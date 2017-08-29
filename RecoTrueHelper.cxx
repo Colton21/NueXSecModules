@@ -16,7 +16,7 @@ void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &
 
 void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoNeutrinosToHits, const lar_pandora::HitsToMCTruth &trueHitsToNeutrinos,
                                           lar_pandora::MCTruthToPFParticles &matchedNeutrinos, lar_pandora::MCTruthToHits &matchedNeutrinoHits,
-                                          lar_pandora::PFParticleSet &vetoReco, lar_pandora::MCTruthSet &vetoTrue) const
+                                          PFParticleSet &vetoReco, MCTruthSet &vetoTrue) const
 {
 	bool foundMatches(false);
 
@@ -91,7 +91,7 @@ void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &
 void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
                                           lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) const
 {
-	lar_pandora::PFParticleSet recoVeto; lar_pandora::MCParticleSet trueVeto;
+	PFParticleSet recoVeto; MCParticleSet trueVeto;
 
 	this->GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, recoVeto, trueVeto);
 }
@@ -100,7 +100,7 @@ void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &
 
 void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
                                           lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits,
-                                          lar_pandora::PFParticleSet &vetoReco, lar_pandora::MCParticleSet &vetoTrue) const
+                                          PFParticleSet &vetoReco, MCParticleSet &vetoTrue) const
 {
 	bool foundMatches(false);
 
@@ -145,7 +145,7 @@ void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &
 		{
 			const art::Ptr<simb::MCParticle> trueParticle = mIter->first;
 
-			MCParticlesToHits::const_iterator iter5 = matchedHits.find(trueParticle);
+			lar_pandora::MCParticlesToHits::const_iterator iter5 = matchedHits.find(trueParticle);
 
 			if ((matchedHits.end() == iter5) || (mIter->second.size() > iter5->second.size()))
 			{

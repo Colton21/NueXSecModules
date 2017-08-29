@@ -60,7 +60,7 @@ void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoNeutrinosToH
  */
 void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoNeutrinosToHits, const lar_pandora::HitsToMCTruth &trueHitsToNeutrinos,
                           lar_pandora::MCTruthToPFParticles &matchedNeutrinos, lar_pandora::MCTruthToHits &matchedNeutrinoHits,
-                          lar_pandora::PFParticleSet &recoVeto, lar_pandora::MCTruthSet &trueVeto) const;
+                          PFParticleSet &recoVeto, MCTruthSet &trueVeto) const;
 
 /**
  *  @brief Perform matching between true and reconstructed particles
@@ -85,7 +85,7 @@ void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToH
  */
 void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
                           lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits,
-                          lar_pandora::PFParticleSet &recoVeto, lar_pandora::MCParticleSet &trueVeto) const;
+                          PFParticleSet &recoVeto, MCParticleSet &trueVeto) const;
 
 /**
  *  @brief Build particle maps for reconstructed particles

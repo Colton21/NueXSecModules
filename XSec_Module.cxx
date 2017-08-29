@@ -3,7 +3,7 @@
 
 namespace nue_xsec {
 
-void XSec::reconfigure(fhicl::ParameterSet const &p)
+void nue_xsec::XSec::reconfigure(fhicl::ParameterSet const &p)
 {
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
@@ -37,7 +37,7 @@ void XSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-XSec::XSec: EDAnalyzer(p) {
+nue_xsec::XSec: EDAnalyzer(p) {
 
 
 	myTree->Branch("run", &run, "run/I");
@@ -103,7 +103,7 @@ XSec::XSec: EDAnalyzer(p) {
 
 }
 
-void XSec::analyze(art::Event const & e) {
+void nue_xsec::XSec::analyze(art::Event const & e) {
 
 	//First thing is to zero all of the values
 	run = -9999;
@@ -712,7 +712,7 @@ void XSec::analyze(art::Event const & e) {
 
 }
 
-void XSec::endSubRun(const art::SubRun& sr) {
+void nue_xsec::XSec::endSubRun(const art::SubRun& sr) {
 	//probably want to fill the tree here
 	std::cout << "[XSec_Module] End Running" << std::endl;
 
