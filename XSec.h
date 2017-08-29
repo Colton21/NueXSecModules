@@ -6,133 +6,134 @@
 
 #ifndef XSec_H
 #define XSec_H
-namespce nue_xsec {
 
-	class XSec;
+namespace nue_xsec {
 
-	class XSec : public art::EDAnalyzer {
+class XSec;
+
+class XSec : public art::EDAnalyzer {
 public:
-	explicit XSec(fhicl::ParameterSet const & p);
+explicit XSec(fhicl::ParameterSet const & p);
 // The compiler-generated destructor is fine for non-base
 // classes without bare pointers or other resource use.
 
 // Plugins should not be copied or assigned.
-	XSec(XSec const &) = delete;
-	XSec(XSec &&) = delete;
-	XSec & operator = (XSec const &) = delete;
-	XSec & operator = (XSec &&) = delete;
+XSec(XSec const &) = delete;
+XSec(XSec &&) = delete;
+XSec & operator = (XSec const &) = delete;
+XSec & operator = (XSec &&) = delete;
 
 // Required functions.
-	void reconfigure(fhicl::ParameterSet const &p) override;
-	void analyze(art::Event const & e) override;
-	void endSubRun(const art::SubRun &sr) override;
+void reconfigure(fhicl::ParameterSet const &p) override;
+void analyze(art::Event const & e) override;
+void endSubRun(const art::SubRun &sr) override;
 
 
 private:
 
-	TTree * myTree;
-	bool isMC;
-	bool isData;
+TTree * myTree;
+bool isMC;
+bool isData;
 
 //RecoTrueMatcher matchinghelper;
 
-	std::string _pfp_producer;
-	std::string _hitfinderLabel;
-	std::string _geantModuleLabel;
-	std::string _spacepointLabel;
-	std::string _neutrino_flash_match_producer;
-	std::string _cosmic_flash_match_producer;
-	std::string _opflash_producer_beam;
-	std::string _acpt_producer;
-	std::string _tpcobject_producer;
-	std::string _potsum_producer;
-	std::string _potsum_instance;
-	std::string _particle_id_producer;
-	std::string _mc_ghost_producer;
+std::string _pfp_producer;
+std::string _hitfinderLabel;
+std::string _geantModuleLabel;
+std::string _spacepointLabel;
+std::string _neutrino_flash_match_producer;
+std::string _cosmic_flash_match_producer;
+std::string _opflash_producer_beam;
+std::string _acpt_producer;
+std::string _tpcobject_producer;
+std::string _potsum_producer;
+std::string _potsum_instance;
+std::string _particle_id_producer;
+std::string _mc_ghost_producer;
 
-	bool _useDaughterMCParticles;
-	bool _useDaughterPFParticles;
-	bool _addDaughterMCParticles;
-	bool _addDaughterPFParticles;
+bool _useDaughterMCParticles;
+bool _useDaughterPFParticles;
+bool _addDaughterMCParticles;
+bool _addDaughterPFParticles;
 
-	bool _use_genie_info;
-	int _minimumHitRequirement;
+bool _use_genie_info;
+int _minimumHitRequirement;
 
-	double _beam_spill_start;
-	double _beam_spill_end;
+double _beam_spill_start;
+double _beam_spill_end;
 
-	bool _debug;
-	bool _verbose;
+bool _debug;
+bool _verbose;
 
 
-	int run;
-	int event;
-	int index;
-	int nMCParticles;
-	int nMCNeutrinos;
-	int nPFPartilcles;
-	int nPFPNeutrinos;
-	int mcPdg;
-	int mcNuPdg;
-	int mcNuIndex;
-	int mcParentPdg;
-	bool mcIsNeutirno;
-	bool mcIsPrimary;
-	int mcMode;
-	bool mcIsCC;
-	int pfpPdg;
-	int pfpNuPdg;
-	int pfpNuIndex;
-	int pfpParentPdg;
-	bool pfpIsNeutrino;
+int run;
+int event;
+int index;
+int nMCParticles;
+int nMCNeutrinos;
+int nPFPartilcles;
+int nPFPNeutrinos;
+int mcPdg;
+int mcNuPdg;
+int mcNuIndex;
+int mcParentPdg;
+bool mcIsNeutirno;
+bool mcIsPrimary;
+int mcMode;
+bool mcIsCC;
+int pfpPdg;
+int pfpNuPdg;
+int pfpNuIndex;
+int pfpParentPdg;
+bool pfpIsNeutrino;
 
-	double mcVtxX;
-	double mcVtxY;
-	double mcVtxZ;
-	double pfpVtxX;
-	double pfpVtxY;
-	double pfpVtxZ;
+double mcVtxX;
+double mcVtxY;
+double mcVtxZ;
+double pfpVtxX;
+double pfpVtxY;
+double pfpVtxZ;
 
-	double mcDirX;
-	double mcDirY;
-	double mcDirZ;
-	double pfpDirX;
-	double pfpDirY;
-	double pfpDirZ;
+double mcDirX;
+double mcDirY;
+double mcDirZ;
+double pfpDirX;
+double pfpDirY;
+double pfpDirZ;
 
-	double mcTheta;
-	double mcPhi;
-	double pfpTheta;
-	double pfpPhi;
+double mcTheta;
+double mcPhi;
+double pfpTheta;
+double pfpPhi;
 
-	double mcLength;
-	double pfpLength;
+double mcLength;
+double pfpLength;
 
-	double mcEnergy;
-	double mcMomentum;
+double mcEnergy;
+double mcMomentum;
 //double pfpEnergy;
-	double pfpMomentum;
+double pfpMomentum;
 
-	double completeness;
-	double purity;
+double completeness;
+double purity;
 
-	int nMCHits;
-	int nMCHitsU;
-	int nMCHitsV;
-	int nMCHitsY;
-	int nPFPHits;
-	int nPFPHitsU;
-	int nPFPHitsV;
-	int nPFPHitsY;
-	int nMatchedHits;
-	int nMatchedHitsU;
-	int nMatchedHitsV;
-	int nMatchedHitsY;
+int nMCHits;
+int nMCHitsU;
+int nMCHitsV;
+int nMCHitsY;
+int nPFPHits;
+int nPFPHitsU;
+int nPFPHitsV;
+int nPFPHitsY;
+int nMatchedHits;
+int nMatchedHitsU;
+int nMatchedHitsV;
+int nMatchedHitsY;
 
-	double mcOpenAngle;
-	double pfpOpenAngle;
+double mcOpenAngle;
+double pfpOpenAngle;
 
-	};
+};
 
 }//end namespace
 
