@@ -3,7 +3,7 @@
 
 namespace nue_xsec {
 
-void nue_xsec::XSec::reconfigure(fhicl::ParameterSet const &p)
+void XSec::reconfigure(fhicl::ParameterSet const &p)
 {
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
@@ -25,19 +25,19 @@ void nue_xsec::XSec::reconfigure(fhicl::ParameterSet const &p)
 	_addDaughterMCParticles         = p.get<std::string>("AddDaughterMCParticles");
 	_addDaughterPFParticles         = p.get<std::string>("AddDaughterPFParticles");
 
-	_use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
+	_use_genie_info                 = p.get<bool>("UseGENIEInfo", "false");
 	_minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
 
 	_beam_spill_start               = p.get<double>("BeamSpillStart", 3.2);
 	_beam_spill_end                 = p.get<double>("BeamSpillEnd",   4.8);
 
-	_debug                          = p.get<std::string>("Debug", false);
-	_verbose                        = p.get<std::string>("Verbose", false);
+	_debug                          = p.get<std::string>("Debug", "false");
+	_verbose                        = p.get<std::string>("Verbose", "false");
 
 }
 
 
-nue_xsec::XSec: EDAnalyzer(p) {
+XSec: EDAnalyzer(p) {
 
 
 	myTree->Branch("run", &run, "run/I");
@@ -103,7 +103,7 @@ nue_xsec::XSec: EDAnalyzer(p) {
 
 }
 
-void nue_xsec::XSec::analyze(art::Event const & e) {
+void XSec::analyze(art::Event const & e) {
 
 	//First thing is to zero all of the values
 	run = -9999;
@@ -712,7 +712,7 @@ void nue_xsec::XSec::analyze(art::Event const & e) {
 
 }
 
-void nue_xsec::XSec::endSubRun(const art::SubRun& sr) {
+void XSec::endSubRun(const art::SubRun& sr) {
 	//probably want to fill the tree here
 	std::cout << "[XSec_Module] End Running" << std::endl;
 
