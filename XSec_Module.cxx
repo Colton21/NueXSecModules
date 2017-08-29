@@ -33,7 +33,7 @@ void XSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-XSec::XSex: EDAnalyzer(p) {
+XSec::XSec: EDAnalyzer(p) {
 
 
 	myTree->Branch("run", &run, "run/I");
@@ -174,7 +174,7 @@ void XSec::analyze(art::Event const & e) {
 	int run = e.id().run();
 	//int _subrun = e.id().subRun();
 	int event = e.id().event();
-	bool _is_data = e.isReadlData();
+	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
 
 	//I want to move this all to a separate file, but I should test that this builds as is first!
@@ -189,8 +189,8 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::PFParticlesToTracks recoParticlesToTracks;
 	LArPandoraHelper::CollectTracks(e, _pfp_producer, recoTrackVector, recoParticlesToTracks);
 
-	T0Vector t0Vector_trk;
-	TracksToT0s tracksToT0s;
+	lar_pandora::T0Vector t0Vector_trk;
+	lar_pandora::TracksToT0s tracksToT0s;
 	LArPandoraHelper::CollectT0s(e, _pfp_producer, t0Vector_trk, tracksToT0s);
 
 	if (_verbose)
@@ -202,8 +202,8 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::PFParticlesToShowers recoParticlesToShowers;
 	LArPandoraHelper::CollectShowers(e, _pfp_producer, recoShowerVector, recoParticlesToShowers);
 
-	T0Vector t0Vector_shwr;
-	ShowersToT0s showersToT0s;
+	lar_pandora::T0Vector t0Vector_shwr;
+	lar_pandora::ShowersToT0s showersToT0s;
 	LArPandoraHelper::CollectT0s(e, _pfp_producer, t0Vector_shwr, showersToT0s);
 
 	if (_verbose)

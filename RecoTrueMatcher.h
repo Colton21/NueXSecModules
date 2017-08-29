@@ -7,7 +7,7 @@ class RecoTrueMatcher {
 
 public:
 
-temp = 0;
+double temp;
 
 };
 

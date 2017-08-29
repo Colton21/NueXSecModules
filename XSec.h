@@ -29,7 +29,7 @@ TTree * myTree;
 bool isMC;
 bool isData;
 
-RecoTrueMatcher matchinghelper;
+//RecoTrueMatcher matchinghelper;
 
 std::string _pfp_producer;
 std::string _hitfinderLabe;
@@ -54,8 +54,8 @@ int _minimumHitRequirement;
 double _beam_spill_start;
 double _beam_spill_end;
 
-std::string _debug;
-std::string _verbose;
+bool _debug;
+bool _verbose;
 
 
 int run;
@@ -120,7 +120,7 @@ int nPFPHitsY;
 int nMatchedHits;
 int nMatchedHitsU;
 int nMatchedHitsV;
-int nMatchedHitsW;
+int nMatchedHitsY;
 
 double mcOpenAngle;
 double pfpOpenAngle;
