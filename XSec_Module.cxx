@@ -355,9 +355,9 @@ void XSec::analyze(art::Event const & e) {
 		purity = 0.0;
 
 		nMCHits = trueHitVector.size();
-		nMCHitsU = this->CountHitsByType(geo::kU, trueHitVector);
-		nMCHitsV = this->CountHitsByType(geo::kV, trueHitVector);
-		nMCHitsY = this->CountHitsByType(geo::kW, trueHitVector);
+		nMCHitsU = this->lar_pandora::CountHitsByType(geo::kU, trueHitVector);
+		nMCHitsV = this->lar_pandora::CountHitsByType(geo::kV, trueHitVector);
+		nMCHitsY = this->lar_pandora::CountHitsByType(geo::kW, trueHitVector);
 
 
 		// Start Filling the PFP Neutrino information
@@ -388,14 +388,14 @@ void XSec::analyze(art::Event const & e) {
 			{
 				const HitVector &matchedHitVector = pIter3->second;
 				nPFPHits = recoHitVector.size();
-				nPFPHitsU = this->CountHitsByType(geo::kU, recoHitVector);
-				nPFPHitsV = this->CountHitsByType(geo::kV, recoHitVector);
-				nPFPHitsY = this->CountHitsByType(geo::kW, recoHitVector);
+				nPFPHitsU = this->lar_pandora::CountHitsByType(geo::kU, recoHitVector);
+				nPFPHitsV = this->lar_pandora::CountHitsByType(geo::kV, recoHitVector);
+				nPFPHitsY = this->lar_pandora::CountHitsByType(geo::kW, recoHitVector);
 
 				nMatchedHits = matchedHitVector.size();
-				nMatchedHitsU = this->CountHitsByType(geo::kU, matchedHitVector);
-				nMatchedHitsV = this->CountHitsByType(geo::kV, matchedHitVector);
-				nMatchedHitsY = this->CountHitsByType(geo::kW, matchedHitVector);
+				nMatchedHitsU = this->lar_pandora::CountHitsByType(geo::kU, matchedHitVector);
+				nMatchedHitsV = this->lar_pandora::CountHitsByType(geo::kV, matchedHitVector);
+				nMatchedHitsY = this->lar_pandora::CountHitsByType(geo::kW, matchedHitVector);
 			}
 
 			//get the reco vertex
@@ -503,9 +503,9 @@ void XSec::analyze(art::Event const & e) {
 		// Count number of available hits
 		// Match true and reconstructed hits
 		nMCHits = trueHitVector.size();
-		nMCHitsU = this->CountHitsByType(geo::kU, trueHitVector);
-		nMCHitsV = this->CountHitsByType(geo::kV, trueHitVector);
-		nMCHitsY = this->CountHitsByType(geo::kW, trueHitVector);
+		nMCHitsU = this->lar_pandora::CountHitsByType(geo::kU, trueHitVector);
+		nMCHitsV = this->lar_pandora::CountHitsByType(geo::kV, trueHitVector);
+		nMCHitsY = this->lar_pandora::CountHitsByType(geo::kW, trueHitVector);
 
 		//Now we start working with the matched pfpartciles
 		//========================================================
@@ -539,14 +539,14 @@ void XSec::analyze(art::Event const & e) {
 			const HitVector &matchedHitVector = pIter3->second;
 
 			nPfpHits = recoHitVector.size();
-			nPfpHitsU = this->CountHitsByType(geo::kU, recoHitVector);
-			nPfpHitsV = this->CountHitsByType(geo::kV, recoHitVector);
-			nPfpHitsY = this->CountHitsByType(geo::kW, recoHitVector);
+			nPfpHitsU = this->lar_pandora::CountHitsByType(geo::kU, recoHitVector);
+			nPfpHitsV = this->lar_pandora::CountHitsByType(geo::kV, recoHitVector);
+			nPfpHitsY = this->lar_pandora::CountHitsByType(geo::kW, recoHitVector);
 
 			nMatchedHits = matchedHitVector.size();
-			nMatchedHitsU = this->CountHitsByType(geo::kU, matchedHitVector);
-			nMatchedHitsV = this->CountHitsByType(geo::kV, matchedHitVector);
-			nMatchedHitsY = this->CountHitsByType(geo::kW, matchedHitVector);
+			nMatchedHitsU = this->lar_pandora::CountHitsByType(geo::kU, matchedHitVector);
+			nMatchedHitsV = this->lar_pandora::CountHitsByType(geo::kV, matchedHitVector);
+			nMatchedHitsY = this->lar_pandora::CountHitsByType(geo::kW, matchedHitVector);
 
 			//Find the reconstructed vertices!
 			PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
@@ -681,7 +681,7 @@ void XSec::analyze(art::Event const & e) {
 
 }
 
-void UBXSec::endSubRun(const art::SubRun& sr) {
+void XSec::endSubRun(const art::SubRun& sr) {
 	//probably want to fill the tree here
 	std::cout << "[XSec_Module] End Running" << std::endl;
 

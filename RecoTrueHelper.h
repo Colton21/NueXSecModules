@@ -10,6 +10,9 @@ typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
 typedef std::set< art::Ptr<simb::MCParticle> > MCParticleSet;
 typedef std::set< art::Ptr<simb::MCTruth> > MCTruthSet;
 
+//I should export this as a fcl parameter in the future
+_recursiveMatching = true;
+
 /**
  *  @brief  Build mapping from true neutrinos to hits
  *

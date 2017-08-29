@@ -4,8 +4,8 @@ namespace lar_pandora
 {
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-recotruehelper::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos,
-                                     matchedNeutrinos, matchedNeutrinoHits)
+void recotruehelper::GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const HitsToMCTruth &trueHitsToNeutrinos,
+                                          MCTruthToPFParticles &matchedNeutrinos, MCTruthToHits &matchedNeutrinoHits) const
 {
 	PFParticleSet recoVeto; MCTruthSet trueVeto;
 
@@ -81,7 +81,7 @@ void recotruehelper::GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinos
 		vetoReco.insert(pIter->second);
 	}
 
-	if (m_recursiveMatching)
+	if (_recursiveMatching)
 		this->GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos, matchedNeutrinos, matchedNeutrinoHits, vetoReco, vetoTrue);
 }
 
@@ -164,7 +164,7 @@ void recotruehelper::GetRecoToTrueMatches(const PFParticlesToHits &recoParticles
 		vetoReco.insert(pIter->second);
 	}
 
-	if (m_recursiveMatching)
+	if (_recursiveMatching)
 		this->GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedHits, vetoReco, vetoTrue);
 }
 
