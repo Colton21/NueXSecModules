@@ -4,8 +4,8 @@ namespace lar_pandora
 {
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-PFParticleMonitoring::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos,
-                                           matchedNeutrinos, matchedNeutrinoHits)
+recotruehelper::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos,
+                                     matchedNeutrinos, matchedNeutrinoHits)
 {
 	PFParticleSet recoVeto; MCTruthSet trueVeto;
 
@@ -14,8 +14,8 @@ PFParticleMonitoring::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutri
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-void PFParticleMonitoring::GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const HitsToMCTruth &trueHitsToNeutrinos,
-                                                MCTruthToPFParticles &matchedNeutrinos, MCTruthToHits &matchedNeutrinoHits, PFParticleSet &vetoReco, MCTruthSet &vetoTrue) const
+void recotruehelper::GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const HitsToMCTruth &trueHitsToNeutrinos,
+                                          MCTruthToPFParticles &matchedNeutrinos, MCTruthToHits &matchedNeutrinoHits, PFParticleSet &vetoReco, MCTruthSet &vetoTrue) const
 {
 	bool foundMatches(false);
 
@@ -87,8 +87,8 @@ void PFParticleMonitoring::GetRecoToTrueMatches(const PFParticlesToHits &recoNeu
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-void PFParticleMonitoring::GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const HitsToMCParticles &trueHitsToParticles,
-                                                MCParticlesToPFParticles &matchedParticles, MCParticlesToHits &matchedHits) const
+void recotruehelper::GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const HitsToMCParticles &trueHitsToParticles,
+                                          MCParticlesToPFParticles &matchedParticles, MCParticlesToHits &matchedHits) const
 {
 	PFParticleSet recoVeto; MCParticleSet trueVeto;
 
@@ -97,8 +97,8 @@ void PFParticleMonitoring::GetRecoToTrueMatches(const PFParticlesToHits &recoPar
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-void PFParticleMonitoring::GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const HitsToMCParticles &trueHitsToParticles,
-                                                MCParticlesToPFParticles &matchedParticles, MCParticlesToHits &matchedHits, PFParticleSet &vetoReco, MCParticleSet &vetoTrue) const
+void recotruehelper::GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const HitsToMCParticles &trueHitsToParticles,
+                                          MCParticlesToPFParticles &matchedParticles, MCParticlesToHits &matchedHits, PFParticleSet &vetoReco, MCParticleSet &vetoTrue) const
 {
 	bool foundMatches(false);
 
@@ -172,7 +172,7 @@ void PFParticleMonitoring::GetRecoToTrueMatches(const PFParticlesToHits &recoPar
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-void PFParticleMonitoring::BuildRecoParticleMap(const PFParticleVector &particleVector, PFParticleMap &particleMap) const
+void recotruehelper::BuildRecoParticleMap(const PFParticleVector &particleVector, PFParticleMap &particleMap) const
 {
 	for (PFParticleVector::const_iterator iter = particleVector.begin(), iterEnd = particleVector.end(); iter != iterEnd; ++iter)
 	{
@@ -183,7 +183,7 @@ void PFParticleMonitoring::BuildRecoParticleMap(const PFParticleVector &particle
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-void PFParticleMonitoring::BuildTrueParticleMap(const MCParticleVector &particleVector, MCParticleMap &particleMap) const
+void recotruehelper::BuildTrueParticleMap(const MCParticleVector &particleVector, MCParticleMap &particleMap) const
 {
 	for (MCParticleVector::const_iterator iter = particleVector.begin(), iterEnd = particleVector.end(); iter != iterEnd; ++iter)
 	{
@@ -194,7 +194,7 @@ void PFParticleMonitoring::BuildTrueParticleMap(const MCParticleVector &particle
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-int PFParticleMonitoring::CountHitsByType(const int view, const HitVector &hitVector) const
+int recotruehelper::CountHitsByType(const int view, const HitVector &hitVector) const
 {
 	int nHits(0);
 
@@ -210,7 +210,7 @@ int PFParticleMonitoring::CountHitsByType(const int view, const HitVector &hitVe
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-void PFParticleMonitoring::GetStartAndEndPoints(const art::Ptr<simb::MCParticle> particle, int &startT, int &endT) const
+void recotruehelper::GetStartAndEndPoints(const art::Ptr<simb::MCParticle> particle, int &startT, int &endT) const
 {
 	art::ServiceHandle<geo::Geometry> theGeometry;
 
@@ -247,7 +247,7 @@ void PFParticleMonitoring::GetStartAndEndPoints(const art::Ptr<simb::MCParticle>
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-double PFParticleMonitoring::GetLength(const art::Ptr<simb::MCParticle> particle, const int startT, const int endT) const
+double recotruehelper::GetLength(const art::Ptr<simb::MCParticle> particle, const int startT, const int endT) const
 {
 	if (endT <= startT)
 		return 0.0;
