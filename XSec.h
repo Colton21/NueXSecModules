@@ -45,8 +45,9 @@ std::string _potsum_instance;
 std::string _particle_id_producer;
 std::string _mc_ghost_producer;
 
-std::string _useDaughterPFParticles;
-std::string _addDaughterPFParticles;
+bool _useDaughterMCParticles;
+bool _useDaughterPFParticles;
+bool _addDaughterPFParticles;
 
 bool _use_genie_info;
 int _minimumHitRequirement;

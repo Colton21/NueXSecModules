@@ -18,6 +18,7 @@ void XSec::reconfigure(fhicl::ParameterSet const &p)
 	_particle_id_producer           = p.get<std::string>("ParticleIDProducer");
 	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
 
+	_useDaughterMCParticles         = p.get<std::string>("UseDaughterMCParticles");
 	_useDaughterPFParticles         = p.get<std::string>("UseDaughterPFParticles");
 	_addDaughterPFParticles         = p.get<std::string>("AddDaughterPFParticles");
 
@@ -180,8 +181,8 @@ void XSec::analyze(art::Event const & e) {
 	//I want to move this all to a separate file, but I should test that this builds as is first!
 	//performing reco-true matching
 	//====================================================
-	lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles; // This is a map: MCParticle to matched PFParticle
-	lar_pandora::MCParticlesToHits matchedParticleHits;
+	//lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles; // This is a map: MCParticle to matched PFParticle
+	//lar_pandora::MCParticlesToHits matchedParticleHits;
 
 	// Collect Tracks and PFParticle <-> Track Associations
 	// ====================================================
@@ -211,8 +212,8 @@ void XSec::analyze(art::Event const & e) {
 
 	// Collect Vertices and PFParticle <-> Vertex Associations
 	// =======================================================
-	VertexVector recoVertexVector;
-	PFParticlesToVertices recoParticlesToVertices;
+	lar_pandora::VertexVector recoVertexVector;
+	lar_pandora::PFParticlesToVertices recoParticlesToVertices;
 	LArPandoraHelper::CollectVertices(e,  _pfp_producer, recoVertexVector, recoParticlesToVertices);
 
 	if (_verbose)
@@ -307,8 +308,8 @@ void XSec::analyze(art::Event const & e) {
 	this->recotruehelper::BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
 	this->recotruehelper::BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
 
-	MCTruthToPFParticles matchedNeutrinos;
-	MCTruthToHits matchedNeutrinoHits;
+	lar_pandora::MCTruthToPFParticles matchedNeutrinos;
+	lar_pandora::MCTruthToHits matchedNeutrinoHits;
 	this->recotruehelper::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos, matchedNeutrinos, matchedNeutrinoHits);
 
 
@@ -329,7 +330,7 @@ void XSec::analyze(art::Event const & e) {
 		const simb::MCNeutrino trueNeutrino(trueEvent->GetNeutrino());
 		const simb::MCParticle trueParticle(trueNeutrino.Nu());
 
-		mcIsCC = ((simb::kCC == neutrino.CCNC()) ? 1 : 0);
+		mcIsCC = ((simb::kCC == trueNeutrino.CCNC()) ? 1 : 0);
 		mcPdg = trueParticle.PdgCode();
 		mcNuPdg = trueNeutrino.PdgCode();
 		mcIsNeutirno = true;
@@ -367,6 +368,7 @@ void XSec::analyze(art::Event const & e) {
 		if (matchedNeutrinos.end() != pIter1)
 		{
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
+			const lar_pandora::HitVector &recoHitVector = pIter2->second;
 
 
 			pfpPdg = recoParticle->PdgCode();
@@ -387,7 +389,7 @@ void XSec::analyze(art::Event const & e) {
 			lar_pandora::MCTruthToHits::const_iterator pIter3 = matchedNeutrinoHits.find(trueEvent);
 			if (matchedNeutrinoHits.end() != pIter3)
 			{
-				const HitVector &matchedHitVector = pIter3->second;
+				const lar_pandora::HitVector &matchedHitVector = pIter3->second;
 				nPFPHits = recoHitVector.size();
 				nPFPHitsU = this->recotruehelper::CountHitsByType(geo::kU, recoHitVector);
 				nPFPHitsV = this->recotruehelper::CountHitsByType(geo::kV, recoHitVector);
@@ -403,7 +405,7 @@ void XSec::analyze(art::Event const & e) {
 			lar_pandora::PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
 			if (recoParticlesToVertices.end() != pIter4)
 			{
-				const VertexVector &vertexVector = pIter4->second;
+				const lar_pandora::VertexVector &vertexVector = pIter4->second;
 				if (!vertexVector.empty())
 				{
 					if (vertexVector.size() !=1 && _debug == true)
@@ -482,7 +484,7 @@ void XSec::analyze(art::Event const & e) {
 		const art::Ptr<simb::MCTruth> trueEvent = nuIter->second;
 		if (trueEvent->NeutrinoSet())
 		{
-			const simb::MCNeutrino neutrino(trueEvent->GetNeutrino());
+			const simb::MCNeutrino neutrino = trueEvent->GetNeutrino();
 			mcNuPdg = neutrino.Nu().PdgCode();
 			mcIsCC = ((simb::kCC == neutrino.CCNC()) ? 1 : 0);
 			mcMode = neutrino.Mode();
@@ -517,7 +519,7 @@ void XSec::analyze(art::Event const & e) {
 			pfpPdg = recoParticle->PdgCode();
 			pfpNuPdg = LArPandoraHelper::GetParentNeutrino(recoParticleMap, recoParticle);
 			if(pfpPdg == 12 || pfpPdg == 14) {pfpIsNeutrino = true; }
-			else{pfpIsNeutrino == false; }
+			//else{pfpIsNeutrino == false; }
 			pfpIsPrimary = LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle);
 
 			const art::Ptr<recob::PFParticle> parentParticle = LArPandoraHelper::GetParentPFParticle(recoParticleMap, recoParticle);
@@ -553,7 +555,7 @@ void XSec::analyze(art::Event const & e) {
 			lar_pandora::PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
 			if (recoParticlesToVertices.end() != pIter4)
 			{
-				const VertexVector &vertexVector = pIter4->second;
+				const lar_pandora::VertexVector &vertexVector = pIter4->second;
 				if (!vertexVector.empty())
 				{
 					if (vertexVector.size() !=1 && _debug == true)
@@ -581,7 +583,7 @@ void XSec::analyze(art::Event const & e) {
 					if (trackVector.size() !=1 && _debug == true)
 						std::cout << " Warning: Found particle with more than one associated track " << std::endl;
 
-					const art::Ptr<recob::Track> recoTrack = *(lar_pandora::trackVector.begin());
+					const art::Ptr<recob::Track> recoTrack = *(trackVector.begin());
 					const TVector3 &vtxDirection = recoTrack->VertexDirection();
 
 					pfpDirX = vtxDirection.x();
@@ -604,7 +606,7 @@ void XSec::analyze(art::Event const & e) {
 					if (showerVector.size() !=1 && _debug == true)
 						std::cout << " Warning: Found particle with more than one associated shower " << std::endl;
 
-					const art::Ptr<recob::Shower> recoShower = *(lar_pandora::ShowerVector.begin());
+					const art::Ptr<recob::Shower> recoShower = *(showerVector.begin());
 					const TVector3 &vtxDirection = recoShower->Direction();
 
 					pfpDirX = vtxDirection.x();
@@ -673,7 +675,7 @@ void XSec::analyze(art::Event const & e) {
 //
 //      }
 //
-	if(_is_data = true)
+	if(_is_data == true)
 	{
 		//I need to just fill all pfp information!
 		std::cout << "We're looking at data!" << std::endl;
