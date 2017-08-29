@@ -22,8 +22,8 @@ bool _recursiveMatching = true;
  *  @param trueNeutrinosToHits  the output mapping from trues event to hits
  *  @param trueHitsToNeutrinos  the output mappign from hits to true events
  */
-void BuildTrueNeutrinoHitMaps(const MCTruthToMCParticles &truthToParticles, const MCParticlesToHits &trueParticlesToHits,
-                              MCTruthToHits &trueNeutrinosToHits, HitsToMCTruth &trueHitsToNeutrinos) const;
+void BuildTrueNeutrinoHitMaps(const lar_pandora::MCTruthToMCParticles &truthToParticles, const lar_pandora::MCParticlesToHits &trueParticlesToHits,
+                              lar_pandora::MCTruthToHits &trueNeutrinosToHits, lar_pandora::HitsToMCTruth &trueHitsToNeutrinos) const;
 
 /**
  *  @brief  Build mapping from reconstructed neutrinos to hits
@@ -33,8 +33,8 @@ void BuildTrueNeutrinoHitMaps(const MCTruthToMCParticles &truthToParticles, cons
  *  @param recoNeutrinosToHits  the output mapping from reconstructed particles to hits
  *  @param recoHitsToNeutrinos  the output mapping from reconstructed hits to particles
  */
-void BuildRecoNeutrinoHitMaps(const PFParticleMap &recoParticleMap, const PFParticlesToHits &recoParticlesToHits,
-                              PFParticlesToHits &recoNeutrinosToHits, HitsToPFParticles &recoHitsToNeutrinos) const;
+void BuildRecoNeutrinoHitMaps(const lar_pandora::PFParticleMap &recoParticleMap, const lar_pandora::PFParticlesToHits &recoParticlesToHits,
+                              lar_pandora::PFParticlesToHits &recoNeutrinosToHits, lar_pandora::HitsToPFParticles &recoHitsToNeutrinos) const;
 
 /**
  *  @brief Perform matching between true and reconstructed neutrino events
@@ -44,8 +44,8 @@ void BuildRecoNeutrinoHitMaps(const PFParticleMap &recoParticleMap, const PFPart
  *  @param matchedNeutrinos  the output matches between reconstructed and true neutrinos
  *  @param matchedNeutrinoHits  the output matches between reconstructed neutrinos and hits
  */
-void GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const HitsToMCTruth &trueHitsToNeutrinos,
-                          MCTruthToPFParticles &matchedNeutrinos, MCTruthToHits &matchedNeutrinoHits) const;
+void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoNeutrinosToHits, const lar_pandora::HitsToMCTruth &trueHitsToNeutrinos,
+                          lar_pandora::MCTruthToPFParticles &matchedNeutrinos, lar_pandora::MCTruthToHits &matchedNeutrinoHits) const;
 
 /**
  *  @brief Perform matching between true and reconstructed neutrino events
@@ -57,8 +57,9 @@ void GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const Hi
  *  @param recoVeto  the veto list for reconstructed particles
  *  @param trueVeto  the veto list for true particles
  */
-void GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const HitsToMCTruth &trueHitsToNeutrinos,
-                          MCTruthToPFParticles &matchedNeutrinos, MCTruthToHits &matchedNeutrinoHits, PFParticleSet &recoVeto, MCTruthSet &trueVeto) const;
+void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoNeutrinosToHits, const lar_pandora::HitsToMCTruth &trueHitsToNeutrinos,
+                          lar_pandora::MCTruthToPFParticles &matchedNeutrinos, lar_pandora::MCTruthToHits &matchedNeutrinoHits,
+                          lar_pandora::PFParticleSet &recoVeto, lar_pandora::MCTruthSet &trueVeto) const;
 
 /**
  *  @brief Perform matching between true and reconstructed particles
@@ -68,8 +69,8 @@ void GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const Hi
  *  @param matchedParticles the output matches between reconstructed and true particles
  *  @param matchedHits the output matches between reconstructed particles and hits
  */
-void GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const HitsToMCParticles &trueHitsToParticles,
-                          MCParticlesToPFParticles &matchedParticles, MCParticlesToHits &matchedHits) const;
+void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
+                          lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits) const;
 
 /**
  *  @brief Perform matching between true and reconstructed particles
@@ -81,8 +82,9 @@ void GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const Hi
  *  @param recoVeto the veto list for reconstructed particles
  *  @param trueVeto the veto list for true particles
  */
-void GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const HitsToMCParticles &trueHitsToParticles,
-                          MCParticlesToPFParticles &matchedParticles, MCParticlesToHits &matchedHits, PFParticleSet &recoVeto, MCParticleSet &trueVeto) const;
+void GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoParticlesToHits, const lar_pandora::HitsToMCParticles &trueHitsToParticles,
+                          lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits,
+                          lar_pandora::PFParticleSet &recoVeto, lar_pandora::MCParticleSet &trueVeto) const;
 
 /**
  *  @brief Build particle maps for reconstructed particles
@@ -90,7 +92,7 @@ void GetRecoToTrueMatches(const PFParticlesToHits &recoParticlesToHits, const Hi
  *  @param particleVector the input vector of reconstructed particles
  *  @param particleMap the output mapping between reconstructed particles and particle ID
  */
-void BuildRecoParticleMap(const PFParticleVector &particleVector, PFParticleMap &particleMap) const;
+void BuildRecoParticleMap(const lar_pandora::PFParticleVector &particleVector, lar_pandora::PFParticleMap &particleMap) const;
 
 /**
  *  @brief Build particle maps for true particles
@@ -98,7 +100,7 @@ void BuildRecoParticleMap(const PFParticleVector &particleVector, PFParticleMap 
  *  @param particleVector the input vector of true particles
  *  @param particleMap the output mapping between true particle and true track ID
  */
-void BuildTrueParticleMap(const MCParticleVector &particleVector, MCParticleMap &particleMap) const;
+void BuildTrueParticleMap(const lar_pandora::MCParticleVector &particleVector, lar_pandora::MCParticleMap &particleMap) const;
 
 /**
  *  @brief Count the number of reconstructed hits in a given wire plane
@@ -106,7 +108,7 @@ void BuildTrueParticleMap(const MCParticleVector &particleVector, MCParticleMap 
  *  @param view the wire plane ID
  *  @param hitVector the input vector of reconstructed hits
  */
-int CountHitsByType(const int view, const HitVector &hitVector) const;
+int CountHitsByType(const int view, const lar_pandora::HitVector &hitVector) const;
 
 /**
  *  @brief Find the start and end points of the true particle in the active region of detector
