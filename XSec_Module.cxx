@@ -20,10 +20,10 @@ void XSec::reconfigure(fhicl::ParameterSet const &p)
 	_particle_id_producer           = p.get<std::string>("ParticleIDProducer");
 	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
 
-	_useDaughterMCParticles         = p.get<std::string>("UseDaughterMCParticles");
-	_useDaughterPFParticles         = p.get<std::string>("UseDaughterPFParticles");
-	_addDaughterMCParticles         = p.get<std::string>("AddDaughterMCParticles");
-	_addDaughterPFParticles         = p.get<std::string>("AddDaughterPFParticles");
+	_useDaughterMCParticles         = p.get<bool>("UseDaughterMCParticles");
+	_useDaughterPFParticles         = p.get<bool>("UseDaughterPFParticles");
+	_addDaughterMCParticles         = p.get<bool>("AddDaughterMCParticles");
+	_addDaughterPFParticles         = p.get<bool>("AddDaughterPFParticles");
 
 	_use_genie_info                 = p.get<bool>("UseGENIEInfo", "false");
 	_minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -724,4 +724,4 @@ void XSec::endSubRun(const art::SubRun& sr) {
 
 }//end namespace
 
-DEFINE_ART_MODULE(XSec)
+DEFINE_ART_MODULE(nue_xsec::XSec)
