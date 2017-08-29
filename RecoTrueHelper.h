@@ -121,6 +121,7 @@ void GetStartAndEndPoints(const art::Ptr<simb::MCParticle> trueParticle, int &st
  *  @param endT  the true end point
  */
 double GetLength(const art::Ptr<simb::MCParticle> trueParticle, const int startT, const int endT) const;
-}
+
+};
 
 }//end namespace lar_pandora

@@ -4,8 +4,8 @@ namespace lar_pandora
 {
 //------------------------------------------------------------------------------------------------------------------------------------------
 
-void PFParticleMonitoring::GetRecoToTrueMatches(const PFParticlesToHits &recoNeutrinosToHits, const HitsToMCTruth &trueHitsToNeutrinos,
-                                                MCTruthToPFParticles &matchedNeutrinos, MCTruthToHits &matchedNeutrinoHits) const
+PFParticleMonitoring::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos,
+                                           matchedNeutrinos, matchedNeutrinoHits)
 {
 	PFParticleSet recoVeto; MCTruthSet trueVeto;
 
