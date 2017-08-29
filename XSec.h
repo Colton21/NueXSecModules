@@ -47,6 +47,7 @@ std::string _mc_ghost_producer;
 
 bool _useDaughterMCParticles;
 bool _useDaughterPFParticles;
+bool _addDaughterMCParticles;
 bool _addDaughterPFParticles;
 
 bool _use_genie_info;

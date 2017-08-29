@@ -20,6 +20,7 @@ void XSec::reconfigure(fhicl::ParameterSet const &p)
 
 	_useDaughterMCParticles         = p.get<std::string>("UseDaughterMCParticles");
 	_useDaughterPFParticles         = p.get<std::string>("UseDaughterPFParticles");
+	_addDaughterMCParticles         = p.get<std::string>("AddDaughterMCParticles");
 	_addDaughterPFParticles         = p.get<std::string>("AddDaughterPFParticles");
 
 	_use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
@@ -264,7 +265,7 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::MCParticlesToHits trueParticlesToHits;
 	lar_pandora::HitsToMCParticles trueHitsToParticles;
 
-	if (!.isRealData())
+	if (!e.isRealData())
 	{
 		LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, trueParticleVector);
 		LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, truthToParticles, particlesToTruth);
@@ -386,7 +387,7 @@ void XSec::analyze(art::Event const & e) {
 		if (matchedNeutrinos.end() != pIter1)
 		{
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
-			const lar_pandora::HitVector &recoHitVector = pIter1->second;
+
 
 
 			pfpPdg = recoParticle->PdgCode();
@@ -402,6 +403,12 @@ void XSec::analyze(art::Event const & e) {
 			pfpPhi = 0;
 			pfpLength = 0;
 			pfpMomentum = 0;
+
+			lar_pandoar::PFParticlesToHits::const_iterator pIter2 = recoNeutrinosToHits.find(recoParticle);
+			if (recoNeutrinosToHits.end() == pIter2)
+				throw cet::exception("LArPandora") << " PFParticleMonitoring::analyze --- Found a reco neutrino without any hits ";
+
+			const lar_pandora::HitVector &recoHitVector = pIter2->second;
 
 			//get the pfp hits
 			lar_pandora::MCTruthToHits::const_iterator pIter3 = matchedNeutrinoHits.find(trueEvent);
