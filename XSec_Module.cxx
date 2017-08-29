@@ -31,8 +31,8 @@ void XSec::reconfigure(fhicl::ParameterSet const &p)
 	_beam_spill_start               = p.get<double>("BeamSpillStart", 3.2);
 	_beam_spill_end                 = p.get<double>("BeamSpillEnd",   4.8);
 
-	_debug                          = p.get<std::string>("Debug", "false");
-	_verbose                        = p.get<std::string>("Verbose", "false");
+	_debug                          = p.get<bool>("Debug", false);
+	_verbose                        = p.get<bool>("Verbose", false);
 
 }
 
@@ -256,7 +256,7 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::SpacePointVector spacePointVector;
 	lar_pandora::SpacePointsToHits spacePointsToHits;
 	lar_pandora::HitsToSpacePoints hitsToSpacePoints;
-	lar_pandora::LArPandoraHelper::CollectSpacePoints(e, _particleLabel, spacePointVector, spacePointsToHits, hitsToSpacePoints);
+	lar_pandora::LArPandoraHelper::CollectSpacePoints(e, _pfp_producer, spacePointVector, spacePointsToHits, hitsToSpacePoints);
 
 	if (_verbose)
 		std::cout << "  SpacePoints: " << spacePointVector.size() << std::endl;
