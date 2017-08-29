@@ -2,6 +2,37 @@
 
 namespace nue_xsec
 {
+
+//------------------------------------------------------------------------------------------------------------------------------------------
+
+void recotruehelper::BuildTrueNeutrinoHitMaps(const lar_pandora::MCTruthToMCParticles &truthToParticles, const lar_pandora::MCParticlesToHits &trueParticlesToHits,
+                                              lar_pandora::MCTruthToHits &trueNeutrinosToHits, lar_pandora::HitsToMCTruth &trueHitsToNeutrinos) const
+{
+	for (lar_pandora::MCTruthToMCParticles::const_iterator iter1 = truthToParticles.begin(), iterEnd1 = truthToParticles.end();
+	     iter1 != iterEnd1; ++iter1)
+	{
+		const art::Ptr<simb::MCTruth> trueNeutrino = iter1->first;
+		const lar_pandora::MCParticleVector &trueParticleVector = iter1->second;
+
+		for (lar_pandora::MCParticleVector::const_iterator iter2 = trueParticleVector.begin(), iterEnd2 = trueParticleVector.end(); iter2 != iterEnd2; ++iter2)
+		{
+			const lar_pandora::MCParticlesToHits::const_iterator iter3 = trueParticlesToHits.find(*iter2);
+			if (trueParticlesToHits.end() == iter3)
+				continue;
+
+			const lar_pandora::HitVector &hitVector = iter3->second;
+
+			for (lar_pandora::HitVector::const_iterator iter4 = hitVector.begin(), iterEnd4 = hitVector.end(); iter4 != iterEnd4; ++iter4)
+			{
+				const art::Ptr<recob::Hit> hit = *iter4;
+				trueHitsToNeutrinos[hit] = trueNeutrino;
+				trueNeutrinosToHits[trueNeutrino].push_back(hit);
+			}
+		}
+	}
+}
+
+
 //--------------------------------------------------------------------------------------------------------------------------------------------
 void recotruehelper::BuildRecoNeutrinoHitMaps(const lar_pandora::PFParticleMap &recoParticleMap, const lar_pandora::PFParticlesToHits &recoParticlesToHits,
                                               lar_pandora::PFParticlesToHits &recoNeutrinosToHits, lar_pandora::HitsToPFParticles &recoHitsToNeutrinos) const
