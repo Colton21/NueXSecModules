@@ -170,11 +170,11 @@ void XSec::analyze(art::Event const & e) {
 	pfpOpenAngle = -9999;
 
 
-	int _run = e.id().run();
+	int run = e.id().run();
 	//int _subrun = e.id().subRun();
-	int _event = e.id().event();
-	bool _is_data = e.isReadlData();
-	bool _is_mc = !_is_data;
+	int event = e.id().event();
+	bool is_data = e.isReadlData();
+	bool is_mc = !_is_data;
 
 	//I want to move this all to a separate file, but I should test that this builds as is first!
 	//performing reco-true matching
@@ -185,7 +185,7 @@ void XSec::analyze(art::Event const & e) {
 	// Collect Tracks and PFParticle <-> Track Associations
 	// ====================================================
 	TrackVector recoTrackVector;
-	PFParticlesToTracks recoParticlesToTracks;
+	lar_pandora::PFParticlesToTracks recoParticlesToTracks;
 	LArPandoraHelper::CollectTracks(e, _pfp_producer, recoTrackVector, recoParticlesToTracks);
 
 	T0Vector t0Vector_trk;
@@ -198,7 +198,7 @@ void XSec::analyze(art::Event const & e) {
 	// Collect Showers and PFParticle <-> Shower Associations
 	// ====================================================
 	ShowerVector recoShowerVector;
-	PFParticlesToShowers recoParticlesToShowers;
+	lar_pandora::PFParticlesToShowers recoParticlesToShowers;
 	LArPandoraHelper::CollectShowers(e, _pfp_producer, recoShowerVector, recoParticlesToShowers);
 
 	T0Vector t0Vector_shwr;
@@ -355,9 +355,9 @@ void XSec::analyze(art::Event const & e) {
 		purity = 0.0;
 
 		nMCHits = trueHitVector.size();
-		nMCHitsU = this->lar_pandora::CountHitsByType(geo::kU, trueHitVector);
-		nMCHitsV = this->lar_pandora::CountHitsByType(geo::kV, trueHitVector);
-		nMCHitsY = this->lar_pandora::CountHitsByType(geo::kW, trueHitVector);
+		nMCHitsU = this->recotruehelper::CountHitsByType(geo::kU, trueHitVector);
+		nMCHitsV = this->recotruehelper::CountHitsByType(geo::kV, trueHitVector);
+		nMCHitsY = this->recotruehelper::CountHitsByType(geo::kW, trueHitVector);
 
 
 		// Start Filling the PFP Neutrino information
@@ -388,14 +388,14 @@ void XSec::analyze(art::Event const & e) {
 			{
 				const HitVector &matchedHitVector = pIter3->second;
 				nPFPHits = recoHitVector.size();
-				nPFPHitsU = this->lar_pandora::CountHitsByType(geo::kU, recoHitVector);
-				nPFPHitsV = this->lar_pandora::CountHitsByType(geo::kV, recoHitVector);
-				nPFPHitsY = this->lar_pandora::CountHitsByType(geo::kW, recoHitVector);
+				nPFPHitsU = this->recotruehelper::CountHitsByType(geo::kU, recoHitVector);
+				nPFPHitsV = this->recotruehelper::CountHitsByType(geo::kV, recoHitVector);
+				nPFPHitsY = this->recotruehelper::CountHitsByType(geo::kW, recoHitVector);
 
 				nMatchedHits = matchedHitVector.size();
-				nMatchedHitsU = this->lar_pandora::CountHitsByType(geo::kU, matchedHitVector);
-				nMatchedHitsV = this->lar_pandora::CountHitsByType(geo::kV, matchedHitVector);
-				nMatchedHitsY = this->lar_pandora::CountHitsByType(geo::kW, matchedHitVector);
+				nMatchedHitsU = this->recotruehelper::CountHitsByType(geo::kU, matchedHitVector);
+				nMatchedHitsV = this->recotruehelper::CountHitsByType(geo::kV, matchedHitVector);
+				nMatchedHitsY = this->recotruehelper::CountHitsByType(geo::kW, matchedHitVector);
 			}
 
 			//get the reco vertex
@@ -418,8 +418,8 @@ void XSec::analyze(art::Event const & e) {
 			}
 
 		}
-		purity = ((nPfpHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nPfpHits));
-		completeness = ((nPfpHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nMCHits));
+		purity = ((nPFPHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nPFPHits));
+		completeness = ((nPFPHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nMCHits));
 
 		//let's fill the tree with the neutrinos
 		myTree->Fill();
@@ -503,9 +503,9 @@ void XSec::analyze(art::Event const & e) {
 		// Count number of available hits
 		// Match true and reconstructed hits
 		nMCHits = trueHitVector.size();
-		nMCHitsU = this->lar_pandora::CountHitsByType(geo::kU, trueHitVector);
-		nMCHitsV = this->lar_pandora::CountHitsByType(geo::kV, trueHitVector);
-		nMCHitsY = this->lar_pandora::CountHitsByType(geo::kW, trueHitVector);
+		nMCHitsU = this->recotruehelper::CountHitsByType(geo::kU, trueHitVector);
+		nMCHitsV = this->recotruehelper::CountHitsByType(geo::kV, trueHitVector);
+		nMCHitsY = this->recotruehelper::CountHitsByType(geo::kW, trueHitVector);
 
 		//Now we start working with the matched pfpartciles
 		//========================================================
@@ -538,15 +538,15 @@ void XSec::analyze(art::Event const & e) {
 
 			const HitVector &matchedHitVector = pIter3->second;
 
-			nPfpHits = recoHitVector.size();
-			nPfpHitsU = this->lar_pandora::CountHitsByType(geo::kU, recoHitVector);
-			nPfpHitsV = this->lar_pandora::CountHitsByType(geo::kV, recoHitVector);
-			nPfpHitsY = this->lar_pandora::CountHitsByType(geo::kW, recoHitVector);
+			nPFPHits = recoHitVector.size();
+			nPFPHitsU = this->recotruehelper::CountHitsByType(geo::kU, recoHitVector);
+			nPFPHitsV = this->recotruehelper::CountHitsByType(geo::kV, recoHitVector);
+			nPFPHitsY = this->recotruehelper::CountHitsByType(geo::kW, recoHitVector);
 
 			nMatchedHits = matchedHitVector.size();
-			nMatchedHitsU = this->lar_pandora::CountHitsByType(geo::kU, matchedHitVector);
-			nMatchedHitsV = this->lar_pandora::CountHitsByType(geo::kV, matchedHitVector);
-			nMatchedHitsY = this->lar_pandora::CountHitsByType(geo::kW, matchedHitVector);
+			nMatchedHitsU = this->recotruehelper::CountHitsByType(geo::kU, matchedHitVector);
+			nMatchedHitsV = this->recotruehelper::CountHitsByType(geo::kV, matchedHitVector);
+			nMatchedHitsY = this->recotruehelper::CountHitsByType(geo::kW, matchedHitVector);
 
 			//Find the reconstructed vertices!
 			PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
@@ -571,7 +571,7 @@ void XSec::analyze(art::Event const & e) {
 			//===========================================================
 			//tracks!
 			//============================================================
-			PFParticlesToTracks::const_iterator pIter5 = recoParticlesToTracks.find(recoParticle);
+			lar_pandora::PFParticlesToTracks::const_iterator pIter5 = recoParticlesToTracks.find(recoParticle);
 			if (recoParticlesToTracks.end() != pIter5)
 			{
 				const TrackVector &trackVector = pIter5->second;
@@ -594,7 +594,7 @@ void XSec::analyze(art::Event const & e) {
 			}//end looping tracks
 			 //showers!
 			 //===================================================================================
-			PFParticlesToTracks::const_iterator pIter6 = recoParticlesToShowers.find(recoParticle);
+			lar_pandora::PFParticlesToTracks::const_iterator pIter6 = recoParticlesToShowers.find(recoParticle);
 			if (recoParticlesToShowers.end() != pIter6)
 			{
 				const ShowerVector &showerVector = pIter6->second;
@@ -618,8 +618,8 @@ void XSec::analyze(art::Event const & e) {
 					pfpOpenAngle = reccoShower->OpenAngle();
 				}
 			}//end looping tracks
-			purity = ((nPfpHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nPfpHits));
-			completeness = ((nPfpHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nMCHits));
+			purity = ((nPFPHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nPFPHits));
+			completeness = ((nPFPHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nMCHits));
 		}
 		myTree->Fill();
 	} //end looping track/shower map
