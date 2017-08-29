@@ -244,7 +244,7 @@ void XSec::analyze(art::Event const & e) {
 	// Collect Hits
 	// ============
 	lar_pandora::HitVector hitVector;
-	LArPandoraHelper::CollectHits(evt, m_hitfinderLabel, hitVector);
+	LArPandoraHelper::CollectHits(e, _hitfinderLabel, hitVector);
 
 	if (_verbose)
 		std::cout << "  Hits: " << hitVector.size() << std::endl;
@@ -254,7 +254,7 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::SpacePointVector spacePointVector;
 	lar_pandora::SpacePointsToHits spacePointsToHits;
 	lar_pandora::HitsToSpacePoints hitsToSpacePoints;
-	LArPandoraHelper::CollectSpacePoints(evt, m_particleLabel, spacePointVector, spacePointsToHits, hitsToSpacePoints);
+	LArPandoraHelper::CollectSpacePoints(e, _particleLabel, spacePointVector, spacePointsToHits, hitsToSpacePoints);
 
 	if (_verbose)
 		std::cout << "  SpacePoints: " << spacePointVector.size() << std::endl;

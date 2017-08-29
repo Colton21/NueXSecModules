@@ -34,7 +34,7 @@ bool isData;
 //RecoTrueMatcher matchinghelper;
 
 std::string _pfp_producer;
-std::string _hitfinderLabe;
+std::string _hitfinderLabel;
 std::string _geantModuleLabel;
 std::string _spacepointLabel;
 std::string _neutrino_flash_match_producer;
