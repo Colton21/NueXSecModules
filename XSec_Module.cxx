@@ -1,4 +1,5 @@
 #include "XSec.h"
+#include "RecoTrueHelper.h"
 
 void XSec::reconfigure(fhicl::ParameterSet const &p)
 {
@@ -219,10 +220,10 @@ void XSec::analyze(art::Event const & e) {
 
 	// Collect PFParticles and match Reco Particles to Hits
 	// ====================================================
-	PFParticleVector recoParticleVector;
-	PFParticleVector recoNeutrinoVector;
-	PFParticlesToHits recoParticlesToHits;
-	HitsToPFParticles recoHitsToParticles;
+	lar_pandora::PFParticleVector recoParticleVector;
+	lar_pandora::PFParticleVector recoNeutrinoVector;
+	lar_pandora::PFParticlesToHits recoParticlesToHits;
+	lar_pandora::HitsToPFParticles recoHitsToParticles;
 
 	LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
 	LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
@@ -267,11 +268,11 @@ void XSec::analyze(art::Event const & e) {
 
 	// Build Reco and True Particle Maps (for Parent/Daughter Navigation)
 	// =================================================================
-	MCParticleMap trueParticleMap;
-	PFParticleMap recoParticleMap;
+	lar_pandora::MCParticleMap trueParticleMap;
+	lar_pandora::PFParticleMap recoParticleMap;
 
-	this->BuildTrueParticleMap(trueParticleVector, trueParticleMap);
-	this->BuildRecoParticleMap(recoParticleVector, recoParticleMap);
+	this->recotruehelper::BuildTrueParticleMap(trueParticleVector, trueParticleMap);
+	this->recotruehelper::BuildRecoParticleMap(recoParticleVector, recoParticleMap);
 
 	//nMCParticles  = trueParticlesToHits.size();
 	//nNeutrinoPfos = 0;
@@ -303,8 +304,8 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::HitsToPFParticles recoHitsToNeutrinos;
 	lar_pandora::HitsToMCTruth trueHitsToNeutrinos;
 	lar_pandora::MCTruthToHits trueNeutrinosToHits;
-	this->BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
-	this->BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
+	this->recotruehelper::BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
+	this->recotruehelper::BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
 
 	MCTruthToPFParticles matchedNeutrinos;
 	MCTruthToHits matchedNeutrinoHits;
@@ -456,7 +457,7 @@ void XSec::analyze(art::Event const & e) {
 			mcVtxY = trueParticle->Vy(startT);
 			mcVtxZ = trueParticle->Vz(startT);
 
-			mcLength = this->GetLength(trueParticle, startT, endT);
+			mcLength = this->recotruehelper::GetLength(trueParticle, startT, endT);
 
 			mcEnergy = trueParticle->E(startT);
 			mcMomentum = trueParticle->P(startT);
