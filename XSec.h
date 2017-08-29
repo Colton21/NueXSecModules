@@ -90,10 +90,10 @@ int nPFPHits;
 int nPFPHitsU;
 int nPFPHitsV;
 int nPFPHitsY;
-int m_nMatchedHits;
-int m_nMatchedHitsU;
-int m_nMatchedHitsV;
-int m_nMatchedHitsW;
+int nMatchedHits;
+int nMatchedHitsU;
+int nMatchedHitsV;
+int nMatchedHitsW;
 
 double mcOpenAngle;
 double pfpOpenAngle;

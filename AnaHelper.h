@@ -36,11 +36,16 @@
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larsim/MCCheater/BackTracker.h"
 
+#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
 #include "larevt/CalibrationDBI/Interface/DetPedestalService.h"
 #include "larevt/CalibrationDBI/Interface/DetPedestalProvider.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusService.h"
 #include "larevt/CalibrationDBI/Interface/ChannelStatusProvider.h"
+
+//root includes
+#include "TTree.h"
+#include "TBranch.h"
 
 #ifndef ANAHELPER_H
 #define ANAHELPER_H

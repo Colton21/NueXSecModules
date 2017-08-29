@@ -1,6 +1,7 @@
 #include "XSec.h"
 
-XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
+void XSec::reconfigure(fhicl::ParameterSet const &p)
+{
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -16,6 +17,9 @@ XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 	_particle_id_producer           = p.get<std::string>("ParticleIDProducer");
 	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
 
+	_useDaughterPFParticles         = p.get<std::string>("UseDaughterPFParticles");
+	_addDaughterPFParticles         = p.get<std::string>("AddDaughterPFParticles");
+
 	_use_genie_info                 = p.get<bool>("UseGENIEInfo", false);
 	_minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
 
@@ -23,9 +27,15 @@ XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 	_beam_spill_end                 = p.get<double>("BeamSpillEnd",   4.8);
 
 	_debug                          = p.get<std::string>("Debug", false);
-	_verbose                        = p.get<std::string>("Verbose", false)
+	_verbose                        = p.get<std::string>("Verbose", false);
 
-	                                  myTree->Branch("run", &run, "run/I");
+}
+
+
+XSec::XSex: EDAnalyzer(p) {
+
+
+	myTree->Branch("run", &run, "run/I");
 	myTree->Branch("event", &event, "event/I");
 	myTree->Branch("index", &index, "index/I");
 	myTree->Branch("nMCParticles", &nMCParticles, "nMCParticles/I");
@@ -68,27 +78,27 @@ XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p) {
 	myTree->Branch("pfpLength", &pfpLength, "pfpLength/D");
 
 	myTree->Branch("mcEnergy", &mcEnergy, "mcEnergy/D");
-	myTree->Branch("pfpEnergy", &pfpEnergy, "pfpEnergy/D");
 	myTree->Branch("mcMomentum", &mcMomentum, "mcMomentum/D");
+	myTree->Branch("pfpMomentum", &pfpMomentum, "pfpMomentum/D");
 
 	myTree->Branch("completeness", &completeness, "completeness/D");
 	myTree->Branch("purity", &purity, "purity/D");
 
-	myTree->Branch("mcHits", &mcHits, "mcHits/I");
-	myTree->Branch("mcHitsU", &mcHitsU, "mcHitsU/I");
-	myTree->Branch("mcHitsV", &mcHitsV, "mcHitsV/I");
-	myTree->Branch("mcHitsY", &mcHitsY, "mcHitsY/I");
-	myTree->Branch("pfpHits", &pfpHits, "pfpHits/I");
-	myTree->Branch("pfpHitsU", &pfpHitsU, "pfpHitsU/I");
-	myTree->Branch("pfpHitsV", &pfpHitsV, "pfpHitsV/I");
-	myTree->Branch("pfpHitsY", &pfpHitsY, "pfpHitsY/I");
+	myTree->Branch("nMCHits",   &nMCHits, "mcHits/I");
+	myTree->Branch("nMCHitsU",  &nMCHitsU, "mcHitsU/I");
+	myTree->Branch("nMCHitsV",  &nMCHitsV, "mcHitsV/I");
+	myTree->Branch("nMCHitsY",  &nMCHitsY, "mcHitsY/I");
+	myTree->Branch("nPFPHits",  &nPFPHits, "pfpHits/I");
+	myTree->Branch("nPFPHitsU", &nPFPHitsU, "pfpHitsU/I");
+	myTree->Branch("nPFPHitsV", &nPFPHitsV, "pfpHitsV/I");
+	myTree->Branch("nPFPHitsY", &nPFPHitsY, "pfpHitsY/I");
 
 	myTree->Branch("mcOpenAngle", &mcOpenAngle, "mcOpenAngle/D");
 	myTree->Branch("pfpOpenAngle", &pfpOpenAngle, "pfpOpenAngle");
 
 }
 
-void UBXSec::analyze(art::Event const & e) {
+void XSec::analyze(art::Event const & e) {
 
 	//First thing is to zero all of the values
 	run = -9999;
@@ -217,8 +227,8 @@ void UBXSec::analyze(art::Event const & e) {
 	LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
 	LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
 	LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, recoParticlesToHits, recoHitsToParticles,
-	                                         (m_useDaughterPFParticles ?
-	                                          (m_addDaughterPFParticles ? LArPandoraHelper::kAddDaughters : LArPandoraHelper::kUseDaughters) : LArPandoraHelper::kIgnoreDaughters));
+	                                         (_useDaughterPFParticles ?
+	                                          (_addDaughterPFParticles ? LArPandoraHelper::kAddDaughters : LArPandoraHelper::kUseDaughters) : LArPandoraHelper::kIgnoreDaughters));
 
 	if (_verbose)
 		std::cout << "  RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
@@ -239,8 +249,8 @@ void UBXSec::analyze(art::Event const & e) {
 		LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, trueParticleVector);
 		LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, truthToParticles, particlesToTruth);
 		LArPandoraHelper::BuildMCParticleHitMaps(e, _geantModuleLabel, hitVector, trueParticlesToHits, trueHitsToParticles,
-		                                         (m_useDaughterMCParticles ?
-		                                          (m_addDaughterMCParticles ? LArPandoraHelper::kAddDaughters : LArPandoraHelper::kUseDaughters) : LArPandoraHelper::kIgnoreDaughters));
+		                                         (_useDaughterMCParticles ?
+		                                          (_addDaughterMCParticles ? LArPandoraHelper::kAddDaughters : LArPandoraHelper::kUseDaughters) : LArPandoraHelper::kIgnoreDaughters));
 	}
 
 	if (_verbose)
@@ -251,7 +261,7 @@ void UBXSec::analyze(art::Event const & e) {
 
 	if (trueParticlesToHits.empty())
 	{
-		m_pRecoTree->Fill();
+		myTree->Fill();
 		return;
 	}
 
@@ -263,29 +273,29 @@ void UBXSec::analyze(art::Event const & e) {
 	this->BuildTrueParticleMap(trueParticleVector, trueParticleMap);
 	this->BuildRecoParticleMap(recoParticleVector, recoParticleMap);
 
-	m_nMCParticles  = trueParticlesToHits.size();
-	m_nNeutrinoPfos = 0;
-	m_nPrimaryPfos  = 0;
-	m_nDaughterPfos = 0;
+	//nMCParticles  = trueParticlesToHits.size();
+	//nNeutrinoPfos = 0;
+	//nPrimaryPfos  = 0;
+	//nDaughterPfos = 0;
 
 	// Count reconstructed particles
-	for (PFParticleVector::const_iterator iter = recoParticleVector.begin(), iterEnd = recoParticleVector.end(); iter != iterEnd; ++iter)
-	{
-		const art::Ptr<recob::PFParticle> recoParticle = *iter;
-
-		if (LArPandoraHelper::IsNeutrino(recoParticle))
-		{
-			m_nNeutrinoPfos++;
-		}
-		else if (LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle))
-		{
-			m_nPrimaryPfos++;
-		}
-		else
-		{
-			m_nDaughterPfos++;
-		}
-	}
+	// for (PFParticleVector::const_iterator iter = recoParticleVector.begin(), iterEnd = recoParticleVector.end(); iter != iterEnd; ++iter)
+	// {
+	//      const art::Ptr<recob::PFParticle> recoParticle = *iter;
+	//
+	//      if (LArPandoraHelper::IsNeutrino(recoParticle))
+	//      {
+	//              m_nNeutrinoPfos++;
+	//      }
+	//      else if (LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle))
+	//      {
+	//              m_nPrimaryPfos++;
+	//      }
+	//      else
+	//      {
+	//              m_nDaughterPfos++;
+	//      }
+	// }
 
 	// Match Reco Neutrinos to True Neutrinos
 	// ======================================
