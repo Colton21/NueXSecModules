@@ -1,6 +1,6 @@
 #include "AnaHelper.h"
 
-namespace lar_pandora {
+namespace nue_xsec {
 
 class recotruehelper {
 

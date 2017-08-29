@@ -1,6 +1,8 @@
 #include "XSec.h"
 #include "RecoTrueHelper.h"
 
+namespace nue_xsec {
+
 void XSec::reconfigure(fhicl::ParameterSet const &p)
 {
 
@@ -715,4 +717,6 @@ void XSec::endSubRun(const art::SubRun& sr) {
 
 }
 
-DEFINE_ART_MODULE(XSec)
+}//end namespace
+
+DEFINE_ART_MODULE(nue_xsec::XSec)
