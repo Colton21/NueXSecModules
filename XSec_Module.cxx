@@ -292,6 +292,7 @@ void XSec::analyze(art::Event const & e) {
 	// =================================================================
 	lar_pandora::MCParticleMap trueParticleMap;
 	lar_pandora::PFParticleMap recoParticleMap;
+	nue_xsec::recotruehelper myMatcher;//dummy class instantiation
 
 	myMatcher.BuildTrueParticleMap(trueParticleVector, trueParticleMap);
 	myMatcher.BuildRecoParticleMap(recoParticleVector, recoParticleMap);
@@ -322,7 +323,6 @@ void XSec::analyze(art::Event const & e) {
 
 	// Match Reco Neutrinos to True Neutrinos
 	// ======================================
-	nue_xsec::recotruehelper myMatcher;
 	lar_pandora::PFParticlesToHits recoNeutrinosToHits;
 	lar_pandora::HitsToPFParticles recoHitsToNeutrinos;
 	lar_pandora::HitsToMCTruth trueHitsToNeutrinos;
@@ -407,7 +407,7 @@ void XSec::analyze(art::Event const & e) {
 			pfpLength = 0;
 			pfpMomentum = 0;
 
-			lar_pandoar::PFParticlesToHits::const_iterator pIter2 = recoNeutrinosToHits.find(recoParticle);
+			lar_pandora::PFParticlesToHits::const_iterator pIter2 = recoNeutrinosToHits.find(recoParticle);
 			if (recoNeutrinosToHits.end() == pIter2)
 				throw cet::exception("LArPandora") << " PFParticleMonitoring::analyze --- Found a reco neutrino without any hits ";
 
@@ -548,7 +548,7 @@ void XSec::analyze(art::Event const & e) {
 			pfpNuPdg = LArPandoraHelper::GetParentNeutrino(recoParticleMap, recoParticle);
 			if(pfpPdg == 12 || pfpPdg == 14) {pfpIsNeutrino = true; }
 			//else{pfpIsNeutrino == false; }
-			pfpIsPrimary = LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle);
+			//pfpIsPrimary = LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle);
 
 			const art::Ptr<recob::PFParticle> parentParticle = LArPandoraHelper::GetParentPFParticle(recoParticleMap, recoParticle);
 			pfpParentPdg = parentParticle->PdgCode();
@@ -703,11 +703,11 @@ void XSec::analyze(art::Event const & e) {
 //
 //      }
 //
-	if(_is_data == true)
-	{
-		//I need to just fill all pfp information!
-		std::cout << "We're looking at data!" << std::endl;
-	}
+	// if(_is_data == true)
+	// {
+	//      //I need to just fill all pfp information!
+	//      std::cout << "We're looking at data!" << std::endl;
+	// }
 
 
 }
