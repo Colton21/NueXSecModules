@@ -406,7 +406,7 @@ void XSec::analyze(art::Event const & e) {
 				const VertexVector &vertexVector = pIter4->second;
 				if (!vertexVector.empty())
 				{
-					if (vertexVector.size() !=1 && _debug)
+					if (vertexVector.size() !=1 && _debug == true)
 						std::cout << " Warning: Found particle with more than one associated vertex " << std::endl;
 
 					const art::Ptr<recob::Vertex> recoVertex = *(vertexVector.begin());
@@ -556,7 +556,7 @@ void XSec::analyze(art::Event const & e) {
 				const VertexVector &vertexVector = pIter4->second;
 				if (!vertexVector.empty())
 				{
-					if (vertexVector.size() !=1 && _debug)
+					if (vertexVector.size() !=1 && _debug == true)
 						std::cout << " Warning: Found particle with more than one associated vertex " << std::endl;
 
 					const art::Ptr<recob::Vertex> recoVertex = *(vertexVector.begin());
@@ -578,7 +578,7 @@ void XSec::analyze(art::Event const & e) {
 				const lar_pandora::TrackVector &trackVector = pIter5->second;
 				if (!trackVector.empty())
 				{
-					if (trackVector.size() !=1 && _debug)
+					if (trackVector.size() !=1 && _debug == true)
 						std::cout << " Warning: Found particle with more than one associated track " << std::endl;
 
 					const art::Ptr<recob::Track> recoTrack = *(lar_pandora::trackVector.begin());
@@ -595,13 +595,13 @@ void XSec::analyze(art::Event const & e) {
 			}//end looping tracks
 			 //showers!
 			 //===================================================================================
-			lar_pandora::PFParticlesToTracks::const_iterator pIter6 = recoParticlesToShowers.find(recoParticle);
+			lar_pandora::PFParticlesToShowers::const_iterator pIter6 = recoParticlesToShowers.find(recoParticle);
 			if (recoParticlesToShowers.end() != pIter6)
 			{
 				const lar_pandora::ShowerVector &showerVector = pIter6->second;
 				if (!showerVector.empty())
 				{
-					if (showerVector.size() !=1 && _debug)
+					if (showerVector.size() !=1 && _debug == true)
 						std::cout << " Warning: Found particle with more than one associated shower " << std::endl;
 
 					const art::Ptr<recob::Shower> recoShower = *(lar_pandora::ShowerVector.begin());
