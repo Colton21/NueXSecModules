@@ -2,6 +2,34 @@
 
 namespace nue_xsec
 {
+//--------------------------------------------------------------------------------------------------------------------------------------------
+void recotruehelper::PFParticleMonitoring::BuildRecoNeutrinoHitMaps(const lar_pandora::PFParticleMap &recoParticleMap, const lar_pandora::PFParticlesToHits &recoParticlesToHits,
+                                                                    lar_pandora::PFParticlesToHits &recoNeutrinosToHits, lar_pandora::HitsToPFParticles &recoHitsToNeutrinos) const
+{
+	for (lar_pandora::PFParticleMap::const_iterator iter1 = recoParticleMap.begin(), iterEnd1 = recoParticleMap.end(); iter1 != iterEnd1; ++iter1)
+	{
+		const art::Ptr<recob::PFParticle> recoParticle = iter1->second;
+		const art::Ptr<recob::PFParticle> recoNeutrino = LArPandoraHelper::GetParentPFParticle(recoParticleMap, recoParticle);
+
+		if (!LArPandoraHelper::IsNeutrino(recoNeutrino))
+			continue;
+
+		const lar_pandora::PFParticlesToHits::const_iterator iter2 = recoParticlesToHits.find(recoParticle);
+		if (recoParticlesToHits.end() == iter2)
+			continue;
+
+		const lar_pandora::HitVector &hitVector = iter2->second;
+
+		for (lar_pandora::HitVector::const_iterator iter3 = hitVector.begin(), iterEnd3 = hitVector.end(); iter3 != iterEnd3; ++iter3)
+		{
+			const art::Ptr<recob::Hit> hit = *iter3;
+			recoHitsToNeutrinos[hit] = recoNeutrino;
+			recoNeutrinosToHits[recoNeutrino].push_back(hit);
+		}
+	}
+}
+
+
 //------------------------------------------------------------------------------------------------------------------------------------------
 
 void recotruehelper::GetRecoToTrueMatches(const lar_pandora::PFParticlesToHits &recoNeutrinosToHits, const lar_pandora::HitsToMCTruth &trueHitsToNeutrinos,
