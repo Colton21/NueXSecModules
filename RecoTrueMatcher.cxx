@@ -1,3 +1,3 @@
 #include "RecoTrueMatcher.h"
 
-temp = 1;
+RecoTrueMatcher::temp = 1;

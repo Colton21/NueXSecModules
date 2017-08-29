@@ -172,11 +172,11 @@ void XSec::analyze(art::Event const & e) {
 	pfpOpenAngle = -9999;
 
 
-	int run = e.id().run();
+	run = e.id().run();
 	//int _subrun = e.id().subRun();
-	int event = e.id().event();
-	bool _is_data = e.isRealData();
-	bool _is_mc = !_is_data;
+	event = e.id().event();
+	//bool _is_data = e.isRealData();
+	//bool _is_mc = !_is_data;
 
 	//I want to move this all to a separate file, but I should test that this builds as is first!
 	//performing reco-true matching
@@ -237,6 +237,24 @@ void XSec::analyze(art::Event const & e) {
 
 	if (_verbose)
 		std::cout << "  RecoParticles: " << recoParticleVector.size() << std::endl;
+
+	// Collect Hits
+	// ============
+	lar_pandora::HitVector hitVector;
+	LArPandoraHelper::CollectHits(evt, m_hitfinderLabel, hitVector);
+
+	if (_verbose)
+		std::cout << "  Hits: " << hitVector.size() << std::endl;
+
+	// Collect SpacePoints and SpacePoint <-> Hit Associations
+	// =======================================================
+	lar_pandora::SpacePointVector spacePointVector;
+	lar_pandora::SpacePointsToHits spacePointsToHits;
+	lar_pandora::HitsToSpacePoints hitsToSpacePoints;
+	LArPandoraHelper::CollectSpacePoints(evt, m_particleLabel, spacePointVector, spacePointsToHits, hitsToSpacePoints);
+
+	if (_verbose)
+		std::cout << "  SpacePoints: " << spacePointVector.size() << std::endl;
 
 	// Collect MCParticles and match True Particles to Hits
 	// ====================================================
@@ -332,7 +350,7 @@ void XSec::analyze(art::Event const & e) {
 
 		mcIsCC = ((simb::kCC == trueNeutrino.CCNC()) ? 1 : 0);
 		mcPdg = trueParticle.PdgCode();
-		mcNuPdg = trueNeutrino.PdgCode();
+		mcNuPdg = trueNeutrino.Nu().PdgCode();
 		mcIsNeutirno = true;
 		mcParentPdg = 0;
 		mcIsPrimary = 0;
@@ -368,7 +386,7 @@ void XSec::analyze(art::Event const & e) {
 		if (matchedNeutrinos.end() != pIter1)
 		{
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
-			const lar_pandora::HitVector &recoHitVector = pIter2->second;
+			const lar_pandora::HitVector &recoHitVector = pIter1->second;
 
 
 			pfpPdg = recoParticle->PdgCode();
