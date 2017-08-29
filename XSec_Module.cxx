@@ -173,8 +173,8 @@ void XSec::analyze(art::Event const & e) {
 	int run = e.id().run();
 	//int _subrun = e.id().subRun();
 	int event = e.id().event();
-	bool is_data = e.isReadlData();
-	bool is_mc = !_is_data;
+	bool _is_data = e.isReadlData();
+	bool _is_mc = !_is_data;
 
 	//I want to move this all to a separate file, but I should test that this builds as is first!
 	//performing reco-true matching
@@ -184,7 +184,7 @@ void XSec::analyze(art::Event const & e) {
 
 	// Collect Tracks and PFParticle <-> Track Associations
 	// ====================================================
-	TrackVector recoTrackVector;
+	lar_pandora::TrackVector recoTrackVector;
 	lar_pandora::PFParticlesToTracks recoParticlesToTracks;
 	LArPandoraHelper::CollectTracks(e, _pfp_producer, recoTrackVector, recoParticlesToTracks);
 
@@ -197,7 +197,7 @@ void XSec::analyze(art::Event const & e) {
 
 	// Collect Showers and PFParticle <-> Shower Associations
 	// ====================================================
-	ShowerVector recoShowerVector;
+	lar_pandora::ShowerVector recoShowerVector;
 	lar_pandora::PFParticlesToShowers recoParticlesToShowers;
 	LArPandoraHelper::CollectShowers(e, _pfp_producer, recoShowerVector, recoParticlesToShowers);
 
@@ -238,11 +238,11 @@ void XSec::analyze(art::Event const & e) {
 
 	// Collect MCParticles and match True Particles to Hits
 	// ====================================================
-	MCParticleVector trueParticleVector;
-	MCTruthToMCParticles truthToParticles;
-	MCParticlesToMCTruth particlesToTruth;
-	MCParticlesToHits trueParticlesToHits;
-	HitsToMCParticles trueHitsToParticles;
+	lar_pandora::MCParticleVector trueParticleVector;
+	lar_pandora::MCTruthToMCParticles truthToParticles;
+	lar_pandora::MCParticlesToMCTruth particlesToTruth;
+	lar_pandora::MCParticlesToHits trueParticlesToHits;
+	lar_pandora::HitsToMCParticles trueHitsToParticles;
 
 	if (!.isRealData())
 	{
@@ -299,24 +299,24 @@ void XSec::analyze(art::Event const & e) {
 
 	// Match Reco Neutrinos to True Neutrinos
 	// ======================================
-	PFParticlesToHits recoNeutrinosToHits;
-	HitsToPFParticles recoHitsToNeutrinos;
-	HitsToMCTruth trueHitsToNeutrinos;
-	MCTruthToHits trueNeutrinosToHits;
+	lar_pandora::PFParticlesToHits recoNeutrinosToHits;
+	lar_pandora::HitsToPFParticles recoHitsToNeutrinos;
+	lar_pandora::HitsToMCTruth trueHitsToNeutrinos;
+	lar_pandora::MCTruthToHits trueNeutrinosToHits;
 	this->BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
 	this->BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
 
 	MCTruthToPFParticles matchedNeutrinos;
 	MCTruthToHits matchedNeutrinoHits;
-	this->GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos, matchedNeutrinos, matchedNeutrinoHits);
+	this->recotruehelper::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos, matchedNeutrinos, matchedNeutrinoHits);
 
 
 	//Start to Fill the MC Truth information - First we do neutrinos
 	//=================================================
-	for (MCTruthToHits::const_iterator iter = trueNeutrinosToHits.begin(), iterEnd = trueNeutrinosToHits.end(); iter != iterEnd; ++iter)
+	for (lar_pandora::MCTruthToHits::const_iterator iter = trueNeutrinosToHits.begin(), iterEnd = trueNeutrinosToHits.end(); iter != iterEnd; ++iter)
 	{
 		const art::Ptr<simb::MCTruth> trueEvent = iter->first;
-		const HitVector &trueHitVector = iter->second;
+		const lar_pandora::HitVector &trueHitVector = iter->second;
 
 		if (trueHitVector.empty())
 			continue;
@@ -362,7 +362,7 @@ void XSec::analyze(art::Event const & e) {
 
 		// Start Filling the PFP Neutrino information
 		//==================================================
-		MCTruthToPFParticles::const_iterator pIter1 = matchedNeutrinos.find(trueEvent);
+		lar_pandora::MCTruthToPFParticles::const_iterator pIter1 = matchedNeutrinos.find(trueEvent);
 		if (matchedNeutrinos.end() != pIter1)
 		{
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
@@ -383,7 +383,7 @@ void XSec::analyze(art::Event const & e) {
 			pfpMomentum = 0;
 
 			//get the pfp hits
-			MCTruthToHits::const_iterator pIter3 = matchedNeutrinoHits.find(trueEvent);
+			lar_pandora::MCTruthToHits::const_iterator pIter3 = matchedNeutrinoHits.find(trueEvent);
 			if (matchedNeutrinoHits.end() != pIter3)
 			{
 				const HitVector &matchedHitVector = pIter3->second;
@@ -399,7 +399,7 @@ void XSec::analyze(art::Event const & e) {
 			}
 
 			//get the reco vertex
-			PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
+			lar_pandora::PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
 			if (recoParticlesToVertices.end() != pIter4)
 			{
 				const VertexVector &vertexVector = pIter4->second;
@@ -430,15 +430,15 @@ void XSec::analyze(art::Event const & e) {
 
 	//start looping the track/shower maps
 	//=======================================================
-	MCParticlesToPFParticles matchedParticles;
-	MCParticlesToHits matchedParticleHits;
-	this->GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedParticleHits);
+	lar_pandora::MCParticlesToPFParticles matchedParticles;
+	lar_pandora::MCParticlesToHits matchedParticleHits;
+	this->recotruehelper::GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedParticleHits);
 
 	// Compare true and reconstructed particles
-	for (MCParticlesToHits::const_iterator iter = trueParticlesToHits.begin(), iterEnd = trueParticlesToHits.end(); iter != iterEnd; ++iter)
+	for (lar_pandora::MCParticlesToHits::const_iterator iter = trueParticlesToHits.begin(), iterEnd = trueParticlesToHits.end(); iter != iterEnd; ++iter)
 	{
 		const art::Ptr<simb::MCParticle> trueParticle = iter->first;
-		const HitVector &trueHitVector = iter->second;
+		const lar_pandora::HitVector &trueHitVector = iter->second;
 
 		if (trueHitVector.empty())
 			continue;
@@ -450,7 +450,7 @@ void XSec::analyze(art::Event const & e) {
 		{
 			int startT(-1);
 			int endT(-1);
-			this->GetStartAndEndPoints(trueParticle, startT, endT);
+			this->recotruehelper::GetStartAndEndPoints(trueParticle, startT, endT);
 
 			mcVtxX = trueParticle->Vx(startT);
 			mcVtxY = trueParticle->Vy(startT);
@@ -474,7 +474,7 @@ void XSec::analyze(art::Event const & e) {
 
 		// Get the true parent neutrino
 		//=============================
-		MCParticlesToMCTruth::const_iterator nuIter = particlesToTruth.find(trueParticle);
+		lar_pandora::MCParticlesToMCTruth::const_iterator nuIter = particlesToTruth.find(trueParticle);
 		if (particlesToTruth.end() == nuIter)
 			throw cet::exception("LArPandora") << " PFParticleMonitoring::analyze --- Found a true particle without any ancestry information ";
 
@@ -494,7 +494,7 @@ void XSec::analyze(art::Event const & e) {
 			const art::Ptr<simb::MCParticle> parentParticle(LArPandoraHelper::GetParentMCParticle(trueParticleMap, trueParticle));
 			const art::Ptr<simb::MCParticle> primaryParticle(LArPandoraHelper::GetFinalStateMCParticle(trueParticleMap, trueParticle));
 			mcParentPdg = ((parentParticle != trueParticle) ? parentParticle->PdgCode() : 0);
-			mcPrimaryPdg = primaryParticle->PdgCode();
+			//mcPrimaryPdg = primaryParticle->PdgCode();
 			mcIsPrimary = (primaryParticle == trueParticle);//this returns the ID of the primary particle ****
 		}
 		catch (cet::exception &e) {
@@ -509,7 +509,7 @@ void XSec::analyze(art::Event const & e) {
 
 		//Now we start working with the matched pfpartciles
 		//========================================================
-		MCParticlesToPFParticles::const_iterator pIter1 = matchedParticles.find(trueParticle);
+		lar_pandora::MCParticlesToPFParticles::const_iterator pIter1 = matchedParticles.find(trueParticle);
 		if (matchedParticles.end() != pIter1)
 		{
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
@@ -526,17 +526,17 @@ void XSec::analyze(art::Event const & e) {
 			// pfpPrimaryPdg = primaryParticle->PdgCode();
 
 			//Find the matched hits!
-			PFParticlesToHits::const_iterator pIter2 = recoParticlesToHits.find(recoParticle);
+			lar_pandora::PFParticlesToHits::const_iterator pIter2 = recoParticlesToHits.find(recoParticle);
 			if (recoParticlesToHits.end() == pIter2)
 				throw cet::exception("LArPandora") << " PFParticleMonitoring::analyze --- Found a reco particle without any hits ";
 
-			const HitVector &recoHitVector = pIter2->second;
+			const lar_pandora::HitVector &recoHitVector = pIter2->second;
 
-			MCParticlesToHits::const_iterator pIter3 = matchedParticleHits.find(trueParticle);
+			lar_pandora::MCParticlesToHits::const_iterator pIter3 = matchedParticleHits.find(trueParticle);
 			if (matchedParticleHits.end() == pIter3)
 				throw cet::exception("LArPandora") << " PFParticleMonitoring::analyze --- Found a matched true particle without matched hits ";
 
-			const HitVector &matchedHitVector = pIter3->second;
+			const lar_pandora::HitVector &matchedHitVector = pIter3->second;
 
 			nPFPHits = recoHitVector.size();
 			nPFPHitsU = this->recotruehelper::CountHitsByType(geo::kU, recoHitVector);
@@ -549,7 +549,7 @@ void XSec::analyze(art::Event const & e) {
 			nMatchedHitsY = this->recotruehelper::CountHitsByType(geo::kW, matchedHitVector);
 
 			//Find the reconstructed vertices!
-			PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
+			lar_pandora::PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
 			if (recoParticlesToVertices.end() != pIter4)
 			{
 				const VertexVector &vertexVector = pIter4->second;
@@ -574,13 +574,13 @@ void XSec::analyze(art::Event const & e) {
 			lar_pandora::PFParticlesToTracks::const_iterator pIter5 = recoParticlesToTracks.find(recoParticle);
 			if (recoParticlesToTracks.end() != pIter5)
 			{
-				const TrackVector &trackVector = pIter5->second;
+				const lar_pandora::TrackVector &trackVector = pIter5->second;
 				if (!trackVector.empty())
 				{
 					if (trackVector.size() !=1 && _debug)
 						std::cout << " Warning: Found particle with more than one associated track " << std::endl;
 
-					const art::Ptr<recob::Track> recoTrack = *(trackVector.begin());
+					const art::Ptr<recob::Track> recoTrack = *(lar_pandora::trackVector.begin());
 					const TVector3 &vtxDirection = recoTrack->VertexDirection();
 
 					pfpDirX = vtxDirection.x();
@@ -597,13 +597,13 @@ void XSec::analyze(art::Event const & e) {
 			lar_pandora::PFParticlesToTracks::const_iterator pIter6 = recoParticlesToShowers.find(recoParticle);
 			if (recoParticlesToShowers.end() != pIter6)
 			{
-				const ShowerVector &showerVector = pIter6->second;
+				const lar_pandora::ShowerVector &showerVector = pIter6->second;
 				if (!showerVector.empty())
 				{
 					if (showerVector.size() !=1 && _debug)
 						std::cout << " Warning: Found particle with more than one associated shower " << std::endl;
 
-					const art::Ptr<recob::Shower> recoShower = *(ShowerVector.begin());
+					const art::Ptr<recob::Shower> recoShower = *(lar_pandora::ShowerVector.begin());
 					const TVector3 &vtxDirection = recoShower->Direction();
 
 					pfpDirX = vtxDirection.x();
@@ -615,7 +615,7 @@ void XSec::analyze(art::Event const & e) {
 					const int bestplane = recoShower->best_plane();
 					pfpMomentum = recoShower->Energy().at(bestplane);
 
-					pfpOpenAngle = reccoShower->OpenAngle();
+					pfpOpenAngle = recoShower->OpenAngle();
 				}
 			}//end looping tracks
 			purity = ((nPFPHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nPFPHits));
@@ -624,54 +624,54 @@ void XSec::analyze(art::Event const & e) {
 		myTree->Fill();
 	} //end looping track/shower map
 
-
-//==========================================================================
-	if(_is_mc == true)
-	{
-		matchinghelper.GetRecoToTrueMatches(e,
-		                                    _pfp_producer,
-		                                    _spacepointLabel,
-		                                    _geantModuleLabel,
-		                                    _hitfinderLabel,
-		                                    matchedMCToPFParticles,
-		                                    matchedParticleHits);
-	} //end if mc
-
-//loop over all matched particles
-	auto const &pfparticle_handle = e.getValidHandle<std::vector<recob::PFParticle> >(_pfp_producer);
-
-	for (auto const& iter : matchedMCToPFParticles)
-	{
-		art::Ptr<simb::MCParticle>  mc_part = iter.first;// The MCParticle
-		art::Ptr<recob::PFParticle> pf_part = iter.second; // The matched PFParticle
-
-		//fill MC info function
-
-		//fill Reco info function
-		//check if neutrino or track/shower
-		// int _pfpPdg = pf_pard->PdgCode()
-		//               if(_pfpPdg == 12 || _pfpPdg == 14)
-		// {
-		//
-		// }
-		// if(_pfpPdg == 11 || _pfpPdg == 13)
-		// {
-		//      //showers
-		//      if(_pfpPdg == 11)
-		//      {
-		//              art::FindOneP(recob::Shower) shower_for_pfp(pfparticle_handle, e, _pfp_producer);
-		//              auto const & shwr = shower_for_pfp.at(iter);
-		//      }
-		//      //tracks
-		//      if(_pfpPdg == 13)
-		//      {
-		//              art::FindOneP(recob::Track) track_for_pfp(pfparticle_handle, e, _pfp_producer);
-		//              auto const & trk = track_for_pfp.at(iter);
-		//      }
-		// }
-
-	}
-
+//
+// //==========================================================================
+//      if(_is_mc == true)
+//      {
+//              matchinghelper.GetRecoToTrueMatches(e,
+//                                                  _pfp_producer,
+//                                                  _spacepointLabel,
+//                                                  _geantModuleLabel,
+//                                                  _hitfinderLabel,
+//                                                  matchedMCToPFParticles,
+//                                                  matchedParticleHits);
+//      } //end if mc
+//
+// //loop over all matched particles
+//      auto const &pfparticle_handle = e.getValidHandle<std::vector<recob::PFParticle> >(_pfp_producer);
+//
+//      for (auto const& iter : matchedMCToPFParticles)
+//      {
+//              art::Ptr<simb::MCParticle>  mc_part = iter.first;// The MCParticle
+//              art::Ptr<recob::PFParticle> pf_part = iter.second; // The matched PFParticle
+//
+//              //fill MC info function
+//
+//              //fill Reco info function
+//              //check if neutrino or track/shower
+//              // int _pfpPdg = pf_pard->PdgCode()
+//              //               if(_pfpPdg == 12 || _pfpPdg == 14)
+//              // {
+//              //
+//              // }
+//              // if(_pfpPdg == 11 || _pfpPdg == 13)
+//              // {
+//              //      //showers
+//              //      if(_pfpPdg == 11)
+//              //      {
+//              //              art::FindOneP(recob::Shower) shower_for_pfp(pfparticle_handle, e, _pfp_producer);
+//              //              auto const & shwr = shower_for_pfp.at(iter);
+//              //      }
+//              //      //tracks
+//              //      if(_pfpPdg == 13)
+//              //      {
+//              //              art::FindOneP(recob::Track) track_for_pfp(pfparticle_handle, e, _pfp_producer);
+//              //              auto const & trk = track_for_pfp.at(iter);
+//              //      }
+//              // }
+//
+//      }
+//
 	if(_is_data = true)
 	{
 		//I need to just fill all pfp information!
