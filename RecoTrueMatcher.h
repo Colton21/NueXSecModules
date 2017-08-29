@@ -5,12 +5,6 @@
 
 class RecoTrueMatcher {
 
-public:
-
-double temp;
-
-void dummy_function(temp);
-
 };
 
 #endif
