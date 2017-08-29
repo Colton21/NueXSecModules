@@ -3,15 +3,15 @@
 namespace nue_xsec
 {
 //--------------------------------------------------------------------------------------------------------------------------------------------
-void recotruehelper::PFParticleMonitoring::BuildRecoNeutrinoHitMaps(const lar_pandora::PFParticleMap &recoParticleMap, const lar_pandora::PFParticlesToHits &recoParticlesToHits,
-                                                                    lar_pandora::PFParticlesToHits &recoNeutrinosToHits, lar_pandora::HitsToPFParticles &recoHitsToNeutrinos) const
+void recotruehelper::BuildRecoNeutrinoHitMaps(const lar_pandora::PFParticleMap &recoParticleMap, const lar_pandora::PFParticlesToHits &recoParticlesToHits,
+                                              lar_pandora::PFParticlesToHits &recoNeutrinosToHits, lar_pandora::HitsToPFParticles &recoHitsToNeutrinos) const
 {
 	for (lar_pandora::PFParticleMap::const_iterator iter1 = recoParticleMap.begin(), iterEnd1 = recoParticleMap.end(); iter1 != iterEnd1; ++iter1)
 	{
 		const art::Ptr<recob::PFParticle> recoParticle = iter1->second;
-		const art::Ptr<recob::PFParticle> recoNeutrino = LArPandoraHelper::GetParentPFParticle(recoParticleMap, recoParticle);
+		const art::Ptr<recob::PFParticle> recoNeutrino = lar_pandora::LArPandoraHelper::GetParentPFParticle(recoParticleMap, recoParticle);
 
-		if (!LArPandoraHelper::IsNeutrino(recoNeutrino))
+		if (!lar_pandora::LArPandoraHelper::IsNeutrino(recoNeutrino))
 			continue;
 
 		const lar_pandora::PFParticlesToHits::const_iterator iter2 = recoParticlesToHits.find(recoParticle);
