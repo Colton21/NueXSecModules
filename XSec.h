@@ -1,6 +1,8 @@
 #include "AnaHelper.h"
 #include "PostMCCorrections.h"
 #include "RecoTrueHelper.h"
+#include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
+
 
 #ifndef XSec_H
 #define XSec_H

@@ -291,8 +291,8 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::MCParticleMap trueParticleMap;
 	lar_pandora::PFParticleMap recoParticleMap;
 
-	this->recotruehelper::BuildTrueParticleMap(trueParticleVector, trueParticleMap);
-	this->recotruehelper::BuildRecoParticleMap(recoParticleVector, recoParticleMap);
+	recotruehelper::BuildTrueParticleMap(trueParticleVector, trueParticleMap);
+	recotruehelper::BuildRecoParticleMap(recoParticleVector, recoParticleMap);
 
 	//nMCParticles  = trueParticlesToHits.size();
 	//nNeutrinoPfos = 0;
@@ -324,12 +324,12 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::HitsToPFParticles recoHitsToNeutrinos;
 	lar_pandora::HitsToMCTruth trueHitsToNeutrinos;
 	lar_pandora::MCTruthToHits trueNeutrinosToHits;
-	this->recotruehelper::BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
-	this->recotruehelper::BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
+	recotruehelper::BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
+	recotruehelper::BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
 
 	lar_pandora::MCTruthToPFParticles matchedNeutrinos;
 	lar_pandora::MCTruthToHits matchedNeutrinoHits;
-	this->recotruehelper::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos, matchedNeutrinos, matchedNeutrinoHits);
+	recotruehelper::GetRecoToTrueMatches(recoNeutrinosToHits, trueHitsToNeutrinos, matchedNeutrinos, matchedNeutrinoHits);
 
 
 	//Start to Fill the MC Truth information - First we do neutrinos
@@ -376,9 +376,9 @@ void XSec::analyze(art::Event const & e) {
 		purity = 0.0;
 
 		nMCHits = trueHitVector.size();
-		nMCHitsU = this->recotruehelper::CountHitsByType(geo::kU, trueHitVector);
-		nMCHitsV = this->recotruehelper::CountHitsByType(geo::kV, trueHitVector);
-		nMCHitsY = this->recotruehelper::CountHitsByType(geo::kW, trueHitVector);
+		nMCHitsU = recotruehelper::CountHitsByType(geo::kU, trueHitVector);
+		nMCHitsV = recotruehelper::CountHitsByType(geo::kV, trueHitVector);
+		nMCHitsY = recotruehelper::CountHitsByType(geo::kW, trueHitVector);
 
 
 		// Start Filling the PFP Neutrino information
@@ -416,14 +416,14 @@ void XSec::analyze(art::Event const & e) {
 			{
 				const lar_pandora::HitVector &matchedHitVector = pIter3->second;
 				nPFPHits = recoHitVector.size();
-				nPFPHitsU = this->recotruehelper::CountHitsByType(geo::kU, recoHitVector);
-				nPFPHitsV = this->recotruehelper::CountHitsByType(geo::kV, recoHitVector);
-				nPFPHitsY = this->recotruehelper::CountHitsByType(geo::kW, recoHitVector);
+				nPFPHitsU = recotruehelper::CountHitsByType(geo::kU, recoHitVector);
+				nPFPHitsV = recotruehelper::CountHitsByType(geo::kV, recoHitVector);
+				nPFPHitsY = recotruehelper::CountHitsByType(geo::kW, recoHitVector);
 
 				nMatchedHits = matchedHitVector.size();
-				nMatchedHitsU = this->recotruehelper::CountHitsByType(geo::kU, matchedHitVector);
-				nMatchedHitsV = this->recotruehelper::CountHitsByType(geo::kV, matchedHitVector);
-				nMatchedHitsY = this->recotruehelper::CountHitsByType(geo::kW, matchedHitVector);
+				nMatchedHitsU = recotruehelper::CountHitsByType(geo::kU, matchedHitVector);
+				nMatchedHitsV = recotruehelper::CountHitsByType(geo::kV, matchedHitVector);
+				nMatchedHitsY = recotruehelper::CountHitsByType(geo::kW, matchedHitVector);
 			}
 
 			//get the reco vertex
@@ -460,7 +460,7 @@ void XSec::analyze(art::Event const & e) {
 	//=======================================================
 	lar_pandora::MCParticlesToPFParticles matchedParticles;
 	lar_pandora::MCParticlesToHits matchedParticleHits;
-	this->recotruehelper::GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedParticleHits);
+	recotruehelper::GetRecoToTrueMatches(recoParticlesToHits, trueHitsToParticles, matchedParticles, matchedParticleHits);
 
 	// Compare true and reconstructed particles
 	for (lar_pandora::MCParticlesToHits::const_iterator iter = trueParticlesToHits.begin(), iterEnd = trueParticlesToHits.end(); iter != iterEnd; ++iter)
@@ -478,13 +478,13 @@ void XSec::analyze(art::Event const & e) {
 		{
 			int startT(-1);
 			int endT(-1);
-			this->recotruehelper::GetStartAndEndPoints(trueParticle, startT, endT);
+			recotruehelper::GetStartAndEndPoints(trueParticle, startT, endT);
 
 			mcVtxX = trueParticle->Vx(startT);
 			mcVtxY = trueParticle->Vy(startT);
 			mcVtxZ = trueParticle->Vz(startT);
 
-			mcLength = this->recotruehelper::GetLength(trueParticle, startT, endT);
+			mcLength = recotruehelper::GetLength(trueParticle, startT, endT);
 
 			mcEnergy = trueParticle->E(startT);
 			mcMomentum = trueParticle->P(startT);
@@ -531,9 +531,9 @@ void XSec::analyze(art::Event const & e) {
 		// Count number of available hits
 		// Match true and reconstructed hits
 		nMCHits = trueHitVector.size();
-		nMCHitsU = this->recotruehelper::CountHitsByType(geo::kU, trueHitVector);
-		nMCHitsV = this->recotruehelper::CountHitsByType(geo::kV, trueHitVector);
-		nMCHitsY = this->recotruehelper::CountHitsByType(geo::kW, trueHitVector);
+		nMCHitsU = recotruehelper::CountHitsByType(geo::kU, trueHitVector);
+		nMCHitsV = recotruehelper::CountHitsByType(geo::kV, trueHitVector);
+		nMCHitsY = recotruehelper::CountHitsByType(geo::kW, trueHitVector);
 
 		//Now we start working with the matched pfpartciles
 		//========================================================
@@ -567,14 +567,14 @@ void XSec::analyze(art::Event const & e) {
 			const lar_pandora::HitVector &matchedHitVector = pIter3->second;
 
 			nPFPHits = recoHitVector.size();
-			nPFPHitsU = this->recotruehelper::CountHitsByType(geo::kU, recoHitVector);
-			nPFPHitsV = this->recotruehelper::CountHitsByType(geo::kV, recoHitVector);
-			nPFPHitsY = this->recotruehelper::CountHitsByType(geo::kW, recoHitVector);
+			nPFPHitsU = recotruehelper::CountHitsByType(geo::kU, recoHitVector);
+			nPFPHitsV = recotruehelper::CountHitsByType(geo::kV, recoHitVector);
+			nPFPHitsY = recotruehelper::CountHitsByType(geo::kW, recoHitVector);
 
 			nMatchedHits = matchedHitVector.size();
-			nMatchedHitsU = this->recotruehelper::CountHitsByType(geo::kU, matchedHitVector);
-			nMatchedHitsV = this->recotruehelper::CountHitsByType(geo::kV, matchedHitVector);
-			nMatchedHitsY = this->recotruehelper::CountHitsByType(geo::kW, matchedHitVector);
+			nMatchedHitsU = recotruehelper::CountHitsByType(geo::kU, matchedHitVector);
+			nMatchedHitsV = recotruehelper::CountHitsByType(geo::kV, matchedHitVector);
+			nMatchedHitsY = recotruehelper::CountHitsByType(geo::kW, matchedHitVector);
 
 			//Find the reconstructed vertices!
 			lar_pandora::PFParticlesToVertices::const_iterator pIter4 = recoParticlesToVertices.find(recoParticle);
