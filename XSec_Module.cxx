@@ -191,11 +191,11 @@ void XSec::analyze(art::Event const & e) {
 	// ====================================================
 	lar_pandora::TrackVector recoTrackVector;
 	lar_pandora::PFParticlesToTracks recoParticlesToTracks;
-	LArPandoraHelper::CollectTracks(e, _pfp_producer, recoTrackVector, recoParticlesToTracks);
+	lar_pandora::LArPandoraHelper::CollectTracks(e, _pfp_producer, recoTrackVector, recoParticlesToTracks);
 
 	lar_pandora::T0Vector t0Vector_trk;
 	lar_pandora::TracksToT0s tracksToT0s;
-	LArPandoraHelper::CollectT0s(e, _pfp_producer, t0Vector_trk, tracksToT0s);
+	lar_pandora::LArPandoraHelper::CollectT0s(e, _pfp_producer, t0Vector_trk, tracksToT0s);
 
 	if (_verbose)
 		std::cout << "  Tracks: " << recoTrackVector.size() << std::endl;
@@ -204,11 +204,11 @@ void XSec::analyze(art::Event const & e) {
 	// ====================================================
 	lar_pandora::ShowerVector recoShowerVector;
 	lar_pandora::PFParticlesToShowers recoParticlesToShowers;
-	LArPandoraHelper::CollectShowers(e, _pfp_producer, recoShowerVector, recoParticlesToShowers);
+	lar_pandora::LArPandoraHelper::CollectShowers(e, _pfp_producer, recoShowerVector, recoParticlesToShowers);
 
 	lar_pandora::T0Vector t0Vector_shwr;
 	lar_pandora::ShowersToT0s showersToT0s;
-	LArPandoraHelper::CollectT0s(e, _pfp_producer, t0Vector_shwr, showersToT0s);
+	lar_pandora::LArPandoraHelper::CollectT0s(e, _pfp_producer, t0Vector_shwr, showersToT0s);
 
 	if (_verbose)
 		std::cout << "  Showers: " << recoShowerVector.size() << std::endl;
@@ -217,7 +217,7 @@ void XSec::analyze(art::Event const & e) {
 	// =======================================================
 	lar_pandora::VertexVector recoVertexVector;
 	lar_pandora::PFParticlesToVertices recoParticlesToVertices;
-	LArPandoraHelper::CollectVertices(e,  _pfp_producer, recoVertexVector, recoParticlesToVertices);
+	lar_pandora::LArPandoraHelper::CollectVertices(e,  _pfp_producer, recoVertexVector, recoParticlesToVertices);
 
 	if (_verbose)
 		std::cout << "  Vertices: " << recoVertexVector.size() << std::endl;
@@ -229,11 +229,13 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::PFParticlesToHits recoParticlesToHits;
 	lar_pandora::HitsToPFParticles recoHitsToParticles;
 
-	LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
-	LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
-	LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, recoParticlesToHits, recoHitsToParticles,
-	                                         (_useDaughterPFParticles ?
-	                                          (_addDaughterPFParticles ? LArPandoraHelper::kAddDaughters : LArPandoraHelper::kUseDaughters) : LArPandoraHelper::kIgnoreDaughters));
+	lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
+	lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
+	lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, recoParticlesToHits, recoHitsToParticles,
+	                                                      (_useDaughterPFParticles ?
+	                                                       (_addDaughterPFParticles ?
+	                                                        lar_pandora::LArPandoraHelper::kAddDaughters :
+	                                                        lar_pandora::LArPandoraHelper::kUseDaughters) : lar_pandora::LArPandoraHelper::kIgnoreDaughters));
 
 	if (_verbose)
 		std::cout << "  RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
@@ -244,7 +246,7 @@ void XSec::analyze(art::Event const & e) {
 	// Collect Hits
 	// ============
 	lar_pandora::HitVector hitVector;
-	LArPandoraHelper::CollectHits(e, _hitfinderLabel, hitVector);
+	lar_pandora::LArPandoraHelper::CollectHits(e, _hitfinderLabel, hitVector);
 
 	if (_verbose)
 		std::cout << "  Hits: " << hitVector.size() << std::endl;
@@ -254,7 +256,7 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::SpacePointVector spacePointVector;
 	lar_pandora::SpacePointsToHits spacePointsToHits;
 	lar_pandora::HitsToSpacePoints hitsToSpacePoints;
-	LArPandoraHelper::CollectSpacePoints(e, _particleLabel, spacePointVector, spacePointsToHits, hitsToSpacePoints);
+	lar_pandora::LArPandoraHelper::CollectSpacePoints(e, _particleLabel, spacePointVector, spacePointsToHits, hitsToSpacePoints);
 
 	if (_verbose)
 		std::cout << "  SpacePoints: " << spacePointVector.size() << std::endl;
@@ -269,11 +271,13 @@ void XSec::analyze(art::Event const & e) {
 
 	if (!e.isRealData())
 	{
-		LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, trueParticleVector);
-		LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, truthToParticles, particlesToTruth);
-		LArPandoraHelper::BuildMCParticleHitMaps(e, _geantModuleLabel, hitVector, trueParticlesToHits, trueHitsToParticles,
-		                                         (_useDaughterMCParticles ?
-		                                          (_addDaughterMCParticles ? LArPandoraHelper::kAddDaughters : LArPandoraHelper::kUseDaughters) : LArPandoraHelper::kIgnoreDaughters));
+		lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, trueParticleVector);
+		lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, truthToParticles, particlesToTruth);
+		lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, _geantModuleLabel, hitVector, trueParticlesToHits, trueHitsToParticles,
+		                                                      (_useDaughterMCParticles ?
+		                                                       (_addDaughterMCParticles ?
+		                                                        lar_pandora::LArPandoraHelper::kAddDaughters :
+		                                                        lar_pandora::LArPandoraHelper::kUseDaughters) : lar_pandora::LArPandoraHelper::kIgnoreDaughters));
 	}
 
 	if (_verbose)
@@ -522,8 +526,8 @@ void XSec::analyze(art::Event const & e) {
 		//================================================
 		try
 		{
-			const art::Ptr<simb::MCParticle> parentParticle(LArPandoraHelper::GetParentMCParticle(trueParticleMap, trueParticle));
-			const art::Ptr<simb::MCParticle> primaryParticle(LArPandoraHelper::GetFinalStateMCParticle(trueParticleMap, trueParticle));
+			const art::Ptr<simb::MCParticle> parentParticle(lar_pandora::LArPandoraHelper::GetParentMCParticle(trueParticleMap, trueParticle));
+			const art::Ptr<simb::MCParticle> primaryParticle(lar_pandora::LArPandoraHelper::GetFinalStateMCParticle(trueParticleMap, trueParticle));
 			mcParentPdg = ((parentParticle != trueParticle) ? parentParticle->PdgCode() : 0);
 			//mcPrimaryPdg = primaryParticle->PdgCode();
 			mcIsPrimary = (primaryParticle == trueParticle);//this returns the ID of the primary particle ****
@@ -545,12 +549,12 @@ void XSec::analyze(art::Event const & e) {
 		{
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
 			pfpPdg = recoParticle->PdgCode();
-			pfpNuPdg = LArPandoraHelper::GetParentNeutrino(recoParticleMap, recoParticle);
+			pfpNuPdg = lar_pandora::LArPandoraHelper::GetParentNeutrino(recoParticleMap, recoParticle);
 			if(pfpPdg == 12 || pfpPdg == 14) {pfpIsNeutrino = true; }
 			//else{pfpIsNeutrino == false; }
 			//pfpIsPrimary = LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle);
 
-			const art::Ptr<recob::PFParticle> parentParticle = LArPandoraHelper::GetParentPFParticle(recoParticleMap, recoParticle);
+			const art::Ptr<recob::PFParticle> parentParticle = lar_pandora::LArPandoraHelper::GetParentPFParticle(recoParticleMap, recoParticle);
 			pfpParentPdg = parentParticle->PdgCode();
 
 			// const art::Ptr<recob::PFParticle> primaryParticle = LArPandoraHelper::GetFinalStatePFParticle(recoParticleMap, recoParticle);
