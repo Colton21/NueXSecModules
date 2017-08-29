@@ -12,7 +12,6 @@ class XSec;
 class XSec : public art::EDAnalyzer {
 public:
 explicit XSec(fhicl::ParameterSet const & p);
-explicit reconfigure(fhicl::ParameterSet const &p);
 // The compiler-generated destructor is fine for non-base
 // classes without bare pointers or other resource use.
 
@@ -23,6 +22,7 @@ XSec & operator = (XSec const &) = delete;
 XSec & operator = (XSec &&) = delete;
 
 // Required functions.
+void reconfigure(fhicl::ParameterSet const &p) override;
 void analyze(art::Event const & e) override;
 void endSubRun(const art::SubRun &sr) override;
 
