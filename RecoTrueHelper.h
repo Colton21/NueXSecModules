@@ -1,14 +1,15 @@
 #include "AnaHelper.h"
 
+typedef std::set<art::Ptr<recob::PFParticle> > PFParticleSet;
+typedef std::set<art::Ptr<simb::MCParticle> > MCParticleSet;
+typedef std::set< art::Ptr<simb::MCTruth> > MCTruthSet;
+
+
 namespace nue_xsec {
 
 class recotruehelper {
 
-private:
-
-typedef std::set< art::Ptr<recob::PFParticle> > PFParticleSet;
-typedef std::set< art::Ptr<simb::MCParticle> > MCParticleSet;
-typedef std::set< art::Ptr<simb::MCTruth> > MCTruthSet;
+public:
 
 //I should export this as a fcl parameter in the future
 bool _recursiveMatching = true;
