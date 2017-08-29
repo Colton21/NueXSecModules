@@ -37,7 +37,7 @@ void XSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-XSec: EDAnalyzer(p) {
+XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 
 
 	myTree->Branch("run", &run, "run/I");
@@ -720,4 +720,4 @@ void XSec::endSubRun(const art::SubRun& sr) {
 
 }//end namespace
 
-DEFINE_ART_MODULE(nue_xsec::XSec)
+DEFINE_ART_MODULE(XSec)

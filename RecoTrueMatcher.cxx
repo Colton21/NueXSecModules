@@ -1,3 +1,4 @@
 #include "RecoTrueMatcher.h"
 
-RecoTrueMatcher::temp = 1;
+void dummy_function(temp)
+temp = 1;
