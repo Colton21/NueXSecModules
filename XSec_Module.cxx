@@ -53,7 +53,7 @@ XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 	myTree->Branch("mcIsNeutirno", &mcIsNeutirno, "mcIsNeutirno/O");
 	myTree->Branch("mcIsPrimary", &mcIsPrimary, "mcIsPrimary/O");
 	myTree->Branch("mcMode", &mcMode, "mcMode/I");
-	myTree->Branch("mcOrigin", &mcOrigin, "mcOrigin/I")
+	myTree->Branch("mcOrigin", &mcOrigin, "mcOrigin/I");
 	myTree->Branch("mcIsCC", &mcIsCC, "mcIsCC/O");
 	myTree->Branch("pfpPdg", &pfpPdg, "pfpPdg/I");
 	myTree->Branch("pfpNuPdg", &pfpNuPdg, "pfpNuPdg/I");
@@ -371,9 +371,9 @@ void XSec::analyze(art::Event const & e) {
 		mcParentPdg = 0;
 		mcIsPrimary = 0;
 		mcMode = trueNeutrino.Mode();
-		simb::Origin_t origin = trueNeutrino.Origin();
-		if(origin == kBeamNeutrino) {mcOrigin = 1; }
-		if(origin == kCosmicRay) {mcOrigin = 2; }
+		simb::Origin_t origin = trueNeutrino.Nu().Origin();
+		if(origin == simb::Origin_t::kBeamNeutrino) {mcOrigin = 1; }
+		if(origin == simb::Origin_t::kCosmicRay) {mcOrigin = 2; }
 
 		mcVtxX = trueParticle.Vx();
 		mcVtxY = trueParticle.Vy();
@@ -511,6 +511,9 @@ void XSec::analyze(art::Event const & e) {
 
 		mcPdg = trueParticle->PdgCode();
 		mcIsNeutirno = false;
+		simb::Origin_t origin = trueParticle->Origin();
+		if(origin == simb::Origin_t::kBeamNeutrino) {mcOrigin = 1; }
+		if(origin == simb::Origin_t::kCosmicRay) {mcOrigin = 2; }
 
 		try
 		{
@@ -551,9 +554,6 @@ void XSec::analyze(art::Event const & e) {
 			mcNuPdg = neutrino.Nu().PdgCode();
 			mcIsCC = ((simb::kCC == neutrino.CCNC()) ? 1 : 0);
 			mcMode = neutrino.Mode();
-			simb::Origin_t origin = trueNeutrino.Origin();
-			if(origin == kBeamNeutrino) {mcOrigin = 1; }
-			if(origin == kCosmicRay) {mcOrigin = 2; }
 		}
 
 		// Get the true 'parent' and 'primary' particles
