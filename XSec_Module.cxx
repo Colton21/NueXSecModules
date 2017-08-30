@@ -178,6 +178,7 @@ void XSec::analyze(art::Event const & e) {
 	mcOpenAngle = -9999;
 	pfpOpenAngle = -9999;
 
+	art::ServiceHandle<cheat::BackTracker> bt;
 
 	run = e.id().run();
 	//int _subrun = e.id().subRun();
@@ -371,7 +372,7 @@ void XSec::analyze(art::Event const & e) {
 		mcParentPdg = 0;
 		mcIsPrimary = 0;
 		mcMode = trueNeutrino.Mode();
-		simb::Origin_t origin = trueNeutrino.Nu().Origin();
+		simb::Origin_t origin = trueEvent.Origin();
 		if(origin == simb::Origin_t::kBeamNeutrino) {mcOrigin = 1; }
 		if(origin == simb::Origin_t::kCosmicRay) {mcOrigin = 2; }
 
@@ -511,7 +512,9 @@ void XSec::analyze(art::Event const & e) {
 
 		mcPdg = trueParticle->PdgCode();
 		mcIsNeutirno = false;
-		simb::Origin_t origin = trueParticle->Origin();
+		//need to grab the mc truth from the mc particle to get the origin
+		const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(trueParticle->TrackId());
+		simb::Origin_t origin = mc_truth->Origin();
 		if(origin == simb::Origin_t::kBeamNeutrino) {mcOrigin = 1; }
 		if(origin == simb::Origin_t::kCosmicRay) {mcOrigin = 2; }
 
