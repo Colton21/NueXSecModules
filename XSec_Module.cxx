@@ -53,10 +53,12 @@ XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 	myTree->Branch("mcIsNeutirno", &mcIsNeutirno, "mcIsNeutirno/O");
 	myTree->Branch("mcIsPrimary", &mcIsPrimary, "mcIsPrimary/O");
 	myTree->Branch("mcMode", &mcMode, "mcMode/I");
+	myTree->Branch("mcOrigin", &mcOrigin, "mcOrigin/I")
 	myTree->Branch("mcIsCC", &mcIsCC, "mcIsCC/O");
 	myTree->Branch("pfpPdg", &pfpPdg, "pfpPdg/I");
 	myTree->Branch("pfpNuPdg", &pfpNuPdg, "pfpNuPdg/I");
 	myTree->Branch("pfpNuIndex", &pfpNuIndex, "pfpNuIndex/I");
+	myTree->Branch("pfpIndex", &pfpIndex, "pfpIndex/I");
 	myTree->Branch("pfpParentPdg", &pfpParentPdg, "pfpParentPdg/I");
 	myTree->Branch("pfpIsNeutrino", &pfpIsNeutrino, "pfpIsNeutrino/O");
 
@@ -99,7 +101,7 @@ XSec::XSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 	myTree->Branch("nPFPHitsY", &nPFPHitsY, "pfpHitsY/I");
 
 	myTree->Branch("mcOpenAngle", &mcOpenAngle, "mcOpenAngle/D");
-	myTree->Branch("pfpOpenAngle", &pfpOpenAngle, "pfpOpenAngle");
+	myTree->Branch("pfpOpenAngle", &pfpOpenAngle, "pfpOpenAngle/D");
 
 }
 
@@ -108,7 +110,7 @@ void XSec::analyze(art::Event const & e) {
 	//First thing is to zero all of the values
 	run = -9999;
 	event = -9999;
-	index = -9999;
+	index = 0;
 	nMCParticles = -9999;
 	nMCNeutrinos = -9999;
 	nPFPartilcles = -9999;
@@ -121,10 +123,12 @@ void XSec::analyze(art::Event const & e) {
 	mcIsNeutirno = -9999;
 	mcIsPrimary = -9999;
 	mcMode = -9999;
+	mcOrigin = -9999;
 	mcIsCC = -9999;
 	pfpPdg = -9999;
 	pfpNuPdg = -9999;
 	pfpNuIndex = -9999;
+	pfpIndex = -9999;
 	pfpParentPdg = -9999;
 	pfpIsNeutrino = -9999;
 
@@ -332,7 +336,8 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::HitsToMCTruth trueHitsToNeutrinos;
 	lar_pandora::MCTruthToHits trueNeutrinosToHits;
 	myMatcher.BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
-	myMatcher.BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
+	if(_use_genie_info == true)
+		myMatcher.BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
 
 	lar_pandora::MCTruthToPFParticles matchedNeutrinos;
 	lar_pandora::MCTruthToHits matchedNeutrinoHits;
@@ -347,7 +352,10 @@ void XSec::analyze(art::Event const & e) {
 		const lar_pandora::HitVector &trueHitVector = iter->second;
 
 		if (trueHitVector.empty())
-			continue;
+			if(_verbose) {
+				std::cout << "No Hits!" << std::endl;
+			}
+		//continue;
 
 		//**** WHAT DOES THIS DO??? ****
 		if (!trueEvent->NeutrinoSet())
@@ -363,6 +371,9 @@ void XSec::analyze(art::Event const & e) {
 		mcParentPdg = 0;
 		mcIsPrimary = 0;
 		mcMode = trueNeutrino.Mode();
+		simb::Origin_t origin = trueNeutrino.Origin();
+		if(origin == kBeamNeutrino) {mcOrigin = 1; }
+		if(origin == kCosmicRay) {mcOrigin = 2; }
 
 		mcVtxX = trueParticle.Vx();
 		mcVtxY = trueParticle.Vy();
@@ -390,17 +401,19 @@ void XSec::analyze(art::Event const & e) {
 
 		// Start Filling the PFP Neutrino information
 		//==================================================
+		//what about pfp neutrinos which did not match to an mc neutrino!
+		//I want the true info to be filled with a dummy particle - 0!
 		lar_pandora::MCTruthToPFParticles::const_iterator pIter1 = matchedNeutrinos.find(trueEvent);
 		if (matchedNeutrinos.end() != pIter1)
 		{
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
 
-
-
 			pfpPdg = recoParticle->PdgCode();
 			pfpNuPdg = pfpPdg;
 			pfpParentPdg = pfpPdg;
 			pfpIsNeutrino = true;
+			pfpIndex = recoParticle->Self();
+			pfpNuIndex = recoParticle->Parent();
 
 			//these are not reconstructed for pfp neutrinos!
 			pfpDirX = 0;
@@ -416,6 +429,22 @@ void XSec::analyze(art::Event const & e) {
 				throw cet::exception("LArPandora") << " PFParticleMonitoring::analyze --- Found a reco neutrino without any hits ";
 
 			const lar_pandora::HitVector &recoHitVector = pIter2->second;
+
+			//***********************************************
+			//this is for reco particles without true hits???
+			for (lar_pandora::HitVector::const_iterator hIter2 = recoHitVector.begin(), hIterEnd2 = recoHitVector.end(); hIter2 != hIterEnd2; ++hIter2)
+			{
+				if (trueHitsToParticles.find(*hIter2) == trueHitsToParticles.end())
+				{
+					//++m_nRecoWithoutTrueHits;
+					if(_verbose) {std::cout << "Found Reco Particle without true hits!" << std::endl; }
+					nPFPHits = recoHitVector.size();
+					nPFPHitsU = myMatcher.CountHitsByType(geo::kU, recoHitVector);
+					nPFPHitsV = myMatcher.CountHitsByType(geo::kV, recoHitVector);
+					nPFPHitsY = myMatcher.CountHitsByType(geo::kW, recoHitVector);
+				}
+			}
+
 
 			//get the pfp hits
 			lar_pandora::MCTruthToHits::const_iterator pIter3 = matchedNeutrinoHits.find(trueEvent);
@@ -458,6 +487,8 @@ void XSec::analyze(art::Event const & e) {
 
 		//let's fill the tree with the neutrinos
 		myTree->Fill();
+		++index;
+		++mcNuIndex;
 
 	}//end looping neutrino map
 	 //========================================================
@@ -520,6 +551,9 @@ void XSec::analyze(art::Event const & e) {
 			mcNuPdg = neutrino.Nu().PdgCode();
 			mcIsCC = ((simb::kCC == neutrino.CCNC()) ? 1 : 0);
 			mcMode = neutrino.Mode();
+			simb::Origin_t origin = trueNeutrino.Origin();
+			if(origin == kBeamNeutrino) {mcOrigin = 1; }
+			if(origin == kCosmicRay) {mcOrigin = 2; }
 		}
 
 		// Get the true 'parent' and 'primary' particles
@@ -550,6 +584,8 @@ void XSec::analyze(art::Event const & e) {
 			const art::Ptr<recob::PFParticle> recoParticle = pIter1->second;
 			pfpPdg = recoParticle->PdgCode();
 			pfpNuPdg = lar_pandora::LArPandoraHelper::GetParentNeutrino(recoParticleMap, recoParticle);
+			pfpIndex = recoParticle->Self();
+			pfpNuIndex = recoParticle->Parent();
 			if(pfpPdg == 12 || pfpPdg == 14) {pfpIsNeutrino = true; }
 			//else{pfpIsNeutrino == false; }
 			//pfpIsPrimary = LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle);
@@ -655,8 +691,10 @@ void XSec::analyze(art::Event const & e) {
 			}//end looping tracks
 			purity = ((nPFPHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nPFPHits));
 			completeness = ((nPFPHits == 0) ? 0.0 : static_cast<double>(nMatchedHits) / static_cast<double>(nMCHits));
-		}
-		myTree->Fill();
+
+			myTree->Fill();
+			++index;
+		}// end if (matchedParticles.end() != pIter1)
 	} //end looping track/shower map
 
 //

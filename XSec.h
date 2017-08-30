@@ -80,10 +80,12 @@ int mcParentPdg;
 bool mcIsNeutirno;
 bool mcIsPrimary;
 int mcMode;
+int mcOrigin;
 bool mcIsCC;
 int pfpPdg;
 int pfpNuPdg;
 int pfpNuIndex;
+int pfpIndex;
 int pfpParentPdg;
 bool pfpIsNeutrino;
 
