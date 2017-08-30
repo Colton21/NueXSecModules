@@ -372,7 +372,7 @@ void XSec::analyze(art::Event const & e) {
 		mcParentPdg = 0;
 		mcIsPrimary = 0;
 		mcMode = trueNeutrino.Mode();
-		simb::Origin_t origin = trueEvent.Origin();
+		simb::Origin_t origin = trueEvent->Origin();
 		if(origin == simb::Origin_t::kBeamNeutrino) {mcOrigin = 1; }
 		if(origin == simb::Origin_t::kCosmicRay) {mcOrigin = 2; }
 
