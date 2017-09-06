@@ -303,6 +303,25 @@ void NueXSec::analyze(art::Event const & e) {
 		const std::vector<recob::PFParticle> pfp_v = tpcobj.GetPFPs();
 		const std::vector<recob::Track> track_v = tpcobj.GetTracks();
 		const std::vector<recob::Shower> shower_v = tpcobj.GetShowers();
+
+		// Hits - we want the hits from both tracks and showers
+		int nhits_u = 0;
+		int nhits_v = 0;
+		int nhits_w = 0;
+		int total_nhits_u = 0;
+		int total_nhits_v = 0;
+		int total_nhits_w = 0;
+		UBXSecHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v, nhits_u, nhits_v, nhits_w);
+		total_nhits_u += nhits_u;
+		total_nhits_v += nhits_v;
+		total_nhits_w += nhits_w;
+		UBXSecHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, shower_v, nhits_u, nhits_v, nhits_w);
+		total_nhits_u += nhits_u;
+		total_nhits_v += nhits_v;
+		total_nhits_w += nhits_w;
+
+
+
 		for(auto const pfp : pfp_v)
 		{
 			int mcPdg = 0;
@@ -319,14 +338,26 @@ void NueXSec::analyze(art::Event const & e) {
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
 				const art::Ptr<simb::MCParticle> the_mcpart = mcpart.at(0);
 				const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(the_mcpart->TrackId());
-				mcPdg = the_mcpart->PdgCode();
 				mcOrigin = mctruth->Origin();
+				mcPdg = the_mcpart->PdgCode();
 				std::cout << "MC Pdg Code: " << mcPdg << std::endl;
+			}
+			//tracks
+			if(pfpPdg == 13)
+			{
+				std::vector<art::Ptr<recob::Track> > tracks = tracks_from_pfp.at(pfp.key());
+				std::cout << "[UBXSec] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
+			}
+			//showers
+			if(pfpPdg == 11)
+			{
+				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(ppf.key());
+				std::cout << "[UBXSec] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
 			}
 		}//end loop over pfp in tpcobject
 		for(auto const track : track_v)
 		{
-			std::cout << "Track Length" << track.Length() << std::endl;
+			pfpLength = track.Length() << std::endl;
 		}//end loop over pfp tracks in tpc object
 
 		//fill root tree per tpcobject

@@ -64,3 +64,5 @@ art::Ptr<recob::PFParticle> GetNuPFP(lar_pandora::PFParticleVector pfp_v);
 }; //end tpcobjecthelper
 
 }//end namespace
+
+#endif

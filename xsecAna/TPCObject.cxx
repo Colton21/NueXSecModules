@@ -11,7 +11,7 @@ TPCObject::TPCObject() {
 TPCObject::~TPCObject(){
 }
 
-// Setter methoths
+// Setter methods
 void TPCObject::SetTracks      (std::vector<recob::Track> tracks)    {
 	this->fTracks = tracks;
 }
