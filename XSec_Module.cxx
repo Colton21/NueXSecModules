@@ -306,30 +306,6 @@ void XSec::analyze(art::Event const & e) {
 	myMatcher.BuildTrueParticleMap(trueParticleVector, trueParticleMap);
 	myMatcher.BuildRecoParticleMap(recoParticleVector, recoParticleMap);
 
-	//nMCParticles  = trueParticlesToHits.size();
-	//nNeutrinoPfos = 0;
-	//nPrimaryPfos  = 0;
-	//nDaughterPfos = 0;
-
-	// Count reconstructed particles
-	// for (PFParticleVector::const_iterator iter = recoParticleVector.begin(), iterEnd = recoParticleVector.end(); iter != iterEnd; ++iter)
-	// {
-	//      const art::Ptr<recob::PFParticle> recoParticle = *iter;
-	//
-	//      if (LArPandoraHelper::IsNeutrino(recoParticle))
-	//      {
-	//              m_nNeutrinoPfos++;
-	//      }
-	//      else if (LArPandoraHelper::IsFinalState(recoParticleMap, recoParticle))
-	//      {
-	//              m_nPrimaryPfos++;
-	//      }
-	//      else
-	//      {
-	//              m_nDaughterPfos++;
-	//      }
-	// }
-
 	// Match Reco Neutrinos to True Neutrinos
 	// ======================================
 	lar_pandora::PFParticlesToHits recoNeutrinosToHits;
@@ -337,6 +313,7 @@ void XSec::analyze(art::Event const & e) {
 	lar_pandora::HitsToMCTruth trueHitsToNeutrinos;
 	lar_pandora::MCTruthToHits trueNeutrinosToHits;
 	myMatcher.BuildRecoNeutrinoHitMaps(recoParticleMap, recoParticlesToHits, recoNeutrinosToHits, recoHitsToNeutrinos);
+	//does this make it so I can run over only cosmics???
 	if(_use_genie_info == true)
 		myMatcher.BuildTrueNeutrinoHitMaps(truthToParticles, trueParticlesToHits, trueNeutrinosToHits, trueHitsToNeutrinos);
 
@@ -700,60 +677,8 @@ void XSec::analyze(art::Event const & e) {
 		}// end if (matchedParticles.end() != pIter1)
 	} //end looping track/shower map
 
-//
-// //==========================================================================
-//      if(_is_mc == true)
-//      {
-//              matchinghelper.GetRecoToTrueMatches(e,
-//                                                  _pfp_producer,
-//                                                  _spacepointLabel,
-//                                                  _geantModuleLabel,
-//                                                  _hitfinderLabel,
-//                                                  matchedMCToPFParticles,
-//                                                  matchedParticleHits);
-//      } //end if mc
-//
-// //loop over all matched particles
-//      auto const &pfparticle_handle = e.getValidHandle<std::vector<recob::PFParticle> >(_pfp_producer);
-//
-//      for (auto const& iter : matchedMCToPFParticles)
-//      {
-//              art::Ptr<simb::MCParticle>  mc_part = iter.first;// The MCParticle
-//              art::Ptr<recob::PFParticle> pf_part = iter.second; // The matched PFParticle
-//
-//              //fill MC info function
-//
-//              //fill Reco info function
-//              //check if neutrino or track/shower
-//              // int _pfpPdg = pf_pard->PdgCode()
-//              //               if(_pfpPdg == 12 || _pfpPdg == 14)
-//              // {
-//              //
-//              // }
-//              // if(_pfpPdg == 11 || _pfpPdg == 13)
-//              // {
-//              //      //showers
-//              //      if(_pfpPdg == 11)
-//              //      {
-//              //              art::FindOneP(recob::Shower) shower_for_pfp(pfparticle_handle, e, _pfp_producer);
-//              //              auto const & shwr = shower_for_pfp.at(iter);
-//              //      }
-//              //      //tracks
-//              //      if(_pfpPdg == 13)
-//              //      {
-//              //              art::FindOneP(recob::Track) track_for_pfp(pfparticle_handle, e, _pfp_producer);
-//              //              auto const & trk = track_for_pfp.at(iter);
-//              //      }
-//              // }
-//
-//      }
-//
-	// if(_is_data == true)
-	// {
-	//      //I need to just fill all pfp information!
-	//      std::cout << "We're looking at data!" << std::endl;
-	// }
 
+	//lastly I want to fill the tree with dummy MC particles for any unmatched pfparticles!
 
 }
 
