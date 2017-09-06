@@ -1,0 +1,59 @@
+#include "services_microboone.fcl"
+#include "messageservice.fcl"
+#include "time_memory_tracker_microboone.fcl"
+
+process_name : NueXsecExtractorProcess
+
+services:
+{
+
+  TFileService:	{fileName: "nue_xsec_extraction.root"}
+  TimeTracker:	@local::microboone_time_tracker
+  MemoryTracker: @local::microboone_memory_tracker
+  @table::microboone_simulation_services
+
+
+}#end services
+
+source:
+{
+
+  module_type: RootInput
+  maxEvents: -1
+  firstRun: 1
+  firstEvent: 1
+
+
+}
+
+physics:
+{
+  analyzers:
+  {
+    NueXsec:
+    {
+      module_type: "NueXsecExtractor"
+      MCParticleLabel: "largeant"
+    }
+    TrueRecoMon:
+    {
+      module_type: "PFParticleMonitoring"
+      TrackModule: "pandoraNu"
+      ShowerModule: "pandoraNu"
+      PFParticleModule: "pandoraNu"
+      SpacePointModule: "pandoraNu"
+      #SpacePointModule: "gaushit"
+      #HitFinderModule: "gaushit"
+      HitFinderModule: "pandoraCosmicHitRemoval"
+      UseDaughterPFParticles: "true"
+      UseDaughterMCParticles: "true"
+      RecursiveMatching: "true"
+      PrintDebug: "true"
+    }
+  }
+  analysis: [ NueXsec, TrueRecoMon ]
+  end_paths: [analysis]
+}
+
+
+services.DetectorClocksService.InheritClockConfig: false

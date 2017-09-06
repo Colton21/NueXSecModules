@@ -1,0 +1,63 @@
+#include "services_microboone.fcl"
+#include "messageservice.fcl"
+#include "time_memory_tracker_microboone.fcl"
+
+process_name : NueXsecExtractorProcess
+
+services:
+{
+
+  TFileService: {fileName: "nue_xsec_extraction.root"}
+  TimeTracker:  @local::microboone_time_tracker
+  MemoryTracker: @local::microboone_memory_tracker
+  @table::microboone_simulation_services
+
+
+}#end services
+
+source:
+{
+
+  module_type: RootInput
+  maxEvents: -1
+  firstRun: 1
+  firstEvent: 1
+
+
+}
+
+physics:
+{
+  analyzers:
+  {
+    XSec:
+    {
+      module_type: "XSec"
+      PFParticleProducer: "pandoraNu"
+      HitProducer: ""
+      GeantModule: ""
+      SpacePointProducer: ""
+      NeutrinoFlashMatchProducer: ""
+      CosmicFlashMatchProducer: ""
+      OpFlashBeamProducer: ""
+      ACPTProducer: ""
+      TPCObjectProducer: ""
+      POTSummaryProducer: ""
+      POTSummaryInstance: ""
+      ParticleIDProducer: ""
+      MCGhostProducer: ""
+      AddDaughterPFParticles: "true"
+      AddDaughterMCParticles: "true"
+      UseDaughterPFParticles: "true"
+      UseDaughterMCParticles: "true"
+      RecursiveMatching: "true"
+      PrintDebug: "true"
+    }
+  }
+  analysis: [ XSec ]
+  end_paths: [analysis]
+}
+
+
+services.DetectorClocksService.InheritClockConfig: false
+
