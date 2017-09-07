@@ -1,11 +1,10 @@
+#ifndef TPCOBJECTANALYSIS_H
+#define TPCOBJECTANALYSIS_H
+
 #include "AnaHelper.h"
 #include "PostMCCorrections.h"
 #include "TpcObjectHelper.h"
 #include "UtilityFunctions.h"
-
-
-#ifndef XSec_H
-#define XSec_H
 
 namespace xsec_ana {
 
