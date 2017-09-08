@@ -9,6 +9,63 @@ class ParticleContainer {
 
 private:
 
+int index;
+
+int origin;
+int mc_pdg;
+int mc_nu_pdg;
+int mc_parent_pdg;
+bool is_neutrino;
+bool is_primary;
+int pfp_pdg;
+int pfp_nu_pdg;
+int pfp_parent_pdg;
+
+int mc_vtx_x;
+int mc_vtx_y;
+int mc_vtx_z;
+int pfp_vtx_x;
+int pfp_vtx_y;
+int pfp_vtx_z;
+
+double mc_dir_x;
+double mc_dir_y;
+double mc_dir_z;
+double pfp_dir_x;
+double pfp_dir_y;
+double pfp_dir_z;
+
+double mc_theta;
+double mc_phi;
+double pfp_theta;
+double pfp_phi;
+
+double mc_length;
+double pfp_length;
+
+double mc_energy;
+double mc_momentum;
+double pfp_momentum;
+
+double completeness;
+double purity;
+
+int n_mc_hits;
+int n_mc_hits_u;
+int n_mc_hits_v;
+int n_mc_hits_w;
+int n_pfp_hits;
+int n_pfp_hits_u;
+int n_pfp_hits_v;
+int n_pfp_hits_w;
+
+int n_matched_hits;
+int n_matched_hits_u;
+int n_matched_hits_v;
+int n_matched_hits_w;
+
+double mc_open_angle;
+double pfp_open_angle;
 
 public:
 
@@ -26,12 +83,11 @@ void SetOrigin(int);
 void SetmcPdgCode(int);
 void SetmcNuPdgCode(int);
 void SetmcParentPdgCode(int);
-void SetmcIsNeutrino(bool);
+void SetIsNeutrino(bool);
 void SetmcIsPrimary(bool);
 void SetpfpPdgCode(int);
 void SetpfpNuPdgCode(int);
 void SetpfpParentPdgCode(int);
-void SetpfpIsNeutrino(bool);
 
 void SetmcVtxX  (double);
 void SetmcVtxY  (double);
@@ -79,66 +135,67 @@ void SetNumMatchedHitsW (int);
 void SetmcOpenAngle(double);
 void SetpfpOpenAngle(double);
 
-int origin;//this is the particle origin
+//need to write the getter functions too!
 
-int mcPdg;
-int mcNuPdg;
-int mcNuIndex;
-int mcParentPdg;
-bool mcIsNeutirno;
-bool mcIsPrimary;
-int pfpPdg;
-int pfpNuPdg;
-int pfpNuIndex;
-int pfpIndex;
-int pfpParentPdg;
-bool pfpIsNeutrino;
+const int Index();//index is particle number in tpc object container
 
-double mcVtxX;
-double mcVtxY;
-double mcVtxZ;
-double pfpVtxX;
-double pfpVtxY;
-double pfpVtxZ;
+const int Origin();//this is the particle origin
 
-double mcDirX;
-double mcDirY;
-double mcDirZ;
-double pfpDirX;
-double pfpDirY;
-double pfpDirZ;
+const int MCPdgCode();//true pdg code for the pfp
+const int MCNuPdgCode();//true nu pdg code (parent) for the pfp
+const int MCParentPdg();//true parent pdg of the pfp
+const bool IsNeutirno();//is the pfparticle 12 / 14 pdg code
+const bool IsPrimary();
+const int PFParticlePdgCode();
+const int PFParticleNuPdgCode();
+//const int PFParticleNuIndex();
+const int PFParticleParentPdgCode();
 
-double mcTheta;
-double mcPhi;
-double pfpTheta;
-double pfpPhi;
+const double mcVtxX();
+const double mcVtxY();
+const double mcVtxZ();
+const double pfpVtxX();
+const double pfpVtxY();
+const double pfpVtxZ();
 
-double mcLength;
-double pfpLength;
+const double mcDirX();
+const double mcDirY();
+const double mcDirZ();
+const double pfpDirX();
+const double pfpDirY();
+const double pfpDirZ();
 
-double mcEnergy;
-double mcMomentum;
-//double pfpEnergy;
-double pfpMomentum;
+const double mcTheta();
+const double mcPhi();
+const double pfpTheta();
+const double pfpPhi();
 
-double completeness;
-double purity;
+const double mcLength();
+const double pfpLength();
 
-int nMCHits;
-int nMCHitsU;
-int nMCHitsV;
-int nMCHitsY;
-int nPFPHits;
-int nPFPHitsU;
-int nPFPHitsV;
-int nPFPHitsY;
-int nMatchedHits;
-int nMatchedHitsU;
-int nMatchedHitsV;
-int nMatchedHitsY;
+const double mcEnergy();
+const double mcMomentum();
+const double pfpMomentum();
 
-double mcOpenAngle;
-double pfpOpenAngle;
+const double completeness();
+const double purity();
+
+const int NumMCHits   ();
+const int NumMCHitsU  ();
+const int NumMCHitsV  ();
+const int NumMCHitsW  ();
+const int NumPFPHits  ();
+const int NumPFPHitsU ();
+const int NumPFPHitsV ();
+const int NumPFPHitsW ();
+
+const int NumMatchedHits  ();
+const int NumMatchedHitsU ();
+const int NumMatchedHitsV ();
+const int NumMatchedHitsW ();
+
+const double mcOpenAngle();
+const double pfpOpenAngle();
 
 };//end class
 
