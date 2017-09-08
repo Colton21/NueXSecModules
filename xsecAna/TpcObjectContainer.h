@@ -2,6 +2,7 @@
 #define TPCOBJECTCONTAINER_H
 
 #include "AnaHelper.h"
+#include "ParticleContainer.h"
 
 namespace xsec_ana {
 
@@ -76,7 +77,7 @@ void SetMode (int);//interaction mode
 //2 = Deep Inelastic Scattering
 //3 = Coherent Scattering
 void SetOrigin (int);//this is the origin coming from the tpcobject
-void SetIsCC (bool); //true = CC, false = NC
+void SetIsCC (int); //true = CC, false = NC
 
 //the tpc object takes the neutrino vertex
 void SetmcVtxX  (double);
@@ -119,7 +120,7 @@ const int NumPFParticles ();
 const int NumPFPNeutrinos ();
 const int Mode ();
 const int Origin ();
-const bool IsCC ();
+const int IsCC ();
 
 const double mcVtxX  ();
 const double mcVtxY  ();

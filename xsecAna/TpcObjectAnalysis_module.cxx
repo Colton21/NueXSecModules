@@ -1,5 +1,6 @@
 #include "XSec.h"
 #include "TpcObjectHelper.h"
+#include "TpcObjectContainer.h"
 
 namespace xsec_ana {
 
@@ -110,6 +111,7 @@ void NueXSec::analyze(art::Event const & e) {
 	art::ServiceHandle<cheat::BackTracker> bt;
 
 	run = e.id().run();
+
 	event = e.id().event();
 	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
@@ -234,6 +236,7 @@ void NueXSec::analyze(art::Event const & e) {
 			const int pfp_id = p.Self();
 			int pfp_origin = -1; //this is for the case where the pfp is not matched
 			bool matched = false;
+			//const int pfp_pdg = p.PdgCode();
 			for(auto const pp : pfp_origin_v)
 			{
 				if(pfp_id == pp.first)
@@ -268,7 +271,7 @@ void NueXSec::analyze(art::Event const & e) {
 		util::CreateAssn(*this, e, *tpcObjectVector, shower_v_v[pfparticle_vector], *assnOutTPCObjectShower);
 		util::CreateAssn(*this, e, *tpcObjectVector, pfp_v_v[pfparticle_vector],    *assnOutTPCObjectPFP);
 
-	}// end looping pfparticle_vectors
+	}// end looping pfparticle_vectors (tpc objects)
 
 	// Put TPCObjects into the Event
 	e.put(std::move(tpcObjectVector));
@@ -277,6 +280,9 @@ void NueXSec::analyze(art::Event const & e) {
 	e.put(std::move(assnOutTPCObjectPFP));
 
 	if (_debug) std::cout << "[TPCObjectMaker] Ends" << std::endl;
+	//***********************************
+	//finish constructing TPC Objects! **
+	//***********************************
 
 	//**************************
 	//start the analysis loops!
@@ -294,6 +300,11 @@ void NueXSec::analyze(art::Event const & e) {
 	art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
 
 	std::cout << "TPC Objects in this Event: " << tpcObjectVector.size() << std::endl;
+	//loop over all of the tpc objects!
+
+	int tpc_object_counter = 0;
+	std::vector<TpcObjectContainer> tpc_object_container_v;
+
 	for(auto const tpcobj : tpcObjectVector)
 	{
 		const int ntracks                   = tpcobj.GetNTracks();
@@ -304,6 +315,29 @@ void NueXSec::analyze(art::Event const & e) {
 		const std::vector<recob::Track> track_v = tpcobj.GetTracks();
 		const std::vector<recob::Shower> shower_v = tpcobj.GetShowers();
 
+		// Reco vertex
+		double reco_nu_vtx[3];
+		recob::Vertex tpcobj_nu_vtx = tpcobj.GetVertex();
+		tpcobj_nu_vtx.XYZ(reco_nu_vtx);
+		const double pfp_nu_vtx_x = reco_nu_vtx[0];
+		const double pfp_nu_vtx_y = reco_nu_vtx[1];
+		const double pfp_nu_vtx_z = reco_nu_vtx[2];
+		//_slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
+
+		tpc_object_container.SetpfpVtxX(pfp_nu_vtx_x);
+		tpc_object_container.SetpfpVtxY(pfp_nu_vtx_y);
+		tpc_object_container.SetpfpVtxZ(pfp_nu_vtx_z);
+		TpcObjectContainer tpc_object_container;
+		tpc_object_container.SetRunNumber(run);
+		//tpc_object_container.SetSubRunNumber();
+		tpc_object_container.SetEventNumber(event);
+		tpc_object_container.SetIndex(tpc_object_counter);
+		tpc_object_container.SetOrigin(tpcobj_origin);
+
+		const int num_pfp = pfp_v_v[pfparticle_vector].size();
+		if(_verbose) {std::cout << "Number of PFP in this TPC Object: " << num_pfp << std::endl; }
+		tpc_object_container.SetNumPFParticles(num_pfp);
+
 		// Hits - we want the hits from both tracks and showers
 		int nhits_u = 0;
 		int nhits_v = 0;
@@ -311,22 +345,90 @@ void NueXSec::analyze(art::Event const & e) {
 		int total_nhits_u = 0;
 		int total_nhits_v = 0;
 		int total_nhits_w = 0;
-		UBXSecHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v, nhits_u, nhits_v, nhits_w);
+		int total_nhits = 0;
+		//need to sum all hits from both tracks and showers
+		utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v, nhits_u, nhits_v, nhits_w);
 		total_nhits_u += nhits_u;
 		total_nhits_v += nhits_v;
 		total_nhits_w += nhits_w;
-		UBXSecHelper::GetNumberOfHitsPerPlane(e, _pfp_producer, shower_v, nhits_u, nhits_v, nhits_w);
+		utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower_v, nhits_u, nhits_v, nhits_w);
 		total_nhits_u += nhits_u;
 		total_nhits_v += nhits_v;
 		total_nhits_w += nhits_w;
+		total_nhits = (total_nhits_u + total_nhits_v + total_nhits_w);
 
+		tpc_object_container.SetNumPFPHits   (total_nhits);
+		tpc_object_container.SetNumPFPHitsU  (total_nhits_u);
+		tpc_object_container.SetNumPFPHitsV  (total_nhits_v);
+		tpc_object_container.SetNumPFPHitsW  (total_nhits_w);
 
+		int pfp_nu_counter = 0;
+		int pfpNuPdg = 0;//not set
+		int pfpParentPdg = 0;
+		int mode = -1;
+		int ccnc = -1;
+		bool is_neutrino = false;
+		bool is_primary = false; // not set
 
+		//loop over pfparticles in the tpc object
 		for(auto const pfp : pfp_v)
 		{
+
+			ParticleContainer particle_container;
+
 			int mcPdg = 0;
+			int mcNuPdg = 0; // not set
+			int mcParentPdg = 0; // not set
+			double pfp_dir_x = 0;
+			double pfp_dir_y = 0;
+			double pfp_dir_z = 0;
+			double pfp_theta = 0;
+			double pfp_phi = 0;
+			double pfp_length = 0;
+			double pfp_momentum = 0;
+			int pfp_hits = 0;
+			int pfp_hits_u = 0;
+			int pfp_hits_v = 0;
+			int pfp_hits_w = 0;
+			double pfp_open_angle = 0;
+
+			double mc_vtx_x = 0;
+			double mc_vtx_y = 0;
+			double mc_vtx_z = 0;
+			double mc_dir_x = 0;
+			double mc_dir_y = 0;
+			double mc_dir_z = 0;
+			double mc_theta = 0;
+			double mc_phi = 0;
+			double mcLength = 0;
+			double mcEnergy = 0;
+			double mcMomentum = 0;
+			double mc_open_angle = 0;
+
 			const int pfpPdg = pfp->PdgCode();
+			pfpParentPdg = pfp_v.at(pfp->Parent())->PdgCode();
+			particle_container.SetpfpPdgCode(pfpPdg);
+			particle_container.SetpfpNuPdgCode(pfpParentPdg);
+			const int index = pfp->Self();
+			particle_container.SetIndex(index);
 			const simb::Origin_t mcOrigin = 0;
+
+			if(pfpPdg == 12 || pfpPdg == 14) {
+				if(_verbose) {std::cout << "PFP Neutrino with PDG Code: " << pfpPdg << std::endl; }
+				is_neutrino = true;
+				pfp_nu_counter++;
+			}
+			particle_container.SetIsNeutrino(is_neutrino);
+
+			// Reco vertex
+			double reco_vtx[3];
+			pfp.XYZ(reco_nu_vtx);
+			const double pfp_vtx_x = reco_vtx[0];
+			const double pfp_vtx_y = reco_vtx[1];
+			const double pfp_vtx_z = reco_vtx[2];
+			particle_container.SetpfpVtxX(pfp_vtx_x);
+			particle_container.SetpfpVtxY(pfp_vtx_y);
+			particle_container.SetpfpVtxZ(pfp_vtx_z);
 
 			//mcghosts do accounting from pfp to mcghost to mc particle
 			const std::vector<art::Ptr<xsec_ana::MCGhost> > mcghost = mcghost_from_pfp.at(pfp.key());
@@ -338,31 +440,122 @@ void NueXSec::analyze(art::Event const & e) {
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
 				const art::Ptr<simb::MCParticle> the_mcpart = mcpart.at(0);
 				const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(the_mcpart->TrackId());
+				const art::Ptr<simb::MCNeutrino> mc_nu = mctruth->GetNeutrino();
+				mode = mc_nu->Mode();
+				ccnc = mc_nu->CCNC();
+
 				mcOrigin = mctruth->Origin();
 				mcPdg = the_mcpart->PdgCode();
-				std::cout << "MC Pdg Code: " << mcPdg << std::endl;
+				//mcNuPdg = the_mcpart->Mother();
+				//mcParentPdg = the_mcpart->Mother();
+				mc_vtx_x = the_mcpart->Vx();
+				mc_vtx_y = the_mcpart->Vy();
+				mc_vtx_z = the_mcpart->Vz();
+				mc_dir_x = the_mcpart->Px();
+				mc_dir_y = the_mcpart->Py();
+				mc_dir_z = the_mcpart->Pz();
+				mc_theta = acos(mc_dir_z) * (180 / 3.1415);
+				mc_phi = atan2(mc_dir_y, mc_dir_x) * (180 / 3.1415);
+				mcLength = the_mcpart->Position() - the_mcpart->EndPosition();
+				mcEnergy = the_mcpart->E();
+				mcMomentum = the_mcpart->P();
+
 			}
-			//tracks
+			particle_container.SetmcPdgCode(mcPdg);
+			particle_container.SetOrigin(mcOrigin);
+			particle_container.SetmcVtxX(mc_vtx_x);
+			particle_container.SetmcVtxY(mc_vtx_y);
+			particle_container.SetmcVtxZ(mc_vtx_z);
+			particle_container.SetmcDirX(mc_dir_x);
+			particle_container.SetmcDirY(mc_dir_y);
+			particle_container.SetmcDirZ(mc_dir_z);
+			particle_container.SetmcTheta(mc_theta);
+			particle_container.SetmcPhi(mc_phi);
+			particle_container.SetmcLength(mcLength);
+			particle_container.SetmcEnergy(mcEnergy);
+			particle_container.SetmcMomentum(mcMomentum);
+
+			//pfp tracks
 			if(pfpPdg == 13)
 			{
 				std::vector<art::Ptr<recob::Track> > tracks = tracks_from_pfp.at(pfp.key());
 				std::cout << "[UBXSec] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
+				//we want to take the first association, right?
+				const art::Ptr<recob::Track> this_track = tracks.at(0);
+				pfp_dir_x = this_track->VertexDirection().X();
+				pfp_dir_y = this_track->VertexDirection().Y();
+				pfp_dir_z = this_track->VertexDirection().Z();
+				pfp_theta = acos(pfp_dir_z) * (180 / 3.1415);
+				pfp_phi = atan2(pfp_dir_y, pfp_dir_x) * (180 / 3.1415);
+				pfp_length = this_track->Length();
+				pfp_momentum = this_track->VertexMomentum();
+
+				lar_pandora::HitVector hit_v = tracksToHits.at(this_track);
+				// Check where the hit is coming from
+				for (unsigned int h = 0; h < hit_v.size(); h++) {
+					if (hit_v[h]->View() == 0) pfp_hits_u++;
+					if (hit_v[h]->View() == 1) pfp_hits_v++;
+					if (hit_v[h]->View() == 2) pfp_hits_w++;
+				}
+				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}
-			//showers
+			//pfp showers
 			if(pfpPdg == 11)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(ppf.key());
 				std::cout << "[UBXSec] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
-			}
-		}//end loop over pfp in tpcobject
-		for(auto const track : track_v)
-		{
-			pfpLength = track.Length() << std::endl;
-		}//end loop over pfp tracks in tpc object
+				//we want to take the first association, right?
+				const art::Ptr<recob::Shower> this_shower = showers.at(0);
+				pfp_dir_x = this_shower->Direction().X();
+				pfp_dir_y = this_shower->Direction().Y();
+				pfp_dir_z = this_shower->Direction().Z();
+				pfp_theta = acos(pfp_dir_z) * (180 / 3.1415);
+				pfp_phi = atan2(pfp_dir_y, pfp_dir_x) * (180 / 3.1415);
+				pfp_length = this_shower->Length();
+				pfp_momentum = this_shower->Energy(this_shower->best_plane());
+				pfp_open_angle = this_shower->OpenAngle();
 
-		//fill root tree per tpcobject
+				lar_pandora::HitVector hit_v = showersToHits.at(this_shower);
+				// Check where the hit is coming from
+				for (unsigned int h = 0; h < hit_v.size(); h++) {
+					if (hit_v[h]->View() == 0) pfp_hits_u++;
+					if (hit_v[h]->View() == 1) pfp_hits_v++;
+					if (hit_v[h]->View() == 2) pfp_hits_w++;
+				}
+				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
+			}
+
+			particle_container.SetpfpDirX(pfp_dir_x);
+			particle_container.SetpfpDirY(pfp_dir_y);
+			particle_container.SetpfpDirZ(pfp_dir_z);
+			particle_container.SetpfpTheta(pfp_theta);
+			particle_container.SetpfpPhi(pfp_phi);
+			particle_container.SetpfpLength(pfp_length);
+			particle_container.SetpfpMomentum(pfp_momentum);
+			particle_container.SetpfpOpenAngle(pfp_open_angle);
+			particle_container.SetNumPFPHits(pfp_hits);
+			particle_container.SetNumPFPHitsU(pfp_hits_u);
+			particle_container.SetNumPFPHitsV(pfp_hits_v);
+			particle_container.SetNumPFPHitsW(pfp_hits_w);
+
+			tpc_object_container.AddParticle(particle_container);
+
+		}//end loop over pfp in tpcobject
+		tpc_object_container.SetNumPFPNeutrinos(pfp_nu_counter);
+		tpc_object_container.SetMode(mode);
+		tpc_object_container.SetIsCC(ccnc);
+
+		// for(auto const track : track_v)
+		// {
+		//      pfpLength = track.Length() << std::endl;
+		// }//end loop over pfp tracks in tpc object
+
+		tpc_object_container_v.emplace_back(tpc_object_container);
+		tpc_object_counter++;
 	}//end loop tpc objects
 
+	//fill root tree per event
+	myTree->Fill(tpc_object_container_v);
 
 }//end analyze
 

@@ -2,308 +2,308 @@
 
 namespace xsec_ana {
 
-void SetIndex(int);
+void ParticleContainer::SetIndex(int);
 
-void SetOrigin(int _origin){
+void ParticleContainer::SetOrigin(int _origin){
 	origin = _origin;
 }
-void SetmcPdgCode(int _mc_pdg){
+void ParticleContainer::SetmcPdgCode(int _mc_pdg){
 	mc_pdg = _mc_pdg;
 }
-void SetmcNuPdgCode(int _mc_nu_pdg){
+void ParticleContainer::SetmcNuPdgCode(int _mc_nu_pdg){
 	mc_nu_pdg = _mc_nu_pdg
 }
-void SetmcParentPdgCode(int _mc_parent_pdg){
+void ParticleContainer::SetmcParentPdgCode(int _mc_parent_pdg){
 	mc_parent_pdg = _mc_parent_pdg;
 }
-void SetIsNeutrino(bool _is_neutrino){
+void ParticleContainer::SetIsNeutrino(bool _is_neutrino){
 	is_neutrino = _is_neutrino;
 }
-void SetmcIsPrimary(bool _is_primary){
+void ParticleContainer::SetmcIsPrimary(bool _is_primary){
 	is_primary = _is_primary;
 }
-void SetpfpPdgCode(int _pfp_pdg){
+void ParticleContainer::SetpfpPdgCode(int _pfp_pdg){
 	pfp_pdg = _pfp_pdg;
 }
-void SetpfpNuPdgCode(int _pfp_nu_pdg){
+void ParticleContainer::SetpfpNuPdgCode(int _pfp_nu_pdg){
 	pfp_nu_pdg = _pfp_nu_pdg;
 }
-void SetpfpParentPdgCode(int _pfp_parent_pdg){
+void ParticleContainer::SetpfpParentPdgCode(int _pfp_parent_pdg){
 	pfp_parent_pdg = _pfp_parent_pdg;
 }
 
-void SetmcVtxX  (double _mc_vtx_x){
+void ParticleContainer::SetmcVtxX  (double _mc_vtx_x){
 	mc_vtx_x = _mc_vtx_x;
 }
-void SetmcVtxY  (double _mc_vtx_y){
+void ParticleContainer::SetmcVtxY  (double _mc_vtx_y){
 	mc_vtx_y = _mc_vtx_y;
 }
-void SetmcVtxZ  (double _mc_vtx_z){
+void ParticleContainer::SetmcVtxZ  (double _mc_vtx_z){
 	mc_vtx_z = _mc_vtx_z;
 }
-void SetpfpVtxX (double _pfp_vtx_x){
+void ParticleContainer::SetpfpVtxX (double _pfp_vtx_x){
 	pfp_vtx_x = _pfp_vtx_x;
 }
-void SetpfpVtxY (double _pfp_vtx_y){
+void ParticleContainer::SetpfpVtxY (double _pfp_vtx_y){
 	pfp_vtx_y = _pfp_vtx_y;
 }
-void SetpfpVtxZ (double _pfp_vtx_z){
+void ParticleContainer::SetpfpVtxZ (double _pfp_vtx_z){
 	pfp_vtx_z = _pfp_vtx_z;
 }
 
-void SetmcDirX  (double _mc_dir_x){
+void ParticleContainer::SetmcDirX  (double _mc_dir_x){
 	mc_dir_x = _mc_dir_x;
 }
-void SetmcDirY  (double _mc_dir_y){
+void ParticleContainer::SetmcDirY  (double _mc_dir_y){
 	mc_dir_y = _mc_dir_y;
 }
-void SetmcDirZ  (double _mc_dir_z){
+void ParticleContainer::SetmcDirZ  (double _mc_dir_z){
 	mc_dir_z = _mc_dir_z;
 }
-void SetpfpDirX (double _pfp_dir_x){
+void ParticleContainer::SetpfpDirX (double _pfp_dir_x){
 	pfp_dir_x = _pfp_dir_x;
 }
-void SetpfpDirY (double _pfp_dir_y){
+void ParticleContainer::SetpfpDirY (double _pfp_dir_y){
 	pfp_dir_y = _pfp_dir_y;
 }
-void SetpfpDirZ (double _pfp_dir_z){
+void ParticleContainer::SetpfpDirZ (double _pfp_dir_z){
 	pfp_dir_z = _pfp_dir_z;
 }
 
-void SetmcTheta (double _mc_theta){
+void ParticleContainer::SetmcTheta (double _mc_theta){
 	mc_theta = _mc_theta;
 }
-void SetmcPhi (double _mc_phi){
+void ParticleContainer::SetmcPhi (double _mc_phi){
 	mc_phi = _mc_phi;
 }
-void SetpfpTheta (double _pfp_theta){
+void ParticleContainer::SetpfpTheta (double _pfp_theta){
 	pfp_theta = _pfp_theta;
 }
-void SetpfpPhi (double _pfp_phi){
+void ParticleContainer::SetpfpPhi (double _pfp_phi){
 	pfp_phi = _pfp_phi;
 }
 
-void SetmcLength(double _mc_length){
+void ParticleContainer::SetmcLength(double _mc_length){
 	mc_length = _mc_length;
 }
-void SetpfpLength(double _pfp_length){
+void ParticleContainer::SetpfpLength(double _pfp_length){
 	pfp_length = _pfp_length;
 }
 
-void SetmcEnergy(double _mc_energy){
+void ParticleContainer::SetmcEnergy(double _mc_energy){
 	mc_energy = _mc_energy;
 }
-void SetmcMomentum(double _mc_momentum){
+void ParticleContainer::SetmcMomentum(double _mc_momentum){
 	mc_momentum = _mc_momentum;
 }
-void SetpfpMomentum(double _pfp_momentum){
+void ParticleContainer::SetpfpMomentum(double _pfp_momentum){
 	pfp_momentum = _pfp_momentum;
 }
 
-void SetCompleteness(double _completeness){
+void ParticleContainer::SetCompleteness(double _completeness){
 	completeness = _completeness;
 }
-void SetPurity(double _purity){
+void ParticleContainer::SetPurity(double _purity){
 	purity = _purity;
 }
 
-void SetNumMCHits   (int _n_mc_hits){
+void ParticleContainer::SetNumMCHits   (int _n_mc_hits){
 	n_mc_hits = _n_mc_hits;
 }
-void SetNumMCHitsU  (int _n_mc_hits_u){
+void ParticleContainer::SetNumMCHitsU  (int _n_mc_hits_u){
 	n_mc_hits_u = _n_mc_hits_u;
 }
-void SetNumMCHitsV  (int _n_mc_hits_v){
+void ParticleContainer::SetNumMCHitsV  (int _n_mc_hits_v){
 	n_mc_htis_v = _n_mc_hits_v;
 }
-void SetNumMCHitsW  (int _n_mc_hits_w){
+void ParticleContainer::SetNumMCHitsW  (int _n_mc_hits_w){
 	n_mc_hits_w = _n_mc_hits_w;
 }
-void SetNumPFPHits  (int _n_pfp_hits){
+void ParticleContainer::SetNumPFPHits  (int _n_pfp_hits){
 	n_pfp_hits = _n_pfp_hits;
 }
-void SetNumPFPHitsU (int _n_pfp_hits_u){
+void ParticleContainer::SetNumPFPHitsU (int _n_pfp_hits_u){
 	n_pfp_hits_u = _n_pfp_hits_u;
 }
-void SetNumPFPHitsV (int _n_pfp_hits_v){
+void ParticleContainer::SetNumPFPHitsV (int _n_pfp_hits_v){
 	n_pfp_hits_v = _n_pfp_hits_v;
 }
-void SetNumPFPHitsW (int _n_pfp_hits_w){
+void ParticleContainer::SetNumPFPHitsW (int _n_pfp_hits_w){
 	n_pfp_hits_w = _n_pfp_hits_w;
 }
 
-void SetNumMatchedHits  (int _n_matched_hits){
+void ParticleContainer::SetNumMatchedHits  (int _n_matched_hits){
 	n_matched_hits = _n_matched_hits;
 }
-void SetNumMatchedHitsU (int _n_matched_hits_u){
+void ParticleContainer::SetNumMatchedHitsU (int _n_matched_hits_u){
 	n_matched_hits_u = _n_matched_hits_u;
 }
-void SetNumMatchedHitsV (int _n_matched_hits_v){
+void ParticleContainer::SetNumMatchedHitsV (int _n_matched_hits_v){
 	n_matched_hits_v = _n_matched_hits_v;
 }
-void SetNumMatchedHitsW (int _n_matched_hits_w){
+void ParticleContainer::SetNumMatchedHitsW (int _n_matched_hits_w){
 	n_matched_hits_w = _n_matched_hits_w;
 }
 
-void SetmcOpenAngle(double _mc_open_angle){
+void ParticleContainer::SetmcOpenAngle(double _mc_open_angle){
 	mc_open_angle = _mc_open_angle;
 }
-void SetpfpOpenAngle(double _pfp_open_angle){
+void ParticleContainer::SetpfpOpenAngle(double _pfp_open_angle){
 	pfp_open_angle = _pfp_open_angle;
 }
 
 //need to write the getter functions too!
 
-const int Index(){
+const int ParticleContainer::Index(){
 	return index;
 } //index is particle number in tpc object container
 
-const int Origin(){
+const int ParticleContainer::Origin(){
 	return origin;
 }  //this is the particle origin
 
-const int MCPdgCode(){
+const int ParticleContainer::MCPdgCode(){
 	return mc_pdg;
 }  //true pdg code for the pfp
-const int MCNuPdgCode(){
+const int ParticleContainer::MCNuPdgCode(){
 	return mc_nu_pdg;
 }  //true nu pdg code (parent) for the pfp
-const int MCParentPdg(){
+const int ParticleContainer::MCParentPdg(){
 	return mc_parent_pdg;
 }  //true parent pdg of the pfp
-const bool IsNeutirno(){
+const bool ParticleContainer::IsNeutirno(){
 	return is_neutirno;
 }  //is the pfparticle 12 / 14 pdg code
-const bool IsPrimary(){
+const bool ParticleContainer::IsPrimary(){
 	return is_primary;
 }
-const int PFParticlePdgCode(){
+const int ParticleContainer::PFParticlePdgCode(){
 	return pfp_pdg;
 }
-const int PFParticleNuPdgCode(){
+const int ParticleContainer::PFParticleNuPdgCode(){
 	return pfp_nu_pdg;
 }
-const int PFParticleParentPdgCode(){
+const int ParticleContainer::PFParticleParentPdgCode(){
 	return pfp_parent_pdg;
 }
 
-const double mcVtxX(){
+const double ParticleContainer::mcVtxX(){
 	return mc_vtx_x;
 }
-const double mcVtxY(){
+const double ParticleContainer::mcVtxY(){
 	return mc_vtx_y;
 }
-const double mcVtxZ(){
+const double ParticleContainer::mcVtxZ(){
 	return mc_vtx_z;
 }
-const double pfpVtxX(){
+const double ParticleContainer::pfpVtxX(){
 	return pfp_vtx_x;
 }
-const double pfpVtxY(){
+const double ParticleContainer::pfpVtxY(){
 	return pfp_vtx_y;
 }
-const double pfpVtxZ(){
+const double ParticleContainer::pfpVtxZ(){
 	return pfp_vtx_z;
 }
 
-const double mcDirX(){
+const double ParticleContainer::mcDirX(){
 	return mc_dir_x;
 }
-const double mcDirY(){
+const double ParticleContainer::mcDirY(){
 	return mc_dir_y;
 }
-const double mcDirZ(){
+const double ParticleContainer::mcDirZ(){
 	return mc_dir_z;
 }
-const double pfpDirX(){
+const double ParticleContainer::pfpDirX(){
 	return pfp_dir_x;
 }
-const double pfpDirY(){
+const double ParticleContainer::pfpDirY(){
 	return pfp_dir_y;
 }
-const double pfpDirZ(){
+const double ParticleContainer::pfpDirZ(){
 	return pfp_dir_z;
 }
 
-const double mcTheta(){
+const double ParticleContainer::mcTheta(){
 	return mc_theta;
 }
-const double mcPhi(){
+const double ParticleContainer::mcPhi(){
 	return mc_phi;
 }
-const double pfpTheta(){
+const double ParticleContainer::pfpTheta(){
 	return pfp_theta;
 }
-const double pfpPhi(){
+const double ParticleContainer::pfpPhi(){
 	return pfp_phi;
 }
 
-const double mcLength(){
+const double ParticleContainer::mcLength(){
 	return mc_length;
 }
-const double pfpLength(){
+const double ParticleContainer::pfpLength(){
 	return pfp_length;
 }
 
-const double mcEnergy(){
+const double ParticleContainer::mcEnergy(){
 	return mc_energy;
 }
-const double mcMomentum(){
+const double ParticleContainer::mcMomentum(){
 	return mc_momentum;
 }
-const double pfpMomentum(){
+const double ParticleContainer::pfpMomentum(){
 	return pfp_momentum;
 }
 
-const double completeness(){
+const double ParticleContainer::completeness(){
 	return completeness;
 }
-const double purity(){
+const double ParticleContainer::purity(){
 	return purity;
 }
 
-const int NumMCHits   (){
+const int ParticleContainer::NumMCHits   (){
 	return n_mc_hits;
 }
-const int NumMCHitsU  (){
+const int ParticleContainer::NumMCHitsU  (){
 	return n_mc_hits_u;
 }
-const int NumMCHitsV  (){
+const int ParticleContainer::NumMCHitsV  (){
 	return n_mc_hits_v;
 }
-const int NumMCHitsW  (){
+const int ParticleContainer::NumMCHitsW  (){
 	return n_mc_hits_w;
 }
-const int NumPFPHits  (){
+const int ParticleContainer::NumPFPHits  (){
 	return n_pfp_hits;
 }
-const int NumPFPHitsU (){
+const int ParticleContainer::NumPFPHitsU (){
 	return n_pfp_hits_u;
 }
-const int NumPFPHitsV (){
+const int ParticleContainer::NumPFPHitsV (){
 	return n_pfp_hits_v;
 }
-const int NumPFPHitsW (){
+const int ParticleContainer::NumPFPHitsW (){
 	return n_pfp_hits_w;
 }
 
-const int NumMatchedHits  (){
+const int ParticleContainer::NumMatchedHits  (){
 	return n_matched_hits;
 }
-const int NumMatchedHitsU (){
+const int ParticleContainer::NumMatchedHitsU (){
 	return n_matched_hits_u;
 }
-const int NumMatchedHitsV (){
+const int ParticleContainer::NumMatchedHitsV (){
 	return n_matched_hits_v;
 }
-const int NumMatchedHitsW (){
+const int ParticleContainer::NumMatchedHitsW (){
 	return n_matched_hits_w;
 }
 
-const double mcOpenAngle(){
+const double ParticleContainer::mcOpenAngle(){
 	return mc_open_angle;
 }
-const double pfpOpenAngle(){
+const double ParticleContainer::pfpOpenAngle(){
 	return pfp_open_angle;
 }
 

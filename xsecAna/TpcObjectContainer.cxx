@@ -26,7 +26,7 @@ void pfp_container::SetMode (int _mode){
 void pfp_container::SetOrigin (int _origin){
 	origin = _origin;
 }
-void pfp_container::SetIsCC (bool _is_cc){
+void pfp_container::SetIsCC (int _is_cc){
 	is_cc = _is_cc;
 }
 
@@ -124,7 +124,7 @@ const int pfp_container::Mode (){
 const int pfp_container::Origin (){
 	return origin;
 }
-const bool pfp_container::IsCC (){
+const int pfp_container::IsCC (){
 	return is_cc;
 }
 
