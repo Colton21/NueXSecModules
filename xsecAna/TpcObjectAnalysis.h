@@ -3,6 +3,7 @@
 
 #include "AnaHelper.h"
 #include "RecoTrueHelper.h"
+#include "MCGhost.h"
 #include "PostMCCorrections.h"
 #include "TPCObject.h"
 #include "TpcObjectHelper.h"
@@ -34,7 +35,7 @@ void endSubRun(const art::SubRun &sr) override;
 
 private:
 
-recotruehelper _recotruehelper_instance;
+xsec_ana::recotruehelper _recotruehelper_instance;
 
 TTree * myTree;
 bool isMC;
@@ -53,6 +54,10 @@ std::string _potsum_instance;
 std::string _particle_id_producer;
 std::string _mc_ghost_producer;
 
+std::string _vertexLabel;
+std::string _trackLabel;
+std::string _showerLabel;
+
 bool _use_genie_info;
 int _minimumHitRequirement;
 
@@ -62,7 +67,7 @@ double _beam_spill_end;
 bool _debug;
 bool _verbose;
 
-std::vector<TpcObjectContainer> tpc_object_container_v;
+std::vector<xsec_ana::TpcObjectContainer> tpc_object_container_v;
 
 
 int run;

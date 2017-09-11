@@ -18,6 +18,10 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 	_particle_id_producer           = p.get<std::string>("ParticleIDProducer");
 	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
 
+	_vertexLabel                    =p.get<std::string>("VertexProducer");
+	_trackLabel                     =p.get<std::string>("TrackProducer");
+	_showerLabel                    =p.get<std::string>("ShowerProducer");
+
 	_use_genie_info                 = p.get<bool>("UseGENIEInfo", "false");
 	_minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
 
@@ -30,7 +34,7 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
+NueXSec(fhicl::ParameterSet const &p) : EDAnalyzer(p){
 
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 
@@ -100,7 +104,7 @@ NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 
 }
 
-void NueXSec::analyze(art::Event const & e) {
+void NueXSec::analyze(art::Event & e) {
 
 	art::ServiceHandle<cheat::BackTracker> bt;
 
@@ -111,7 +115,7 @@ void NueXSec::analyze(art::Event const & e) {
 	bool _is_mc = !_is_data;
 
 	// Instantiate the output
-	std::unique_ptr< std::vector< xsec_ana::TPCObject > >                 tpcObjectVector         (new std::vector<xsec_ana::TPCObject>);
+	std::unique_ptr< std::vector< xsec_ana::TPCObject > >                 tpcObjectVector        (new std::vector<xsec_ana::TPCObject>);
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::Track> >      assnOutTPCObjectTrack  (new art::Assns<xsec_ana::TPCObject, recob::Track>      );
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::Shower> >     assnOutTPCObjectShower (new art::Assns<xsec_ana::TPCObject, recob::Shower>     );
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::PFParticle> > assnOutTPCObjectPFP    (new art::Assns<xsec_ana::TPCObject, recob::PFParticle> );
@@ -185,7 +189,13 @@ void NueXSec::analyze(art::Event const & e) {
 	}
 
 	//reco true matching is performed here!
-	std::vector< std::pair> pfp_origin_v;
+	std::vector<art::Ptr<recob::PFParticle> > neutrinoOriginPFP;
+	std::vector<art::Ptr<recob::PFParticle> > cosmicOriginPFP;
+
+	if(!neutrinoOriginPFP.empty()) {neutrinoOriginPFP.clear(); }
+	if(!cosmicOriginPFP.empty()) {cosmicOriginPFP.clear(); }
+
+	std::vector< std::pair< int, simb::Origin_t > > pfp_origin_v;
 	if(!pfp_origin_v.empty()) {pfp_origin_v.clear(); }
 	for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
 	     iter1 != iterEnd1; ++iter1)
@@ -229,7 +239,7 @@ void NueXSec::analyze(art::Event const & e) {
 		{
 			pfp_v.emplace_back((*p));
 			const int pfp_id = p->Self();
-			simb::Origin_t pfp_origin = kUnknown; //this is for the case where the pfp is not matched
+			simb::Origin_t pfp_origin = xsec_ana::kUnknown; //this is for the case where the pfp is not matched
 			bool matched = false;
 			//const int pfp_pdg = p.PdgCode();
 			for(auto const pp : pfp_origin_v)
@@ -246,7 +256,7 @@ void NueXSec::analyze(art::Event const & e) {
 		obj.SetParticleOrigins(origin_v);
 
 		// Set vertex
-		art::Ptr<recob::PFParticle> pfp = this->GetNuPFP(pfp_v_v[pfparticle_vector]);
+		art::Ptr<recob::PFParticle> pfp = tpcobjecthelper::GetNuPFP(pfp_v_v[pfparticle_vector]);
 		auto iter = pfParticleToVertexMap.find(pfp);
 		if (iter != pfParticleToVertexMap.end()) {
 			obj.SetVertex(*(iter->second[0]));
@@ -294,13 +304,13 @@ void NueXSec::analyze(art::Event const & e) {
 	art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
 	art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
 
-	std::cout << "TPC Objects in this Event: " << tpcObjectVector.size() << std::endl;
+	std::cout << "TPC Objects in this Event: " << tpcObjectVector->size() << std::endl;
 	//loop over all of the tpc objects!
 
 	int tpc_object_counter = 0;
 	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
 
-	for(auto const tpcobj : tpcObjectVector)
+	for(auto const tpcobj : &tpcObjectVector)
 	{
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
@@ -368,14 +378,16 @@ void NueXSec::analyze(art::Event const & e) {
 		//****************************************
 		//loop over pfparticles in the tpc object
 		//****************************************
-		for(auto const pfp : pfp_v)
+		auto pfps_from_tpcobj = tpcobjToPFPAssns.at(tpc_object_counter);
+		for(auto const pfp : pfps_from_tpcobj)
+		//for(auto const pfp : pfp_v)
 		{
 
 			ParticleContainer particle_container;
 
 			int mcPdg = 0;
-			int mcNuPdg = 0; // not set
-			int mcParentPdg = 0; // not set
+			//int mcNuPdg = 0; // not set
+			//int mcParentPdg = 0; // not set
 			double pfp_dir_x = 0;
 			double pfp_dir_y = 0;
 			double pfp_dir_z = 0;
@@ -400,15 +412,15 @@ void NueXSec::analyze(art::Event const & e) {
 			double mcLength = 0;
 			double mcEnergy = 0;
 			double mcMomentum = 0;
-			double mc_open_angle = 0;
+			//double mc_open_angle = 0; //unset
 
-			const int pfpPdg = pfp->PdgCode();
-			pfpParentPdg = pfp_v.at(pfp->Parent())->PdgCode();
+			const int pfpPdg = pfp.PdgCode();
+			pfpParentPdg = pfp_v.at(pfp.Parent()).PdgCode();
 			particle_container.SetpfpPdgCode(pfpPdg);
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
-			const int index = pfp->Self();
+			const int index = pfp.Self();
 			particle_container.SetIndex(index);
-			const simb::Origin_t mcOrigin = kUnknown;
+			const simb::Origin_t mcOrigin = xsec_ana::kUnknown;
 
 			if(pfpPdg == 12 || pfpPdg == 14) {
 				if(_verbose) {std::cout << "PFP Neutrino with PDG Code: " << pfpPdg << std::endl; }
@@ -428,10 +440,10 @@ void NueXSec::analyze(art::Event const & e) {
 			particle_container.SetpfpVtxZ(pfp_vtx_z);
 
 			//mcghosts do accounting from pfp to mcghost to mc particle
-			const std::vector<art::Ptr<xsec_ana::MCGhost> > mcghost = mcghost_from_pfp.at(pfp.key());
+			const std::vector<art::Ptr<MCGhost> > mcghost = mcghost_from_pfp.at(pfp.key());
 			std::vector<art::Ptr<simb::MCParticle> > mcpart;
 			if(mcghost == 0) {std::cout << "No matched MC Ghost to PFP!" << std::endl; }
-			if(mcghost > 1) {std::cout << "Too many matched MC Ghost to PPF!" << std::endl; }
+			if(mcghost > 1) {std::cout << "Too many matched MC Ghost to PFP!" << std::endl; }
 			if(mcghost == 1)
 			{
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
@@ -487,19 +499,19 @@ void NueXSec::analyze(art::Event const & e) {
 				pfp_length = this_track->Length();
 				pfp_momentum = this_track->VertexMomentum();
 
-				lar_pandora::HitVector hit_v = tracksToHits.at(this_track);
+				utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 				// Check where the hit is coming from
-				for (unsigned int h = 0; h < hit_v.size(); h++) {
-					if (hit_v[h]->View() == 0) pfp_hits_u++;
-					if (hit_v[h]->View() == 1) pfp_hits_v++;
-					if (hit_v[h]->View() == 2) pfp_hits_w++;
-				}
+				// for (unsigned int h = 0; h < hit_v.size(); h++) {
+				//      if (hit_v[h]->View() == 0) pfp_hits_u++;
+				//      if (hit_v[h]->View() == 1) pfp_hits_v++;
+				//      if (hit_v[h]->View() == 2) pfp_hits_w++;
+				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}
 			//pfp showers
 			if(pfpPdg == 11)
 			{
-				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(ppf.key());
+				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
 				std::cout << "[UBXSec] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
 				//we want to take the first association, right?
 				const art::Ptr<recob::Shower> this_shower = showers.at(0);
@@ -512,13 +524,13 @@ void NueXSec::analyze(art::Event const & e) {
 				pfp_momentum = this_shower->Energy(this_shower->best_plane());
 				pfp_open_angle = this_shower->OpenAngle();
 
-				lar_pandora::HitVector hit_v = showersToHits.at(this_shower);
+				utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_shower pfp_hits_u, pfp_hits_v, pfp_hits_w);
 				// Check where the hit is coming from
-				for (unsigned int h = 0; h < hit_v.size(); h++) {
-					if (hit_v[h]->View() == 0) pfp_hits_u++;
-					if (hit_v[h]->View() == 1) pfp_hits_v++;
-					if (hit_v[h]->View() == 2) pfp_hits_w++;
-				}
+				// for (unsigned int h = 0; h < hit_v.size(); h++) {
+				//      if (hit_v[h]->View() == 0) pfp_hits_u++;
+				//      if (hit_v[h]->View() == 1) pfp_hits_v++;
+				//      if (hit_v[h]->View() == 2) pfp_hits_w++;
+				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}
 

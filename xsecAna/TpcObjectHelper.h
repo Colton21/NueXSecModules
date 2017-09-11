@@ -61,6 +61,15 @@ void GetTPCObjects(lar_pandora::PFParticleVector pfParticleList, lar_pandora::PF
  *  @param pfp_v the TPC object (vector of PFP) */
 art::Ptr<recob::PFParticle> GetNuPFP(lar_pandora::PFParticleVector pfp_v);
 
+/**
+ *  @brief Returns the origin of the TPC object (neutrino/cosmic/mixed)
+ *
+ *  @param neutrinoOriginPFP list of PFP with neutrino origin
+ *  @param cosmicOriginPFP list of PFP with cosmic origin
+ *  @param pfp_v the TPC object (vector of PFP)  */
+static xsec_ana::TPCObjectOrigin GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle> > neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle> > cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v);
+
+
 }; //end tpcobjecthelper
 
 }//end namespace

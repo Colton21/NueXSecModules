@@ -208,4 +208,41 @@ void tpcobjecthelper::GetMultiplicity(lar_pandora::PFParticleVector pfParticleLi
 
 }
 
+//__________________________________________________________________________
+xsec_ana::TPCObjectOrigin tpcobjecthelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle> > neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle> > cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v) {
+
+	xsec_ana::TPCObjectOrigin origin = xsec_ana::kUnknown;
+
+	int nuOrigin     = 0;
+	int cosmicOrigin = 0;
+
+	// Loop over pfp in the slice
+	for ( unsigned int i = 0; i < pfp_v.size(); i++) {
+
+		// Loop over pfp from nu origin
+		for ( unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
+
+			if (neutrinoOriginPFP[j] == pfp_v[i]) {
+				nuOrigin++;
+			}
+		}
+
+		// Loop over pfp from cosmic origin
+		for ( unsigned int j = 0; j < cosmicOriginPFP.size(); j++) {
+
+			if (cosmicOriginPFP[j] == pfp_v[i]) {
+				cosmicOrigin++;
+			}
+		}
+	}
+
+	if (nuOrigin > 0  && cosmicOrigin == 0) origin = xsec_ana::kBeamNeutrino;
+	if (nuOrigin == 0 && cosmicOrigin > 0 ) origin = xsec_ana::kCosmicRay;
+	if (nuOrigin > 0  && cosmicOrigin > 0 ) origin = xsec_ana::kMixed;
+
+	return origin;
+
+}
+
+
 }//end namepsace
