@@ -6,7 +6,7 @@ namespace xsec_ana {
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
                                       std::string _particleLabel,
-                                      std::vector<simb::Track> track_v,
+                                      std::vector<recob::Track> track_v,
                                       int & nhits_u,
                                       int & nhits_v,
                                       int & nhits_w ) {
@@ -72,7 +72,7 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
                                       std::string _particleLabel,
-                                      std::vector<simb::Shower> shower_v,
+                                      std::vector<recob::Shower> shower_v,
                                       int & nhits_u,
                                       int & nhits_v,
                                       int & nhits_w ) {
