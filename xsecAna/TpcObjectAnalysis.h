@@ -36,9 +36,6 @@ void endSubRun(const art::SubRun &sr) override;
 
 private:
 
-nue_xsec::recotruehelper _recotruehelper_instance;
-xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
-
 TTree * myTree;
 bool isMC;
 bool isData;

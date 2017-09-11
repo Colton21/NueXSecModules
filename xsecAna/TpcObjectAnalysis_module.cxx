@@ -38,75 +38,13 @@ NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 
-	//
-	// myTree->Branch("run", &run, "run/I");
-	// myTree->Branch("event", &event, "event/I");
-	// myTree->Branch("index", &index, "index/I");
-	// myTree->Branch("nMCParticles", &nMCParticles, "nMCParticles/I");
-	// myTree->Branch("nMCNeutrinos", &nMCNeutrinos, "nMCNeutrinos/I");
-	// myTree->Branch("nPFPNeutrinos", &nPFPNeutrinos, "nPFPNeutrinos/I");
-	// myTree->Branch("mcPdg", &mcPdg, "mcPdg/I");
-	// myTree->Branch("mcNuPdg", &mcNuPdg, "mcNuPdg/I");
-	// myTree->Branch("mcNuIndex", &mcNuIndex, "mcNuIndex/I");
-	// myTree->Branch("mcParentPdg", &mcParentPdg, "mcParentPdg/I");
-	// myTree->Branch("mcIsNeutirno", &mcIsNeutirno, "mcIsNeutirno/O");
-	// myTree->Branch("mcIsPrimary", &mcIsPrimary, "mcIsPrimary/O");
-	// myTree->Branch("mcMode", &mcMode, "mcMode/I");
-	// myTree->Branch("mcOrigin", &mcOrigin, "mcOrigin/I");
-	// myTree->Branch("mcIsCC", &mcIsCC, "mcIsCC/O");
-	// myTree->Branch("pfpPdg", &pfpPdg, "pfpPdg/I");
-	// myTree->Branch("pfpNuPdg", &pfpNuPdg, "pfpNuPdg/I");
-	// myTree->Branch("pfpNuIndex", &pfpNuIndex, "pfpNuIndex/I");
-	// myTree->Branch("pfpIndex", &pfpIndex, "pfpIndex/I");
-	// myTree->Branch("pfpParentPdg", &pfpParentPdg, "pfpParentPdg/I");
-	// myTree->Branch("pfpIsNeutrino", &pfpIsNeutrino, "pfpIsNeutrino/O");
-	//
-	// myTree->Branch("mcVtxX", &mcVtxX, "mcVtxX/D");
-	// myTree->Branch("mcVtxY", &mcVtxY, "mcVtxY/D");
-	// myTree->Branch("mcVtxZ", &mcVtxZ, "mcVtxZ/D");
-	// myTree->Branch("pfpVtxX", &pfpVtxX, "pfpVtxX/D");
-	// myTree->Branch("pfpVtxY", &pfpVtxY, "pfpVtxY/D");
-	// myTree->Branch("pfpVtxZ", &pfpVtxZ, "pfpVtxZ/D");
-	//
-	// myTree->Branch("mcDirX", &mcDirX, "mcDirX/D");
-	// myTree->Branch("mcDirY", &mcDirY, "mcDirY/D");
-	// myTree->Branch("mcDirZ", &mcDirZ, "mcDirZ/D");
-	// myTree->Branch("pfpDirX", &pfpDirX, "pfpDirX/D");
-	// myTree->Branch("pfpDirY", &pfpDirY, "pfpDirY/D");
-	// myTree->Branch("pfpDirZ", &pfpDirZ, "pfpDirZ/D");
-	//
-	// myTree->Branch("mcTheta", &mcTheta, "mcTheta/D");
-	// myTree->Branch("mcPhi", &mcPhi, "mcPhi/D");
-	// myTree->Branch("pfpTheta", &pfpTheta, "pfpTheta/D");
-	// myTree->Branch("pfpPhi", &pfpPhi, "pfpPhi/D");
-	//
-	// myTree->Branch("mcLength", &mcLength, "mcLength/D");
-	// myTree->Branch("pfpLength", &pfpLength, "pfpLength/D");
-	//
-	// myTree->Branch("mcEnergy", &mcEnergy, "mcEnergy/D");
-	// myTree->Branch("mcMomentum", &mcMomentum, "mcMomentum/D");
-	// myTree->Branch("pfpMomentum", &pfpMomentum, "pfpMomentum/D");
-	//
-	// myTree->Branch("completeness", &completeness, "completeness/D");
-	// myTree->Branch("purity", &purity, "purity/D");
-	//
-	// myTree->Branch("nMCHits",   &nMCHits, "mcHits/I");
-	// myTree->Branch("nMCHitsU",  &nMCHitsU, "mcHitsU/I");
-	// myTree->Branch("nMCHitsV",  &nMCHitsV, "mcHitsV/I");
-	// myTree->Branch("nMCHitsY",  &nMCHitsY, "mcHitsY/I");
-	// myTree->Branch("nPFPHits",  &nPFPHits, "pfpHits/I");
-	// myTree->Branch("nPFPHitsU", &nPFPHitsU, "pfpHitsU/I");
-	// myTree->Branch("nPFPHitsV", &nPFPHitsV, "pfpHitsV/I");
-	// myTree->Branch("nPFPHitsY", &nPFPHitsY, "pfpHitsY/I");
-	//
-	// myTree->Branch("mcOpenAngle", &mcOpenAngle, "mcOpenAngle/D");
-	// myTree->Branch("pfpOpenAngle", &pfpOpenAngle, "pfpOpenAngle/D");
-
 }
 
 void NueXSec::analyze(art::Event & e) {
 
 	art::ServiceHandle<cheat::BackTracker> bt;
+	nue_xsec::recotruehelper _recotruehelper_instance;
+	xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
 
 	run = e.id().run();
 
@@ -231,7 +169,7 @@ void NueXSec::analyze(art::Event & e) {
 		obj.SetShowers(shwr_v);
 
 		//set individual particle origins
-		std::vector<xsec_ana::TPCObjectOrigin> origin_v;
+		std::vector<simb::Origin_t> origin_v;
 		// Set PFPs
 		std::vector<recob::PFParticle> pfp_v;
 		//pfp_v.clear();
@@ -317,7 +255,7 @@ void NueXSec::analyze(art::Event & e) {
 		const int npfparticles              = tpcobj.GetNPFP();
 		const TPCObjectOrigin tpcobj_origin = tpcobj.GetOrigin();
 		const std::vector<recob::PFParticle> pfp_v = tpcobj.GetPFPs();
-		const std::vector<recob::Track> track_v = tpcobj.GetTracks();
+		const std::vector<recob::Track>  track_v  = tpcobj.GetTracks();
 		const std::vector<recob::Shower> shower_v = tpcobj.GetShowers();
 
 		if(_verbose)
@@ -358,11 +296,11 @@ void NueXSec::analyze(art::Event & e) {
 		int total_nhits_w = 0;
 		int total_nhits = 0;
 		//need to sum all hits from both tracks and showers
-		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, &track_v, nhits_u, nhits_v, nhits_w);
+		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v, nhits_u, nhits_v, nhits_w);
 		total_nhits_u += nhits_u;
 		total_nhits_v += nhits_v;
 		total_nhits_w += nhits_w;
-		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, &shower_v, nhits_u, nhits_v, nhits_w);
+		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower_v, nhits_u, nhits_v, nhits_w);
 		total_nhits_u += nhits_u;
 		total_nhits_v += nhits_v;
 		total_nhits_w += nhits_w;
@@ -421,7 +359,7 @@ void NueXSec::analyze(art::Event & e) {
 			//double mc_open_angle = 0; //unset
 
 			const int pfpPdg = pfp->PdgCode();
-			pfpParentPdg = pfp_v.at(pfp->Parent())->PdgCode();
+			pfpParentPdg = pfp_v.at(pfp->Parent()).zPdgCode();
 			particle_container.SetpfpPdgCode(pfpPdg);
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
 			const int index = pfp->Self();
@@ -568,7 +506,7 @@ void NueXSec::analyze(art::Event & e) {
 	}//end loop tpc objects
 
 	//fill root tree per event
-	myTree->Fill(tpc_object_container_v);
+	myTree->Fill();
 
 }//end analyze
 
