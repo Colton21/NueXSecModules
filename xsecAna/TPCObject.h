@@ -29,12 +29,12 @@
 
 namespace xsec_ana {
 
-// enum TPCObjectOrigin {
-//      kUnknown = -1,      // -1
-//      kBeamNeutrino = 0,  // 0
-//      kCosmicRay,         // 1
-//      kMixed,             // 2
-// };
+enum TPCObjectOrigin {
+	kUnknown = -1,      // -1
+	kBeamNeutrino = 0,  // 0
+	kCosmicRay,         // 1
+	kMixed,             // 2
+};
 
 enum TPCObjectOriginExtra {
 	kNotSet = -1,       // -1

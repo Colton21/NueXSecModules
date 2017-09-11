@@ -34,7 +34,7 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-NueXSec(fhicl::ParameterSet &p) : EDAnalyzer(p){
+NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 
