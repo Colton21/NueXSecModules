@@ -256,10 +256,10 @@ const double ParticleContainer::pfpMomentum(){
 	return pfp_momentum;
 }
 
-const double ParticleContainer::completeness(){
+const double ParticleContainer::Completeness(){
 	return completeness;
 }
-const double ParticleContainer::purity(){
+const double ParticleContainer::Purity(){
 	return purity;
 }
 

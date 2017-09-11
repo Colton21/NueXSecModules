@@ -2,8 +2,12 @@
 #define TPCOBJECTANALYSIS_H
 
 #include "AnaHelper.h"
+#include "RecoTrueHelper.h"
 #include "PostMCCorrections.h"
+#include "TPCObject.h"
 #include "TpcObjectHelper.h"
+#include "TpcObjectContainer.h"
+#include "ParticleContainer.h"
 #include "UtilityFunctions.h"
 
 namespace xsec_ana {
@@ -29,6 +33,8 @@ void endSubRun(const art::SubRun &sr) override;
 
 
 private:
+
+recotruehelper _recotruehelper_instance;
 
 TTree * myTree;
 bool isMC;
