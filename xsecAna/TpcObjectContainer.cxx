@@ -23,7 +23,7 @@ void pfp_container::SetNumPFPNeutrinos (int _n_pfp_nu){
 void pfp_container::SetMode (int _mode){
 	mode = _mode;
 }
-void pfp_container::SetOrigin (int _origin){
+void pfp_container::SetOrigin (simb::Origin_t _origin){
 	origin = _origin;
 }
 void pfp_container::SetIsCC (int _is_cc){
@@ -121,7 +121,7 @@ const int pfp_container::NumPFPNeutrinos (){
 const int pfp_container::Mode (){
 	return mode;
 }
-const int pfp_container::Origin (){
+const simb::Origin_t pfp_container::Origin (){
 	return origin;
 }
 const int pfp_container::IsCC (){

@@ -11,7 +11,7 @@ private:
 
 int index;
 
-int origin;
+simb::Origin_t origin;
 int mc_pdg;
 int mc_nu_pdg;
 int mc_parent_pdg;
@@ -79,7 +79,7 @@ virtual ~ParticleContainer();
 
 void SetIndex(int);
 
-void SetOrigin(int);
+void SetOrigin(simb::Origin_t);
 void SetmcPdgCode(int);
 void SetmcNuPdgCode(int);
 void SetmcParentPdgCode(int);
@@ -139,7 +139,7 @@ void SetpfpOpenAngle(double);
 
 const int Index();//index is particle number in tpc object container
 
-const int Origin();//this is the particle origin
+const simb::Origin_t Origin();//this is the particle origin
 
 const int MCPdgCode();//true pdg code for the pfp
 const int MCNuPdgCode();//true nu pdg code (parent) for the pfp

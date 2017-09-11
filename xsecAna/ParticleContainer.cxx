@@ -4,7 +4,7 @@ namespace xsec_ana {
 
 void ParticleContainer::SetIndex(int);
 
-void ParticleContainer::SetOrigin(int _origin){
+void ParticleContainer::SetOrigin(simb::Origin_t _origin){
 	origin = _origin;
 }
 void ParticleContainer::SetmcPdgCode(int _mc_pdg){
@@ -158,7 +158,7 @@ const int ParticleContainer::Index(){
 	return index;
 } //index is particle number in tpc object container
 
-const int ParticleContainer::Origin(){
+const simb::Origin_t ParticleContainer::Origin(){
 	return origin;
 }  //this is the particle origin
 

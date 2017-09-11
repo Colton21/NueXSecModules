@@ -21,7 +21,7 @@ int n_pfp;
 int n_pfp_nu;
 
 int mode;
-int origin;
+simb::Origin_t origin;
 int is_cc;
 
 int mc_vtx;
@@ -76,7 +76,7 @@ void SetMode (int);//interaction mode
 //1 = Resonant
 //2 = Deep Inelastic Scattering
 //3 = Coherent Scattering
-void SetOrigin (int);//this is the origin coming from the tpcobject
+void SetOrigin (simb::Origin_t);//this is the origin coming from the tpcobject
 void SetIsCC (int); //true = CC, false = NC
 
 //the tpc object takes the neutrino vertex
@@ -119,7 +119,7 @@ const int Index ();
 const int NumPFParticles ();
 const int NumPFPNeutrinos ();
 const int Mode ();
-const int Origin ();
+const simb::Origin_t Origin ();
 const int IsCC ();
 
 const double mcVtxX  ();
