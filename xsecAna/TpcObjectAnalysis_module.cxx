@@ -185,7 +185,7 @@ void NueXSec::analyze(art::Event & e) {
 	lar_pandora::MCParticlesToHits matchedParticleHits;
 	if (_is_mc)
 	{
-		_recotruehelper_instance.nue_xsec::GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
+		_recotruehelper_instance.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
 	}
 
 	//reco true matching is performed here!
@@ -239,7 +239,7 @@ void NueXSec::analyze(art::Event & e) {
 		{
 			pfp_v.emplace_back((*p));
 			const int pfp_id = p->Self();
-			simb::Origin_t pfp_origin = -1; //this is for the case where the pfp is not matched
+			simb::Origin_t pfp_origin = simb::kUnknown; //this is for the case where the pfp is not matched
 			bool matched = false;
 			//const int pfp_pdg = p.PdgCode();
 			for(auto const pp : pfp_origin_v)
@@ -310,7 +310,7 @@ void NueXSec::analyze(art::Event & e) {
 	int tpc_object_counter = 0;
 	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
 
-	for(auto const tpcobj : tpcObjectVector)
+	for(auto const tpcobj : *tpcObjectVector)
 	{
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
@@ -358,11 +358,11 @@ void NueXSec::analyze(art::Event & e) {
 		int total_nhits_w = 0;
 		int total_nhits = 0;
 		//need to sum all hits from both tracks and showers
-		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, *track_v, nhits_u, nhits_v, nhits_w);
+		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, &track_v, nhits_u, nhits_v, nhits_w);
 		total_nhits_u += nhits_u;
 		total_nhits_v += nhits_v;
 		total_nhits_w += nhits_w;
-		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, *shower_v, nhits_u, nhits_v, nhits_w);
+		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, &shower_v, nhits_u, nhits_v, nhits_w);
 		total_nhits_u += nhits_u;
 		total_nhits_v += nhits_v;
 		total_nhits_w += nhits_w;
@@ -426,7 +426,7 @@ void NueXSec::analyze(art::Event & e) {
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
 			const int index = pfp->Self();
 			particle_container.SetIndex(index);
-			simb::Origin_t mcOrigin = -1;
+			simb::Origin_t mcOrigin = simb::kUnknown;
 
 			if(pfpPdg == 12 || pfpPdg == 14) {
 				if(_verbose) {std::cout << "PFP Neutrino with PDG Code: " << pfpPdg << std::endl; }
