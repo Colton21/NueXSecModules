@@ -2,8 +2,9 @@
 
 namespace xsec_ana {
 
-void ParticleContainer::SetIndex(int);
-
+void ParticleContainer::SetIndex(int _index){
+	index = _index;
+}
 void ParticleContainer::SetOrigin(simb::Origin_t _origin){
 	origin = _origin;
 }
@@ -11,7 +12,7 @@ void ParticleContainer::SetmcPdgCode(int _mc_pdg){
 	mc_pdg = _mc_pdg;
 }
 void ParticleContainer::SetmcNuPdgCode(int _mc_nu_pdg){
-	mc_nu_pdg = _mc_nu_pdg
+	mc_nu_pdg = _mc_nu_pdg;
 }
 void ParticleContainer::SetmcParentPdgCode(int _mc_parent_pdg){
 	mc_parent_pdg = _mc_parent_pdg;
@@ -114,7 +115,7 @@ void ParticleContainer::SetNumMCHitsU  (int _n_mc_hits_u){
 	n_mc_hits_u = _n_mc_hits_u;
 }
 void ParticleContainer::SetNumMCHitsV  (int _n_mc_hits_v){
-	n_mc_htis_v = _n_mc_hits_v;
+	n_mc_hits_v = _n_mc_hits_v;
 }
 void ParticleContainer::SetNumMCHitsW  (int _n_mc_hits_w){
 	n_mc_hits_w = _n_mc_hits_w;
@@ -171,8 +172,8 @@ const int ParticleContainer::MCNuPdgCode(){
 const int ParticleContainer::MCParentPdg(){
 	return mc_parent_pdg;
 }  //true parent pdg of the pfp
-const bool ParticleContainer::IsNeutirno(){
-	return is_neutirno;
+const bool ParticleContainer::IsNeutrino(){
+	return is_neutrino;
 }  //is the pfparticle 12 / 14 pdg code
 const bool ParticleContainer::IsPrimary(){
 	return is_primary;

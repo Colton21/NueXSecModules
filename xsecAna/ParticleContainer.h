@@ -75,7 +75,7 @@ virtual ~ParticleContainer();
 
 //-----------------------
 //Setter functions
-/------------------------
+//------------------------
 
 void SetIndex(int);
 
@@ -144,7 +144,7 @@ const simb::Origin_t Origin();//this is the particle origin
 const int MCPdgCode();//true pdg code for the pfp
 const int MCNuPdgCode();//true nu pdg code (parent) for the pfp
 const int MCParentPdg();//true parent pdg of the pfp
-const bool IsNeutirno();//is the pfparticle 12 / 14 pdg code
+const bool IsNeutrino();//is the pfparticle 12 / 14 pdg code
 const bool IsPrimary();
 const int PFParticlePdgCode();
 const int PFParticleNuPdgCode();
@@ -177,8 +177,8 @@ const double mcEnergy();
 const double mcMomentum();
 const double pfpMomentum();
 
-const double completeness();
-const double purity();
+const double Completeness();
+const double Purity();
 
 const int NumMCHits   ();
 const int NumMCHitsU  ();

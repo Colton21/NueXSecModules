@@ -4,8 +4,8 @@
 namespace xsec_ana {
 
 TPCObject::TPCObject() {
-	fOrigin      = ubana::kUnknown;
-	fOriginExtra = ubana::kNotSet;
+	fOrigin      = xsec_ana::kUnknown;
+	fOriginExtra = xsec_ana::kNotSet;
 }
 
 TPCObject::~TPCObject(){
@@ -24,7 +24,7 @@ void TPCObject::SetPFPs        (std::vector<recob::PFParticle> pfps) {
 void TPCObject::SetVertex      (recob::Vertex vertex)                {
 	this->fVertex = vertex;
 }
-void TPCObject::SetParticleOrigins (std::vector< x_sec_ana::TPCObjectOrigin> origins)
+void TPCObject::SetParticleOrigins (std::vector< xsec_ana::TPCObjectOrigin> origins)
 {
 	this->fOriginVector = origins;
 }
