@@ -41,6 +41,37 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
                                       std::string _particleLabel,
+                                      art::Ptr<recob::Track> track,
+                                      int & nhits_u,
+                                      int & nhits_v,
+                                      int & nhits_w ) {
+
+	nhits_u = 0;
+	nhits_v = 0;
+	nhits_w = 0;
+
+	lar_pandora::TrackVector trackVector;
+	lar_pandora::TracksToHits tracksToHits;
+	lar_pandora::LArPandoraHelper::CollectTracks( e, _particleLabel, trackVector, tracksToHits );
+
+	// Get the hits associated with the track
+	lar_pandora::HitVector hit_v = tracksToHits.at(track);
+
+	// Check where the hit is coming from
+	for (unsigned int h = 0; h < hit_v.size(); h++) {
+
+		if (hit_v[h]->View() == 0) nhits_u++;
+		if (hit_v[h]->View() == 1) nhits_v++;
+		if (hit_v[h]->View() == 2) nhits_w++;
+
+	}
+
+}
+
+//______________________________________________________________________________
+
+void utility::GetNumberOfHitsPerPlane(art::Event const & e,
+                                      std::string _particleLabel,
                                       lar_pandora::ShowerVector shower_v,
                                       int & nhits_u,
                                       int & nhits_v,
@@ -68,6 +99,37 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 			if (hit_v[h]->View() == 2) nhits_w++;
 
 		}
+	}
+
+}
+
+//______________________________________________________________________________
+
+void utility::GetNumberOfHitsPerPlane(art::Event const & e,
+                                      std::string _particleLabel,
+                                      art::Ptr<recob::Shower> shower,
+                                      int & nhits_u,
+                                      int & nhits_v,
+                                      int & nhits_w ) {
+
+	nhits_u = 0;
+	nhits_v = 0;
+	nhits_w = 0;
+
+	lar_pandora::ShowerVector showerVector;
+	lar_pandora::ShowersToHits showersToHits;
+	lar_pandora::LArPandoraHelper::CollectShowers( e, _particleLabel, showerVector, showersToHits );
+
+	// Get the hits associated with the track
+	lar_pandora::HitVector hit_v = showersToHits.at(shower);
+
+	// Check where the hit is coming from
+	for (unsigned int h = 0; h < hit_v.size(); h++) {
+
+		if (hit_v[h]->View() == 0) nhits_u++;
+		if (hit_v[h]->View() == 1) nhits_v++;
+		if (hit_v[h]->View() == 2) nhits_w++;
+
 	}
 
 }
