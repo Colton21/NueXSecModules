@@ -16,8 +16,8 @@ class tpcobjecthelper {
 
 private:
 bool _debug = "true";
-TPCObjectFilter *_tpcobj_filter;
-bool _do_filter;
+//xsec_ana::TPCObjectFilter *_tpcobj_filter;
+//bool _do_filter;
 
 public:
 

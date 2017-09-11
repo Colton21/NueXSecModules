@@ -35,7 +35,7 @@ void endSubRun(const art::SubRun &sr) override;
 
 private:
 
-xsec_ana::recotruehelper _recotruehelper_instance;
+nue_xsec::recotruehelper _recotruehelper_instance;
 xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
 
 TTree * myTree;
@@ -68,7 +68,7 @@ double _beam_spill_end;
 bool _debug;
 bool _verbose;
 
-std::vector<xsec_ana::TpcObjectContainer> tpc_object_container_v;
+std::vector<xsec_ana::pfp_container> tpc_object_container_v;
 
 
 int run;

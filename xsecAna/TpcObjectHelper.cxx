@@ -59,17 +59,17 @@ void tpcobjecthelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList
 			CollectTracksAndShowers(pfParticleToTrackMap, pfParticleToShowerMap, pfp_v, // input
 			                        track_v, shower_v);                     // output
 
-			// If filtering is on, filter the PFP for this TPC object
-			lar_pandora::PFParticleVector filtered_pfp_v;
-			if(_tpcobj_filter && _do_filter) {
-
-				filtered_pfp_v = _tpcobj_filter->Filter(pfp_v, pfParticleToTrackMap, pfParticleToShowerMap, pfParticleToVertexMap);
-
-				pfp_v = filtered_pfp_v;
-
-				this->CollectTracksAndShowers(pfParticleToTrackMap, pfParticleToShowerMap, pfp_v, // input
-				                              track_v, shower_v);         // output
-			}
+			// // If filtering is on, filter the PFP for this TPC object
+			// lar_pandora::PFParticleVector filtered_pfp_v;
+			// if(_tpcobj_filter && _do_filter) {
+			//
+			//      filtered_pfp_v = _tpcobj_filter->Filter(pfp_v, pfParticleToTrackMap, pfParticleToShowerMap, pfParticleToVertexMap);
+			//
+			//      pfp_v = filtered_pfp_v;
+			//
+			//      this->CollectTracksAndShowers(pfParticleToTrackMap, pfParticleToShowerMap, pfp_v, // input
+			//                                    track_v, shower_v);         // output
+			// }
 
 			// Calculate multiplicity for this TPC object
 			this->GetMultiplicity(pfParticleList, pfp_v, particle, p, t, s);

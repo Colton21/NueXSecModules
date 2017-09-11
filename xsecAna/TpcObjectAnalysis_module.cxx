@@ -34,7 +34,7 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-NueXSec(fhicl::ParameterSet const &p) : EDAnalyzer(p){
+NueXSec(fhicl::ParameterSet &p) : EDAnalyzer(p){
 
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 
@@ -332,7 +332,7 @@ void NueXSec::analyze(art::Event & e) {
 		tpc_object_container.SetpfpVtxX(pfp_nu_vtx_x);
 		tpc_object_container.SetpfpVtxY(pfp_nu_vtx_y);
 		tpc_object_container.SetpfpVtxZ(pfp_nu_vtx_z);
-		TpcObjectContainer tpc_object_container;
+		xsec_ana::pfp_container tpc_object_container;
 		tpc_object_container.SetRunNumber(run);
 		//tpc_object_container.SetSubRunNumber();
 		tpc_object_container.SetEventNumber(event);
