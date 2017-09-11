@@ -14,17 +14,11 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 	_neutrino_flash_match_producer  = p.get<std::string>("NeutrinoFlashMatchProducer");
 	_cosmic_flash_match_producer    = p.get<std::string>("CosmicFlashMatchProducer");
 	_opflash_producer_beam          = p.get<std::string>("OpFlashBeamProducer");
-	_acpt_producer                  = p.get<std::string>("ACPTProducer");
 	_tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
 	_potsum_producer                = p.get<std::string>("POTSummaryProducer");
 	_potsum_instance                = p.get<std::string>("POTSummaryInstance");
 	_particle_id_producer           = p.get<std::string>("ParticleIDProducer");
 	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
-
-	_useDaughterMCParticles         = p.get<bool>("UseDaughterMCParticles");
-	_useDaughterPFParticles         = p.get<bool>("UseDaughterPFParticles");
-	_addDaughterMCParticles         = p.get<bool>("AddDaughterMCParticles");
-	_addDaughterPFParticles         = p.get<bool>("AddDaughterPFParticles");
 
 	_use_genie_info                 = p.get<bool>("UseGENIEInfo", "false");
 	_minimumHitRequirement          = p.get<int>("MinimumHitRequirement", 3);
@@ -119,7 +113,7 @@ void NueXSec::analyze(art::Event const & e) {
 	bool _is_mc = !_is_data;
 
 	// Instantiate the output
-	std::unique_ptr< std::vector< xsec_ana::TPCObject > >                tpcObjectVector         (new std::vector<xsec_ana::TPCObject>);
+	std::unique_ptr< std::vector< xsec_ana::TPCObject > >                 tpcObjectVector         (new std::vector<xsec_ana::TPCObject>);
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::Track> >      assnOutTPCObjectTrack  (new art::Assns<xsec_ana::TPCObject, recob::Track>      );
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::Shower> >     assnOutTPCObjectShower (new art::Assns<xsec_ana::TPCObject, recob::Shower>     );
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::PFParticle> > assnOutTPCObjectPFP    (new art::Assns<xsec_ana::TPCObject, recob::PFParticle> );
@@ -548,11 +542,6 @@ void NueXSec::analyze(art::Event const & e) {
 		tpc_object_container.SetNumPFPNeutrinos(pfp_nu_counter);
 		tpc_object_container.SetMode(mode);
 		tpc_object_container.SetIsCC(ccnc);
-
-		// for(auto const track : track_v)
-		// {
-		//      pfpLength = track.Length() << std::endl;
-		// }//end loop over pfp tracks in tpc object
 
 		tpc_object_container_v.emplace_back(tpc_object_container);
 		tpc_object_counter++;

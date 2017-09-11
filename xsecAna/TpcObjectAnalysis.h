@@ -34,8 +34,6 @@ TTree * myTree;
 bool isMC;
 bool isData;
 
-//RecoTrueMatcher matchinghelper;
-
 std::string _pfp_producer;
 std::string _hitfinderLabel;
 std::string _geantModuleLabel;
@@ -43,17 +41,11 @@ std::string _spacepointLabel;
 std::string _neutrino_flash_match_producer;
 std::string _cosmic_flash_match_producer;
 std::string _opflash_producer_beam;
-std::string _acpt_producer;
 std::string _tpcobject_producer;
 std::string _potsum_producer;
 std::string _potsum_instance;
 std::string _particle_id_producer;
 std::string _mc_ghost_producer;
-
-bool _useDaughterMCParticles;
-bool _useDaughterPFParticles;
-bool _addDaughterMCParticles;
-bool _addDaughterPFParticles;
 
 bool _use_genie_info;
 int _minimumHitRequirement;
