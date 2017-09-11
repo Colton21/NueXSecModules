@@ -2,7 +2,7 @@
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
 
-namespace nue_xsec {
+namespace xsec_ana {
 
 //_____________________________________________________________________________________
 art::Ptr<recob::PFParticle> tpcobjecthelper::GetNuPFP(lar_pandora::PFParticleVector pfp_v){
@@ -25,10 +25,10 @@ void tpcobjecthelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList
                                     lar_pandora::PFParticlesToTracks pfParticleToTrackMap,
                                     lar_pandora::PFParticlesToShowers pfParticleToShowerMap,
                                     lar_pandora::PFParticlesToVertices pfParticleToVertexMap,
-                                    std::vector<lar_pandora::PFParticleVector> & pfp_v_v,
-                                    std::vector<lar_pandora::TrackVector> & track_v_v,
-                                    std::vector<lar_pandora::ShowerVector> & shower_v_v,
-                                    std::vector<int> & p_v, std::vector<int> & t_v, std::vector<int> & s_v) {
+                                    std::vector<lar_pandora::PFParticleVector> &pfp_v_v,
+                                    std::vector<lar_pandora::TrackVector> &track_v_v,
+                                    std::vector<lar_pandora::ShowerVector> &shower_v_v,
+                                    std::vector<int> &p_v, std::vector<int> &t_v, std::vector<int> &s_v) {
 
 	track_v_v.clear();
 	shower_v_v.clear();
@@ -53,11 +53,11 @@ void tpcobjecthelper::GetTPCObjects(lar_pandora::PFParticleVector pfParticleList
 
 
 			// Collect PFPs for this TPC object
-			this->CollectPFP(pfParticleList, particle, pfp_v);
+			CollectPFP(pfParticleList, particle, pfp_v);
 
 			// Collect Tracks and Showers for this TPC object
-			this->CollectTracksAndShowers(pfParticleToTrackMap, pfParticleToShowerMap, pfp_v, // input
-			                              track_v, shower_v);               // output
+			CollectTracksAndShowers(pfParticleToTrackMap, pfParticleToShowerMap, pfp_v, // input
+			                        track_v, shower_v);                     // output
 
 			// If filtering is on, filter the PFP for this TPC object
 			lar_pandora::PFParticleVector filtered_pfp_v;
@@ -122,7 +122,7 @@ void tpcobjecthelper::CollectPFP(lar_pandora::PFParticleVector pfParticleList,
 		for (unsigned int m = 0; m < daughterIDs.size(); ++m) {
 			const art::Ptr<recob::PFParticle> daughter = pfParticleList.at(daughterIDs.at(m));
 			// Recursive call
-			this->CollectPFP(pfParticleList, daughter, pfp_v);
+			CollectPFP(pfParticleList, daughter, pfp_v);
 		}
 	}
 

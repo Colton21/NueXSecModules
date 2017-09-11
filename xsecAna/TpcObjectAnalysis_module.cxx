@@ -179,7 +179,7 @@ void NueXSec::analyze(art::Event & e) {
 	std::vector<lar_pandora::PFParticleVector> pfp_v_v;
 	std::vector<int> p_v, t_v, s_v;
 
-	tpcobjecthelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToShowerMap, pfParticleToVertexMap, pfp_v_v, track_v_v, shower_v_v, p_v, t_v, s_v);
+	_tpcobjecthelper_instance.tpcobjecthelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToShowerMap, pfParticleToVertexMap, pfp_v_v, track_v_v, shower_v_v, p_v, t_v, s_v);
 
 	lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
 	lar_pandora::MCParticlesToHits matchedParticleHits;
@@ -256,14 +256,14 @@ void NueXSec::analyze(art::Event & e) {
 		obj.SetParticleOrigins(origin_v);
 
 		// Set vertex
-		art::Ptr<recob::PFParticle> pfp = tpcobjecthelper::GetNuPFP(pfp_v_v[pfparticle_vector]);
+		art::Ptr<recob::PFParticle> pfp = _tpcobjecthelper_instance.tpcobjecthelper::GetNuPFP(pfp_v_v[pfparticle_vector]);
 		auto iter = pfParticleToVertexMap.find(pfp);
 		if (iter != pfParticleToVertexMap.end()) {
 			obj.SetVertex(*(iter->second[0]));
 		}
 
 		// Set origin
-		::xsec_ana::TPCObjectOrigin origin = xsec_ana::kUnknown;
+		xsec_ana::TPCObjectOrigin origin = xsec_ana::kUnknown;
 		if (_is_mc)
 			origin = UBXSecHelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[pfparticle_vector]);
 		obj.SetOrigin(origin);
@@ -314,7 +314,7 @@ void NueXSec::analyze(art::Event & e) {
 	{
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
-		cosnt int npfparticles              = tpcobj.GetNPFP();
+		const int npfparticles              = tpcobj.GetNPFP();
 		const TPCObjectOrigin tpcobj_origin = tpcobj.GetOrigin();
 		const std::vector<recob::PFParticle> pfp_v = tpcobj.GetPFPs();
 		const std::vector<recob::Track> track_v = tpcobj.GetTracks();
