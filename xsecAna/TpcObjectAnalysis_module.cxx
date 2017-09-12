@@ -40,7 +40,7 @@ NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
 
 }
 
-void NueXSec::analyze(art::Event & e) {
+void NueXSec::analyze(art::Event const & e) {
 
 	art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;
@@ -297,14 +297,20 @@ void NueXSec::analyze(art::Event & e) {
 		int total_nhits_w = 0;
 		int total_nhits = 0;
 		//need to sum all hits from both tracks and showers
-		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track_v, nhits_u, nhits_v, nhits_w);
-		total_nhits_u += nhits_u;
-		total_nhits_v += nhits_v;
-		total_nhits_w += nhits_w;
-		xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower_v, nhits_u, nhits_v, nhits_w);
-		total_nhits_u += nhits_u;
-		total_nhits_v += nhits_v;
-		total_nhits_w += nhits_w;
+		for(auto const track : track_v)
+		{
+			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track nhits_u, nhits_v, nhits_w);
+			total_nhits_u += nhits_u;
+			total_nhits_v += nhits_v;
+			total_nhits_w += nhits_w;
+		}
+		for(auto const shower : shower_v)
+		{
+			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower, nhits_u, nhits_v, nhits_w);
+			total_nhits_u += nhits_u;
+			total_nhits_v += nhits_v;
+			total_nhits_w += nhits_w;
+		}
 		total_nhits = (total_nhits_u + total_nhits_v + total_nhits_w);
 
 		tpc_object_container.SetNumPFPHits   (total_nhits);
@@ -375,14 +381,22 @@ void NueXSec::analyze(art::Event & e) {
 			particle_container.SetIsNeutrino(is_neutrino);
 
 			// Reco vertex
+			// lar_pandora::VertexVector vertexVector;
+			// lar_pandora::PFParticlesToVertices particlesToVertices;
+			// lar_pandora::LArPandoraHelper::CollectVertices(e, _pfp_producer, vertexVector, particlesToVertices);
+
 			auto iter = particlesToVertices.find(pfp);
+			double pfp_vtx_x = 0;
+			double pfp_vtx_y = 0;
+			double pfp_vtx_z = 0;
 			if (iter != particlesToVertices.end()) {
-				lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
+				lar_pandora::VertexVector vertex_v = pfParticleToVertexMap.find(pfp)->second;
+				//lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
 				double reco_vtx[3];
 				vertex_v[0]->XYZ(reco_vtx);
-				const double pfp_vtx_x = reco_vtx[0];
-				const double pfp_vtx_y = reco_vtx[1];
-				const double pfp_vtx_z = reco_vtx[2];
+				pfp_vtx_x = reco_vtx[0];
+				pfp_vtx_y = reco_vtx[1];
+				pfp_vtx_z = reco_vtx[2];
 			}
 
 			particle_container.SetpfpVtxX(pfp_vtx_x);
@@ -516,7 +530,7 @@ void NueXSec::analyze(art::Event & e) {
 
 }//end analyze
 
-void NueXSec::endSubRun(const art::SubRun& sr) {
+void NueXSec::endSubRun(art::SubRun const & sr) {
 	//probably want to fill the tree here
 	std::cout << "[XSec_Module] End Running" << std::endl;
 

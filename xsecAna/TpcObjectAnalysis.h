@@ -12,10 +12,11 @@
 #include "UtilityFunctions.h"
 
 namespace xsec_ana {
-
 class NueXSec;
+}
 
-class NueXSec : public art::EDAnalyzer {
+class xsec_ana::NueXSec : public art::EDAnalyzer {
+
 public:
 explicit NueXSec(fhicl::ParameterSet const & p);
 // The compiler-generated destructor is fine for non-base
@@ -29,9 +30,9 @@ NueXSec & operator = (NueXSec &&) = delete;
 
 // Required functions.
 void reconfigure(fhicl::ParameterSet const &p) override;
-void analyze(art::Event & e);
-//void analyze(art::Event const & e) override;
-void endSubRun(const art::SubRun &sr) override;
+//void analyze(art::Event & e);
+void analyze(art::Event const & e) override;
+void endSubRun(art::SubRun const &sr) override;
 
 
 private:
