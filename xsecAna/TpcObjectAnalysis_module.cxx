@@ -4,18 +4,16 @@ namespace xsec_ana {
 
 void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 {
-
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
 	_tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
-
 }
 void NueXSecProducer::reconfigure(fhicl::ParameterSet const &p)
 {
-
+	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
 	_geantModuleLabel               = p.get<std::string>("GeantModule");
 	_spacepointLabel                = p.get<std::string>("SpacePointProducer");
