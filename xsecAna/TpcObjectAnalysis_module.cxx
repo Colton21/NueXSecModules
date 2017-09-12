@@ -39,7 +39,7 @@ void NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 }
 
-NueXsec::produce(art::Event & e){
+void NueXSec::produce(art::Event & e){
 	art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;
 	xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
@@ -70,45 +70,6 @@ NueXsec::produce(art::Event & e){
 	lar_pandora::ShowerVector allPfParticleShowers;
 	lar_pandora::PFParticlesToShowers pfParticleToShowerMap;
 	lar_pandora::LArPandoraHelper::CollectShowers(e, _showerLabel, allPfParticleShowers, pfParticleToShowerMap);
-
-
-// Get PFP
-	art::Handle<std::vector<recob::PFParticle> > pfp_h;
-	e.getByLabel(_pfp_producer,pfp_h);
-	if(!pfp_h.isValid())
-	{
-		std::cout << "[UBXSec] PFP product " << _pfp_producer << " not found..." << std::endl;
-		//throw std::exception();
-	}
-	if(pfp_h->empty())
-	{
-		std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
-	}
-	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
-	art::FindManyP<recob::Shower> showers_from_pfp(pfp_h, e, _pfp_producer);
-
-// Get PID information
-// art::FindMany<anab::ParticleID> particleids_from_track (track_h, e, _particle_id_producer);
-// art::FindMany<anab::ParticleID> particleids_from_shower (shower_h, e, _particle_id_producer);
-// if (!particleids_from_track.isValid()) {
-//      std::cout << "[UBXSec] anab::ParticleID Track is not valid." << std::endl;
-// }
-// if (!particleids_from_shower.isValid()) {
-//      std::cout << "[UBXSec] anab::ParticleID Shower is not valid." << std::endl;
-// }
-// std::cout << "[UBXSec] Numeber of particleids_from_track " << particleids_from_track.size() << std::endl;
-// std::cout << "[UBXSec] Numeber of particleids_from_shower " << particleids_from_shower.size() << std::endl;
-
-
-// Get Ghosts
-	art::Handle<std::vector<xsec_ana::MCGhost> > ghost_h;
-	e.getByLabel(_mc_ghost_producer,ghost_h);
-	if(!ghost_h.isValid()) {
-		std::cout << "[UBXSec] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
-		//throw std::exception();
-	}
-	art::FindManyP<xsec_ana::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
-	art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer);
 
 
 	std::vector<lar_pandora::TrackVector     > track_v_v;
@@ -241,8 +202,34 @@ void NueXSec::analyze(art::Event const & e)
 
 	run = e.id().run();
 	event = e.id().event();
-	bool _is_data = e.isRealData();
-	bool _is_mc = !_is_data;
+	//bool _is_data = e.isRealData();
+	//bool _is_mc = !_is_data;
+
+
+	// Get PFP
+	art::Handle<std::vector<recob::PFParticle> > pfp_h;
+	e.getByLabel(_pfp_producer,pfp_h);
+	if(!pfp_h.isValid())
+	{
+		std::cout << "[UBXSec] PFP product " << _pfp_producer << " not found..." << std::endl;
+		//throw std::exception();
+	}
+	if(pfp_h->empty())
+	{
+		std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
+	}
+	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
+	art::FindManyP<recob::Shower> showers_from_pfp(pfp_h, e, _pfp_producer);
+
+	// Get Ghosts
+	art::Handle<std::vector<xsec_ana::MCGhost> > ghost_h;
+	e.getByLabel(_mc_ghost_producer,ghost_h);
+	if(!ghost_h.isValid()) {
+		std::cout << "[UBXSec] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
+		//throw std::exception();
+	}
+	art::FindManyP<xsec_ana::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
+	art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer);
 
 	// Get TPCObjects from the Event
 	art::Handle<std::vector<xsec_ana::TPCObject> > tpcobj_h;
@@ -255,13 +242,13 @@ void NueXSec::analyze(art::Event const & e)
 	art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
 	art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
 
-	std::cout << "TPC Objects in this Event: " << tpcObjectVector->size() << std::endl;
+	std::cout << "TPC Objects in this Event: " << tpcobj_h->size() << std::endl;
 	//loop over all of the tpc objects!
 
 	int tpc_object_counter = 0;
 	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
 
-	for(int tpc_counter = 0; tpc_counter < tpcobj_h->Size(); tpc_counter++)
+	for(int tpc_counter = 0; tpc_counter < tpcobj_h->size(); tpc_counter++)
 	{
 		const xsec_ana::TPCObject tpcobj = (*tpcobj_h)[tpc_counter];
 		const int ntracks                   = tpcobj.GetNTracks();
@@ -396,20 +383,20 @@ void NueXSec::analyze(art::Event const & e)
 			particle_container.SetIsNeutrino(is_neutrino);
 
 			// Reco vertex
-			// lar_pandora::VertexVector vertexVector;
-			// lar_pandora::PFParticlesToVertices particlesToVertices;
-			// lar_pandora::LArPandoraHelper::CollectVertices(e, _pfp_producer, vertexVector, particlesToVertices);
+			lar_pandora::VertexVector vertexVector;
+			lar_pandora::PFParticlesToVertices particlesToVertices;
+			lar_pandora::LArPandoraHelper::CollectVertices(e, _pfp_producer, vertexVector, particlesToVertices);
 
-			//auto iter = particlesToVertices.find(pfp);
-			auto iter = pfParticleToVertexMap.find(pfp);
+			auto iter = particlesToVertices.find(pfp);
+			//auto iter = pfParticleToVertexMap.find(pfp);
 			double pfp_vtx_x = 0;
 			double pfp_vtx_y = 0;
 			double pfp_vtx_z = 0;
-			//if (iter != particlesToVert.end())
-			if(iter != pfParticleToVertexMap.end())
+			if (iter != particlesToVert.end())
+			//if(iter != pfParticleToVertexMap.end())
 			{
-				lar_pandora::VertexVector vertex_v = pfParticleToVertexMap.find(pfp)->second;
-				//lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
+				//lar_pandora::VertexVector vertex_v = pfParticleToVertexMap.find(pfp)->second;
+				lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
 				double reco_vtx[3];
 				vertex_v[0]->XYZ(reco_vtx);
 				pfp_vtx_x = reco_vtx[0];
