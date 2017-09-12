@@ -88,7 +88,7 @@ std::vector<recob::Shower>     fShowers;
 std::vector<recob::PFParticle> fPFParticles;
 recob::Vertex fVertex;
 std::vector< simb::Origin_t > fOriginVector;
-xsec_ana::TPCObjectOrigin fOrigin;
+simb::Origin_t fOrigin;
 xsec_ana::TPCObjectOriginExtra fOriginExtra;
 int fPfpMult;
 int fTrackMult;

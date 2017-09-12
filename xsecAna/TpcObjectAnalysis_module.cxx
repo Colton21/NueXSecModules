@@ -302,7 +302,7 @@ void NueXSec::analyze(art::Event const & e)
 		//need to sum all hits from both tracks and showers
 		for(auto const track : track_v)
 		{
-			art::Prt<recob::Track> _track = *track;
+			art::Ptr<recob::Track> & _track = track;
 			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, _track, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
@@ -310,7 +310,7 @@ void NueXSec::analyze(art::Event const & e)
 		}
 		for(auto const shower : shower_v)
 		{
-			art::Ptr<recob::Shower> _shower = *shower;
+			art::Ptr<recob::Shower> & _shower = shower;
 			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, _shower, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
