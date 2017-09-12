@@ -28,7 +28,7 @@ void TPCObject::SetParticleOrigins (std::vector< simb::Origin_t > origins)
 {
 	this->fOriginVector = origins;
 }
-void TPCObject::SetOrigin      (xsec_ana::TPCObjectOrigin origin)       {
+void TPCObject::SetOrigin      (simb::Origin_t origin)       {
 	this->fOrigin = origin;
 }
 void TPCObject::SetOriginExtra (xsec_ana::TPCObjectOriginExtra origin)  {

@@ -62,7 +62,7 @@ void SetTracks(std::vector<recob::Track>);
 void SetShowers(std::vector<recob::Shower>);
 void SetPFPs(std::vector<recob::PFParticle>);
 void SetVertex(recob::Vertex);
-void SetOrigin(xsec_ana::TPCObjectOrigin);
+void SetOrigin(simb::Origin_t);
 void SetOriginExtra(xsec_ana::TPCObjectOriginExtra);
 void SetParticleOrigins (std::vector< simb::Origin_t > origins);
 void SetMultiplicity(int pfpMult, int trackMult, int showerMult);

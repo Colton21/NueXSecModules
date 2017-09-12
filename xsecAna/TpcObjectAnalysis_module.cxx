@@ -302,14 +302,16 @@ void NueXSec::analyze(art::Event const & e)
 		//need to sum all hits from both tracks and showers
 		for(auto const track : track_v)
 		{
-			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track nhits_u, nhits_v, nhits_w);
+			art::Prt<recob::Track> _track = *track;
+			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, _track, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
 		}
 		for(auto const shower : shower_v)
 		{
-			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower, nhits_u, nhits_v, nhits_w);
+			art::Ptr<recob::Shower> _shower = *shower;
+			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, _shower, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
@@ -388,11 +390,14 @@ void NueXSec::analyze(art::Event const & e)
 			// lar_pandora::PFParticlesToVertices particlesToVertices;
 			// lar_pandora::LArPandoraHelper::CollectVertices(e, _pfp_producer, vertexVector, particlesToVertices);
 
-			auto iter = particlesToVertices.find(pfp);
+			//auto iter = particlesToVertices.find(pfp);
+			auto iter = pfParticleToVertexMap.find(pfp);
 			double pfp_vtx_x = 0;
 			double pfp_vtx_y = 0;
 			double pfp_vtx_z = 0;
-			if (iter != particlesToVertices.end()) {
+			//if (iter != particlesToVert.end())
+			if(iter != pfParticleToVertexMap.end())
+			{
 				lar_pandora::VertexVector vertex_v = pfParticleToVertexMap.find(pfp)->second;
 				//lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
 				double reco_vtx[3];
