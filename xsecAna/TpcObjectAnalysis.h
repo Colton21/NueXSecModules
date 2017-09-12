@@ -46,6 +46,12 @@ std::string _vertexLabel;
 std::string _trackLabel;
 std::string _showerLabel;
 
+bool _use_genie_info;
+int _minimumHitRequirement;
+
+double _beam_spill_start;
+double _beam_spill_end;
+
 bool _debug;
 bool _verbose;
 bool isMC;
@@ -86,12 +92,6 @@ bool isData;
 std::string _pfp_producer;
 std::string _mc_ghost_producer;
 std::string _tpcobject_producer;
-
-bool _use_genie_info;
-int _minimumHitRequirement;
-
-double _beam_spill_start;
-double _beam_spill_end;
 
 bool _debug;
 bool _verbose;
