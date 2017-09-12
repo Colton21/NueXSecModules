@@ -34,7 +34,7 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-void NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
+NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
 {
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 }
@@ -392,7 +392,7 @@ void NueXSec::analyze(art::Event const & e)
 			double pfp_vtx_x = 0;
 			double pfp_vtx_y = 0;
 			double pfp_vtx_z = 0;
-			if (iter != particlesToVertieces.end())
+			if (iter != particlesToVertices.end())
 			//if(iter != pfParticleToVertexMap.end())
 			{
 				//lar_pandora::VertexVector vertex_v = pfParticleToVertexMap.find(pfp)->second;
