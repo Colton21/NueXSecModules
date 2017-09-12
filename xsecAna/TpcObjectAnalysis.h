@@ -13,7 +13,32 @@
 
 namespace xsec_ana {
 class NueXSec;
+class NueXSecProducer;
 }
+
+class xsec_ana::NueXSecProducer : public art::EDProducer {
+public:
+explicit NueXSecProducer(fhicl::ParameterSet const & p);
+
+// Plugins should not be copied or assigned.
+NueXSecProducer(NueXSecProducer const &) = delete;
+NueXSecProducer(NueXSecProducer &&) = delete;
+NueXSecProducer & operator = (NueXSecProducer const &) = delete;
+NueXSecProducer & operator = (NueXSecProducer &&) = delete;
+
+void reconfigure(fhicl::ParameterSet const &p) override;
+void produce(art::Event & e) override;
+
+private:
+bool _debug;
+bool _verbose;
+bool isMC;
+bool isData;
+
+int run;
+int event;
+
+};
 
 class xsec_ana::NueXSec : public art::EDAnalyzer {
 
@@ -30,7 +55,7 @@ NueXSec & operator = (NueXSec &&) = delete;
 
 // Required functions.
 void reconfigure(fhicl::ParameterSet const &p) override;
-void produce(art::Event & e) override;
+//void produce(art::Event & e) override;
 //void analyze(art::Event & e);
 void analyze(art::Event const & e) override;
 void endSubRun(art::SubRun const &sr) override;

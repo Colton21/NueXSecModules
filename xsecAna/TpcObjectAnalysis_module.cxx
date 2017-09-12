@@ -6,17 +6,25 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 {
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
+	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
+	_tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
+
+	_debug                          = p.get<bool>("Debug", false);
+	_verbose                        = p.get<bool>("Verbose", false);
+
+}
+void NueXSecProducer::reconfigure(fhicl::ParameterSet const &p)
+{
+
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
 	_geantModuleLabel               = p.get<std::string>("GeantModule");
 	_spacepointLabel                = p.get<std::string>("SpacePointProducer");
 	_neutrino_flash_match_producer  = p.get<std::string>("NeutrinoFlashMatchProducer");
 	_cosmic_flash_match_producer    = p.get<std::string>("CosmicFlashMatchProducer");
 	_opflash_producer_beam          = p.get<std::string>("OpFlashBeamProducer");
-	_tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
 	_potsum_producer                = p.get<std::string>("POTSummaryProducer");
 	_potsum_instance                = p.get<std::string>("POTSummaryInstance");
 	_particle_id_producer           = p.get<std::string>("ParticleIDProducer");
-	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
 
 	_vertexLabel                    =p.get<std::string>("VertexProducer");
 	_trackLabel                     =p.get<std::string>("TrackProducer");
@@ -30,7 +38,6 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
-
 }
 
 
@@ -39,7 +46,7 @@ NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 }
 
-void NueXSec::produce(art::Event & e){
+void NueXSecProducer::produce(art::Event & e){
 	art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;
 	xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
