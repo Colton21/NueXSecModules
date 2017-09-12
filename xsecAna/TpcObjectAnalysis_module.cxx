@@ -39,7 +39,7 @@ NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 }
 
-void NueXSec::analyze(art::Event const & e)
+void NueXSec::analyze(art::Event & e)
 {
 	art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;

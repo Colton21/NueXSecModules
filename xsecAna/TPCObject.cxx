@@ -4,8 +4,8 @@
 namespace xsec_ana {
 
 TPCObject::TPCObject() {
-	fOrigin      = xsec_ana::kUnknown;
-	fOriginExtra = xsec_ana::kNotSet;
+	fOrigin      = simb::kUnknown;
+	fOriginExtra = simb::kUnknown;//was kUnSet before
 }
 
 TPCObject::~TPCObject(){
