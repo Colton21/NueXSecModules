@@ -58,8 +58,8 @@ TPCObject();
 virtual ~TPCObject();
 
 // Setter methods
-void SetTracks(std::vector<recob::Track>);
-void SetShowers(std::vector<recob::Shower>);
+void SetTracks(std::vector <art::Ptr<recob::Track>  >);
+void SetShowers(std::vector<art::Ptr<recob::Shower> >);
 void SetPFPs(std::vector<recob::PFParticle>);
 void SetVertex(recob::Vertex);
 void SetOrigin(simb::Origin_t);
@@ -68,8 +68,8 @@ void SetParticleOrigins (std::vector< simb::Origin_t > origins);
 void SetMultiplicity(int pfpMult, int trackMult, int showerMult);
 
 // Getter methods
-const std::vector<recob::Track>               & GetTracks()          const;
-const std::vector<recob::Shower>              & GetShowers()         const;
+const std::vector<art::Ptr<recob::Track> >               & GetTracks()          const;
+const std::vector<art::Ptr<recob::Shower> >              & GetShowers()         const;
 const std::vector<recob::PFParticle>          & GetPFPs()            const;
 const recob::Vertex                           & GetVertex()          const;
 const simb::Origin_t                          & GetOrigin()          const;
@@ -83,8 +83,8 @@ const int                                     GetNTracksCloseToVertex(double)   
 
 private:
 
-std::vector<recob::Track>      fTracks;
-std::vector<recob::Shower>     fShowers;
+std::vector<art::Ptr<recob::Track>  >     fTracks;
+std::vector<art::Ptr<recob::Shower> >     fShowers;
 std::vector<recob::PFParticle> fPFParticles;
 recob::Vertex fVertex;
 std::vector< simb::Origin_t > fOriginVector;

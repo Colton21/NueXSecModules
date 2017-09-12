@@ -124,15 +124,15 @@ void NueXSecProducer::produce(art::Event & e){
 		xsec_ana::TPCObject obj;
 
 		// Set tracks
-		std::vector<recob::Track> trk_v;
+		std::vector<art::Ptr<recob::Track> > trk_v;
 		//trk_v.clear();
-		for (auto t : track_v_v[pfparticle_vector]) trk_v.emplace_back((*t));
+		for (auto t : track_v_v[pfparticle_vector]) trk_v.emplace_back(t);
 		obj.SetTracks(trk_v);
 
 		// Set showers
-		std::vector<recob::Shower> shwr_v;
+		std::vector<art::Ptr<recob::Shower> > shwr_v;
 		//shwr_v.clear();
-		for (auto s : shower_v_v[pfparticle_vector]) shwr_v.emplace_back((*s));
+		for (auto s : shower_v_v[pfparticle_vector]) shwr_v.emplace_back(s);
 		obj.SetShowers(shwr_v);
 
 		//set individual particle origins
@@ -304,16 +304,16 @@ void NueXSec::analyze(art::Event const & e)
 		//need to sum all hits from both tracks and showers
 		for(auto const track : track_v)
 		{
-			art::Ptr<recob::Track> & _track = track;
-			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, _track, nhits_u, nhits_v, nhits_w);
+			//art::Ptr<recob::Track> & _track = track;
+			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
 		}
 		for(auto const shower : shower_v)
 		{
-			art::Ptr<recob::Shower> & _shower = shower;
-			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, _shower, nhits_u, nhits_v, nhits_w);
+			//art::Ptr<recob::Shower> & _shower = shower;
+			xsec_ana::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
