@@ -34,35 +34,33 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
+void NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
 {
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 }
 
-void NueXSec::analyze(art::Event & e)
-{
+NueXsec::produce(art::Event & e){
 	art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;
 	xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
 
 	run = e.id().run();
-
 	event = e.id().event();
 	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
 
-	// Instantiate the output
+// Instantiate the output
 	std::unique_ptr< std::vector< xsec_ana::TPCObject > >                 tpcObjectVector        (new std::vector<xsec_ana::TPCObject>);
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::Track> >      assnOutTPCObjectTrack  (new art::Assns<xsec_ana::TPCObject, recob::Track>      );
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::Shower> >     assnOutTPCObjectShower (new art::Assns<xsec_ana::TPCObject, recob::Shower>     );
 	std::unique_ptr< art::Assns<xsec_ana::TPCObject, recob::PFParticle> > assnOutTPCObjectPFP    (new art::Assns<xsec_ana::TPCObject, recob::PFParticle> );
 
 
-	// Use LArPandoraHelper functions to collect Pandora information
+// Use LArPandoraHelper functions to collect Pandora information
 	lar_pandora::PFParticleVector pfParticleList;        //vector of PFParticles
 	lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, pfParticleList);
 
-	// Collect vertices, tracks and shower
+// Collect vertices, tracks and shower
 	lar_pandora::VertexVector allPfParticleVertices;
 	lar_pandora::PFParticlesToVertices pfParticleToVertexMap;
 	lar_pandora::LArPandoraHelper::CollectVertices(e, _vertexLabel, allPfParticleVertices, pfParticleToVertexMap);
@@ -74,7 +72,7 @@ void NueXSec::analyze(art::Event & e)
 	lar_pandora::LArPandoraHelper::CollectShowers(e, _showerLabel, allPfParticleShowers, pfParticleToShowerMap);
 
 
-	// Get PFP
+// Get PFP
 	art::Handle<std::vector<recob::PFParticle> > pfp_h;
 	e.getByLabel(_pfp_producer,pfp_h);
 	if(!pfp_h.isValid())
@@ -89,20 +87,20 @@ void NueXSec::analyze(art::Event & e)
 	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
 	art::FindManyP<recob::Shower> showers_from_pfp(pfp_h, e, _pfp_producer);
 
-	// Get PID information
-	// art::FindMany<anab::ParticleID> particleids_from_track (track_h, e, _particle_id_producer);
-	// art::FindMany<anab::ParticleID> particleids_from_shower (shower_h, e, _particle_id_producer);
-	// if (!particleids_from_track.isValid()) {
-	//      std::cout << "[UBXSec] anab::ParticleID Track is not valid." << std::endl;
-	// }
-	// if (!particleids_from_shower.isValid()) {
-	//      std::cout << "[UBXSec] anab::ParticleID Shower is not valid." << std::endl;
-	// }
-	// std::cout << "[UBXSec] Numeber of particleids_from_track " << particleids_from_track.size() << std::endl;
-	// std::cout << "[UBXSec] Numeber of particleids_from_shower " << particleids_from_shower.size() << std::endl;
+// Get PID information
+// art::FindMany<anab::ParticleID> particleids_from_track (track_h, e, _particle_id_producer);
+// art::FindMany<anab::ParticleID> particleids_from_shower (shower_h, e, _particle_id_producer);
+// if (!particleids_from_track.isValid()) {
+//      std::cout << "[UBXSec] anab::ParticleID Track is not valid." << std::endl;
+// }
+// if (!particleids_from_shower.isValid()) {
+//      std::cout << "[UBXSec] anab::ParticleID Shower is not valid." << std::endl;
+// }
+// std::cout << "[UBXSec] Numeber of particleids_from_track " << particleids_from_track.size() << std::endl;
+// std::cout << "[UBXSec] Numeber of particleids_from_shower " << particleids_from_shower.size() << std::endl;
 
 
-	// Get Ghosts
+// Get Ghosts
 	art::Handle<std::vector<xsec_ana::MCGhost> > ghost_h;
 	e.getByLabel(_mc_ghost_producer,ghost_h);
 	if(!ghost_h.isValid()) {
@@ -128,7 +126,7 @@ void NueXSec::analyze(art::Event & e)
 		_recotruehelper_instance.GetRecoToTrueMatches(matchedParticles, matchedParticleHits);
 	}
 
-	//reco true matching is performed here!
+//reco true matching is performed here!
 	std::vector<art::Ptr<recob::PFParticle> > neutrinoOriginPFP;
 	std::vector<art::Ptr<recob::PFParticle> > cosmicOriginPFP;
 
@@ -151,9 +149,9 @@ void NueXSec::analyze(art::Event & e)
 		}
 		std::pair < int, simb::Origin_t > pfp_origin (pf_par->Self(), mc_truth->Origin());
 		pfp_origin_v.emplace_back(pfp_origin);
-	}//end looping mc to pfp
+	} //end looping mc to pfp
 
-	//loop over TPC objects
+//loop over TPC objects
 	for (size_t pfparticle_vector = 0; pfparticle_vector < pfp_v_v.size(); pfparticle_vector++)
 	{
 
@@ -218,22 +216,33 @@ void NueXSec::analyze(art::Event & e)
 		util::CreateAssn(*this, e, *tpcObjectVector, shower_v_v[pfparticle_vector], *assnOutTPCObjectShower);
 		util::CreateAssn(*this, e, *tpcObjectVector, pfp_v_v[pfparticle_vector],    *assnOutTPCObjectPFP);
 
-	}// end looping pfparticle_vectors (tpc objects)
+	} // end looping pfparticle_vectors (tpc objects)
 
-	// Put TPCObjects into the Event
+// Put TPCObjects into the Event
 	e.put(std::move(tpcObjectVector));
 	e.put(std::move(assnOutTPCObjectTrack));
 	e.put(std::move(assnOutTPCObjectShower));
 	e.put(std::move(assnOutTPCObjectPFP));
 
 	if (_debug) std::cout << "[TPCObjectMaker] Ends" << std::endl;
-	//***********************************
-	//finish constructing TPC Objects! **
-	//***********************************
 
-	//**************************
-	//start the analysis loops!
-	//*************************
+}
+//***********************************
+//finish constructing TPC Objects! **
+//***********************************
+
+//**************************
+//start the analysis loops!
+//*************************
+
+void NueXSec::analyze(art::Event const & e)
+{
+	art::ServiceHandle<cheat::BackTracker> bt;
+
+	run = e.id().run();
+	event = e.id().event();
+	bool _is_data = e.isRealData();
+	bool _is_mc = !_is_data;
 
 	// Get TPCObjects from the Event
 	art::Handle<std::vector<xsec_ana::TPCObject> > tpcobj_h;
@@ -252,8 +261,9 @@ void NueXSec::analyze(art::Event & e)
 	int tpc_object_counter = 0;
 	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
 
-	for(auto const tpcobj : *tpcObjectVector)
+	for(int tpc_counter = 0; tpc_counter < tpcobj_h->Size(); tpc_counter++)
 	{
+		const xsec_ana::TPCObject tpcobj = (*tpcobj_h)[tpc_counter];
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
 		const int npfparticles              = tpcobj.GetNPFP();

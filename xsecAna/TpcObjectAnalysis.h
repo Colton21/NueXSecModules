@@ -30,8 +30,9 @@ NueXSec & operator = (NueXSec &&) = delete;
 
 // Required functions.
 void reconfigure(fhicl::ParameterSet const &p) override;
+void produce(art::Event & e) override;
 //void analyze(art::Event & e);
-void analyze(art::Event & e) override;
+void analyze(art::Event const & e) override;
 void endSubRun(art::SubRun const &sr) override;
 
 

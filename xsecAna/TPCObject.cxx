@@ -31,7 +31,7 @@ void TPCObject::SetParticleOrigins (std::vector< simb::Origin_t > origins)
 void TPCObject::SetOrigin      (simb::Origin_t origin)       {
 	this->fOrigin = origin;
 }
-void TPCObject::SetOriginExtra (xsec_ana::TPCObjectOriginExtra origin)  {
+void TPCObject::SetOriginExtra (simb::Origin_t origin)  {
 	this->fOriginExtra = origin;
 }
 void TPCObject::SetMultiplicity(int p, int t, int s)                 {
@@ -51,13 +51,13 @@ const std::vector<recob::PFParticle>  & TPCObject::GetPFPs()        const {
 const recob::Vertex                   & TPCObject::GetVertex()      const {
 	return this->fVertex;
 }
-const std::vector< simb::Origin_t > & TPCObject::GetParticleOrigins()  const {
+const std::vector< simb::Origin_t >   & TPCObject::GetParticleOrigins()  const {
 	return this->fOriginVector;
 }
-const xsec_ana::TPCObjectOrigin          & TPCObject::GetOrigin()      const {
+const simb::Origin_t                  & TPCObject::GetOrigin()      const {
 	return this->fOrigin;
 }
-const xsec_ana::TPCObjectOriginExtra     & TPCObject::GetOriginExtra() const {
+const simb::Origin_t                  & TPCObject::GetOriginExtra() const {
 	return this->fOriginExtra;
 }
 
