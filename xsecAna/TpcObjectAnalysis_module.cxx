@@ -261,8 +261,8 @@ void NueXSec::analyze(art::Event const & e)
 		const int npfparticles              = tpcobj.GetNPFP();
 		const simb::Origin_t tpcobj_origin  = tpcobj.GetOrigin();
 		const std::vector<recob::PFParticle> pfp_v = tpcobj.GetPFPs();
-		const std::vector<recob::Track>  track_v  = tpcobj.GetTracks();
-		const std::vector<recob::Shower> shower_v = tpcobj.GetShowers();
+		const std::vector<art::Ptr<recob::Track>  >  track_v  = tpcobj.GetTracks();
+		const std::vector<art::Ptr<recob::Shower> > shower_v  = tpcobj.GetShowers();
 
 		if(_verbose)
 		{
