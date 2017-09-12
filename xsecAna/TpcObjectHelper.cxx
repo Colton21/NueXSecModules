@@ -209,9 +209,9 @@ void tpcobjecthelper::GetMultiplicity(lar_pandora::PFParticleVector pfParticleLi
 }
 
 //__________________________________________________________________________
-xsec_ana::TPCObjectOrigin tpcobjecthelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle> > neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle> > cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v) {
+simb::Origin_t tpcobjecthelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFParticle> > neutrinoOriginPFP, std::vector<art::Ptr<recob::PFParticle> > cosmicOriginPFP, lar_pandora::PFParticleVector pfp_v) {
 
-	xsec_ana::TPCObjectOrigin origin = xsec_ana::kUnknown;
+	simb::Origin_t origin = simb::kUnknown;
 
 	int nuOrigin     = 0;
 	int cosmicOrigin = 0;
@@ -236,9 +236,9 @@ xsec_ana::TPCObjectOrigin tpcobjecthelper::GetSliceOrigin(std::vector<art::Ptr<r
 		}
 	}
 
-	if (nuOrigin > 0  && cosmicOrigin == 0) origin = xsec_ana::kBeamNeutrino;
-	if (nuOrigin == 0 && cosmicOrigin > 0 ) origin = xsec_ana::kCosmicRay;
-	if (nuOrigin > 0  && cosmicOrigin > 0 ) origin = xsec_ana::kMixed;
+	if (nuOrigin > 0  && cosmicOrigin == 0) origin = simb::kBeamNeutrino;
+	if (nuOrigin == 0 && cosmicOrigin > 0 ) origin = simb::kCosmicRay;
+	if (nuOrigin > 0  && cosmicOrigin > 0 ) origin = simb::kMixed;
 
 	return origin;
 

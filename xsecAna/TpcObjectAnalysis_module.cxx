@@ -201,7 +201,8 @@ void NueXSec::analyze(art::Event & e) {
 		}
 
 		// Set origin
-		xsec_ana::TPCObjectOrigin origin = xsec_ana::kUnknown;
+		//xsec_ana::TPCObjectOrigin origin = xsec_ana::kUnknown;
+		simb::Origin_t origin = simb::kUnknown;
 		if (_is_mc)
 			origin = _tpcobjecthelper_instance.tpcobjecthelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[pfparticle_vector]);
 		obj.SetOrigin(origin);
@@ -253,10 +254,10 @@ void NueXSec::analyze(art::Event & e) {
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
 		const int npfparticles              = tpcobj.GetNPFP();
-		const TPCObjectOrigin tpcobj_origin = tpcobj.GetOrigin();
+		const simb::Origin_t tpcobj_origin  = tpcobj.GetOrigin();
 		const std::vector<recob::PFParticle> pfp_v = tpcobj.GetPFPs();
-		const std::vector<art::Ptr<recob::Track> >  track_v  = tpcobj.GetTracks();
-		const std::vector<art::Ptr<recob::Shower> > shower_v = tpcobj.GetShowers();
+		const std::vector<recob::Track>  track_v  = tpcobj.GetTracks();
+		const std::vector<recob::Shower> shower_v = tpcobj.GetShowers();
 
 		if(_verbose)
 		{

@@ -13,6 +13,11 @@ namespace nue_xsec {
 
 class recotruehelper {
 
+private:
+
+lar_pandora::HitsToMCParticles _trueHitsToParticles;   ///< A map from recon hits to MCParticles
+lar_pandora::PFParticlesToHits _recoParticlesToHits; ///< A map from PFParticles to recon hits
+
 public:
 
 //I should export this as a fcl parameter in the future

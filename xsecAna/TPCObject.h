@@ -21,11 +21,13 @@
 #ifndef TPCObject_h
 #define TPCObject_h
 
-#include "lardataobj/RecoBase/Track.h"
-#include "lardataobj/RecoBase/Shower.h"
-#include "lardataobj/RecoBase/PFParticle.h"
-#include "lardataobj/RecoBase/Vertex.h"
-#include <vector>
+#include "AnaHelper.h"
+
+// #include "lardataobj/RecoBase/Track.h"
+// #include "lardataobj/RecoBase/Shower.h"
+// #include "lardataobj/RecoBase/PFParticle.h"
+// #include "lardataobj/RecoBase/Vertex.h"
+// #include <vector>
 
 namespace xsec_ana {
 
@@ -85,7 +87,7 @@ std::vector<recob::Track>      fTracks;
 std::vector<recob::Shower>     fShowers;
 std::vector<recob::PFParticle> fPFParticles;
 recob::Vertex fVertex;
-std::vector< xsec_ana::TPCObjectOrigin > fOriginVector;
+std::vector< simb::Origin_t > fOriginVector;
 xsec_ana::TPCObjectOrigin fOrigin;
 xsec_ana::TPCObjectOriginExtra fOriginExtra;
 int fPfpMult;
