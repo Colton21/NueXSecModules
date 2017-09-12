@@ -41,6 +41,16 @@ void BuildTrueNeutrinoHitMaps(const lar_pandora::MCTruthToMCParticles &truthToPa
 void BuildRecoNeutrinoHitMaps(const lar_pandora::PFParticleMap &recoParticleMap, const lar_pandora::PFParticlesToHits &recoParticlesToHits,
                               lar_pandora::PFParticlesToHits &recoNeutrinosToHits, lar_pandora::HitsToPFParticles &recoHitsToNeutrinos) const;
 
+
+/**
+ *  @brief Returns matching between true and reconstructed particles
+ *
+ *  @param matchedParticles the output matches between reconstructed and true particles
+ *  @param matchedHits the output matches between reconstructed particles and hits
+ */
+void GetRecoToTrueMatches(lar_pandora::MCParticlesToPFParticles &matchedParticles, lar_pandora::MCParticlesToHits &matchedHits);
+
+
 /**
  *  @brief Perform matching between true and reconstructed neutrino events
  *

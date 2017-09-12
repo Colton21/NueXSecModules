@@ -62,7 +62,7 @@ void SetPFPs(std::vector<recob::PFParticle>);
 void SetVertex(recob::Vertex);
 void SetOrigin(xsec_ana::TPCObjectOrigin);
 void SetOriginExtra(xsec_ana::TPCObjectOriginExtra);
-void SetParticleOrigins (std::vector< xsec_ana::TPCObjectOrigin> origins);
+void SetParticleOrigins (std::vector< simb::Origin_t > origins);
 void SetMultiplicity(int pfpMult, int trackMult, int showerMult);
 
 // Getter methods
@@ -72,7 +72,7 @@ const std::vector<recob::PFParticle>          & GetPFPs()            const;
 const recob::Vertex                           & GetVertex()          const;
 const xsec_ana::TPCObjectOrigin               & GetOrigin()          const;
 const xsec_ana::TPCObjectOriginExtra          & GetOriginExtra()     const;
-const std::vector<xsec_ana::TPCObjectOrigin>  & GetParticleOrigins() const;
+const std::vector<simb::Origin_t>             & GetParticleOrigins() const;
 const size_t                                  GetNTracks()           const;
 const size_t                                  GetNShowers()          const;
 const size_t                                  GetNPFP()              const;

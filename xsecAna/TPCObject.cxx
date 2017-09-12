@@ -24,7 +24,7 @@ void TPCObject::SetPFPs        (std::vector<recob::PFParticle> pfps) {
 void TPCObject::SetVertex      (recob::Vertex vertex)                {
 	this->fVertex = vertex;
 }
-void TPCObject::SetParticleOrigins (std::vector< xsec_ana::TPCObjectOrigin> origins)
+void TPCObject::SetParticleOrigins (std::vector< simb::Origin_t > origins)
 {
 	this->fOriginVector = origins;
 }
@@ -51,7 +51,7 @@ const std::vector<recob::PFParticle>  & TPCObject::GetPFPs()        const {
 const recob::Vertex                   & TPCObject::GetVertex()      const {
 	return this->fVertex;
 }
-const std::vector< xsec_ana::TPCObjectOrigin > & TPCObject::GetParticleOrigins()  const {
+const std::vector< simb::Origin_t > & TPCObject::GetParticleOrigins()  const {
 	return this->fOriginVector;
 }
 const xsec_ana::TPCObjectOrigin          & TPCObject::GetOrigin()      const {

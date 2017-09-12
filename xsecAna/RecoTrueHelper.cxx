@@ -60,6 +60,17 @@ void recotruehelper::BuildRecoNeutrinoHitMaps(const lar_pandora::PFParticleMap &
 	}
 }
 
+//___________________________________________________________________________________________________
+void recotruehelper::GetRecoToTrueMatches(lar_pandora::MCParticlesToPFParticles &matchedParticles,
+                                          lar_pandora::MCParticlesToHits &matchedParticleHits) {
+
+
+	GetRecoToTrueMatches(_recoParticlesToHits,
+	                     _trueHitsToParticles,
+	                     matchedParticles,
+	                     matchedParticleHits);
+}
+
 
 //------------------------------------------------------------------------------------------------------------------------------------------
 

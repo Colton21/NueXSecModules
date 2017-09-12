@@ -255,8 +255,8 @@ void NueXSec::analyze(art::Event & e) {
 		const int npfparticles              = tpcobj.GetNPFP();
 		const TPCObjectOrigin tpcobj_origin = tpcobj.GetOrigin();
 		const std::vector<recob::PFParticle> pfp_v = tpcobj.GetPFPs();
-		const std::vector<recob::Track>  track_v  = tpcobj.GetTracks();
-		const std::vector<recob::Shower> shower_v = tpcobj.GetShowers();
+		const std::vector<art::Ptr<recob::Track> >  track_v  = tpcobj.GetTracks();
+		const std::vector<art::Ptr<recob::Shower> > shower_v = tpcobj.GetShowers();
 
 		if(_verbose)
 		{
@@ -359,7 +359,7 @@ void NueXSec::analyze(art::Event & e) {
 			//double mc_open_angle = 0; //unset
 
 			const int pfpPdg = pfp->PdgCode();
-			pfpParentPdg = pfp_v.at(pfp->Parent()).zPdgCode();
+			pfpParentPdg = pfp_v.at(pfp->Parent()).PdgCode();
 			particle_container.SetpfpPdgCode(pfpPdg);
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
 			const int index = pfp->Self();
@@ -374,11 +374,16 @@ void NueXSec::analyze(art::Event & e) {
 			particle_container.SetIsNeutrino(is_neutrino);
 
 			// Reco vertex
-			double reco_vtx[3];
-			pfp->XYZ(reco_nu_vtx);
-			const double pfp_vtx_x = reco_vtx[0];
-			const double pfp_vtx_y = reco_vtx[1];
-			const double pfp_vtx_z = reco_vtx[2];
+			auto iter = particlesToVertices.find(pfp);
+			if (iter != particlesToVertices.end()) {
+				lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
+				double reco_vtx[3];
+				vertex_v[0]->XYZ(reco_vtx);
+				const double pfp_vtx_x = reco_vtx[0];
+				const double pfp_vtx_y = reco_vtx[1];
+				const double pfp_vtx_z = reco_vtx[2];
+			}
+
 			particle_container.SetpfpVtxX(pfp_vtx_x);
 			particle_container.SetpfpVtxY(pfp_vtx_y);
 			particle_container.SetpfpVtxZ(pfp_vtx_z);
