@@ -30,31 +30,33 @@ physics:
 {
   analyzers:
   {
-    XSec:
+    Analysis:
     {
-      module_type: "XSec"
+      module_type: "TpcObjectAnalysis"
       PFParticleProducer: "pandoraNu"
-      HitProducer: ""
-      GeantModule: ""
-      SpacePointProducer: ""
-      NeutrinoFlashMatchProducer: ""
-      CosmicFlashMatchProducer: ""
-      OpFlashBeamProducer: ""
-      ACPTProducer: ""
-      TPCObjectProducer: ""
-      POTSummaryProducer: ""
+      HitProducer: "pandoraCosmicHitRemoval"
+      GeantModule: "largeant"
+      SpacePointProducer: "pandoraNu"
+      NeutrinoFlashMatchProducer: "NeutrinoFlashMatch"
+      CosmicFlashMatchProducer: "CosmicFlashMatch"
+      OpFlashBeamProducer: "simpleFlashBeam"
+      TPCObjectProducer: "TPCObjectMaker"
+      POTSummaryProducer: "generator"
       POTSummaryInstance: ""
-      ParticleIDProducer: ""
-      MCGhostProducer: ""
-      AddDaughterPFParticles: "true"
-      AddDaughterMCParticles: "true"
-      UseDaughterPFParticles: "true"
-      UseDaughterMCParticles: "true"
-      RecursiveMatching: "true"
-      PrintDebug: "true"
+      ParticleIDProducer: "pandoraNupid"
+      MCGhostProducer: "RecoTrueMatcher"
+
+      UseGENIEInfo: "true"
+      MinimumHitRequirement: "3"
+
+      BeamSpillStart: "5"
+      BeamSpillEnd: "16"
+
+      Debug: "true"
+      Verbose: "true"
     }
   }
-  analysis: [ XSec ]
+  analysis: [ Analysis ]
   end_paths: [analysis]
 }
 
