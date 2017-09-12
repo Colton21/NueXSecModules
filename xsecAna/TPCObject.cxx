@@ -12,10 +12,10 @@ TPCObject::~TPCObject(){
 }
 
 // Setter methods
-void TPCObject::SetTracks      (std::vector<recob::Track> tracks)    {
+void TPCObject::SetTracks      (std::vector<art::Ptr<recob::Track> > tracks)    {
 	this->fTracks = tracks;
 }
-void TPCObject::SetShowers     (std::vector<recob::Shower> showers)  {
+void TPCObject::SetShowers     (std::vector<art::Ptr<recob::Shower> > showers)  {
 	this->fShowers = showers;
 }
 void TPCObject::SetPFPs        (std::vector<recob::PFParticle> pfps) {
@@ -39,10 +39,10 @@ void TPCObject::SetMultiplicity(int p, int t, int s)                 {
 }
 
 // Getter methods
-const std::vector<recob::Track>       & TPCObject::GetTracks()      const {
+const std::vector<art::Ptr<recob::Track> >       & TPCObject::GetTracks()      const {
 	return this->fTracks;
 }
-const std::vector<recob::Shower>      & TPCObject::GetShowers()     const {
+const std::vector<art::Ptr<recob::Shower> >      & TPCObject::GetShowers()     const {
 	return this->fShowers;
 }
 const std::vector<recob::PFParticle>  & TPCObject::GetPFPs()        const {
@@ -94,8 +94,8 @@ const int TPCObject::GetNTracksCloseToVertex(double tolerance) const {
 	// Loop over tracks and calulate multiplicity
 	for (auto t : this->fTracks) {
 
-		TVector3 start = t.Vertex();
-		TVector3 end = t.End();
+		TVector3 start = t->Vertex();
+		TVector3 end = t->End();
 
 		if ( (vtx-start).Mag() < tolerance   ||   (vtx-end).Mag() < tolerance ) {
 			multiplicity++;
