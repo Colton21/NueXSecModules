@@ -118,7 +118,8 @@ void NueXSec::analyze(art::Event const & e)
 	std::vector<lar_pandora::PFParticleVector> pfp_v_v;
 	std::vector<int> p_v, t_v, s_v;
 
-	_tpcobjecthelper_instance.tpcobjecthelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToShowerMap, pfParticleToVertexMap, pfp_v_v, track_v_v, shower_v_v, p_v, t_v, s_v);
+	_tpcobjecthelper_instance.tpcobjecthelper::GetTPCObjects(pfParticleList, pfParticleToTrackMap, pfParticleToShowerMap,
+	                                                         pfParticleToVertexMap, pfp_v_v, track_v_v, shower_v_v, p_v, t_v, s_v);
 
 	lar_pandora::MCParticlesToPFParticles matchedParticles;    // This is a map: MCParticle to matched PFParticle
 	lar_pandora::MCParticlesToHits matchedParticleHits;
@@ -438,7 +439,7 @@ void NueXSec::analyze(art::Event const & e)
 				mcEnergy = the_mcpart->E();
 				mcMomentum = the_mcpart->P();
 
-			}
+			}//end mcghost == 1
 			particle_container.SetmcPdgCode(mcPdg);
 			particle_container.SetOrigin(mcOrigin);
 			particle_container.SetmcVtxX(mc_vtx_x);
@@ -476,8 +477,8 @@ void NueXSec::analyze(art::Event const & e)
 				//      if (hit_v[h]->View() == 2) pfp_hits_w++;
 				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
-			}
-			//pfp showers
+			}//end pfp tracks
+			 //pfp showers
 			if(pfpPdg == 11)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
@@ -501,7 +502,7 @@ void NueXSec::analyze(art::Event const & e)
 				//      if (hit_v[h]->View() == 2) pfp_hits_w++;
 				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
-			}
+			}//end pfp showers
 
 			particle_container.SetpfpDirX(pfp_dir_x);
 			particle_container.SetpfpDirY(pfp_dir_y);

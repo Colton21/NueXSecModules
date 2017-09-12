@@ -141,6 +141,4 @@ double pfpOpenAngle;
 
 };
 
-}//end namespace
-
 #endif
