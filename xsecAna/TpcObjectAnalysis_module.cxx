@@ -248,7 +248,7 @@ void NueXSec::analyze(art::Event const & e)
 	int tpc_object_counter = 0;
 	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
 
-	for(int tpc_counter = 0; tpc_counter < tpcobj_h->size(); tpc_counter++)
+	for(size_t tpc_counter = 0; tpc_counter < tpcobj_h->size(); tpc_counter++)
 	{
 		const xsec_ana::TPCObject tpcobj = (*tpcobj_h)[tpc_counter];
 		const int ntracks                   = tpcobj.GetNTracks();
@@ -392,7 +392,7 @@ void NueXSec::analyze(art::Event const & e)
 			double pfp_vtx_x = 0;
 			double pfp_vtx_y = 0;
 			double pfp_vtx_z = 0;
-			if (iter != particlesToVert.end())
+			if (iter != particlesToVertieces.end())
 			//if(iter != pfParticleToVertexMap.end())
 			{
 				//lar_pandora::VertexVector vertex_v = pfParticleToVertexMap.find(pfp)->second;
