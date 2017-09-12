@@ -34,14 +34,13 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 }
 
 
-NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p){
-
+NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
+{
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
-
 }
 
-void NueXSec::analyze(art::Event const & e) {
-
+void NueXSec::analyze(art::Event const & e)
+{
 	art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;
 	xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
@@ -78,11 +77,13 @@ void NueXSec::analyze(art::Event const & e) {
 	// Get PFP
 	art::Handle<std::vector<recob::PFParticle> > pfp_h;
 	e.getByLabel(_pfp_producer,pfp_h);
-	if(!pfp_h.isValid()) {
+	if(!pfp_h.isValid())
+	{
 		std::cout << "[UBXSec] PFP product " << _pfp_producer << " not found..." << std::endl;
 		//throw std::exception();
 	}
-	if(pfp_h->empty()) {
+	if(pfp_h->empty())
+	{
 		std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
 	}
 	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
@@ -152,7 +153,8 @@ void NueXSec::analyze(art::Event const & e) {
 	}//end looping mc to pfp
 
 	//loop over TPC objects
-	for (size_t pfparticle_vector = 0; pfparticle_vector < pfp_v_v.size(); pfparticle_vector++) {
+	for (size_t pfparticle_vector = 0; pfparticle_vector < pfp_v_v.size(); pfparticle_vector++)
+	{
 
 		xsec_ana::TPCObject obj;
 
@@ -196,15 +198,15 @@ void NueXSec::analyze(art::Event const & e) {
 		// Set vertex
 		art::Ptr<recob::PFParticle> pfp = _tpcobjecthelper_instance.tpcobjecthelper::GetNuPFP(pfp_v_v[pfparticle_vector]);
 		auto iter = pfParticleToVertexMap.find(pfp);
-		if (iter != pfParticleToVertexMap.end()) {
-			obj.SetVertex(*(iter->second[0]));
-		}
+		if (iter != pfParticleToVertexMap.end()) {obj.SetVertex(*(iter->second[0])); }
 
 		// Set origin
 		//xsec_ana::TPCObjectOrigin origin = xsec_ana::kUnknown;
 		simb::Origin_t origin = simb::kUnknown;
 		if (_is_mc)
+		{
 			origin = _tpcobjecthelper_instance.tpcobjecthelper::GetSliceOrigin(neutrinoOriginPFP, cosmicOriginPFP, pfp_v_v[pfparticle_vector]);
+		}
 		obj.SetOrigin(origin);
 
 		// Set Multiplicity

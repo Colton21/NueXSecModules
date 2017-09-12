@@ -238,7 +238,7 @@ simb::Origin_t tpcobjecthelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFPar
 
 	if (nuOrigin > 0  && cosmicOrigin == 0) origin = simb::kBeamNeutrino;
 	if (nuOrigin == 0 && cosmicOrigin > 0 ) origin = simb::kCosmicRay;
-	if (nuOrigin > 0  && cosmicOrigin > 0 ) origin = simb::kMixed;
+	if (nuOrigin > 0  && cosmicOrigin > 0 ) origin = simb::kUnknown;//was previously kMixed!
 
 	return origin;
 
