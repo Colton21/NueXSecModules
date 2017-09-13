@@ -2,6 +2,24 @@
 
 namespace xsec_ana {
 
+pfp_container::pfp_container() {
+}
+
+pfp_container::~pfp_container(){
+}
+
+//
+
+void pfp_container::AddParticle ( ParticleContainer _particle){
+	fParticleList.push_back(_particle);
+}
+
+const ParticleContainer pfp_container::GetParticle(int _i) const {
+	return fParticleList.at(_i);
+}
+
+//
+
 void pfp_container::SetRunNumber (int run_number){
 	run = run_number;
 }

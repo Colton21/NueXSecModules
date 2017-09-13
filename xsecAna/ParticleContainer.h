@@ -70,7 +70,6 @@ double pfp_open_angle;
 public:
 
 ParticleContainer();
-
 virtual ~ParticleContainer();
 
 //-----------------------

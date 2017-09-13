@@ -56,8 +56,8 @@ pfp_container();
 //destructor
 virtual ~pfp_container();
 
-void AddParticle ( ParticleContainer & particle);
-const ParticleContainer & GetParticle (int i) const;
+void AddParticle (ParticleContainer);
+const ParticleContainer GetParticle (int) const;
 
 //----------------
 //Setter Functions
