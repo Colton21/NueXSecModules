@@ -368,4 +368,4 @@ void NueXSec::endSubRun(art::SubRun const & sr) {
 
 }//end namespace
 
-DEFINE_ART_MODULE(xsec_ana::NueXSec)
+DEFINE_ART_MODULE(TpcObjectAnalysis)

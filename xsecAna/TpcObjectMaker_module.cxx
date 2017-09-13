@@ -2,7 +2,6 @@
 
 namespace xsec_ana {
 
-
 void NueXSecProducer::reconfigure(fhicl::ParameterSet const &p)
 {
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
@@ -184,4 +183,4 @@ void NueXSecProducer::produce(art::Event & e){
 //***********************************
 }//end namespace
 
-DEFINE_ART_MODULE(xsec_ana::NueXSecProducer)
+DEFINE_ART_MODULE(TPCObjectMaker)
