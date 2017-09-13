@@ -2,7 +2,7 @@
 
 namespace xsec_ana {
 
-void NueXSecProducer::reconfigure(fhicl::ParameterSet const &p)
+void TPCObjectMaker::reconfigure(fhicl::ParameterSet const &p)
 {
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -29,7 +29,7 @@ void NueXSecProducer::reconfigure(fhicl::ParameterSet const &p)
 	_verbose                        = p.get<bool>("Verbose", false);
 }
 
-void NueXSecProducer::produce(art::Event & e){
+void TPCObjectMaker::produce(art::Event & e){
 	art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;
 	xsec_ana::tpcobjecthelper _tpcobjecthelper_instance;
@@ -183,4 +183,4 @@ void NueXSecProducer::produce(art::Event & e){
 //***********************************
 }//end namespace
 
-DEFINE_ART_MODULE(TPCObjectMaker)
+DEFINE_ART_MODULE(xsec_ana::TPCObjectMaker)

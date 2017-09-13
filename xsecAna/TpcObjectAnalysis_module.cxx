@@ -2,7 +2,7 @@
 
 namespace xsec_ana {
 
-void NueXSec::reconfigure(fhicl::ParameterSet const &p)
+void TpcObjectAnalysis::reconfigure(fhicl::ParameterSet const &p)
 {
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
@@ -12,7 +12,7 @@ void NueXSec::reconfigure(fhicl::ParameterSet const &p)
 	_verbose                        = p.get<bool>("Verbose", false);
 }
 
-NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
+TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p) : EDAnalyzer(p)
 {
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 }
@@ -21,7 +21,7 @@ NueXSec::NueXSec(fhicl::ParameterSet const & p) : EDAnalyzer(p)
 //start the analysis loops!
 //*************************
 
-void NueXSec::analyze(art::Event const & e)
+void TpcObjectAnalysis::analyze(art::Event const & e)
 {
 	art::ServiceHandle<cheat::BackTracker> bt;
 
@@ -360,7 +360,7 @@ void NueXSec::analyze(art::Event const & e)
 
 }//end analyze
 
-void NueXSec::endSubRun(art::SubRun const & sr) {
+void TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
 	//probably want to fill the tree here
 	std::cout << "[XSec_Module] End Running" << std::endl;
 
@@ -368,4 +368,4 @@ void NueXSec::endSubRun(art::SubRun const & sr) {
 
 }//end namespace
 
-DEFINE_ART_MODULE(TpcObjectAnalysis)
+DEFINE_ART_MODULE(xsec_ana::TpcObjectAnalysis)

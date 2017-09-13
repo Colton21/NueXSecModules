@@ -8,18 +8,18 @@
 #include "MCGhost.h"
 
 namespace xsec_ana {
-class NueXSecProducer;
+class TPCObjectMaker;
 }
 
-class xsec_ana::NueXSecProducer : public art::EDProducer {
+class xsec_ana::TPCObjectMaker : public art::EDProducer {
 public:
-explicit NueXSecProducer(fhicl::ParameterSet const & p);
+explicit TPCObjectMaker(fhicl::ParameterSet const & p);
 
 // Plugins should not be copied or assigned.
-NueXSecProducer(NueXSecProducer const &) = delete;
-NueXSecProducer(NueXSecProducer &&) = delete;
-NueXSecProducer & operator = (NueXSecProducer const &) = delete;
-NueXSecProducer & operator = (NueXSecProducer &&) = delete;
+TPCObjectMaker(TPCObjectMaker const &) = delete;
+TPCObjectMaker(TPCObjectMaker &&) = delete;
+TPCObjectMaker & operator = (TPCObjectMaker const &) = delete;
+TPCObjectMaker & operator = (TPCObjectMaker &&) = delete;
 
 void reconfigure(fhicl::ParameterSet const &p) override;
 void produce(art::Event & e) override;

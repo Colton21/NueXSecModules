@@ -10,21 +10,21 @@
 #include "UtilityFunctions.h"
 
 namespace xsec_ana {
-class NueXSec;
+class TpcObjectAnalysis;
 }
 
-class xsec_ana::NueXSec : public art::EDAnalyzer {
+class xsec_ana::TpcObjectAnalysis : public art::EDAnalyzer {
 
 public:
-explicit NueXSec(fhicl::ParameterSet const & p);
+explicit TpcObjectAnalysis(fhicl::ParameterSet const & p);
 // The compiler-generated destructor is fine for non-base
 // classes without bare pointers or other resource use.
 
 // Plugins should not be copied or assigned.
-NueXSec(NueXSec const &) = delete;
-NueXSec(NueXSec &&) = delete;
-NueXSec & operator = (NueXSec const &) = delete;
-NueXSec & operator = (NueXSec &&) = delete;
+TpcObjectAnalysis(TpcObjectAnalysis const &) = delete;
+TpcObjectAnalysis(TpcObjectAnalysis &&) = delete;
+TpcObjectAnalysis & operator = (TpcObjectAnalysis const &) = delete;
+TpcObjectAnalysis & operator = (TpcObjectAnalysis &&) = delete;
 
 // Required functions.
 void reconfigure(fhicl::ParameterSet const &p) override;
