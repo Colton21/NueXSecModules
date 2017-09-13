@@ -148,7 +148,9 @@ void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, doub
 		std::vector<sim::TrackIDE> eveIDs = bt->HitToEveID(recoHit);
 
 		for(size_t e = 0; e < eveIDs.size(); ++e) {
-			//std::cout<<"[Hit "<< h<<"] hit plane: "<<recoHit->View()<<" "<<e<<" "<<eveIDs[e].trackID<<" "<<eveIDs[e].energy<<" "<<eveIDs[e].energyFrac<<"   pdg "<< (bt->TrackIDToParticle(eveIDs[e].trackID))->PdgCode()<<"   process "<<(bt->TrackIDToParticle(eveIDs[e].trackID))->Process()<<std::endl;
+			//std::cout<<"[Hit "<< h<<"] hit plane: "<<recoHit->View()<<" "<<e<<" "<<eveIDs[e].trackID<<" "<<eveIDs[e].energy<<" "
+			//<<eveIDs[e].energyFrac<<"   pdg "<< (bt->TrackIDToParticle(eveIDs[e].trackID))->PdgCode()<<"   process "
+			//<<(bt->TrackIDToParticle(eveIDs[e].trackID))->Process()<<std::endl;
 			trkidToIDE[eveIDs[e].trackID] += eveIDs[e].energy;
 		}
 	}

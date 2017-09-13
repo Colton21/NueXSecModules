@@ -2,6 +2,12 @@
 
 namespace xsec_ana {
 
+pfp_container::pfp_container() {
+}
+
+pfp_container::~pfp_container(){
+}
+
 void pfp_container::SetRunNumber (int run_number){
 	run = run_number;
 }

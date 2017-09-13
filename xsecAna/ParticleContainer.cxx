@@ -2,6 +2,13 @@
 
 namespace xsec_ana {
 
+ParticleContainer::ParticleContainer(){
+
+}
+ParticleContainer::~ParticleContainer(){
+
+}
+
 void ParticleContainer::SetIndex(int _index){
 	index = _index;
 }
