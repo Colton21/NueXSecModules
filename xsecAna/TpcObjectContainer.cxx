@@ -8,7 +8,6 @@ pfp_container::pfp_container() {
 pfp_container::~pfp_container(){
 }
 
-<<<<<<< HEAD
 //
 
 void pfp_container::AddParticle ( ParticleContainer _particle){
@@ -21,8 +20,6 @@ const ParticleContainer pfp_container::GetParticle(int _i) const {
 
 //
 
-=======
->>>>>>> 657e45da78207a4d8c26c1c997f6312a3e29437a
 void pfp_container::SetRunNumber (int run_number){
 	run = run_number;
 }
