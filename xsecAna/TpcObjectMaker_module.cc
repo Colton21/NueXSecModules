@@ -15,8 +15,10 @@
 #include "art/Framework/Principal/SubRun.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#include "larsim/MCCheater/BackTracker.h"
 
 #include <memory>
+#include <fstream>
 
 #include "AnaHelper.h"
 #include "RecoTrueHelper.h"

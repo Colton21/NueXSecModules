@@ -15,6 +15,7 @@
 #include "art/Framework/Principal/SubRun.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
+#include "larsim/MCCheater/BackTracker.h"
 
 #include "TpcObjectContainer.h"
 #include "ParticleContainer.h"
@@ -24,6 +25,7 @@
 #include "PostMCCorrections.h"
 #include "TPCObject.h"
 
+#include <fstream>
 
 namespace xsec_ana {
 class TpcObjectAnalysis;
