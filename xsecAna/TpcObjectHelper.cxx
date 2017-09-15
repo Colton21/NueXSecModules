@@ -2,7 +2,7 @@
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 
 
-namespace xsec_ana {
+namespace xsecAna {
 
 //_____________________________________________________________________________________
 art::Ptr<recob::PFParticle> tpcobjecthelper::GetNuPFP(lar_pandora::PFParticleVector pfp_v){

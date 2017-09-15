@@ -24,7 +24,7 @@
 
 #include <string>
 
-namespace xsec_ana {
+namespace xsecAna {
 
 class MCGhost {
 

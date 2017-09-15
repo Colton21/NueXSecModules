@@ -1,7 +1,7 @@
 #include "TPCObject.h"
 #include <vector>
 
-namespace xsec_ana {
+namespace xsecAna {
 
 TPCObject::TPCObject() {
 	fOrigin      = simb::kUnknown;

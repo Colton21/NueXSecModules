@@ -1,6 +1,6 @@
 #include "UtilityFunctions.h"
 
-namespace xsec_ana {
+namespace xsecAna {
 
 //______________________________________________________________________________
 

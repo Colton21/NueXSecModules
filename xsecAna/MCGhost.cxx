@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace xsec_ana {
+namespace xsecAna {
 
 MCGhost::MCGhost() {
 	_mode = "unknown";

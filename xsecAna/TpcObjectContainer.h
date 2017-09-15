@@ -4,9 +4,9 @@
 #include "AnaHelper.h"
 #include "ParticleContainer.h"
 
-namespace xsec_ana {
+namespace xsecAna {
 
-class pfp_container {
+class TPCObjectContainer {
 
 private:
 
@@ -51,10 +51,10 @@ int n_matched_hits_w;
 
 public:
 
-pfp_container();
+TPCObjectContainer();
 
 //destructor
-virtual ~pfp_container();
+virtual ~TPCObjectContainer();
 
 void AddParticle (ParticleContainer);
 const ParticleContainer GetParticle (int) const;

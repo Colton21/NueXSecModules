@@ -1,6 +1,6 @@
 #include "ParticleContainer.h"
 
-namespace xsec_ana {
+namespace xsecAna {
 
 ParticleContainer::ParticleContainer(){
 

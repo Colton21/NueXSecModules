@@ -4,7 +4,7 @@
 #include "AnaHelper.h"
 #include "TPCObject.h"
 
-namespace xsec_ana {
+namespace xsecAna {
 
 // enum TPCObjectOrigin {
 //      kUnknown = -1,      // -1
@@ -17,7 +17,7 @@ class tpcobjecthelper {
 
 private:
 bool _debug = "true";
-//xsec_ana::TPCObjectFilter *_tpcobj_filter;
+//xsecAna::TPCObjectFilter *_tpcobj_filter;
 //bool _do_filter;
 
 public:

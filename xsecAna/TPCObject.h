@@ -29,7 +29,7 @@
 // #include "lardataobj/RecoBase/Vertex.h"
 // #include <vector>
 
-namespace xsec_ana {
+namespace xsecAna {
 
 enum TPCObjectOrigin {
 	kUnknown = -1,      // -1
@@ -48,7 +48,7 @@ enum TPCObjectOriginExtra {
 }
 
 
-namespace xsec_ana {
+namespace xsecAna {
 
 class TPCObject {
 
