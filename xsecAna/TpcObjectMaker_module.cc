@@ -119,6 +119,12 @@ xsec_ana::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 
 	if(_verbose) {std::cout << "TpcObjectMaker --- fcl parameters set --- " << std::endl; }
 
+        produces< std::vector<TPCObject>>();
+        produces< art::Assns<TPCObject,   recob::Track>>();
+        produces< art::Assns<TPCObject,   recob::Shower>>();
+        produces< art::Assns<TPCObject,   recob::PFParticle>>();
+
+
 }
 
 void xsec_ana::TpcObjectMaker::produce(art::Event & e)
