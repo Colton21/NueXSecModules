@@ -28,11 +28,11 @@ source:
 
 physics:
 {
-  analyzers:
+  producers:
   {
-    Analysis:
+    ProduceTPCO:
     {
-      module_type: "TpcObjectAnalysis"
+      module_type: "TpcObjectMaker"
       PFParticleProducer: "pandoraNu"
       HitProducer: "pandoraCosmicHitRemoval"
       GeantModule: "largeant"
@@ -40,14 +40,29 @@ physics:
       NeutrinoFlashMatchProducer: "NeutrinoFlashMatch"
       CosmicFlashMatchProducer: "CosmicFlashMatch"
       OpFlashBeamProducer: "simpleFlashBeam"
-      TPCObjectProducer: "TPCObjectMaker"
-      POTSummaryProducer: "generator"
       POTSummaryInstance: ""
+      POTSummaryProducer: "generator"
       ParticleIDProducer: "pandoraNupid"
-      MCGhostProducer: "RecoTrueMatcher"
-
+      VertexProducer: "pandoraNu"
+      TrackProducer: "pandoraNu"
+      ShowerProducer: "pandoraNu"
       UseGENIEInfo: "true"
       MinimumHitRequirement: "3"
+      BeamSpillStart: "5"
+      BeamSpillEnd: "16"
+      Debug: "true"
+      Verbose: "true"
+    }
+  }
+  production: [ProduceTPCO]
+  analyzers:
+  {
+    AnalyzeTPCO:
+    {
+      module_type: "TpcObjectAnalysis"
+      PFParticleProducer: "pandoraNu"
+      TPCObjectProducer: "TPCObjectMaker"
+      MCGhostProducer: "RecoTrueMatcher"
 
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
@@ -56,8 +71,8 @@ physics:
       Verbose: "true"
     }
   }
-  analysis: [ Analysis ]
-  end_paths: [analysis]
+  analysis: [ AnalyzeTPCO ]
+  end_paths: [production, analysis]
 }
 
 
