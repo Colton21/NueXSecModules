@@ -20,8 +20,21 @@ lar_pandora::PFParticlesToHits _recoParticlesToHits; ///< A map from PFParticles
 
 public:
 
+/// Default constructor
+McPfpMatch();
+
+/// Default destructor
+~McPfpMatch(){
+}
+
 //I should export this as a fcl parameter in the future
+bool _debug             = false;
+bool _verbose           = false;
 bool _recursiveMatching = true;
+
+/// Configure function parameters
+void Configure(art::Event const & e, std::string _pfp_producer,
+               std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel);
 
 
 /**

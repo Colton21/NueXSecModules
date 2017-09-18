@@ -3,6 +3,76 @@
 namespace nue_xsec
 {
 
+void recotruehelper::Configure(art::Event const & e,
+                               std::string _pfp_producer,
+                               std::string _spacepointLabel,
+                               std::string _hitfinderLabel,
+                               std::string _geantModuleLabel) {
+
+	// Collect hits
+	lar_pandora::HitVector hitVector;
+	lar_pandora::LArPandoraHelper::CollectHits(e, _hitfinderLabel, hitVector);
+
+	// Collect PFParticles and match Reco Particles to Hits
+	lar_pandora::PFParticleVector recoParticleVector;
+	lar_pandora::PFParticleVector recoNeutrinoVector;
+	lar_pandora::PFParticlesToHits recoParticlesToHits;
+	lar_pandora::HitsToPFParticles recoHitsToParticles;
+
+	lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
+	lar_pandora::LArPandoraHelper::SelectNeutrinoPFParticles(recoParticleVector, recoNeutrinoVector);
+	lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e, _pfp_producer, _spacepointLabel, recoParticlesToHits,
+	                                                      recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
+
+	if (_verbose) {
+		std::cout << "[McPfpMatch] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
+		std::cout << "[McPfpMatch] RecoParticles: " << recoParticleVector.size() << std::endl;
+	}
+
+	// Collect MCParticles and match True Particles to Hits
+	lar_pandora::MCParticleVector trueParticleVector;
+	lar_pandora::MCTruthToMCParticles truthToParticles;
+	lar_pandora::MCParticlesToMCTruth particlesToTruth;
+	lar_pandora::MCParticlesToHits trueParticlesToHits;
+	lar_pandora::HitsToMCParticles trueHitsToParticles;
+
+	if (!e.isRealData()) {
+		lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, trueParticleVector);
+		lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, truthToParticles, particlesToTruth);
+		lar_pandora::LArPandoraHelper::BuildMCParticleHitMaps(e, _geantModuleLabel, hitVector, trueParticlesToHits,
+		                                                      trueHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
+	}
+
+	if (_verbose) {
+		std::cout << "[McPfpMatch] TrueParticles: " << particlesToTruth.size() << std::endl;
+		std::cout << "[McPfpMatch] TrueEvents: " << truthToParticles.size() << std::endl;
+	}
+
+	// Now set the things we need for the future
+	_trueHitsToParticles = trueHitsToParticles;
+	_recoParticlesToHits = recoParticlesToHits;
+
+	if (_debug) { // yes, don't do it
+		std::cout << "[McPfpMatch] This is event " << e.id().run() << std::endl;
+		art::ServiceHandle<cheat::BackTracker> bt;
+		std::cout << "[McPfpMatch] Number of MCParticles matched to hits: " << trueParticlesToHits.size() << std::endl;
+		for (const auto & iter : trueParticlesToHits) {
+			const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth((iter.first)->TrackId());
+			std::cout << "[McPfpMatch] MCParticle with pdg " << (iter.first)->PdgCode()
+			          << " and origin " << (mc_truth->Origin() == 1 ? "neutrino" : "cosmic")
+			          << " has " << (iter.second).size() << " hits ass." << std::endl;
+			if (mc_truth->Origin() == 1) {
+				lar_pandora::HitVector hits = (iter.second);
+				for (const auto & hit : hits) {
+					std::cout << "[McPfpMatch]   > Hit on plane " << hit->View()
+					          << " on wire " << hit->WireID()
+					          << " with time " << hit->PeakTime() << std::endl;
+				}
+			}
+		}
+	}
+}
+
 //------------------------------------------------------------------------------------------------------------------------------------------
 
 void recotruehelper::BuildTrueNeutrinoHitMaps(const lar_pandora::MCTruthToMCParticles &truthToParticles, const lar_pandora::MCParticlesToHits &trueParticlesToHits,

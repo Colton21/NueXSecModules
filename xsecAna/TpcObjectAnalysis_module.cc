@@ -52,6 +52,9 @@ void endSubRun(art::SubRun const &sr) override;
 private:
 
 // Declare member data here.
+
+//these should be art::InputTag
+//but several pandora functions want strings!
 std::string _pfp_producer;
 std::string _mc_ghost_producer;
 std::string _tpcobject_producer;
@@ -102,7 +105,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	event = e.id().event();
 	//bool _is_data = e.isRealData();
 	//bool _is_mc = !_is_data;
-
 
 	// Get PFP
 	art::Handle<std::vector<recob::PFParticle> > pfp_h;
