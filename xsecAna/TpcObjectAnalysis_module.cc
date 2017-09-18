@@ -52,9 +52,9 @@ void endSubRun(art::SubRun const &sr) override;
 private:
 
 // Declare member data here.
-art::InputTag _pfp_producer;
-art::InputTag _mc_ghost_producer;
-art::InputTag _tpcobject_producer;
+art::InputTag & _pfp_producer;
+art::InputTag & _mc_ghost_producer;
+art::InputTag & _tpcobject_producer;
 
 bool _debug;
 bool _verbose;

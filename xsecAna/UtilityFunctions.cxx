@@ -5,7 +5,7 @@ namespace xsecAna {
 //______________________________________________________________________________
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
-                                      art::InputTag _particleLabel,
+                                      art::InputTag & _particleLabel,
                                       lar_pandora::TrackVector track_v,
                                       int & nhits_u,
                                       int & nhits_v,
@@ -40,7 +40,7 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 //______________________________________________________________________________
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
-                                      art::InputTag _particleLabel,
+                                      art::InputTag & _particleLabel,
                                       art::Ptr<recob::Track> track,
                                       int & nhits_u,
                                       int & nhits_v,
@@ -71,7 +71,7 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 //______________________________________________________________________________
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
-                                      art::InputTag _particleLabel,
+                                      art::InputTag & _particleLabel,
                                       lar_pandora::ShowerVector shower_v,
                                       int & nhits_u,
                                       int & nhits_v,
@@ -106,7 +106,7 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 //______________________________________________________________________________
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
-                                      art::InputTag _particleLabel,
+                                      art::InputTag & _particleLabel,
                                       art::Ptr<recob::Shower> shower,
                                       int & nhits_u,
                                       int & nhits_v,
