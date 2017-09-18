@@ -52,9 +52,9 @@ void endSubRun(art::SubRun const &sr) override;
 private:
 
 // Declare member data here.
-art::InputTag & _pfp_producer;
-art::InputTag & _mc_ghost_producer;
-art::InputTag & _tpcobject_producer;
+std::string _pfp_producer;
+std::string _mc_ghost_producer;
+std::string _tpcobject_producer;
 
 bool _debug;
 bool _verbose;
@@ -74,9 +74,9 @@ int event;
 xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	:
 	EDAnalyzer(p),
-	_pfp_producer(p.get<art::InputTag>("PFParticleProducer")),
-	_mc_ghost_producer(p.get<art::InputTag>("MCGhostProducer")),
-	_tpcobject_producer(p.get<art::InputTag>("TPCObjectProducer"))
+	_pfp_producer(p.get<std::string>("PFParticleProducer")),
+	_mc_ghost_producer(p.get<std::string>("MCGhostProducer")),
+	_tpcobject_producer(p.get<std::string>("TPCObjectProducer"))
 	// More initializers here.
 {
 	art::ServiceHandle<art::TFileService> fs;
@@ -84,8 +84,8 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 
 	//_pfp_producer                   = p.get<std::string>("PFParticleProducer");
-	//_mc_ghost_producer              = p.get<art::InputTag>("MCGhostProducer");
-	//_tpcobject_producer             = p.get<art::InputTag>("TPCObjectProducer");
+	//_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
+	//_tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
