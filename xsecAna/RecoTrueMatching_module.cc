@@ -41,7 +41,6 @@
 
 // Algorithms include
 #include "RecoTrueHelper.h"
-//#include "uboone/UBXSec/Algorithms/McPfpMatch.h"
 
 namespace xsecAna {
 class RecoTrueMatching;
@@ -63,8 +62,6 @@ RecoTrueMatching & operator = (RecoTrueMatching &&) = delete;
 void produce(art::Event & e) override;
 
 private:
-
-ubxsec::McPfpMatch mcpfpMatcher;
 
 std::string _pfp_producer;
 std::string _spacepointLabel;
