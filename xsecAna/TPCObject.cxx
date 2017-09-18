@@ -1,5 +1,7 @@
 #include "TPCObject.h"
 #include <vector>
+#include <iostream>
+#include <stdexcept>
 
 namespace xsecAna {
 
@@ -8,8 +10,8 @@ TPCObject::TPCObject() {
 	fOriginExtra = simb::kUnknown;//was kUnSet before
 }
 
-TPCObject::~TPCObject(){
-}
+// TPCObject::~TPCObject(){
+// }
 
 // Setter methods
 void TPCObject::SetTracks      (std::vector<art::Ptr<recob::Track> > tracks)    {

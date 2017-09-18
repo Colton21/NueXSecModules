@@ -21,13 +21,18 @@
 #ifndef TPCObject_h
 #define TPCObject_h
 
-#include "AnaHelper.h"
+//#include "AnaHelper.h"
 
-// #include "lardataobj/RecoBase/Track.h"
-// #include "lardataobj/RecoBase/Shower.h"
-// #include "lardataobj/RecoBase/PFParticle.h"
-// #include "lardataobj/RecoBase/Vertex.h"
-// #include <vector>
+#include "canvas/Persistency/Common/Ptr.h"
+
+#include "lardataobj/RecoBase/Track.h"
+#include "lardataobj/RecoBase/Shower.h"
+#include "lardataobj/RecoBase/PFParticle.h"
+#include "lardataobj/RecoBase/Vertex.h"
+#include "nusimdata/SimulationBase/MCTruth.h"
+
+
+#include <vector>
 
 namespace xsecAna {
 
@@ -55,7 +60,7 @@ class TPCObject {
 public:
 
 TPCObject();
-virtual ~TPCObject();
+//virtual ~TPCObject();
 
 // Setter methods
 void SetTracks(std::vector <art::Ptr<recob::Track>  >);
