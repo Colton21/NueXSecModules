@@ -13,6 +13,7 @@
 #include "art/Framework/Principal/Handle.h"
 #include "art/Framework/Principal/Run.h"
 #include "art/Framework/Principal/SubRun.h"
+#include "canvas/Utilities/InputTag.h"
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "larsim/MCCheater/BackTracker.h"
@@ -46,16 +47,14 @@ TpcObjectAnalysis & operator = (TpcObjectAnalysis &&) = delete;
 // Required functions.
 void analyze(art::Event const & e) override;
 void endSubRun(art::SubRun const &sr) override;
-void reconfigure(fhicl::ParameterSet const &p) override;
-
 
 
 private:
 
 // Declare member data here.
-std::string _pfp_producer;
-std::string _mc_ghost_producer;
-std::string _tpcobject_producer;
+art::InputTag _pfp_producer;
+art::InputTag _mc_ghost_producer;
+art::InputTag _tpcobject_producer;
 
 bool _debug;
 bool _verbose;
@@ -74,23 +73,20 @@ int event;
 
 xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	:
-	EDAnalyzer(p) // ,
+	EDAnalyzer(p), _pfp_producer(p.get<art::InputTag>("PFParticleProducer"))
 	// More initializers here.
 {
 	art::ServiceHandle<art::TFileService> fs;
 	myTree = fs->make<TTree>("tree","");
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 
-}
-
-void xsecAna::TpcObjectAnalysis::reconfigure(fhicl::ParameterSet const &p)
-{
-	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
-	_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
-	_tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
+	//_pfp_producer                   = p.get<std::string>("PFParticleProducer");
+	_mc_ghost_producer              = p.get<art::InputTag>("MCGhostProducer");
+	_tpcobject_producer             = p.get<art::InputTag>("TPCObjectProducer");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
+
 }
 
 void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
