@@ -21,11 +21,11 @@ lar_pandora::PFParticlesToHits _recoParticlesToHits; ///< A map from PFParticles
 public:
 
 /// Default constructor
-recotruehelper();
+//recotruehelper();
 
 /// Default destructor
-~recotruehelper(){
-}
+//~recotruehelper(){
+//}
 
 //I should export this as a fcl parameter in the future
 bool _debug             = false;
