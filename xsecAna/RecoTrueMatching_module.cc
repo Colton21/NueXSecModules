@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////
-// Class:       RecoTrueMatcher
+// Class:       RecoTrueMatching
 // Plugin Type: producer (art v2_05_00)
-// File:        RecoTrueMatcher_module.cc
+// File:        RecoTrueMatching_module.cc
 //
 // Generated at Fri Aug 18 08:43:34 2017 by Marco Del Tutto using cetskelgen
 // from cetlib version v1_21_00.
@@ -44,20 +44,20 @@
 //#include "uboone/UBXSec/Algorithms/McPfpMatch.h"
 
 namespace xsecAna {
-class RecoTrueMatcher;
+class RecoTrueMatching;
 }
 
-class xsecAna::RecoTrueMatcher : public art::EDProducer {
+class xsecAna::RecoTrueMatching : public art::EDProducer {
 public:
-explicit RecoTrueMatcher(fhicl::ParameterSet const & p);
+explicit RecoTrueMatching(fhicl::ParameterSet const & p);
 // The compiler-generated destructor is fine for non-base
 // classes without bare pointers or other resource use.
 
 // Plugins should not be copied or assigned.
-RecoTrueMatcher(RecoTrueMatcher const &) = delete;
-RecoTrueMatcher(RecoTrueMatcher &&) = delete;
-RecoTrueMatcher & operator = (RecoTrueMatcher const &) = delete;
-RecoTrueMatcher & operator = (RecoTrueMatcher &&) = delete;
+RecoTrueMatching(RecoTrueMatching const &) = delete;
+RecoTrueMatching(RecoTrueMatching &&) = delete;
+RecoTrueMatching & operator = (RecoTrueMatching const &) = delete;
+RecoTrueMatching & operator = (RecoTrueMatching &&) = delete;
 
 // Required functions.
 void produce(art::Event & e) override;
@@ -76,7 +76,7 @@ bool _debug;
 };
 
 
-xsecAna::RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
+xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -90,12 +90,12 @@ xsecAna::RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
 	produces< art::Assns<recob::PFParticle, xsecAna::MCGhost> >();
 }
 
-void xsecAna::RecoTrueMatcher::produce(art::Event & e)
+void xsecAna::RecoTrueMatching::produce(art::Event & e)
 {
 	nue_xsec::recotruehelper _recotruehelper_instance;
 
-	if(_debug) std::cout << "[RecoTrueMatcher] Starts" << std::endl;
-	if(_debug) std::cout << "[RecoTrueMatcher] event: " << e.id().event() << std::endl;
+	if(_debug) std::cout << "[RecoTrueMatching] Starts" << std::endl;
+	if(_debug) std::cout << "[RecoTrueMatching] event: " << e.id().event() << std::endl;
 
 	// Instantiate the output
 	std::unique_ptr< std::vector< xsecAna::MCGhost > >                mcGhostVector   (new std::vector<xsecAna::MCGhost>);
@@ -106,7 +106,7 @@ void xsecAna::RecoTrueMatcher::produce(art::Event & e)
 	_is_data = e.isRealData();
 
 	if (_is_data) {
-		std::cout << "[RecoTrueMatcher] Running on a real data file. No MC-PFP matching will be attempted." << std::endl;
+		std::cout << "[RecoTrueMatching] Running on a real data file. No MC-PFP matching will be attempted." << std::endl;
 		e.put(std::move(mcGhostVector));
 		e.put(std::move(assnOutGhostMCP));
 		e.put(std::move(assnOutGhostPFP));
@@ -120,7 +120,7 @@ void xsecAna::RecoTrueMatcher::produce(art::Event & e)
 
 	_recotruehelper_instance.GetRecoToTrueMatches(matchedMCToPFParticles, matchedParticleHits);
 
-	std::cout << "[RecoTrueMatcher] Generating " << matchedMCToPFParticles.size() << " MCGhosts." << std::endl;
+	std::cout << "[RecoTrueMatching] Generating " << matchedMCToPFParticles.size() << " MCGhosts." << std::endl;
 
 	for (auto const& iter : matchedMCToPFParticles) {
 
@@ -140,4 +140,4 @@ void xsecAna::RecoTrueMatcher::produce(art::Event & e)
 	e.put(std::move(assnOutGhostPFP));
 }
 
-DEFINE_ART_MODULE(xsecAna::RecoTrueMatcher)
+DEFINE_ART_MODULE(xsecAna::RecoTrueMatching)
