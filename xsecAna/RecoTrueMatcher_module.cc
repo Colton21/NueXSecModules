@@ -43,11 +43,11 @@
 #include "RecoTrueHelper.h"
 //#include "uboone/UBXSec/Algorithms/McPfpMatch.h"
 
-
+namespace xsecAna {
 class RecoTrueMatcher;
+}
 
-
-class RecoTrueMatcher : public art::EDProducer {
+class xsecAna::RecoTrueMatcher : public art::EDProducer {
 public:
 explicit RecoTrueMatcher(fhicl::ParameterSet const & p);
 // The compiler-generated destructor is fine for non-base
@@ -76,7 +76,7 @@ bool _debug;
 };
 
 
-RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
+xsecAna::RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -90,7 +90,7 @@ RecoTrueMatcher::RecoTrueMatcher(fhicl::ParameterSet const & p) {
 	produces< art::Assns<recob::PFParticle, xsecAna::MCGhost> >();
 }
 
-void RecoTrueMatcher::produce(art::Event & e)
+void xsecAna::RecoTrueMatcher::produce(art::Event & e)
 {
 	nue_xsec::recotruehelper _recotruehelper_instance;
 
@@ -140,4 +140,4 @@ void RecoTrueMatcher::produce(art::Event & e)
 	e.put(std::move(assnOutGhostPFP));
 }
 
-DEFINE_ART_MODULE(RecoTrueMatcher)
+DEFINE_ART_MODULE(xsecAna::RecoTrueMatcher)
