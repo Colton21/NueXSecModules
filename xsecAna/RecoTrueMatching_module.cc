@@ -82,7 +82,7 @@ xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 
 	_debug                          = p.get<bool>("Debug", "false");
 
-	produces< std::vector<ubana::MCGhost> >();
+	produces< std::vector<xsecAna::MCGhost> >();
 	produces< art::Assns<simb::MCParticle, xsecAna::MCGhost> >();
 	produces< art::Assns<recob::PFParticle, xsecAna::MCGhost> >();
 }
