@@ -73,7 +73,10 @@ int event;
 
 xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	:
-	EDAnalyzer(p), _pfp_producer(p.get<art::InputTag>("PFParticleProducer"))
+	EDAnalyzer(p),
+	_pfp_producer(p.get<art::InputTag>("PFParticleProducer")),
+	_mc_ghost_producer(p.get<art::InputTag>("MCGhostProducer")),
+	_tpcobject_producer(p.get<art::InputTag>("TPCObjectProducer"))
 	// More initializers here.
 {
 	art::ServiceHandle<art::TFileService> fs;
@@ -81,8 +84,8 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
 
 	//_pfp_producer                   = p.get<std::string>("PFParticleProducer");
-	_mc_ghost_producer              = p.get<art::InputTag>("MCGhostProducer");
-	_tpcobject_producer             = p.get<art::InputTag>("TPCObjectProducer");
+	//_mc_ghost_producer              = p.get<art::InputTag>("MCGhostProducer");
+	//_tpcobject_producer             = p.get<art::InputTag>("TPCObjectProducer");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);

@@ -18,7 +18,7 @@ public:
  *  @param nhits_u number of hits in the U plane
  *  @param nhits_v number of hits in the V plane
  *  @param nhits_w number of hits in the W plane  */
-static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleLabel, lar_pandora::TrackVector track_v, int & nhits_u, int & nhits_v, int & nhits_w );
+static void GetNumberOfHitsPerPlane(art::Event const & e, art::InputTag _particleLabel, lar_pandora::TrackVector track_v, int & nhits_u, int & nhits_v, int & nhits_w );
 
 /**
  *  @brief Returns number of hits on each plane for a TPC obj
@@ -29,7 +29,7 @@ static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleL
  *  @param nhits_u number of hits in the U plane
  *  @param nhits_v number of hits in the V plane
  *  @param nhits_w number of hits in the W plane  */
-static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleLabel, art::Ptr<recob::Track> track, int & nhits_u, int & nhits_v, int & nhits_w );
+static void GetNumberOfHitsPerPlane(art::Event const & e, art::InputTag _particleLabel, art::Ptr<recob::Track> track, int & nhits_u, int & nhits_v, int & nhits_w );
 
 /**
  *  @brief Returns number of hits on each plane for a TPC obj
@@ -40,7 +40,7 @@ static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleL
  *  @param nhits_u number of hits in the U plane
  *  @param nhits_v number of hits in the V plane
  *  @param nhits_w number of hits in the W plane  */
-static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleLabel, lar_pandora::ShowerVector shower_v, int & nhits_u, int & nhits_v, int & nhits_w );
+static void GetNumberOfHitsPerPlane(art::Event const & e, art::InputTag _particleLabel, lar_pandora::ShowerVector shower_v, int & nhits_u, int & nhits_v, int & nhits_w );
 
 /**
  *  @brief Returns number of hits on each plane for a TPC obj
@@ -51,7 +51,7 @@ static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleL
  *  @param nhits_u number of hits in the U plane
  *  @param nhits_v number of hits in the V plane
  *  @param nhits_w number of hits in the W plane  */
-static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleLabel, art::Ptr<recob::Shower> shower, int & nhits_u, int & nhits_v, int & nhits_w );
+static void GetNumberOfHitsPerPlane(art::Event const & e, art::InputTag _particleLabel, art::Ptr<recob::Shower> shower, int & nhits_u, int & nhits_v, int & nhits_w );
 
 /**
  *  @brief Given a vector of hits associated to the PFP (or a track, indeed you are just passing the hits), returns the tracking eff and purity
