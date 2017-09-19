@@ -12,7 +12,7 @@ ParticleContainer::~ParticleContainer(){
 void ParticleContainer::SetIndex(int _index){
 	index = _index;
 }
-void ParticleContainer::SetOrigin(simb::Origin_t _origin){
+void ParticleContainer::SetOrigin(std::string _origin){
 	origin = _origin;
 }
 void ParticleContainer::SetmcPdgCode(int _mc_pdg){
@@ -166,7 +166,7 @@ const int ParticleContainer::Index(){
 	return index;
 } //index is particle number in tpc object container
 
-const simb::Origin_t ParticleContainer::Origin(){
+const std::string ParticleContainer::Origin(){
 	return origin;
 }  //this is the particle origin
 

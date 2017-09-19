@@ -184,7 +184,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		//tpc_object_container.SetSubRunNumber();
 		tpc_object_container.SetEventNumber(event);
 		tpc_object_container.SetIndex(tpc_object_counter);
-		tpc_object_container.SetOrigin(tpcobj_origin);
+		//convert simb::Origin_t object to std::string
+		std::string str_origin;
+		if(tpcobj_origin == kUnknown) {str_origin = "kUnknown"; }
+		if(tpcobj_origin == kBeamNeutrino) {str_origin = "kBeamNeutrino"; }
+		if(tpcobj_origin == kCosmicRay) {str_origin = "kCosmicRay"; }
+		tpc_object_container.SetOrigin(str_origin);
 
 		if(_verbose) {std::cout << "Number of PFP in this TPC Object: " << npfparticles << std::endl; }
 		tpc_object_container.SetNumPFParticles(npfparticles);
@@ -364,7 +369,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 			}//end mcghost == 1
 			particle_container.SetmcPdgCode(mcPdg);
-			particle_container.SetOrigin(mcOrigin);
+			//convert simb::Origin_t to std::string
+			std::string str_mcorigin;
+			if(mcorigin == kUnknown) {str_mcorigin = "kUnknown"; }
+			if(mcorigin == kBeamNeutrino) {str_mcorigin = "kBeamNeutrino"; }
+			if(mcorigin == kCosmicRay) {str_mcorigin = "kCosmicRay"; }
+			particle_container.SetOrigin(str_mcOrigin);
 			particle_container.SetmcVtxX(mc_vtx_x);
 			particle_container.SetmcVtxY(mc_vtx_y);
 			particle_container.SetmcVtxZ(mc_vtx_z);

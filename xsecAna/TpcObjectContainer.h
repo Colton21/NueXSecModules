@@ -1,7 +1,7 @@
 #ifndef TPCOBJECTCONTAINER_H
 #define TPCOBJECTCONTAINER_H
 
-#include "AnaHelper.h"
+//#include "AnaHelper.h"
 #include "ParticleContainer.h"
 
 namespace xsecAna {
@@ -21,7 +21,7 @@ int n_pfp;
 int n_pfp_nu;
 
 int mode;
-simb::Origin_t origin;
+std::string origin;
 int is_cc;
 
 int mc_vtx;
@@ -76,7 +76,7 @@ void SetMode (int);//interaction mode
 //1 = Resonant
 //2 = Deep Inelastic Scattering
 //3 = Coherent Scattering
-void SetOrigin (simb::Origin_t);//this is the origin coming from the tpcobject
+void SetOrigin (std::string);//this is the origin coming from the tpcobject
 void SetIsCC (int); //true = CC, false = NC
 
 //the tpc object takes the neutrino vertex
@@ -119,7 +119,7 @@ const int Index ();
 const int NumPFParticles ();
 const int NumPFPNeutrinos ();
 const int Mode ();
-const simb::Origin_t Origin ();
+const std::string Origin ();
 const int IsCC ();
 
 const double mcVtxX  ();

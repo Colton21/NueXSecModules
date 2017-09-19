@@ -41,7 +41,7 @@ void TPCObjectContainer::SetNumPFPNeutrinos (int _n_pfp_nu){
 void TPCObjectContainer::SetMode (int _mode){
 	mode = _mode;
 }
-void TPCObjectContainer::SetOrigin (simb::Origin_t _origin){
+void TPCObjectContainer::SetOrigin (std::string _origin){
 	origin = _origin;
 }
 void TPCObjectContainer::SetIsCC (int _is_cc){
@@ -139,7 +139,7 @@ const int TPCObjectContainer::NumPFPNeutrinos (){
 const int TPCObjectContainer::Mode (){
 	return mode;
 }
-const simb::Origin_t TPCObjectContainer::Origin (){
+const std::string TPCObjectContainer::Origin (){
 	return origin;
 }
 const int TPCObjectContainer::IsCC (){
