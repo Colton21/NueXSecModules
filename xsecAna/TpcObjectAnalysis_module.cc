@@ -200,20 +200,24 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		//need to sum all hits from both tracks and showers
 		for(auto const track : track_v)
 		{
+			std::cout << "Tracks!" << std::endl;
 			//art::Ptr<recob::Track> & _track = track;
 			xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
 		}
+		std::cout << "End Tracks" << std::endl;
 		for(auto const shower : shower_v)
 		{
+			std::cout << "Showers!" << std::endl;
 			//art::Ptr<recob::Shower> & _shower = shower;
 			xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
 		}
+		std::cout << "End Showers" << std::endl;
 		total_nhits = (total_nhits_u + total_nhits_v + total_nhits_w);
 
 		tpc_object_container.SetNumPFPHits   (total_nhits);
