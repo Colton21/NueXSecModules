@@ -27,6 +27,8 @@
 #include "TPCObject.h"
 
 #include <fstream>
+#include <iostream>
+#include <string>
 
 namespace xsecAna {
 class TpcObjectAnalysis;

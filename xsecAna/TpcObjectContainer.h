@@ -4,6 +4,8 @@
 //#include "AnaHelper.h"
 #include "ParticleContainer.h"
 
+#include <string>
+
 namespace xsecAna {
 
 class TPCObjectContainer {

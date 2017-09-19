@@ -3,6 +3,8 @@
 
 //#include "AnaHelper.h"
 
+#include <string>
+
 namespace xsecAna {
 
 class ParticleContainer {
