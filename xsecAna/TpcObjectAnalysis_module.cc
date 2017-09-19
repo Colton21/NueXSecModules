@@ -276,20 +276,19 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			const int pfpPdg = pfp->PdgCode();
 			if(_verbose) {std::cout << "PFP PDG Code " << pfpPdg << std::endl; }
 			const unsigned int pfpParent_id = pfp->Parent();
-			if(_verbose) {std::cout << "PFP Parent ID " << pfpParent_id << std::endl;}
 			int position = 0;
 			int parent_position = -1;
 			for(auto const parent_search : pfps_from_tpcobj)
 			{
-			 if(parent_search->Self() == pfpParent_id ){parent_position = position;}
-			 position++;
+				if(parent_search->Self() == pfpParent_id ) {parent_position = position; }
+				position++;
 			}
 			if(parent_position != -1)
 			{
-			  auto const pfpParent_obj = pfps_from_tpcobj.at(parent_position);
-			  pfpParentPdg = pfpParent_obj->PdgCode();
+				auto const pfpParent_obj = pfps_from_tpcobj.at(parent_position);
+				pfpParentPdg = pfpParent_obj->PdgCode();
 			}
-			if(_verbose) {std::cout << "PFP Parent PDG Code" << pfpParentPdg << std::endl; }
+			if(_verbose) {std::cout << "PFP Parent PDG Code " << pfpParentPdg << std::endl; }
 			particle_container.SetpfpPdgCode(pfpPdg);
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
 			const int index = pfp->Self();
@@ -324,8 +323,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				pfp_vtx_y = reco_vtx[1];
 				pfp_vtx_z = reco_vtx[2];
 			}
-			std::cout << "Get Reco Vertex" << std::endl;
-
 			particle_container.SetpfpVtxX(pfp_vtx_x);
 			particle_container.SetpfpVtxY(pfp_vtx_y);
 			particle_container.SetpfpVtxZ(pfp_vtx_z);
@@ -366,7 +363,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				mcMomentum = the_mcpart->P();
 
 			}//end mcghost == 1
-			std::cout << "End IF MC Ghost == 1" << std::endl;
 			particle_container.SetmcPdgCode(mcPdg);
 			particle_container.SetOrigin(mcOrigin);
 			particle_container.SetmcVtxX(mc_vtx_x);
@@ -405,7 +401,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}//end pfp tracks
-			std::cout << "End IF PFP Track" << std::endl;
 
 			//pfp showers
 			if(pfpPdg == 11)
@@ -432,7 +427,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}//end pfp showers
-			std::cout << "End IF PFP Shower" << std::endl;
 
 			particle_container.SetpfpDirX(pfp_dir_x);
 			particle_container.SetpfpDirY(pfp_dir_y);
