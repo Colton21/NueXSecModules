@@ -237,10 +237,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		//loop over pfparticles in the tpc object
 		//****************************************
 		auto pfps_from_tpcobj = tpcobjToPFPAssns.at(tpc_object_counter);
+		std::cout << "Grab pfps_from_tpcobj" << std::endl;
 		for(auto const pfp : pfps_from_tpcobj)
 		//for(auto const pfp : pfp_v)
 		{
-
+			std::cout << "PFP" << std::endl;
 			xsecAna::ParticleContainer particle_container;
 
 			int mcPdg = 0;
