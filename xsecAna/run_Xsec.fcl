@@ -6,31 +6,34 @@ process_name : NueXsecExtractorProcess
 
 services:
 {
-
   TFileService: {fileName: "nue_xsec_extraction.root"}
   TimeTracker:  @local::microboone_time_tracker
   MemoryTracker: @local::microboone_memory_tracker
   #@table::microboone_simulation_services
   @table::microboone_full_services
-
-
 }#end services
 
 source:
 {
-
   module_type: RootInput
   maxEvents: -1
   firstRun: 1
   firstEvent: 1
-
-
 }
 
 physics:
 {
   producers:
   {
+    ProduceMCGhost:
+    {
+      module_type: "RecoTrueMatching"
+      PFParticleProducer: "pandoraNu"
+      HitProducer: "pandoraCosmicHitRemoval"
+      GeantModule: "largeant"
+      SpacePointProducer: "pandoraNu"
+      Debug: "true"
+    }
     ProduceTPCO:
     {
       module_type: "TpcObjectMaker"
@@ -55,15 +58,15 @@ physics:
       Verbose: "true"
     }
   }
-  production: [ProduceTPCO]
+  production: [ProduceMCGhost, ProduceTPCO]
   analyzers:
   {
     AnalyzeTPCO:
     {
       module_type: "TpcObjectAnalysis"
       PFParticleProducer: "pandoraNu"
-      TPCObjectProducer: "TPCObjectMaker"
-      MCGhostProducer: "RecoTrueMatcher"
+      TPCObjectProducer: "ProduceTPCO"
+      MCGhostProducer: "ProduceMCGhost"
 
       BeamSpillStart: "5"
       BeamSpillEnd: "16"

@@ -39,3 +39,4 @@ Thumbs.db
 # Files #
 *.root
 *.db
+xsecAna/run_Prod.fcl
