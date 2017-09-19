@@ -66,7 +66,7 @@ art_make( BASENAME_ONLY
                    larsim_MCCheater_BackTracker_service
 		   larpandora_LArPandoraInterface
                    #                   larpandora_LArPandoraContent
-
+		   uboone_NueXSecModules_xsecAna_dict 
 		   uboonecode_uboone_BasicTool_GeoAlgo
 		   uboonecode_uboone_SelectionTool_OpT0FinderBase
 		   uboonecode_uboone_SelectionTool_OpT0FinderAlgorithms

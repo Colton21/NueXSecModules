@@ -10,6 +10,7 @@
 //#include "uboone/NueXSecModules/xsecAna/"
 #include "uboone/NueXSecModules/xsecAna/TPCObject.h"
 #include "uboone/NueXSecModules/xsecAna/MCGhost.h"
+#include "uboone/NueXSecModules/xsecAna/TpcObjectContainer.h"
 
 #include "nusimdata/SimulationBase/MCParticle.h"
 

@@ -39,6 +39,11 @@
   <class name="art::Wrapper<art::Assns<recob::Track,ubana::FlashMatch,void> >"      />
   <class name="art::Wrapper<art::Assns<ubana::FlashMatch,recob::Track,void> >"      /> -->
 
+  <class name="xsecAna::ParticleContainer" />
+  <class name="std::vector<xsecAna::ParticleContainer>" />
+  <class name="xsecAna::TPCObjectContainer" />
+  <class name="std::vector<xsecAna::TPCObjectContainer>" />
+
 
   <class name="std::vector<art::Ptr<recob::Shower> >"/>
   <class name="std::vector<art::Ptr<recob::Track> >"/>

@@ -88,7 +88,9 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree = fs->make<TTree>("tree","");
 	//myTree->Branch("TpcObjectContainerV", &tpc_object_container_v, "tpc_object_container_v");
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
-
+	std::cout << "----------" << std::endl;
+	myTree->Print();
+	std::cout << "---------" << std::endl;
 
 	//_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	//_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
@@ -462,7 +464,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetMode(mode);
 		tpc_object_container.SetIsCC(ccnc);
 
-		tpc_object_container_v.emplace_back(tpc_object_container);
+		tpc_object_container_v.push_back(tpc_object_container);
 		tpc_object_counter++;
 	}//end loop tpc objects
 
