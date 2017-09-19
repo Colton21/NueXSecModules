@@ -274,8 +274,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			//double mc_open_angle = 0; //unset
 
 			const int pfpPdg = pfp->PdgCode();
-			if(_verbose) {std::cout << "PFP PDG Code" << pfpPdg << std::endl; }
-			pfpParentPdg = pfp_v.at(pfp->Parent()).PdgCode();
+			if(_verbose) {std::cout << "PFP PDG Code " << pfpPdg << std::endl; }
+			pfpParentPdg = pfps_from_tpcobj->at(pfp->Parent())->PdgCode();
+			if(_verbose) {std::cout << "PFP Parent PDG Code" << pfpParentPdg << std::endl; }
 			particle_container.SetpfpPdgCode(pfpPdg);
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
 			const int index = pfp->Self();
