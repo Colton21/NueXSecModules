@@ -274,6 +274,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			//double mc_open_angle = 0; //unset
 
 			const int pfpPdg = pfp->PdgCode();
+			if(_verbose) {std::cout << "PFP PDG Code" << pfpPdg << std::endl; }
 			pfpParentPdg = pfp_v.at(pfp->Parent()).PdgCode();
 			particle_container.SetpfpPdgCode(pfpPdg);
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
@@ -309,6 +310,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				pfp_vtx_y = reco_vtx[1];
 				pfp_vtx_z = reco_vtx[2];
 			}
+			std::cout << "Get Reco Vertex" << std::endl;
 
 			particle_container.SetpfpVtxX(pfp_vtx_x);
 			particle_container.SetpfpVtxY(pfp_vtx_y);
@@ -318,9 +320,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			const std::vector<art::Ptr<MCGhost> > mcghost = mcghost_from_pfp.at(pfp.key());
 			std::vector<art::Ptr<simb::MCParticle> > mcpart;
 			if(mcghost.size() == 0) {std::cout << "No matched MC Ghost to PFP!" << std::endl; }
+			//we don't want to just throw these events out!
 			if(mcghost.size() > 1) {std::cout << "Too many matched MC Ghost to PFP!" << std::endl; }
 			if(mcghost.size() == 1)
 			{
+				if(_verbose) {std::cout << "One MC Ghost Found!" << std::endl; }
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
 				const art::Ptr<simb::MCParticle> the_mcpart = mcpart.at(0);
 				const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(the_mcpart->TrackId());
@@ -348,6 +352,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				mcMomentum = the_mcpart->P();
 
 			}//end mcghost == 1
+			std::cout << "End IF MC Ghost == 1" << std::endl;
 			particle_container.SetmcPdgCode(mcPdg);
 			particle_container.SetOrigin(mcOrigin);
 			particle_container.SetmcVtxX(mc_vtx_x);
@@ -386,7 +391,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}//end pfp tracks
-			 //pfp showers
+			std::cout << "End IF PFP Track" << std::endl;
+
+			//pfp showers
 			if(pfpPdg == 11)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
@@ -411,6 +418,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}//end pfp showers
+			std::cout << "End IF PFP Shower" << std::endl;
 
 			particle_container.SetpfpDirX(pfp_dir_x);
 			particle_container.SetpfpDirY(pfp_dir_y);
@@ -437,6 +445,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	}//end loop tpc objects
 
 	//fill root tree per event
+	std::cout << "Fill Root Tree" << std::endl;
 	myTree->Fill();
 
 
