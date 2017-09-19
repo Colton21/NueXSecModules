@@ -121,6 +121,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
 	art::FindManyP<recob::Shower> showers_from_pfp(pfp_h, e, _pfp_producer);
 
+	// Get TPCObjects from the Event
+	art::Handle<std::vector<xsecAna::TPCObject> > tpcobj_h;
+	e.getByLabel(_tpcobject_producer, tpcobj_h);
+	if (!tpcobj_h.isValid()) {
+		std::cout << "[UBXSec] Cannote locate ubana::TPCObject." << std::endl;
+	}
+
 	// Get Ghosts
 	art::Handle<std::vector<xsecAna::MCGhost> > ghost_h;
 	e.getByLabel(_mc_ghost_producer,ghost_h);
@@ -131,12 +138,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<xsecAna::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
 	art::FindManyP<simb::MCParticle> mcpar_from_mcghost (ghost_h, e, _mc_ghost_producer);
 
-	// Get TPCObjects from the Event
-	art::Handle<std::vector<xsecAna::TPCObject> > tpcobj_h;
-	e.getByLabel(_tpcobject_producer, tpcobj_h);
-	if (!tpcobj_h.isValid()) {
-		std::cout << "[UBXSec] Cannote locate ubana::TPCObject." << std::endl;
-	}
 	//art::FindManyP<xsecAna::FlashMatch> tpcobjToFlashMatchAssns(tpcobj_h, e, _neutrino_flash_match_producer);
 	art::FindManyP<recob::Track>      tpcobjToTrackAssns(tpcobj_h, e, _tpcobject_producer);
 	art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
