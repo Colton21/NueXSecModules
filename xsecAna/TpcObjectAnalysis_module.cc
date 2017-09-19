@@ -373,9 +373,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetmcPdgCode(mcPdg);
 			//convert simb::Origin_t to std::string
 			std::string str_mcorigin;
-			if(mcorigin == simb::kUnknown) {str_mcorigin = "kUnknown"; }
-			if(mcorigin == simb::kBeamNeutrino) {str_mcorigin = "kBeamNeutrino"; }
-			if(mcorigin == simb::kCosmicRay) {str_mcorigin = "kCosmicRay"; }
+			if(mcOrigin == simb::kUnknown) {str_mcorigin = "kUnknown"; }
+			if(mcOrigin == simb::kBeamNeutrino) {str_mcorigin = "kBeamNeutrino"; }
+			if(mcOrigin == simb::kCosmicRay) {str_mcorigin = "kCosmicRay"; }
 			particle_container.SetOrigin(str_mcorigin);
 			particle_container.SetmcVtxX(mc_vtx_x);
 			particle_container.SetmcVtxY(mc_vtx_y);
