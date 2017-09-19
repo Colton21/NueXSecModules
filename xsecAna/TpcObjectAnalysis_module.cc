@@ -86,7 +86,9 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 {
 	art::ServiceHandle<art::TFileService> fs;
 	myTree = fs->make<TTree>("tree","");
-	myTree->Branch("TpcObjectContainer", &tpc_object_container_v, "tpc_object_container_v");
+	//myTree->Branch("TpcObjectContainerV", &tpc_object_container_v, "tpc_object_container_v");
+	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
+
 
 	//_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	//_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
@@ -102,6 +104,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	// Implementation of required member function here.
 
 	art::ServiceHandle<cheat::BackTracker> bt;
+	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
+
 
 	run = e.id().run();
 	event = e.id().event();
@@ -149,8 +153,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	//loop over all of the tpc objects!
 
 	int tpc_object_counter = 0;
-	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
-
 	for(size_t tpc_counter = 0; tpc_counter < tpcobj_h->size(); tpc_counter++)
 	{
 		const xsecAna::TPCObject tpcobj = (*tpcobj_h)[tpc_counter];

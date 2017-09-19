@@ -40,3 +40,5 @@ Thumbs.db
 *.root
 *.db
 xsecAna/run_Prod.fcl
+scripts/out_inspect
+scripts/potSum

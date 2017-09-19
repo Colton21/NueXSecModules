@@ -11,14 +11,14 @@
 int main()
 {
 	const char * _file1 = "../nue_xsec_extraction.root";
-	std::cout << _file1 << std::endl;
+	std::cout << "File Path: " << _file1 << std::endl;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; return 1; }
 	TTree * mytree = (TTree*)f->Get("AnalyzeTPCO/tree");
 
-	const std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v;
-	mytree->SetBranchAddress("TpcObject", &tpc_object_container_v);
+	std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v;
+	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
 	const int total_entries = mytree->GetEntries();
 
