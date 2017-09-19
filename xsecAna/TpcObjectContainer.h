@@ -5,6 +5,7 @@
 #include "ParticleContainer.h"
 
 #include <string>
+#include <vector>
 
 namespace xsecAna {
 
