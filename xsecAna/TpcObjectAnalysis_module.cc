@@ -275,7 +275,20 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 			const int pfpPdg = pfp->PdgCode();
 			if(_verbose) {std::cout << "PFP PDG Code " << pfpPdg << std::endl; }
-			pfpParentPdg = pfps_from_tpcobj->at(pfp->Parent())->PdgCode();
+			const unsigned int pfpParent_id = pfp->Parent();
+			if(_verbose) {std::cout << "PFP Parent ID " << pfpParent_id << std::endl;}
+			int position = 0;
+			int parent_position = -1;
+			for(auto const parent_search : pfps_from_tpcobj)
+			{
+			 if(parent_search->Self() == pfpParent_id ){parent_position = position;}
+			 position++;
+			}
+			if(parent_position != -1)
+			{
+			  auto const pfpParent_obj = pfps_from_tpcobj.at(parent_position);
+			  pfpParentPdg = pfpParent_obj->PdgCode();
+			}
 			if(_verbose) {std::cout << "PFP Parent PDG Code" << pfpParentPdg << std::endl; }
 			particle_container.SetpfpPdgCode(pfpPdg);
 			particle_container.SetpfpNuPdgCode(pfpParentPdg);
