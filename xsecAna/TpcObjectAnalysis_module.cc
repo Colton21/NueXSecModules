@@ -211,24 +211,20 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		//need to sum all hits from both tracks and showers
 		for(auto const track : track_v)
 		{
-			std::cout << "Tracks!" << std::endl;
 			//art::Ptr<recob::Track> & _track = track;
 			xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, track, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
 		}
-		std::cout << "End Tracks" << std::endl;
 		for(auto const shower : shower_v)
 		{
-			std::cout << "Showers!" << std::endl;
 			//art::Ptr<recob::Shower> & _shower = shower;
 			xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, shower, nhits_u, nhits_v, nhits_w);
 			total_nhits_u += nhits_u;
 			total_nhits_v += nhits_v;
 			total_nhits_w += nhits_w;
 		}
-		std::cout << "End Showers" << std::endl;
 		total_nhits = (total_nhits_u + total_nhits_v + total_nhits_w);
 
 		tpc_object_container.SetNumPFPHits   (total_nhits);
@@ -248,11 +244,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		//loop over pfparticles in the tpc object
 		//****************************************
 		auto pfps_from_tpcobj = tpcobjToPFPAssns.at(tpc_object_counter);
-		std::cout << "Grab pfps_from_tpcobj" << std::endl;
 		for(auto const pfp : pfps_from_tpcobj)
 		//for(auto const pfp : pfp_v)
 		{
-			std::cout << "PFP" << std::endl;
 			xsecAna::ParticleContainer particle_container;
 
 			int mcPdg = 0;
@@ -381,6 +375,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(mcOrigin == simb::kBeamNeutrino) {str_mcorigin = "kBeamNeutrino"; }
 			if(mcOrigin == simb::kCosmicRay) {str_mcorigin = "kCosmicRay"; }
 			particle_container.SetOrigin(str_mcorigin);
+			particle_container.SetmcPdgCode(mcPdg);
+			//particle_container.SetmcNuPdgCode();
 			particle_container.SetmcVtxX(mc_vtx_x);
 			particle_container.SetmcVtxY(mc_vtx_y);
 			particle_container.SetmcVtxZ(mc_vtx_z);
