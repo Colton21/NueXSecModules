@@ -279,7 +279,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			//double mc_open_angle = 0; //unset
 
 			const int pfpPdg = pfp->PdgCode();
-			if(_verbose) {std::cout << "PFP PDG Code " << pfpPdg << std::endl; }
+			//if(_verbose) {std::cout << "PFP PDG Code " << pfpPdg << std::endl; }
 			const unsigned int pfpParent_id = pfp->Parent();
 			int position = 0;
 			int parent_position = -1;
@@ -293,9 +293,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				auto const pfpParent_obj = pfps_from_tpcobj.at(parent_position);
 				pfpParentPdg = pfpParent_obj->PdgCode();
 			}
-			if(_verbose) {std::cout << "PFP Parent PDG Code " << pfpParentPdg << std::endl; }
+			//if(_verbose) {std::cout << "PFP Parent PDG Code " << pfpParentPdg << std::endl; }
 			particle_container.SetpfpPdgCode(pfpPdg);
-			particle_container.SetpfpNuPdgCode(pfpParentPdg);
+			//particle_container.SetpfpNuPdgCode(pfpParentPdg); //this will sometimes be a neutrino and sometimes not!
+			particle_container.SetpfpParentPdgCode(pfpParentPdg);
 			const int index = pfp->Self();
 			particle_container.SetIndex(index);
 			simb::Origin_t mcOrigin = simb::kUnknown;
@@ -402,15 +403,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				pfp_theta = acos(pfp_dir_z) * (180 / 3.1415);
 				pfp_phi = atan2(pfp_dir_y, pfp_dir_x) * (180 / 3.1415);
 				pfp_length = this_track->Length();
-				pfp_momentum = this_track->VertexMomentum();
+				pfp_momentum = this_track->StartMomentum();
 
 				xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
-				// Check where the hit is coming from
-				// for (unsigned int h = 0; h < hit_v.size(); h++) {
-				//      if (hit_v[h]->View() == 0) pfp_hits_u++;
-				//      if (hit_v[h]->View() == 1) pfp_hits_v++;
-				//      if (hit_v[h]->View() == 2) pfp_hits_w++;
-				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 			}//end pfp tracks
 
