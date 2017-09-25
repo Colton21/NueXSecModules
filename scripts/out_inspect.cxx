@@ -40,6 +40,7 @@ int out_inspect()
 			const int n_pfp_hits = tpc_obj.NumPFPHits();
 			const int is_cc = tpc_obj.IsCC();
 			const int mode = tpc_obj.Mode();
+			const std::string tpc_obj_origin = tpc_obj.Origin();
 			std::vector < double > tpc_obj_pfp_vtx;
 			tpc_obj_pfp_vtx.push_back(tpc_obj.pfpVtxX());
 			tpc_obj_pfp_vtx.push_back(tpc_obj.pfpVtxY());
@@ -50,7 +51,8 @@ int out_inspect()
 			tpc_obj_mc_vtx.push_back(tpc_obj.mcVtxZ());
 
 			std::cout << " \t Number of PFParticles: " << n_pfp << "\t Number of PFP Neutrinos: " << n_pfp_nu << std::endl;
-			std::cout << " \t Reco Hits: " << n_pfp_hits << "  MC Hits: " << n_mc_hits << std::endl;
+			std::cout << " \t Origin : " << tpc_obj_origin << std::endl;
+			std::cout << " \t Reco Hits: " << n_pfp_hits << "  MC Hits: " << "NOT SET" << std::endl;//n_mc_hits << std::endl;
 			std::cout << " \t Interaction Mode: " << mode << " IsCC: " << is_cc << std::endl;
 			std::cout << " \t Vertex - Reco : " << tpc_obj_pfp_vtx.at(0) << ", " << tpc_obj_pfp_vtx.at(1) << ", " << tpc_obj_pfp_vtx.at(2) << std::endl;
 			std::cout << " \t Vertex - MC   : " << tpc_obj_mc_vtx.at(0)  << ", " << tpc_obj_mc_vtx.at(1)  << ", " << tpc_obj_mc_vtx.at(2)  << std::endl;
@@ -60,7 +62,8 @@ int out_inspect()
 				auto const part = tpc_obj.GetParticle(j);
 				const int pfp_pdg = part.PFParticlePdgCode();
 				const int mc_pdg = part.MCPdgCode();
-				const int mc_parent_pdg = part.MCParentPdg();
+				//const int mc_parent_pdg = part.MCParentPdg();//not set in module
+				const int pfp_parent_pdg = part.PFParticleParentPdgCode();
 				const std::string origin = part.Origin();
 				std::vector < double > pfp_vtx;
 				pfp_vtx.push_back(tpc_obj.pfpVtxX());
@@ -88,7 +91,7 @@ int out_inspect()
 				const double pfp_open_angle = part.pfpOpenAngle();
 
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
-				std::cout << " \t \t Particle PDG Codes: - Reco " << pfp_pdg << " - True " << mc_pdg << " - True Parent " << mc_parent_pdg << std::endl;
+				std::cout << " \t \t Particle PDG Codes: - Reco " << pfp_pdg << " - True " << mc_pdg << " - Reco Parent " << pfp_parent_pdg << std::endl;
 				std::cout << " \t \t Origin: " << origin << std::endl;
 				std::cout << " \t \t Vertex - Reco : " << pfp_vtx.at(0) << ", " << pfp_vtx.at(1) << ", " << pfp_vtx.at(2) << std::endl;
 				std::cout << " \t \t Vertex - MC   : " << mc_vtx.at(0)  << ", " << mc_vtx.at(1)  << ", " << mc_vtx.at(2)  << std::endl;
@@ -96,7 +99,7 @@ int out_inspect()
 				std::cout << " \t \t Direction - MC   : " << mc_dir.at(0)  << ", " << mc_dir.at(1)  << ", " << mc_dir.at(2)  << std::endl;
 				std::cout << " \t \t Length - MC : " << mc_length << " - Reco : " << pfp_length << std::endl;
 				std::cout << " \t \t Momentum - MC : " << mc_momentum << " - Reco : " << pfp_momentum << std::endl;
-				std::cout << " \t \t Hits - MC : " << n_mc_hits << " - Reco: " << n_pfp_hits << std::endl;
+				std::cout << " \t \t Hits - MC : " << n_mc_hits << " - Reco: " << "NOT SET" << std::endl;//n_pfp_hits << std::endl;
 				std::cout << " \t \t Open Angle: " << pfp_open_angle << std::endl;
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 			}//end looping particles

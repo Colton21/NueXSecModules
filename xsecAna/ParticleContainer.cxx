@@ -36,6 +36,12 @@ void ParticleContainer::SetpfpNuPdgCode(int _pfp_nu_pdg){
 void ParticleContainer::SetpfpParentPdgCode(int _pfp_parent_pdg){
 	pfp_parent_pdg = _pfp_parent_pdg;
 }
+void ParticleContainer::SetMode(int _mode){
+	mode = _mode;
+}
+void ParticleContainer::SetIsCC(int _is_cc){
+	is_cc = _is_cc;
+}
 
 void ParticleContainer::SetmcVtxX  (double _mc_vtx_x){
 	mc_vtx_x = _mc_vtx_x;
@@ -190,6 +196,12 @@ int ParticleContainer::PFParticleNuPdgCode() const {
 }
 int ParticleContainer::PFParticleParentPdgCode() const {
 	return pfp_parent_pdg;
+}
+int ParticleContainer::Mode() const {
+	return mode;
+}
+int ParticleContainer::IsCC() const {
+	return is_cc;
 }
 
 double ParticleContainer::mcVtxX() const {

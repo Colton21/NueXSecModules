@@ -115,12 +115,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	e.getByLabel(_pfp_producer,pfp_h);
 	if(!pfp_h.isValid())
 	{
-		std::cout << "[UBXSec] PFP product " << _pfp_producer << " not found..." << std::endl;
+		std::cout << "[Analysis] PFP product " << _pfp_producer << " not found..." << std::endl;
 		//throw std::exception();
 	}
 	if(pfp_h->empty())
 	{
-		std::cout << "[UBXSec] PFP " << _pfp_producer << " is empty." << std::endl;
+		std::cout << "[Analysis] PFP " << _pfp_producer << " is empty." << std::endl;
 	}
 	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
 	art::FindManyP<recob::Shower> showers_from_pfp(pfp_h, e, _pfp_producer);
@@ -129,14 +129,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::Handle<std::vector<xsecAna::TPCObject> > tpcobj_h;
 	e.getByLabel(_tpcobject_producer, tpcobj_h);
 	if (!tpcobj_h.isValid()) {
-		std::cout << "[UBXSec] Cannote locate ubana::TPCObject." << std::endl;
+		std::cout << "[Analysis] Cannote locate ubana::TPCObject." << std::endl;
 	}
 
 	// Get Ghosts
 	art::Handle<std::vector<xsecAna::MCGhost> > ghost_h;
 	e.getByLabel(_mc_ghost_producer,ghost_h);
 	if(!ghost_h.isValid()) {
-		std::cout << "[UBXSec] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
+		std::cout << "[Analysis] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
 		//throw std::exception();
 	}
 	art::FindManyP<xsecAna::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
@@ -187,7 +187,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetEventNumber(event);
 		tpc_object_container.SetIndex(tpc_object_counter);
 		//convert simb::Origin_t object to std::string
-		std::string str_origin = "kUnknown";
+		std::string str_origin = "kUnset";
 		if(tpcobj_origin == simb::kUnknown) {str_origin = "kUnknown"; }
 		if(tpcobj_origin == simb::kBeamNeutrino) {str_origin = "kBeamNeutrino"; }
 		if(tpcobj_origin == simb::kCosmicRay) {str_origin = "kCosmicRay"; }
@@ -272,6 +272,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			double mcLength = 0;
 			double mcEnergy = 0;
 			double mcMomentum = 0;
+			int particle_mode = -1;
+			int particle_is_cc = -1;
 			//double mc_open_angle = 0; //unset
 
 			const int pfpPdg = pfp->PdgCode();
@@ -334,8 +336,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			std::vector<art::Ptr<simb::MCParticle> > mcpart;
 			if(mcghost.size() == 0) {std::cout << "No matched MC Ghost to PFP!" << std::endl; }
 			//we don't want to just throw these events out!
-			if(mcghost.size() > 1) {std::cout << "Too many matched MC Ghost to PFP!" << std::endl; }
-			if(mcghost.size() == 1)
+			if(mcghost.size() > 1)
+			{
+				if(_verbose) {std::cout << "Too many matched MC Ghost to PFP!" << std::endl; }
+			}//end if 2+ MC Ghost
+			if(mcghost.size() >= 1)
 			{
 				if(_verbose) {std::cout << "One MC Ghost Found!" << std::endl; }
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
@@ -344,6 +349,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				const simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
 				mode = mc_nu.Mode();
 				ccnc = mc_nu.CCNC();
+				particle_mode = mode;
+				particle_is_cc = ccnc;
 
 				mcOrigin = mctruth->Origin();
 				mcPdg = the_mcpart->PdgCode();
@@ -385,6 +392,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetmcLength(mcLength);
 			particle_container.SetmcEnergy(mcEnergy);
 			particle_container.SetmcMomentum(mcMomentum);
+			particle_container.SetMode(particle_mode);
+			particle_container.SetIsCC(particle_is_cc);
 
 			//pfp tracks
 			if(pfpPdg == 13)

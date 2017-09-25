@@ -22,6 +22,8 @@ bool is_primary;
 int pfp_pdg;
 int pfp_nu_pdg;
 int pfp_parent_pdg;
+int mode;
+int is_cc;
 
 int mc_vtx_x;
 int mc_vtx_y;
@@ -88,6 +90,8 @@ void SetmcIsPrimary(bool);
 void SetpfpPdgCode(int);
 void SetpfpNuPdgCode(int);
 void SetpfpParentPdgCode(int);
+void SetMode(int);
+void SetIsCC(int);
 
 void SetmcVtxX  (double);
 void SetmcVtxY  (double);
@@ -150,6 +154,8 @@ int PFParticlePdgCode   () const;
 int PFParticleNuPdgCode () const;
 //const int PFParticleNuIndex();
 int PFParticleParentPdgCode() const;
+int Mode () const;
+int IsCC () const;
 
 double mcVtxX () const;
 double mcVtxY () const;
