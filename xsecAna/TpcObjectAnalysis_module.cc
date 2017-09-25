@@ -399,7 +399,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 13)
 			{
 				std::vector<art::Ptr<recob::Track> > tracks = tracks_from_pfp.at(pfp.key());
-				std::cout << "[UBXSec] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
+				std::cout << "[Analysis] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
 				//we want to take the first association, right?
 				const art::Ptr<recob::Track> this_track = tracks.at(0);
 				pfp_dir_x = this_track->VertexDirection().X();
@@ -418,7 +418,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 11)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
-				std::cout << "[UBXSec] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
+				std::cout << "[Analysis] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
 				//we want to take the first association, right?
 				const art::Ptr<recob::Shower> this_shower = showers.at(0);
 				pfp_dir_x = this_shower->Direction().X();

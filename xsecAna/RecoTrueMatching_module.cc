@@ -95,7 +95,7 @@ void xsecAna::RecoTrueMatching::produce(art::Event & e)
 	if(_debug) std::cout << "[RecoTrueMatching] event: " << e.id().event() << std::endl;
 
 	// Instantiate the output
-	std::unique_ptr< std::vector< xsecAna::MCGhost > >                mcGhostVector   (new std::vector<xsecAna::MCGhost>);
+	std::unique_ptr< std::vector< xsecAna::MCGhost > >                 mcGhostVector   (new std::vector<xsecAna::MCGhost>);
 	std::unique_ptr< art::Assns<simb::MCParticle, xsecAna::MCGhost> >  assnOutGhostMCP (new art::Assns<simb::MCParticle, xsecAna::MCGhost>);
 	std::unique_ptr< art::Assns<recob::PFParticle, xsecAna::MCGhost> > assnOutGhostPFP (new art::Assns<recob::PFParticle, xsecAna::MCGhost>);
 
