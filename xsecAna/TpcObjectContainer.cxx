@@ -11,7 +11,7 @@ void TPCObjectContainer::AddParticle ( ParticleContainer _particle){
 	fParticleList.push_back(_particle);
 }
 
-const ParticleContainer TPCObjectContainer::GetParticle(int _i) const {
+ParticleContainer TPCObjectContainer::GetParticle(int _i) const {
 	return fParticleList.at(_i);
 }
 
@@ -114,96 +114,96 @@ void TPCObjectContainer::SetNumMatchedHitsW (int _n_matched_hits_w){
 //Getter Functions
 //----------------
 
-const int TPCObjectContainer::RunNumber () {
+int TPCObjectContainer::RunNumber () const {
 	return run;
 }
-const int TPCObjectContainer::SubRunNumber () {
+int TPCObjectContainer::SubRunNumber () const {
 	return subrun;
 }
-const int TPCObjectContainer::EventNumber() {
+int TPCObjectContainer::EventNumber() const {
 	return event;
 }
-const int TPCObjectContainer::Index () {
+int TPCObjectContainer::Index () const {
 	return index;
 }
 
-const int TPCObjectContainer::NumPFParticles (){
+int TPCObjectContainer::NumPFParticles () const {
 	return n_pfp;
 }
-const int TPCObjectContainer::NumPFPNeutrinos (){
+int TPCObjectContainer::NumPFPNeutrinos () const {
 	return n_pfp_nu;
 }
-const int TPCObjectContainer::Mode (){
+int TPCObjectContainer::Mode () const {
 	return mode;
 }
-const std::string TPCObjectContainer::Origin (){
+std::string TPCObjectContainer::Origin () const {
 	return origin;
 }
-const int TPCObjectContainer::IsCC (){
+int TPCObjectContainer::IsCC () const {
 	return is_cc;
 }
 
-const double TPCObjectContainer::mcVtxX  (){
+double TPCObjectContainer::mcVtxX  () const {
 	return mc_vtx_x;
 }
-const double TPCObjectContainer::mcVtxY  (){
+double TPCObjectContainer::mcVtxY  () const {
 	return mc_vtx_y;
 }
-const double TPCObjectContainer::mcVtxZ  (){
+double TPCObjectContainer::mcVtxZ  () const {
 	return mc_vtx_z;
 }
-const double TPCObjectContainer::pfpVtxX (){
+double TPCObjectContainer::pfpVtxX () const {
 	return pfp_vtx_x;
 }
-const double TPCObjectContainer::pfpVtxY (){
+double TPCObjectContainer::pfpVtxY () const {
 	return pfp_vtx_y;
 }
-const double TPCObjectContainer::pfpVtxZ (){
+double TPCObjectContainer::pfpVtxZ () const {
 	return pfp_vtx_z;
 }
 
-const double TPCObjectContainer::Completeness (){
+double TPCObjectContainer::Completeness () const {
 	return completeness;
 }
-const double TPCObjectContainer::Purity (){
+double TPCObjectContainer::Purity () const {
 	return purity;
 }
 
-const int TPCObjectContainer::NumMCHits   () {
+int TPCObjectContainer::NumMCHits   () const {
 	return n_mc_hits;
 }
-const int TPCObjectContainer::NumMCHitsU  () {
+int TPCObjectContainer::NumMCHitsU  () const {
 	return n_mc_hits_u;
 }
-const int TPCObjectContainer::NumMCHitsV  () {
+int TPCObjectContainer::NumMCHitsV  () const {
 	return n_mc_hits_v;
 }
-const int TPCObjectContainer::NumMCHitsW  () {
+int TPCObjectContainer::NumMCHitsW  () const {
 	return n_mc_hits_w;
 }
-const int TPCObjectContainer::NumPFPHits  () {
+int TPCObjectContainer::NumPFPHits  () const {
 	return n_pfp_hits;
 }
-const int TPCObjectContainer::NumPFPHitsU () {
+int TPCObjectContainer::NumPFPHitsU () const {
 	return n_pfp_hits_u;
 }
-const int TPCObjectContainer::NumPFPHitsV () {
+int TPCObjectContainer::NumPFPHitsV () const {
 	return n_pfp_hits_v;
 }
-const int TPCObjectContainer::NumPFPHitsW () {
+int TPCObjectContainer::NumPFPHitsW () const {
 	return n_pfp_hits_w;
 }
 
-const int TPCObjectContainer::NumMatchedHits  () {
+int TPCObjectContainer::NumMatchedHits  () const {
 	return n_matched_hits;
 }
-const int TPCObjectContainer::NumMatchedHitsU () {
+int TPCObjectContainer::NumMatchedHitsU () const {
 	return n_matched_hits_u;
 }
-const int TPCObjectContainer::NumMatchedHitsV () {
+int TPCObjectContainer::NumMatchedHitsV () const {
 	return n_matched_hits_v;
 }
-const int TPCObjectContainer::NumMatchedHitsW () {
+int TPCObjectContainer::NumMatchedHitsW () const {
 	return n_matched_hits_w;
 }
 

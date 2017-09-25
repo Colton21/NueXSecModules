@@ -25,17 +25,20 @@ int out_inspect()
 	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
-	std::cout << "Pointer: " << tpc_object_container_v << std::endl;
-
 	const int total_entries = mytree->GetEntries();
 
 	for(int i = 0; i < total_entries; i++)
 	{
 		mytree->GetEntry(i);
-		std::cout << "Pointer: " << tpc_object_container_v << std::endl;
-		std::cout << tpc_object_container_v->size() << std::endl;
-		std::cout << tpc_object_container_v->at(0).RunNumber() << std::endl;
-	}
+		const int n_tpc_obj = tpc_object_container_v->size();
+		std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
+		for(auto const tpc_obj : *tpc_object_container_v)
+		{
+			const int n_pfp = tpc_obj.NumPFParticles();
+			std::cout << " \t Number of PFParticles: " << n_pfp << std::endl;
+		}
+		//std::cout << tpc_object_container_v->at(0).RunNumber() << std::endl;
+	}//end looping events
 
 	return 0;
 }

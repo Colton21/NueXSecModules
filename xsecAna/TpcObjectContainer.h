@@ -57,7 +57,7 @@ public:
 TPCObjectContainer()=default;
 
 void AddParticle (ParticleContainer);
-const ParticleContainer GetParticle (int) const;
+ParticleContainer GetParticle (int) const;
 
 //----------------
 //Setter Functions
@@ -111,40 +111,40 @@ void SetNumMatchedHitsW (int);
 //Getter Functions
 //----------------
 
-const int RunNumber ();
-const int SubRunNumber ();
-const int EventNumber();
-const int Index ();
+int RunNumber     () const;
+int SubRunNumber  () const;
+int EventNumber   () const;
+int Index         () const;
 
-const int NumPFParticles ();
-const int NumPFPNeutrinos ();
-const int Mode ();
-const std::string Origin ();
-const int IsCC ();
+int NumPFParticles  () const;
+int NumPFPNeutrinos () const;
+int Mode            () const;
+std::string Origin  () const;
+int IsCC            () const;
 
-const double mcVtxX  ();
-const double mcVtxY  ();
-const double mcVtxZ  ();
-const double pfpVtxX ();
-const double pfpVtxY ();
-const double pfpVtxZ ();
+double mcVtxX  () const;
+double mcVtxY  () const;
+double mcVtxZ  () const;
+double pfpVtxX () const;
+double pfpVtxY () const;
+double pfpVtxZ () const;
 
-const double Completeness ();
-const double Purity ();
+double Completeness () const;
+double Purity       () const;
 
-const int NumMCHits   ();
-const int NumMCHitsU  ();
-const int NumMCHitsV  ();
-const int NumMCHitsW  ();
-const int NumPFPHits  ();
-const int NumPFPHitsU ();
-const int NumPFPHitsV ();
-const int NumPFPHitsW ();
+int NumMCHits   () const;
+int NumMCHitsU  () const;
+int NumMCHitsV  () const;
+int NumMCHitsW  () const;
+int NumPFPHits  () const;
+int NumPFPHitsU () const;
+int NumPFPHitsV () const;
+int NumPFPHitsW () const;
 
-const int NumMatchedHits  ();
-const int NumMatchedHitsU ();
-const int NumMatchedHitsV ();
-const int NumMatchedHitsW ();
+int NumMatchedHits  () const;
+int NumMatchedHitsU () const;
+int NumMatchedHitsV () const;
+int NumMatchedHitsW () const;
 
 };
 

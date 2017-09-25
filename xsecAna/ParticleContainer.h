@@ -137,65 +137,65 @@ void SetpfpOpenAngle(double);
 
 //need to write the getter functions too!
 
-const int Index();//index is particle number in tpc object container
+int Index() const; //index is particle number in tpc object container
 
-const std::string Origin();//this is the particle origin
+std::string Origin() const; //this is the particle origin
 
-const int MCPdgCode();//true pdg code for the pfp
-const int MCNuPdgCode();//true nu pdg code (parent) for the pfp
-const int MCParentPdg();//true parent pdg of the pfp
-const bool IsNeutrino();//is the pfparticle 12 / 14 pdg code
-const bool IsPrimary();
-const int PFParticlePdgCode();
-const int PFParticleNuPdgCode();
+int MCPdgCode           () const;//true pdg code for the pfp
+int MCNuPdgCode         () const;//true nu pdg code (parent) for the pfp
+int MCParentPdg         () const;//true parent pdg of the pfp
+bool IsNeutrino         () const;//is the pfparticle 12 / 14 pdg code
+bool IsPrimary          () const;
+int PFParticlePdgCode   () const;
+int PFParticleNuPdgCode () const;
 //const int PFParticleNuIndex();
-const int PFParticleParentPdgCode();
+int PFParticleParentPdgCode() const;
 
-const double mcVtxX();
-const double mcVtxY();
-const double mcVtxZ();
-const double pfpVtxX();
-const double pfpVtxY();
-const double pfpVtxZ();
+double mcVtxX () const;
+double mcVtxY () const;
+double mcVtxZ () const;
+double pfpVtxX() const;
+double pfpVtxY() const;
+double pfpVtxZ() const;
 
-const double mcDirX();
-const double mcDirY();
-const double mcDirZ();
-const double pfpDirX();
-const double pfpDirY();
-const double pfpDirZ();
+double mcDirX   () const;
+double mcDirY   () const;
+double mcDirZ   () const;
+double pfpDirX  () const;
+double pfpDirY  () const;
+double pfpDirZ  () const;
 
-const double mcTheta();
-const double mcPhi();
-const double pfpTheta();
-const double pfpPhi();
+double mcTheta  () const;
+double mcPhi    () const;
+double pfpTheta () const;
+double pfpPhi   () const;
 
-const double mcLength();
-const double pfpLength();
+double mcLength   () const;
+double pfpLength  () const;
 
-const double mcEnergy();
-const double mcMomentum();
-const double pfpMomentum();
+double mcEnergy     () const;
+double mcMomentum   () const;
+double pfpMomentum  () const;
 
-const double Completeness();
-const double Purity();
+double Completeness () const;
+double Purity       () const;
 
-const int NumMCHits   ();
-const int NumMCHitsU  ();
-const int NumMCHitsV  ();
-const int NumMCHitsW  ();
-const int NumPFPHits  ();
-const int NumPFPHitsU ();
-const int NumPFPHitsV ();
-const int NumPFPHitsW ();
+int NumMCHits   () const;
+int NumMCHitsU  () const;
+int NumMCHitsV  () const;
+int NumMCHitsW  () const;
+int NumPFPHits  () const;
+int NumPFPHitsU () const;
+int NumPFPHitsV () const;
+int NumPFPHitsW () const;
 
-const int NumMatchedHits  ();
-const int NumMatchedHitsU ();
-const int NumMatchedHitsV ();
-const int NumMatchedHitsW ();
+int NumMatchedHits  () const;
+int NumMatchedHitsU () const;
+int NumMatchedHitsV () const;
+int NumMatchedHitsW () const;
 
-const double mcOpenAngle();
-const double pfpOpenAngle();
+double mcOpenAngle  () const;
+double pfpOpenAngle () const;
 
 };//end class
 

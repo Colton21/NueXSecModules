@@ -159,156 +159,156 @@ void ParticleContainer::SetpfpOpenAngle(double _pfp_open_angle){
 
 //need to write the getter functions too!
 
-const int ParticleContainer::Index(){
+int ParticleContainer::Index() const {
 	return index;
 } //index is particle number in tpc object container
 
-const std::string ParticleContainer::Origin(){
+std::string ParticleContainer::Origin() const {
 	return origin;
 }  //this is the particle origin
 
-const int ParticleContainer::MCPdgCode(){
+int ParticleContainer::MCPdgCode() const {
 	return mc_pdg;
 }  //true pdg code for the pfp
-const int ParticleContainer::MCNuPdgCode(){
+int ParticleContainer::MCNuPdgCode() const {
 	return mc_nu_pdg;
 }  //true nu pdg code (parent) for the pfp
-const int ParticleContainer::MCParentPdg(){
+int ParticleContainer::MCParentPdg() const {
 	return mc_parent_pdg;
 }  //true parent pdg of the pfp
-const bool ParticleContainer::IsNeutrino(){
+bool ParticleContainer::IsNeutrino() const {
 	return is_neutrino;
 }  //is the pfparticle 12 / 14 pdg code
-const bool ParticleContainer::IsPrimary(){
+bool ParticleContainer::IsPrimary() const {
 	return is_primary;
 }
-const int ParticleContainer::PFParticlePdgCode(){
+int ParticleContainer::PFParticlePdgCode() const {
 	return pfp_pdg;
 }
-const int ParticleContainer::PFParticleNuPdgCode(){
+int ParticleContainer::PFParticleNuPdgCode() const {
 	return pfp_nu_pdg;
 }
-const int ParticleContainer::PFParticleParentPdgCode(){
+int ParticleContainer::PFParticleParentPdgCode() const {
 	return pfp_parent_pdg;
 }
 
-const double ParticleContainer::mcVtxX(){
+double ParticleContainer::mcVtxX() const {
 	return mc_vtx_x;
 }
-const double ParticleContainer::mcVtxY(){
+double ParticleContainer::mcVtxY() const {
 	return mc_vtx_y;
 }
-const double ParticleContainer::mcVtxZ(){
+double ParticleContainer::mcVtxZ() const {
 	return mc_vtx_z;
 }
-const double ParticleContainer::pfpVtxX(){
+double ParticleContainer::pfpVtxX() const {
 	return pfp_vtx_x;
 }
-const double ParticleContainer::pfpVtxY(){
+double ParticleContainer::pfpVtxY() const {
 	return pfp_vtx_y;
 }
-const double ParticleContainer::pfpVtxZ(){
+double ParticleContainer::pfpVtxZ() const {
 	return pfp_vtx_z;
 }
 
-const double ParticleContainer::mcDirX(){
+double ParticleContainer::mcDirX() const {
 	return mc_dir_x;
 }
-const double ParticleContainer::mcDirY(){
+double ParticleContainer::mcDirY() const {
 	return mc_dir_y;
 }
-const double ParticleContainer::mcDirZ(){
+double ParticleContainer::mcDirZ() const {
 	return mc_dir_z;
 }
-const double ParticleContainer::pfpDirX(){
+double ParticleContainer::pfpDirX() const {
 	return pfp_dir_x;
 }
-const double ParticleContainer::pfpDirY(){
+double ParticleContainer::pfpDirY() const {
 	return pfp_dir_y;
 }
-const double ParticleContainer::pfpDirZ(){
+double ParticleContainer::pfpDirZ() const {
 	return pfp_dir_z;
 }
 
-const double ParticleContainer::mcTheta(){
+double ParticleContainer::mcTheta() const {
 	return mc_theta;
 }
-const double ParticleContainer::mcPhi(){
+double ParticleContainer::mcPhi() const {
 	return mc_phi;
 }
-const double ParticleContainer::pfpTheta(){
+double ParticleContainer::pfpTheta() const {
 	return pfp_theta;
 }
-const double ParticleContainer::pfpPhi(){
+double ParticleContainer::pfpPhi() const {
 	return pfp_phi;
 }
 
-const double ParticleContainer::mcLength(){
+double ParticleContainer::mcLength() const {
 	return mc_length;
 }
-const double ParticleContainer::pfpLength(){
+double ParticleContainer::pfpLength() const {
 	return pfp_length;
 }
 
-const double ParticleContainer::mcEnergy(){
+double ParticleContainer::mcEnergy() const {
 	return mc_energy;
 }
-const double ParticleContainer::mcMomentum(){
+double ParticleContainer::mcMomentum() const {
 	return mc_momentum;
 }
-const double ParticleContainer::pfpMomentum(){
+double ParticleContainer::pfpMomentum() const {
 	return pfp_momentum;
 }
 
-const double ParticleContainer::Completeness(){
+double ParticleContainer::Completeness() const {
 	return completeness;
 }
-const double ParticleContainer::Purity(){
+double ParticleContainer::Purity() const {
 	return purity;
 }
 
-const int ParticleContainer::NumMCHits   (){
+int ParticleContainer::NumMCHits   () const {
 	return n_mc_hits;
 }
-const int ParticleContainer::NumMCHitsU  (){
+int ParticleContainer::NumMCHitsU  () const {
 	return n_mc_hits_u;
 }
-const int ParticleContainer::NumMCHitsV  (){
+int ParticleContainer::NumMCHitsV  () const {
 	return n_mc_hits_v;
 }
-const int ParticleContainer::NumMCHitsW  (){
+int ParticleContainer::NumMCHitsW  () const {
 	return n_mc_hits_w;
 }
-const int ParticleContainer::NumPFPHits  (){
+int ParticleContainer::NumPFPHits  () const {
 	return n_pfp_hits;
 }
-const int ParticleContainer::NumPFPHitsU (){
+int ParticleContainer::NumPFPHitsU () const {
 	return n_pfp_hits_u;
 }
-const int ParticleContainer::NumPFPHitsV (){
+int ParticleContainer::NumPFPHitsV () const {
 	return n_pfp_hits_v;
 }
-const int ParticleContainer::NumPFPHitsW (){
+int ParticleContainer::NumPFPHitsW () const {
 	return n_pfp_hits_w;
 }
 
-const int ParticleContainer::NumMatchedHits  (){
+int ParticleContainer::NumMatchedHits  () const {
 	return n_matched_hits;
 }
-const int ParticleContainer::NumMatchedHitsU (){
+int ParticleContainer::NumMatchedHitsU () const {
 	return n_matched_hits_u;
 }
-const int ParticleContainer::NumMatchedHitsV (){
+int ParticleContainer::NumMatchedHitsV () const {
 	return n_matched_hits_v;
 }
-const int ParticleContainer::NumMatchedHitsW (){
+int ParticleContainer::NumMatchedHitsW () const {
 	return n_matched_hits_w;
 }
 
-const double ParticleContainer::mcOpenAngle(){
+double ParticleContainer::mcOpenAngle() const {
 	return mc_open_angle;
 }
-const double ParticleContainer::pfpOpenAngle(){
+double ParticleContainer::pfpOpenAngle() const {
 	return pfp_open_angle;
 }
 
