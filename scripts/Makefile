@@ -1,15 +1,26 @@
-CXXFLAGS=-std=c++11 $(shell root-config --cflags)
+CXX=g++
+CXXFLAGS=$(shell root-config --cflags)
 LIBS=$(shell root-config --libs)
+LD=g++
+LDFLAGS=
+DEBUGFLAGS= -O0 -D _DEBUG
 
-run: potSum
-	@echo "Complied potSum..."
-potSum: potSum.o
-	g++ -o $@ $^ ${LIBS}
+XSECANALIBS=../xsecAna/libxsecAna.so ../xsecAna/libxsecAna_dict.so
 
-run: out_inspect
-	@echo "Compiled out_inspect..."
-out_inspect: out_inspect.o
-	g++ -o $@ $^ ${LIBS}
+TARGETNAMES=out_inspect
+
+TARGETS=$(TARGETNAMES:%=%.exe)
+OBJECTS=$(TARGETNAMES:%=%.o)
+SOURCES=$(TARGETNAMES:%=%.cxx)
+
+
+all: $(TARGETS)
+
+clean:
+	rm -f $(OBJECTS) $(TARGETS)
 
 %.o: %.cxx
-	g++ ${CXXFLAGS} -o $@ -c $^
+	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c -o "$@" $^
+
+%.exe : %.o $(XSECANALIBS)
+	$(LD) $(LDFLAGS) $(LIBS) -o "$@" $^

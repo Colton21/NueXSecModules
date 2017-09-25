@@ -54,10 +54,7 @@ int n_matched_hits_w;
 
 public:
 
-TPCObjectContainer();
-
-//destructor
-virtual ~TPCObjectContainer();
+TPCObjectContainer()=default;
 
 void AddParticle (ParticleContainer);
 const ParticleContainer GetParticle (int) const;

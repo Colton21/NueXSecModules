@@ -92,10 +92,6 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree->Print();
 	std::cout << "---------" << std::endl;
 
-	//_pfp_producer                   = p.get<std::string>("PFParticleProducer");
-	//_mc_ghost_producer              = p.get<std::string>("MCGhostProducer");
-	//_tpcobject_producer             = p.get<std::string>("TPCObjectProducer");
-
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
 

@@ -2,11 +2,8 @@
 
 namespace xsecAna {
 
-TPCObjectContainer::TPCObjectContainer() {
-}
-
-TPCObjectContainer::~TPCObjectContainer(){
-}
+// TPCObjectContainer::TPCObjectContainer() {
+// }
 
 //
 
