@@ -42,10 +42,12 @@ int out_inspect()
 			const int mode = tpc_obj.Mode();
 			const std::string tpc_obj_origin = tpc_obj.Origin();
 			std::vector < double > tpc_obj_pfp_vtx;
+			if(!tpc_obj_pfp_vtx.empty()) {tpc_obj_pfp_vtx.clear(); }
 			tpc_obj_pfp_vtx.push_back(tpc_obj.pfpVtxX());
 			tpc_obj_pfp_vtx.push_back(tpc_obj.pfpVtxY());
 			tpc_obj_pfp_vtx.push_back(tpc_obj.pfpVtxZ());
 			std::vector < double > tpc_obj_mc_vtx;
+			if(!tpc_obj_mc_vtx.empty()) {tpc_obj_mc_vtx.clear(); }
 			tpc_obj_mc_vtx.push_back(tpc_obj.mcVtxX());
 			tpc_obj_mc_vtx.push_back(tpc_obj.mcVtxY());
 			tpc_obj_mc_vtx.push_back(tpc_obj.mcVtxZ());
@@ -66,18 +68,22 @@ int out_inspect()
 				const int pfp_parent_pdg = part.PFParticleParentPdgCode();
 				const std::string origin = part.Origin();
 				std::vector < double > pfp_vtx;
+				if(!pfp_vtx.empty()) {pfp_vtx.clear(); }
 				pfp_vtx.push_back(tpc_obj.pfpVtxX());
 				pfp_vtx.push_back(tpc_obj.pfpVtxY());
 				pfp_vtx.push_back(tpc_obj.pfpVtxZ());
 				std::vector < double > mc_vtx;
+				if(!mc_vtx.empty()) {mc_vtx.clear(); }
 				mc_vtx.push_back(tpc_obj.mcVtxX());
 				mc_vtx.push_back(tpc_obj.mcVtxY());
 				mc_vtx.push_back(tpc_obj.mcVtxZ());
 				std::vector < double > pfp_dir;
+				if(!pfp_dir.empty()) {pfp_dir.clear(); }
 				pfp_dir.push_back(part.pfpDirX());
 				pfp_dir.push_back(part.pfpDirY());
 				pfp_dir.push_back(part.pfpDirZ());
 				std::vector < double > mc_dir;
+				if(!mc_dir.empty()) {mc_dir.clear(); }
 				mc_dir.push_back(part.mcDirX());
 				mc_dir.push_back(part.mcDirY());
 				mc_dir.push_back(part.mcDirZ());
