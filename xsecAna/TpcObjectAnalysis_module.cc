@@ -17,6 +17,8 @@
 #include "fhiclcpp/ParameterSet.h"
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "larsim/MCCheater/BackTracker.h"
+#include "lardataobj/RecoBase/OpFlash.h"
+
 
 #include "TpcObjectContainer.h"
 #include "ParticleContainer.h"
@@ -73,6 +75,14 @@ std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v;
 int run;
 int event;
 
+TTree * optical_tree;
+int fOpFlashPE = 0;
+double fOpFlashTime = 0;
+double fOpFlashWidthY = 0;
+double fOpFlashWidthZ = 0;
+double fOpFlashCenterY = 0;
+double fOpFlashCenterZ = 0;
+
 };
 
 
@@ -85,12 +95,24 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	// More initializers here.
 {
 	art::ServiceHandle<art::TFileService> fs;
+
 	myTree = fs->make<TTree>("tree","");
-	//myTree->Branch("TpcObjectContainerV", &tpc_object_container_v, "tpc_object_container_v");
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
-	std::cout << "----------" << std::endl;
-	myTree->Print();
-	std::cout << "---------" << std::endl;
+
+	optical_tree = fs->make<TTree>("optical_tree", "optical_objects");
+	optical_tree->Branch("event", &fevent, "event/I");
+	optical_tree->Branch("run", &run, "run/I");
+	//optical_tree->Branch("Subrun", &fSubrun_num, "fSubrun_num/I");
+	optical_tree->Branch("OpFlashPE", &fOpFlashPE, "fOpFlashPe/I");
+	optical_tree->Branch("OpFlashTime", &fOpFlashTime, "fOpFlashTime/D");
+	optical_tree->Branch("OpFlashWidhtY", &fOpFlashWidthY, "fOpFlashWidthY/D");
+	optical_tree->Branch("OpFlashWidthZ", &fOpFlashWidthZ, "fOpFlashWidhtZ/D");
+	optical_tree->Branch("OpFlashCenterY", &fOpFlashCenterY, "fOpFlashCenterY/D");
+	optical_tree->Branch("OpFlashCenterZ", &fOpFlashCenterZ, "fOpFlashCenterZ/D");
+
+	//std::cout << "----------" << std::endl;
+	//myTree->Print();
+	//std::cout << "---------" << std::endl;
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -99,6 +121,23 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 
 void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 {
+	//this is getting the optical information
+	std::string beam_flash_tag = "simpleFlashBeam";
+	auto const & beam_opf = evt.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
+	auto const & beam_opflashes(*beam_opf);
+	for(auto const & opflsh : beam_opflashes)
+	{
+		fOpFlashPE = opflsh.TotalPE();
+		fOpFlashTime = opflsh.Time();
+		fOpFlashWidthY = opflsh.YWidth();
+		fOpFlashWidthZ = opflsh.ZWidth();
+		fOpFlashCenterY = opflsh.YCenter();
+		fOpFlashCenterZ = opflsh.ZCenter();
+		optical_tree->Fill();
+	}
+
+
+
 	// Implementation of required member function here.
 
 	art::ServiceHandle<cheat::BackTracker> bt;
