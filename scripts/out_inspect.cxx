@@ -105,7 +105,7 @@ int out_inspect()
 				std::cout << " \t \t Direction - MC   : " << mc_dir.at(0)  << ", " << mc_dir.at(1)  << ", " << mc_dir.at(2)  << std::endl;
 				std::cout << " \t \t Length - MC : " << mc_length << " - Reco : " << pfp_length << std::endl;
 				std::cout << " \t \t Momentum - MC : " << mc_momentum << " - Reco : " << pfp_momentum << std::endl;
-				std::cout << " \t \t Hits - MC : " << n_mc_hits << " - Reco: " << "NOT SET" << std::endl;//n_pfp_hits << std::endl;
+				std::cout << " \t \t Hits - Reco : " << n_pfp_hits << " - MC: " << "NOT SET" << std::endl;//n_mc_hits << std::endl;
 				std::cout << " \t \t Open Angle: " << pfp_open_angle << std::endl;
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 			}//end looping particles
