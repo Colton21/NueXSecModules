@@ -83,6 +83,19 @@ double fOpFlashWidthZ = 0;
 double fOpFlashCenterY = 0;
 double fOpFlashCenterZ = 0;
 
+TTree * mcparticle_tree;
+int fMcparticle_pdg = 0;
+int fStatusCode = 0;
+double fMCVtxX = 0.0;
+double fMCVtxY = 0.0;
+double fMCVtxZ = 0.0;
+double fMCEnergy = 0.0;
+double fMCMass = 0.0;
+double fMCPx = 0.0;
+double fMCPy = 0.0;
+double fMCPz = 0.0;
+int fMCParticleID = 0;
+
 };
 
 
@@ -92,7 +105,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	_pfp_producer(p.get<std::string>("PFParticleProducer")),
 	_mc_ghost_producer(p.get<std::string>("MCGhostProducer")),
 	_tpcobject_producer(p.get<std::string>("TPCObjectProducer"))
-	// More initializers here.
+// More initializers here.
 {
 	art::ServiceHandle<art::TFileService> fs;
 
@@ -110,9 +123,22 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	optical_tree->Branch("OpFlashCenterY", &fOpFlashCenterY, "fOpFlashCenterY/D");
 	optical_tree->Branch("OpFlashCenterZ", &fOpFlashCenterZ, "fOpFlashCenterZ/D");
 
-	//std::cout << "----------" << std::endl;
-	//myTree->Print();
-	//std::cout << "---------" << std::endl;
+	mcparticle_tree = tfs->make<TTree>("mcparticle_tree", "mcparticle_objects");
+	mcparticle_tree->Branch("event", &fEvent_num, "fEvent_num/I");
+	mcparticle_tree->Branch("Run", &fRun_num, "fRun_num/I");
+	mcparticle_tree->Branch("Subrun", &fSubrun_num, "fSubrun_num/I");
+	mcparticle_tree->Branch("MC_ID", &fMCParticleID, "fMCParticleID/I");
+	mcparticle_tree->Branch("StatusCode", &fStatusCode, "fStatusCode/I");
+	mcparticle_tree->Branch("MC_PDG", &fMcparticle_pdg, "fMcparticle_pdg/I");
+	mcparticle_tree->Branch("MCVtxX", &fMCVtxX, "fMCVtxX/D");
+	mcparticle_tree->Branch("MCVtxY", &fMCVtxY, "fMCVtxY/D");
+	mcparticle_tree->Branch("MCVtxZ", &fMCVtxZ, "fMCVtxZ/D");
+	mcparticle_tree->Branch("MCEnergy", &fMCEnergy, "fMCEnergy/D");
+	mcparticle_tree->Branch("MCMass", &fMCMass, "MCMass/D");
+	mcparticle_tree->Branch("MCPx", &fMCPx, "MCPx/D");
+	mcparticle_tree->Branch("MCPy", &fMCPy, "MCPy/D");
+	mcparticle_tree->Branch("MCPz", &fMCPz, "MCPz/D");
+	mcparticle_tree->Branch("PfpartPrimay", &fPfparticle_isPrimary, "fPfparticle_isPrimary/B");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -135,7 +161,25 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fOpFlashCenterZ = opflsh.ZCenter();
 		optical_tree->Fill();
 	}
-
+	//MC Particle Information
+	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
+	e.getByLabel("largeant", MCParticleHandle);
+	if(!MCParticleHandle.isValid()) {std::cout << "Handle is not valid" << std::endl; exit(1); }
+	for(auto const & mcparticle : (*MCParticleHandle) )
+	{
+		fMCParticleID = mcparticle.TrackId();
+		fMcparticle_pdg = mcparticle.PdgCode();
+		fStatusCode = mcparticle.StatusCode();
+		fMCVtxX = mcparticle.Vx();
+		fMCVtxY = mcparticle.Vy();
+		fMCVtxZ = mcparticle.Vz();
+		fMCEnergy = mcparticle.E();
+		fMCMass = mcparticle.Mass();
+		fMCPx = mcparticle.Px();
+		fMCPy = mcparticle.Py();
+		fMCPz = mcparticle.Pz();
+		mcparticle_tree->Fill();
+	}//end loop mc particles
 
 
 	// Implementation of required member function here.
