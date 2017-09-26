@@ -4,6 +4,7 @@ LIBS=$(shell root-config --libs)
 LD=g++
 LDFLAGS= -shared
 DEBUGFLAGS= -O0 -D _DEBUG
+COMPILE_FLAGS+=-fPIC
 
 SOURCENAMES=TpcObjectContainer ParticleContainer
 HEADERS=$(SOURCENAMES:%=%.h)
@@ -32,7 +33,7 @@ $(DICTNAME).cxx: $(HEADERS) LinkDef.h
 	rootcling -f $@ $^
 
 %.o: %.cxx
-	$(CXX) $(CXXFLAGS) $(OPTFLAGS) -c -o "$@" $^
+	$(CXX) $(COMPILE_FLAGS) $(CXXFLAGS) $(OPTFLAGS) -c -o "$@" $^
 
 lib$(TARGETNAME).so: $(OBJECTS) 
 	$(LD) $(LDFLAGS) $(LIBS) -o "$@" $^

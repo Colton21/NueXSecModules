@@ -1,0 +1,19 @@
+<!--                                                                                  -->
+<!--  $Id: classes_def.xml,v 1.10 2010/04/12 18:12:28  Exp $                          -->
+<!--  $Author:  $                                                                     -->
+<!--  $Date: 2010/04/12 18:12:28 $                                                    -->
+<!--                                                                                  -->
+<!--  Include art::Wrapper lines for objects that we would like to put into the event -->
+<!--  Include the non-wrapper lines for all objects on the art::Wrapper lines and     -->
+<!--  for all objects that are data members of those objects.                         -->
+
+
+<lcgdict>
+
+  <class name="xsecAna::ParticleContainer" />
+  <class name="std::vector<xsecAna::ParticleContainer>" />
+  <class name="xsecAna::TPCObjectContainer" />
+  <class name="std::vector<xsecAna::TPCObjectContainer>" />
+
+
+  </lcgdict>
