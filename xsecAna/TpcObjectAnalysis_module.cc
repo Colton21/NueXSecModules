@@ -100,7 +100,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
 
 	optical_tree = fs->make<TTree>("optical_tree", "optical_objects");
-	optical_tree->Branch("event", &fevent, "event/I");
+	optical_tree->Branch("event", &event, "event/I");
 	optical_tree->Branch("run", &run, "run/I");
 	//optical_tree->Branch("Subrun", &fSubrun_num, "fSubrun_num/I");
 	optical_tree->Branch("OpFlashPE", &fOpFlashPE, "fOpFlashPe/I");
@@ -123,7 +123,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 {
 	//this is getting the optical information
 	std::string beam_flash_tag = "simpleFlashBeam";
-	auto const & beam_opf = evt.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
+	auto const & beam_opf = e.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
 	auto const & beam_opflashes(*beam_opf);
 	for(auto const & opflsh : beam_opflashes)
 	{
