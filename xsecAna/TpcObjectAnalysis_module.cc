@@ -123,10 +123,9 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	optical_tree->Branch("OpFlashCenterY", &fOpFlashCenterY, "fOpFlashCenterY/D");
 	optical_tree->Branch("OpFlashCenterZ", &fOpFlashCenterZ, "fOpFlashCenterZ/D");
 
-	mcparticle_tree = tfs->make<TTree>("mcparticle_tree", "mcparticle_objects");
-	mcparticle_tree->Branch("event", &fEvent_num, "fEvent_num/I");
-	mcparticle_tree->Branch("Run", &fRun_num, "fRun_num/I");
-	mcparticle_tree->Branch("Subrun", &fSubrun_num, "fSubrun_num/I");
+	mcparticle_tree = fs->make<TTree>("mcparticle_tree", "mcparticle_objects");
+	mcparticle_tree->Branch("event", &event, "event/I");
+	mcparticle_tree->Branch("run", &run, "run/I");
 	mcparticle_tree->Branch("MC_ID", &fMCParticleID, "fMCParticleID/I");
 	mcparticle_tree->Branch("StatusCode", &fStatusCode, "fStatusCode/I");
 	mcparticle_tree->Branch("MC_PDG", &fMcparticle_pdg, "fMcparticle_pdg/I");
@@ -138,7 +137,6 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mcparticle_tree->Branch("MCPx", &fMCPx, "MCPx/D");
 	mcparticle_tree->Branch("MCPy", &fMCPy, "MCPy/D");
 	mcparticle_tree->Branch("MCPz", &fMCPz, "MCPz/D");
-	mcparticle_tree->Branch("PfpartPrimay", &fPfparticle_isPrimary, "fPfparticle_isPrimary/B");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
