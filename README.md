@@ -41,10 +41,13 @@ This means, however, whenever you change the `TPCObjectContainer` or `ParticleCo
 
 This is a place where I will be tracking some issues:
 
+- A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero. Does this come from the MC Ghost module? 
+- I notice not many `kBeamNeutrino` events have matched MC Ghosts, but more `kCosmicRay` events do... why?
+- Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
+
+## To-Be Verified
 - Adding all MC Truth information in a new tree - this is useful to get true event numbers for efficiencies.
 - Add optical information (`simpleFlashBeam`) - this is needed on a per-event basis to perform the flash-matching as well as an in-time cut.
-- A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero. Does this come from the MC Ghost module? I notice not many `kBeamNeutrino` events have matched MC Ghosts, but more `kCosmicRay` events do.
-- Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
 
 ## Acknowledgements
 
