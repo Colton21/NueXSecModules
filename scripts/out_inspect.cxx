@@ -67,6 +67,8 @@ int out_inspect()
 				//const int mc_parent_pdg = part.MCParentPdg();//not set in module
 				const int pfp_parent_pdg = part.PFParticleParentPdgCode();
 				const std::string origin = part.Origin();
+				const int pfp_mode = part.Mode();
+				const int pfp_isCC = part.IsCC();
 				std::vector < double > pfp_vtx;
 				if(!pfp_vtx.empty()) {pfp_vtx.clear(); }
 				pfp_vtx.push_back(tpc_obj.pfpVtxX());
@@ -99,6 +101,7 @@ int out_inspect()
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 				std::cout << " \t \t Particle PDG Codes: - Reco " << pfp_pdg << " - True " << mc_pdg << " - Reco Parent " << pfp_parent_pdg << std::endl;
 				std::cout << " \t \t Origin: " << origin << std::endl;
+				std::cout << " \t \t Mode: " << pfp_mode        << "  Is CC: " << pfp_isCC << std::endl;
 				std::cout << " \t \t Vertex - Reco : " << pfp_vtx.at(0) << ", " << pfp_vtx.at(1) << ", " << pfp_vtx.at(2) << std::endl;
 				std::cout << " \t \t Vertex - MC   : " << mc_vtx.at(0)  << ", " << mc_vtx.at(1)  << ", " << mc_vtx.at(2)  << std::endl;
 				std::cout << " \t \t Direction - Reco : " << pfp_dir.at(0) << ", " << pfp_dir.at(1) << ", " << pfp_dir.at(2) << std::endl;
