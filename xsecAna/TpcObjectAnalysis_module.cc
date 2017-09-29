@@ -171,11 +171,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fOpFlashCenterZ =opflsh.ZCenter();
 		optical_tree->Fill();
 	}
-
+	//there are so may mc particles -- why?
 	//MC Particle Information
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
 	e.getByLabel("largeant", MCParticleHandle);
 	if(!MCParticleHandle.isValid()) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
+	std::cout << "[Analyze] [MCPARTICLE] largeant in this event: " << MCParticleHandle->size() << std::endl;
+
 	for(auto const & mcparticle : (*MCParticleHandle) )
 	{
 		fMCParticleID = mcparticle.TrackId();
@@ -189,8 +191,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fMCPx = mcparticle.Px();
 		fMCPy = mcparticle.Py();
 		fMCPz = mcparticle.Pz();
+		mcparticle_tree->Fill();
 	}//end loop mc particles
-	mcparticle_tree->Fill();
 
 
 	// Implementation of required member function here.
