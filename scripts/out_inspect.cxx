@@ -26,14 +26,16 @@ int out_inspect()
 	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
-	int * fRun = 0;
-	int * fEvent = 0;
-	int    * fOpFlashPE = 0;
-	double * fOpFlashTime = 0;
-	double * fOpFlashWidthY = 0;
-	double * fOpFlashWidthZ = 0;
-	double * fOpFlashCenterY = 0;
-	double * fOpFlashCenterZ = 0;
+	int fRun = 0;
+	int fEvent = 0;
+	int fOpFlashPE = 0;
+	double fOpFlashTime = 0;
+	double fOpFlashWidthY = 0;
+	double fOpFlashWidthZ = 0;
+	double fOpFlashCenterY = 0;
+	double fOpFlashCenterZ = 0;
+	optree->SetBranchAddress("Run", &fRun);
+	optree->SetBranchAddress("Event", &fEvent);
 	optree->SetBranchAddress("OpFlashPE",        &fOpFlashPE);
 	optree->SetBranchAddress("OpFlashTime",      &fOpFlashTime);
 	optree->SetBranchAddress("OpFlashWidhtY",    &fOpFlashWidthY);
