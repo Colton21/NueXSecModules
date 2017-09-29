@@ -76,6 +76,8 @@ int run;
 int event;
 
 TTree * optical_tree;
+std::vector < int >    event_v;
+std::vector < int >    run_v;
 std::vector < int >    fOpFlashPE_v;
 std::vector < double > fOpFlashTime_v;
 std::vector < double > fOpFlashWidthY_v;
@@ -113,8 +115,8 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
 
 	optical_tree = fs->make<TTree>("optical_tree", "optical_objects");
-	optical_tree->Branch("event", &event, "event/I");
-	optical_tree->Branch("run", &run, "run/I");
+	optical_tree->Branch("event_v", &event_v);
+	optical_tree->Branch("run_v", &run_v);
 	//optical_tree->Branch("Subrun", &fSubrun_num, "fSubrun_num/I");
 	optical_tree->Branch("OpFlashPE_v",        &fOpFlashPE_v);
 	optical_tree->Branch("OpFlashTime_v",      &fOpFlashTime_v);
@@ -145,13 +147,22 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 
 void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 {
+
+	run = e.id().run();
+	event = e.id().event();
+	//bool _is_data = e.isRealData();
+	//bool _is_mc = !_is_data;
+
 	//maybe make them filled at the same place as the other - so it's a per event
 	//this is getting the optical information
 	std::string beam_flash_tag = "simpleFlashBeam";
 	auto const & beam_opf = e.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
 	auto const & beam_opflashes(*beam_opf);
+	std::cout << "[Analyze] [OPTICAL] " << beam_flash_tag << " in this event: " << beam_opflashes.size() << std::endl;
 	for(auto const & opflsh : beam_opflashes)
 	{
+		event_v.push_back(event);
+		run_v.push_back(run);
 		fOpFlashPE_v.push_back(opflsh.TotalPE());
 		fOpFlashTime_v.push_back(opflsh.Time());
 		fOpFlashWidthY_v.push_back(opflsh.YWidth());
@@ -160,6 +171,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fOpFlashCenterZ_v.push_back(opflsh.ZCenter());
 	}
 	optical_tree->Fill();
+	event_v.clear();
+	run_v.clear();
 	fOpFlashPE_v.clear();
 	fOpFlashTime_v.clear();
 	fOpFlashWidthY_v.clear();
@@ -192,12 +205,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 	art::ServiceHandle<cheat::BackTracker> bt;
 	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
-
-
-	run = e.id().run();
-	event = e.id().event();
-	//bool _is_data = e.isRealData();
-	//bool _is_mc = !_is_data;
 
 	// Get PFP
 	art::Handle<std::vector<recob::PFParticle> > pfp_h;

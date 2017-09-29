@@ -26,12 +26,12 @@ int out_inspect()
 	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
-	std::vector < int >    fOpFlashPE_;
-	std::vector < double > fOpFlashTime_v;
-	std::vector < double > fOpFlashWidthY_v;
-	std::vector < double > fOpFlashWidthZ_v;
-	std::vector < double > fOpFlashCenterY_v;
-	std::vector < double > fOpFlashCenterZ_v;
+	std::vector < int >    * fOpFlashPE_v = nullptr;
+	std::vector < double > * fOpFlashTime_v = nullptr;
+	std::vector < double > * fOpFlashWidthY_v = nullptr;
+	std::vector < double > * fOpFlashWidthZ_v = nullptr;
+	std::vector < double > * fOpFlashCenterY_v = nullptr;
+	std::vector < double > * fOpFlashCenterZ_v = nullptr;
 	optree->SetBranchAddress("OpFlashPE_v",        &fOpFlashPE_v);
 	optree->SetBranchAddress("OpFlashTime_v",      &fOpFlashTime_v);
 	optree->SetBranchAddress("OpFlashWidhtY_v",    &fOpFlashWidthY_v);
@@ -39,7 +39,7 @@ int out_inspect()
 	optree->SetBranchAddress("OpFlashCenterY_v",   &fOpFlashCenterY_v);
 	optree->SetBranchAddress("OpFlashCenterZ_v",   &fOpFlashCenterZ_v);
 
-	const int total_entries = mytree->GetEntries();
+	const int total_entries = mytree->GetEntries();//optree has same num entries
 
 	for(int i = 0; i < total_entries; i++)
 	{
@@ -131,17 +131,18 @@ int out_inspect()
 		}//end looping tpc objects
 		 //std::cout << tpc_object_container_v->at(0).RunNumber() << std::endl;
 
-		for(int i = 0; i < fOpFlashPE_v.size(); i++)
+		std::cout << fOpFlashTime_v->size() << std::endl;
+		for(int i = 0; i < fOpFlashPE_v->size(); i++)
 		{
-			std::cout << "[Optical Info] \t PE:      " << fOpFlashPE_v.at(i) << std::endl;
-			std::cout << "[Optical Info] \t Time:    " << fOpFlashTime_v.at(i) << std::endl;
-			std::cout << "[Optical Info] \t WidthY:  " << fOpFlashWidthY_v.at(i) << std::endl;
-			std::cout << "[Optical Info] \t WidthZ:  " << fOpFlashWidthZ_v.at(i) << std::endl;
-			std::cout << "[Optical Info] \t CenterY: " << fOpFlashCenterY_v.at(i) << std::endl;
-			std::cout << "[Optical Info] \t CenterZ: " << fOpFlashCenterZ_v.at(i) << std::endl;
+			std::cout << "[Optical Info] \t PE:      " << fOpFlashPE_v->at(i) << std::endl;
+			std::cout << "[Optical Info] \t Time:    " << fOpFlashTime_v->at(i) << std::endl;
+			std::cout << "[Optical Info] \t WidthY:  " << fOpFlashWidthY_v->at(i) << std::endl;
+			std::cout << "[Optical Info] \t WidthZ:  " << fOpFlashWidthZ_v->at(i) << std::endl;
+			std::cout << "[Optical Info] \t CenterY: " << fOpFlashCenterY_v->at(i) << std::endl;
+			std::cout << "[Optical Info] \t CenterZ: " << fOpFlashCenterZ_v->at(i) << std::endl;
 		}
 
-	}//end looping events
+	}//end looping entries
 
 	return 0;
 }//end out_inspect
