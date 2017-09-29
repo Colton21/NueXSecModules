@@ -76,12 +76,12 @@ int run;
 int event;
 
 TTree * optical_tree;
-int fOpFlashPE = 0;
-double fOpFlashTime = 0;
-double fOpFlashWidthY = 0;
-double fOpFlashWidthZ = 0;
-double fOpFlashCenterY = 0;
-double fOpFlashCenterZ = 0;
+std::vector < int >    fOpFlashPE_;
+std::vector < double > fOpFlashTime_v;
+std::vector < double > fOpFlashWidthY_v;
+std::vector < double > fOpFlashWidthZ_v;
+std::vector < double > fOpFlashCenterY_v;
+std::vector < double > fOpFlashCenterZ_v;
 
 TTree * mcparticle_tree;
 int fMcparticle_pdg = 0;
@@ -116,12 +116,12 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	optical_tree->Branch("event", &event, "event/I");
 	optical_tree->Branch("run", &run, "run/I");
 	//optical_tree->Branch("Subrun", &fSubrun_num, "fSubrun_num/I");
-	optical_tree->Branch("OpFlashPE", &fOpFlashPE, "fOpFlashPe/I");
-	optical_tree->Branch("OpFlashTime", &fOpFlashTime, "fOpFlashTime/D");
-	optical_tree->Branch("OpFlashWidhtY", &fOpFlashWidthY, "fOpFlashWidthY/D");
-	optical_tree->Branch("OpFlashWidthZ", &fOpFlashWidthZ, "fOpFlashWidhtZ/D");
-	optical_tree->Branch("OpFlashCenterY", &fOpFlashCenterY, "fOpFlashCenterY/D");
-	optical_tree->Branch("OpFlashCenterZ", &fOpFlashCenterZ, "fOpFlashCenterZ/D");
+	optical_tree->Branch("OpFlashPE_v",        &fOpFlashPE_v);
+	optical_tree->Branch("OpFlashTime_v",      &fOpFlashTime_v);
+	optical_tree->Branch("OpFlashWidhtY_v",    &fOpFlashWidthY_v);
+	optical_tree->Branch("OpFlashWidthZ_v",    &fOpFlashWidthZ_v);
+	optical_tree->Branch("OpFlashCenterY_v",   &fOpFlashCenterY_v);
+	optical_tree->Branch("OpFlashCenterZ_v",   &fOpFlashCenterZ_v);
 
 	mcparticle_tree = fs->make<TTree>("mcparticle_tree", "mcparticle_objects");
 	mcparticle_tree->Branch("event", &event, "event/I");
@@ -145,24 +145,32 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 
 void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 {
+	//maybe make them filled at the same place as the other - so it's a per event
 	//this is getting the optical information
 	std::string beam_flash_tag = "simpleFlashBeam";
 	auto const & beam_opf = e.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
 	auto const & beam_opflashes(*beam_opf);
 	for(auto const & opflsh : beam_opflashes)
 	{
-		fOpFlashPE = opflsh.TotalPE();
-		fOpFlashTime = opflsh.Time();
-		fOpFlashWidthY = opflsh.YWidth();
-		fOpFlashWidthZ = opflsh.ZWidth();
-		fOpFlashCenterY = opflsh.YCenter();
-		fOpFlashCenterZ = opflsh.ZCenter();
-		optical_tree->Fill();
+		fOpFlashPE_v.push_back(opflsh.TotalPE());
+		fOpFlashTime_v.push_back(opflsh.Time());
+		fOpFlashWidthY_v.push_back(opflsh.YWidth());
+		fOpFlashWidthZ_v.push_back(opflsh.ZWidth());
+		fOpFlashCenterY_v.push_back(opflsh.YCenter());
+		fOpFlashCenterZ_v.push_back(opflsh.ZCenter());
 	}
+	optical_tree->Fill();
+	fOpFlashPE_v.clear();
+	fOpFlashTime_v.clear();
+	fOpFlashWidthY_v.clear();
+	fOpFlashWidthZ_v.clear();
+	fOpFlashCenterY_v.clear();
+	fOpFlashCenterZ_v.clear();
+
 	//MC Particle Information
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
 	e.getByLabel("largeant", MCParticleHandle);
-	if(!MCParticleHandle.isValid()) {std::cout << "Handle is not valid" << std::endl; exit(1); }
+	if(!MCParticleHandle.isValid()) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
 	for(auto const & mcparticle : (*MCParticleHandle) )
 	{
 		fMCParticleID = mcparticle.TrackId();
@@ -176,8 +184,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fMCPx = mcparticle.Px();
 		fMCPy = mcparticle.Py();
 		fMCPz = mcparticle.Pz();
-		mcparticle_tree->Fill();
 	}//end loop mc particles
+	mcparticle_tree->Fill();
 
 
 	// Implementation of required member function here.
@@ -228,7 +236,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
 	art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
 
-	std::cout << "TPC Objects in this Event: " << tpcobj_h->size() << std::endl;
+	std::cout << "[Analyze] TPC Objects in this Event: " << tpcobj_h->size() << std::endl;
 	//loop over all of the tpc objects!
 
 	int tpc_object_counter = 0;
@@ -245,9 +253,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 		if(_verbose)
 		{
-			std::cout << "N PFPs   : " << npfparticles << std::endl;
-			std::cout << "N Tracks : " << ntracks << std::endl;
-			std::cout << "N Showers: " << nshowers << std::endl;
+			std::cout << "[Analyze] N PFPs   : " << npfparticles << std::endl;
+			std::cout << "[Analyze] N Tracks : " << ntracks << std::endl;
+			std::cout << "[Analyze] N Showers: " << nshowers << std::endl;
 		}
 
 		// Reco vertex
@@ -274,7 +282,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		if(tpcobj_origin == simb::kCosmicRay) {str_origin = "kCosmicRay"; }
 		tpc_object_container.SetOrigin(str_origin);
 
-		if(_verbose) {std::cout << "Number of PFP in this TPC Object: " << npfparticles << std::endl; }
+		if(_verbose) {std::cout << "[Analyze] Number of PFP in this TPC Object: " << npfparticles << std::endl; }
 		tpc_object_container.SetNumPFParticles(npfparticles);
 
 		// Hits - we want the hits from both tracks and showers
@@ -358,7 +366,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			//double mc_open_angle = 0; //unset
 
 			const int pfpPdg = pfp->PdgCode();
-			//if(_verbose) {std::cout << "PFP PDG Code " << pfpPdg << std::endl; }
+			//if(_verbose) {std::cout << "[Analyze] PFP PDG Code " << pfpPdg << std::endl; }
 			const unsigned int pfpParent_id = pfp->Parent();
 			int position = 0;
 			int parent_position = -1;
@@ -372,7 +380,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				auto const pfpParent_obj = pfps_from_tpcobj.at(parent_position);
 				pfpParentPdg = pfpParent_obj->PdgCode();
 			}
-			//if(_verbose) {std::cout << "PFP Parent PDG Code " << pfpParentPdg << std::endl; }
+			//if(_verbose) {std::cout << "[Analyze] PFP Parent PDG Code " << pfpParentPdg << std::endl; }
 			particle_container.SetpfpPdgCode(pfpPdg);
 			//particle_container.SetpfpNuPdgCode(pfpParentPdg); //this will sometimes be a neutrino and sometimes not!
 			particle_container.SetpfpParentPdgCode(pfpParentPdg);
@@ -381,7 +389,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			simb::Origin_t mcOrigin = simb::kUnknown;
 
 			if(pfpPdg == 12 || pfpPdg == 14) {
-				if(_verbose) {std::cout << "PFP Neutrino with PDG Code: " << pfpPdg << std::endl; }
+				if(_verbose) {std::cout << "[Analyze] PFP Neutrino with PDG Code: " << pfpPdg << std::endl; }
 				is_neutrino = true;
 				pfp_nu_counter++;
 			}
@@ -415,15 +423,15 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			//mcghosts do accounting from pfp to mcghost to mc particle
 			const std::vector<art::Ptr<MCGhost> > mcghost = mcghost_from_pfp.at(pfp.key());
 			std::vector<art::Ptr<simb::MCParticle> > mcpart;
-			if(mcghost.size() == 0) {std::cout << "No matched MC Ghost to PFP!" << std::endl; }
+			if(mcghost.size() == 0) {std::err << "[Analyze] No matched MC Ghost to PFP!" << std::endl; }
 			//we don't want to just throw these events out!
 			if(mcghost.size() > 1)
 			{
-				if(_verbose) {std::cout << "Too many matched MC Ghost to PFP!" << std::endl; }
+				if(_verbose) {std::cout << "[Analyze] Too many matched MC Ghost to PFP!" << std::endl; }
 			}//end if 2+ MC Ghost
 			if(mcghost.size() >= 1)
 			{
-				if(_verbose) {std::cout << "One MC Ghost Found!" << std::endl; }
+				if(_verbose) {std::cout << "[Analyze] One MC Ghost Found!" << std::endl; }
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
 				const art::Ptr<simb::MCParticle> the_mcpart = mcpart.at(0);
 				const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(the_mcpart->TrackId());
@@ -546,7 +554,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	}//end loop tpc objects
 
 	//fill root tree per event
-	std::cout << "Fill Root Tree" << std::endl;
+	std::cout << "[Analyze] Fill Root Tree" << std::endl;
 	myTree->Fill();
 
 
@@ -554,7 +562,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
 	//probably want to fill the tree here
-	std::cout << "[XSec_Module] End Running" << std::endl;
+	std::cout << "[Analyze] End Running" << std::endl;
 }
 
 DEFINE_ART_MODULE(xsecAna::TpcObjectAnalysis)
