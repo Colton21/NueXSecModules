@@ -78,7 +78,7 @@ int event;
 TTree * optical_tree;
 int fEvent;
 int fRun;
-double fOpFlashPE;
+int fOpFlashPE;
 double fOpFlashTime;
 double fOpFlashWidthY;
 double fOpFlashWidthZ;
@@ -115,9 +115,9 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
 
 	optical_tree = fs->make<TTree>("optical_tree", "optical_objects");
-	optical_tree->Branch("fEvent",           &fEvent,               "fEvent/I");
-	optical_tree->Branch("fRun",             &fRun,                 "fRun/I");
-	optical_tree->Branch("OpFlashPE",        &fOpFlashPE,           "fOpFlashPE/D");
+	optical_tree->Branch("Event",           &fEvent,                "fEvent/I");
+	optical_tree->Branch("Run",             &fRun,                  "fRun/I");
+	optical_tree->Branch("OpFlashPE",        &fOpFlashPE,           "fOpFlashPE/I");
 	optical_tree->Branch("OpFlashTime",      &fOpFlashTime,         "fOpFlashTime/D");
 	optical_tree->Branch("OpFlashWidhtY",    &fOpFlashWidthY,       "fOpFlashWidthY/D");
 	optical_tree->Branch("OpFlashWidthZ",    &fOpFlashWidthZ,       "fOpFlashWidthZ/D");
