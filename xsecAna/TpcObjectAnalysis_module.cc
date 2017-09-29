@@ -76,7 +76,7 @@ int run;
 int event;
 
 TTree * optical_tree;
-std::vector < int >    fOpFlashPE_;
+std::vector < int >    fOpFlashPE_v;
 std::vector < double > fOpFlashTime_v;
 std::vector < double > fOpFlashWidthY_v;
 std::vector < double > fOpFlashWidthZ_v;
@@ -204,12 +204,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	e.getByLabel(_pfp_producer,pfp_h);
 	if(!pfp_h.isValid())
 	{
-		std::cout << "[Analysis] PFP product " << _pfp_producer << " not found..." << std::endl;
+		std::cout << "[Analyze] PFP product " << _pfp_producer << " not found..." << std::endl;
 		//throw std::exception();
 	}
 	if(pfp_h->empty())
 	{
-		std::cout << "[Analysis] PFP " << _pfp_producer << " is empty." << std::endl;
+		std::cout << "[Analyze] PFP " << _pfp_producer << " is empty." << std::endl;
 	}
 	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
 	art::FindManyP<recob::Shower> showers_from_pfp(pfp_h, e, _pfp_producer);
@@ -218,14 +218,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::Handle<std::vector<xsecAna::TPCObject> > tpcobj_h;
 	e.getByLabel(_tpcobject_producer, tpcobj_h);
 	if (!tpcobj_h.isValid()) {
-		std::cout << "[Analysis] Cannote locate ubana::TPCObject." << std::endl;
+		std::cout << "[Analyze] Cannote locate ubana::TPCObject." << std::endl;
 	}
 
 	// Get Ghosts
 	art::Handle<std::vector<xsecAna::MCGhost> > ghost_h;
 	e.getByLabel(_mc_ghost_producer,ghost_h);
 	if(!ghost_h.isValid()) {
-		std::cout << "[Analysis] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
+		std::cout << "[Analyze] MCGhost product " << _mc_ghost_producer << " not found..." << std::endl;
 		//throw std::exception();
 	}
 	art::FindManyP<xsecAna::MCGhost>   mcghost_from_pfp   (pfp_h,   e, _mc_ghost_producer);
@@ -423,7 +423,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			//mcghosts do accounting from pfp to mcghost to mc particle
 			const std::vector<art::Ptr<MCGhost> > mcghost = mcghost_from_pfp.at(pfp.key());
 			std::vector<art::Ptr<simb::MCParticle> > mcpart;
-			if(mcghost.size() == 0) {std::err << "[Analyze] No matched MC Ghost to PFP!" << std::endl; }
+			if(mcghost.size() == 0) {std::cout << "[Analyze] No matched MC Ghost to PFP!" << std::endl; }
 			//we don't want to just throw these events out!
 			if(mcghost.size() > 1)
 			{
@@ -488,7 +488,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 13)
 			{
 				std::vector<art::Ptr<recob::Track> > tracks = tracks_from_pfp.at(pfp.key());
-				std::cout << "[Analysis] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
+				std::cout << "[Analyze] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
 				//we want to take the first association, right?
 				const art::Ptr<recob::Track> this_track = tracks.at(0);
 				pfp_dir_x = this_track->VertexDirection().X();
@@ -507,7 +507,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 11)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
-				std::cout << "[Analysis] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
+				std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
 				//we want to take the first association, right?
 				const art::Ptr<recob::Shower> this_shower = showers.at(0);
 				pfp_dir_x = this_shower->Direction().X();
