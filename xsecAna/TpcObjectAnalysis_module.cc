@@ -162,7 +162,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	for(auto const & opflsh : beam_opflashes)
 	{
 		fEvent = event;
-		fRun_v = run;
+		fRun = run;
 		fOpFlashPE   = opflsh.TotalPE();
 		fOpFlashTime = opflsh.Time();
 		fOpFlashWidthY  = opflsh.YWidth();
