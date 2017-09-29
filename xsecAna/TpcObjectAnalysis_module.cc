@@ -117,7 +117,6 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	optical_tree = fs->make<TTree>("optical_tree", "optical_objects");
 	optical_tree->Branch("event_v", &event_v);
 	optical_tree->Branch("run_v", &run_v);
-	//optical_tree->Branch("Subrun", &fSubrun_num, "fSubrun_num/I");
 	optical_tree->Branch("OpFlashPE_v",        &fOpFlashPE_v);
 	optical_tree->Branch("OpFlashTime_v",      &fOpFlashTime_v);
 	optical_tree->Branch("OpFlashWidhtY_v",    &fOpFlashWidthY_v);
@@ -159,26 +158,42 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	auto const & beam_opf = e.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
 	auto const & beam_opflashes(*beam_opf);
 	std::cout << "[Analyze] [OPTICAL] " << beam_flash_tag << " in this event: " << beam_opflashes.size() << std::endl;
+
+	std::vector < int >    event_v;
+	std::vector < int >    run_v;
+	std::vector < int >    OpFlashPE_v;
+	std::vector < double > OpFlashTime_v;
+	std::vector < double > OpFlashWidthY_v;
+	std::vector < double > OpFlashWidthZ_v;
+	std::vector < double > OpFlashCenterY_v;
+	std::vector < double > OpFlashCenterZ_v;
+
 	for(auto const & opflsh : beam_opflashes)
 	{
 		event_v.push_back(event);
 		run_v.push_back(run);
-		fOpFlashPE_v.push_back(opflsh.TotalPE());
-		fOpFlashTime_v.push_back(opflsh.Time());
-		fOpFlashWidthY_v.push_back(opflsh.YWidth());
-		fOpFlashWidthZ_v.push_back(opflsh.ZWidth());
-		fOpFlashCenterY_v.push_back(opflsh.YCenter());
-		fOpFlashCenterZ_v.push_back(opflsh.ZCenter());
+		OpFlashPE_v.push_back(opflsh.TotalPE());
+		OpFlashTime_v.push_back(opflsh.Time());
+		OpFlashWidthY_v.push_back(opflsh.YWidth());
+		OpFlashWidthZ_v.push_back(opflsh.ZWidth());
+		OpFlashCenterY_v.push_back(opflsh.YCenter());
+		OpFlashCenterZ_v.push_back(opflsh.ZCenter());
 	}
+	fOpFlashPE_v = OpFlashPE_v;
+	fOpFlashTime_v = OpFLashTime_v;
+	fOpFlashWidthY_v = OpFlashWidthY_v;
+	fOpFlashWidthZ_v = OpFLashWidthZ_v;
+	fOpFlashCenterY_v = OpFlashCenterY_v;
+	fOpFlashCenterZ_v = OpFLashCenterZ_v;
 	optical_tree->Fill();
 	event_v.clear();
 	run_v.clear();
-	fOpFlashPE_v.clear();
-	fOpFlashTime_v.clear();
-	fOpFlashWidthY_v.clear();
-	fOpFlashWidthZ_v.clear();
-	fOpFlashCenterY_v.clear();
-	fOpFlashCenterZ_v.clear();
+	OpFlashPE_v.clear();
+	OpFlashTime_v.clear();
+	OpFlashWidthY_v.clear();
+	OpFlashWidthZ_v.clear();
+	OpFlashCenterY_v.clear();
+	OpFlashCenterZ_v.clear();
 
 	//MC Particle Information
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
