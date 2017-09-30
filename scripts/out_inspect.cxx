@@ -52,6 +52,8 @@ int out_inspect()
 		std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
 		for(auto const tpc_obj : *tpc_object_container_v)
 		{
+			const int run_number = tpc_obj.RunNumber();
+			const int event_number = tpc_obj.EventNumber();
 			const int n_pfp = tpc_obj.NumPFParticles();
 			const int n_pfp_nu = tpc_obj.NumPFPNeutrinos();
 			const int n_mc_hits = tpc_obj.NumMCHits();
@@ -71,6 +73,7 @@ int out_inspect()
 			tpc_obj_mc_vtx.push_back(tpc_obj.mcVtxZ());
 
 			std::cout << " \t Number of PFParticles: " << n_pfp << "\t Number of PFP Neutrinos: " << n_pfp_nu << std::endl;
+			std::cout << " \t Run: " << run_number << " , Event: " << event_number << std::endl;
 			std::cout << " \t Origin : " << tpc_obj_origin << std::endl;
 			std::cout << " \t Reco Hits: " << n_pfp_hits << "  MC Hits: " << "NOT SET" << std::endl;//n_mc_hits << std::endl;
 			std::cout << " \t Interaction Mode: " << mode << " IsCC: " << is_cc << std::endl;

@@ -44,6 +44,9 @@ This is a place where I will be tracking some issues:
 - A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero. Does this come from the MC Ghost module? 
 - I notice not many `kBeamNeutrino` events have matched MC Ghosts, but more `kCosmicRay` events do... why?
 - Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
+- Why so many MC Truth objects (100k+) for 5 Events?
+- Why does cosmic-only not work?
+- Construct previously used cuts — make sure to use separate functions for every single cut! This may not be most efficient, but this will make it clear how effective each individual cut is. Their order can also be easily rearranged, and will be easily importable to larsoft filter modules in the future.
 
 ## To-Be Verified
 - Adding all MC Truth information in a new tree - this is useful to get true event numbers for efficiencies.
