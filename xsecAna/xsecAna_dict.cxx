@@ -6,7 +6,6 @@
 #include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
 #include <assert.h>
 #define G__DICTIONARY
@@ -42,51 +41,6 @@ namespace std {} using namespace std;
 #include "ParticleContainer.h"
 
 // Header files passed via #pragma extra_include
-
-namespace ROOT {
-   static TClass *xsecAnacLcLTPCObjectContainer_Dictionary();
-   static void xsecAnacLcLTPCObjectContainer_TClassManip(TClass*);
-   static void *new_xsecAnacLcLTPCObjectContainer(void *p = 0);
-   static void *newArray_xsecAnacLcLTPCObjectContainer(Long_t size, void *p);
-   static void delete_xsecAnacLcLTPCObjectContainer(void *p);
-   static void deleteArray_xsecAnacLcLTPCObjectContainer(void *p);
-   static void destruct_xsecAnacLcLTPCObjectContainer(void *p);
-
-   // Function generating the singleton type initializer
-   static TGenericClassInfo *GenerateInitInstanceLocal(const ::xsecAna::TPCObjectContainer*)
-   {
-      ::xsecAna::TPCObjectContainer *ptr = 0;
-      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::xsecAna::TPCObjectContainer));
-      static ::ROOT::TGenericClassInfo 
-         instance("xsecAna::TPCObjectContainer", "TpcObjectContainer.h", 12,
-                  typeid(::xsecAna::TPCObjectContainer), ::ROOT::Internal::DefineBehavior(ptr, ptr),
-                  &xsecAnacLcLTPCObjectContainer_Dictionary, isa_proxy, 0,
-                  sizeof(::xsecAna::TPCObjectContainer) );
-      instance.SetNew(&new_xsecAnacLcLTPCObjectContainer);
-      instance.SetNewArray(&newArray_xsecAnacLcLTPCObjectContainer);
-      instance.SetDelete(&delete_xsecAnacLcLTPCObjectContainer);
-      instance.SetDeleteArray(&deleteArray_xsecAnacLcLTPCObjectContainer);
-      instance.SetDestructor(&destruct_xsecAnacLcLTPCObjectContainer);
-      return &instance;
-   }
-   TGenericClassInfo *GenerateInitInstance(const ::xsecAna::TPCObjectContainer*)
-   {
-      return GenerateInitInstanceLocal((::xsecAna::TPCObjectContainer*)0);
-   }
-   // Static variable to force the class initialization
-   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const ::xsecAna::TPCObjectContainer*)0x0); R__UseDummy(_R__UNIQUE_(Init));
-
-   // Dictionary for non-ClassDef classes
-   static TClass *xsecAnacLcLTPCObjectContainer_Dictionary() {
-      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::xsecAna::TPCObjectContainer*)0x0)->GetClass();
-      xsecAnacLcLTPCObjectContainer_TClassManip(theClass);
-   return theClass;
-   }
-
-   static void xsecAnacLcLTPCObjectContainer_TClassManip(TClass* ){
-   }
-
-} // end of namespace ROOT
 
 namespace ROOT {
    static TClass *xsecAnacLcLParticleContainer_Dictionary();
@@ -134,25 +88,49 @@ namespace ROOT {
 } // end of namespace ROOT
 
 namespace ROOT {
-   // Wrappers around operator new
-   static void *new_xsecAnacLcLTPCObjectContainer(void *p) {
-      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) ::xsecAna::TPCObjectContainer : new ::xsecAna::TPCObjectContainer;
+   static TClass *xsecAnacLcLTPCObjectContainer_Dictionary();
+   static void xsecAnacLcLTPCObjectContainer_TClassManip(TClass*);
+   static void *new_xsecAnacLcLTPCObjectContainer(void *p = 0);
+   static void *newArray_xsecAnacLcLTPCObjectContainer(Long_t size, void *p);
+   static void delete_xsecAnacLcLTPCObjectContainer(void *p);
+   static void deleteArray_xsecAnacLcLTPCObjectContainer(void *p);
+   static void destruct_xsecAnacLcLTPCObjectContainer(void *p);
+
+   // Function generating the singleton type initializer
+   static TGenericClassInfo *GenerateInitInstanceLocal(const ::xsecAna::TPCObjectContainer*)
+   {
+      ::xsecAna::TPCObjectContainer *ptr = 0;
+      static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::xsecAna::TPCObjectContainer));
+      static ::ROOT::TGenericClassInfo 
+         instance("xsecAna::TPCObjectContainer", "TpcObjectContainer.h", 12,
+                  typeid(::xsecAna::TPCObjectContainer), ::ROOT::Internal::DefineBehavior(ptr, ptr),
+                  &xsecAnacLcLTPCObjectContainer_Dictionary, isa_proxy, 0,
+                  sizeof(::xsecAna::TPCObjectContainer) );
+      instance.SetNew(&new_xsecAnacLcLTPCObjectContainer);
+      instance.SetNewArray(&newArray_xsecAnacLcLTPCObjectContainer);
+      instance.SetDelete(&delete_xsecAnacLcLTPCObjectContainer);
+      instance.SetDeleteArray(&deleteArray_xsecAnacLcLTPCObjectContainer);
+      instance.SetDestructor(&destruct_xsecAnacLcLTPCObjectContainer);
+      return &instance;
    }
-   static void *newArray_xsecAnacLcLTPCObjectContainer(Long_t nElements, void *p) {
-      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) ::xsecAna::TPCObjectContainer[nElements] : new ::xsecAna::TPCObjectContainer[nElements];
+   TGenericClassInfo *GenerateInitInstance(const ::xsecAna::TPCObjectContainer*)
+   {
+      return GenerateInitInstanceLocal((::xsecAna::TPCObjectContainer*)0);
    }
-   // Wrapper around operator delete
-   static void delete_xsecAnacLcLTPCObjectContainer(void *p) {
-      delete ((::xsecAna::TPCObjectContainer*)p);
+   // Static variable to force the class initialization
+   static ::ROOT::TGenericClassInfo *_R__UNIQUE_(Init) = GenerateInitInstanceLocal((const ::xsecAna::TPCObjectContainer*)0x0); R__UseDummy(_R__UNIQUE_(Init));
+
+   // Dictionary for non-ClassDef classes
+   static TClass *xsecAnacLcLTPCObjectContainer_Dictionary() {
+      TClass* theClass =::ROOT::GenerateInitInstanceLocal((const ::xsecAna::TPCObjectContainer*)0x0)->GetClass();
+      xsecAnacLcLTPCObjectContainer_TClassManip(theClass);
+   return theClass;
    }
-   static void deleteArray_xsecAnacLcLTPCObjectContainer(void *p) {
-      delete [] ((::xsecAna::TPCObjectContainer*)p);
+
+   static void xsecAnacLcLTPCObjectContainer_TClassManip(TClass* ){
    }
-   static void destruct_xsecAnacLcLTPCObjectContainer(void *p) {
-      typedef ::xsecAna::TPCObjectContainer current_t;
-      ((current_t*)p)->~current_t();
-   }
-} // end of namespace ROOT for class ::xsecAna::TPCObjectContainer
+
+} // end of namespace ROOT
 
 namespace ROOT {
    // Wrappers around operator new
@@ -176,6 +154,27 @@ namespace ROOT {
 } // end of namespace ROOT for class ::xsecAna::ParticleContainer
 
 namespace ROOT {
+   // Wrappers around operator new
+   static void *new_xsecAnacLcLTPCObjectContainer(void *p) {
+      return  p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) ::xsecAna::TPCObjectContainer : new ::xsecAna::TPCObjectContainer;
+   }
+   static void *newArray_xsecAnacLcLTPCObjectContainer(Long_t nElements, void *p) {
+      return p ? ::new((::ROOT::Internal::TOperatorNewHelper*)p) ::xsecAna::TPCObjectContainer[nElements] : new ::xsecAna::TPCObjectContainer[nElements];
+   }
+   // Wrapper around operator delete
+   static void delete_xsecAnacLcLTPCObjectContainer(void *p) {
+      delete ((::xsecAna::TPCObjectContainer*)p);
+   }
+   static void deleteArray_xsecAnacLcLTPCObjectContainer(void *p) {
+      delete [] ((::xsecAna::TPCObjectContainer*)p);
+   }
+   static void destruct_xsecAnacLcLTPCObjectContainer(void *p) {
+      typedef ::xsecAna::TPCObjectContainer current_t;
+      ((current_t*)p)->~current_t();
+   }
+} // end of namespace ROOT for class ::xsecAna::TPCObjectContainer
+
+namespace ROOT {
    static TClass *vectorlExsecAnacLcLTPCObjectContainergR_Dictionary();
    static void vectorlExsecAnacLcLTPCObjectContainergR_TClassManip(TClass*);
    static void *new_vectorlExsecAnacLcLTPCObjectContainergR(void *p = 0);
@@ -190,7 +189,7 @@ namespace ROOT {
       vector<xsecAna::TPCObjectContainer> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<xsecAna::TPCObjectContainer>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<xsecAna::TPCObjectContainer>", -2, "vector", 214,
+         instance("vector<xsecAna::TPCObjectContainer>", -2, "vector", 457,
                   typeid(vector<xsecAna::TPCObjectContainer>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlExsecAnacLcLTPCObjectContainergR_Dictionary, isa_proxy, 4,
                   sizeof(vector<xsecAna::TPCObjectContainer>) );
@@ -253,7 +252,7 @@ namespace ROOT {
       vector<xsecAna::ParticleContainer> *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(vector<xsecAna::ParticleContainer>));
       static ::ROOT::TGenericClassInfo 
-         instance("vector<xsecAna::ParticleContainer>", -2, "vector", 214,
+         instance("vector<xsecAna::ParticleContainer>", -2, "vector", 457,
                   typeid(vector<xsecAna::ParticleContainer>), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &vectorlExsecAnacLcLParticleContainergR_Dictionary, isa_proxy, 4,
                   sizeof(vector<xsecAna::ParticleContainer>) );
@@ -309,8 +308,8 @@ namespace {
 0
     };
     static const char* includePaths[] = {
-"/grid/fermiapp/products/larsoft/root/v6_06_08/Linux64bit+2.6-2.12-e10-nu-prof/include",
-"/uboone/app/users/chill2/uboonecode_v06_26_01_06/srcs/uboonecode/uboone/NueXSecModules/xsecAna/",
+"/usr/local/Cellar/root6/6.08.02/include/root",
+"/Users/chill/PhD/nue_analysis_modules/xsecAna/",
 0
     };
     static const char* fwdDeclCode = R"DICTFWDDCLS(
@@ -319,10 +318,10 @@ namespace {
 #pragma clang diagnostic ignored "-Wignored-attributes"
 #pragma clang diagnostic ignored "-Wreturn-type-c-linkage"
 extern int __Cling_Autoloading_Map;
+namespace xsecAna{class __attribute__((annotate("$clingAutoload$ParticleContainer.h")))  __attribute__((annotate("$clingAutoload$TpcObjectContainer.h")))  ParticleContainer;}
+namespace std{inline namespace __1{template <class _Tp> class __attribute__((annotate("$clingAutoload$memory")))  __attribute__((annotate("$clingAutoload$string")))  allocator;
+}}
 namespace xsecAna{class __attribute__((annotate("$clingAutoload$TpcObjectContainer.h")))  TPCObjectContainer;}
-namespace std{template <typename _Tp> class __attribute__((annotate("$clingAutoload$string")))  allocator;
-}
-namespace xsecAna{class __attribute__((annotate("$clingAutoload$TpcObjectContainer.h")))  ParticleContainer;}
 )DICTFWDDCLS";
     static const char* payloadCode = R"DICTPAYLOAD(
 #line 1 "xsecAna_dict dictionary payload"

@@ -17,22 +17,23 @@
 //***************************************************************************
 //***************************************************************************
 
-bool flash_in_time(int flash_pe, int flash_pe_threshold, double flash_time, double flash_start, double flash_end)
+int flash_in_time(int flash_pe, int flash_pe_threshold, double flash_time, double flash_start, double flash_end)
 {
 	if(flash_time >= flash_start && flash_time <= flash_end)
 	{
 		if(flash_pe >= flash_pe_threshold)
 		{
-			return true;
+			return 1;//true
 		}
 	}
-	return false;
+	return 0;//false
 }
 //***************************************************************************
 //***************************************************************************
 
 void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                  double flash_time_end, std::vector<bool> * passed_runs){
+                  double flash_time_end, std::vector<int> * _passed_runs)
+{
 
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 
@@ -40,22 +41,16 @@ void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, doubl
 	int fEvent = 0;
 	int fOpFlashPE = 0;
 	double fOpFlashTime = 0;
-	double fOpFlashWidthY = 0;
-	double fOpFlashWidthZ = 0;
-	double fOpFlashCenterY = 0;
-	double fOpFlashCenterZ = 0;
+
 	optical_tree->SetBranchAddress("Run", &fRun);
 	optical_tree->SetBranchAddress("Event", &fEvent);
 	optical_tree->SetBranchAddress("OpFlashPE",        &fOpFlashPE);
 	optical_tree->SetBranchAddress("OpFlashTime",      &fOpFlashTime);
-	optical_tree->SetBranchAddress("OpFlashWidhtY",    &fOpFlashWidthY);
-	optical_tree->SetBranchAddress("OpFlashWidthZ",    &fOpFlashWidthZ);
-	optical_tree->SetBranchAddress("OpFlashCenterY",   &fOpFlashCenterY);
-	optical_tree->SetBranchAddress("OpFlashCenterZ",   &fOpFlashCenterZ);
+
 
 	const int optical_entries = optical_tree->GetEntries();
 
-	bool in_time = false;
+	//int in_time = 0;//false
 	/// I want passed_runs to be the same size as the number of TPCObject_v
 	/// This will give the vector a 1:1 mapping to the events
 
@@ -74,16 +69,17 @@ void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, doubl
 		//events successfully pass this cut
 		current_run = fRun;
 		current_event = fEvent;
-		bool in_time = false;
-		if(passed_runs->size() != 0)
+
+		int in_time = 0;//false
+		if(_passed_runs->size() != 0)
 		{
 			if(current_event == last_event && current_run == last_run)
 			{
-				if(passed_runs->back() == false)
+				if(_passed_runs->back() == 0)//false
 				{
-					passed_runs->pop_back();
+					_passed_runs->pop_back();
 				}
-				if(passed_runs->back() == true)
+				if(_passed_runs->back() == 1)//true
 				{
 					last_event = current_event;
 					last_run = current_run;
@@ -95,10 +91,10 @@ void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, doubl
 		last_run = current_run;
 
 		in_time = flash_in_time(fOpFlashPE, flash_pe_threshold, fOpFlashTime, flash_time_start, flash_time_end);
-		passed_runs->push_back(in_time);
+		_passed_runs->push_back(in_time);
 
 	}//end loop optical entries
-	for(auto const run : *passed_runs) {std::cout << "In Time: " << run << std::endl; }
+	for(auto const run : * _passed_runs) {std::cout << "In Time: " << run << std::endl; }
 
 }//end optical loop function
 
@@ -129,16 +125,19 @@ bool in_fv(double x, double y, double z,
 	else{return true; }
 }
 
+//***************************************************************************
+//***************************************************************************
+
 void fiducial_volume_cut(TTree * mytree, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                         std::vector<bool> *passed_runs)
+                         std::vector<int> *passed_runs)
 {
 	const int total_entries = mytree->GetEntries();
 	std::cout << "Total Events: " << total_entries << std::endl;
-	for(int i = 0; i < total_entries; i++)
+	for(int event = 0; event < total_entries; event++)
 	{
-		mytree->GetEntry(i);
-		//if(passed_runs.at(i) == false) {continue; }
+		mytree->GetEntry(event);
+		if(passed_runs->at(event) == 0) {continue; }//false
 		int n_tpc_obj = tpc_object_container_v->size();
 		std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
 		for(int i = 0; i < n_tpc_obj; i++)
@@ -150,9 +149,9 @@ void fiducial_volume_cut(TTree * mytree, std::vector<xsecAna::TPCObjectContainer
 			const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 			const bool InFV = in_fv(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2);
 			//if(InFV == true) {std::cout << " \t Passed!" << std::endl; }
-			if(InFV == false)
+			if(InFV == 0)//false
 			{
-				//std::cout << " \t Failed!" << std::endl;
+				std::cout << " \t " << i << " TPC Object Outside FV" << std::endl;
 				tpc_object_container_v->erase(tpc_object_container_v->begin() + i);
 				n_tpc_obj = tpc_object_container_v->size();
 			}
@@ -160,13 +159,193 @@ void fiducial_volume_cut(TTree * mytree, std::vector<xsecAna::TPCObjectContainer
 		 //all of the tpc objects were outside the FV
 		if(tpc_object_container_v->size() == 0)
 		{
-			bool *state = passed_runs->data()[i];
-			//passed_runs[i] = false;
+			std::cout << "Emptied Event" << std::endl;
+			passed_runs->at(event) = 0;//false
 		}
 	}//end events loop
 }
 
+//***************************************************************************
+//***************************************************************************
 
+bool opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double tollerance)
+{
+	const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+	if(distance <= tollerance) {return true; }
+	return false;
+}
+
+//***************************************************************************
+//***************************************************************************
+
+void flashRecoVtxDist(TFile * f, TTree * optical_tree, TTree * mytree, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                      double tollerance, std::vector<int> * passed_runs)
+{
+
+	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
+
+	int fRun = 0;
+	int fEvent = 0;
+	int fOpFlashPE = 0;
+	double fOpFlashWidthY = 0;
+	double fOpFlashWidthZ = 0;
+	double fOpFlashCenterY = 0;
+	double fOpFlashCenterZ = 0;
+
+	optical_tree->SetBranchAddress("Run", &fRun);
+	optical_tree->SetBranchAddress("Event", &fEvent);
+	optical_tree->SetBranchAddress("OpFlashPE",        &fOpFlashPE);
+	optical_tree->SetBranchAddress("OpFlashWidhtY",    &fOpFlashWidthY);
+	optical_tree->SetBranchAddress("OpFlashWidthZ",    &fOpFlashWidthZ);
+	optical_tree->SetBranchAddress("OpFlashCenterY",   &fOpFlashCenterY);
+	optical_tree->SetBranchAddress("OpFlashCenterZ",   &fOpFlashCenterZ);
+
+	const int optical_entries = optical_tree->GetEntries();
+	std::vector< std::vector < double > > largest_flash_v_v;
+	double largest_flash = 0;
+	int current_event = 0;
+	int current_run = 0;
+	int last_event = 0;
+	int last_run = 0;
+	//since I only care about the largest flash in each event,
+	//size(optical_entries)-->size(total_entries)
+	for(int i = 0; i < optical_entries; i++)
+	{
+		optical_tree->GetEntry(i);
+		current_run = fRun;
+		current_event = fEvent;
+		double this_flash = fOpFlashPE;
+		std::vector < double > largest_flash_v;//contains the y,z for largest flash
+		if(this_flash <= largest_flash)
+		{
+			last_event = current_event;
+			last_run = current_run;
+			continue;
+		}
+		if(current_event == last_event && current_run == last_run)
+		{
+			if(this_flash > largest_flash)
+			{
+				largest_flash = this_flash;
+				largest_flash_v_v.pop_back();
+			}
+		}
+		last_event = current_event;
+		last_run = current_run;
+		largest_flash_v.push_back(fOpFlashCenterY);
+		largest_flash_v.push_back(fOpFlashCenterZ);
+		largest_flash_v_v.push_back(largest_flash_v);
+		if(current_event != last_event) {largest_flash = 0; }
+		largest_flash_v.clear();
+	}
+
+	const int total_entries = mytree->GetEntries();
+	std::cout << "Total Events: " << total_entries << std::endl;
+	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v.size() << std::endl;
+
+	for(int event = 0; event < total_entries; event++)
+	{
+		mytree->GetEntry(event);
+		if(passed_runs->at(event) == 0) {continue; }//false
+		int n_tpc_obj = tpc_object_container_v->size();
+		std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
+		for(int i = 0; i < n_tpc_obj; i++)
+		{
+			auto const tpc_obj = tpc_object_container_v->at(i);
+			const double tpc_vtx_x = tpc_obj.pfpVtxX();
+			const double tpc_vtx_y = tpc_obj.pfpVtxY();
+			const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+			const bool is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v_v.at(i).at(0), largest_flash_v_v.at(i).at(1), tollerance);
+			if(is_close == 0)//false
+			{
+				std::cout << " \t " << i << " TPC Object Vtx far from Flash" << std::endl;
+				tpc_object_container_v->erase(tpc_object_container_v->begin() + i);
+				n_tpc_obj = tpc_object_container_v->size();
+			}
+		}//end tpc object loop
+		 //all of the tpc objects were too far from the flash
+		if(tpc_object_container_v->size() == 0)
+		{
+			std::cout << "Emptied Event" << std::endl;
+			passed_runs->at(event) = 0;//false
+		}
+	}
+}//end flashRecoVtxDist
+
+//***************************************************************************
+//***************************************************************************
+
+bool shwr_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, double tpc_vtx_z,
+                       double pfp_vtx_x, double pfp_vtx_y, double pfp_vtx_z, double tollerance)
+{
+	const double distance = sqrt(pow((tpc_vtx_x - pfp_vtx_x), 2) + pow((tpc_vtx_y - pfp_vtx_y), 2) + pow((tpc_vtx_z - pfp_vtx_z), 2) );
+	if(distance <= tollerance) {return true; }
+	return false;
+}
+
+//***************************************************************************
+//***************************************************************************
+
+//this function wants to remove particles too far from the reconstructed neutrino vertex
+void VtxNuDistance(TTree * mytree, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                   double tollerance, std::vector<int> * passed_runs)
+{
+	const int total_entries = mytree->GetEntries();
+	std::cout << "Total Events: " << total_entries << std::endl;
+	for(int event = 0; event < total_entries; event++)
+	{
+		mytree->GetEntry(event);
+		if(passed_runs->at(event) == 0) {continue; }//false
+		int n_tpc_obj = tpc_object_container_v->size();
+		std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
+		for(int i = 0; i < n_tpc_obj; i++)
+		{
+			bool close_shower = false;
+			auto const tpc_obj = tpc_object_container_v->at(i);
+			const int n_pfp = tpc_obj.NumPFParticles();
+			std::cout << " \t Number of PFParticles: " << n_pfp << std::endl;
+			const double tpc_vtx_x = tpc_obj.pfpVtxX();
+			const double tpc_vtx_y = tpc_obj.pfpVtxY();
+			const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+			//loop over pfparticles in the TPCO
+			for(int j = 0; j < n_pfp; j++)
+			{
+				auto const part = tpc_obj.GetParticle(j);
+				const int pfp_pdg = part.PFParticlePdgCode();
+				//check if at least one shower is within the tollerance to tpco vtx
+				//if no shower within tollerance, discard tpco (i.e. it's not a cc nue)
+				if(pfp_pdg == 11)//if it's a shower
+				{
+					const double pfp_vtx_x = part.pfpVtxX();
+					const double pfp_vtx_y = part.pfpVtxY();
+					const double pfp_vtx_z = part.pfpVtxZ();
+					close_shower = shwr_vtx_distance(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z,
+					                                 pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, tollerance);
+					if(close_shower == true)
+					{
+						std::cout << " \t " << i << " TPC Object Passed " << std::endl;
+						break;
+					}
+				}
+			}//end loop pfps
+			if(close_shower == 0)//false
+			{
+				std::cout << " \t " << i << " TPC Object Vtx far from All Shower Vtx" << std::endl;
+				tpc_object_container_v->erase(tpc_object_container_v->begin() + i);
+				n_tpc_obj = tpc_object_container_v->size();
+			}
+		}//end tpc object loop
+		 //all of the tpc objects were too far from the flash
+		if(tpc_object_container_v->size() == 0)
+		{
+			std::cout << "Emptied Event" << std::endl;
+			passed_runs->at(event) = 0;//false
+		}
+	}
+}
+
+//***************************************************************************
+//***************************************************************************
 
 int selection(){
 
@@ -193,27 +372,28 @@ int selection(){
 	}
 	std::cout << "MC Nue Counter: " << mc_nue_counter << std::endl;
 
-	std::cout << "===================" << std::endl;
-	std::cout << "Begin Selection" << std::endl;
-	std::cout << "===================" << std::endl;
+	std::cout << "=====================" << std::endl;
+	std::cout << "== Begin Selection ==" << std::endl;
+	std::cout << "=====================" << std::endl;
 
+	std::vector<int> * passed_runs = new std::vector<int>;
+	std::cout << "Initialize Run Vector" << std::endl;
 
-	std::cout << "===================" << std::endl;
-	std::cout << "In Time Cut " << std::endl;
-	std::cout << "===================" << std::endl;
+	std::cout << "=====================" << std::endl;
+	std::cout << "==== In Time Cut ====" << std::endl;
+	std::cout << "=====================" << std::endl;
 
 	const int flash_pe_threshold = 50;
 	const double flash_time_start = 5;
 	const double flash_time_end = 16;
-	std::vector<bool> *passed_runs;
 	loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
 	             flash_time_end, passed_runs);
 	std::cout << "Passed Runs Size: " << passed_runs->size() << std::endl;
 
 
-	std::cout << "===================" << std::endl;
-	std::cout << "In FV Cut " << std::endl;
-	std::cout << "===================" << std::endl;
+	std::cout << "=====================" << std::endl;
+	std::cout << "===== In FV Cut =====" << std::endl;
+	std::cout << "=====================" << std::endl;
 
 	const double _x1 = 0;
 	const double _x2 = 0;
@@ -222,8 +402,28 @@ int selection(){
 	const double _z1 = 0;
 	const double _z2 = 0;
 	fiducial_volume_cut(mytree, tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_runs);
+	std::cout << "Passed Runs Size: " << passed_runs->size() << std::endl;
+
+	std::cout << "============================" << std::endl;
+	std::cout << "===== Vertex-To-Flash: =====" << std::endl;
+	std::cout << "============================" << std::endl;
+	const double tollerance = 100;//cm
+	flashRecoVtxDist(f, optree, mytree, tpc_object_container_v,
+	                 tollerance, passed_runs);
+	std::cout << "Passed Runs Size: " << passed_runs->size() << std::endl;
 
 
+	std::cout << "============================" << std::endl;
+	std::cout << "====== Shower-To-Nue: ======" << std::endl;
+	std::cout << "============================" << std::endl;
+	const double shwr_nue_tollerance = 50;//cm
+	VtxNuDistance(mytree, tpc_object_container_v, shwr_nue_tollerance, passed_runs);
+	std::cout << "Passed Runs Size: " << passed_runs->size() << std::endl;
+
+
+	std::cout << "------------------" << std::endl;
+	std::cout << "End Selection" << std::endl;
+	std::cout << "------------------" << std::endl;
 	return 0;
 }        //end selection
 

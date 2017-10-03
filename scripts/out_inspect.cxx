@@ -92,14 +92,14 @@ int out_inspect()
 				const int pfp_isCC = part.IsCC();
 				std::vector < double > pfp_vtx;
 				if(!pfp_vtx.empty()) {pfp_vtx.clear(); }
-				pfp_vtx.push_back(tpc_obj.pfpVtxX());
-				pfp_vtx.push_back(tpc_obj.pfpVtxY());
-				pfp_vtx.push_back(tpc_obj.pfpVtxZ());
+				pfp_vtx.push_back(part.pfpVtxX());
+				pfp_vtx.push_back(part.pfpVtxY());
+				pfp_vtx.push_back(part.pfpVtxZ());
 				std::vector < double > mc_vtx;
 				if(!mc_vtx.empty()) {mc_vtx.clear(); }
-				mc_vtx.push_back(tpc_obj.mcVtxX());
-				mc_vtx.push_back(tpc_obj.mcVtxY());
-				mc_vtx.push_back(tpc_obj.mcVtxZ());
+				mc_vtx.push_back(part.mcVtxX());
+				mc_vtx.push_back(part.mcVtxY());
+				mc_vtx.push_back(part.mcVtxZ());
 				std::vector < double > pfp_dir;
 				if(!pfp_dir.empty()) {pfp_dir.clear(); }
 				pfp_dir.push_back(part.pfpDirX());
