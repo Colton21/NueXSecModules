@@ -70,6 +70,7 @@ std::string _geantModuleLabel;
 
 bool _is_data;
 bool _debug;
+bool _cosmic_only;
 };
 
 
@@ -80,7 +81,8 @@ xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 	_geantModuleLabel               = p.get<std::string>("GeantModule");
 	_spacepointLabel                = p.get<std::string>("SpacePointProducer");
 
-	_debug                          = p.get<bool>("Debug", "false");
+	_debug                          = p.get<bool>("Debug", "true");
+	_cosmic_only                    = p.get<bool>("CosmicOnly", "false");
 
 	produces< std::vector<xsecAna::MCGhost> >();
 	produces< art::Assns<simb::MCParticle, xsecAna::MCGhost> >();
@@ -93,6 +95,12 @@ void xsecAna::RecoTrueMatching::produce(art::Event & e)
 
 	if(_debug) std::cout << "[RecoTrueMatching] Starts" << std::endl;
 	if(_debug) std::cout << "[RecoTrueMatching] event: " << e.id().event() << std::endl;
+
+	if(_cosmic_only)
+	{
+		std::cout << "[RecoTrueMatching] Cosmic Only Configuration! - End Module" << std::endl;
+		return;
+	}
 
 	// Instantiate the output
 	std::unique_ptr< std::vector< xsecAna::MCGhost > >                 mcGhostVector   (new std::vector<xsecAna::MCGhost>);

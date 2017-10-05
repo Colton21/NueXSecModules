@@ -58,7 +58,7 @@ int out_inspect()
 			const int n_pfp_nu = tpc_obj.NumPFPNeutrinos();
 			const int n_mc_hits = tpc_obj.NumMCHits();
 			const int n_pfp_hits = tpc_obj.NumPFPHits();
-			const int is_cc = tpc_obj.IsCC();
+			const int is_cc = tpc_obj.CCNC();
 			const int mode = tpc_obj.Mode();
 			const int tpco_mc_pdg_code = tpc_obj.MCParticlePdgCode();
 			const int tpco_pfp_pdg_code = tpc_obj.PFParticlePdgCode();
@@ -79,7 +79,7 @@ int out_inspect()
 			std::cout << " \t Origin : " << tpc_obj_origin << std::endl;
 			std::cout << " \t PDG Code: - Reco " << tpco_pfp_pdg_code << " - MC " << tpco_mc_pdg_code << std::endl;
 			std::cout << " \t Reco Hits: " << n_pfp_hits << "  MC Hits: " << "NOT SET" << std::endl;//n_mc_hits << std::endl;
-			std::cout << " \t Interaction Mode: " << mode << " IsCC: " << is_cc << std::endl;
+			std::cout << " \t Interaction Mode: " << mode << " CC/NC: " << is_cc << std::endl;
 			std::cout << " \t Vertex - Reco : " << tpc_obj_pfp_vtx.at(0) << ", " << tpc_obj_pfp_vtx.at(1) << ", " << tpc_obj_pfp_vtx.at(2) << std::endl;
 			std::cout << " \t Vertex - MC   : " << tpc_obj_mc_vtx.at(0)  << ", " << tpc_obj_mc_vtx.at(1)  << ", " << tpc_obj_mc_vtx.at(2)  << std::endl;
 
@@ -92,7 +92,7 @@ int out_inspect()
 				const int pfp_parent_pdg = part.PFParticleParentPdgCode();
 				const std::string origin = part.Origin();
 				const int pfp_mode = part.Mode();
-				const int pfp_isCC = part.IsCC();
+				const int pfp_CCNC = part.CCNC();
 				std::vector < double > pfp_vtx;
 				if(!pfp_vtx.empty()) {pfp_vtx.clear(); }
 				pfp_vtx.push_back(part.pfpVtxX());
@@ -125,7 +125,7 @@ int out_inspect()
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 				std::cout << " \t \t Particle PDG Codes: - Reco " << pfp_pdg << " - True " << mc_pdg << " - Reco Parent " << pfp_parent_pdg << std::endl;
 				std::cout << " \t \t Origin: " << origin << std::endl;
-				std::cout << " \t \t Mode: " << pfp_mode        << "  Is CC: " << pfp_isCC << std::endl;
+				std::cout << " \t \t Mode: " << pfp_mode        << "  CC/NC: " << pfp_CCNC << std::endl;
 				std::cout << " \t \t Vertex - Reco : " << pfp_vtx.at(0) << ", " << pfp_vtx.at(1) << ", " << pfp_vtx.at(2) << std::endl;
 				std::cout << " \t \t Vertex - MC   : " << mc_vtx.at(0)  << ", " << mc_vtx.at(1)  << ", " << mc_vtx.at(2)  << std::endl;
 				std::cout << " \t \t Direction - Reco : " << pfp_dir.at(0) << ", " << pfp_dir.at(1) << ", " << pfp_dir.at(2) << std::endl;
