@@ -41,21 +41,19 @@ This means, however, whenever you change the `TPCObjectContainer` or `ParticleCo
 
 This is a place where I will be tracking some issues:
 
-- A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero. Does this come from the MC Ghost module? 
-- I notice not many `kBeamNeutrino` events have matched MC Ghosts, but more `kCosmicRay` events do... why?
+- A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero.
 - Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
 - Why so many MC Truth objects (100k+) for 5 Events?
 - Why does cosmic-only not work?
-- Construct previously used cuts — make sure to use separate functions for every single cut! This may not be most efficient, but this will make it clear how effective each individual cut is. Their order can also be easily rearranged, and will be easily importable to larsoft filter modules in the future.
+- Improve Print Statements for selection.cxx
 
 ## To-Be Verified
-- Adding all MC Truth information in a new tree - this is useful to get true event numbers for efficiencies.
-- Add optical information (`simpleFlashBeam`) - this is needed on a per-event basis to perform the flash-matching as well as an in-time cut.
+- MC Truth info added, but why do I see 40 MC Truth nue for 5 art events?
 
 ## Acknowledgements
 
 Big thanks to everyone who helped with my getting this working and for ideas:
 
-Gean-Luca, Marco, Corey, Elena.
+Gianluca, Marco, Corey, Elena.
 
 
