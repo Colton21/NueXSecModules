@@ -26,6 +26,8 @@ int n_pfp_nu;
 int mode;
 std::string origin;
 int is_cc;
+int mc_pdg_code;
+int pfp_pdg_code;
 
 int mc_vtx;
 int mc_vtx_x;
@@ -72,6 +74,8 @@ void SetIndex (int); //tpc object num per event
 void SetNumPFParticles (int);//number of pfp in the tpc object
 void SetNumPFPNeutrinos (int); //number of pfp neutrinos in the tpc object
 void SetMode (int);//interaction mode
+void SetmcPdgCode(int);
+void SetpfpPdgCode(int);
 //0 = CCQE-like
 //1 = Resonant
 //2 = Deep Inelastic Scattering
@@ -121,6 +125,10 @@ int NumPFPNeutrinos () const;
 int Mode            () const;
 std::string Origin  () const;
 int IsCC            () const;
+
+int PFParticlePdgCode () const;
+int MCParticlePdgCode () const;
+
 
 double mcVtxX  () const;
 double mcVtxY  () const;

@@ -323,6 +323,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		int pfpParentPdg = 0;
 		int mode = -1;
 		int ccnc = -1;
+		int tpco_mc_pdg  = -1;
+		int tpco_pfp_pdg = -1;
 		bool is_neutrino = false;
 		//bool is_primary = false; // not set
 
@@ -392,6 +394,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 12 || pfpPdg == 14) {
 				if(_verbose) {std::cout << "[Analyze] PFP Neutrino with PDG Code: " << pfpPdg << std::endl; }
 				is_neutrino = true;
+				tpco_pfp_pdg = pfpPdg;
 				pfp_nu_counter++;
 			}
 			particle_container.SetIsNeutrino(is_neutrino);
@@ -444,6 +447,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 				mcOrigin = mctruth->Origin();
 				mcPdg = the_mcpart->PdgCode();
+				if(is_neutrino == true) {tpco_mc_pdg = mcPdg; }
 				//mcNuPdg = the_mcpart->Mother();
 				//mcParentPdg = the_mcpart->Mother();
 				mc_vtx_x = the_mcpart->Vx();
@@ -549,6 +553,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetNumPFPNeutrinos(pfp_nu_counter);
 		tpc_object_container.SetMode(mode);
 		tpc_object_container.SetIsCC(ccnc);
+		tpc_object_container.SetmcPdgCode(tpco_mc_pdg);
+		tpc_object_container.SetpfpPdgCode(tpco_pfp_pdg);
 
 		tpc_object_container_v.push_back(tpc_object_container);
 		tpc_object_counter++;

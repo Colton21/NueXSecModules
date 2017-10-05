@@ -45,6 +45,15 @@ void TPCObjectContainer::SetIsCC (int _is_cc){
 	is_cc = _is_cc;
 }
 
+//the tpc object pdg codes correspond to the in-coming neutrino object
+void TPCObjectContainer::SetmcPdgCode( int _mc_pdg_code){
+	mc_pdg_code = _mc_pdg_code;
+}
+void TPCObjectContainer::SetpfpPdgCode( int _pfp_pdg_code){
+	pfp_pdg_code = _pfp_pdg_code;
+}
+
+
 //the tpc object takes the neutrino vertex
 void TPCObjectContainer::SetmcVtxX  (double _mc_vtx_x){
 	mc_vtx_x = _mc_vtx_x;
@@ -142,6 +151,13 @@ std::string TPCObjectContainer::Origin () const {
 int TPCObjectContainer::IsCC () const {
 	return is_cc;
 }
+int TPCObjectContainer::MCParticlePdgCode() const {
+	return mc_pdg_code;
+}
+int TPCObjectContainer::PFParticlePdgCode() const {
+	return pfp_pdg_code;
+}
+
 
 double TPCObjectContainer::mcVtxX  () const {
 	return mc_vtx_x;
