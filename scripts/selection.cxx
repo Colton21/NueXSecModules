@@ -94,7 +94,7 @@ void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, doubl
 		_passed_runs->push_back(in_time);
 
 	}//end loop optical entries
-	for(auto const run : * _passed_runs) {std::cout << "In Time: " << run << std::endl; }
+	 //for(auto const run : * _passed_runs) {std::cout << "In Time: " << run << std::endl; }
 
 }//end optical loop function
 
@@ -133,7 +133,7 @@ void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          std::vector<int> * passed_tpco)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
+	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
 	if(passed_tpco->size() != n_tpc_obj) {std::cout << "Passed TPCO Vector Size != nTPCO!" << std::endl; }
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
@@ -147,12 +147,12 @@ void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
 		if(InFV == 1)//true
 		{
 			passed_tpco->at(i) = 1;
-			std::cout << " \t " << i << " Passed!" << std::endl;
+			std::cout << " \t " << i << "[Fid Volume Cut] \t Passed" << std::endl;
 		}
 		if(InFV == 0)//false
 		{
 			passed_tpco->at(i) = 0;
-			std::cout << " \t " << i << " TPC Object Outside FV" << std::endl;
+			//std::cout << " \t " << i << " TPC Object Outside FV" << std::endl;
 		}
 	}//end tpc object loop
 }
@@ -160,10 +160,10 @@ void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
 //***************************************************************************
 //***************************************************************************
 
-bool opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double tollerance)
+bool opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double tolerance)
 {
 	const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
-	if(distance <= tollerance) {return true; }
+	if(distance <= tolerance) {return true; }
 	return false;
 }
 
@@ -230,10 +230,10 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 
 
 void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                      double tollerance, std::vector<int> * passed_tpco)
+                      double tolerance, std::vector<int> * passed_tpco)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
+	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i) == 0) {continue; }
@@ -241,16 +241,16 @@ void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
-		const bool is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tollerance);
+		const bool is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tolerance);
 		if(is_close == 1)//true
 		{
 			passed_tpco->at(i) = 1;
-			std::cout << " \t " << i << " Passed! " << std::endl;
+			std::cout << " \t " << i << "[Vertex-To-Flash] \t Passed " << std::endl;
 		}
 		if(is_close == 0)//false
 		{
 			passed_tpco->at(i) = 0;
-			std::cout << " \t " << i << " TPC Object Vtx far from Flash" << std::endl;
+			//std::cout << " \t " << i << " TPC Object Vtx far from Flash" << std::endl;
 		}
 	}        //end tpc object loop
 }//end flashRecoVtxDist
@@ -259,10 +259,10 @@ void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna
 //***************************************************************************
 
 bool shwr_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, double tpc_vtx_z,
-                       double pfp_vtx_x, double pfp_vtx_y, double pfp_vtx_z, double tollerance)
+                       double pfp_vtx_x, double pfp_vtx_y, double pfp_vtx_z, double tolerance)
 {
 	const double distance = sqrt(pow((tpc_vtx_x - pfp_vtx_x), 2) + pow((tpc_vtx_y - pfp_vtx_y), 2) + pow((tpc_vtx_z - pfp_vtx_z), 2) );
-	if(distance <= tollerance) {return true; }
+	if(distance <= tolerance) {return true; }
 	return false;
 }
 
@@ -271,10 +271,10 @@ bool shwr_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, double tpc_vtx_z,
 
 //this function wants to remove particles too far from the reconstructed neutrino vertex
 void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                   double tollerance, std::vector<int> * passed_tpco)
+                   double tolerance, std::vector<int> * passed_tpco)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
+	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i) == 0) {continue; }
@@ -289,18 +289,18 @@ void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
 		{
 			auto const part = tpc_obj.GetParticle(j);
 			const int pfp_pdg = part.PFParticlePdgCode();
-			//check if at least one shower is within the tollerance to tpco vtx
-			//if no shower within tollerance, discard tpco (i.e. it's not a cc nue)
+			//check if at least one shower is within the tolerance to tpco vtx
+			//if no shower within tolerance, discard tpco (i.e. it's not a cc nue)
 			if(pfp_pdg == 11)        //if it's a shower
 			{
 				const double pfp_vtx_x = part.pfpVtxX();
 				const double pfp_vtx_y = part.pfpVtxY();
 				const double pfp_vtx_z = part.pfpVtxZ();
 				close_shower = shwr_vtx_distance(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z,
-				                                 pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, tollerance);
+				                                 pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, tolerance);
 				if(close_shower == true)
 				{
-					std::cout << " \t " << i << " TPC Object Passed " << std::endl;
+					std::cout << " \t " << i << "[Shower-To-Nue] \t Passed " << std::endl;
 					passed_tpco->at(i) = 1;
 					break;
 				}
@@ -308,7 +308,50 @@ void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
 		} //end loop pfps
 		if(close_shower == 0)//false
 		{
-			std::cout << " \t " << i << " TPC Object Vtx far from All Shower Vtx" << std::endl;
+			//std::cout << " \t " << i << " TPC Object Vtx far from All Shower Vtx" << std::endl;
+			passed_tpco->at(i) = 0;
+		}
+	}//end tpc object loop
+}
+
+//***************************************************************************
+//***************************************************************************
+
+//this function wants to remove particles too far from the reconstructed neutrino vertex
+void HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                  double threshold, std::vector<int> * passed_tpco)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i) == 0) {continue; }
+		bool over_threshold = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_tpco_hits = tpc_obj.NumPFPHits();
+		//loop over pfparticles in the TPCO
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			//check if at least one shower is within the tolerance to tpco vtx
+			//if no shower within tolerance, discard tpco (i.e. it's not a cc nue)
+			if(pfp_pdg == 11)        //if it's a shower
+			{
+				const int n_pfp_hits = part.NumPFPHits();
+				if(n_pfp_hits >= threshold) {over_threshold = true; }
+				if(over_threshold == true)
+				{
+					std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
+					passed_tpco->at(i) = 1;
+					break;
+				}
+			}
+		} //end loop pfps
+		if(over_threshold == 0)//false
+		{
+			//std::cout << " \t " << i << " No Showers over threshold" << std::endl;
 			passed_tpco->at(i) = 0;
 		}
 	}//end tpc object loop
@@ -340,14 +383,41 @@ void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, s
 		if(has_nue == false)
 		{
 			passed_tpco->at(i) = 0;
-			std::cout << " \t " << i << " No Nue for TPC Object " << std::endl;
+			//std::cout << " \t " << i << " No Nue for TPC Object " << std::endl;
 		}
 		if(has_nue == true)
 		{
 			passed_tpco->at(i) = 1;
-			std::cout << " \t " << i << " Has Nue for TPC Object" << std::endl;
+			std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl;
 		}
 	}
+}
+
+//***************************************************************************
+//***************************************************************************
+//this function will help us check how each cut is performing
+bool ValidTPCObjects(std::vector<int> * passed_tpco)
+{
+	const int n_tpco = passed_tpco->size();
+	int pass_sum = 0;
+	for(int const tpco : * passed_tpco)
+	{
+		pass_sum = pass_sum + tpco;
+	}
+	//0 --> failed tpco, 1 --> passed tpco
+	if(pass_sum == 0) {return false; }
+	return true;
+}
+
+void PrintInfo()
+{
+
+	std::cout << " Number of Nue CC : " << << std::endl;
+	std::cout << " Number of Nue NC : " << << std::endl;
+	std::cout << " Number of Numu   : " << << std::endl;
+	std::cout << " Number of Cosmic : " << << std::endl;
+	std::cout << " Efficiency       : " << << std::endl;
+	std::cout << " Purity           : " << << std::endl;
 }
 
 //***************************************************************************
@@ -373,6 +443,7 @@ int selection(){
 	int mc_nue_counter = 0;
 	for(int i = 0; i < total_mc_entires; i++)
 	{
+		mctree->GetEntry(i);
 		if(fMC_PDG == 12) {mc_nue_counter++; }
 	}
 	std::cout << "MC Nue Counter: " << mc_nue_counter << std::endl;
@@ -382,7 +453,8 @@ int selection(){
 	std::cout << "=====================" << std::endl;
 
 	std::vector<int> * passed_runs = new std::vector<int>;
-	std::cout << "Initialize Run Vector" << std::endl;
+	const int total_entries = mytree->GetEntries();
+	std::cout << "Total Events: " << total_entries << std::endl;
 
 	//let's do the in-time cut as the very first thing
 	std::cout << "=====================" << std::endl;
@@ -394,21 +466,32 @@ int selection(){
 	const double flash_time_end = 16;
 	loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
 	             flash_time_end, passed_runs);
-	std::cout << "Passed Runs Size: " << passed_runs->size() << std::endl;
 
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
 	SetXYflashVector(f, optree, largest_flash_v_v);
 	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v->size() << std::endl;
 
-	//now let's do the TPCO related cuts
+	int run_sum = 0;
+	for(auto const run : * passed_runs) {run_sum = run_sum + run; }
+	std::cout << "Passed Runs Size: " << run_sum << std::endl;
 
-	const int total_entries = mytree->GetEntries();
-	std::cout << "Total Events: " << total_entries << std::endl;
+
+	//**********************************
+	//now let's do the TPCO related cuts
+	//*********************************
 	for(int event = 0; event < total_entries; event++)
 	{
+		std::cout << "----------------------" << std::endl;
+		std::cout << "[EVENT NUMBER] \t " << event << std::endl;
+		std::cout << "----------------------" << std::endl;
+
 		mytree->GetEntry(event);
-		if(passed_runs->at(event) == 0) {continue; }//false
+		if(passed_runs->at(event) == 0)
+		{
+			std::cout << "[Failed In-Time Cut]" << std::endl;
+			continue;
+		}//false
 
 		//XY Position of largest flash
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
@@ -417,15 +500,13 @@ int selection(){
 		std::vector<int> * passed_tpco = new std::vector<int>;
 		passed_tpco->resize(tpc_object_container_v->size(), 1);
 
-		std::cout << "======================" << std::endl;
-		std::cout << "==== Reco Nue Cut ====" << std::endl;
-		std::cout << "======================" << std::endl;
+		//start the cuts here
+
+		//reco nue cut
 		HasNue(tpc_object_container_v, passed_tpco);
+		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 
-		std::cout << "=======================" << std::endl;
-		std::cout << "====== In FV Cut ======" << std::endl;
-		std::cout << "=======================" << std::endl;
-
+		//in fv cut
 		const double _x1 = 0;
 		const double _x2 = 0;
 		const double _y1 = 0;
@@ -433,26 +514,33 @@ int selection(){
 		const double _z1 = 0;
 		const double _z2 = 0;
 		fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco);
+		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 
-		std::cout << "============================" << std::endl;
-		std::cout << "===== Vertex-To-Flash: =====" << std::endl;
-		std::cout << "============================" << std::endl;
-		const double tollerance = 100;//cm
+		//vertex to flash
+		const double tolerance = 100;//cm
 		flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
-		                 tollerance, passed_tpco);
+		                 tolerance, passed_tpco);
+		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 
+		//distance between pfp shower and nue object
+		const double shwr_nue_tolerance = 50;//cm
+		VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco);
+		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 
-		std::cout << "============================" << std::endl;
-		std::cout << "====== Shower-To-Nue: ======" << std::endl;
-		std::cout << "============================" << std::endl;
-		const double shwr_nue_tollerance = 50;//cm
-		VtxNuDistance(tpc_object_container_v, shwr_nue_tollerance, passed_tpco);
-
-
-		std::cout << "------------------" << std::endl;
-		std::cout << "End Selection" << std::endl;
-		std::cout << "------------------" << std::endl;
+		//hit threshold for showers
+		const double shwr_hit_threshold = 50;//hits
+		HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco);
+		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 	}
+	std::cout << "------------------" << std::endl;
+	std::cout << "End Selection" << std::endl;
+	std::cout << "------------------" << std::endl;
+
+	//we also want some metrics to print at the end
+
+
+
+
 	return 0;
 }        //end selection
 
