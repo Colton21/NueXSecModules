@@ -6,7 +6,7 @@ process_name : NueXsecExtractorProcess
 
 services:
 {
-  TFileService: {fileName: "nue_xsec_extraction.root"}
+  TFileService: {fileName: "cosmic_extraction.root"}
   TimeTracker:  @local::microboone_time_tracker
   MemoryTracker: @local::microboone_memory_tracker
   #@table::microboone_simulation_services
