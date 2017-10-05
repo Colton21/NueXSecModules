@@ -412,12 +412,12 @@ bool ValidTPCObjects(std::vector<int> * passed_tpco)
 void PrintInfo()
 {
 
-	std::cout << " Number of Nue CC : " << << std::endl;
-	std::cout << " Number of Nue NC : " << << std::endl;
-	std::cout << " Number of Numu   : " << << std::endl;
-	std::cout << " Number of Cosmic : " << << std::endl;
-	std::cout << " Efficiency       : " << << std::endl;
-	std::cout << " Purity           : " << << std::endl;
+	// std::cout << " Number of Nue CC : " << << std::endl;
+	// std::cout << " Number of Nue NC : " << << std::endl;
+	// std::cout << " Number of Numu   : " << << std::endl;
+	// std::cout << " Number of Cosmic : " << << std::endl;
+	// std::cout << " Efficiency       : " << << std::endl;
+	// std::cout << " Purity           : " << << std::endl;
 }
 
 //***************************************************************************
