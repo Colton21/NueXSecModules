@@ -91,7 +91,7 @@ void SetpfpPdgCode(int);
 void SetpfpNuPdgCode(int);
 void SetpfpParentPdgCode(int);
 void SetMode(int);
-void SetIsCC(int);
+void SetCCNC(int);
 
 void SetmcVtxX  (double);
 void SetmcVtxY  (double);
@@ -155,7 +155,7 @@ int PFParticleNuPdgCode () const;
 //const int PFParticleNuIndex();
 int PFParticleParentPdgCode() const;
 int Mode () const;
-int IsCC () const;
+int CCNC () const;
 
 double mcVtxX () const;
 double mcVtxY () const;

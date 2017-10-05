@@ -41,7 +41,7 @@ void TPCObjectContainer::SetMode (int _mode){
 void TPCObjectContainer::SetOrigin (std::string _origin){
 	origin = _origin;
 }
-void TPCObjectContainer::SetIsCC (int _is_cc){
+void TPCObjectContainer::SetCCNC (int _is_cc){
 	is_cc = _is_cc;
 }
 
@@ -148,7 +148,7 @@ int TPCObjectContainer::Mode () const {
 std::string TPCObjectContainer::Origin () const {
 	return origin;
 }
-int TPCObjectContainer::IsCC () const {
+int TPCObjectContainer::CCNC () const {
 	return is_cc;
 }
 int TPCObjectContainer::MCParticlePdgCode() const {

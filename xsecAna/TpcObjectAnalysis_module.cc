@@ -487,7 +487,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetmcEnergy(mcEnergy);
 			particle_container.SetmcMomentum(mcMomentum);
 			particle_container.SetMode(particle_mode);
-			particle_container.SetIsCC(particle_is_cc);
+			particle_container.SetCCNC(particle_is_cc);
 
 			//pfp tracks
 			if(pfpPdg == 13)
@@ -552,7 +552,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		}//end loop over pfp in tpcobject
 		tpc_object_container.SetNumPFPNeutrinos(pfp_nu_counter);
 		tpc_object_container.SetMode(mode);
-		tpc_object_container.SetIsCC(ccnc);
+		tpc_object_container.SetCCNC(ccnc);
 		tpc_object_container.SetmcPdgCode(tpco_mc_pdg);
 		tpc_object_container.SetpfpPdgCode(tpco_pfp_pdg);
 

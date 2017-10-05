@@ -81,7 +81,7 @@ void SetpfpPdgCode(int);
 //2 = Deep Inelastic Scattering
 //3 = Coherent Scattering
 void SetOrigin (std::string);//this is the origin coming from the tpcobject
-void SetIsCC (int); //true = CC, false = NC
+void SetCCNC (int); //true = CC, false = NC
 
 //the tpc object takes the neutrino vertex
 void SetmcVtxX  (double);
@@ -124,7 +124,7 @@ int NumPFParticles  () const;
 int NumPFPNeutrinos () const;
 int Mode            () const;
 std::string Origin  () const;
-int IsCC            () const;
+int CCNC            () const;
 
 int PFParticlePdgCode () const;
 int MCParticlePdgCode () const;
