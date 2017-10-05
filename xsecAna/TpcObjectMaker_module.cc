@@ -78,6 +78,7 @@ bool _debug;
 bool _verbose;
 bool isMC;
 bool isData;
+bool _cosmic_only;
 
 int run;
 int event;
@@ -116,6 +117,8 @@ xsecAna::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
+
+	_cosmic_only                    = p.get<bool>("CosmicOnly", "false");
 
 	if(_verbose) {std::cout << "TpcObjectMaker --- fcl parameters set --- " << std::endl; }
 
@@ -188,21 +191,24 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 
 	std::vector< std::pair< int, simb::Origin_t > > pfp_origin_v;
 	if(!pfp_origin_v.empty()) {pfp_origin_v.clear(); }
-	for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
-	     iter1 != iterEnd1; ++iter1)
+	if(_cosmic_only)
 	{
-		art::Ptr<simb::MCParticle>  mc_par = iter1->first;// The MCParticle
-		art::Ptr<recob::PFParticle> pf_par = iter1->second; // The matched PFParticle
+		for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
+		     iter1 != iterEnd1; ++iter1)
+		{
+			art::Ptr<simb::MCParticle>  mc_par = iter1->first;// The MCParticle
+			art::Ptr<recob::PFParticle> pf_par = iter1->second; // The matched PFParticle
 
-		const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
+			const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
 
-		if (!mc_truth) {
-			std::cerr << "[TPCObjectMaker] Problem with MCTruth pointer." << std::endl;
-			continue;
-		}
-		std::pair < int, simb::Origin_t > pfp_origin (pf_par->Self(), mc_truth->Origin());
-		pfp_origin_v.emplace_back(pfp_origin);
-	} //end looping mc to pfp
+			if (!mc_truth) {
+				std::cerr << "[TPCObjectMaker] Problem with MCTruth pointer." << std::endl;
+				continue;
+			}
+			std::pair < int, simb::Origin_t > pfp_origin (pf_par->Self(), mc_truth->Origin());
+			pfp_origin_v.emplace_back(pfp_origin);
+		} //end looping mc to pfp
+	}
 
 //loop over TPC objects
 	for (size_t pfparticle_vector = 0; pfparticle_vector < pfp_v_v.size(); pfparticle_vector++)

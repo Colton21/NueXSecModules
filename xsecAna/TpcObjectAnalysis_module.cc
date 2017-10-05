@@ -65,6 +65,7 @@ std::string _tpcobject_producer;
 
 bool _debug;
 bool _verbose;
+bool _cosmic_only;
 
 bool isMC;
 bool isData;
@@ -141,6 +142,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
+	_cosmic_only                    = p.get<bool>("CosmicOnly", false);
 
 }
 
@@ -151,6 +153,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	event = e.id().event();
 	//bool _is_data = e.isRealData();
 	//bool _is_mc = !_is_data;
+	if(_cosmic_only) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
 
 	//maybe make them filled at the same place as the other - so it's a per event
 	//this is getting the optical information
@@ -175,25 +178,27 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	//MC Particle Information
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
 	e.getByLabel("largeant", MCParticleHandle);
-	if(!MCParticleHandle.isValid()) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
-	std::cout << "[Analyze] [MCPARTICLE] largeant in this event: " << MCParticleHandle->size() << std::endl;
-
-	for(auto const & mcparticle : (*MCParticleHandle) )
+	if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
+	if(_cosmic_only == false)
 	{
-		fMCParticleID = mcparticle.TrackId();
-		fMcparticle_pdg = mcparticle.PdgCode();
-		fStatusCode = mcparticle.StatusCode();
-		fMCVtxX = mcparticle.Vx();
-		fMCVtxY = mcparticle.Vy();
-		fMCVtxZ = mcparticle.Vz();
-		fMCEnergy = mcparticle.E();
-		fMCMass = mcparticle.Mass();
-		fMCPx = mcparticle.Px();
-		fMCPy = mcparticle.Py();
-		fMCPz = mcparticle.Pz();
-		mcparticle_tree->Fill();
-	}//end loop mc particles
+		std::cout << "[Analyze] [MCPARTICLE] largeant in this event: " << MCParticleHandle->size() << std::endl;
 
+		for(auto const & mcparticle : (*MCParticleHandle) )
+		{
+			fMCParticleID = mcparticle.TrackId();
+			fMcparticle_pdg = mcparticle.PdgCode();
+			fStatusCode = mcparticle.StatusCode();
+			fMCVtxX = mcparticle.Vx();
+			fMCVtxY = mcparticle.Vy();
+			fMCVtxZ = mcparticle.Vz();
+			fMCEnergy = mcparticle.E();
+			fMCMass = mcparticle.Mass();
+			fMCPx = mcparticle.Px();
+			fMCPy = mcparticle.Py();
+			fMCPz = mcparticle.Pz();
+			mcparticle_tree->Fill();
+		}//end loop mc particles
+	}
 
 	// Implementation of required member function here.
 
