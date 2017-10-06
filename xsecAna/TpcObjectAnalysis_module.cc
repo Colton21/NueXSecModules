@@ -444,13 +444,16 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
 				const art::Ptr<simb::MCParticle> the_mcpart = mcpart.at(0);
 				const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(the_mcpart->TrackId());
-				const simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
+				if(!mctruth) {std::cout << "[Analyze] MCTruth Pointer Not Valid!" << std::endl; }
+				else
+				{
+					const simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
+					mcOrigin = mctruth->Origin();
+				}
 				mode = mc_nu.Mode();
 				ccnc = mc_nu.CCNC();
 				particle_mode = mode;
 				particle_is_cc = ccnc;
-
-				mcOrigin = mctruth->Origin();
 				mcPdg = the_mcpart->PdgCode();
 				if(is_neutrino == true) {tpco_mc_pdg = mcPdg; }
 				//mcNuPdg = the_mcpart->Mother();
