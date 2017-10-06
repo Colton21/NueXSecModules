@@ -6,6 +6,7 @@
 #include "TBranch.h"
 #include "TInterpreter.h"
 #include "TROOT.h"
+#include "TH1.h"
 
 #include <iostream>
 #include <vector>
@@ -140,6 +141,9 @@ int out_inspect()
 
 		}//end looping tpc objects
 	}//end looping events
+
+	TH1D * h_opt_time = new TH1D("h_opt_time", "h_opt_time", 50, 0, 20);
+
 
 	const int opt_entries = optree->GetEntries();
 	for(int i = 0; i < opt_entries; i++)

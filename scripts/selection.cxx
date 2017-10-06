@@ -426,6 +426,7 @@ void PrintInfo()
 int selection(){
 
 	const char * _file1 = "../nue_xsec_extraction.root";
+	//const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
@@ -438,13 +439,18 @@ int selection(){
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
 	int fMC_PDG = 0;
+	std::string fMCOrigin = 'kUnknown';
+	int fMCMother = 0;
 	mctree->SetBranchAddress("MC_PDG", &fMC_PDG);
+	mctree->SetBranchAddress("MC_Origin", &fMCOrigin);
+	mctree->SetBranchAddress("MC_Mother", &fMCMother);
 	const int total_mc_entires = mctree->GetEntries();
+	std::cout << "Total MC Entries: " << total_mc_entires << std::endl;
 	int mc_nue_counter = 0;
 	for(int i = 0; i < total_mc_entires; i++)
 	{
 		mctree->GetEntry(i);
-		if(fMC_PDG == 12) {mc_nue_counter++; }
+		if(fMC_PDG == 12 && fMCMother == 0 && fMCOrigin == 'kBeamNeutrino') {mc_nue_counter++; }
 	}
 	std::cout << "MC Nue Counter: " << mc_nue_counter << std::endl;
 

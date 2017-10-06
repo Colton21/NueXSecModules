@@ -98,6 +98,8 @@ double fMCPx = 0.0;
 double fMCPy = 0.0;
 double fMCPz = 0.0;
 int fMCParticleID = 0;
+int fMCMother = 0;
+std::string fMCOrigin = 0;
 
 };
 
@@ -129,6 +131,8 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mcparticle_tree->Branch("event", &event, "event/I");
 	mcparticle_tree->Branch("run", &run, "run/I");
 	mcparticle_tree->Branch("MC_ID", &fMCParticleID, "fMCParticleID/I");
+	mcparticle_tree->Branch("MC_Mother", &fMCMother, "fMCMother/I");
+	mcparticle_tree->Branch("MC_Origin", &fMCOrigin, "fMCOrigin/S");
 	mcparticle_tree->Branch("StatusCode", &fStatusCode, "fStatusCode/I");
 	mcparticle_tree->Branch("MC_PDG", &fMcparticle_pdg, "fMcparticle_pdg/I");
 	mcparticle_tree->Branch("MCVtxX", &fMCVtxX, "fMCVtxX/D");
@@ -185,7 +189,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
+			const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(mcparticle->TrackId());
+			if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin == 'kBeamNeutrino'; }
+			if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin == 'kCosmicRay'; }
+			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin == 'kUnknown'; }
+
 			fMCParticleID = mcparticle.TrackId();
+			fMCMother = mcparticle.Mother();
 			fMcparticle_pdg = mcparticle.PdgCode();
 			fStatusCode = mcparticle.StatusCode();
 			fMCVtxX = mcparticle.Vx();
