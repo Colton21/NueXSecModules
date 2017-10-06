@@ -146,7 +146,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
-	_cosmic_only                    = p.get<bool>("CosmicOnly", "false");
+	_cosmic_only                    = p.get<bool>("CosmicOnly", false);
 
 }
 

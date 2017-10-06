@@ -81,8 +81,8 @@ xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 	_geantModuleLabel               = p.get<std::string>("GeantModule");
 	_spacepointLabel                = p.get<std::string>("SpacePointProducer");
 
-	_debug                          = p.get<bool>("Debug", "true");
-	_cosmic_only                    = p.get<bool>("CosmicOnly", "false");
+	_debug                          = p.get<bool>("Debug", true);
+	_cosmic_only                    = p.get<bool>("CosmicOnly", false);
 
 	produces< std::vector<xsecAna::MCGhost> >();
 	produces< art::Assns<simb::MCParticle, xsecAna::MCGhost> >();
