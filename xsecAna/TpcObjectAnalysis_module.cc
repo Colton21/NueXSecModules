@@ -444,7 +444,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
 				const art::Ptr<simb::MCParticle> the_mcpart = mcpart.at(0);
 				const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(the_mcpart->TrackId());
-				const simb::MCNeutrino mc_nu;
+				simb::MCNeutrino mc_nu;
 				if(!mctruth) {std::cout << "[Analyze] MCTruth Pointer Not Valid!" << std::endl; }
 				else
 				{
