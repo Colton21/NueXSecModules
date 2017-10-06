@@ -180,6 +180,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	}
 	//there are so may mc particles -- why?
 	//MC Particle Information
+	art::ServiceHandle<cheat::BackTracker> bt;
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
 	e.getByLabel("largeant", MCParticleHandle);
 	if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
@@ -189,7 +190,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
-			const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(mcparticle->TrackId());
+			const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(mcparticle.TrackId());
 			if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin == "kBeamNeutrino"; }
 			if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin == "kCosmicRay"; }
 			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin == "kUnknown"; }
@@ -212,7 +213,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 	// Implementation of required member function here.
 
-	art::ServiceHandle<cheat::BackTracker> bt;
 	if(!tpc_object_container_v.empty()) {tpc_object_container_v.clear(); }
 
 	// Get PFP
