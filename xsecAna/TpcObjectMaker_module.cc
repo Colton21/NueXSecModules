@@ -141,7 +141,7 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 	event = e.id().event();
 	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
-	if(_is_mc) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+	if(_is_mc && !_cosmic_only) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
 	if(_verbose && _is_mc) {std::cout << "TpcObjectMaker --- Running with MC --- " << std::endl; }
 
 // Instantiate the output
