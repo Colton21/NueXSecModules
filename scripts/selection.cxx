@@ -439,7 +439,7 @@ int selection(){
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
 	int fMC_PDG = 0;
-	std::string fMCOrigin = 'kUnknown';
+	int fMCOrigin = -1;
 	int fMCMother = 0;
 	mctree->SetBranchAddress("MC_PDG", &fMC_PDG);
 	mctree->SetBranchAddress("MC_Origin", &fMCOrigin);
@@ -450,7 +450,7 @@ int selection(){
 	for(int i = 0; i < total_mc_entires; i++)
 	{
 		mctree->GetEntry(i);
-		if(fMC_PDG == 12 && fMCMother == 0 && fMCOrigin == 'kBeamNeutrino') {mc_nue_counter++; }
+		if(fMC_PDG == 12 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_counter++; }
 	}
 	std::cout << "MC Nue Counter: " << mc_nue_counter << std::endl;
 

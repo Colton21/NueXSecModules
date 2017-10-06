@@ -98,8 +98,8 @@ double fMCPx = 0.0;
 double fMCPy = 0.0;
 double fMCPz = 0.0;
 int fMCParticleID = 0;
-int fMCMother = 0;
-int fMCOrigin = 0;
+int fMCMother = -1;
+int fMCOrigin = -1;
 
 };
 
@@ -191,9 +191,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
 			const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(mcparticle.TrackId());
-			if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin == 0; }
-			if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin == 1; }
-			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin == 2; }
+			if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
+			if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
+			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
 
 			fMCParticleID = mcparticle.TrackId();
 			fMCMother = mcparticle.Mother();
