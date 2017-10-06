@@ -46,9 +46,10 @@ This is a place where I will be tracking some issues:
 - Why so many MC Truth objects (100k+) for 5 Events?
 - Why does cosmic-only not work?
 - Improve Print Statements for selection.cxx
+- MC Truth info added, but Geant4 doesn't know about the in-coming neutrinos - need to add this info
 
 ## To-Be Verified
-- MC Truth info added, but why do I see 40 MC Truth nue for 5 art events?
+
 
 ## Acknowledgements
 
