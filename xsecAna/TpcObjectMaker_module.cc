@@ -191,7 +191,7 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 
 	std::vector< std::pair< int, simb::Origin_t > > pfp_origin_v;
 	if(!pfp_origin_v.empty()) {pfp_origin_v.clear(); }
-	if(_cosmic_only)
+	if(_cosmic_only == false)
 	{
 		for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
 		     iter1 != iterEnd1; ++iter1)

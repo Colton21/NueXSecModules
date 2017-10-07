@@ -228,6 +228,8 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 	}
 }
 
+//***************************************************************************
+//***************************************************************************
 
 void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                       double tolerance, std::vector<int> * passed_tpco)
@@ -359,7 +361,20 @@ void HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
 
 //***************************************************************************
 //***************************************************************************
+//this gives a list of all of the origins of the tpc objects
+void GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::string> * tpco_origin_v)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const std::string tpc_obj_origin = tpc_obj.Origin();
+		tpco_origin_v->push_back(tpc_obj_origin);
+	}
+}
 
+//***************************************************************************
+//***************************************************************************
 //this function simply checks if the tpc object is a nue
 void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco)
 {
@@ -369,6 +384,7 @@ void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, s
 		if(passed_tpco->at(i) == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
+
 		bool has_nue = false;
 		for(int j = 0; j <n_pfp; j++)
 		{
@@ -408,16 +424,62 @@ bool ValidTPCObjects(std::vector<int> * passed_tpco)
 	if(pass_sum == 0) {return false; }
 	return true;
 }
+//***************************************************************************
+//***************************************************************************
 
-void PrintInfo()
+std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco)
 {
+	int nue_cc = 0;
+	int cosmic = 0;
+	int nue_nc = 0;
+	int numu   = 0;
+	std::vector<int> tabulated_origins;
+	tabulated_origins.resize(4);
 
-	// std::cout << " Number of Nue CC : " << << std::endl;
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i) == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const std::string tpc_obj_origin = tpc_obj.Origin();
+		std::cout << tpc_obj_origin << std::endl;
+		//const int tpc_obj_pdg = tpc_obj.MCParticlePdgCode();
+		if(tpc_obj_origin == "kCosmicRay") {cosmic++; }
+		if(tpc_obj_origin == "kBeamNeutrino") {nue_cc++; } //this is for the time being
+	}
+	tabulated_origins.at(0) = nue_cc;
+	tabulated_origins.at(1) = cosmic;
+	tabulated_origins.at(2) = nue_nc;
+	tabulated_origins.at(3) = numu;
+	return tabulated_origins;
+}
+
+//***************************************************************************
+//***************************************************************************
+//modify this so it takes a string of the cut name so I only pass it a few variable at a time,
+//then I can call this function several times later at the bottom
+void PrintInfo(int mc_nue_counter,
+               int counter,
+               int counter_nue_cc,
+               int counter_cosmic,
+               std::string cut_name)
+{
+	std::cout << " <" << cut_name << "> " << std::endl;
+	std::cout << "Total Reco Nue    : " << counter << std::endl;
+	std::cout << " Number of Nue CC : " << counter_nue_cc << std::endl;
 	// std::cout << " Number of Nue NC : " << << std::endl;
 	// std::cout << " Number of Numu   : " << << std::endl;
-	// std::cout << " Number of Cosmic : " << << std::endl;
-	// std::cout << " Efficiency       : " << << std::endl;
-	// std::cout << " Purity           : " << << std::endl;
+	std::cout << " Number of Cosmic : " << counter_cosmic << std::endl;
+	// std::cout << " kBeamNeutrino    : " << << std::endl;
+	// std::cout << " kCosmicRay       : " << << std::endl;
+	// std::cout << " kMixed/Unknown   : " << << std::endl;
+	std::cout << "------------------------" << std::endl;
+	const double efficiency = counter_nue_cc / mc_nue_counter;
+	const double purity = counter_nue_cc / counter;
+	std::cout << " Efficiency       : " << efficiency << std::endl;
+	std::cout << " Purity           : " << purity << std::endl;
+	std::cout << "------------------------" << std::endl;
+	std::cout << "------------------------" << std::endl;
 }
 
 //***************************************************************************
@@ -450,7 +512,8 @@ int selection(){
 	for(int i = 0; i < total_mc_entires; i++)
 	{
 		mctree->GetEntry(i);
-		if(fMC_PDG == 12 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_counter++; }
+		//for now we'll just count the nue cc interactions - primary, beam electrons
+		if(fMC_PDG == 11 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_counter++; }
 	}
 	std::cout << "MC Nue Counter: " << mc_nue_counter << std::endl;
 
@@ -482,6 +545,22 @@ int selection(){
 	for(auto const run : * passed_runs) {run_sum = run_sum + run; }
 	std::cout << "Passed Runs Size: " << run_sum << std::endl;
 
+	int reco_nue_counter = 0;
+	int reco_nue_counter_nue_cc = 0;
+	int reco_nue_counter_cosmic = 0;
+	int in_fv_counter = 0;
+	int in_fv_counter_nue_cc = 0;
+	int in_fv_counter_cosmic = 0;
+	int vtx_flash_counter = 0;
+	int vtx_flash_counter_nue_cc = 0;
+	int vtx_flash_counter_cosmic = 0;
+	int shwr_tpco_counter = 0;
+	int shwr_tpco_counter_nue_cc = 0;
+	int shwr_tpco_counter_cosmic = 0;
+	int hit_threshold_counter = 0;
+	int hit_threshold_counter_nue_cc = 0;
+	int hit_threshold_counter_cosmic = 0;
+	std::vector<int> tabulated_origins;
 
 	//**********************************
 	//now let's do the TPCO related cuts
@@ -499,6 +578,9 @@ int selection(){
 			continue;
 		}//false
 
+		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
+		GetOrigins(tpc_object_container_v, tpco_origin_v);
+
 		//XY Position of largest flash
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
 
@@ -506,11 +588,15 @@ int selection(){
 		std::vector<int> * passed_tpco = new std::vector<int>;
 		passed_tpco->resize(tpc_object_container_v->size(), 1);
 
-		//start the cuts here
+		//** start the cuts here **
 
 		//reco nue cut
 		HasNue(tpc_object_container_v, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
+		if(ValidTPCObjects(passed_tpco) == true ) {reco_nue_counter++; }
+		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		reco_nue_counter_nue_cc = reco_nue_counter_nue_cc + tabulated_origins.at(0);
+		reco_nue_counter_cosmic = reco_nue_counter_cosmic + tabulated_origins.at(1);
 
 		//in fv cut
 		const double _x1 = 0;
@@ -521,29 +607,74 @@ int selection(){
 		const double _z2 = 0;
 		fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
+		if(ValidTPCObjects(passed_tpco) == true ) {in_fv_counter++; }
+		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		in_fv_counter_nue_cc = reco_nue_counter_nue_cc + tabulated_origins.at(0);
+		in_fv_counter_cosmic = reco_nue_counter_cosmic + tabulated_origins.at(1);
 
 		//vertex to flash
 		const double tolerance = 100;//cm
 		flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
 		                 tolerance, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
+		if(ValidTPCObjects(passed_tpco) == true) {vtx_flash_counter++; }
+		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		vtx_flash_counter_nue_cc = reco_nue_counter_nue_cc + tabulated_origins.at(0);
+		vtx_flash_counter_cosmic = reco_nue_counter_cosmic + tabulated_origins.at(1);
 
 		//distance between pfp shower and nue object
 		const double shwr_nue_tolerance = 50;//cm
 		VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
+		if(ValidTPCObjects(passed_tpco) == true ) {shwr_tpco_counter++; }
+		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		shwr_tpco_counter_nue_cc = reco_nue_counter_nue_cc + tabulated_origins.at(0);
+		shwr_tpco_counter_cosmic = reco_nue_counter_cosmic + tabulated_origins.at(1);
 
 		//hit threshold for showers
 		const double shwr_hit_threshold = 50;//hits
 		HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
+		if(ValidTPCObjects(passed_tpco) == true ) {hit_threshold_counter++; }
+		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		hit_threshold_counter_nue_cc = reco_nue_counter_nue_cc + tabulated_origins.at(0);
+		hit_threshold_counter_cosmic = reco_nue_counter_cosmic + tabulated_origins.at(1);
 	}
 	std::cout << "------------------" << std::endl;
 	std::cout << "End Selection" << std::endl;
 	std::cout << "------------------" << std::endl;
 
 	//we also want some metrics to print at the end
-
+	PrintInfo( mc_nue_counter,
+	           reco_nue_counter,
+	           reco_nue_counter_nue_cc,
+	           reco_nue_counter_cosmic,
+	           "Reco Nue"
+	           );
+	PrintInfo( mc_nue_counter,
+	           in_fv_counter,
+	           in_fv_counter_nue_cc,
+	           in_fv_counter_cosmic,
+	           "In FV"
+	           );
+	PrintInfo( mc_nue_counter,
+	           vtx_flash_counter,
+	           vtx_flash_counter_nue_cc,
+	           vtx_flash_counter_cosmic,
+	           "Vtx-to-Flash"
+	           );
+	PrintInfo( mc_nue_counter,
+	           shwr_tpco_counter,
+	           shwr_tpco_counter_nue_cc,
+	           shwr_tpco_counter_cosmic,
+	           "Shower-to-TPCO"
+	           );
+	PrintInfo( mc_nue_counter,
+	           hit_threshold_counter,
+	           hit_threshold_counter_nue_cc,
+	           hit_threshold_counter_cosmic,
+	           "Hit Threshold"
+	           );
 
 
 
