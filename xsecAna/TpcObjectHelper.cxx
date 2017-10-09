@@ -206,7 +206,7 @@ simb::Origin_t tpcobjecthelper::GetSliceOrigin(std::vector<art::Ptr<recob::PFPar
 
 	// Loop over pfp in the slice -- the last pfp is always the incoming neutrino
 	for ( unsigned int i = 0; i < pfp_v.size(); i++) {
-
+		if(pfp_v.at(i)->PdgCode() == 12 || pfp_v.at(i)->PdgCode() == 14) {continue; }
 		// Loop over pfp from nu origin
 		for ( unsigned int j = 0; j < neutrinoOriginPFP.size(); j++) {
 
