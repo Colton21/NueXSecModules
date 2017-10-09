@@ -258,6 +258,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	int tpc_object_counter = 0;
 	for(size_t tpc_counter = 0; tpc_counter < tpcobj_h->size(); tpc_counter++)
 	{
+		std::cout << "[Analyze] TPC Object Number: " << tpc_counter << std::endl;
 		const xsecAna::TPCObject tpcobj = (*tpcobj_h)[tpc_counter];
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
@@ -350,6 +351,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		for(auto const pfp : pfps_from_tpcobj)
 		//for(auto const pfp : pfp_v)
 		{
+			std::cout << "[Analyze] PFParticles " << std::endl;
 			xsecAna::ParticleContainer particle_container;
 
 			int mcPdg = 0;
@@ -400,7 +402,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					auto const pfpParent_obj = pfps_from_tpcobj.at(parent_position);
 					pfpParentPdg = pfpParent_obj->PdgCode();
 				}
-				catch(..) {std::cout << "No Parent Found!" << std::endl; }
+				catch(...) {std::cout << "No Parent Found!" << std::endl; }
 			}
 			//if(_verbose) {std::cout << "[Analyze] PFP Parent PDG Code " << pfpParentPdg << std::endl; }
 			particle_container.SetpfpPdgCode(pfpPdg);
@@ -518,6 +520,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				std::vector<art::Ptr<recob::Track> > tracks = tracks_from_pfp.at(pfp.key());
 				std::cout << "[Analyze] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
 				//we want to take the first association, right?
+				if(tracks.size() != 0)
+				{
 				const art::Ptr<recob::Track> this_track = tracks.at(0);
 				pfp_dir_x = this_track->VertexDirection().X();
 				pfp_dir_y = this_track->VertexDirection().Y();
@@ -529,6 +533,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 				xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
+				}
 			}//end pfp tracks
 
 			//pfp showers
@@ -537,6 +542,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
 				std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
 				//we want to take the first association, right?
+				if(showers.size() != 0)
+				{
 				const art::Ptr<recob::Shower> this_shower = showers.at(0);
 				pfp_dir_x = this_shower->Direction().X();
 				pfp_dir_y = this_shower->Direction().Y();
@@ -555,7 +562,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				//      if (hit_v[h]->View() == 2) pfp_hits_w++;
 				// }
 				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
+				}
 			}//end pfp showers
+
+			std::cout << "[Analyze] Filling Particle Container Objects" << std::endl;
 
 			particle_container.SetpfpDirX(pfp_dir_x);
 			particle_container.SetpfpDirY(pfp_dir_y);
