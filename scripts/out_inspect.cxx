@@ -58,6 +58,8 @@ int out_inspect()
 	TH1I * h_tpco_origin_cosmic   = new TH1I("h_tpco_origin_cosmic", "h_tpco_origin_cosmic", 10, 0, 10);
 	TH1I * h_tpco_origin_neutrino = new TH1I("h_tpco_origin_neutrino", "h_tpco_origin_neutrino", 10, 0, 10);
 	TH2I * h_tpco_origin_neutrino_cosmic = new TH2I("h_tpco_origin_neutrino_cosmic", "h_tpco_origin_neutrino_cosmic", 10, 0, 10, 10, 0, 10);
+	TH2I * h_nue_daughter_track_shower = new TH2I("h_nue_daughter_track_shower",
+	                                              "h_nue_daughter_track_shower", 5, 0, 5, 5, 0, 5);
 
 	// h_tpco_origin_unknown->SetStats(kFALSE);
 	// h_tpco_origin_cosmic->SetStats(kFALSE);
@@ -100,6 +102,8 @@ int out_inspect()
 			int origin_cosmic = 0;
 			int origin_beam = 0;
 			int origin_unknown = 0;
+			int n_showers = 0;
+			int n_tracks = 0;
 
 			std::cout << " \t Number of PFParticles: " << n_pfp << "\t Number of PFP Neutrinos: " << n_pfp_nu << std::endl;
 			std::cout << " \t Run: " << run_number << " , Event: " << event_number << std::endl;
@@ -173,6 +177,8 @@ int out_inspect()
 					reco_nue_v_pfp_pdg.push_back(pfp_pdg);
 					reco_nue_v_mc_pdg.push_back(mc_pdg);
 					reco_nue_v_pfp_hits.push_back(n_pfp_hits);
+					if(pfp_pdg == 11) {n_showers++; }
+					if(pfp_pdg == 13) {n_tracks++; }
 				}
 			}//end looping particles
 			std::cout << "\n " << std::endl;
@@ -180,6 +186,8 @@ int out_inspect()
 			h_tpco_origin_cosmic->Fill(origin_cosmic);
 			h_tpco_origin_neutrino->Fill(origin_beam);
 			h_tpco_origin_neutrino_cosmic->Fill(origin_beam, origin_cosmic);
+			h_nue_daughter_track_shower->Fill(n_tracks, n_showers);
+
 		}//end looping tpc objects
 	}//end looping events
 	 //*******************
@@ -207,6 +215,12 @@ int out_inspect()
 	h_tpco_origin_neutrino_cosmic->GetYaxis()->SetTitle("NPFP Origin = Cosmic");
 	h_tpco_origin_neutrino_cosmic->Draw("colz");
 	origin_c4->Print("tpco_origin_neutrino_cosmic.pdf");
+	TCanvas * origin_c5 = new TCanvas();
+	origin_c5->cd();
+	h_nue_daughter_track_shower->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_nue_daughter_track_shower->GetYaxis()->SetTitle("N Showers per TPC Object");
+	h_nue_daughter_track_shower->Draw("colz");
+	origin_c5->Print("nue_daughter_track_shower.pdf");
 
 
 	TH1D * h_nue_daughter_origin = new TH1D("h_nue_daughter_origin", "h_nue_daughter_origin", 3, 0, 3);
