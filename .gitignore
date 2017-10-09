@@ -41,6 +41,7 @@ Thumbs.db
 *.db
 *pcm
 *.d
+*.pdf
 AutoDict_*
 xsecAna/run_Prod.fcl
 scripts/out_inspect
