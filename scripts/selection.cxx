@@ -202,6 +202,7 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 		optical_tree->GetEntry(i);
 		current_run = fRun;
 		current_event = fEvent;
+		if(current_event != last_event) {largest_flash = 0; }
 		double this_flash = fOpFlashPE;
 		std::vector < double > largest_flash_v;//contains the y,z for largest flash
 		if(this_flash <= largest_flash)
@@ -220,10 +221,10 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 		}
 		last_event = current_event;
 		last_run = current_run;
+		if(this_flash > largest_flash) {largest_flash = this_flash; }
 		largest_flash_v.push_back(fOpFlashCenterY);
 		largest_flash_v.push_back(fOpFlashCenterZ);
 		largest_flash_v_v->push_back(largest_flash_v);
-		if(current_event != last_event) {largest_flash = 0; }
 		largest_flash_v.clear();
 	}
 }
@@ -442,10 +443,17 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		if(passed_tpco->at(i) == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const std::string tpc_obj_origin = tpc_obj.Origin();
-		std::cout << tpc_obj_origin << std::endl;
+		std::cout << "\t " << i << " " << tpc_obj_origin << std::endl;
 		//const int tpc_obj_pdg = tpc_obj.MCParticlePdgCode();
 		if(tpc_obj_origin == "kCosmicRay") {cosmic++; }
-		if(tpc_obj_origin == "kBeamNeutrino") {nue_cc++; } //this is for the time being
+		//if(tpc_obj_origin == "kBeamNeutrino") {nue_cc++; } //this is for the time being
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" ) {}
+		}
 	}
 	tabulated_origins.at(0) = nue_cc;
 	tabulated_origins.at(1) = cosmic;

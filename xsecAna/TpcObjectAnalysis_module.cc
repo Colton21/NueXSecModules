@@ -356,7 +356,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 			int mcPdg = 0;
 			//int mcNuPdg = 0; // not set
-			//int mcParentPdg = 0; // not set
+			int mcParentPdg = 0;
 			double pfp_dir_x = 0;
 			double pfp_dir_y = 0;
 			double pfp_dir_z = 0;
@@ -469,12 +469,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				}
 				mode = mc_nu.Mode();
 				ccnc = mc_nu.CCNC();
+				mcParentPdg = mc_nu.Nu().PdgCode();
 				particle_mode = mode;
 				particle_is_cc = ccnc;
 				mcPdg = the_mcpart->PdgCode();
 				if(is_neutrino == true) {tpco_mc_pdg = mcPdg; }
-				//mcNuPdg = the_mcpart->Mother();
-				//mcParentPdg = the_mcpart->Mother();
 				mc_vtx_x = the_mcpart->Vx();
 				mc_vtx_y = the_mcpart->Vy();
 				mc_vtx_z = the_mcpart->Vz();
@@ -499,7 +498,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(mcOrigin == simb::kCosmicRay) {str_mcorigin = "kCosmicRay"; }
 			particle_container.SetOrigin(str_mcorigin);
 			particle_container.SetmcPdgCode(mcPdg);
-			//particle_container.SetmcNuPdgCode();
+			particle_container.SetmcParentPdgCode(mcParentPdg);
 			particle_container.SetmcVtxX(mc_vtx_x);
 			particle_container.SetmcVtxY(mc_vtx_y);
 			particle_container.SetmcVtxZ(mc_vtx_z);
@@ -522,17 +521,17 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				//we want to take the first association, right?
 				if(tracks.size() != 0)
 				{
-				const art::Ptr<recob::Track> this_track = tracks.at(0);
-				pfp_dir_x = this_track->VertexDirection().X();
-				pfp_dir_y = this_track->VertexDirection().Y();
-				pfp_dir_z = this_track->VertexDirection().Z();
-				pfp_theta = acos(pfp_dir_z) * (180 / 3.1415);
-				pfp_phi = atan2(pfp_dir_y, pfp_dir_x) * (180 / 3.1415);
-				pfp_length = this_track->Length();
-				pfp_momentum = this_track->StartMomentum();
+					const art::Ptr<recob::Track> this_track = tracks.at(0);
+					pfp_dir_x = this_track->VertexDirection().X();
+					pfp_dir_y = this_track->VertexDirection().Y();
+					pfp_dir_z = this_track->VertexDirection().Z();
+					pfp_theta = acos(pfp_dir_z) * (180 / 3.1415);
+					pfp_phi = atan2(pfp_dir_y, pfp_dir_x) * (180 / 3.1415);
+					pfp_length = this_track->Length();
+					pfp_momentum = this_track->StartMomentum();
 
-				xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
-				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
+					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
+					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 				}
 			}//end pfp tracks
 
@@ -544,24 +543,24 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				//we want to take the first association, right?
 				if(showers.size() != 0)
 				{
-				const art::Ptr<recob::Shower> this_shower = showers.at(0);
-				pfp_dir_x = this_shower->Direction().X();
-				pfp_dir_y = this_shower->Direction().Y();
-				pfp_dir_z = this_shower->Direction().Z();
-				pfp_theta = acos(pfp_dir_z) * (180 / 3.1415);
-				pfp_phi = atan2(pfp_dir_y, pfp_dir_x) * (180 / 3.1415);
-				pfp_length = this_shower->Length();
-				pfp_momentum = this_shower->Energy().at(this_shower->best_plane());
-				pfp_open_angle = this_shower->OpenAngle();
+					const art::Ptr<recob::Shower> this_shower = showers.at(0);
+					pfp_dir_x = this_shower->Direction().X();
+					pfp_dir_y = this_shower->Direction().Y();
+					pfp_dir_z = this_shower->Direction().Z();
+					pfp_theta = acos(pfp_dir_z) * (180 / 3.1415);
+					pfp_phi = atan2(pfp_dir_y, pfp_dir_x) * (180 / 3.1415);
+					pfp_length = this_shower->Length();
+					pfp_momentum = this_shower->Energy().at(this_shower->best_plane());
+					pfp_open_angle = this_shower->OpenAngle();
 
-				xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_shower, pfp_hits_u, pfp_hits_v, pfp_hits_w);
-				// Check where the hit is coming from
-				// for (unsigned int h = 0; h < hit_v.size(); h++) {
-				//      if (hit_v[h]->View() == 0) pfp_hits_u++;
-				//      if (hit_v[h]->View() == 1) pfp_hits_v++;
-				//      if (hit_v[h]->View() == 2) pfp_hits_w++;
-				// }
-				pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
+					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_shower, pfp_hits_u, pfp_hits_v, pfp_hits_w);
+					// Check where the hit is coming from
+					// for (unsigned int h = 0; h < hit_v.size(); h++) {
+					//      if (hit_v[h]->View() == 0) pfp_hits_u++;
+					//      if (hit_v[h]->View() == 1) pfp_hits_v++;
+					//      if (hit_v[h]->View() == 2) pfp_hits_w++;
+					// }
+					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 				}
 			}//end pfp showers
 
@@ -588,6 +587,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetCCNC(ccnc);
 		tpc_object_container.SetmcPdgCode(tpco_mc_pdg);
 		tpc_object_container.SetpfpPdgCode(tpco_pfp_pdg);
+		//tpc_object_container.SetmcPdgCode();
 
 		tpc_object_container_v.push_back(tpc_object_container);
 		tpc_object_counter++;

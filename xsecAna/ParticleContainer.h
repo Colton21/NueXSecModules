@@ -155,7 +155,7 @@ int PFParticleNuPdgCode () const;
 //const int PFParticleNuIndex();
 int PFParticleParentPdgCode() const;
 int Mode () const;
-int CCNC () const;
+int CCNC () const;//0 is cc, 1 is nc
 
 double mcVtxX () const;
 double mcVtxY () const;
