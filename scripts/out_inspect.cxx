@@ -119,7 +119,7 @@ int out_inspect()
 				auto const part = tpc_obj.GetParticle(j);
 				const int pfp_pdg = part.PFParticlePdgCode();
 				const int mc_pdg = part.MCPdgCode();
-				//const int mc_parent_pdg = part.MCParentPdg();//not set in module
+				const int mc_parent_pdg = part.MCParentPdg();
 				const int pfp_parent_pdg = part.PFParticleParentPdgCode();
 				const std::string origin = part.Origin();
 				const int pfp_mode = part.Mode();
@@ -154,7 +154,8 @@ int out_inspect()
 				const double pfp_open_angle = part.pfpOpenAngle();
 
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
-				std::cout << " \t \t Particle PDG Codes: - Reco " << pfp_pdg << " - True " << mc_pdg << " - Reco Parent " << pfp_parent_pdg << std::endl;
+				std::cout << " \t \t Particle PDG Codes:        - Reco " << pfp_pdg << " - True " << mc_pdg << std::endl;
+				std::cout << " \t \t Parent Particle PDG Codes: - Reco " << pfp_parent_pdg << " - True " << mc_parent_pdg << std::endl;
 				std::cout << " \t \t Origin: " << origin << std::endl;
 				std::cout << " \t \t Mode: " << pfp_mode        << "  CC/NC: " << pfp_CCNC << std::endl;
 				std::cout << " \t \t Vertex - Reco : " << pfp_vtx.at(0) << ", " << pfp_vtx.at(1) << ", " << pfp_vtx.at(2) << std::endl;
