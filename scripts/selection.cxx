@@ -412,7 +412,7 @@ void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, s
 
 //***************************************************************************
 //***************************************************************************
-//this function will help us check how each cut is performing
+//this function just counts if at least 1 tpc object passes the cuts
 bool ValidTPCObjects(std::vector<int> * passed_tpco)
 {
 	const int n_tpco = passed_tpco->size();
@@ -437,8 +437,9 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 	int numu   = 0;
 	int unmatched = 0;
 	int other_mixed = 0;
+	int total = 0;
 	std::vector<int> tabulated_origins;
-	tabulated_origins.resize(7);
+	tabulated_origins.resize(8);
 
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -452,7 +453,7 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		if(passed_tpco->at(i) == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const std::string tpc_obj_origin = tpc_obj.Origin();
-		std::cout << "\t " << i << " " << tpc_obj_origin << std::endl;
+		//std::cout << "\t " << i << " " << tpc_obj_origin << std::endl;
 		//const int tpc_obj_pdg = tpc_obj.MCParticlePdgCode();
 		if(tpc_obj_origin == "kCosmicRay") {cosmic++; }
 		const int n_pfp = tpc_obj.NumPFParticles();
@@ -470,15 +471,21 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		if(part_cosmic > 0)
 		{
 			if(part_nue_cc > 0) {nue_cc_mixed++; continue; }
-			if(part_nue_nc > 0 || part_numu > 0 || part_unmatched > 0) {other_mixed++; continue; }
+			if(part_nue_nc > 0 || part_numu > 0) {other_mixed++; continue; }
 			cosmic++;
 			continue;
 		}
-		if(part_nue_cc    > 0) {nue_cc++;    continue; }
-		if(part_nue_nc    > 0) {nue_nc++;    continue; }
-		if(part_numu      > 0) {numu++;      continue; }
-		if(part_unmatched > 0) {unmatched++; continue; }
+		if( part_cosmic == 0)
+		{
+			if(part_nue_cc    > 0) {nue_cc++;    continue; }
+			if(part_nue_nc    > 0) {nue_nc++;    continue; }
+			if(part_numu      > 0) {numu++;      continue; }
+			if(part_unmatched > 0) {unmatched++; continue; }
+		}
 	}
+
+	total = nue_cc + nue_cc_mixed + cosmic + nue_nc + numu + unmatched + other_mixed;
+
 	tabulated_origins.at(0) = nue_cc;
 	tabulated_origins.at(1) = nue_cc_mixed;
 	tabulated_origins.at(2) = cosmic;
@@ -486,6 +493,7 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 	tabulated_origins.at(4) = numu;
 	tabulated_origins.at(5) = unmatched;
 	tabulated_origins.at(6) = other_mixed;
+	tabulated_origins.at(7) = total;
 	return tabulated_origins;
 }
 
@@ -514,8 +522,8 @@ void PrintInfo(int mc_nue_counter,
 	std::cout << " Number of Unmatched    : " << counter_unmatched << std::endl;
 	std::cout << " Number of Other Mixed  : " << counter_other_mixed << std::endl;
 	std::cout << "------------------------" << std::endl;
-	const double efficiency = counter_nue_cc / mc_nue_counter;
-	const double purity = counter_nue_cc / counter;
+	const double efficiency = double(counter_nue_cc) / double(mc_nue_counter);
+	const double purity = double(counter_nue_cc) / double(counter);
 	std::cout << " Efficiency       : " << efficiency << std::endl;
 	std::cout << " Purity           : " << purity << std::endl;
 	std::cout << "------------------------" << std::endl;
@@ -658,7 +666,6 @@ int selection(){
 		//reco nue cut
 		HasNue(tpc_object_container_v, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		if(ValidTPCObjects(passed_tpco) == true ) {reco_nue_counter++; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		reco_nue_counter_nue_cc       = reco_nue_counter_nue_cc + tabulated_origins.at(0);
 		reco_nue_counter_nue_cc_mixed = reco_nue_counter_nue_cc_mixed + tabulated_origins.at(1);
@@ -667,6 +674,7 @@ int selection(){
 		reco_nue_counter_numu         = reco_nue_counter_numu + tabulated_origins.at(4);
 		reco_nue_counter_unmatched    = reco_nue_counter_unmatched + tabulated_origins.at(5);
 		reco_nue_counter_other_mixed  = reco_nue_counter_other_mixed + tabulated_origins.at(6);
+		reco_nue_counter = reco_nue_counter + tabulated_origins.at(7);
 
 		//in fv cut
 		const double _x1 = 0;
@@ -677,7 +685,6 @@ int selection(){
 		const double _z2 = 0;
 		fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		if(ValidTPCObjects(passed_tpco) == true ) {in_fv_counter++; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		in_fv_counter_nue_cc       = in_fv_counter_nue_cc + tabulated_origins.at(0);
 		in_fv_counter_nue_cc_mixed = in_fv_counter_nue_cc_mixed + tabulated_origins.at(1);
@@ -686,13 +693,13 @@ int selection(){
 		in_fv_counter_numu         = in_fv_counter_numu + tabulated_origins.at(4);
 		in_fv_counter_unmatched    = in_fv_counter_unmatched + tabulated_origins.at(5);
 		in_fv_counter_other_mixed  = in_fv_counter_other_mixed + tabulated_origins.at(6);
+		in_fv_counter = in_fv_counter + tabulated_origins.at(7);
 
 		//vertex to flash
 		const double tolerance = 100;//cm
 		flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
 		                 tolerance, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		if(ValidTPCObjects(passed_tpco) == true) {vtx_flash_counter++; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		vtx_flash_counter_nue_cc       = vtx_flash_counter_nue_cc + tabulated_origins.at(0);
 		vtx_flash_counter_nue_cc_mixed = vtx_flash_counter_nue_cc_mixed + tabulated_origins.at(1);
@@ -701,12 +708,12 @@ int selection(){
 		vtx_flash_counter_numu         = vtx_flash_counter_numu + tabulated_origins.at(4);
 		vtx_flash_counter_unmatched    = vtx_flash_counter_unmatched + tabulated_origins.at(5);
 		vtx_flash_counter_other_mixed  = vtx_flash_counter_other_mixed + tabulated_origins.at(6);
+		vtx_flash_counter = vtx_flash_counter + tabulated_origins.at(7);
 
 		//distance between pfp shower and nue object
 		const double shwr_nue_tolerance = 50;//cm
 		VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		if(ValidTPCObjects(passed_tpco) == true ) {shwr_tpco_counter++; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		shwr_tpco_counter_nue_cc       = shwr_tpco_counter_nue_cc + tabulated_origins.at(0);
 		shwr_tpco_counter_nue_cc_mixed = shwr_tpco_counter_nue_cc_mixed + tabulated_origins.at(1);
@@ -715,12 +722,12 @@ int selection(){
 		shwr_tpco_counter_numu         = shwr_tpco_counter_numu + tabulated_origins.at(4);
 		shwr_tpco_counter_unmatched    = shwr_tpco_counter_unmatched + tabulated_origins.at(5);
 		shwr_tpco_counter_other_mixed  = shwr_tpco_counter_other_mixed + tabulated_origins.at(6);
+		shwr_tpco_counter = shwr_tpco_counter + tabulated_origins.at(7);
 
 		//hit threshold for showers
 		const double shwr_hit_threshold = 50;//hits
 		HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		if(ValidTPCObjects(passed_tpco) == true ) {hit_threshold_counter++; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		hit_threshold_counter_nue_cc       = hit_threshold_counter_nue_cc + tabulated_origins.at(0);
 		hit_threshold_counter_nue_cc_mixed = hit_threshold_counter_nue_cc_mixed + tabulated_origins.at(1);
@@ -729,6 +736,7 @@ int selection(){
 		hit_threshold_counter_numu         = hit_threshold_counter_numu + tabulated_origins.at(4);
 		hit_threshold_counter_unmatched    = hit_threshold_counter_unmatched + tabulated_origins.at(5);
 		hit_threshold_counter_other_mixed  = hit_threshold_counter_other_mixed + tabulated_origins.at(6);
+		hit_threshold_counter = hit_threshold_counter + tabulated_origins.at(7);
 	}
 	std::cout << "------------------" << std::endl;
 	std::cout << "End Selection" << std::endl;

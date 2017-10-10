@@ -169,6 +169,7 @@ int out_inspect()
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 
 				//this should only let daughters of pfp nue's through
+				//we also don't want the neutrino pfps!
 				if(pfp_parent_pdg == 12 && (pfp_pdg != 12 && pfp_pdg != 14))
 				{
 					reco_nue_v_origin.push_back(origin);
@@ -226,13 +227,13 @@ int out_inspect()
 
 	TH1D * h_nue_daughter_origin = new TH1D("h_nue_daughter_origin", "h_nue_daughter_origin", 3, 0, 3);
 	TH1D * h_nue_daughter_pfp_pdg = new TH1D("h_nue_daughter_pfp_pdg", "h_nue_daughter_pfp_pdg", 3, 0, 3);
-	TH1D * h_nue_daughter_mc_pdg = new TH1D("h_nue_daughter_mc_pdg", "h_nue_daughter_mc_pdg", 10, 0, 10);
+	TH1D * h_nue_daughter_mc_pdg = new TH1D("h_nue_daughter_mc_pdg", "h_nue_daughter_mc_pdg", 12, 0, 12);
 	TH1D * h_nue_daughter_pfp_hits = new TH1D("h_nue_daughter_pfp_hits", "h_nue_daughter_pfp_hits", 20, 0, 3000);
-	TH2I * h_nue_daughter_mc_pfp_pdg = new TH2I("h_nue_daughter_mc_pfp_pdg", "h_nue_daughter_mc_pfp_pdg", 10, 0, 10, 2, 0, 2);
+	TH2I * h_nue_daughter_mc_pfp_pdg = new TH2I("h_nue_daughter_mc_pfp_pdg", "h_nue_daughter_mc_pfp_pdg", 12, 0, 12, 2, 0, 2);
 	TH2I * h_nue_daughter_shower_mc_pdg_pfp_hits = new TH2I ("h_nue_daughter_shower_mc_pdg_pfp_hits",
-	                                                         "h_nue_daughter_shower_mc_pdg_pfp_hits", 20, 0, 3000, 10, 0, 10);
+	                                                         "h_nue_daughter_shower_mc_pdg_pfp_hits", 20, 0, 3000, 12, 0, 12);
 	TH2I * h_nue_daughter_track_mc_pdg_pfp_hits = new TH2I ("h_nue_daughter_track_mc_pdg_pfp_hits",
-	                                                        "h_nue_daughter_track_mc_pdg_pfp_hits", 20, 0, 3000, 10, 0, 10);
+	                                                        "h_nue_daughter_track_mc_pdg_pfp_hits", 20, 0, 3000, 12, 0, 12);
 
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
 	for (int i=1; i<=3; i++) {h_nue_daughter_origin->GetXaxis()->SetBinLabel(i,str_origin[i-1]); }
@@ -242,9 +243,9 @@ int out_inspect()
 		h_nue_daughter_pfp_pdg->GetXaxis()->SetBinLabel(i, str_pfp_particles[i-1]);
 		h_nue_daughter_mc_pfp_pdg->GetYaxis()->SetBinLabel(i, str_pfp_particles[i-1]);
 	}
-	const char * str_mc_particle[10] = {"Electron", "Positron", "Muon", "Mu+", "Photon",
-		                            "Pion", "Pi0", "Proton", "Neutron", "Other"};
-	for (int i = 1; i <= 10; i++)
+	const char * str_mc_particle[12] = {"Electron", "Positron", "Muon", "Mu+", "Photon",
+		                            "Pion", "Pi0", "Proton", "Neutron", "Kaon", "Other", "No Match"};
+	for (int i = 1; i <= 12; i++)
 	{
 		h_nue_daughter_mc_pdg->GetXaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_nue_daughter_mc_pfp_pdg->GetXaxis()->SetBinLabel(i, str_mc_particle[i-1]);
@@ -259,20 +260,25 @@ int out_inspect()
 		if(this_origin == "kBeamNeutrino") {h_nue_daughter_origin->Fill(0); }
 		if(this_origin == "kCosmicRay")    {h_nue_daughter_origin->Fill(1); }
 		const int this_pfp_pdg = reco_nue_v_pfp_pdg.at(i);
-		if(this_pfp_pdg == 11)                       {h_nue_daughter_pfp_pdg->Fill(0); }
-		if(this_pfp_pdg == 13)                       {h_nue_daughter_pfp_pdg->Fill(1); }
-		if(this_pfp_pdg != 11 && this_pfp_pdg != 13) {h_nue_daughter_pfp_pdg->Fill(2); }
+		if(this_pfp_pdg == 11)                       {h_nue_daughter_pfp_pdg->Fill(0);  }
+		if(this_pfp_pdg == 13)                       {h_nue_daughter_pfp_pdg->Fill(1);  }
+		//this next line should be 0 as pfp neutrinos are removed already
+		if(this_pfp_pdg != 11 && this_pfp_pdg != 13) {h_nue_daughter_pfp_pdg->Fill(2);  }
 		const int this_mc_pdg = reco_nue_v_mc_pdg.at(i);
-		if(this_mc_pdg == 11)                         {h_nue_daughter_mc_pdg->Fill(0); }
-		if(this_mc_pdg == -11)                        {h_nue_daughter_mc_pdg->Fill(1); }
-		if(this_mc_pdg == 13)                         {h_nue_daughter_mc_pdg->Fill(2); }
-		if(this_mc_pdg == -13)                        {h_nue_daughter_mc_pdg->Fill(3); }
-		if(this_mc_pdg == 22)                         {h_nue_daughter_mc_pdg->Fill(4); }
-		if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_mc_pdg->Fill(5); }
-		if(this_mc_pdg == 111)                        {h_nue_daughter_mc_pdg->Fill(6); }
-		if(this_mc_pdg == 2212)                       {h_nue_daughter_mc_pdg->Fill(7); }
-		if(this_mc_pdg == 2112)                       {h_nue_daughter_mc_pdg->Fill(8); }
-		if(this_mc_pdg == 0)                          {h_nue_daughter_mc_pdg->Fill(9); }
+		if(this_mc_pdg == 11)                         {h_nue_daughter_mc_pdg->Fill(0);  }
+		if(this_mc_pdg == -11)                        {h_nue_daughter_mc_pdg->Fill(1);  }
+		if(this_mc_pdg == 13)                         {h_nue_daughter_mc_pdg->Fill(2);  }
+		if(this_mc_pdg == -13)                        {h_nue_daughter_mc_pdg->Fill(3);  }
+		if(this_mc_pdg == 22)                         {h_nue_daughter_mc_pdg->Fill(4);  }
+		if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_mc_pdg->Fill(5);  }
+		if(this_mc_pdg == 111)                        {h_nue_daughter_mc_pdg->Fill(6);  }
+		if(this_mc_pdg == 2212)                       {h_nue_daughter_mc_pdg->Fill(7);  }
+		if(this_mc_pdg == 2112)                       {h_nue_daughter_mc_pdg->Fill(8);  }
+		if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+		   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+		   this_mc_pdg == -321)                       {h_nue_daughter_mc_pdg->Fill(9);  }
+		if(this_mc_pdg == 0)                          {h_nue_daughter_mc_pdg->Fill(11); }
+		//else{h_nue_daughter_mc_pdg->Fill(10); }
 		const int this_pfp_hits = reco_nue_v_pfp_hits.at(i);
 		h_nue_daughter_pfp_hits->Fill(this_pfp_hits);
 
@@ -285,7 +291,10 @@ int out_inspect()
 		if(this_pfp_pdg == 11 && this_mc_pdg == 111)  {h_nue_daughter_mc_pfp_pdg->Fill(6.0, 0.0); }
 		if(this_pfp_pdg == 11 && this_mc_pdg == 2212) {h_nue_daughter_mc_pfp_pdg->Fill(7.0, 0.0); }
 		if(this_pfp_pdg == 11 && this_mc_pdg == 2112) {h_nue_daughter_mc_pfp_pdg->Fill(8.0, 0.0); }
-		if(this_pfp_pdg == 11 && this_mc_pdg == 0)    {h_nue_daughter_mc_pfp_pdg->Fill(9.0, 0.0); }
+		if(this_pfp_pdg == 11 && (this_mc_pdg == 130 ||
+		                          this_mc_pdg == 310 || this_mc_pdg == 311 ||
+		                          this_mc_pdg == 321 || this_mc_pdg == -321)) {h_nue_daughter_mc_pfp_pdg->Fill(9.0, 0.0); }
+		if(this_pfp_pdg == 13 && this_mc_pdg == 0)    {h_nue_daughter_mc_pfp_pdg->Fill(11.0, 0.0); }
 
 		if(this_pfp_pdg == 13 && this_mc_pdg == 11)   {h_nue_daughter_mc_pfp_pdg->Fill(0.0, 1.0); }
 		if(this_pfp_pdg == 13 && this_mc_pdg == -11)  {h_nue_daughter_mc_pfp_pdg->Fill(1.0, 1.0); }
@@ -296,7 +305,10 @@ int out_inspect()
 		if(this_pfp_pdg == 13 && this_mc_pdg == 111)  {h_nue_daughter_mc_pfp_pdg->Fill(6.0, 1.0); }
 		if(this_pfp_pdg == 13 && this_mc_pdg == 2212) {h_nue_daughter_mc_pfp_pdg->Fill(7.0, 1.0); }
 		if(this_pfp_pdg == 13 && this_mc_pdg == 2112) {h_nue_daughter_mc_pfp_pdg->Fill(8.0, 1.0); }
-		if(this_pfp_pdg == 13 && this_mc_pdg == 0)    {h_nue_daughter_mc_pfp_pdg->Fill(9.0, 1.0); }
+		if(this_pfp_pdg == 11 && (this_mc_pdg == 130 ||
+		                          this_mc_pdg == 310 || this_mc_pdg == 311 ||
+		                          this_mc_pdg == 321 || this_mc_pdg == -321)) {h_nue_daughter_mc_pfp_pdg->Fill(9.0, 1.0); }
+		if(this_pfp_pdg == 13 && this_mc_pdg == 0)    {h_nue_daughter_mc_pfp_pdg->Fill(11.0, 1.0); }
 
 		if(this_pfp_pdg == 11)
 		{
@@ -309,7 +321,10 @@ int out_inspect()
 			if(this_mc_pdg == 111)                        {h_nue_daughter_shower_mc_pdg_pfp_hits->Fill(this_pfp_hits, 6.0); }
 			if(this_mc_pdg == 2212)                       {h_nue_daughter_shower_mc_pdg_pfp_hits->Fill(this_pfp_hits, 7.0); }
 			if(this_mc_pdg == 2112)                       {h_nue_daughter_shower_mc_pdg_pfp_hits->Fill(this_pfp_hits, 8.0); }
-			if(this_mc_pdg == 0)                          {h_nue_daughter_shower_mc_pdg_pfp_hits->Fill(this_pfp_hits, 9.0); }
+			if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+			   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+			   this_mc_pdg == -321)                       {h_nue_daughter_shower_mc_pdg_pfp_hits->Fill(this_pfp_hits, 9.0);  }
+			if(this_mc_pdg == 0)                          {h_nue_daughter_shower_mc_pdg_pfp_hits->Fill(this_pfp_hits, 11.0); }
 		}
 		if(this_pfp_pdg == 13)
 		{
@@ -322,7 +337,10 @@ int out_inspect()
 			if(this_mc_pdg == 111)                        {h_nue_daughter_track_mc_pdg_pfp_hits->Fill(this_pfp_hits, 6.0); }
 			if(this_mc_pdg == 2212)                       {h_nue_daughter_track_mc_pdg_pfp_hits->Fill(this_pfp_hits, 7.0); }
 			if(this_mc_pdg == 2112)                       {h_nue_daughter_track_mc_pdg_pfp_hits->Fill(this_pfp_hits, 8.0); }
-			if(this_mc_pdg == 0)                          {h_nue_daughter_track_mc_pdg_pfp_hits->Fill(this_pfp_hits, 9.0); }
+			if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+			   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+			   this_mc_pdg == -321)                       {h_nue_daughter_track_mc_pdg_pfp_hits->Fill(this_pfp_hits, 9.0);  }
+			if(this_mc_pdg == 0)                          {h_nue_daughter_track_mc_pdg_pfp_hits->Fill(this_pfp_hits, 11.0); }
 		}
 
 	}
