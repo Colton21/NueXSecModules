@@ -232,11 +232,17 @@ int out_inspect()
 	TH2I * h_nue_daughter_mc_pfp_pdg = new TH2I("h_nue_daughter_mc_pfp_pdg", "h_nue_daughter_mc_pfp_pdg", 12, 0, 12, 2, 0, 2);
 	TH2I * h_nue_daughter_shower_mc_pdg_pfp_hits = new TH2I ("h_nue_daughter_shower_mc_pdg_pfp_hits",
 	                                                         "h_nue_daughter_shower_mc_pdg_pfp_hits", 20, 0, 3000, 12, 0, 12);
-	TH2I * h_nue_daughter_track_mc_pdg_pfp_hits = new TH2I ("h_nue_daughter_track_mc_pdg_pfp_hits",
+	TH2D * h_nue_daughter_track_mc_pdg_pfp_hits = new TH2D ("h_nue_daughter_track_mc_pdg_pfp_hits",
 	                                                        "h_nue_daughter_track_mc_pdg_pfp_hits", 20, 0, 3000, 12, 0, 12);
+	TH2I * h_nue_daughter_origin_mc_pdg = new TH2I ("h_nue_daughter_origin_mc_pdg", "h_nue_daughter_origin_mc_pdg", 12, 0, 12, 3, 0, 3);
 
+	//here I modify the names of the axis labels
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
-	for (int i=1; i<=3; i++) {h_nue_daughter_origin->GetXaxis()->SetBinLabel(i,str_origin[i-1]); }
+	for (int i=1; i<=3; i++)
+	{
+		h_nue_daughter_origin->GetXaxis()->SetBinLabel(i,str_origin[i-1]);
+		h_nue_daughter_origin_mc_pdg->GetYaxis()->SetBinLabel(i, str_origin[i-1]);
+	}
 	const char * str_pfp_particles[3] = {"Shower", "Track", "Other"};
 	for (int i = 1; i <= 3; i++)
 	{
@@ -251,20 +257,71 @@ int out_inspect()
 		h_nue_daughter_mc_pfp_pdg->GetXaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_nue_daughter_shower_mc_pdg_pfp_hits->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_nue_daughter_track_mc_pdg_pfp_hits->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_nue_daughter_origin_mc_pdg->GetXaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 	}
 
 	for(int i = 0; i < reco_nue_v_origin.size(); i++)
 	{
 		auto const this_origin = reco_nue_v_origin.at(i);
-		if(this_origin == "kUnknown")      {h_nue_daughter_origin->Fill(2); }
-		if(this_origin == "kBeamNeutrino") {h_nue_daughter_origin->Fill(0); }
-		if(this_origin == "kCosmicRay")    {h_nue_daughter_origin->Fill(1); }
+		const int this_mc_pdg  = reco_nue_v_mc_pdg.at(i);
 		const int this_pfp_pdg = reco_nue_v_pfp_pdg.at(i);
+
+		if(this_origin == "kBeamNeutrino")
+		{
+			h_nue_daughter_origin->Fill(0);
+			if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg->Fill(0.0, 0.0);  }
+			if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg->Fill(1.0, 0.0);  }
+			if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg->Fill(2.0, 0.0);  }
+			if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg->Fill(3.0, 0.0);  }
+			if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg->Fill(4.0, 0.0);  }
+			if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg->Fill(5.0, 0.0);  }
+			if(this_mc_pdg == 111)                        {h_nue_daughter_origin_mc_pdg->Fill(6.0, 0.0);  }
+			if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg->Fill(7.0, 0.0);  }
+			if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg->Fill(8.0, 0.0);  }
+			if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+			   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+			   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg->Fill(9.0, 0.0); }
+			if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg->Fill(11.0, 0.0); }
+		}
+		if(this_origin == "kCosmicRay")
+		{
+			h_nue_daughter_origin->Fill(1);
+			if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg->Fill(0.0, 1.0);  }
+			if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg->Fill(1.0, 1.0);  }
+			if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg->Fill(2.0, 1.0);  }
+			if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg->Fill(3.0, 1.0);  }
+			if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg->Fill(4.0, 1.0);  }
+			if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg->Fill(5.0, 1.0);  }
+			if(this_mc_pdg == 111)                        {h_nue_daughter_origin_mc_pdg->Fill(6.0, 1.0);  }
+			if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg->Fill(7.0, 1.0);  }
+			if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg->Fill(8.0, 1.0);  }
+			if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+			   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+			   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg->Fill(9.0, 1.0); }
+			if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg->Fill(11.0, 1.0); }
+		}
+		if(this_origin == "kUnknown")
+		{
+			h_nue_daughter_origin->Fill(2);
+			if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg->Fill(0.0, 2.0);  }
+			if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg->Fill(1.0, 2.0);  }
+			if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg->Fill(2.0, 2.0);  }
+			if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg->Fill(3.0, 2.0);  }
+			if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg->Fill(4.0, 2.0);  }
+			if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg->Fill(5.0, 2.0);  }
+			if(this_mc_pdg == 111)                        {h_nue_daughter_origin_mc_pdg->Fill(6.0, 2.0);  }
+			if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg->Fill(7.0, 2.0);  }
+			if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg->Fill(8.0, 2.0);  }
+			if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+			   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+			   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg->Fill(9.0, 2.0); }
+			if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg->Fill(11.0, 2.0); }
+		}
 		if(this_pfp_pdg == 11)                       {h_nue_daughter_pfp_pdg->Fill(0);  }
 		if(this_pfp_pdg == 13)                       {h_nue_daughter_pfp_pdg->Fill(1);  }
 		//this next line should be 0 as pfp neutrinos are removed already
 		if(this_pfp_pdg != 11 && this_pfp_pdg != 13) {h_nue_daughter_pfp_pdg->Fill(2);  }
-		const int this_mc_pdg = reco_nue_v_mc_pdg.at(i);
+
 		if(this_mc_pdg == 11)                         {h_nue_daughter_mc_pdg->Fill(0);  }
 		if(this_mc_pdg == -11)                        {h_nue_daughter_mc_pdg->Fill(1);  }
 		if(this_mc_pdg == 13)                         {h_nue_daughter_mc_pdg->Fill(2);  }
@@ -389,6 +446,13 @@ int out_inspect()
 	h_nue_daughter_track_mc_pdg_pfp_hits->SetStats(kFALSE);
 	h_nue_daughter_track_mc_pdg_pfp_hits->Draw("colz");
 	tpco_c7->Print("nue_daughter_track_mc_pdg_pfp_hits.pdf");
+	TCanvas * tpco_c8 = new TCanvas();
+	tpco_c8->cd();
+	h_nue_daughter_origin_mc_pdg->GetXaxis()->SetTitle("Reco Nue Daughter MC Particle");
+	h_nue_daughter_origin_mc_pdg->GetYaxis()->SetTitle("Reco Nue Daughter Origin");
+	h_nue_daughter_origin_mc_pdg->SetStats(kFALSE);
+	h_nue_daughter_origin_mc_pdg->Draw("colz");
+	tpco_c8->Print("nue_daughter_origin_mc_pdg.pdf");
 
 
 	TH1D * h_opt_time = new TH1D("h_opt_time", "h_opt_time", 50, 0, 20);
@@ -400,8 +464,8 @@ int out_inspect()
 	h_opt_pe->GetYaxis()->SetTitle("Flashes");
 	TCanvas * opt_c2 = new TCanvas();
 	TH2D * h_opt_time_pe = new TH2D("h_opt_time_pe", "h_opt_time_pe", 20, 0, 20, 20, 0, 15000);
-	h_opt_pe->GetXaxis()->SetTitle("Time [us]");
-	h_opt_pe->GetYaxis()->SetTitle("Photoelectrons");
+	h_opt_time_pe->GetXaxis()->SetTitle("Time [us]");
+	h_opt_time_pe->GetYaxis()->SetTitle("Photoelectrons");
 	TCanvas * opt_c3 = new TCanvas();
 
 
