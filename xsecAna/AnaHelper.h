@@ -32,7 +32,7 @@
 #include "lardataobj/Simulation/SimChannel.h"
 #include "nusimdata/SimulationBase/MCParticle.h"
 #include "nusimdata/SimulationBase/MCTruth.h"
-#include "nusimdata/SimulationBase/MCTrack.h"
+#include "lardataobj/MCBase/MCTrack.h"
 #include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larsim/MCCheater/BackTracker.h"

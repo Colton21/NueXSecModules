@@ -190,7 +190,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 	//I need the MC Track for later - getting cosmic info from MCParticle->MCTrack
 	std::string mc_track_tag = "largeant";
-	art::FindManyP<simb::MCTrack> mctracks_from_mcparticle(MCParticleHandle, e, mc_track_tag);
+	art::FindManyP<sim::MCTrack> mctracks_from_mcparticle(MCParticleHandle, e, mc_track_tag);
 
 	if(_cosmic_only == false)
 	{
@@ -483,7 +483,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				}
 				if(mcOrigin == simb::kCosmicRay)
 				{
-					std::vector<art::Ptr<simb::MCTrack> > mc_tracks = mctracks_from_mcparticle.at(the_mcpart.key());
+					std::vector<art::Ptr<sim::MCTrack> > mc_tracks = mctracks_from_mcparticle.at(the_mcpart.key());
 				}
 				particle_mode = mode;
 				particle_is_cc = ccnc;
