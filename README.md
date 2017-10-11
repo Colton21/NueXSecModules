@@ -43,12 +43,13 @@ This is a place where I will be tracking some issues:
 
 - A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero.
 - Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
-- Why so many MC Truth objects (100k+) for 5 Events?
-- Why does cosmic-only not work?
-- Improve Print Statements for selection.cxx
-- MC Truth info added, but Geant4 doesn't know about the in-coming neutrinos - need to add this info
+- Certain truth variables being filled have odd results - why can MC Direction be greater than 1?
 
 ## To-Be Verified
+- Remove any segmentation violations or bugs which will kill the selection.
+- All NuMI Nue + Cosmic sample.
+- All NuMI In-Time Cosmic sample.
+- All NuMI + Cosmic sample.
 
 
 ## Acknowledgements
