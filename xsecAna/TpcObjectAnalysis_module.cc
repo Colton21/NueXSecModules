@@ -167,7 +167,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	std::cout << "[Analyze] [OPTICAL] " << beam_flash_tag << " in this event: " << beam_opflashes.size() << std::endl;
 
 	//if there is no optical activity in this event then I don't care about it
-	if(beam_opflashes.size() == 0) { continue; }
+	if(beam_opflashes.size() == 0) { std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl; return; }
 
 	for(auto const & opflsh : beam_opflashes)
 	{
