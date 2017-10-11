@@ -200,23 +200,16 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 
 	for(int i = 0; i < optical_entries; i++)
 	{
-
-		int size_delta = 0;
-
 		optical_tree->GetEntry(i);
 		current_run = fRun;
 		current_event = fEvent;
 		if(current_event != last_event) {largest_flash = 0; }
 		double this_flash = fOpFlashPE;
 		std::vector < double > largest_flash_v;//contains the y,z for largest flash
-		std::cout << "Event: " << current_event << " , Opt Flash: " << i << std::endl;
-		//std::cout << "This Flash: " << this_flash << " , " << "Largest Flash: " << largest_flash << std::endl;
 		if(this_flash < largest_flash)
 		{
 			last_event = current_event;
 			last_run = current_run;
-			//std::cout << "SIZE: " << largest_flash_v_v->size() << std::endl;
-			//std::cout << "\t SIZE DELTA: " << size_delta << std::endl;
 			continue;
 		}
 		if(current_event == last_event && current_run == last_run)
@@ -224,10 +217,7 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 			if(this_flash > largest_flash)
 			{
 				largest_flash = this_flash;
-				//std::cout << "before pop back: " << largest_flash_v_v->size() << std::endl;
 				largest_flash_v_v->pop_back();
-				//std::cout << "after pop back: " << largest_flash_v_v->size() << std::endl;
-				size_delta = size_delta - 1;
 			}
 		}
 		last_event = current_event;
@@ -236,11 +226,7 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 		largest_flash_v.push_back(fOpFlashCenterY);
 		largest_flash_v.push_back(fOpFlashCenterZ);
 		largest_flash_v_v->push_back(largest_flash_v);
-		size_delta = size_delta + 1;
 		largest_flash_v.clear();
-		//std::cout << "SIZE: " << largest_flash_v_v->size() << std::endl;
-		//std::cout << "\t SIZE DELTA:" << size_delta << std::endl;
-
 	}
 }
 
@@ -666,7 +652,6 @@ int selection(){
 			std::cout << "[Failed In-Time Cut]" << std::endl;
 			continue;
 		}//false
-		std::cout << "Passed Run" << std::endl;
 
 		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
 		GetOrigins(tpc_object_container_v, tpco_origin_v);

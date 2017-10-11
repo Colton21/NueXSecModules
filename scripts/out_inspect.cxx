@@ -238,7 +238,7 @@ int out_inspect()
 
 	//here I modify the names of the axis labels
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
-	for (int i=1; i<=3; i++)
+	for (int i=1; i<= 3; i++)
 	{
 		h_nue_daughter_origin->GetXaxis()->SetBinLabel(i,str_origin[i-1]);
 		h_nue_daughter_origin_mc_pdg->GetYaxis()->SetBinLabel(i, str_origin[i-1]);
@@ -473,17 +473,17 @@ int out_inspect()
 	for(int i = 0; i < opt_entries; i++)
 	{
 		optree->GetEntry(i);
-		std::cout << "[Optical Info] \t Event:   " << fEvent << std::endl;
-		std::cout << "[Optical Info] \t Run:     " << fRun << std::endl;
-		std::cout << "[Optical Info] \t PE:      " << fOpFlashPE << std::endl;
+		// std::cout << "[Optical Info] \t Event:   " << fEvent << std::endl;
+		// std::cout << "[Optical Info] \t Run:     " << fRun << std::endl;
+		// std::cout << "[Optical Info] \t PE:      " << fOpFlashPE << std::endl;
+		// std::cout << "[Optical Info] \t Time:    " << fOpFlashTime << std::endl;
+		// std::cout << "[Optical Info] \t WidthY:  " << fOpFlashWidthY << std::endl;
+		// std::cout << "[Optical Info] \t WidthZ:  " << fOpFlashWidthZ << std::endl;
+		// std::cout << "[Optical Info] \t CenterY: " << fOpFlashCenterY << std::endl;
+		// std::cout << "[Optical Info] \t CenterZ: " << fOpFlashCenterZ << std::endl;
 		h_opt_pe->Fill(fOpFlashPE);
-		std::cout << "[Optical Info] \t Time:    " << fOpFlashTime << std::endl;
 		h_opt_time->Fill(fOpFlashTime);
 		h_opt_time_pe->Fill(fOpFlashTime, fOpFlashPE);
-		std::cout << "[Optical Info] \t WidthY:  " << fOpFlashWidthY << std::endl;
-		std::cout << "[Optical Info] \t WidthZ:  " << fOpFlashWidthZ << std::endl;
-		std::cout << "[Optical Info] \t CenterY: " << fOpFlashCenterY << std::endl;
-		std::cout << "[Optical Info] \t CenterZ: " << fOpFlashCenterZ << std::endl;
 	}
 	opt_c1->cd();
 	h_opt_time->Draw();
