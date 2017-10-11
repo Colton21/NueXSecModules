@@ -80,11 +80,10 @@ int out_inspect()
 			const int event_number = tpc_obj.EventNumber();
 			const int n_pfp = tpc_obj.NumPFParticles();
 			const int n_pfp_nu = tpc_obj.NumPFPNeutrinos();
-			const int n_mc_hits = tpc_obj.NumMCHits();
+			//const int n_mc_hits = tpc_obj.NumMCHits();
 			const int n_pfp_hits = tpc_obj.NumPFPHits();
 			const int is_cc = tpc_obj.CCNC();
 			const int mode = tpc_obj.Mode();
-			const int tpco_mc_pdg_code = tpc_obj.MCParticlePdgCode();
 			const int tpco_pfp_pdg_code = tpc_obj.PFParticlePdgCode();
 			if(tpco_pfp_pdg_code != 12) {continue; }
 			const std::string tpc_obj_origin = tpc_obj.Origin();
@@ -108,8 +107,8 @@ int out_inspect()
 			std::cout << " \t Number of PFParticles: " << n_pfp << "\t Number of PFP Neutrinos: " << n_pfp_nu << std::endl;
 			std::cout << " \t Run: " << run_number << " , Event: " << event_number << std::endl;
 			std::cout << " \t Origin : " << tpc_obj_origin << std::endl;
-			std::cout << " \t PDG Code: - Reco " << tpco_pfp_pdg_code << " - MC " << tpco_mc_pdg_code << std::endl;
-			std::cout << " \t Reco Hits: " << n_pfp_hits << "  MC Hits: " << "NOT SET" << std::endl;//n_mc_hits << std::endl;
+			std::cout << " \t PDG Code: - Reco " << tpco_pfp_pdg_code << std::endl;
+			std::cout << " \t Reco Hits: " << n_pfp_hits << std::endl;
 			std::cout << " \t Interaction Mode: " << mode << " CC/NC: " << is_cc << std::endl;
 			std::cout << " \t Vertex - Reco : " << tpc_obj_pfp_vtx.at(0) << ", " << tpc_obj_pfp_vtx.at(1) << ", " << tpc_obj_pfp_vtx.at(2) << std::endl;
 			std::cout << " \t Vertex - MC   : " << tpc_obj_mc_vtx.at(0)  << ", " << tpc_obj_mc_vtx.at(1)  << ", " << tpc_obj_mc_vtx.at(2)  << std::endl;

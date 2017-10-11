@@ -44,6 +44,7 @@ This is a place where I will be tracking some issues:
 - A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero.
 - Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
 - Certain truth variables being filled have odd results - why can MC Direction be greater than 1?
+- Reco Momentum for recob::Track objects using StartMomentum() is always 1.
 
 ## To-Be Verified
 - Remove any segmentation violations or bugs which will kill the selection.

@@ -187,6 +187,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
 	e.getByLabel("largeant", MCParticleHandle);
 	if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
+
+	//I need the MC Track for later - getting cosmic info from MCParticle->MCTrack
+	std::string mc_track_tag = "largeant";
+	art::FindManyP<simb::MCTrack> mctracks_from_mcparticle(MCParticleHandle, e, mc_track_tag);
+
 	if(_cosmic_only == false)
 	{
 		std::cout << "[Analyze] [MCPARTICLE] largeant in this event: " << MCParticleHandle->size() << std::endl;
@@ -470,9 +475,16 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					mc_nu = mctruth->GetNeutrino();
 					mcOrigin = mctruth->Origin();
 				}
-				mode = mc_nu.Mode();
-				ccnc = mc_nu.CCNC();
-				mcParentPdg = mc_nu.Nu().PdgCode();
+				if(mcOrigin != simb::kCosmicRay)
+				{
+					mode = mc_nu.Mode();
+					ccnc = mc_nu.CCNC();
+					mcParentPdg = mc_nu.Nu().PdgCode();
+				}
+				if(mcOrigin == simb::kCosmicRay)
+				{
+					std::vector<art::Ptr<simb::MCTrack> > mc_tracks = mctracks_from_mcparticle.at(the_mcpart.key());
+				}
 				particle_mode = mode;
 				particle_is_cc = ccnc;
 				mcPdg = the_mcpart->PdgCode();
@@ -480,9 +492,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				mc_vtx_x = the_mcpart->Vx();
 				mc_vtx_y = the_mcpart->Vy();
 				mc_vtx_z = the_mcpart->Vz();
-				mc_dir_x = the_mcpart->Px();
-				mc_dir_y = the_mcpart->Py();
-				mc_dir_z = the_mcpart->Pz();
+				mcMomentum = the_mcpart->P();
+				mc_dir_x = the_mcpart->Px() / mcMomentum;
+				mc_dir_y = the_mcpart->Py() / mcMomentum;
+				mc_dir_z = the_mcpart->Pz() / mcMomentum;
 				mc_theta = acos(mc_dir_z) * (180 / 3.1415);
 				mc_phi = atan2(mc_dir_y, mc_dir_x) * (180 / 3.1415);
 				const double mc_length_x = the_mcpart->Position().X() - the_mcpart->EndPosition().X();
@@ -490,7 +503,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				const double mc_length_z = the_mcpart->Position().Z() - the_mcpart->EndPosition().Z();
 				mcLength = sqrt((mc_length_x * mc_length_x) + (mc_length_y * mc_length_y) + (mc_length_z * mc_length_z));
 				mcEnergy = the_mcpart->E();
-				mcMomentum = the_mcpart->P();
+
 
 			}//end mcghost == 1
 			particle_container.SetmcPdgCode(mcPdg);
@@ -557,12 +570,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					pfp_open_angle = this_shower->OpenAngle();
 
 					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_shower, pfp_hits_u, pfp_hits_v, pfp_hits_w);
-					// Check where the hit is coming from
-					// for (unsigned int h = 0; h < hit_v.size(); h++) {
-					//      if (hit_v[h]->View() == 0) pfp_hits_u++;
-					//      if (hit_v[h]->View() == 1) pfp_hits_v++;
-					//      if (hit_v[h]->View() == 2) pfp_hits_w++;
-					// }
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 				}
 			}//end pfp showers
