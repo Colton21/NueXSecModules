@@ -189,8 +189,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
 
 	//I need the MC Track for later - getting cosmic info from MCParticle->MCTrack
-	std::string mc_track_tag = "largeant";
-	art::FindManyP<sim::MCTrack> mctracks_from_mcparticle(MCParticleHandle, e, mc_track_tag);
+	//std::string mc_track_tag = "mcreco";
+	//art::FindManyP<sim::MCTrack> mctracks_from_mcparticle(MCParticleHandle, e, mc_track_tag);
+	//MCTrack association not there!
 
 	if(_cosmic_only == false)
 	{
@@ -484,17 +485,17 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					mc_vtx_y = the_mcpart->Vy();
 					mc_vtx_z = the_mcpart->Vz();
 				}
-				if(mcOrigin == simb::kCosmicRay)
-				{
-					std::vector<art::Ptr<sim::MCTrack> > mc_tracks = mctracks_from_mcparticle.at(the_mcpart.key());
-					if(mc_tracks..size() == 1)
-					{
-						mc_vtx_x = mc_tracks.at(0)->Start().X();
-						mc_vtx_y = mc_tracks.at(0)->Start().Y();
-						mc_vtx_z = mc_tracks.at(0)->Start().Z();
-						//I can include the length and directions here!
-					}
-				}
+				//if(mcOrigin == simb::kCosmicRay)
+				//{
+					//std::vector<art::Ptr<sim::MCTrack> > mc_tracks = mctracks_from_mcparticle.at(the_mcpart.key());
+					//if(mc_tracks.size() == 1)
+					//{
+					//	mc_vtx_x = mc_tracks.at(0)->Start().X();
+					//	mc_vtx_y = mc_tracks.at(0)->Start().Y();
+					//	mc_vtx_z = mc_tracks.at(0)->Start().Z();
+					//	//I can include the length and directions here!
+					//}
+				//}
 				particle_mode = mode;
 				particle_is_cc = ccnc;
 				mcPdg = the_mcpart->PdgCode();
