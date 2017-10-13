@@ -66,6 +66,7 @@ std::string _tpcobject_producer;
 bool _debug;
 bool _verbose;
 bool _cosmic_only;
+bool _save_truth_info;
 
 bool isMC;
 bool isData;
@@ -100,6 +101,11 @@ double fMCPz = 0.0;
 int fMCParticleID = 0;
 int fMCMother = -1;
 int fMCOrigin = -1;
+
+int mc_nue_cc_counter = 0;
+int mc_numu_cc_counter = 0;
+int mc_nue_nc_counter = 0;
+int mc_numu_nc_counter = 0;
 
 };
 
@@ -144,9 +150,19 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mcparticle_tree->Branch("MCPy", &fMCPy, "MCPy/D");
 	mcparticle_tree->Branch("MCPz", &fMCPz, "MCPz/D");
 
+	mctruth_counter_tree = fs->make<TTree>("mctruth_counter_tree", "mctruth_counter");
+	mctruth_counter_tree->Branch("mc_nue_cc_counter", &mc_nue_cc_counter, "mc_nue_cc_counter/I");
+	mctruth_counter_tree->Branch("mc_numu_cc_counter", &mc_numu_cc_counter, "mc_numu_cc_counter/I");
+	mctruth_counter_tree->Branch("mc_nue_nc_counter", &mc_nue_nc_counter, "mc_nue_nc_counter/I");
+	mctruth_counter_tree->Branch("mc_numu_nc_counter", &mc_numu_nc_counter, "mc_numu_nc_counter/I");
+
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
 	_cosmic_only                    = p.get<bool>("CosmicOnly", false);
+	//we set this to be false by default, as it severely inflates the size of
+	//of the output file.
+	//Instead we just count the most important truth events.
+	_save_truth_info                = p.get<bool>("SaveTruthInfo", false);
 
 }
 
@@ -196,6 +212,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(_cosmic_only == false)
 	{
 		std::cout << "[Analyze] [MCPARTICLE] largeant in this event: " << MCParticleHandle->size() << std::endl;
+		if(_save_truth_info == true)
+		{
+			std::cout << "[Analyze] [MCPARTICLE] Saving MC Truth Tree Configuration" << std::endl;
+			std::cout << "[Analyze] [MCPARTICLE] This inflates the output file size!" << std::endl;
+		}
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
@@ -203,7 +224,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
 			if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
 			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
-
+			simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
+			bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
 			fMCParticleID = mcparticle.TrackId();
 			fMCMother = mcparticle.Mother();
 			fMcparticle_pdg = mcparticle.PdgCode();
@@ -216,8 +238,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			fMCPx = mcparticle.Px();
 			fMCPy = mcparticle.Py();
 			fMCPz = mcparticle.Pz();
-			mcparticle_tree->Fill();
+			if(_save_truth_info == true) {mcparticle_tree->Fill(); }
+			if(fMcparticle_pdg == 11 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_nue_cc_counter++; }
+			if(fMcparticle_pdg == 13 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_numu_cc_counter++; }
+			if(fMcparticle_pdg == 11 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_nue_nc_counter++; }
+			if(fMcparticle_pdg == 13 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_numu_nc_counter++; }
 		}//end loop mc particles
+		mctruth_counter_tree->Fill();
 	}
 
 	// Implementation of required member function here.
@@ -487,14 +514,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				}
 				//if(mcOrigin == simb::kCosmicRay)
 				//{
-					//std::vector<art::Ptr<sim::MCTrack> > mc_tracks = mctracks_from_mcparticle.at(the_mcpart.key());
-					//if(mc_tracks.size() == 1)
-					//{
-					//	mc_vtx_x = mc_tracks.at(0)->Start().X();
-					//	mc_vtx_y = mc_tracks.at(0)->Start().Y();
-					//	mc_vtx_z = mc_tracks.at(0)->Start().Z();
-					//	//I can include the length and directions here!
-					//}
+				//std::vector<art::Ptr<sim::MCTrack> > mc_tracks = mctracks_from_mcparticle.at(the_mcpart.key());
+				//if(mc_tracks.size() == 1)
+				//{
+				//	mc_vtx_x = mc_tracks.at(0)->Start().X();
+				//	mc_vtx_y = mc_tracks.at(0)->Start().Y();
+				//	mc_vtx_z = mc_tracks.at(0)->Start().Z();
+				//	//I can include the length and directions here!
+				//}
 				//}
 				particle_mode = mode;
 				particle_is_cc = ccnc;
