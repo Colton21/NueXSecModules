@@ -102,6 +102,7 @@ int fMCParticleID = 0;
 int fMCMother = -1;
 int fMCOrigin = -1;
 
+TTree * mctruth_counter_tree;
 int mc_nue_cc_counter = 0;
 int mc_numu_cc_counter = 0;
 int mc_nue_nc_counter = 0;
