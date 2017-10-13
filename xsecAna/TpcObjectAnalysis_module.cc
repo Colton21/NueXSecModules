@@ -421,6 +421,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			double mcLength = 0;
 			double mcEnergy = 0;
 			double mcMomentum = 0;
+			double mcNeutrinoEnergy = 0;
 			int particle_mode = -1;
 			int particle_is_cc = -1;
 			//double mc_open_angle = 0; //unset
@@ -510,6 +511,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					mode = mc_nu.Mode();
 					ccnc = mc_nu.CCNC();
 					mcParentPdg = mc_nu.Nu().PdgCode();
+					mcNeutrinoEnergy = mc_nu.Nu().E();
 					mc_vtx_x = the_mcpart->Vx();
 					mc_vtx_y = the_mcpart->Vy();
 					mc_vtx_z = the_mcpart->Vz();
@@ -552,6 +554,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetOrigin(str_mcorigin);
 			particle_container.SetmcPdgCode(mcPdg);
 			particle_container.SetmcParentPdgCode(mcParentPdg);
+			particle_container.SetmcNeutrinoEnergy(mcNeutrinoEnergy);
 			particle_container.SetmcVtxX(mc_vtx_x);
 			particle_container.SetmcVtxY(mc_vtx_y);
 			particle_container.SetmcVtxZ(mc_vtx_z);

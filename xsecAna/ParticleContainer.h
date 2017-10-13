@@ -50,6 +50,7 @@ double pfp_length;
 double mc_energy;
 double mc_momentum;
 double pfp_momentum;
+double mc_neutrino_energy;
 
 double completeness;
 double purity;
@@ -118,6 +119,7 @@ void SetpfpLength(double);
 void SetmcEnergy(double);
 void SetmcMomentum(double);
 void SetpfpMomentum(double);
+void SetmcNeutrinoEnergy(double);
 
 void SetCompleteness(double);
 void SetPurity(double);
@@ -179,9 +181,10 @@ double pfpPhi   () const;
 double mcLength   () const;
 double pfpLength  () const;
 
-double mcEnergy     () const;
-double mcMomentum   () const;
-double pfpMomentum  () const;
+double mcEnergy         () const;
+double mcMomentum       () const;
+double pfpMomentum      () const;
+double mcNeutrinoEnergy () const;
 
 double Completeness () const;
 double Purity       () const;

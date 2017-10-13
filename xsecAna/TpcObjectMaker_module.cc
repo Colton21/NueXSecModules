@@ -221,13 +221,11 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 
 		// Set tracks
 		std::vector<art::Ptr<recob::Track> > trk_v;
-		//trk_v.clear();
 		for (auto t : track_v_v[pfparticle_vector]) trk_v.emplace_back(t);
 		obj.SetTracks(trk_v);
 
 		// Set showers
 		std::vector<art::Ptr<recob::Shower> > shwr_v;
-		//shwr_v.clear();
 		for (auto s : shower_v_v[pfparticle_vector]) shwr_v.emplace_back(s);
 		obj.SetShowers(shwr_v);
 
@@ -242,7 +240,6 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 			const int pfp_id = p->Self();
 			simb::Origin_t pfp_origin = simb::kUnknown; //this is for the case where the pfp is not matched
 			bool matched = false;
-			//const int pfp_pdg = p.PdgCode();
 			for(auto const pp : pfp_origin_v)
 			{
 				if(pfp_id == pp.first)
@@ -262,7 +259,6 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 		if (iter != pfParticleToVertexMap.end()) {obj.SetVertex(*(iter->second[0])); }
 
 		// Set origin
-		//xsecAna::TPCObjectOrigin origin = xsecAna::kUnknown;
 		simb::Origin_t origin = simb::kUnknown;
 		if (_is_mc)
 		{

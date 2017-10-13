@@ -110,6 +110,9 @@ void ParticleContainer::SetmcMomentum(double _mc_momentum){
 void ParticleContainer::SetpfpMomentum(double _pfp_momentum){
 	pfp_momentum = _pfp_momentum;
 }
+void ParticleContainer::SetmcNeutrinoEnergy(double _mc_neutrino_energy){
+	mc_neutrino_energy = _mc_neutrino_energy;
+}
 
 void ParticleContainer::SetCompleteness(double _completeness){
 	completeness = _completeness;
@@ -270,6 +273,9 @@ double ParticleContainer::mcMomentum() const {
 }
 double ParticleContainer::pfpMomentum() const {
 	return pfp_momentum;
+}
+double ParticleContainer::mcNeutrinoEnergy() const {
+	return mc_neutrino_energy;
 }
 
 double ParticleContainer::Completeness() const {
