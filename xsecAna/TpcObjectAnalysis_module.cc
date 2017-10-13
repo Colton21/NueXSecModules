@@ -171,9 +171,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 	run = e.id().run();
 	event = e.id().event();
-	//bool _is_data = e.isRealData();
-	//bool _is_mc = !_is_data;
-	if(_cosmic_only) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
+	bool _is_data = e.isRealData();
+	bool _is_mc = !_is_data;
+	if(_cosmic_only == true) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
+	if(_is_mc == true)       {std::cout << "[Analyze] Running with Monte Carlo " << std::endl; }
+	if(_is_data == true)     {std::cout << "[Analyze] Running with Data " << std::endl; }
 
 	//maybe make them filled at the same place as the other - so it's a per event
 	//this is getting the optical information
@@ -209,7 +211,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	//art::FindManyP<sim::MCTrack> mctracks_from_mcparticle(MCParticleHandle, e, mc_track_tag);
 	//MCTrack association not there!
 
-	if(_cosmic_only == false)
+	if(_cosmic_only == false && _is_mc == true)
 	{
 		std::cout << "[Analyze] [MCPARTICLE] largeant in this event: " << MCParticleHandle->size() << std::endl;
 		if(_save_truth_info == true)
@@ -226,6 +228,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
 			simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
 			bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
+			int fMCNuPdg = mc_nu.Nu().PdgCode();
 			fMCParticleID = mcparticle.TrackId();
 			fMCMother = mcparticle.Mother();
 			fMcparticle_pdg = mcparticle.PdgCode();
@@ -239,10 +242,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			fMCPy = mcparticle.Py();
 			fMCPz = mcparticle.Pz();
 			if(_save_truth_info == true) {mcparticle_tree->Fill(); }
-			if(fMcparticle_pdg == 11 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_nue_cc_counter++; }
-			if(fMcparticle_pdg == 13 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_numu_cc_counter++; }
-			if(fMcparticle_pdg == 11 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_nue_nc_counter++; }
-			if(fMcparticle_pdg == 13 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_numu_nc_counter++; }
+			if(fMCNuPdg == 12 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_nue_cc_counter++; }
+			if(fMCNuPdg == 14 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_numu_cc_counter++; }
+			if(fMCNuPdg == 12 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_nue_nc_counter++; }
+			if(fMCNuPdg == 14 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_numu_nc_counter++; }
 		}//end loop mc particles
 		mctruth_counter_tree->Fill();
 	}
@@ -438,7 +441,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					auto const pfpParent_obj = pfps_from_tpcobj.at(parent_position);
 					pfpParentPdg = pfpParent_obj->PdgCode();
 				}
-				catch(...) {std::cout << "No Parent Found!" << std::endl; }
+				catch(...) {std::cout << "[Analyze] [EXCEPTION] No Parent Found!" << std::endl; }
 			}
 			//if(_verbose) {std::cout << "[Analyze] PFP Parent PDG Code " << pfpParentPdg << std::endl; }
 			particle_container.SetpfpPdgCode(pfpPdg);
@@ -467,9 +470,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			double pfp_vtx_y = 0;
 			double pfp_vtx_z = 0;
 			if (iter != particlesToVertices.end())
-			//if(iter != pfParticleToVertexMap.end())
 			{
-				//lar_pandora::VertexVector vertex_v = pfParticleToVertexMap.find(pfp)->second;
 				lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
 				double reco_vtx[3];
 				vertex_v[0]->XYZ(reco_vtx);
@@ -481,7 +482,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetpfpVtxY(pfp_vtx_y);
 			particle_container.SetpfpVtxZ(pfp_vtx_z);
 
-			//mcghosts do accounting from pfp to mcghost to mc particle
+			//mcghosts do accounting for pfp to mcghost to mc particle
 			const std::vector<art::Ptr<MCGhost> > mcghost = mcghost_from_pfp.at(pfp.key());
 			std::vector<art::Ptr<simb::MCParticle> > mcpart;
 			if(mcghost.size() == 0) {std::cout << "[Analyze] No matched MC Ghost to PFP!" << std::endl; }

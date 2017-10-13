@@ -502,7 +502,7 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-void PrintInfo(int mc_nue_counter,
+void PrintInfo(int mc_nue_cc_counter,
                int counter,
                int counter_nue_cc,
                int counter_nue_cc_mixed,
@@ -523,7 +523,7 @@ void PrintInfo(int mc_nue_counter,
 	std::cout << " Number of Unmatched    : " << counter_unmatched << std::endl;
 	std::cout << " Number of Other Mixed  : " << counter_other_mixed << std::endl;
 	std::cout << "------------------------" << std::endl;
-	const double efficiency = double(counter_nue_cc) / double(mc_nue_counter);
+	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
 	const double purity = double(counter_nue_cc) / double(counter);
 	std::cout << " Efficiency       : " << efficiency << std::endl;
 	std::cout << " Purity           : " << purity << std::endl;
@@ -558,14 +558,14 @@ int selection(){
 	mctree->SetBranchAddress("MC_Mother", &fMCMother);
 	const int total_mc_entires = mctree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entires << std::endl;
-	int mc_nue_counter = 0;
+	int mc_nue_cc_counter = 0;
 	for(int i = 0; i < total_mc_entires; i++)
 	{
 		mctree->GetEntry(i);
 		//for now we'll just count the nue cc interactions - primary, beam electrons
-		if(fMC_PDG == 11 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_counter++; }
+		if(fMC_PDG == 11 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_cc_counter++; }
 	}
-	std::cout << "MC Nue Counter: " << mc_nue_counter << std::endl;
+	std::cout << "MC Nue CC Counter: " << mc_nue_cc_counter << std::endl;
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
@@ -749,7 +749,7 @@ int selection(){
 	std::cout << "------------------" << std::endl;
 
 	//we also want some metrics to print at the end
-	PrintInfo( mc_nue_counter,
+	PrintInfo( mc_nue_cc_counter,
 	           reco_nue_counter,
 	           reco_nue_counter_nue_cc,
 	           reco_nue_counter_nue_cc_mixed,
@@ -760,7 +760,7 @@ int selection(){
 	           reco_nue_counter_other_mixed,
 	           "Reco Nue"
 	           );
-	PrintInfo( mc_nue_counter,
+	PrintInfo( mc_nue_cc_counter,
 	           in_fv_counter,
 	           in_fv_counter_nue_cc,
 	           in_fv_counter_nue_cc_mixed,
@@ -771,7 +771,7 @@ int selection(){
 	           in_fv_counter_other_mixed,
 	           "In FV"
 	           );
-	PrintInfo( mc_nue_counter,
+	PrintInfo( mc_nue_cc_counter,
 	           vtx_flash_counter,
 	           vtx_flash_counter_nue_cc,
 	           vtx_flash_counter_nue_cc_mixed,
@@ -782,7 +782,7 @@ int selection(){
 	           vtx_flash_counter_other_mixed,
 	           "Vtx-to-Flash"
 	           );
-	PrintInfo( mc_nue_counter,
+	PrintInfo( mc_nue_cc_counter,
 	           shwr_tpco_counter,
 	           shwr_tpco_counter_nue_cc,
 	           shwr_tpco_counter_nue_cc_mixed,
@@ -793,7 +793,7 @@ int selection(){
 	           shwr_tpco_counter_other_mixed,
 	           "Shower-to-TPCO"
 	           );
-	PrintInfo( mc_nue_counter,
+	PrintInfo( mc_nue_cc_counter,
 	           hit_threshold_counter,
 	           hit_threshold_counter_nue_cc,
 	           hit_threshold_counter_nue_cc_mixed,

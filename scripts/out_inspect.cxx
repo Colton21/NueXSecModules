@@ -18,8 +18,8 @@
 int out_inspect()
 {
 
-	//const char * _file1 = "../nue_xsec_extraction.root";
-	const char * _file1 = "../cosmic_extraction.root";
+	const char * _file1 = "../nue_xsec_extraction.root";
+	//const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
@@ -83,10 +83,13 @@ int out_inspect()
 			const int n_pfp_nu = tpc_obj.NumPFPNeutrinos();
 			//const int n_mc_hits = tpc_obj.NumMCHits();
 			const int n_pfp_hits = tpc_obj.NumPFPHits();
-			const int is_cc = tpc_obj.CCNC();
+			const int is_cc = tpc_obj.CCNC();//0 for cc, 1 for nc
 			const int mode = tpc_obj.Mode();
 			const int tpco_pfp_pdg_code = tpc_obj.PFParticlePdgCode();
+
+			//we only care about the nue tpco!
 			if(tpco_pfp_pdg_code != 12) {continue; }
+
 			const std::string tpc_obj_origin = tpc_obj.Origin();
 			std::vector < double > tpc_obj_pfp_vtx;
 			if(!tpc_obj_pfp_vtx.empty()) {tpc_obj_pfp_vtx.clear(); }
@@ -221,6 +224,7 @@ int out_inspect()
 	origin_c5->cd();
 	h_nue_daughter_track_shower->GetXaxis()->SetTitle("N Tracks per TPC Object");
 	h_nue_daughter_track_shower->GetYaxis()->SetTitle("N Showers per TPC Object");
+	h_nue_daughter_track_shower->SetStats(kFALSE);
 	h_nue_daughter_track_shower->Draw("colz");
 	origin_c5->Print("nue_daughter_track_shower.pdf");
 

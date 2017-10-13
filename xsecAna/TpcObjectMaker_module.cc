@@ -142,7 +142,8 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
 	if(_is_mc && !_cosmic_only) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
-	if(_verbose && _is_mc) {std::cout << "TpcObjectMaker --- Running with MC --- " << std::endl; }
+	if(_verbose && _is_mc)  {std::cout << "[TpcObjectMaker] --- Running with MC --- " << std::endl; }
+	if(_verbose && _is_data) {std::cout << "[TpcObjectMaker] --- Running with Data --- "<< std::endl; }
 
 // Instantiate the output
 	std::unique_ptr< std::vector< xsecAna::TPCObject > >                 tpcObjectVector        (new std::vector<xsecAna::TPCObject>);
@@ -191,7 +192,9 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 
 	std::vector< std::pair< int, simb::Origin_t > > pfp_origin_v;
 	if(!pfp_origin_v.empty()) {pfp_origin_v.clear(); }
-	if(_cosmic_only == false)
+
+	//only perform matching if we have beam and is mc
+	if(_cosmic_only == false && _is_mc == true)
 	{
 		for (lar_pandora::MCParticlesToPFParticles::const_iterator iter1 = matchedParticles.begin(), iterEnd1 = matchedParticles.end();
 		     iter1 != iterEnd1; ++iter1)
