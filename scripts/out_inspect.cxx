@@ -18,7 +18,8 @@
 int out_inspect()
 {
 
-	const char * _file1 = "../nue_xsec_extraction.root";
+	//const char * _file1 = "../nue_xsec_extraction.root";
+	const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);

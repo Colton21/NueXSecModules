@@ -130,7 +130,7 @@ bool in_fv(double x, double y, double z,
 
 void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                         std::vector<int> * passed_tpco)
+                         std::vector<int> * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
@@ -147,7 +147,7 @@ void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
 		if(InFV == 1)//true
 		{
 			passed_tpco->at(i) = 1;
-			std::cout << " \t " << i << "[Fid Volume Cut] \t Passed" << std::endl;
+			if(_verbose) {std::cout << " \t " << i << "[Fid Volume Cut] \t Passed" << std::endl; }
 		}
 		if(InFV == 0)//false
 		{
@@ -234,7 +234,7 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 //***************************************************************************
 
 void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                      double tolerance, std::vector<int> * passed_tpco)
+                      double tolerance, std::vector<int> * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
@@ -249,7 +249,7 @@ void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna
 		if(is_close == 1)//true
 		{
 			passed_tpco->at(i) = 1;
-			std::cout << " \t " << i << "[Vertex-To-Flash] \t Passed " << std::endl;
+			if(_verbose) std::cout << " \t " << i << "[Vertex-To-Flash] \t Passed " << std::endl;
 		}
 		if(is_close == 0)//false
 		{
@@ -275,7 +275,7 @@ bool shwr_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, double tpc_vtx_z,
 
 //this function wants to remove particles too far from the reconstructed neutrino vertex
 void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                   double tolerance, std::vector<int> * passed_tpco)
+                   double tolerance, std::vector<int> * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
@@ -304,7 +304,7 @@ void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
 				                                 pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, tolerance);
 				if(close_shower == true)
 				{
-					std::cout << " \t " << i << "[Shower-To-Nue] \t Passed " << std::endl;
+					if(_verbose) std::cout << " \t " << i << "[Shower-To-Nue] \t Passed " << std::endl;
 					passed_tpco->at(i) = 1;
 					break;
 				}
@@ -323,7 +323,7 @@ void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
 
 //this function wants to remove particles too far from the reconstructed neutrino vertex
 void HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                  double threshold, std::vector<int> * passed_tpco)
+                  double threshold, std::vector<int> * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	//std::cout << "Number of TPC Objects: " << n_tpc_obj << std::endl;
@@ -347,7 +347,7 @@ void HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
 				if(n_pfp_hits >= threshold) {over_threshold = true; }
 				if(over_threshold == true)
 				{
-					std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
+					if(_verbose) std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
 					passed_tpco->at(i) = 1;
 					break;
 				}
@@ -378,7 +378,7 @@ void GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_
 //***************************************************************************
 //***************************************************************************
 //this function simply checks if the tpc object is a nue
-void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco)
+void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -406,7 +406,7 @@ void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, s
 		if(has_nue == true)
 		{
 			passed_tpco->at(i) = 1;
-			std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl;
+			if(_verbose) std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl;
 		}
 	}
 }
@@ -536,9 +536,10 @@ void PrintInfo(int mc_nue_counter,
 
 int selection(){
 
-	const char * _file1 = "../nue_xsec_extraction.root";
-	//const char * _file1 = "../cosmic_extraction.root";
+	//const char * _file1 = "../nue_xsec_extraction.root";
+	const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
+	const bool _verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; return 1; }
@@ -642,14 +643,17 @@ int selection(){
 	//*********************************
 	for(int event = 0; event < total_entries; event++)
 	{
-		std::cout << "----------------------" << std::endl;
-		std::cout << "[EVENT NUMBER] \t " << event << std::endl;
-		std::cout << "----------------------" << std::endl;
+		if(_verbose)
+		{
+			std::cout << "----------------------" << std::endl;
+			std::cout << "[EVENT NUMBER] \t " << event << std::endl;
+			std::cout << "----------------------" << std::endl;
+		}
 
 		mytree->GetEntry(event);
 		if(passed_runs->at(event) == 0)
 		{
-			std::cout << "[Failed In-Time Cut]" << std::endl;
+			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 			continue;
 		}//false
 
@@ -666,7 +670,7 @@ int selection(){
 		//** start the cuts here **
 
 		//reco nue cut
-		HasNue(tpc_object_container_v, passed_tpco);
+		HasNue(tpc_object_container_v, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		reco_nue_counter_nue_cc       = reco_nue_counter_nue_cc + tabulated_origins.at(0);
@@ -685,7 +689,7 @@ int selection(){
 		const double _y2 = 0;
 		const double _z1 = 0;
 		const double _z2 = 0;
-		fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco);
+		fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		in_fv_counter_nue_cc       = in_fv_counter_nue_cc + tabulated_origins.at(0);
@@ -700,7 +704,7 @@ int selection(){
 		//vertex to flash
 		const double tolerance = 100;//cm
 		flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
-		                 tolerance, passed_tpco);
+		                 tolerance, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		vtx_flash_counter_nue_cc       = vtx_flash_counter_nue_cc + tabulated_origins.at(0);
@@ -714,7 +718,7 @@ int selection(){
 
 		//distance between pfp shower and nue object
 		const double shwr_nue_tolerance = 50;//cm
-		VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco);
+		VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		shwr_tpco_counter_nue_cc       = shwr_tpco_counter_nue_cc + tabulated_origins.at(0);
@@ -728,7 +732,7 @@ int selection(){
 
 		//hit threshold for showers
 		const double shwr_hit_threshold = 50;//hits
-		HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco);
+		HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
 		hit_threshold_counter_nue_cc       = hit_threshold_counter_nue_cc + tabulated_origins.at(0);
