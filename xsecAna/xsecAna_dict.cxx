@@ -309,7 +309,7 @@ namespace {
 0
     };
     static const char* includePaths[] = {
-"/grid/fermiapp/products/larsoft/root/v6_06_08/Linux64bit+2.6-2.12-e10-nu-prof/include",
+"/cvmfs/fermilab.opensciencegrid.org/products/larsoft/root/v6_06_08/Linux64bit+2.6-2.12-e10-nu-prof/include",
 "/uboone/app/users/chill2/uboonecode_v06_26_01_06/srcs/uboonecode/uboone/NueXSecModules/xsecAna/",
 0
     };

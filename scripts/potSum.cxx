@@ -7,8 +7,8 @@
 int main()
 {
 
-  const char * _file1 = "/uboone/data/users/chill2/pot_extraction.root";
-  std::cout << _file1 << std::endl;
+  const char * _file1 = "../potFinder/pot_extraction.root";
+  std::cout << "File: " << _file1 << std::endl;
   //first we need to open the root file
   TFile * f = new TFile(_file1);
   if(!f->IsOpen()){std::cout << "Could not open file!" << std::endl; return 1;}
