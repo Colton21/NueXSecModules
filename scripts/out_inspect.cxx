@@ -87,7 +87,7 @@ int out_inspect(const char * _file1)
 			const int tpco_pfp_pdg_code = tpc_obj.PFParticlePdgCode();
 
 			//we only care about the nue tpco!
-			if(tpco_pfp_pdg_code != 12) {continue; }
+			if(tpco_pfp_pdg_code != 12 && tpco_pfp_pdg_code != -12) {continue; }
 
 			const std::string tpc_obj_origin = tpc_obj.Origin();
 			std::vector < double > tpc_obj_pfp_vtx;
@@ -173,7 +173,7 @@ int out_inspect(const char * _file1)
 
 				//this should only let daughters of pfp nue's through
 				//we also don't want the neutrino pfps!
-				if(pfp_parent_pdg == 12 && (pfp_pdg != 12 && pfp_pdg != 14))
+				if((pfp_parent_pdg == 12 || pfp_parent_pdg == -12) && (pfp_pdg != 12 && pfp_pdg != 14))
 				{
 					reco_nue_v_origin.push_back(origin);
 					if(origin == "kUnknown") {origin_unknown++; }
