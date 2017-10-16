@@ -15,10 +15,9 @@
 
 #include "../xsecAna/LinkDef.h"
 
-int out_inspect()
+int out_inspect(const char * _file1)
 {
-
-	const char * _file1 = "../nue_xsec_extraction.root";
+	//const char * _file1 = "../nue_xsec_extraction.root";
 	//const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
 	//first we need to open the root file
@@ -520,9 +519,11 @@ int out_inspect()
 #ifndef __ROOTCLING__
 
 
-int main(){
+int main(int argc, char *argv[]){
 
-	return out_inspect();
+	argc = 2;
+	const char * file1 = argv[1];
+	return out_inspect(file1);
 }
 
 #endif

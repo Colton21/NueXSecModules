@@ -585,9 +585,9 @@ void calcXSec(double _x1, double _x2, double _y1,
 //***************************************************************************
 //***************************************************************************
 
-int selection(){
+int selection( const char * _file1){
 
-	const char * _file1 = "../nue_xsec_extraction.root";
+	//const char * _file1 = "../nue_xsec_extraction.root";
 	//const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
@@ -877,10 +877,20 @@ int selection(){
 	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
 	         n_total, n_bkg, flux,
 	         efficiency, xsec_cc);
+
 	const double genie_xsec = 5.05191e-39;
 
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Cross Section Results:  " << std::endl;
+	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
+	          << xsec_cc->at(1) << " +/- (sys) "
+	          << xsec_cc->at(2) << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	         14664, 0, flux,
+	         1, xsec_cc);
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Cross Section Results (Truth):  " << std::endl;
 	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
 	          << xsec_cc->at(1) << " +/- (sys) "
 	          << xsec_cc->at(2) << std::endl;
@@ -893,9 +903,11 @@ int selection(){
 }        //end selection
 
 
-int main(){
+int main(int argc, char *argv[]){
+	argc = 2;
+	const char * file1 = argv[1];
 
-	return selection();
+	return selection(file1);
 }
 
 #endif
