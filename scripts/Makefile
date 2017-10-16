@@ -7,7 +7,7 @@ DEBUGFLAGS= -O0 -D _DEBUG
 
 XSECANALIBS=../xsecAna/libxsecAna.so ../xsecAna/libxsecAna_dict.so
 
-TARGETNAMES=out_inspect selection
+TARGETNAMES=out_inspect selection potSum
 
 TARGETS=$(TARGETNAMES:%=%.exe)
 OBJECTS=$(TARGETNAMES:%=%.o)

@@ -46,3 +46,5 @@ AutoDict_*
 xsecAna/run_Prod.fcl
 scripts/out_inspect
 scripts/potSum
+potFinder/mem.db
+potFinder/time.db
