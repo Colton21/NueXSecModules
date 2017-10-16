@@ -35,6 +35,13 @@ export LD_LIBRARY_PATH
 
 This means, however, whenever you change the `TPCObjectContainer` or `ParticleContainer` classes you need to make sure you recompile and ensure the new libraries are visible to your script.
 
+###Calculating the Cross Section
+
+The cross section is calculated at the end of the scripts/selection.cxx code. Using whatever the final results of the selection are, the values are plugged into the standard formula to caculate the cross section. This is mostly striaght-forward, however calculating the flux can be tricky.
+
+To properly calculate the flux we use three separate scripts. The first is found in potFinder, where you can run `potfinder.fcl` over the art ROOT files to produce `pot_extraction.root`, which contains the POT histogram for your files. This will take several minutes given the speed of access to your files. Then we can use  `scripts/potSum.cxx` to extract the total POT from the histogram.
+
+Lastly, we need to consulte GENIE and the NuMI flux histograms to find the proper scaling value. This particular scaling factor will change based on your desired signal and beam. If you'd like to use it, I'll be happy to provide you with the scaling factor I use or the module and source files. Those on the gpvms can access `/uboone/app/users/chill2/flux_scripts`. The script is simple enough so I simply execute using root: `root -l flux_calc.cxx+`.
 
 
 ## Open Tickets
@@ -50,9 +57,8 @@ This is a place where I will be tracking some issues:
 - Cosmic information using MCParticles is not great (vtx where Corsika generated, etc), need to use MCTrack/MCShower for these.
 
 ## To-Be Verified
-- Remove any segmentation violations or bugs which will kill the selection.
 - All NuMI Nue + Cosmic sample.
-- All NuMI In-Time Cosmic sample.
+- All NuMI In-Time Cosmic sample - looking at the timing distribution, I think it might be wrong.
 - All NuMI + Cosmic sample.
 
 

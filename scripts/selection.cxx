@@ -530,9 +530,10 @@ void PrintInfo(int mc_nue_cc_counter,
 	std::cout << "------------------------" << std::endl;
 	std::cout << "------------------------" << std::endl;
 }
-
-double calcNumNucleons(double _x1 =0, double _x2 =0, double _y1 =0,
-                       double _y2 =0, double _z1 =0, double _z2 =0 )
+//***************************************************************************
+//***************************************************************************
+double calcNumNucleons(double _x1, double _x2, double _y1,
+                       double _y2, double _z1, double _z2)
 {
 	const double det_x1 = 0;
 	const double det_x2 = 256.35;
@@ -555,36 +556,30 @@ double calcNumNucleons(double _x1 =0, double _x2 =0, double _y1 =0,
 	const double n_target = vol * lar_density / au;
 	return n_target;
 }
-
-
-
-void calcXSec(double _x1 =0, double _x2 =0, double _y1 =0,
-              double _y2 =0, double _z1 =0, double _z2 =0,
-              int n_total, int n_bkg)
+//***************************************************************************
+//***************************************************************************
+void calcXSec(double _x1, double _x2, double _y1,
+              double _y2, double _z1, double _z2,
+              int n_total, int n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc)
 {
 	const int n_events = n_total - n_bkg;
-	//scale flux and events
-	const double flux = 4.05982e+19;
 	//scale_factor = 2.4 * math.pow(10, 17)  # POT / nue
-
 	//calculate the number of nucleons based on the fiducial volume
-	const double n_target = calcNumNucleons(double _x1 =0, double _x2 =0, double _y1 =0,
-	                                        double _y2 =0, double _z1 =0, double _z2 =0);
+	const double n_target = calcNumNucleons(_x1, _x2, _y1,
+	                                        _y2, _z1, _z2);
 
-	std::cout <<  "-------------------" << std::endl;
-	std::cout <<  "N_total:    " << n_total << std::endl;
-	std::cout << "N_bkg:       " << n_bkg << std::endl;
-	std::cout << "N_target:    " << n_target << std::endl;
-	std::cout << "Flux    :    " << flux << std::endl;
-	std::cout << "Efficiency:  " << efficiency << std::endl;
-	std::cout << "------------------" << std::endl;
-	xsec_cc.append((n_events) /
-	               (flux * num_nucleons * efficiency))
-	n_error = (n_events / np.sqrt(n_events))
-	          xsec_cc.append((n_error) /
-	                         (flux * num_nucleons * efficiency))
-	          sys_error = float(xsec_cc[0]) * 0.30  # beam sys error of 30%
-	                      xsec_cc.append(sys_error)
+	std::cout << "-------------------" << std::endl;
+	std::cout << "N_total    :  " << n_total << std::endl;
+	std::cout << "N_bkg      :  " << n_bkg << std::endl;
+	std::cout << "N_target   :  " << n_target << std::endl;
+	std::cout << "Flux       :  " << flux << std::endl;
+	std::cout << "Efficiency :  " << efficiency << std::endl;
+	std::cout << "-------------------" << std::endl;
+	xsec_cc->push_back((n_events) / (flux * n_target * efficiency));
+	const double n_error = (n_total / sqrt(n_total));
+	xsec_cc->push_back((n_error) /  (flux * n_target * efficiency));
+	const double sys_error = xsec_cc->at(0) * 0.30; //beam sys error of 30%
+	xsec_cc->push_back(sys_error);
 }
 
 //***************************************************************************
@@ -592,8 +587,8 @@ void calcXSec(double _x1 =0, double _x2 =0, double _y1 =0,
 
 int selection(){
 
-	//const char * _file1 = "../nue_xsec_extraction.root";
-	const char * _file1 = "../cosmic_extraction.root";
+	const char * _file1 = "../nue_xsec_extraction.root";
+	//const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
 	//first we need to open the root file
@@ -605,6 +600,17 @@ int selection(){
 
 	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
+
+	const double _x1 = 0;
+	const double _x2 = 0;
+	const double _y1 = 0;
+	const double _y2 = 0;
+	const double _z1 = 0;
+	const double _z2 = 0;
+
+	const double POT = 4.05982e+19; //POT
+	const double scaling = 1.52938e-11; //nues / POT / cm^2
+	const double flux = POT * scaling;
 
 	int fMC_PDG = 0;
 	int fMCOrigin = -1;
@@ -739,12 +745,6 @@ int selection(){
 		reco_nue_counter = reco_nue_counter + tabulated_origins.at(7);
 
 		//in fv cut
-		const double _x1 = 0;
-		const double _x2 = 0;
-		const double _y1 = 0;
-		const double _y2 = 0;
-		const double _z1 = 0;
-		const double _z2 = 0;
 		fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
@@ -861,7 +861,33 @@ int selection(){
 	           "Hit Threshold"
 	           );
 
+	std::vector<double> * xsec_cc = new std::vector<double>;
+	const double final_counter = hit_threshold_counter;
+	const double final_counter_nue_cc = hit_threshold_counter_nue_cc;
+	const double final_counter_nue_cc_mixed = hit_threshold_counter_nue_cc_mixed;
+	const double final_counter_cosmic = hit_threshold_counter_cosmic;
+	const double final_counter_nue_nc = hit_threshold_counter_nue_nc;
+	const double final_counter_numu = hit_threshold_counter_numu;
+	const double final_counter_unmatched = hit_threshold_counter_unmatched;
+	const double final_counter_other_mixed = hit_threshold_counter_other_mixed;
+	const int n_total = final_counter;
+	const int n_bkg = (final_counter_nue_cc_mixed + final_counter_cosmic + final_counter_cosmic +
+	                   final_counter_nue_nc + final_counter_numu + final_counter_unmatched + final_counter_other_mixed);
+	const double efficiency = final_counter_nue_cc / double(mc_nue_cc_counter);
+	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	         n_total, n_bkg, flux,
+	         efficiency, xsec_cc);
+	const double genie_xsec = 5.05191e-39;
 
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Cross Section Results:  " << std::endl;
+	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
+	          << xsec_cc->at(1) << " +/- (sys) "
+	          << xsec_cc->at(2) << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Genie value of Flux " << '\n' <<
+	        " Integrated Xsec:    " << genie_xsec << std::endl;
 
 	return 0;
 }        //end selection
