@@ -23,7 +23,7 @@ If anyone intends to apply these two container classes outside of my module's fr
 
 The scripts directory is where I have some test and analysis scripts. `out_inspect.cxx` is a simple ROOT script, which will print out the information contained in your generated file. Here you can check to make sure the modules are doing what you wish.
 
-I will also be adding an analysis script which performs some cuts and generates some plots.
+I will also be adding an analysis script which performs some cuts and generates some plots. If you find that you'd like to include all of the MC Truth information, then be sure to set the fcl parameter. There are a very large number of MCParticles and this inflates the size of the output file, as such they're only saved when requested. This should keep the size of the output file more managable and improve speed of the analysis scritps.
 
 **Important**: as we are using a set of custom data products in the ROOT output file, we need to tell ROOT how to read these. If you try to run the scripts before doing this step, you will likely be told to generate a dictionary file or two. To avoid this problem first you'll want to make sure you `make clean` and then `make` in the `xsecAna` directory. This make file will compile the `TPCObjectContainer` and `ParticleContainer` classes and construct two libraries: `libxsecAna.so` and `libxsecAna_dict.so`. These libraries are what will tell ROOT how to understand the output file. If your `$LD_LIBRARY_PATH` is set to the directory where you run your scripts, you can either copy the libraries over, or append to your library path by doing:
 
@@ -41,10 +41,13 @@ This means, however, whenever you change the `TPCObjectContainer` or `ParticleCo
 
 This is a place where I will be tracking some issues:
 
+- Neutral current events are never being matched, why?
+- True Neutrino energy needs to be added for matched events.
 - A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero.
 - Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
 - Certain truth variables being filled have odd results - why can MC Direction be greater than 1?
 - Reco Momentum for recob::Track objects using StartMomentum() is always 1.
+- Cosmic information using MCParticles is not great (vtx where Corsika generated, etc), need to use MCTrack/MCShower for these.
 
 ## To-Be Verified
 - Remove any segmentation violations or bugs which will kill the selection.

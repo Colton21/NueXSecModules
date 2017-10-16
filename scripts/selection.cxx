@@ -531,6 +531,62 @@ void PrintInfo(int mc_nue_cc_counter,
 	std::cout << "------------------------" << std::endl;
 }
 
+double calcNumNucleons(double _x1 =0, double _x2 =0, double _y1 =0,
+                       double _y2 =0, double _z1 =0, double _z2 =0 )
+{
+	const double det_x1 = 0;
+	const double det_x2 = 256.35;
+	const double det_y1 = -116.5;
+	const double det_y2 = 116.5;
+	const double det_z1 = 0;
+	const double det_z2 = 1036.8;
+
+	const double x1 = det_x1 + x1;
+	const double x2 = det_x2 - x2;
+	const double y1 = det_y1 + y1;
+	const double y2 = det_y2 - y2;
+	const double z1 = det_z1 + z1;
+	const double z2 = det_z2 - z2;
+
+	const double vol = (x2 - x1) * (y2 - y1) * (z2 - z1); //cm^3
+
+	const double lar_density = 0.0013954; //kg/cm^3
+	const double au = 1.67 * pow(10, -27); //kg
+	const double n_target = vol * lar_density / au;
+	return n_target;
+}
+
+
+
+void calcXSec(double _x1 =0, double _x2 =0, double _y1 =0,
+              double _y2 =0, double _z1 =0, double _z2 =0,
+              int n_total, int n_bkg)
+{
+	const int n_events = n_total - n_bkg;
+	//scale flux and events
+	const double flux = 4.05982e+19;
+	//scale_factor = 2.4 * math.pow(10, 17)  # POT / nue
+
+	//calculate the number of nucleons based on the fiducial volume
+	const double n_target = calcNumNucleons(double _x1 =0, double _x2 =0, double _y1 =0,
+	                                        double _y2 =0, double _z1 =0, double _z2 =0);
+
+	std::cout <<  "-------------------" << std::endl;
+	std::cout <<  "N_total:    " << n_total << std::endl;
+	std::cout << "N_bkg:       " << n_bkg << std::endl;
+	std::cout << "N_target:    " << n_target << std::endl;
+	std::cout << "Flux    :    " << flux << std::endl;
+	std::cout << "Efficiency:  " << efficiency << std::endl;
+	std::cout << "------------------" << std::endl;
+	xsec_cc.append((n_events) /
+	               (flux * num_nucleons * efficiency))
+	n_error = (n_events / np.sqrt(n_events))
+	          xsec_cc.append((n_error) /
+	                         (flux * num_nucleons * efficiency))
+	          sys_error = float(xsec_cc[0]) * 0.30  # beam sys error of 30%
+	                      xsec_cc.append(sys_error)
+}
+
 //***************************************************************************
 //***************************************************************************
 
