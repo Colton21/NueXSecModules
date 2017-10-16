@@ -462,9 +462,9 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
-			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && part.PFParticleParentPdgCode() == 12) { part_nue_cc++; }
-			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && part.PFParticleParentPdgCode() == 12) { part_nue_nc++; }
-			if(part.Origin() == "kBeamNeutrino" && part.PFParticleParentPdgCode() == 14) { part_numu++; }
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.PFParticleParentPdgCode() == 12 || part.PFParticleParentPdgCode() == -12)) { part_nue_cc++; }
+			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.PFParticleParentPdgCode() == 12 || part.PFParticleParentPdgCode() == -12)) { part_nue_nc++; }
+			if(part.Origin() == "kBeamNeutrino" && (part.PFParticleParentPdgCode() == 14 || part.PFParticleParentPdgCode() == -14)) { part_numu++; }
 			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
 			if(part.Origin() == "kUnknown")   { part_unmatched++; }
 		}
