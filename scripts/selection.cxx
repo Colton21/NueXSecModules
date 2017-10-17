@@ -608,7 +608,8 @@ int selection( const char * _file1){
 	const double _z1 = 0;
 	const double _z2 = 0;
 
-	const double POT = 4.05982e+19; //POT
+	//const double POT = 4.05982e+19; //POT - all NuMI + cosmics
+	const double POT = 2.90469e+21; //POT - nue + cosmics
 	const double scaling = 1.52938e-11; //nues / POT / cm^2
 	const double flux = POT * scaling;
 
@@ -886,6 +887,7 @@ int selection( const char * _file1){
 	          << xsec_cc->at(1) << " +/- (sys) "
 	          << xsec_cc->at(2) << std::endl;
 	std::cout << "-------------------------" << std::endl;
+	xsec_cc->clear();
 	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
 	         14664, 0, flux,
 	         1, xsec_cc);
