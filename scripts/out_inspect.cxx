@@ -154,7 +154,7 @@ int out_inspect(const char * _file1)
 				const int n_pfp_hits = part.NumPFPHits();
 				const int n_mc_hits = part.NumMCHits();
 				const double pfp_open_angle = part.pfpOpenAngle();
-				if(pfp_CCNC != 1) {continue; }
+				if(mc_parent_pdg != 14) {continue; }
 
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 				std::cout << " \t \t Particle PDG Codes:        - Reco " << pfp_pdg << " - True " << mc_pdg << std::endl;

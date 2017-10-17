@@ -462,9 +462,9 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
-			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.PFParticleParentPdgCode() == 12 || part.PFParticleParentPdgCode() == -12)) { part_nue_cc++; }
-			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.PFParticleParentPdgCode() == 12 || part.PFParticleParentPdgCode() == -12)) { part_nue_nc++; }
-			if(part.Origin() == "kBeamNeutrino" && (part.PFParticleParentPdgCode() == 14 || part.PFParticleParentPdgCode() == -14)) { part_numu++; }
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
+			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
+			if(part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu++; }
 			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
 			if(part.Origin() == "kUnknown")   { part_unmatched++; }
 		}
@@ -474,9 +474,8 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
 			if(part_nue_cc > 0) {nue_cc_mixed++; continue; }
 			if(part_nue_nc > 0 || part_numu > 0) {other_mixed++; continue; }
 			cosmic++;
-			continue;
 		}
-		if( part_cosmic == 0)
+		if(part_cosmic == 0)
 		{
 			if(part_nue_cc    > 0) {nue_cc++;    continue; }
 			if(part_nue_nc    > 0) {nue_nc++;    continue; }
@@ -597,6 +596,7 @@ int selection( const char * _file1){
 	TTree * mytree = (TTree*)f->Get("AnalyzeTPCO/tree");
 	TTree * optree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 	TTree * mctree = (TTree*)f->Get("AnalyzeTPCO/mcparticle_tree");
+	TTree * mctruth_counter_tree = (TTree*)f->Get("AnalyzeTPCO/mctruth_counter_tree");
 
 	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
@@ -608,27 +608,43 @@ int selection( const char * _file1){
 	const double _z1 = 0;
 	const double _z2 = 0;
 
-	//const double POT = 4.05982e+19; //POT - all NuMI + cosmics
-	const double POT = 2.90469e+21; //POT - nue + cosmics
+	const double POT = 4.05982e+19; //POT - all NuMI + cosmics
+	//const double POT = 2.90469e+21; //POT - nue + cosmics
 	const double scaling = 1.52938e-11; //nues / POT / cm^2
 	const double flux = POT * scaling;
 
-	int fMC_PDG = 0;
-	int fMCOrigin = -1;
-	int fMCMother = 0;
-	mctree->SetBranchAddress("MC_PDG", &fMC_PDG);
-	mctree->SetBranchAddress("MC_Origin", &fMCOrigin);
-	mctree->SetBranchAddress("MC_Mother", &fMCMother);
-	const int total_mc_entires = mctree->GetEntries();
-	std::cout << "Total MC Entries: " << total_mc_entires << std::endl;
 	int mc_nue_cc_counter = 0;
-	for(int i = 0; i < total_mc_entires; i++)
-	{
-		mctree->GetEntry(i);
-		//for now we'll just count the nue cc interactions - primary, beam electrons
-		if(fMC_PDG == 11 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_cc_counter++; }
-	}
+	int mc_nue_nc_counter = 0;
+	int mc_numu_cc_counter = 0;
+	int mc_numu_nc_counter = 0;
+
+	mctruth_counter_tree->SetBranchAddress("mc_nue_cc_counter", &mc_nue_cc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter", &mc_nue_nc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_numu_cc_counter", &mc_numu_cc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter", &mc_numu_nc_counter);
+
+	const int total_mc_entires = mctruth_counter_tree->GetEntries();
+	std::cout << "Total MC Entries: " << total_mc_entires << std::endl;
+	mctruth_counter_tree->GetEntry(total_mc_entires-1);
+	const int true_nue_cc_counter = mc_nue_cc_counter;
+	const int true_nue_nc_counter = mc_nue_nc_counter;
+	const int true_numu_cc_counter = mc_numu_cc_counter;
+	const int true_numu_nc_counter = mc_numu_nc_counter;
+
 	std::cout << "MC Nue CC Counter: " << mc_nue_cc_counter << std::endl;
+
+	// int fMC_PDG = 0;
+	// int fMCOrigin = -1;
+	// int fMCMother = 0;
+	// mctree->SetBranchAddress("MC_PDG", &fMC_PDG);
+	// mctree->SetBranchAddress("MC_Origin", &fMCOrigin);
+	// mctree->SetBranchAddress("MC_Mother", &fMCMother);
+	// for(int i = 0; i < total_mc_entires; i++)
+	// {
+	//      mctree->GetEntry(i);
+	//      //for now we'll just count the nue cc interactions - primary, beam electrons
+	//      if(fMC_PDG == 11 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_cc_counter++; }
+	// }
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
@@ -872,8 +888,8 @@ int selection( const char * _file1){
 	const double final_counter_unmatched = hit_threshold_counter_unmatched;
 	const double final_counter_other_mixed = hit_threshold_counter_other_mixed;
 	const int n_total = final_counter;
-	const int n_bkg = (final_counter_nue_cc_mixed + final_counter_cosmic + final_counter_cosmic +
-	                   final_counter_nue_nc + final_counter_numu + final_counter_unmatched + final_counter_other_mixed);
+	const int n_bkg = (final_counter_nue_cc_mixed + final_counter_cosmic + final_counter_nue_nc
+	                   + final_counter_numu + final_counter_unmatched + final_counter_other_mixed);
 	const double efficiency = final_counter_nue_cc / double(mc_nue_cc_counter);
 	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
 	         n_total, n_bkg, flux,
@@ -889,7 +905,7 @@ int selection( const char * _file1){
 	std::cout << "-------------------------" << std::endl;
 	xsec_cc->clear();
 	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
-	         14664, 0, flux,
+	         mc_nue_cc_counter, 0, flux,
 	         1, xsec_cc);
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Cross Section Results (Truth):  " << std::endl;
@@ -906,7 +922,7 @@ int selection( const char * _file1){
 
 
 int main(int argc, char *argv[]){
-	argc = 2;
+	if(argc != 2 ) { std::cout << "Please inclue the input file path" << std::endl; exit(1); }
 	const char * file1 = argv[1];
 
 	return selection(file1);
