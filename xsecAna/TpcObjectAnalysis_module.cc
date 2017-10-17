@@ -221,6 +221,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			std::cout << "[Analyze] [MCPARTICLE] This inflates the output file size!" << std::endl;
 		}
 
+		mc_nue_cc_counter = 0;
+		mc_nue_nc_counter = 0;
+		mc_numu_cc_counter = 0;
+		mc_numu_nc_counter = 0;
+
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
 			const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(mcparticle.TrackId());
@@ -243,10 +248,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			fMCPy = mcparticle.Py();
 			fMCPz = mcparticle.Pz();
 			if(_save_truth_info == true) {mcparticle_tree->Fill(); }
-			if(fMCNuPdg == 12 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_nue_cc_counter++; }
-			if(fMCNuPdg == 14 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 0) {mc_numu_cc_counter++; }
-			if(fMCNuPdg == 12 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_nue_nc_counter++; }
-			if(fMCNuPdg == 14 && fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && fCCNC == 1) {mc_numu_nc_counter++; }
+			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino)
+			{
+				if(fMCNuPdg == 12 && fCCNC == 0) {mc_nue_cc_counter++; std::cout << "Hah Got One Nue CC!" << std::endl; }
+				if(fMCNuPdg == 14 && fCCNC == 0) {mc_numu_cc_counter++; std::cout << "Hah Got One Numu CC!" << std::endl; }
+				if(fMCNuPdg == 12 && fCCNC == 1) {mc_nue_nc_counter++; std::cout << "Hah Got One Nue NC!" << std::endl; }
+				if(fMCNuPdg == 14 && fCCNC == 1) {mc_numu_nc_counter++; std::cout << "Hah Got One Numu NC!" << std::endl; }
+			}
 		}//end loop mc particles
 		mctruth_counter_tree->Fill();
 	}
