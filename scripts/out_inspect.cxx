@@ -66,8 +66,21 @@ int out_inspect(const char * _file1)
 	// h_tpco_origin_neutrino->SetStats(kFALSE);
 	h_tpco_origin_neutrino_cosmic->SetStats(kFALSE);
 
+	TH1I * h_leading_shower_origin = new TH1I("h_leading_shower_origin", "h_leading_shower_origin", 3, 0, 3);
+	TH1I * h_leading_shower_mc_pdg = new TH1I("h_leading_shower_mc_pdg", "h_leading_shower_mc_pdg", 10, 0, 10);
+	TH2I * h_leading_shower_origin_mc_pdg = new TH2I("h_leading_shower_origin_mc_pdg", "h_leading_shower_origin_mc_pdg", 3, 0, 3, 10, 0, 10);
+	TH2I * h_leading_shower_origin_hits = new TH2I("h_leading_shower_origin_hits", "h_leading_shower_origin_hits", 3, 0, 3, 100, 0, 3000);
+	TH2I * h_leading_shower_origin_tpco_cat = new TH2I("h_leading_shower_origin_tpco_cat", "h_leading_shower_origin_tpco_cat", 3, 0, 3, 7, 0, 7);
 
 	//THStack *hs = new THStack(h_title,"");
+	int nue_cc = 0;
+	int nue_cc_mixed = 0;
+	int cosmic = 0;
+	int nue_nc = 0;
+	int numu   = 0;
+	int unmatched = 0;
+	int other_mixed = 0;
+	int total = 0;
 
 	for(int i = 0; i < total_entries; i++)
 	{
@@ -116,6 +129,16 @@ int out_inspect(const char * _file1)
 			std::cout << " \t Vertex - Reco : " << tpc_obj_pfp_vtx.at(0) << ", " << tpc_obj_pfp_vtx.at(1) << ", " << tpc_obj_pfp_vtx.at(2) << std::endl;
 			std::cout << " \t Vertex - MC   : " << tpc_obj_mc_vtx.at(0)  << ", " << tpc_obj_mc_vtx.at(1)  << ", " << tpc_obj_mc_vtx.at(2)  << std::endl;
 
+			xsecAna::ParticleContainer leading_shower;
+			int leading_index = 0;
+			int most_hits = 0;
+			int part_nue_cc = 0;
+			int part_cosmic = 0;
+			int part_nue_nc = 0;
+			int part_numu   = 0;
+			int part_unmatched = 0;
+			std::string tpco_cat = "null";
+
 			for(int j = 0; j < n_pfp; j++)
 			{
 				auto const part = tpc_obj.GetParticle(j);
@@ -154,7 +177,7 @@ int out_inspect(const char * _file1)
 				const int n_pfp_hits = part.NumPFPHits();
 				const int n_mc_hits = part.NumMCHits();
 				const double pfp_open_angle = part.pfpOpenAngle();
-				if(mc_parent_pdg != 14) {continue; }
+				//if(mc_parent_pdg != 14) {continue; }
 
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 				std::cout << " \t \t Particle PDG Codes:        - Reco " << pfp_pdg << " - True " << mc_pdg << std::endl;
@@ -171,6 +194,14 @@ int out_inspect(const char * _file1)
 				std::cout << " \t \t Open Angle: " << pfp_open_angle << std::endl;
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
 
+				if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+				//categorise the tpco based on the origins of the particles it contains
+				if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
+				if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
+				if(part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu++; }
+				if(part.Origin() == "kCosmicRay") { part_cosmic++; }
+				if(part.Origin() == "kUnknown")   { part_unmatched++; }
+
 				//this should only let daughters of pfp nue's through
 				//we also don't want the neutrino pfps!
 				if((pfp_parent_pdg == 12 || pfp_parent_pdg == -12) && (pfp_pdg != 12 && pfp_pdg != 14))
@@ -186,6 +217,102 @@ int out_inspect(const char * _file1)
 					if(pfp_pdg == 13) {n_tracks++; }
 				}
 			}//end looping particles
+
+
+			leading_shower = tpc_obj.GetParticle(leading_index);
+			const std::string leading_origin = leading_shower.Origin();
+			const int leading_mc_pdg = leading_shower.MCPdgCode();
+			const int leading_hits = leading_shower.NumPFPHits();
+
+
+			//now to catagorise the tpco
+			if(part_cosmic > 0)
+			{
+				if(part_nue_cc > 0)                                                              {nue_cc_mixed++; tpco_cat = "nue_cc_mixed"; }
+				if(part_nue_cc == 0 && (part_nue_nc > 0 || part_numu > 0))                       {other_mixed++; tpco_cat = "other_mixed"; }
+				if(part_nue_cc == 0 && part_nue_nc == 0 && part_numu == 0)                       {cosmic++; tpco_cat = "cosmic"; }
+			}
+			if(part_cosmic == 0)
+			{
+				if(part_nue_cc    > 0)                                                            {nue_cc++; tpco_cat = "nue_cc"; }
+				if(part_nue_nc    > 0 && part_nue_cc == 0)                                        {nue_nc++; tpco_cat = "nue_nc"; }
+				if(part_numu      > 0 && part_nue_cc == 0 && part_nue_nc == 0)                    {numu++; tpco_cat = "numu"; }
+				if(part_unmatched > 0 && part_nue_cc == 0 && part_nue_nc == 0 && part_numu == 0)  {unmatched++; tpco_cat = "unmatched"; }
+			}
+
+			if(leading_origin == "kBeamNeutrino")
+			{
+				h_leading_shower_origin->Fill(0);
+				h_leading_shower_origin_hits->Fill(0.0, leading_hits);
+				if(leading_mc_pdg == 11)                         {h_leading_shower_origin_mc_pdg->Fill(0.0, 0.0);  h_leading_shower_mc_pdg->Fill(0.0); }
+				if(leading_mc_pdg == -11)                        {h_leading_shower_origin_mc_pdg->Fill(0.0, 1.0);  h_leading_shower_mc_pdg->Fill(1.0); }
+				if(leading_mc_pdg == 13)                         {h_leading_shower_origin_mc_pdg->Fill(0.0, 2.0);  h_leading_shower_mc_pdg->Fill(2.0); }
+				if(leading_mc_pdg == -13)                        {h_leading_shower_origin_mc_pdg->Fill(0.0, 3.0);  h_leading_shower_mc_pdg->Fill(3.0); }
+				if(leading_mc_pdg == 22)                         {h_leading_shower_origin_mc_pdg->Fill(0.0, 4.0);  h_leading_shower_mc_pdg->Fill(4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_origin_mc_pdg->Fill(0.0, 5.0);  h_leading_shower_mc_pdg->Fill(5.0); }
+				if(leading_mc_pdg == 2212)                       {h_leading_shower_origin_mc_pdg->Fill(0.0, 6.0);  h_leading_shower_mc_pdg->Fill(6.0); }
+				if(leading_mc_pdg == 2112)                       {h_leading_shower_origin_mc_pdg->Fill(0.0, 7.0);  h_leading_shower_mc_pdg->Fill(7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_origin_mc_pdg->Fill(0.0, 8.0); h_leading_shower_mc_pdg->Fill(8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_origin_mc_pdg->Fill(0.0, 9.0); h_leading_shower_mc_pdg->Fill(9.0); }
+				if(tpco_cat == "nue_cc")       {h_leading_shower_origin_tpco_cat->Fill(0.0, 0.0); }
+				if(tpco_cat == "nue_cc_mixed") {h_leading_shower_origin_tpco_cat->Fill(0.0, 1.0); }
+				if(tpco_cat == "cosmic")       {h_leading_shower_origin_tpco_cat->Fill(0.0, 2.0); }
+				if(tpco_cat == "nue_nc")       {h_leading_shower_origin_tpco_cat->Fill(0.0, 3.0); }
+				if(tpco_cat == "numu")         {h_leading_shower_origin_tpco_cat->Fill(0.0, 4.0); }
+				if(tpco_cat == "other_mixed")  {h_leading_shower_origin_tpco_cat->Fill(0.0, 5.0); }
+				if(tpco_cat == "unmatched")    {h_leading_shower_origin_tpco_cat->Fill(0.0, 6.0); }
+			}
+			if(leading_origin == "kCosmicRay")
+			{
+				h_leading_shower_origin->Fill(1);
+				h_leading_shower_origin_hits->Fill(1.0, leading_hits);
+				if(leading_mc_pdg == 11)                         {h_leading_shower_origin_mc_pdg->Fill(1.0, 0.0);  h_leading_shower_mc_pdg->Fill(0.0); }
+				if(leading_mc_pdg == -11)                        {h_leading_shower_origin_mc_pdg->Fill(1.0, 1.0);  h_leading_shower_mc_pdg->Fill(1.0); }
+				if(leading_mc_pdg == 13)                         {h_leading_shower_origin_mc_pdg->Fill(1.0, 2.0);  h_leading_shower_mc_pdg->Fill(2.0); }
+				if(leading_mc_pdg == -13)                        {h_leading_shower_origin_mc_pdg->Fill(1.0, 3.0);  h_leading_shower_mc_pdg->Fill(3.0); }
+				if(leading_mc_pdg == 22)                         {h_leading_shower_origin_mc_pdg->Fill(1.0, 4.0);  h_leading_shower_mc_pdg->Fill(4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_origin_mc_pdg->Fill(1.0, 5.0);  h_leading_shower_mc_pdg->Fill(5.0); }
+				if(leading_mc_pdg == 2212)                       {h_leading_shower_origin_mc_pdg->Fill(1.0, 6.0);  h_leading_shower_mc_pdg->Fill(6.0); }
+				if(leading_mc_pdg == 2112)                       {h_leading_shower_origin_mc_pdg->Fill(1.0, 7.0);  h_leading_shower_mc_pdg->Fill(7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_origin_mc_pdg->Fill(1.0, 8.0); h_leading_shower_mc_pdg->Fill(8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_origin_mc_pdg->Fill(1.0, 9.0); h_leading_shower_mc_pdg->Fill(9.0); }
+				if(tpco_cat == "nue_cc")       {h_leading_shower_origin_tpco_cat->Fill(1.0, 0.0); }
+				if(tpco_cat == "nue_cc_mixed") {h_leading_shower_origin_tpco_cat->Fill(1.0, 1.0); }
+				if(tpco_cat == "cosmic")       {h_leading_shower_origin_tpco_cat->Fill(1.0, 2.0); }
+				if(tpco_cat == "nue_nc")       {h_leading_shower_origin_tpco_cat->Fill(1.0, 3.0); }
+				if(tpco_cat == "numu")         {h_leading_shower_origin_tpco_cat->Fill(1.0, 4.0); }
+				if(tpco_cat == "other_mixed")  {h_leading_shower_origin_tpco_cat->Fill(1.0, 5.0); }
+				if(tpco_cat == "unmatched")    {h_leading_shower_origin_tpco_cat->Fill(1.0, 6.0); }
+			}
+			if(leading_origin == "kUnknown")
+			{
+				h_leading_shower_origin->Fill(2);
+				h_leading_shower_origin_hits->Fill(2.0, leading_hits);
+				if(leading_mc_pdg == 11)                         {h_leading_shower_origin_mc_pdg->Fill(2.0, 0.0);  h_leading_shower_mc_pdg->Fill(0.0); }
+				if(leading_mc_pdg == -11)                        {h_leading_shower_origin_mc_pdg->Fill(2.0, 1.0);  h_leading_shower_mc_pdg->Fill(1.0); }
+				if(leading_mc_pdg == 13)                         {h_leading_shower_origin_mc_pdg->Fill(2.0, 2.0);  h_leading_shower_mc_pdg->Fill(2.0); }
+				if(leading_mc_pdg == -13)                        {h_leading_shower_origin_mc_pdg->Fill(2.0, 3.0);  h_leading_shower_mc_pdg->Fill(3.0); }
+				if(leading_mc_pdg == 22)                         {h_leading_shower_origin_mc_pdg->Fill(2.0, 4.0);  h_leading_shower_mc_pdg->Fill(4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_origin_mc_pdg->Fill(2.0, 5.0);  h_leading_shower_mc_pdg->Fill(5.0); }
+				if(leading_mc_pdg == 2212)                       {h_leading_shower_origin_mc_pdg->Fill(2.0, 6.0);  h_leading_shower_mc_pdg->Fill(6.0); }
+				if(leading_mc_pdg == 2112)                       {h_leading_shower_origin_mc_pdg->Fill(2.0, 7.0);  h_leading_shower_mc_pdg->Fill(7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_origin_mc_pdg->Fill(2.0, 8.0); h_leading_shower_mc_pdg->Fill(8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_origin_mc_pdg->Fill(2.0, 9.0); h_leading_shower_mc_pdg->Fill(9.0); }
+				if(tpco_cat == "nue_cc")       {h_leading_shower_origin_tpco_cat->Fill(2.0, 0.0); }
+				if(tpco_cat == "nue_cc_mixed") {h_leading_shower_origin_tpco_cat->Fill(2.0, 1.0); }
+				if(tpco_cat == "cosmic")       {h_leading_shower_origin_tpco_cat->Fill(2.0, 2.0); }
+				if(tpco_cat == "nue_nc")       {h_leading_shower_origin_tpco_cat->Fill(2.0, 3.0); }
+				if(tpco_cat == "numu")         {h_leading_shower_origin_tpco_cat->Fill(2.0, 4.0); }
+				if(tpco_cat == "other_mixed")  {h_leading_shower_origin_tpco_cat->Fill(2.0, 5.0); }
+				if(tpco_cat == "unmatched")    {h_leading_shower_origin_tpco_cat->Fill(2.0, 6.0); }
+			}
+
 			std::cout << "\n " << std::endl;
 			h_tpco_origin_unknown->Fill(origin_unknown);
 			h_tpco_origin_cosmic->Fill(origin_cosmic);
@@ -231,7 +358,6 @@ int out_inspect(const char * _file1)
 	h_nue_daughter_track_shower->Draw("colz");
 	origin_c5->Print("nue_daughter_track_shower.pdf");
 
-
 	TH1D * h_nue_daughter_origin = new TH1D("h_nue_daughter_origin", "h_nue_daughter_origin", 3, 0, 3);
 	TH1D * h_nue_daughter_pfp_pdg = new TH1D("h_nue_daughter_pfp_pdg", "h_nue_daughter_pfp_pdg", 3, 0, 3);
 	TH1D * h_nue_daughter_mc_pdg = new TH1D("h_nue_daughter_mc_pdg", "h_nue_daughter_mc_pdg", 10, 0, 10);
@@ -249,6 +375,10 @@ int out_inspect(const char * _file1)
 	{
 		h_nue_daughter_origin->GetXaxis()->SetBinLabel(i,str_origin[i-1]);
 		h_nue_daughter_origin_mc_pdg->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
+		h_leading_shower_origin->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
+		h_leading_shower_origin_mc_pdg->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
+		h_leading_shower_origin_hits->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
+		h_leading_shower_origin_tpco_cat->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
 	}
 	const char * str_pfp_particles[3] = {"Shower", "Track", "Other"};
 	for (int i = 1; i <= 3; i++)
@@ -265,8 +395,18 @@ int out_inspect(const char * _file1)
 		h_nue_daughter_shower_mc_pdg_pfp_hits->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_nue_daughter_track_mc_pdg_pfp_hits->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_nue_daughter_origin_mc_pdg->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg->GetXaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_origin_mc_pdg->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+	}
+	const char * str_tpco_cat[7] = {"Nue CC", "Nue CC Mixed", "Cosmic", "Nue NC",
+		                        "Numu", "Other Mixed", "Unmatched"};
+	for (int i = 1; i <=7; i++)
+	{
+		h_leading_shower_origin_tpco_cat->GetYaxis()->SetBinLabel(i, str_tpco_cat[i-1]);
 	}
 
+	//--------------------
+	//loop for plotting...
 	for(int i = 0; i < reco_nue_v_origin.size(); i++)
 	{
 		auto const this_origin = reco_nue_v_origin.at(i);
@@ -417,7 +557,7 @@ int out_inspect(const char * _file1)
 	TCanvas * tpco_c3 = new TCanvas();
 	tpco_c3->cd();
 	h_nue_daughter_mc_pdg->GetYaxis()->SetTitleOffset(1.3);
-	h_nue_daughter_mc_pdg->GetYaxis()->SetTitleOffset(1.3);
+	h_nue_daughter_mc_pdg->GetXaxis()->SetTitleOffset(1.2);
 	h_nue_daughter_mc_pdg->GetXaxis()->SetTitle("Reco Nue Daughter MC Particle");
 	h_nue_daughter_mc_pdg->GetYaxis()->SetTitle("PFPs");
 	h_nue_daughter_mc_pdg->Draw();
@@ -484,6 +624,44 @@ int out_inspect(const char * _file1)
 	h_opt_time_pe->GetXaxis()->SetTitle("Time [us]");
 	h_opt_time_pe->GetYaxis()->SetTitle("Photoelectrons");
 	TCanvas * opt_c3 = new TCanvas();
+
+
+	TCanvas * ls_c1 = new TCanvas();
+	ls_c1->cd();
+	h_leading_shower_mc_pdg->GetXaxis()->SetTitleOffset(1.2);
+	h_leading_shower_mc_pdg->GetXaxis()->SetTitle("Nue Candidate Leading Shower True PDG");
+	h_leading_shower_mc_pdg->Draw();
+	ls_c1->Print("leading_shower_mc_pdg.pdf");
+	TCanvas * ls_c2 = new TCanvas();
+	ls_c2->cd();
+	h_leading_shower_origin->GetXaxis()->SetTitle("Nue Candidate Leading Shower Origin");
+	h_leading_shower_origin->Draw();
+	ls_c2->Print("leading_shower_origin.pdf");
+	TCanvas * ls_c3 = new TCanvas();
+	ls_c3->cd();
+	h_leading_shower_origin_mc_pdg->GetXaxis()->SetTitle("Nue Candidate Leading Shower Origin");
+	h_leading_shower_origin_mc_pdg->GetYaxis()->SetTitleOffset(1.3);
+	h_leading_shower_origin_mc_pdg->GetYaxis()->SetLabelOffset(0.002);
+	h_leading_shower_origin_mc_pdg->GetYaxis()->SetTitle("Nue Candidate Leading Shower True PDG");
+	h_leading_shower_origin_mc_pdg->SetStats(kFALSE);
+	h_leading_shower_origin_mc_pdg->Draw("colz");
+	ls_c3->Print("leading_shower_origin_mc_pdg.pdf");
+	TCanvas * ls_c4 = new TCanvas();
+	ls_c4->cd();
+	h_leading_shower_origin_hits->GetXaxis()->SetTitle("Nue Candidate Leading Shower Orgin");
+	h_leading_shower_origin_hits->GetYaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_origin_hits->SetStats(kFALSE);
+	h_leading_shower_origin_hits->Draw("colz");
+	ls_c4->Print("leading_shower_origin_hits.pdf");
+	TCanvas * ls_c5 = new TCanvas();
+	ls_c5->cd();
+	h_leading_shower_origin_tpco_cat->GetXaxis()->SetTitle("Nue Candidate Leading Shower Origin");
+	h_leading_shower_origin_tpco_cat->GetYaxis()->SetTitleOffset(1.6);
+	h_leading_shower_origin_tpco_cat->GetYaxis()->SetLabelOffset(0.002);
+	h_leading_shower_origin_tpco_cat->GetYaxis()->SetTitle("TPC Object classification");
+	h_leading_shower_origin_tpco_cat->SetStats(kFALSE);
+	h_leading_shower_origin_tpco_cat->Draw("colz");
+	ls_c5->Print("leading_shower_origin_tpco_cat.pdf");
 
 
 	const int opt_entries = optree->GetEntries();

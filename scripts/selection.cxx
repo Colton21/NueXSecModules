@@ -513,7 +513,7 @@ void PrintInfo(int mc_nue_cc_counter,
                std::string cut_name)
 {
 	std::cout << " <" << cut_name << "> " << std::endl;
-	std::cout << " Total Reco Nue         : " << counter << std::endl;
+	std::cout << " Total Candidate Nue    : " << counter << std::endl;
 	std::cout << " Number of Nue CC       : " << counter_nue_cc << std::endl;
 	std::cout << " Number of Nue CC Mixed : " << counter_nue_cc_mixed << std::endl;
 	std::cout << " Number of Cosmic       : " << counter_cosmic << std::endl;
@@ -617,11 +617,19 @@ int selection( const char * _file1){
 	int mc_nue_nc_counter = 0;
 	int mc_numu_cc_counter = 0;
 	int mc_numu_nc_counter = 0;
+	int mc_nue_cc_counter_bar = 0;
+	int mc_numu_cc_counter_bar = 0;
+	int mc_nue_nc_counter_bar = 0;
+	int mc_numu_nc_counter_bar = 0;
 
-	mctruth_counter_tree->SetBranchAddress("mc_nue_cc_counter", &mc_nue_cc_counter);
-	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter", &mc_nue_nc_counter);
-	mctruth_counter_tree->SetBranchAddress("mc_numu_cc_counter", &mc_numu_cc_counter);
-	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter", &mc_numu_nc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_nue_cc_counter",      &mc_nue_cc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter",      &mc_nue_nc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_numu_cc_counter",     &mc_numu_cc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter",     &mc_numu_nc_counter);
+	mctruth_counter_tree->SetBranchAddress("mc_nue_cc_counter_bar",  &mc_nue_cc_counter_bar);
+	mctruth_counter_tree->SetBranchAddress("mc_numu_cc_counter_bar", &mc_numu_cc_counter_bar);
+	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter_bar",  &mc_nue_nc_counter_bar);
+	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar);
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entries << std::endl;
@@ -636,8 +644,8 @@ int selection( const char * _file1){
 	std::cout << "MC Numu CC Counter: " << mc_numu_cc_counter << std::endl;
 	std::cout << "MC Numu NC Counter: " << mc_numu_nc_counter << std::endl;
 
-	// int mc_nue_cc_counter = 0;
-	// const int total_mc_entries = mctree->GetEntries();
+	//int mc_nue_cc_counter = 0;
+	//const int total_mc_entries = mctree->GetEntries();
 	// int fMC_PDG = 0;
 	// int fMCOrigin = -1;
 	// int fMCMother = 0;
@@ -650,6 +658,7 @@ int selection( const char * _file1){
 	//      //for now we'll just count the nue cc interactions - primary, beam electrons
 	//      if(fMC_PDG == 11 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_cc_counter++; }
 	// }
+	//std::cout << "MC Nue CC: " << mc_nue_cc_counter << std::endl;
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
