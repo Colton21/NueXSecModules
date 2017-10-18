@@ -16,7 +16,7 @@ namespace xsecAna {
 class tpcobjecthelper {
 
 private:
-bool _debug = "true";
+bool _debug = "false";
 //xsecAna::TPCObjectFilter *_tpcobj_filter;
 //bool _do_filter;
 

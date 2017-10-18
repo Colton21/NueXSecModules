@@ -108,6 +108,13 @@ int mc_numu_cc_counter = 0;
 int mc_nue_nc_counter = 0;
 int mc_numu_nc_counter = 0;
 
+int mc_nue_cc_counter_bar = 0;
+int mc_numu_cc_counter_bar = 0;
+int mc_nue_nc_counter_bar = 0;
+int mc_numu_nc_counter_bar = 0;
+
+
+
 };
 
 
@@ -156,6 +163,11 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("mc_numu_cc_counter", &mc_numu_cc_counter, "mc_numu_cc_counter/I");
 	mctruth_counter_tree->Branch("mc_nue_nc_counter", &mc_nue_nc_counter, "mc_nue_nc_counter/I");
 	mctruth_counter_tree->Branch("mc_numu_nc_counter", &mc_numu_nc_counter, "mc_numu_nc_counter/I");
+
+	mctruth_counter_tree->Branch("mc_nue_cc_counter_bar", &mc_nue_cc_counter_bar, "mc_nue_cc_counter/I");
+	mctruth_counter_tree->Branch("mc_numu_cc_counter_bar", &mc_numu_cc_counter_bar, "mc_numu_cc_counter/I");
+	mctruth_counter_tree->Branch("mc_nue_nc_counter_bar", &mc_nue_nc_counter_bar, "mc_nue_nc_counter_bar/I");
+	mctruth_counter_tree->Branch("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar, "mc_numu_cc_counter/I");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -221,10 +233,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			std::cout << "[Analyze] [MCPARTICLE] This inflates the output file size!" << std::endl;
 		}
 
-		mc_nue_cc_counter = 0;
-		mc_nue_nc_counter = 0;
-		mc_numu_cc_counter = 0;
-		mc_numu_nc_counter = 0;
+		bool event_neutrino = false;
+
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
@@ -248,12 +258,19 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			fMCPy = mcparticle.Py();
 			fMCPz = mcparticle.Pz();
 			if(_save_truth_info == true) {mcparticle_tree->Fill(); }
-			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino)
+			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && event_neutrino == false)
 			{
-				if(fMCNuPdg == 12 && fCCNC == 0) {mc_nue_cc_counter++; std::cout << "Hah Got One Nue CC!" << std::endl; }
-				if(fMCNuPdg == 14 && fCCNC == 0) {mc_numu_cc_counter++; std::cout << "Hah Got One Numu CC!" << std::endl; }
-				if(fMCNuPdg == 12 && fCCNC == 1) {mc_nue_nc_counter++; std::cout << "Hah Got One Nue NC!" << std::endl; }
-				if(fMCNuPdg == 14 && fCCNC == 1) {mc_numu_nc_counter++; std::cout << "Hah Got One Numu NC!" << std::endl; }
+				std::cout << fMCParticleID << '\t';
+				std::cout << fMCNuPdg << '\t';
+				if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      std::cout << "Hah Got One Nue CC!"       << std::endl; }
+				if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     std::cout << "Hah Got One Numu CC!"      << std::endl; }
+				if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      std::cout << "Hah Got One Nue NC!"       << std::endl; }
+				if(fMCNuPdg == 14  && fCCNC == 1) {mc_numu_nc_counter++;     std::cout << "Hah Got One Numu NC!"      << std::endl; }
+				if(fMCNuPdg == -12 && fCCNC == 0) {mc_nue_cc_counter_bar++;  std::cout << "Hah Got One Nue CC Bar!"   << std::endl; }
+				if(fMCNuPdg == -14 && fCCNC == 0) {mc_numu_cc_counter_bar++; std::cout << "Hah Got One Numu CC Bar!"  << std::endl; }
+				if(fMCNuPdg == -12 && fCCNC == 1) {mc_nue_nc_counter_bar++;  std::cout << "Hah Got One Nue NC Bar!"   << std::endl; }
+				if(fMCNuPdg == -14 && fCCNC == 1) {mc_numu_nc_counter_bar++; std::cout << "Hah Got one Numu CC Bar!"  << std::endl; }
+				event_neutrino = true;
 			}
 		}//end loop mc particles
 		mctruth_counter_tree->Fill();
@@ -300,13 +317,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
 	art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
 
-	std::cout << "[Analyze] TPC Objects in this Event: " << tpcobj_h->size() << std::endl;
+	if(_verbose){std::cout << "[Analyze] TPC Objects in this Event: " << tpcobj_h->size() << std::endl;}
 	//loop over all of the tpc objects!
 
 	int tpc_object_counter = 0;
 	for(size_t tpc_counter = 0; tpc_counter < tpcobj_h->size(); tpc_counter++)
 	{
-		std::cout << "[Analyze] TPC Object Number: " << tpc_counter << std::endl;
+		if(_verbose){std::cout << "[Analyze] TPC Object Number: " << tpc_counter << std::endl;}
 		const xsecAna::TPCObject tpcobj = (*tpcobj_h)[tpc_counter];
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
@@ -581,7 +598,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 13)
 			{
 				std::vector<art::Ptr<recob::Track> > tracks = tracks_from_pfp.at(pfp.key());
-				std::cout << "[Analyze] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;
+				if(_verbose){std::cout << "[Analyze] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;}
 				//we want to take the first association, right?
 				if(tracks.size() != 0)
 				{
@@ -603,7 +620,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 11)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
-				std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl;
+				if(_verbose){std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl;}
 				//we want to take the first association, right?
 				if(showers.size() != 0)
 				{
@@ -622,7 +639,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				}
 			}//end pfp showers
 
-			std::cout << "[Analyze] Filling Particle Container Objects" << std::endl;
+			if(_verbose){std::cout << "[Analyze] Filling Particle Container Objects" << std::endl;}
 
 			particle_container.SetpfpDirX(pfp_dir_x);
 			particle_container.SetpfpDirY(pfp_dir_y);

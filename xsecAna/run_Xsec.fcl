@@ -32,7 +32,7 @@ physics:
       HitProducer: "pandoraCosmicHitRemoval"
       GeantModule: "largeant"
       SpacePointProducer: "pandoraNu"
-      Debug: "true"
+      Debug: "false"
     }
     ProduceTPCO:
     {
@@ -54,8 +54,8 @@ physics:
       MinimumHitRequirement: "3"
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
-      Debug: "true"
-      Verbose: "true"
+      Debug: "false"
+      Verbose: "false"
     }
   }
   production: [ProduceMCGhost, ProduceTPCO]
@@ -72,8 +72,8 @@ physics:
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
 
-      Debug: "true"
-      Verbose: "true"
+      Debug: "false"
+      Verbose: "false"
     }
   }
   analysis: [ AnalyzeTPCO ]

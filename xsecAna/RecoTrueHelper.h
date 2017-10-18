@@ -28,8 +28,8 @@ public:
 //}
 
 //I should export this as a fcl parameter in the future
-bool _debug             = true;
-bool _verbose           = true;
+bool _debug             = false;
+bool _verbose           = false;
 bool _recursiveMatching = false;
 
 /// Configure function parameters
