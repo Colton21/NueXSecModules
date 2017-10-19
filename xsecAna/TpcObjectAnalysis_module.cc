@@ -113,6 +113,10 @@ int mc_numu_cc_counter_bar = 0;
 int mc_nue_nc_counter_bar = 0;
 int mc_numu_nc_counter_bar = 0;
 
+double fMCNuVtxX = -999;
+double fMCNuVtxY = -999;
+double fMCNuVtxZ = -999;
+double fMCNuEnergy = -1;
 
 
 };
@@ -168,6 +172,11 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("mc_numu_cc_counter_bar", &mc_numu_cc_counter_bar, "mc_numu_cc_counter/I");
 	mctruth_counter_tree->Branch("mc_nue_nc_counter_bar", &mc_nue_nc_counter_bar, "mc_nue_nc_counter_bar/I");
 	mctruth_counter_tree->Branch("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar, "mc_numu_cc_counter/I");
+
+	mctruth_counter_tree->Branch("fMCNuVtxX", &fMCNuVtxX, "fMCNuVtxX/D");
+	mctruth_counter_tree->Branch("fMCNuVtxY", &fMCNuVtxY, "fMCNuVtxY/D");
+	mctruth_counter_tree->Branch("fMCNuVtxZ", &fMCNuVtxZ, "fMCNuVtxZ/D");
+	mctruth_counter_tree->Branch("fMCNuEnegy", &fMCNuEnegy, "fMCNuEnegy/D");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -270,6 +279,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				if(fMCNuPdg == -14 && fCCNC == 0) {mc_numu_cc_counter_bar++; std::cout << "Hah Got One Numu CC Bar!"  << std::endl; }
 				if(fMCNuPdg == -12 && fCCNC == 1) {mc_nue_nc_counter_bar++;  std::cout << "Hah Got One Nue NC Bar!"   << std::endl; }
 				if(fMCNuPdg == -14 && fCCNC == 1) {mc_numu_nc_counter_bar++; std::cout << "Hah Got one Numu CC Bar!"  << std::endl; }
+				//this loop is only enerted once per event, assuming 1 nu event per event.
+				//this way we get the neutrino vertex and energy per event and can use this
+				//to calculate if it's in the FV in the future, during the selection.
+				fMCNuVtxX   = mc_nu.Nu().Vx();
+				fMCNuVtxY   = mc_nu.Nu().Vy();
+				fMCNuVtxZ   = mc_nu.Nu().Vz();
+				fMCNuEnergy = mc_nu.Nu().E();
 				event_neutrino = true;
 			}
 		}//end loop mc particles
@@ -317,13 +333,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<recob::Shower>     tpcobjToShowerAssns(tpcobj_h, e, _tpcobject_producer);
 	art::FindManyP<recob::PFParticle> tpcobjToPFPAssns(tpcobj_h, e, _tpcobject_producer);
 
-	if(_verbose){std::cout << "[Analyze] TPC Objects in this Event: " << tpcobj_h->size() << std::endl;}
+	if(_verbose) {std::cout << "[Analyze] TPC Objects in this Event: " << tpcobj_h->size() << std::endl; }
 	//loop over all of the tpc objects!
 
 	int tpc_object_counter = 0;
 	for(size_t tpc_counter = 0; tpc_counter < tpcobj_h->size(); tpc_counter++)
 	{
-		if(_verbose){std::cout << "[Analyze] TPC Object Number: " << tpc_counter << std::endl;}
+		if(_verbose) {std::cout << "[Analyze] TPC Object Number: " << tpc_counter << std::endl; }
 		const xsecAna::TPCObject tpcobj = (*tpcobj_h)[tpc_counter];
 		const int ntracks                   = tpcobj.GetNTracks();
 		const int nshowers                  = tpcobj.GetNShowers();
@@ -435,9 +451,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			int pfp_hits_w = 0;
 			double pfp_open_angle = 0;
 
-			double mc_vtx_x = 0;
-			double mc_vtx_y = 0;
-			double mc_vtx_z = 0;
+			double mc_vtx_x = -999;
+			double mc_vtx_y = -999;
+			double mc_vtx_z = -999;
 			double mc_dir_x = 0;
 			double mc_dir_y = 0;
 			double mc_dir_z = 0;
@@ -493,9 +509,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 			auto iter = particlesToVertices.find(pfp);
 			//auto iter = pfParticleToVertexMap.find(pfp);
-			double pfp_vtx_x = 0;
-			double pfp_vtx_y = 0;
-			double pfp_vtx_z = 0;
+			double pfp_vtx_x = -999;
+			double pfp_vtx_y = -999;
+			double pfp_vtx_z = -999;
 			if (iter != particlesToVertices.end())
 			{
 				lar_pandora::VertexVector vertex_v = particlesToVertices.find(pfp)->second;
@@ -598,7 +614,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 13)
 			{
 				std::vector<art::Ptr<recob::Track> > tracks = tracks_from_pfp.at(pfp.key());
-				if(_verbose){std::cout << "[Analyze] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl;}
+				if(_verbose) {std::cout << "[Analyze] \t\t n tracks ass to this pfp: " << tracks.size() << std::endl; }
 				//we want to take the first association, right?
 				if(tracks.size() != 0)
 				{
@@ -620,7 +636,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(pfpPdg == 11)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
-				if(_verbose){std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl;}
+				if(_verbose) {std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl; }
 				//we want to take the first association, right?
 				if(showers.size() != 0)
 				{
@@ -639,7 +655,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				}
 			}//end pfp showers
 
-			if(_verbose){std::cout << "[Analyze] Filling Particle Container Objects" << std::endl;}
+			if(_verbose) {std::cout << "[Analyze] Filling Particle Container Objects" << std::endl; }
 
 			particle_container.SetpfpDirX(pfp_dir_x);
 			particle_container.SetpfpDirY(pfp_dir_y);

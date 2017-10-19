@@ -650,22 +650,6 @@ int selection( const char * _file1){
 	std::cout << "MC Numu CC Counter Bar : " << mc_numu_cc_counter_bar << std::endl;
 	std::cout << "MC Numu NC Counter Bar : " << mc_numu_nc_counter_bar << std::endl;
 
-	//int mc_nue_cc_counter = 0;
-	//const int total_mc_entries = mctree->GetEntries();
-	// int fMC_PDG = 0;
-	// int fMCOrigin = -1;
-	// int fMCMother = 0;
-	// mctree->SetBranchAddress("MC_PDG", &fMC_PDG);
-	// mctree->SetBranchAddress("MC_Origin", &fMCOrigin);
-	// mctree->SetBranchAddress("MC_Mother", &fMCMother);
-	// for(int i = 0; i < total_mc_entries; i++)
-	// {
-	//      mctree->GetEntry(i);
-	//      //for now we'll just count the nue cc interactions - primary, beam electrons
-	//      if(fMC_PDG == 11 && fMCMother == 0 && fMCOrigin == 0) {mc_nue_cc_counter++; }
-	// }
-	//std::cout << "MC Nue CC: " << mc_nue_cc_counter << std::endl;
-
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
 	std::cout << "=====================" << std::endl;
