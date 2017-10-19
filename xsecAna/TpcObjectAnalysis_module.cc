@@ -176,7 +176,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNuVtxX", &fMCNuVtxX, "fMCNuVtxX/D");
 	mctruth_counter_tree->Branch("fMCNuVtxY", &fMCNuVtxY, "fMCNuVtxY/D");
 	mctruth_counter_tree->Branch("fMCNuVtxZ", &fMCNuVtxZ, "fMCNuVtxZ/D");
-	mctruth_counter_tree->Branch("fMCNuEnegy", &fMCNuEnegy, "fMCNuEnegy/D");
+	mctruth_counter_tree->Branch("fMCNuEnegy", &fMCNuEnergy, "fMCNuEnegy/D");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
