@@ -52,6 +52,7 @@ int out_inspect(const char * _file1)
 	std::vector< int > reco_nue_v_mc_pdg;
 	std::vector< std::string > reco_nue_v_origin;
 	std::vector< int > reco_nue_v_pfp_hits;
+	std::vector < std::vector < double > > reco_nue_shower_vtx_v_v;
 
 	TFile * histo_file = new TFile("histo_file.root", "RECREATE");
 	const int total_entries = mytree->GetEntries();
@@ -95,6 +96,12 @@ int out_inspect(const char * _file1)
 	TH2I * h_leading_shower_origin_mc_pdg = new TH2I("h_leading_shower_origin_mc_pdg", "h_leading_shower_origin_mc_pdg", 3, 0, 3, 10, 0, 10);
 	TH2I * h_leading_shower_origin_hits = new TH2I("h_leading_shower_origin_hits", "h_leading_shower_origin_hits", 3, 0, 3, 100, 0, 3000);
 	TH2I * h_leading_shower_origin_tpco_cat = new TH2I("h_leading_shower_origin_tpco_cat", "h_leading_shower_origin_tpco_cat", 3, 0, 3, 7, 0, 7);
+
+	TH1D * h_shwr_to_vtx_beam_electron = new TH1D("h_shwr_to_vtx_beam_electron", "h_shwr_to_vtx_beam_electron", 40, 0, 160);
+	TH1D * h_shwr_to_vtx_beam_photon = new TH1D("h_shwr_to_vtx_beam_photon", "h_shwr_to_vtx_beam_photon", 40, 0, 160);
+	TH1D * h_shwr_to_vtx_cosmic_electron = new TH1D("h_shwr_to_vtx_cosmic_electron", "h_shwr_to_vtx_cosmic_electron", 40, 0, 160);
+	TH1D * h_shwr_to_vtx_cosmic_photon = new TH1D("h_shwr_to_vtx_cosmic_photon", "h_shwr_to_vtx_cosmic_photon", 40, 0, 160);
+	TH1D * h_shwr_to_vtx_unmatched = new TH1D("h_shwr_to_vtx_unmatched", "h_shwr_to_vtx_unmatched", 40, 0, 160);
 
 	//THStack *hs = new THStack(h_title,"");
 	int nue_cc = 0;
@@ -237,7 +244,38 @@ int out_inspect(const char * _file1)
 					reco_nue_v_pfp_pdg.push_back(pfp_pdg);
 					reco_nue_v_mc_pdg.push_back(mc_pdg);
 					reco_nue_v_pfp_hits.push_back(n_pfp_hits);
-					if(pfp_pdg == 11) {n_showers++; }
+					const double shower_to_vtx_distance = (pow((pfp_vtx.at(0) - tpc_obj_pfp_vtx.at(0)), 2) +
+					                                       pow((pfp_vtx.at(1) - tpc_obj_pfp_vtx.at(1)), 2) +
+					                                       pow((pfp_vtx.at(2) - tpc_obj_pfp_vtx.at(2)), 2));
+					if(pfp_pdg == 11)
+					{
+
+						std::vector < double > reco_nue_shower_vtx_v;
+						reco_nue_shower_vtx_v.push_back(pfp_vtx.at(0));
+						reco_nue_shower_vtx_v.push_back(pfp_vtx.at(1));
+						reco_nue_shower_vtx_v.push_back(pfp_vtx.at(2));
+						reco_nue_shower_vtx_v.push_back(event_number);
+						reco_nue_shower_vtx_v.push_back(mc_pdg);
+						if(origin == "kBeamNeutrino") reco_nue_shower_vtx_v.push_back(0);
+						if(origin == "kCosmicRay")    reco_nue_shower_vtx_v.push_back(1);
+						if(origin == "kUnknown")      reco_nue_shower_vtx_v.push_back(2);
+						reco_nue_shower_vtx_v_v.push_back(reco_nue_shower_vtx_v);
+						n_showers++;
+						if(mc_pdg == 11)//electron
+						{
+							if(origin == "kBeamNeutrino") {h_shwr_to_vtx_beam_electron->Fill(shower_to_vtx_distance); }
+							if(origin == "kCosmicRay") {h_shwr_to_vtx_cosmic_electron->Fill(shower_to_vtx_distance); }
+						}
+						if(mc_pdg == 22)//photon
+						{
+							if(origin == "kBeamNeutrino") {h_shwr_to_vtx_beam_photon->Fill(shower_to_vtx_distance); }
+							if(origin == "kCosmicRay") {h_shwr_to_vtx_cosmic_photon->Fill(shower_to_vtx_distance); }
+						}
+						if(mc_pdg == 0)//unmatched
+						{
+							h_shwr_to_vtx_unmatched->Fill(shower_to_vtx_distance);
+						}
+					}
 					if(pfp_pdg == 13) {n_tracks++; }
 				}
 			}//end looping particles
@@ -585,6 +623,58 @@ int out_inspect(const char * _file1)
 	shower_c8->Print("stack_showers_tpco_cat.pdf");
 
 
+	TCanvas * shwr_to_vtx_c1 = new TCanvas();
+	shwr_to_vtx_c1->cd();
+	h_shwr_to_vtx_beam_electron->GetXaxis()->SetTitle("PFP Shower Vtx to Neutrino Candidate Vertex [cm]");
+	h_shwr_to_vtx_beam_electron->Draw();
+	shwr_to_vtx_c1->Print("shwr_to_vtx_beam_electron.pdf");
+	TCanvas * shwr_to_vtx_c2 = new TCanvas();
+	shwr_to_vtx_c2->cd();
+	h_shwr_to_vtx_beam_photon->GetXaxis()->SetTitle("PFP Shower Vtx to Neutrino Candidate Vertex [cm]");
+	h_shwr_to_vtx_beam_photon->Draw();
+	shwr_to_vtx_c2->Print("shwr_to_vtx_beam_photon.pdf");
+	TCanvas * shwr_to_vtx_c3 = new TCanvas();
+	shwr_to_vtx_c3->cd();
+	h_shwr_to_vtx_cosmic_electron->GetXaxis()->SetTitle("PFP Shower Vtx to Neutrino Candidate Vertex [cm]");
+	h_shwr_to_vtx_cosmic_electron->Draw();
+	shwr_to_vtx_c3->Print("shwr_to_vtx_cosmic_electron.pdf");
+	TCanvas * shwr_to_vtx_c4 = new TCanvas();
+	shwr_to_vtx_c4->cd();
+	h_shwr_to_vtx_cosmic_photon->GetXaxis()->SetTitle("PFP Shower Vtx to Neutrino Candidate Vertex [cm]");
+	h_shwr_to_vtx_cosmic_photon->Draw();
+	shwr_to_vtx_c4->Print("shwr_to_vtx_cosmic_photon.pdf");
+	TCanvas * shwr_to_vtx_c5 = new TCanvas();
+	shwr_to_vtx_c5->cd();
+	h_shwr_to_vtx_unmatched->GetXaxis()->SetTitle("PFP Shower Vtx to Neutrino Candidate Vertex [cm]");
+	h_shwr_to_vtx_unmatched->Draw();
+	shwr_to_vtx_c5->Print("shwr_to_vtx_unmatched.pdf");
+	TCanvas * shwr_to_vtx_overlay_c1 = new TCanvas();
+	shwr_to_vtx_overlay_c1->cd();
+	h_shwr_to_vtx_beam_electron->SetLineColor(30);
+	h_shwr_to_vtx_beam_photon->SetLineColor(38);
+	h_shwr_to_vtx_cosmic_electron->SetLineColor(39);
+	h_shwr_to_vtx_cosmic_photon->SetLineColor(46);
+	h_shwr_to_vtx_unmatched->SetLineColor(28);
+	h_shwr_to_vtx_beam_electron->SetStats(kFALSE);
+	h_shwr_to_vtx_beam_photon->SetStats(kFALSE);
+	h_shwr_to_vtx_cosmic_electron->SetStats(kFALSE);
+	h_shwr_to_vtx_cosmic_photon->SetStats(kFALSE);
+	h_shwr_to_vtx_unmatched->SetStats(kFALSE);
+	h_shwr_to_vtx_beam_electron->Draw();
+	h_shwr_to_vtx_beam_photon->Draw("SAME");
+	h_shwr_to_vtx_cosmic_electron->Draw("SAME");
+	h_shwr_to_vtx_cosmic_photon->Draw("SAME");
+	h_shwr_to_vtx_unmatched->Draw("SAME");
+	TLegend * leg_shwr_to_vtx = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_shwr_to_vtx->AddEntry(h_shwr_to_vtx_beam_electron,         "Beam Electron", "f");
+	leg_shwr_to_vtx->AddEntry(h_shwr_to_vtx_beam_photon,           "Beam Photon", "f");
+	leg_shwr_to_vtx->AddEntry(h_shwr_to_vtx_cosmic_electron,       "Cosmic Electron", "f");
+	leg_shwr_to_vtx->AddEntry(h_shwr_to_vtx_cosmic_photon,         "Cosmic Photon", "f");
+	leg_shwr_to_vtx->AddEntry(h_shwr_to_vtx_unmatched,             "Unmatched", "f");
+	leg_shwr_to_vtx->Draw();
+	shwr_to_vtx_overlay_c1->Print("shwr_to_vtx_overlay.pdf");
+
 
 
 	TH1D * h_nue_daughter_origin = new TH1D("h_nue_daughter_origin", "h_nue_daughter_origin", 3, 0, 3);
@@ -597,6 +687,9 @@ int out_inspect(const char * _file1)
 	TH2D * h_nue_daughter_track_mc_pdg_pfp_hits = new TH2D ("h_nue_daughter_track_mc_pdg_pfp_hits",
 	                                                        "h_nue_daughter_track_mc_pdg_pfp_hits", 20, 0, 3000, 10, 0, 10);
 	TH2I * h_nue_daughter_origin_mc_pdg = new TH2I ("h_nue_daughter_origin_mc_pdg", "h_nue_daughter_origin_mc_pdg", 3, 0, 3, 10, 0, 10);
+	TH2I * h_nue_daughter_origin_mc_pdg_shwr = new TH2I ("h_nue_daughter_origin_mc_pdg_shwr", "h_nue_daughter_origin_mc_pdg_shwr", 3, 0, 3, 10, 0, 10);
+	TH2I * h_nue_daughter_origin_mc_pdg_trk  = new TH2I ("h_nue_daughter_origin_mc_pdg_trk", "h_nue_daughter_origin_mc_pdg_trk", 3, 0, 3, 10, 0, 10);
+
 
 	//here I modify the names of the axis labels
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
@@ -604,6 +697,8 @@ int out_inspect(const char * _file1)
 	{
 		h_nue_daughter_origin->GetXaxis()->SetBinLabel(i,str_origin[i-1]);
 		h_nue_daughter_origin_mc_pdg->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
+		h_nue_daughter_origin_mc_pdg_shwr->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
+		h_nue_daughter_origin_mc_pdg_trk->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
 		h_leading_shower_origin->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
 		h_leading_shower_origin_mc_pdg->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
 		h_leading_shower_origin_hits->GetXaxis()->SetBinLabel(i, str_origin[i-1]);
@@ -624,6 +719,8 @@ int out_inspect(const char * _file1)
 		h_nue_daughter_shower_mc_pdg_pfp_hits->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_nue_daughter_track_mc_pdg_pfp_hits->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_nue_daughter_origin_mc_pdg->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_nue_daughter_origin_mc_pdg_shwr->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_nue_daughter_origin_mc_pdg_trk->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_leading_shower_mc_pdg->GetXaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_leading_shower_origin_mc_pdg->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 	}
@@ -690,8 +787,102 @@ int out_inspect(const char * _file1)
 			   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg->Fill(2.0, 8.0); }
 			if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg->Fill(2.0, 9.0); }
 		}
-		if(this_pfp_pdg == 11)                       {h_nue_daughter_pfp_pdg->Fill(0);  }
-		if(this_pfp_pdg == 13)                       {h_nue_daughter_pfp_pdg->Fill(1);  }
+		if(this_pfp_pdg == 11)
+		{
+			if(this_origin == "kBeamNeutrino")
+			{
+				if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 0.0);  }
+				if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 1.0);  }
+				if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 2.0);  }
+				if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 3.0);  }
+				if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 4.0);  }
+				if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 5.0);  }
+				if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 6.0);  }
+				if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 7.0);  }
+				if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+				   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+				   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 8.0); }
+				if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg_shwr->Fill(0.0, 9.0); }
+			}
+			if(this_origin == "kCosmicRay")
+			{
+				if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 0.0);  }
+				if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 1.0);  }
+				if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 2.0);  }
+				if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 3.0);  }
+				if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 4.0);  }
+				if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 5.0);  }
+				if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 6.0);  }
+				if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 7.0);  }
+				if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+				   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+				   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 8.0); }
+				if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg_shwr->Fill(1.0, 9.0); }
+			}
+			if(this_origin == "kUnknown")
+			{
+				if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 0.0);  }
+				if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 1.0);  }
+				if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 2.0);  }
+				if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 3.0);  }
+				if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 4.0);  }
+				if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 5.0);  }
+				if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 6.0);  }
+				if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 7.0);  }
+				if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+				   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+				   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 8.0); }
+				if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg_shwr->Fill(2.0, 9.0); }
+			}
+		}
+		if(this_pfp_pdg == 13)
+		{
+			if(this_origin == "kBeamNeutrino")
+			{
+				if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 0.0);  }
+				if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 1.0);  }
+				if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 2.0);  }
+				if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 3.0);  }
+				if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 4.0);  }
+				if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 5.0);  }
+				if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 6.0);  }
+				if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 7.0);  }
+				if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+				   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+				   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 8.0); }
+				if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg_trk->Fill(0.0, 9.0); }
+			}
+			if(this_origin == "kCosmicRay")
+			{
+				if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 0.0);  }
+				if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 1.0);  }
+				if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 2.0);  }
+				if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 3.0);  }
+				if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 4.0);  }
+				if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 5.0);  }
+				if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 6.0);  }
+				if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 7.0);  }
+				if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+				   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+				   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 8.0); }
+				if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg_trk->Fill(1.0, 9.0); }
+			}
+			if(this_origin == "kUnknown")
+			{
+				if(this_mc_pdg == 11)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 0.0);  }
+				if(this_mc_pdg == -11)                        {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 1.0);  }
+				if(this_mc_pdg == 13)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 2.0);  }
+				if(this_mc_pdg == -13)                        {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 3.0);  }
+				if(this_mc_pdg == 22)                         {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 4.0);  }
+				if(this_mc_pdg == 211 || this_mc_pdg == -211) {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 5.0);  }
+				if(this_mc_pdg == 2212)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 6.0);  }
+				if(this_mc_pdg == 2112)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 7.0);  }
+				if(this_mc_pdg == 130 || this_mc_pdg == 310 ||
+				   this_mc_pdg == 311 || this_mc_pdg == 321 ||
+				   this_mc_pdg == -321)                       {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 8.0); }
+				if(this_mc_pdg == 0)                          {h_nue_daughter_origin_mc_pdg_trk->Fill(2.0, 9.0); }
+			}
+		}
 		//this next line should be 0 as pfp neutrinos are removed already
 		if(this_pfp_pdg != 11 && this_pfp_pdg != 13) {h_nue_daughter_pfp_pdg->Fill(2);  }
 
@@ -837,6 +1028,26 @@ int out_inspect(const char * _file1)
 	h_nue_daughter_origin_mc_pdg->SetStats(kFALSE);
 	h_nue_daughter_origin_mc_pdg->Draw("colz");
 	tpco_c8->Print("nue_daughter_origin_mc_pdg.pdf");
+	TCanvas * tpco_c9 = new TCanvas();
+	tpco_c9->cd();
+	tpco_c9->SetLogz();
+	h_nue_daughter_origin_mc_pdg_shwr->GetYaxis()->SetLabelOffset(0.002);
+	h_nue_daughter_origin_mc_pdg_shwr->GetYaxis()->SetTitleOffset(1.35);
+	h_nue_daughter_origin_mc_pdg_shwr->GetYaxis()->SetTitle("Reco Nue Daughter - Shower MC Particle");
+	h_nue_daughter_origin_mc_pdg_shwr->GetXaxis()->SetTitle("Reco Nue Daughter - Shower Origin");
+	h_nue_daughter_origin_mc_pdg_shwr->SetStats(kFALSE);
+	h_nue_daughter_origin_mc_pdg_shwr->Draw("colz");
+	tpco_c9->Print("nue_daughter_origin_mc_pdg_shwr.pdf");
+	TCanvas * tpco_c10 = new TCanvas();
+	tpco_c10->cd();
+	tpco_c10->SetLogz();
+	h_nue_daughter_origin_mc_pdg_trk->GetYaxis()->SetLabelOffset(0.002);
+	h_nue_daughter_origin_mc_pdg_trk->GetYaxis()->SetTitleOffset(1.35);
+	h_nue_daughter_origin_mc_pdg_trk->GetYaxis()->SetTitle("Reco Nue Daughter - Track MC Particle");
+	h_nue_daughter_origin_mc_pdg_trk->GetXaxis()->SetTitle("Reco Nue Daughter - Track Origin");
+	h_nue_daughter_origin_mc_pdg_trk->SetStats(kFALSE);
+	h_nue_daughter_origin_mc_pdg_trk->Draw("colz");
+	tpco_c10->Print("nue_daughter_origin_mc_pdg_trk.pdf");
 
 
 	TH1D * h_opt_time = new TH1D("h_opt_time", "h_opt_time", 50, 0, 20);
@@ -892,6 +1103,12 @@ int out_inspect(const char * _file1)
 	h_leading_shower_origin_tpco_cat->Draw("colz");
 	ls_c5->Print("leading_shower_origin_tpco_cat.pdf");
 
+	double largest_flash = 0;
+	int current_event = 0;
+	int current_run = 0;
+	int last_event = 0;
+	int last_run = 0;
+	std::vector < std::vector < double > > largest_flash_v_v;
 
 	const int opt_entries = optree->GetEntries();
 	for(int i = 0; i < opt_entries; i++)
@@ -908,7 +1125,70 @@ int out_inspect(const char * _file1)
 		h_opt_pe->Fill(fOpFlashPE);
 		h_opt_time->Fill(fOpFlashTime);
 		h_opt_time_pe->Fill(fOpFlashTime, fOpFlashPE);
+		current_run = fRun;
+		current_event = fEvent;
+		if(current_event != last_event) {largest_flash = 0; }
+		double this_flash = fOpFlashPE;
+		std::vector < double > largest_flash_v;                //contains the y,z for largest flash
+
+
+		if(this_flash <= largest_flash)
+		{
+			last_event = current_event;
+			last_run = current_run;
+			continue;
+		}
+		if(current_event == last_event && current_run == last_run)
+		{
+			if(this_flash > largest_flash)
+			{
+				largest_flash = this_flash;
+				largest_flash_v_v.pop_back();
+			}
+		}
+		last_event = current_event;
+		last_run = current_run;
+		largest_flash = this_flash;
+		largest_flash_v.push_back(fOpFlashCenterY);
+		largest_flash_v.push_back(fOpFlashCenterZ);
+		largest_flash_v.push_back(current_event);
+		largest_flash_v_v.push_back(largest_flash_v);
+		largest_flash_v.clear();
 	}
+
+
+	TH1D * h_flash_dist_beam_electron = new TH1D("h_flash_dist_beam_electron", "h_flash_dist_beam_electron", 40, 0, 160);
+	TH1D * h_flash_dist_beam_photon = new TH1D("h_flash_dist_beam_photon", "h_flash_dist_beam_photon", 40, 0, 160);
+	TH1D * h_flash_dist_cosmic_electron = new TH1D("h_flash_dist_cosmic_electron", "h_flash_dist_cosmic_electron", 40, 0, 160);
+	TH1D * h_flash_dist_cosmic_photon = new TH1D("h_flash_dist_cosmic_photon", "h_flash_dist_cosmic_photon", 40, 0, 160);
+	TH1D * h_flash_dist_unknown = new TH1D("h_flash_dist_unknown", "h_flash_dist_unknown", 40, 0, 160);
+
+	for(auto const this_flash_v : largest_flash_v_v)
+	{
+		const int this_event = this_flash_v.at(2);
+		const double flash_vtx_y = this_flash_v.at(0);
+		const double flash_vtx_z = this_flash_v.at(1);
+		for(auto const this_shower_v : reco_nue_shower_vtx_v_v)
+		{
+			if(this_event != this_shower_v.at(3)) {continue; }
+			const double shwr_vtx_y = this_shower_v.at(1);
+			const double shwr_vtx_z = this_shower_v.at(2);
+			const double distance = sqrt(pow((shwr_vtx_y - flash_vtx_y), 2) + pow((shwr_vtx_z - flash_vtx_z), 2) );
+			if(this_shower_v.at(5) == 0)
+			{
+				if(this_shower_v.at(4) == 11) {h_flash_dist_beam_electron->Fill(distance); }
+				if(this_shower_v.at(4) == 22) {h_flash_dist_beam_photon->Fill(distance); }
+			}
+			if(this_shower_v.at(5) == 1)
+			{
+				if(this_shower_v.at(4) == 11) {h_flash_dist_cosmic_electron->Fill(distance); }
+				if(this_shower_v.at(4) == 22) {h_flash_dist_cosmic_photon->Fill(distance); }
+			}
+			if(this_shower_v.at(5) == 2) {h_flash_dist_unknown->Fill(distance); }
+		}
+	}
+
+
 	opt_c1->cd();
 	h_opt_time->Draw();
 	opt_c1->Print("opt_time.pdf");
