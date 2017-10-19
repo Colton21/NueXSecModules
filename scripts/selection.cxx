@@ -206,7 +206,8 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 		if(current_event != last_event) {largest_flash = 0; }
 		double this_flash = fOpFlashPE;
 		std::vector < double > largest_flash_v;//contains the y,z for largest flash
-		if(this_flash < largest_flash)
+
+		if(this_flash <= largest_flash)
 		{
 			last_event = current_event;
 			last_run = current_run;
@@ -225,6 +226,7 @@ void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector<
 		largest_flash = this_flash;
 		largest_flash_v.push_back(fOpFlashCenterY);
 		largest_flash_v.push_back(fOpFlashCenterZ);
+		largest_flash_v.push_back(current_event);
 		largest_flash_v_v->push_back(largest_flash_v);
 		largest_flash_v.clear();
 	}
@@ -639,10 +641,14 @@ int selection( const char * _file1){
 	const int true_numu_cc_counter = mc_numu_cc_counter;
 	const int true_numu_nc_counter = mc_numu_nc_counter;
 
-	std::cout << "MC Nue CC Counter:  " << mc_nue_cc_counter << std::endl;
-	std::cout << "MC Nue NC Counter:  " << mc_nue_nc_counter << std::endl;
-	std::cout << "MC Numu CC Counter: " << mc_numu_cc_counter << std::endl;
-	std::cout << "MC Numu NC Counter: " << mc_numu_nc_counter << std::endl;
+	std::cout << "MC Nue CC Counter      : " << mc_nue_cc_counter << std::endl;
+	std::cout << "MC Nue NC Counter      : " << mc_nue_nc_counter << std::endl;
+	std::cout << "MC Numu CC Counter     : " << mc_numu_cc_counter << std::endl;
+	std::cout << "MC Numu NC Counter     : " << mc_numu_nc_counter << std::endl;
+	std::cout << "MC Nue CC Counter Bar  : " << mc_nue_cc_counter_bar << std::endl;
+	std::cout << "MC Nue NC Counter Bar  : " << mc_nue_nc_counter_bar << std::endl;
+	std::cout << "MC Numu CC Counter Bar : " << mc_numu_cc_counter_bar << std::endl;
+	std::cout << "MC Numu NC Counter Bar : " << mc_numu_nc_counter_bar << std::endl;
 
 	//int mc_nue_cc_counter = 0;
 	//const int total_mc_entries = mctree->GetEntries();
