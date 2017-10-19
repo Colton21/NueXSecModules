@@ -9,6 +9,8 @@
 #include "TH1.h"
 #include "TH2.h"
 #include "TCanvas.h"
+#include "TLegend.h"
+#include "THStack.h"
 
 #include <iostream>
 #include <vector>
@@ -60,6 +62,28 @@ int out_inspect(const char * _file1)
 	TH2I * h_tpco_origin_neutrino_cosmic = new TH2I("h_tpco_origin_neutrino_cosmic", "h_tpco_origin_neutrino_cosmic", 10, 0, 10, 10, 0, 10);
 	TH2I * h_nue_daughter_track_shower = new TH2I("h_nue_daughter_track_shower",
 	                                              "h_nue_daughter_track_shower", 5, 0, 5, 5, 0, 5);
+	TH2I * h_leading_shower_track_shower_beam      = new TH2I("h_leading_shower_track_shower_beam",
+	                                                          "h_leading_shower_track_shower_beam", 5, 0, 5, 5, 0, 5);
+	TH2I * h_leading_shower_track_shower_cosmic    = new TH2I("h_leading_shower_track_shower_cosmic",
+	                                                          "h_leading_shower_track_shower_cosmic", 5, 0, 5, 5, 0, 5);
+	TH2I * h_leading_shower_track_shower_unknown    = new TH2I("h_leading_shower_track_shower_unknown",
+	                                                           "h_leading_shower_track_shower_unknown", 5, 0, 5, 5, 0, 5);
+
+	TH1I * h_tracks_tpco_cat_nue_cc       = new TH1I("h_tracks_tpco_cat_nue_cc", "h_tracks_tpco_cat_nue_cc", 5, 0, 5);
+	TH1I * h_tracks_tpco_cat_nue_cc_mixed = new TH1I("h_tracks_tpco_cat_nue_cc", "h_tracks_tpco_cat_nue_cc_mixed", 5, 0, 5);
+	TH1I * h_tracks_tpco_cat_cosmic       = new TH1I("h_tracks_tpco_cat_nue_cc", "h_tracks_tpco_cat_cosmic", 5, 0, 5);
+	TH1I * h_tracks_tpco_cat_nue_nc       = new TH1I("h_tracks_tpco_cat_nue_cc", "h_tracks_tpco_cat_nue_nc", 5, 0, 5);
+	TH1I * h_tracks_tpco_cat_numu         = new TH1I("h_tracks_tpco_cat_nue_cc", "h_tracks_tpco_cat_numu", 5, 0, 5);
+	TH1I * h_tracks_tpco_cat_other_mixed  = new TH1I("h_tracks_tpco_cat_nue_cc", "h_tracks_tpco_cat_other_mixed", 5, 0, 5);
+	TH1I * h_tracks_tpco_cat_unmatched    = new TH1I("h_tracks_tpco_cat_nue_cc", "h_tracks_tpco_cat_unmatched", 5, 0, 5);
+
+	TH1I * h_showers_tpco_cat_nue_cc       = new TH1I("h_showers_tpco_cat_nue_cc", "h_showers_tpco_cat_nue_cc", 5, 0, 5);
+	TH1I * h_showers_tpco_cat_nue_cc_mixed = new TH1I("h_showers_tpco_cat_nue_cc", "h_showers_tpco_cat_nue_cc_mixed", 5, 0, 5);
+	TH1I * h_showers_tpco_cat_cosmic       = new TH1I("h_showers_tpco_cat_nue_cc", "h_showers_tpco_cat_cosmic", 5, 0, 5);
+	TH1I * h_showers_tpco_cat_nue_nc       = new TH1I("h_showers_tpco_cat_nue_cc", "h_showers_tpco_cat_nue_nc", 5, 0, 5);
+	TH1I * h_showers_tpco_cat_numu         = new TH1I("h_showers_tpco_cat_nue_cc", "h_showers_tpco_cat_numu", 5, 0, 5);
+	TH1I * h_showers_tpco_cat_other_mixed  = new TH1I("h_showers_tpco_cat_nue_cc", "h_showers_tpco_cat_other_mixed", 5, 0, 5);
+	TH1I * h_showers_tpco_cat_unmatched    = new TH1I("h_showers_tpco_cat_nue_cc", "h_showers_tpco_cat_unmatched", 5, 0, 5);
 
 	// h_tpco_origin_unknown->SetStats(kFALSE);
 	// h_tpco_origin_cosmic->SetStats(kFALSE);
@@ -240,10 +264,19 @@ int out_inspect(const char * _file1)
 				if(part_unmatched > 0 && part_nue_cc == 0 && part_nue_nc == 0 && part_numu == 0)  {unmatched++; tpco_cat = "unmatched"; }
 			}
 
+			if(tpco_cat == "nue_cc")       {h_tracks_tpco_cat_nue_cc->Fill(n_tracks);       h_showers_tpco_cat_nue_cc->Fill(n_showers); }
+			if(tpco_cat == "nue_cc_mixed") {h_tracks_tpco_cat_nue_cc_mixed->Fill(n_tracks); h_showers_tpco_cat_nue_cc_mixed->Fill(n_showers); }
+			if(tpco_cat == "cosmic")       {h_tracks_tpco_cat_cosmic->Fill(n_tracks);       h_showers_tpco_cat_cosmic->Fill(n_showers); }
+			if(tpco_cat == "nue_nc")       {h_tracks_tpco_cat_nue_nc->Fill(n_tracks);       h_showers_tpco_cat_nue_nc->Fill(n_showers); }
+			if(tpco_cat == "numu")         {h_tracks_tpco_cat_numu->Fill(n_tracks);         h_showers_tpco_cat_numu->Fill(n_showers); }
+			if(tpco_cat == "other_mixed")  {h_tracks_tpco_cat_other_mixed->Fill(n_tracks);  h_showers_tpco_cat_other_mixed->Fill(n_showers); }
+			if(tpco_cat == "unmatched")    {h_tracks_tpco_cat_unmatched->Fill(n_tracks);    h_showers_tpco_cat_unmatched->Fill(n_showers); }
+
 			if(leading_origin == "kBeamNeutrino")
 			{
 				h_leading_shower_origin->Fill(0);
 				h_leading_shower_origin_hits->Fill(0.0, leading_hits);
+				h_leading_shower_track_shower_beam->Fill(n_tracks, n_showers);
 				if(leading_mc_pdg == 11)                         {h_leading_shower_origin_mc_pdg->Fill(0.0, 0.0);  h_leading_shower_mc_pdg->Fill(0.0); }
 				if(leading_mc_pdg == -11)                        {h_leading_shower_origin_mc_pdg->Fill(0.0, 1.0);  h_leading_shower_mc_pdg->Fill(1.0); }
 				if(leading_mc_pdg == 13)                         {h_leading_shower_origin_mc_pdg->Fill(0.0, 2.0);  h_leading_shower_mc_pdg->Fill(2.0); }
@@ -268,6 +301,7 @@ int out_inspect(const char * _file1)
 			{
 				h_leading_shower_origin->Fill(1);
 				h_leading_shower_origin_hits->Fill(1.0, leading_hits);
+				h_leading_shower_track_shower_cosmic->Fill(n_tracks, n_showers);
 				if(leading_mc_pdg == 11)                         {h_leading_shower_origin_mc_pdg->Fill(1.0, 0.0);  h_leading_shower_mc_pdg->Fill(0.0); }
 				if(leading_mc_pdg == -11)                        {h_leading_shower_origin_mc_pdg->Fill(1.0, 1.0);  h_leading_shower_mc_pdg->Fill(1.0); }
 				if(leading_mc_pdg == 13)                         {h_leading_shower_origin_mc_pdg->Fill(1.0, 2.0);  h_leading_shower_mc_pdg->Fill(2.0); }
@@ -292,6 +326,7 @@ int out_inspect(const char * _file1)
 			{
 				h_leading_shower_origin->Fill(2);
 				h_leading_shower_origin_hits->Fill(2.0, leading_hits);
+				h_leading_shower_track_shower_unknown->Fill(n_tracks, n_showers);
 				if(leading_mc_pdg == 11)                         {h_leading_shower_origin_mc_pdg->Fill(2.0, 0.0);  h_leading_shower_mc_pdg->Fill(0.0); }
 				if(leading_mc_pdg == -11)                        {h_leading_shower_origin_mc_pdg->Fill(2.0, 1.0);  h_leading_shower_mc_pdg->Fill(1.0); }
 				if(leading_mc_pdg == 13)                         {h_leading_shower_origin_mc_pdg->Fill(2.0, 2.0);  h_leading_shower_mc_pdg->Fill(2.0); }
@@ -357,6 +392,200 @@ int out_inspect(const char * _file1)
 	h_nue_daughter_track_shower->SetStats(kFALSE);
 	h_nue_daughter_track_shower->Draw("colz");
 	origin_c5->Print("nue_daughter_track_shower.pdf");
+	TCanvas * origin_c6 = new TCanvas();
+	origin_c6->cd();
+	h_leading_shower_track_shower_beam->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_leading_shower_track_shower_beam->GetYaxis()->SetTitle("N Showers per TPC Object");
+	h_leading_shower_track_shower_beam->SetStats(kFALSE);
+	h_leading_shower_track_shower_beam->Draw("colz");
+	origin_c6->Print("leading_shower_track_shower_beam.pdf");
+	TCanvas * origin_c7 = new TCanvas();
+	origin_c7->cd();
+	h_leading_shower_track_shower_cosmic->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_leading_shower_track_shower_cosmic->GetYaxis()->SetTitle("N Showers per TPC Object");
+	h_leading_shower_track_shower_cosmic->SetStats(kFALSE);
+	h_leading_shower_track_shower_cosmic->Draw("colz");
+	origin_c7->Print("leading_shower_track_shower_cosmic.pdf");
+	TCanvas * origin_c8 = new TCanvas();
+	origin_c8->cd();
+	h_leading_shower_track_shower_unknown->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_leading_shower_track_shower_unknown->GetYaxis()->SetTitle("N Showers per TPC Object");
+	h_leading_shower_track_shower_unknown->SetStats(kFALSE);
+	h_leading_shower_track_shower_unknown->Draw("colz");
+	origin_c8->Print("leading_shower_track_shower_unknown.pdf");
+
+	TCanvas * track_c1 = new TCanvas();
+	track_c1->cd();
+	h_tracks_tpco_cat_nue_cc->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_tracks_tpco_cat_nue_cc->Draw();
+	track_c1->Print("tpc_object_category_tracks_nue_cc.pdf");
+	TCanvas * track_c2 = new TCanvas();
+	track_c2->cd();
+	h_tracks_tpco_cat_nue_cc_mixed->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_tracks_tpco_cat_nue_cc_mixed->Draw();
+	track_c2->Print("tpc_object_category_tracks_nue_cc_mixed.pdf");
+	TCanvas * track_c3 = new TCanvas();
+	track_c3->cd();
+	h_tracks_tpco_cat_cosmic->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_tracks_tpco_cat_cosmic->Draw();
+	track_c3->Print("tpc_object_category_tracks_cosmic.pdf");
+	TCanvas * track_c4 = new TCanvas();
+	track_c4->cd();
+	h_tracks_tpco_cat_nue_nc->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_tracks_tpco_cat_nue_nc->Draw();
+	track_c4->Print("tpc_object_category_tracks_nue_nc.pdf");
+	TCanvas * track_c5 = new TCanvas();
+	track_c5->cd();
+	h_tracks_tpco_cat_numu->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_tracks_tpco_cat_numu->Draw();
+	track_c5->Print("tpc_object_category_tracks_numu.pdf");
+	TCanvas * track_c6 = new TCanvas();
+	track_c6->cd();
+	h_tracks_tpco_cat_other_mixed->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_tracks_tpco_cat_other_mixed->Draw();
+	track_c6->Print("tpc_object_category_tracks_other_mixed.pdf");
+	TCanvas * track_c7 = new TCanvas();
+	track_c7->cd();
+	h_tracks_tpco_cat_unmatched->GetXaxis()->SetTitle("N Tracks per TPC Object");
+	h_tracks_tpco_cat_unmatched->Draw();
+	track_c7->Print("tpc_object_category_tracks_unmatched.pdf");
+
+	TCanvas * track_c8 = new TCanvas();
+	THStack * hstack_tracks_tpco_cat = new THStack("hstack_tracks_tpco_cat","hstack_tracks_tpco_cat");
+	hstack_tracks_tpco_cat->Add(h_tracks_tpco_cat_nue_cc);
+	hstack_tracks_tpco_cat->Add(h_tracks_tpco_cat_nue_cc_mixed);
+	hstack_tracks_tpco_cat->Add(h_tracks_tpco_cat_cosmic);
+	hstack_tracks_tpco_cat->Add(h_tracks_tpco_cat_nue_nc);
+	hstack_tracks_tpco_cat->Add(h_tracks_tpco_cat_numu);
+	hstack_tracks_tpco_cat->Add(h_tracks_tpco_cat_other_mixed);
+	hstack_tracks_tpco_cat->Add(h_tracks_tpco_cat_unmatched);
+
+	h_tracks_tpco_cat_nue_cc->SetFillColor(30);
+	h_tracks_tpco_cat_nue_cc_mixed->SetFillColor(38);
+	h_tracks_tpco_cat_cosmic->SetFillColor(39);
+	h_tracks_tpco_cat_nue_nc->SetFillColor(46);
+	h_tracks_tpco_cat_numu->SetFillColor(28);
+	h_tracks_tpco_cat_other_mixed->SetFillColor(42);
+	h_tracks_tpco_cat_unmatched->SetFillColor(12);
+
+	h_tracks_tpco_cat_nue_cc->SetStats(kFALSE);
+	h_tracks_tpco_cat_nue_cc_mixed->SetStats(kFALSE);
+	h_tracks_tpco_cat_cosmic->SetStats(kFALSE);
+	h_tracks_tpco_cat_nue_nc->SetStats(kFALSE);
+	h_tracks_tpco_cat_numu->SetStats(kFALSE);
+	h_tracks_tpco_cat_other_mixed->SetStats(kFALSE);
+	h_tracks_tpco_cat_unmatched->SetStats(kFALSE);
+
+	hstack_tracks_tpco_cat->Draw();
+
+	hstack_tracks_tpco_cat->GetYaxis()->SetTitleOffset(1.2);
+	hstack_tracks_tpco_cat->GetXaxis()->SetTitleOffset(0.9);
+	//hstack_tracks_tpco_cat->GetXaxis()->SetTitleSize(axis_title_size);
+	//hstack_tracks_tpco_cat->GetYaxis()->SetTitleSize(axis_title_size);
+	hstack_tracks_tpco_cat->GetXaxis()->SetTitle("N Tracks per Nue Candidate");
+	hstack_tracks_tpco_cat->GetYaxis()->SetTitle("Counts");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_track = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_track->AddEntry(h_tracks_tpco_cat_nue_cc,         "Nue CC", "f");
+	leg_track->AddEntry(h_tracks_tpco_cat_nue_cc_mixed,   "Nue CC Mixed", "f");
+	leg_track->AddEntry(h_tracks_tpco_cat_cosmic,         "Cosmic", "f");
+	leg_track->AddEntry(h_tracks_tpco_cat_nue_nc,         "Nue NC", "f");
+	leg_track->AddEntry(h_tracks_tpco_cat_numu,           "Numu", "f");
+	leg_track->AddEntry(h_tracks_tpco_cat_other_mixed,    "Other Mixed", "f");
+	leg_track->AddEntry(h_tracks_tpco_cat_unmatched,      "Unmatched", "f");
+	leg_track->Draw();
+
+	track_c8->Print("stack_tracks_tpco_cat.pdf");
+
+	TCanvas * shower_c1 = new TCanvas();
+	shower_c1->cd();
+	h_showers_tpco_cat_nue_cc->GetXaxis()->SetTitle("N Showers per TPC Object");
+	h_showers_tpco_cat_nue_cc->Draw();
+	shower_c1->Print("tpc_object_category_showers_nue_cc.pdf");
+	TCanvas * shower_c2 = new TCanvas();
+	shower_c2->cd();
+	h_showers_tpco_cat_nue_cc_mixed->GetXaxis()->SetTitle("N Showers per TPC Object");
+	h_showers_tpco_cat_nue_cc_mixed->Draw();
+	shower_c2->Print("tpc_object_category_showers_nue_cc_mixed.pdf");
+	TCanvas * shower_c3 = new TCanvas();
+	shower_c3->cd();
+	h_showers_tpco_cat_cosmic->GetXaxis()->SetTitle("N Showers per TPC Object");
+	h_showers_tpco_cat_cosmic->Draw();
+	shower_c3->Print("tpc_object_category_showers_cosmic.pdf");
+	TCanvas * shower_c4 = new TCanvas();
+	shower_c4->cd();
+	h_showers_tpco_cat_nue_nc->GetXaxis()->SetTitle("N Showers per TPC Object");
+	h_showers_tpco_cat_nue_nc->Draw();
+	shower_c4->Print("tpc_object_category_showers_nue_nc.pdf");
+	TCanvas * shower_c5 = new TCanvas();
+	shower_c5->cd();
+	h_showers_tpco_cat_numu->GetXaxis()->SetTitle("N Showers per TPC Object");
+	h_showers_tpco_cat_numu->Draw();
+	shower_c5->Print("tpc_object_category_showers_numu.pdf");
+	TCanvas * shower_c6 = new TCanvas();
+	shower_c6->cd();
+	h_showers_tpco_cat_other_mixed->GetXaxis()->SetTitle("N Showers per TPC Object");
+	h_showers_tpco_cat_other_mixed->Draw();
+	shower_c6->Print("tpc_object_category_showers_other_mixed.pdf");
+	TCanvas * shower_c7 = new TCanvas();
+	shower_c7->cd();
+	h_showers_tpco_cat_unmatched->GetXaxis()->SetTitle("N Showers per TPC Object");
+	h_showers_tpco_cat_unmatched->Draw();
+	shower_c7->Print("tpc_object_category_showers_unmatched.pdf");
+
+	TCanvas * shower_c8 = new TCanvas();
+	THStack * hstack_showers_tpco_cat = new THStack("hstack_showers_tpco_cat","hstack_showers_tpco_cat");
+	hstack_showers_tpco_cat->Add(h_showers_tpco_cat_nue_cc);
+	hstack_showers_tpco_cat->Add(h_showers_tpco_cat_nue_cc_mixed);
+	hstack_showers_tpco_cat->Add(h_showers_tpco_cat_cosmic);
+	hstack_showers_tpco_cat->Add(h_showers_tpco_cat_nue_nc);
+	hstack_showers_tpco_cat->Add(h_showers_tpco_cat_numu);
+	hstack_showers_tpco_cat->Add(h_showers_tpco_cat_other_mixed);
+	hstack_showers_tpco_cat->Add(h_showers_tpco_cat_unmatched);
+
+	h_showers_tpco_cat_nue_cc->SetFillColor(30);
+	h_showers_tpco_cat_nue_cc_mixed->SetFillColor(38);
+	h_showers_tpco_cat_cosmic->SetFillColor(39);
+	h_showers_tpco_cat_nue_nc->SetFillColor(46);
+	h_showers_tpco_cat_numu->SetFillColor(28);
+	h_showers_tpco_cat_other_mixed->SetFillColor(42);
+	h_showers_tpco_cat_unmatched->SetFillColor(12);
+
+	h_showers_tpco_cat_nue_cc->SetStats(kFALSE);
+	h_showers_tpco_cat_nue_cc_mixed->SetStats(kFALSE);
+	h_showers_tpco_cat_cosmic->SetStats(kFALSE);
+	h_showers_tpco_cat_nue_nc->SetStats(kFALSE);
+	h_showers_tpco_cat_numu->SetStats(kFALSE);
+	h_showers_tpco_cat_other_mixed->SetStats(kFALSE);
+	h_showers_tpco_cat_unmatched->SetStats(kFALSE);
+
+	hstack_showers_tpco_cat->Draw();
+
+	hstack_showers_tpco_cat->GetYaxis()->SetTitleOffset(1.2);
+	hstack_showers_tpco_cat->GetXaxis()->SetTitleOffset(0.9);
+	//hstack_showers_tpco_cat->GetXaxis()->SetTitleSize(axis_title_size);
+	//hstack_showers_tpco_cat->GetYaxis()->SetTitleSize(axis_title_size);
+	hstack_showers_tpco_cat->GetXaxis()->SetTitle("N Showers per Nue Candidate");
+	hstack_showers_tpco_cat->GetYaxis()->SetTitle("Counts");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_shower = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_shower->AddEntry(h_showers_tpco_cat_nue_cc,         "Nue CC", "f");
+	leg_shower->AddEntry(h_showers_tpco_cat_nue_cc_mixed,   "Nue CC Mixed", "f");
+	leg_shower->AddEntry(h_showers_tpco_cat_cosmic,         "Cosmic", "f");
+	leg_shower->AddEntry(h_showers_tpco_cat_nue_nc,         "Nue NC", "f");
+	leg_shower->AddEntry(h_showers_tpco_cat_numu,           "Numu", "f");
+	leg_shower->AddEntry(h_showers_tpco_cat_other_mixed,    "Other Mixed", "f");
+	leg_shower->AddEntry(h_showers_tpco_cat_unmatched,      "Unmatched", "f");
+	leg_shower->Draw();
+
+	shower_c8->Print("stack_showers_tpco_cat.pdf");
+
+
+
 
 	TH1D * h_nue_daughter_origin = new TH1D("h_nue_daughter_origin", "h_nue_daughter_origin", 3, 0, 3);
 	TH1D * h_nue_daughter_pfp_pdg = new TH1D("h_nue_daughter_pfp_pdg", "h_nue_daughter_pfp_pdg", 3, 0, 3);
