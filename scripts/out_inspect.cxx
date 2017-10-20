@@ -97,6 +97,14 @@ int out_inspect(const char * _file1)
 	TH2I * h_leading_shower_origin_hits = new TH2I("h_leading_shower_origin_hits", "h_leading_shower_origin_hits", 3, 0, 3, 100, 0, 3000);
 	TH2I * h_leading_shower_origin_tpco_cat = new TH2I("h_leading_shower_origin_tpco_cat", "h_leading_shower_origin_tpco_cat", 3, 0, 3, 7, 0, 7);
 
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_cc        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_cc", "h_leading_shower_mc_pdg_pfp_hits_nue_cc", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed  = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed", "h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_cosmic        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_cosmic", "h_leading_shower_mc_pdg_pfp_hits_cosmic", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_nc        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_nc", "h_leading_shower_mc_pdg_pfp_hits_nue_nc", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_numu          = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_numu", "h_leading_shower_mc_pdg_pfp_hits_numu", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_other_mixed   = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_other_mixed", "h_leading_shower_mc_pdg_pfp_hits_other_mixed", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_unmatched     = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_unmatched", "h_leading_shower_mc_pdg_pfp_hits_unmatched", 20, 0, 3000, 10, 0, 10);
+
 	TH1D * h_shwr_to_vtx_beam_electron = new TH1D("h_shwr_to_vtx_beam_electron", "h_shwr_to_vtx_beam_electron", 40, 0, 160);
 	TH1D * h_shwr_to_vtx_beam_photon = new TH1D("h_shwr_to_vtx_beam_photon", "h_shwr_to_vtx_beam_photon", 40, 0, 160);
 	TH1D * h_shwr_to_vtx_cosmic_electron = new TH1D("h_shwr_to_vtx_cosmic_electron", "h_shwr_to_vtx_cosmic_electron", 40, 0, 160);
@@ -302,13 +310,126 @@ int out_inspect(const char * _file1)
 				if(part_unmatched > 0 && part_nue_cc == 0 && part_nue_nc == 0 && part_numu == 0)  {unmatched++; tpco_cat = "unmatched"; }
 			}
 
-			if(tpco_cat == "nue_cc")       {h_tracks_tpco_cat_nue_cc->Fill(n_tracks);       h_showers_tpco_cat_nue_cc->Fill(n_showers); }
-			if(tpco_cat == "nue_cc_mixed") {h_tracks_tpco_cat_nue_cc_mixed->Fill(n_tracks); h_showers_tpco_cat_nue_cc_mixed->Fill(n_showers); }
-			if(tpco_cat == "cosmic")       {h_tracks_tpco_cat_cosmic->Fill(n_tracks);       h_showers_tpco_cat_cosmic->Fill(n_showers); }
-			if(tpco_cat == "nue_nc")       {h_tracks_tpco_cat_nue_nc->Fill(n_tracks);       h_showers_tpco_cat_nue_nc->Fill(n_showers); }
-			if(tpco_cat == "numu")         {h_tracks_tpco_cat_numu->Fill(n_tracks);         h_showers_tpco_cat_numu->Fill(n_showers); }
-			if(tpco_cat == "other_mixed")  {h_tracks_tpco_cat_other_mixed->Fill(n_tracks);  h_showers_tpco_cat_other_mixed->Fill(n_showers); }
-			if(tpco_cat == "unmatched")    {h_tracks_tpco_cat_unmatched->Fill(n_tracks);    h_showers_tpco_cat_unmatched->Fill(n_showers); }
+			if(tpco_cat == "nue_cc")
+			{
+				h_tracks_tpco_cat_nue_cc->Fill(n_tracks);
+				h_showers_tpco_cat_nue_cc->Fill(n_showers);
+				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 0.0); }
+				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 1.0); }
+				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 2.0); }
+				if(leading_mc_pdg == -13)                           {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 3.0); }
+				if(leading_mc_pdg == 22)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 5.0); }
+				if(leading_mc_pdg == 2212)                          {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 6.0); }
+				if(leading_mc_pdg == 2112)                          {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 9.0); }
+
+			}
+			if(tpco_cat == "nue_cc_mixed")
+			{
+				h_tracks_tpco_cat_nue_cc_mixed->Fill(n_tracks);
+				h_showers_tpco_cat_nue_cc_mixed->Fill(n_showers);
+				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 0.0); }
+				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 1.0); }
+				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 2.0); }
+				if(leading_mc_pdg == -13)                           {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 3.0); }
+				if(leading_mc_pdg == 22)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 5.0); }
+				if(leading_mc_pdg == 2212)                          {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 6.0); }
+				if(leading_mc_pdg == 2112)                          {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 9.0); }
+			}
+			if(tpco_cat == "cosmic")
+			{
+				h_tracks_tpco_cat_cosmic->Fill(n_tracks);
+				h_showers_tpco_cat_cosmic->Fill(n_showers);
+				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 0.0); }
+				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 1.0); }
+				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 2.0); }
+				if(leading_mc_pdg == -13)                           {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 3.0); }
+				if(leading_mc_pdg == 22)                            {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 5.0); }
+				if(leading_mc_pdg == 2212)                          {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 6.0); }
+				if(leading_mc_pdg == 2112)                          {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 9.0); }
+			}
+			if(tpco_cat == "nue_nc")
+			{
+				h_tracks_tpco_cat_nue_nc->Fill(n_tracks);
+				h_showers_tpco_cat_nue_nc->Fill(n_showers);
+				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 0.0); }
+				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 1.0); }
+				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 2.0); }
+				if(leading_mc_pdg == -13)                           {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 3.0); }
+				if(leading_mc_pdg == 22)                            {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 5.0); }
+				if(leading_mc_pdg == 2212)                          {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 6.0); }
+				if(leading_mc_pdg == 2112)                          {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 9.0); }
+			}
+			if(tpco_cat == "numu")
+			{
+				h_tracks_tpco_cat_numu->Fill(n_tracks);
+				h_showers_tpco_cat_numu->Fill(n_showers);
+				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 0.0); }
+				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 1.0); }
+				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 2.0); }
+				if(leading_mc_pdg == -13)                           {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 3.0); }
+				if(leading_mc_pdg == 22)                            {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 5.0); }
+				if(leading_mc_pdg == 2212)                          {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 6.0); }
+				if(leading_mc_pdg == 2112)                          {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 9.0); }
+			}
+			if(tpco_cat == "other_mixed")
+			{
+				h_tracks_tpco_cat_other_mixed->Fill(n_tracks);
+				h_showers_tpco_cat_other_mixed->Fill(n_showers);
+				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 0.0); }
+				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 1.0); }
+				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 2.0); }
+				if(leading_mc_pdg == -13)                           {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 3.0); }
+				if(leading_mc_pdg == 22)                            {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 5.0); }
+				if(leading_mc_pdg == 2212)                          {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 6.0); }
+				if(leading_mc_pdg == 2112)                          {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 9.0); }
+			}
+			if(tpco_cat == "unmatched")
+			{
+				h_tracks_tpco_cat_unmatched->Fill(n_tracks);
+				h_showers_tpco_cat_unmatched->Fill(n_showers);
+				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 0.0); }
+				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 1.0); }
+				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 2.0); }
+				if(leading_mc_pdg == -13)                           {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 3.0); }
+				if(leading_mc_pdg == 22)                            {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 4.0); }
+				if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 5.0); }
+				if(leading_mc_pdg == 2212)                          {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 6.0); }
+				if(leading_mc_pdg == 2112)                          {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 7.0); }
+				if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+				   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+				   leading_mc_pdg == -321)                       {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 8.0); }
+				if(leading_mc_pdg == 0)                          {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 9.0); }
+			}
 
 			if(leading_origin == "kBeamNeutrino")
 			{
@@ -723,6 +844,13 @@ int out_inspect(const char * _file1)
 		h_nue_daughter_origin_mc_pdg_trk->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_leading_shower_mc_pdg->GetXaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 		h_leading_shower_origin_mc_pdg->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg_pfp_hits_nue_cc->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg_pfp_hits_cosmic->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg_pfp_hits_nue_nc->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg_pfp_hits_numu->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg_pfp_hits_other_mixed->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
+		h_leading_shower_mc_pdg_pfp_hits_unmatched->GetYaxis()->SetBinLabel(i, str_mc_particle[i-1]);
 	}
 	const char * str_tpco_cat[7] = {"Nue CC", "Nue CC Mixed", "Cosmic", "Nue NC",
 		                        "Numu", "Other Mixed", "Unmatched"};
@@ -1103,6 +1231,51 @@ int out_inspect(const char * _file1)
 	h_leading_shower_origin_tpco_cat->Draw("colz");
 	ls_c5->Print("leading_shower_origin_tpco_cat.pdf");
 
+
+	TCanvas * ls_c6 = new TCanvas();
+	ls_c6->cd();
+	h_leading_shower_mc_pdg_pfp_hits_nue_cc->GetXaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_mc_pdg_pfp_hits_nue_cc->GetYaxis()->SetTitle("Leading Shower True PDG");
+	h_leading_shower_mc_pdg_pfp_hits_nue_cc->Draw("colz");
+	ls_c6->Print("leading_shower_mc_pdg_pfp_hits_nue_cc.pdf");
+	TCanvas * ls_c7 = new TCanvas();
+	ls_c7->cd();
+	h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->GetXaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->GetYaxis()->SetTitle("Leading Shower True PDG");
+	h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Draw("colz");
+	ls_c7->Print("leading_shower_mc_pdg_pfp_hits_nue_cc_mixed.pdf");
+	TCanvas * ls_c8 = new TCanvas();
+	ls_c8->cd();
+	h_leading_shower_mc_pdg_pfp_hits_cosmic->GetXaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_mc_pdg_pfp_hits_cosmic->GetYaxis()->SetTitle("Leading Shower True PDG");
+	h_leading_shower_mc_pdg_pfp_hits_cosmic->Draw("colz");
+	ls_c8->Print("leading_shower_mc_pdg_pfp_hits_cosmic.pdf");
+	TCanvas * ls_c9 = new TCanvas();
+	ls_c9->cd();
+	h_leading_shower_mc_pdg_pfp_hits_nue_nc->GetXaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_mc_pdg_pfp_hits_nue_nc->GetYaxis()->SetTitle("Leading Shower True PDG");
+	h_leading_shower_mc_pdg_pfp_hits_nue_nc->Draw("colz");
+	ls_c9->Print("leading_shower_mc_pdg_pfp_hits_nue_nc.pdf");
+	TCanvas * ls_c10 = new TCanvas();
+	ls_c10->cd();
+	h_leading_shower_mc_pdg_pfp_hits_numu->GetXaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_mc_pdg_pfp_hits_numu->GetYaxis()->SetTitle("Leading Shower True PDG");
+	h_leading_shower_mc_pdg_pfp_hits_numu->Draw("colz");
+	ls_c10->Print("leading_shower_mc_pdg_pfp_hits_numu.pdf");
+	TCanvas * ls_c11 = new TCanvas();
+	ls_c11->cd();
+	h_leading_shower_mc_pdg_pfp_hits_other_mixed->GetXaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_mc_pdg_pfp_hits_other_mixed->GetYaxis()->SetTitle("Leading Shower True PDG");
+	h_leading_shower_mc_pdg_pfp_hits_other_mixed->Draw("colz");
+	ls_c11->Print("leading_shower_mc_pdg_pfp_hits_other_mixed.pdf");
+	TCanvas * ls_c12 = new TCanvas();
+	ls_c12->cd();
+	h_leading_shower_mc_pdg_pfp_hits_unmatched->GetXaxis()->SetTitle("Reconstructed Hits");
+	h_leading_shower_mc_pdg_pfp_hits_unmatched->GetYaxis()->SetTitle("Leading Shower True PDG");
+	h_leading_shower_mc_pdg_pfp_hits_unmatched->Draw("colz");
+	ls_c12->Print("leading_shower_mc_pdg_pfp_hits_unmatched.pdf");
+
+
 	double largest_flash = 0;
 	int current_event = 0;
 	int current_run = 0;
@@ -1152,42 +1325,102 @@ int out_inspect(const char * _file1)
 		largest_flash_v.push_back(fOpFlashCenterY);
 		largest_flash_v.push_back(fOpFlashCenterZ);
 		largest_flash_v.push_back(current_event);
+		largest_flash_v.push_back(fOpFlashWidthZ);
 		largest_flash_v_v.push_back(largest_flash_v);
 		largest_flash_v.clear();
 	}
 
 
-	TH1D * h_flash_dist_beam_electron = new TH1D("h_flash_dist_beam_electron", "h_flash_dist_beam_electron", 40, 0, 160);
-	TH1D * h_flash_dist_beam_photon = new TH1D("h_flash_dist_beam_photon", "h_flash_dist_beam_photon", 40, 0, 160);
+	TH1D * h_flash_dist_beam_electron   = new TH1D("h_flash_dist_beam_electron", "h_flash_dist_beam_electron", 40, 0, 160);
+	TH1D * h_flash_dist_beam_photon     = new TH1D("h_flash_dist_beam_photon", "h_flash_dist_beam_photon", 40, 0, 160);
 	TH1D * h_flash_dist_cosmic_electron = new TH1D("h_flash_dist_cosmic_electron", "h_flash_dist_cosmic_electron", 40, 0, 160);
-	TH1D * h_flash_dist_cosmic_photon = new TH1D("h_flash_dist_cosmic_photon", "h_flash_dist_cosmic_photon", 40, 0, 160);
-	TH1D * h_flash_dist_unknown = new TH1D("h_flash_dist_unknown", "h_flash_dist_unknown", 40, 0, 160);
+	TH1D * h_flash_dist_cosmic_photon   = new TH1D("h_flash_dist_cosmic_photon", "h_flash_dist_cosmic_photon", 40, 0, 160);
+	TH1D * h_flash_dist_unknown         = new TH1D("h_flash_dist_unknown", "h_flash_dist_unknown", 40, 0, 160);
 
+	TH1D * h_flash_dist_width_beam_electron   = new TH1D("h_flash_dist_width_beam_electron",   "h_flash_dist_width_beam_electron", 40, -160, 160);
+	TH1D * h_flash_dist_width_beam_photon     = new TH1D("h_flash_dist_width_beam_photon",     "h_flash_dist_width_beam_photon", 40, -160, 160);
+	TH1D * h_flash_dist_width_cosmic_electron = new TH1D("h_flash_dist_width_cosmic_electron", "h_flash_dist_width_cosmic_electron", 40, -160, 160);
+	TH1D * h_flash_dist_width_cosmic_photon   = new TH1D("h_flash_dist_width_cosmic_photon",   "h_flash_dist_width_cosmic_photon", 40, -160, 160);
+	TH1D * h_flash_dist_width_unknown         = new TH1D("h_flash_dist_width_unknown",         "h_flash_dist_width_unknown", 40, -160, 160);
+
+	std::cout << "Comparing the Largest Flash to the Shower Vertex" << std::endl;
 	for(auto const this_flash_v : largest_flash_v_v)
 	{
 		const int this_event = this_flash_v.at(2);
 		const double flash_vtx_y = this_flash_v.at(0);
 		const double flash_vtx_z = this_flash_v.at(1);
+		const double flash_width_z = this_flash_v.at(3);
 		for(auto const this_shower_v : reco_nue_shower_vtx_v_v)
 		{
 			if(this_event != this_shower_v.at(3)) {continue; }
 			const double shwr_vtx_y = this_shower_v.at(1);
 			const double shwr_vtx_z = this_shower_v.at(2);
 			const double distance = sqrt(pow((shwr_vtx_y - flash_vtx_y), 2) + pow((shwr_vtx_z - flash_vtx_z), 2) );
+			const double distance_width = distance - flash_width_z;
 			if(this_shower_v.at(5) == 0)
 			{
-				if(this_shower_v.at(4) == 11) {h_flash_dist_beam_electron->Fill(distance); }
-				if(this_shower_v.at(4) == 22) {h_flash_dist_beam_photon->Fill(distance); }
+				if(this_shower_v.at(4) == 11) {h_flash_dist_beam_electron->Fill(distance); h_flash_dist_width_beam_electron->Fill(distance_width); }
+				if(this_shower_v.at(4) == 22) {h_flash_dist_beam_photon->Fill(distance); h_flash_dist_width_beam_photon->Fill(distance_width); }
 			}
 			if(this_shower_v.at(5) == 1)
 			{
-				if(this_shower_v.at(4) == 11) {h_flash_dist_cosmic_electron->Fill(distance); }
-				if(this_shower_v.at(4) == 22) {h_flash_dist_cosmic_photon->Fill(distance); }
+				if(this_shower_v.at(4) == 11) {h_flash_dist_cosmic_electron->Fill(distance); h_flash_dist_width_cosmic_electron->Fill(distance_width); }
+				if(this_shower_v.at(4) == 22) {h_flash_dist_cosmic_photon->Fill(distance); h_flash_dist_width_cosmic_photon->Fill(distance_width); }
 			}
-			if(this_shower_v.at(5) == 2) {h_flash_dist_unknown->Fill(distance); }
+			if(this_shower_v.at(5) == 2) {h_flash_dist_unknown->Fill(distance); h_flash_dist_width_unknown->Fill(distance_width); }
 		}
 	}
+	TCanvas * flash_dist_c1 = new TCanvas();
+	flash_dist_c1->cd();
+	h_flash_dist_beam_electron->GetXaxis()->SetTitle("Largest Flash to Shower Vertex [cm]");
+	h_flash_dist_beam_electron->Draw();
+	flash_dist_c1->Print("flash_dist_beam_electron.pdf");
+	TCanvas * flash_dist_c2 = new TCanvas();
+	flash_dist_c2->cd();
+	h_flash_dist_beam_photon->GetXaxis()->SetTitle("Largest Flash to Shower Vertex [cm]");
+	h_flash_dist_beam_photon->Draw();
+	flash_dist_c2->Print("flash_dist_beam_photon.pdf");
+	TCanvas * flash_dist_c3 = new TCanvas();
+	flash_dist_c3->cd();
+	h_flash_dist_cosmic_electron->GetXaxis()->SetTitle("Largest Flash to Shower Vertex [cm]");
+	h_flash_dist_cosmic_electron->Draw();
+	flash_dist_c3->Print("flash_dist_cosmic_electron.pdf");
+	TCanvas * flash_dist_c4 = new TCanvas();
+	flash_dist_c4->cd();
+	h_flash_dist_cosmic_photon->GetXaxis()->SetTitle("Largest Flash to Shower Vertex [cm]");
+	h_flash_dist_cosmic_photon->Draw();
+	flash_dist_c4->Print("flash_dist_cosmic_photon.pdf");
+	TCanvas * flash_dist_c5 = new TCanvas();
+	flash_dist_c5->cd();
+	h_flash_dist_unknown->GetXaxis()->SetTitle("Largest Flash to Shower Vertex [cm]");
+	h_flash_dist_unknown->Draw();
+	flash_dist_c5->Print("flash_dist_unknown.pdf");
 
+	TCanvas * flash_dist_width_c1 = new TCanvas();
+	flash_dist_width_c1->cd();
+	h_flash_dist_width_beam_electron->GetXaxis()->SetTitle("Largest Flash to Shower Vertex - Flash Width Z [cm]");
+	h_flash_dist_width_beam_electron->Draw();
+	flash_dist_width_c1->Print("flash_dist_width_beam_electron.pdf");
+	TCanvas * flash_dist_width_c2 = new TCanvas();
+	flash_dist_width_c2->cd();
+	h_flash_dist_width_beam_photon->GetXaxis()->SetTitle("Largest Flash to Shower Vertex - Flash Width Z [cm]");
+	h_flash_dist_width_beam_photon->Draw();
+	flash_dist_width_c2->Print("flash_dist_width_beam_photon.pdf");
+	TCanvas * flash_dist_width_c3 = new TCanvas();
+	flash_dist_width_c3->cd();
+	h_flash_dist_width_cosmic_electron->GetXaxis()->SetTitle("Largest Flash to Shower Vertex - Flash Width Z [cm]");
+	h_flash_dist_width_cosmic_electron->Draw();
+	flash_dist_width_c3->Print("flash_dist_width_cosmic_electron.pdf");
+	TCanvas * flash_dist_width_c4 = new TCanvas();
+	flash_dist_width_c4->cd();
+	h_flash_dist_width_cosmic_photon->GetXaxis()->SetTitle("Largest Flash to Shower Vertex - Flash Width Z [cm]");
+	h_flash_dist_width_cosmic_photon->Draw();
+	flash_dist_width_c4->Print("flash_dist_width_cosmic_photon.pdf");
+	TCanvas * flash_dist_width_c5 = new TCanvas();
+	flash_dist_width_c5->cd();
+	h_flash_dist_width_unknown->GetXaxis()->SetTitle("Largest Flash to Shower Vertex - Flash Width Z [cm]");
+	h_flash_dist_width_unknown->Draw();
+	flash_dist_width_c5->Print("flash_dist_width_unknown.pdf");
 
 	opt_c1->cd();
 	h_opt_time->Draw();
