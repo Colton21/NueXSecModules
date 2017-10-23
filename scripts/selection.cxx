@@ -37,14 +37,13 @@ int selection( const char * _file1){
 	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar);
 	//mctruth_counter_tree->SetBranchAddress("fMCNuEnergy", &mc_nu_energy);
 	//mctruth_counter_tree->SetBranchAddress("fMCNuID", &mc_nu_id);
+	// mctruth_counter_tree->SetBranchAddress("fMCNuVtxX", &mc_nu_vtx_x);
+	// mctruth_counter_tree->SetBranchAddress("fMCNuVtxY", &mc_nu_vtx_y);
+	// mctruth_counter_tree->SetBranchAddress("fMCNuVtxZ", &mc_nu_vtx_z);
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entries << std::endl;
 	mctruth_counter_tree->GetEntry(total_mc_entries-1);
-	const int true_nue_cc_counter = mc_nue_cc_counter;
-	const int true_nue_nc_counter = mc_nue_nc_counter;
-	const int true_numu_cc_counter = mc_numu_cc_counter;
-	const int true_numu_nc_counter = mc_numu_nc_counter;
 
 	std::cout << "MC Nue CC Counter      : " << mc_nue_cc_counter << std::endl;
 	std::cout << "MC Nue NC Counter      : " << mc_nue_nc_counter << std::endl;
@@ -93,7 +92,13 @@ int selection( const char * _file1){
 		}
 
 		mctruth_counter_tree->GetEntry(event);
-		//if(mc_nu_id == 1) {h_nue_eng_eff_den->Fill(mc_nu_energy); }
+		//if(mc_nu_id == 1) //if this event is a true nue CC interaction
+		// {
+		//  h_nue_eng_eff_den->Fill(mc_nu_energy);
+		//	if(in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		//           _x1, _x2, _y1,
+		//           _y2, _z1, _z2) == true){total_mc_entries_inFV++;}
+		// }
 
 		mytree->GetEntry(event);
 		if(passed_runs->at(event) == 0)
@@ -141,7 +146,6 @@ int selection( const char * _file1){
 		in_fv_counter = in_fv_counter + tabulated_origins.at(7);
 
 		//vertex to flash
-		const double tolerance = 100;//cm
 		flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
 		                 tolerance, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
@@ -156,7 +160,6 @@ int selection( const char * _file1){
 		vtx_flash_counter = vtx_flash_counter + tabulated_origins.at(7);
 
 		//distance between pfp shower and nue object
-		const double shwr_nue_tolerance = 50;//cm
 		VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
@@ -170,7 +173,6 @@ int selection( const char * _file1){
 		shwr_tpco_counter = shwr_tpco_counter + tabulated_origins.at(7);
 
 		//hit threshold for showers
-		const double shwr_hit_threshold = 50;//hits
 		HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 		if(ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
@@ -183,13 +185,18 @@ int selection( const char * _file1){
 		hit_threshold_counter_other_mixed  = hit_threshold_counter_other_mixed + tabulated_origins.at(6);
 		hit_threshold_counter = hit_threshold_counter + tabulated_origins.at(7);
 
-
 		//if(mc_nu_id == 1 && tabulated_origins.at(0) == 1) {h_nue_eng_eff_num->Fill(mc_nu_energy); }
 
 	}//end event loop
-	std::cout << "------------------" << std::endl;
-	std::cout << "End Selection" << std::endl;
-	std::cout << "------------------" << std::endl;
+
+	std::cout << "------------------ " << std::endl;
+	std::cout << " MC Entries in FV: " << total_mc_entries_inFV << std::endl;
+	std::cout << "------------------ " << std::endl;
+	std::cout << "------------------ " << std::endl;
+	std::cout << "  End Selection    " << std::endl;
+	std::cout << "------------------ " << std::endl;
+
+	//change mc_nue_cc_counter to total_mc_entries_inFV once files are ready!
 
 	//we also want some metrics to print at the end
 	PrintInfo( mc_nue_cc_counter,
