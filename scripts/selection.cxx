@@ -6,6 +6,9 @@
 #include "TBranch.h"
 #include "TInterpreter.h"
 #include "TROOT.h"
+#include "TEfficiency.h"
+#include "TCanvas.h"
+#include "TH1.h"
 
 #include <iostream>
 #include <vector>
@@ -588,8 +591,6 @@ void calcXSec(double _x1, double _x2, double _y1,
 
 int selection( const char * _file1){
 
-	//const char * _file1 = "../nue_xsec_extraction.root";
-	//const char * _file1 = "../cosmic_extraction.root";
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
 	//first we need to open the root file
@@ -603,6 +604,11 @@ int selection( const char * _file1){
 	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
+	TH1D * h_nue_eng_eff_den = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 6, 0, 6);
+	TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 6, 0, 6);
+	TEfficiency * eng_eff = new TEfficiency(*h_nue_eng_eff_num, *h_nue_eng_eff_den);
+
+
 	const double _x1 = 0;
 	const double _x2 = 0;
 	const double _y1 = 0;
@@ -612,6 +618,7 @@ int selection( const char * _file1){
 
 	const double POT = 4.05982e+19; //POT - all NuMI + cosmics
 	//const double POT = 2.90469e+21; //POT - nue + cosmics
+	std::cout << "Running With: " << POT << " POT " << std::endl;
 	const double scaling = 1.52938e-11; //nues / POT / cm^2
 	const double flux = POT * scaling;
 
@@ -623,6 +630,8 @@ int selection( const char * _file1){
 	int mc_numu_cc_counter_bar = 0;
 	int mc_nue_nc_counter_bar = 0;
 	int mc_numu_nc_counter_bar = 0;
+	double mc_nu_energy = 0;
+	int mc_nu_id = -1;
 
 	mctruth_counter_tree->SetBranchAddress("mc_nue_cc_counter",      &mc_nue_cc_counter);
 	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter",      &mc_nue_nc_counter);
@@ -632,6 +641,8 @@ int selection( const char * _file1){
 	mctruth_counter_tree->SetBranchAddress("mc_numu_cc_counter_bar", &mc_numu_cc_counter_bar);
 	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter_bar",  &mc_nue_nc_counter_bar);
 	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar);
+	//mctruth_counter_tree->SetBranchAddress("fMCNuEnergy", &mc_nu_energy);
+	//mctruth_counter_tree->SetBranchAddress("fMCNuID", &fMCNuID);
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entries << std::endl;
@@ -733,6 +744,9 @@ int selection( const char * _file1){
 			std::cout << "----------------------" << std::endl;
 		}
 
+		mctruth_counter_tree->GetEntry(event);
+		if(mc_nu_id == 1) {h_nue_eng_eff_den->Fill(mc_nu_energy); }
+
 		mytree->GetEntry(event);
 		if(passed_runs->at(event) == 0)
 		{
@@ -820,7 +834,11 @@ int selection( const char * _file1){
 		hit_threshold_counter_unmatched    = hit_threshold_counter_unmatched + tabulated_origins.at(5);
 		hit_threshold_counter_other_mixed  = hit_threshold_counter_other_mixed + tabulated_origins.at(6);
 		hit_threshold_counter = hit_threshold_counter + tabulated_origins.at(7);
-	}
+
+
+		if(mc_nu_id == 1 && tabulated_origins.at(0) == 1) {h_nue_eng_eff_num->Fill(mc_nu_energy); }
+
+	}//end event loop
 	std::cout << "------------------" << std::endl;
 	std::cout << "End Selection" << std::endl;
 	std::cout << "------------------" << std::endl;
@@ -920,6 +938,16 @@ int selection( const char * _file1){
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Genie value of Flux " << '\n' <<
 	        " Integrated Xsec:    " << genie_xsec << std::endl;
+
+	TCanvas * efficency_c1 = new TCanvas();
+	efficency_c1->cd();
+	eng_eff->SetTitle(";True Neutrino Energy [GeV];Efficiency");
+	eng_eff->SetLineColor(kGreen+3);
+	eng_eff->SetMarkerColor(kGreen+3);
+	eng_eff->SetMarkerStyle(20);
+	eng_eff->SetMarkerSize(0.5);
+	eng_eff->Draw("AP");
+	efficency_c1->Print("signal_selection_nu_energy_efficiency.pdf");
 
 	return 0;
 }        //end selection

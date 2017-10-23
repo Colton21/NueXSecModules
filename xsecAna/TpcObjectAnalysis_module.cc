@@ -117,6 +117,7 @@ double fMCNuVtxX = -999;
 double fMCNuVtxY = -999;
 double fMCNuVtxZ = -999;
 double fMCNuEnergy = -1;
+int fMCNuID = -1;
 
 
 };
@@ -177,6 +178,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNuVtxY", &fMCNuVtxY, "fMCNuVtxY/D");
 	mctruth_counter_tree->Branch("fMCNuVtxZ", &fMCNuVtxZ, "fMCNuVtxZ/D");
 	mctruth_counter_tree->Branch("fMCNuEnegy", &fMCNuEnergy, "fMCNuEnegy/D");
+	mctruth_counter_tree->Branch("fMCNuID", &fMCNuID, "fMCNuID/I");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -271,14 +273,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			{
 				std::cout << fMCParticleID << '\t';
 				std::cout << fMCNuPdg << '\t';
-				if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      std::cout << "Hah Got One Nue CC!"       << std::endl; }
-				if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     std::cout << "Hah Got One Numu CC!"      << std::endl; }
-				if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      std::cout << "Hah Got One Nue NC!"       << std::endl; }
-				if(fMCNuPdg == 14  && fCCNC == 1) {mc_numu_nc_counter++;     std::cout << "Hah Got One Numu NC!"      << std::endl; }
-				if(fMCNuPdg == -12 && fCCNC == 0) {mc_nue_cc_counter_bar++;  std::cout << "Hah Got One Nue CC Bar!"   << std::endl; }
-				if(fMCNuPdg == -14 && fCCNC == 0) {mc_numu_cc_counter_bar++; std::cout << "Hah Got One Numu CC Bar!"  << std::endl; }
-				if(fMCNuPdg == -12 && fCCNC == 1) {mc_nue_nc_counter_bar++;  std::cout << "Hah Got One Nue NC Bar!"   << std::endl; }
-				if(fMCNuPdg == -14 && fCCNC == 1) {mc_numu_nc_counter_bar++; std::cout << "Hah Got one Numu CC Bar!"  << std::endl; }
+				if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      fMCNuID = 1; }
+				if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     fMCNuID = 2; }
+				if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      fMCNuID = 3; }
+				if(fMCNuPdg == 14  && fCCNC == 1) {mc_numu_nc_counter++;     fMCNuID = 4; }
+				if(fMCNuPdg == -12 && fCCNC == 0) {mc_nue_cc_counter_bar++;  fMCNuID = 5; }
+				if(fMCNuPdg == -14 && fCCNC == 0) {mc_numu_cc_counter_bar++; fMCNuID = 6; }
+				if(fMCNuPdg == -12 && fCCNC == 1) {mc_nue_nc_counter_bar++;  fMCNuID = 7; }
+				if(fMCNuPdg == -14 && fCCNC == 1) {mc_numu_nc_counter_bar++; fMCNuID = 8; }
 				//this loop is only enerted once per event, assuming 1 nu event per event.
 				//this way we get the neutrino vertex and energy per event and can use this
 				//to calculate if it's in the FV in the future, during the selection.
