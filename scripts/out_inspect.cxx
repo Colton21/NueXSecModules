@@ -97,13 +97,20 @@ int out_inspect(const char * _file1)
 	TH2I * h_leading_shower_origin_hits = new TH2I("h_leading_shower_origin_hits", "h_leading_shower_origin_hits", 3, 0, 3, 100, 0, 3000);
 	TH2I * h_leading_shower_origin_tpco_cat = new TH2I("h_leading_shower_origin_tpco_cat", "h_leading_shower_origin_tpco_cat", 3, 0, 3, 7, 0, 7);
 
-	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_cc        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_cc", "h_leading_shower_mc_pdg_pfp_hits_nue_cc", 20, 0, 3000, 10, 0, 10);
-	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed  = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed", "h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed", 20, 0, 3000, 10, 0, 10);
-	TH2D * h_leading_shower_mc_pdg_pfp_hits_cosmic        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_cosmic", "h_leading_shower_mc_pdg_pfp_hits_cosmic", 20, 0, 3000, 10, 0, 10);
-	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_nc        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_nc", "h_leading_shower_mc_pdg_pfp_hits_nue_nc", 20, 0, 3000, 10, 0, 10);
-	TH2D * h_leading_shower_mc_pdg_pfp_hits_numu          = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_numu", "h_leading_shower_mc_pdg_pfp_hits_numu", 20, 0, 3000, 10, 0, 10);
-	TH2D * h_leading_shower_mc_pdg_pfp_hits_other_mixed   = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_other_mixed", "h_leading_shower_mc_pdg_pfp_hits_other_mixed", 20, 0, 3000, 10, 0, 10);
-	TH2D * h_leading_shower_mc_pdg_pfp_hits_unmatched     = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_unmatched", "h_leading_shower_mc_pdg_pfp_hits_unmatched", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_cc        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_cc",
+	                                                                  "h_leading_shower_mc_pdg_pfp_hits_nue_cc", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed  = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed",
+	                                                                  "h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_cosmic        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_cosmic",
+	                                                                  "h_leading_shower_mc_pdg_pfp_hits_cosmic", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_nue_nc        = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_nue_nc",
+	                                                                  "h_leading_shower_mc_pdg_pfp_hits_nue_nc", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_numu          = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_numu",
+	                                                                  "h_leading_shower_mc_pdg_pfp_hits_numu", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_other_mixed   = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_other_mixed",
+	                                                                  "h_leading_shower_mc_pdg_pfp_hits_other_mixed", 20, 0, 3000, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_pfp_hits_unmatched     = new TH2D ("h_leading_shower_mc_pdg_pfp_hits_unmatched",
+	                                                                  "h_leading_shower_mc_pdg_pfp_hits_unmatched", 20, 0, 3000, 10, 0, 10);
 
 	TH1D * h_shwr_to_vtx_beam_electron = new TH1D("h_shwr_to_vtx_beam_electron", "h_shwr_to_vtx_beam_electron", 40, 0, 160);
 	TH1D * h_shwr_to_vtx_beam_photon = new TH1D("h_shwr_to_vtx_beam_photon", "h_shwr_to_vtx_beam_photon", 40, 0, 160);

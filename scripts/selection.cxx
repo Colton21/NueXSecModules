@@ -1,9 +1,6 @@
 #include "selection.h"
 
-#ifndef __ROOTCLING__
-
-using namespace xsecSelection;
-
+namespace xsecSelection {
 int selection( const char * _file1){
 
 	std::cout << "File Path: " << _file1 << std::endl;
@@ -19,10 +16,10 @@ int selection( const char * _file1){
 	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
 	mytree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
-	// TH1D * h_nue_eng_eff_den = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 6, 0, 6);
-	// TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 6, 0, 6);
-	// TEfficiency * eng_eff = new TEfficiency(*h_nue_eng_eff_num, *h_nue_eng_eff_den);
+	selection_functions _functions_instance;
 
+	TH1D * h_nue_eng_eff_den = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 6, 0, 6);
+	//TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 6, 0, 6);
 
 	std::cout << "Running With: " << POT << " POT " << std::endl;
 	const double flux = POT * scaling;
@@ -67,12 +64,12 @@ int selection( const char * _file1){
 	std::cout << "==== In Time Cut ====" << std::endl;
 	std::cout << "=====================" << std::endl;
 
-	loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
-	             flash_time_end, passed_runs);
+	_functions_instance.selection_functions::loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
+	                                                      flash_time_end, passed_runs);
 
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
-	SetXYflashVector(f, optree, largest_flash_v_v);
+	_functions_instance.selection_functions::SetXYflashVector(f, optree, largest_flash_v_v);
 	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v->size() << std::endl;
 
 	for(auto const run : * passed_runs) {run_sum = run_sum + run; }
@@ -101,6 +98,7 @@ int selection( const char * _file1){
 		// }
 
 		mytree->GetEntry(event);
+		//this is where the in-time optical cut actually takes effect
 		if(passed_runs->at(event) == 0)
 		{
 			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
@@ -108,7 +106,7 @@ int selection( const char * _file1){
 		}//false
 
 		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
-		GetOrigins(tpc_object_container_v, tpco_origin_v);
+		_functions_instance.selection_functions::GetOrigins(tpc_object_container_v, tpco_origin_v);
 
 		//XY Position of largest flash
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
@@ -120,9 +118,9 @@ int selection( const char * _file1){
 		//** start the cuts here **
 
 		//reco nue cut
-		HasNue(tpc_object_container_v, passed_tpco, _verbose);
-		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		_functions_instance.selection_functions::HasNue(tpc_object_container_v, passed_tpco, _verbose);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco);
 		reco_nue_counter_nue_cc       = reco_nue_counter_nue_cc + tabulated_origins.at(0);
 		reco_nue_counter_nue_cc_mixed = reco_nue_counter_nue_cc_mixed + tabulated_origins.at(1);
 		reco_nue_counter_cosmic       = reco_nue_counter_cosmic + tabulated_origins.at(2);
@@ -133,9 +131,9 @@ int selection( const char * _file1){
 		reco_nue_counter = reco_nue_counter + tabulated_origins.at(7);
 
 		//in fv cut
-		fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
-		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		_functions_instance.selection_functions::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco);
 		in_fv_counter_nue_cc       = in_fv_counter_nue_cc + tabulated_origins.at(0);
 		in_fv_counter_nue_cc_mixed = in_fv_counter_nue_cc_mixed + tabulated_origins.at(1);
 		in_fv_counter_cosmic       = in_fv_counter_cosmic + tabulated_origins.at(2);
@@ -145,11 +143,11 @@ int selection( const char * _file1){
 		in_fv_counter_other_mixed  = in_fv_counter_other_mixed + tabulated_origins.at(6);
 		in_fv_counter = in_fv_counter + tabulated_origins.at(7);
 
-		//vertex to flash
-		flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
-		                 tolerance, passed_tpco, _verbose);
-		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		//vertex to flash cut
+		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
+		                                                          tolerance, passed_tpco, _verbose);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco);
 		vtx_flash_counter_nue_cc       = vtx_flash_counter_nue_cc + tabulated_origins.at(0);
 		vtx_flash_counter_nue_cc_mixed = vtx_flash_counter_nue_cc_mixed + tabulated_origins.at(1);
 		vtx_flash_counter_cosmic       = vtx_flash_counter_cosmic + tabulated_origins.at(2);
@@ -159,10 +157,10 @@ int selection( const char * _file1){
 		vtx_flash_counter_other_mixed  = vtx_flash_counter_other_mixed + tabulated_origins.at(6);
 		vtx_flash_counter = vtx_flash_counter + tabulated_origins.at(7);
 
-		//distance between pfp shower and nue object
-		VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
-		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		//distance between pfp shower and nue object cut
+		_functions_instance.selection_functions::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco);
 		shwr_tpco_counter_nue_cc       = shwr_tpco_counter_nue_cc + tabulated_origins.at(0);
 		shwr_tpco_counter_nue_cc_mixed = shwr_tpco_counter_nue_cc_mixed + tabulated_origins.at(1);
 		shwr_tpco_counter_cosmic       = shwr_tpco_counter_cosmic + tabulated_origins.at(2);
@@ -172,10 +170,10 @@ int selection( const char * _file1){
 		shwr_tpco_counter_other_mixed  = shwr_tpco_counter_other_mixed + tabulated_origins.at(6);
 		shwr_tpco_counter = shwr_tpco_counter + tabulated_origins.at(7);
 
-		//hit threshold for showers
-		HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
-		if(ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = TabulateOrigins(tpc_object_container_v, passed_tpco);
+		//hit threshold for showers cut
+		_functions_instance.selection_functions::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco);
 		hit_threshold_counter_nue_cc       = hit_threshold_counter_nue_cc + tabulated_origins.at(0);
 		hit_threshold_counter_nue_cc_mixed = hit_threshold_counter_nue_cc_mixed + tabulated_origins.at(1);
 		hit_threshold_counter_cosmic       = hit_threshold_counter_cosmic + tabulated_origins.at(2);
@@ -199,61 +197,61 @@ int selection( const char * _file1){
 	//change mc_nue_cc_counter to total_mc_entries_inFV once files are ready!
 
 	//we also want some metrics to print at the end
-	PrintInfo( mc_nue_cc_counter,
-	           reco_nue_counter,
-	           reco_nue_counter_nue_cc,
-	           reco_nue_counter_nue_cc_mixed,
-	           reco_nue_counter_cosmic,
-	           reco_nue_counter_nue_nc,
-	           reco_nue_counter_numu,
-	           reco_nue_counter_unmatched,
-	           reco_nue_counter_other_mixed,
-	           "Reco Nue"
-	           );
-	PrintInfo( mc_nue_cc_counter,
-	           in_fv_counter,
-	           in_fv_counter_nue_cc,
-	           in_fv_counter_nue_cc_mixed,
-	           in_fv_counter_cosmic,
-	           in_fv_counter_nue_nc,
-	           in_fv_counter_numu,
-	           in_fv_counter_unmatched,
-	           in_fv_counter_other_mixed,
-	           "In FV"
-	           );
-	PrintInfo( mc_nue_cc_counter,
-	           vtx_flash_counter,
-	           vtx_flash_counter_nue_cc,
-	           vtx_flash_counter_nue_cc_mixed,
-	           vtx_flash_counter_cosmic,
-	           vtx_flash_counter_nue_nc,
-	           vtx_flash_counter_numu,
-	           vtx_flash_counter_unmatched,
-	           vtx_flash_counter_other_mixed,
-	           "Vtx-to-Flash"
-	           );
-	PrintInfo( mc_nue_cc_counter,
-	           shwr_tpco_counter,
-	           shwr_tpco_counter_nue_cc,
-	           shwr_tpco_counter_nue_cc_mixed,
-	           shwr_tpco_counter_cosmic,
-	           shwr_tpco_counter_nue_nc,
-	           shwr_tpco_counter_numu,
-	           shwr_tpco_counter_unmatched,
-	           shwr_tpco_counter_other_mixed,
-	           "Shower-to-TPCO"
-	           );
-	PrintInfo( mc_nue_cc_counter,
-	           hit_threshold_counter,
-	           hit_threshold_counter_nue_cc,
-	           hit_threshold_counter_nue_cc_mixed,
-	           hit_threshold_counter_cosmic,
-	           hit_threshold_counter_nue_nc,
-	           hit_threshold_counter_numu,
-	           hit_threshold_counter_unmatched,
-	           hit_threshold_counter_other_mixed,
-	           "Hit Threshold"
-	           );
+	_functions_instance.selection_functions::PrintInfo( mc_nue_cc_counter,
+	                                                    reco_nue_counter,
+	                                                    reco_nue_counter_nue_cc,
+	                                                    reco_nue_counter_nue_cc_mixed,
+	                                                    reco_nue_counter_cosmic,
+	                                                    reco_nue_counter_nue_nc,
+	                                                    reco_nue_counter_numu,
+	                                                    reco_nue_counter_unmatched,
+	                                                    reco_nue_counter_other_mixed,
+	                                                    "Reco Nue"
+	                                                    );
+	_functions_instance.selection_functions::PrintInfo( mc_nue_cc_counter,
+	                                                    in_fv_counter,
+	                                                    in_fv_counter_nue_cc,
+	                                                    in_fv_counter_nue_cc_mixed,
+	                                                    in_fv_counter_cosmic,
+	                                                    in_fv_counter_nue_nc,
+	                                                    in_fv_counter_numu,
+	                                                    in_fv_counter_unmatched,
+	                                                    in_fv_counter_other_mixed,
+	                                                    "In FV"
+	                                                    );
+	_functions_instance.selection_functions::PrintInfo( mc_nue_cc_counter,
+	                                                    vtx_flash_counter,
+	                                                    vtx_flash_counter_nue_cc,
+	                                                    vtx_flash_counter_nue_cc_mixed,
+	                                                    vtx_flash_counter_cosmic,
+	                                                    vtx_flash_counter_nue_nc,
+	                                                    vtx_flash_counter_numu,
+	                                                    vtx_flash_counter_unmatched,
+	                                                    vtx_flash_counter_other_mixed,
+	                                                    "Vtx-to-Flash"
+	                                                    );
+	_functions_instance.selection_functions::PrintInfo( mc_nue_cc_counter,
+	                                                    shwr_tpco_counter,
+	                                                    shwr_tpco_counter_nue_cc,
+	                                                    shwr_tpco_counter_nue_cc_mixed,
+	                                                    shwr_tpco_counter_cosmic,
+	                                                    shwr_tpco_counter_nue_nc,
+	                                                    shwr_tpco_counter_numu,
+	                                                    shwr_tpco_counter_unmatched,
+	                                                    shwr_tpco_counter_other_mixed,
+	                                                    "Shower-to-TPCO"
+	                                                    );
+	_functions_instance.selection_functions::PrintInfo( mc_nue_cc_counter,
+	                                                    hit_threshold_counter,
+	                                                    hit_threshold_counter_nue_cc,
+	                                                    hit_threshold_counter_nue_cc_mixed,
+	                                                    hit_threshold_counter_cosmic,
+	                                                    hit_threshold_counter_nue_nc,
+	                                                    hit_threshold_counter_numu,
+	                                                    hit_threshold_counter_unmatched,
+	                                                    hit_threshold_counter_other_mixed,
+	                                                    "Hit Threshold"
+	                                                    );
 
 	std::vector<double> * xsec_cc = new std::vector<double>;
 	const double final_counter = hit_threshold_counter;
@@ -268,9 +266,9 @@ int selection( const char * _file1){
 	const int n_bkg = (final_counter_nue_cc_mixed + final_counter_cosmic + final_counter_nue_nc
 	                   + final_counter_numu + final_counter_unmatched + final_counter_other_mixed);
 	const double efficiency = final_counter_nue_cc / double(mc_nue_cc_counter);
-	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
-	         n_total, n_bkg, flux,
-	         efficiency, xsec_cc);
+	_functions_instance.selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	                                                  n_total, n_bkg, flux,
+	                                                  efficiency, xsec_cc);
 
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Cross Section Results:  " << std::endl;
@@ -279,9 +277,9 @@ int selection( const char * _file1){
 	          << xsec_cc->at(2) << std::endl;
 	std::cout << "-------------------------" << std::endl;
 	xsec_cc->clear();
-	calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
-	         mc_nue_cc_counter, 0, flux,
-	         1, xsec_cc);
+	_functions_instance.selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	                                                  mc_nue_cc_counter, 0, flux,
+	                                                  1, xsec_cc);
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Cross Section Results (Truth):  " << std::endl;
 	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
@@ -294,6 +292,7 @@ int selection( const char * _file1){
 
 	// TCanvas * efficency_c1 = new TCanvas();
 	// efficency_c1->cd();
+	// TEfficiency * eng_eff = new TEfficiency(*h_nue_eng_eff_num, *h_nue_eng_eff_den);
 	// eng_eff->SetTitle(";True Neutrino Energy [GeV];Efficiency");
 	// eng_eff->SetLineColor(kGreen+3);
 	// eng_eff->SetMarkerColor(kGreen+3);
@@ -302,15 +301,20 @@ int selection( const char * _file1){
 	// eng_eff->Draw("AP");
 	// efficency_c1->Print("signal_selection_nu_energy_efficiency.pdf");
 
+	//xsec_plot(_verbose, genie_xsec, xsec_cc->at(1));
+
+	std::cout << " --- End Cross Section Calculation --- " << std::endl;
 	return 0;
 }        //end selection
+}//end namespace
 
+#ifndef __ROOTCLING__
 
 int main(int argc, char *argv[]){
 	if(argc != 2 ) { std::cout << "Please inclue the input file path" << std::endl; exit(1); }
 	const char * file1 = argv[1];
 
-	return selection(file1);
+	return xsecSelection::selection(file1);
 }
 
 #endif

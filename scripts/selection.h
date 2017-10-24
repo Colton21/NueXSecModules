@@ -1,24 +1,17 @@
 #ifndef SELECTION_h
 #define SELECTION_h
 
-#include "../xsecAna/TpcObjectContainer.h"
-#include "../xsecAna/ParticleContainer.h"
-
 #include "selection_functions.h"
-
-#include "TEfficiency.h"
-#include "TCanvas.h"
-#include "TH1.h"
 
 #include "../xsecAna/LinkDef.h"
 
 namespace xsecSelection {
 
 
-const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
-//const double POT = 2.90469e+21;    //POT - nue + cosmics
+//const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
+const double POT = 2.90469e+21;    //POT - nue + cosmics
 const double scaling = 1.52938e-11;  //nues / POT / cm^2
-const double genie_xsec = 5.05191e-39;
+const double genie_xsec = 5.05191e-39; //cm^2
 
 //*******************
 // Cut Values

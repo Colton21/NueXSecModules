@@ -1,7 +1,7 @@
 <!--                                                                                  -->
 <!--  $Id: classes_def.xml,v 1.10 2010/04/12 18:12:28  Exp $                          -->
-<!--  $Author:  $                                                                     -->
-<!--  $Date: 2010/04/12 18:12:28 $                                                    -->
+<!--  $Author:  C Hill$                                                               -->
+<!--  $Date: 2017/10/10 $                                                             -->
 <!--                                                                                  -->
 <!--  Include art::Wrapper lines for objects that we would like to put into the event -->
 <!--  Include the non-wrapper lines for all objects on the art::Wrapper lines and     -->
