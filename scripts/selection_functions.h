@@ -110,8 +110,7 @@ void calcXSec(double _x1, double _x2, double _y1,
 
 //***************************************************************************
 //***************************************************************************
-
-// void xsec_plot(bool _verbose, double genie_xsec, double xsec);
+void xsec_plot(bool _verbose, double genie_xsec, double xsec);
 };
 
 #endif

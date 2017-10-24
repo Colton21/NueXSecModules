@@ -551,19 +551,23 @@ void selection_functions::calcXSec(double _x1, double _x2, double _y1,
 //***************************************************************************
 //***************************************************************************
 
-// void xsec_plot(bool _verbose, double genie_xsec, double xsec)
-// {
-//
-//      std::cout << "Opening NuMIFlux.root" << std::endl;
-//      //first we need to open the root file
-//      TFile * f = new TFile("NuMIFlux.root");
-//      if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
-//      TH1D * h_nue_flux = (TH1D*)f->Get("nueFluxHisto");
-//
-//      std::cout << "Opening argon_xsec_nue.root" << std::endl;
-//      //this is a genie file with the cross section
-//      TFile * xsec_f = new TFile("argon_xsec_nue.root");
-//      if(!xsec_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
-//      TGraph * g_nue_xsec = (TGraph*)xsec_f->Get("nu_e_Ar40/tot_cc");
-//
-// }
+void xsec_plot(bool _verbose, double genie_xsec, double xsec)
+{
+
+	std::cout << "Opening NuMIFlux.root" << std::endl;
+	//first we need to open the root file
+	TFile * f = new TFile("NuMIFlux.root");
+	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
+	TH1D * h_nue_flux = (TH1D*)f->Get("nueFluxHisto");
+
+	std::cout << "Opening argon_xsec_nue.root" << std::endl;
+	//this is a genie file with the cross section
+	TFile * xsec_f = new TFile("argon_xsec_nue.root");
+	if(!xsec_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
+	TGraph * g_nue_xsec = (TGraph*)xsec_f->Get("nu_e_Ar40/tot_cc");
+
+
+	if(f->IsOpen()) {f->Close(); }
+	if(f->IsOpen()) {xsec_f->Close(); }
+
+}

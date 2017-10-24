@@ -7,7 +7,7 @@ int selection( const char * _file1){
 	const bool _verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
-	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; return 1; }
+	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TTree * mytree = (TTree*)f->Get("AnalyzeTPCO/tree");
 	TTree * optree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 	TTree * mctree = (TTree*)f->Get("AnalyzeTPCO/mcparticle_tree");
@@ -19,7 +19,7 @@ int selection( const char * _file1){
 	selection_functions _functions_instance;
 
 	TH1D * h_nue_eng_eff_den = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 6, 0, 6);
-	//TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 6, 0, 6);
+	TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 6, 0, 6);
 
 	std::cout << "Running With: " << POT << " POT " << std::endl;
 	const double flux = POT * scaling;
@@ -290,22 +290,29 @@ int selection( const char * _file1){
 	std::cout << " Genie value of Flux " << '\n' <<
 	        " Integrated Xsec:    " << genie_xsec << std::endl;
 
-	// TCanvas * efficency_c1 = new TCanvas();
-	// efficency_c1->cd();
-	// TEfficiency * eng_eff = new TEfficiency(*h_nue_eng_eff_num, *h_nue_eng_eff_den);
-	// eng_eff->SetTitle(";True Neutrino Energy [GeV];Efficiency");
-	// eng_eff->SetLineColor(kGreen+3);
-	// eng_eff->SetMarkerColor(kGreen+3);
-	// eng_eff->SetMarkerStyle(20);
-	// eng_eff->SetMarkerSize(0.5);
-	// eng_eff->Draw("AP");
-	// efficency_c1->Print("signal_selection_nu_energy_efficiency.pdf");
+	TCanvas * efficency_c1 = new TCanvas();
+	efficency_c1->cd();
+	TEfficiency * eng_eff = new TEfficiency(*h_nue_eng_eff_num, *h_nue_eng_eff_den);
+	eng_eff->SetTitle(";True Neutrino Energy [GeV];Efficiency");
+	eng_eff->SetLineColor(kGreen+3);
+	eng_eff->SetMarkerColor(kGreen+3);
+	eng_eff->SetMarkerStyle(20);
+	eng_eff->SetMarkerSize(0.5);
+	eng_eff->Draw("AP");
+	efficency_c1->Print("signal_selection_nu_energy_efficiency.pdf");
 
 	//xsec_plot(_verbose, genie_xsec, xsec_cc->at(1));
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;
+
+	if(f->IsOpen()) {f->Close(); }
+	//for some reason, the histogram is not being deleted upon function exit
+	//trying to close root file instead
+	//delete h_nue_eng_eff_den;
+	//delete h_nue_eng_eff_num;
+
 	return 0;
-}        //end selection
+}//end selection
 }//end namespace
 
 #ifndef __ROOTCLING__
@@ -313,6 +320,7 @@ int selection( const char * _file1){
 int main(int argc, char *argv[]){
 	if(argc != 2 ) { std::cout << "Please inclue the input file path" << std::endl; exit(1); }
 	const char * file1 = argv[1];
+
 
 	return xsecSelection::selection(file1);
 }

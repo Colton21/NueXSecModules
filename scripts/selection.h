@@ -104,4 +104,5 @@ std::vector<int> tabulated_origins;
 
 
 }//end namespace
+
 #endif
