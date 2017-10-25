@@ -18,8 +18,8 @@ int selection( const char * _file1){
 
 	selection_functions _functions_instance;
 
-	TH1D * h_nue_eng_eff_den = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 6, 0, 6);
-	TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 6, 0, 6);
+	TH1D * h_nue_eng_eff_den = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 12, 0, 6);
+	TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 12, 0, 6);
 	TH2I * h_tracks_showers  = new TH2I("h_tracks_showers", "h_tracks_showers", 10, 0, 10, 10, 0, 10);
 
 	std::cout << "Running With: " << POT << " POT " << std::endl;
@@ -33,11 +33,11 @@ int selection( const char * _file1){
 	mctruth_counter_tree->SetBranchAddress("mc_numu_cc_counter_bar", &mc_numu_cc_counter_bar);
 	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter_bar",  &mc_nue_nc_counter_bar);
 	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar);
-	//mctruth_counter_tree->SetBranchAddress("fMCNuEnergy", &mc_nu_energy);
-	//mctruth_counter_tree->SetBranchAddress("fMCNuID", &mc_nu_id);
-	// mctruth_counter_tree->SetBranchAddress("fMCNuVtxX", &mc_nu_vtx_x);
-	// mctruth_counter_tree->SetBranchAddress("fMCNuVtxY", &mc_nu_vtx_y);
-	// mctruth_counter_tree->SetBranchAddress("fMCNuVtxZ", &mc_nu_vtx_z);
+	mctruth_counter_tree->SetBranchAddress("fMCNuEnegy", &mc_nu_energy);
+	mctruth_counter_tree->SetBranchAddress("fMCNuID", &mc_nu_id);
+	mctruth_counter_tree->SetBranchAddress("fMCNuVtxX", &mc_nu_vtx_x);
+	mctruth_counter_tree->SetBranchAddress("fMCNuVtxY", &mc_nu_vtx_y);
+	mctruth_counter_tree->SetBranchAddress("fMCNuVtxZ", &mc_nu_vtx_z);
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entries << std::endl;
@@ -90,13 +90,16 @@ int selection( const char * _file1){
 		}
 
 		mctruth_counter_tree->GetEntry(event);
-		//if(mc_nu_id == 1) //if this event is a true nue CC interaction
-		// {
-		//  h_nue_eng_eff_den->Fill(mc_nu_energy);
-		//	if(in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		//           _x1, _x2, _y1,
-		//           _y2, _z1, _z2) == true){total_mc_entries_inFV++;}
-		// }
+		if(mc_nu_id == 1) //if this event is a true nue CC interaction
+		{
+			if(_functions_instance.selection_functions::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+			                                                  _x1, _x2, _y1,
+			                                                  _y2, _z1, _z2) == true)
+			{
+				h_nue_eng_eff_den->Fill(mc_nu_energy);
+				total_mc_entries_inFV++;
+			}
+		}
 
 		mytree->GetEntry(event);
 		//this is where the in-time optical cut actually takes effect
@@ -184,7 +187,7 @@ int selection( const char * _file1){
 		hit_threshold_counter_other_mixed  = hit_threshold_counter_other_mixed + tabulated_origins.at(6);
 		hit_threshold_counter = hit_threshold_counter + tabulated_origins.at(7);
 
-		//if(mc_nu_id == 1 && tabulated_origins.at(0) == 1) {h_nue_eng_eff_num->Fill(mc_nu_energy); }
+		if(mc_nu_id == 1 && tabulated_origins.at(0) == 1) {h_nue_eng_eff_num->Fill(mc_nu_energy); }
 		_functions_instance.selection_functions::PostCutPlots(tpc_object_container_v, passed_tpco, _verbose, h_tracks_showers);
 
 	}//end event loop
@@ -295,6 +298,16 @@ int selection( const char * _file1){
 //********************//
 //**** Histograms ****//
 //*******************//
+
+	TCanvas * test_c1 = new TCanvas();
+	test_c1->cd();
+	h_nue_eng_eff_num->Draw();
+	test_c1->Print("selected_true_neutrino_energy.pdf");
+	TCanvas * test_c2 = new TCanvas();
+	test_c2->cd();
+	h_nue_eng_eff_den->Draw();
+	test_c2->Print("all_true_neutrino_energy.pdf");
+
 
 	TCanvas * efficency_c1 = new TCanvas();
 	efficency_c1->cd();

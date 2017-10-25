@@ -408,8 +408,9 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	int unmatched = 0;
 	int other_mixed = 0;
 	int total = 0;
+	int signal_tpco_num = -1;
 	std::vector<int> tabulated_origins;
-	tabulated_origins.resize(8);
+	tabulated_origins.resize(9);
 
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -444,7 +445,7 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 		}
 		if(part_cosmic == 0)
 		{
-			if(part_nue_cc    > 0) {nue_cc++;    continue; }
+			if(part_nue_cc    > 0) {nue_cc++;    signal_tpco_num = i; continue; }
 			if(part_nue_nc    > 0) {nue_nc++;    continue; }
 			if(part_numu      > 0) {numu++;      continue; }
 			if(part_unmatched > 0) {unmatched++; continue; }
@@ -461,6 +462,7 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	tabulated_origins.at(5) = unmatched;
 	tabulated_origins.at(6) = other_mixed;
 	tabulated_origins.at(7) = total;
+	tabulated_origins.at(8) = signal_tpco_num;
 	return tabulated_origins;
 }
 
@@ -665,9 +667,25 @@ void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> 
                                        std::vector<int> * passed_tpco, bool _verbose, TH2I * h_tracks_showers)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
+	int nue_cc = 0;
+	int nue_cc_mixed = 0;
+	int cosmic = 0;
+	int nue_nc = 0;
+	int numu   = 0;
+	int unmatched = 0;
+	int other_mixed = 0;
+	int total = 0;
+	int signal_tpco_num = -1;
+
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i) == 0) {continue; }
+		int part_nue_cc = 0;
+		int part_cosmic = 0;
+		int part_nue_nc = 0;
+		int part_numu   = 0;
+		int part_unmatched = 0;
+
 		int num_tracks = 0;
 		int num_showers = 0;
 		auto const tpc_obj = tpc_object_container_v->at(i);
@@ -679,7 +697,29 @@ void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> 
 			auto const part = tpc_obj.GetParticle(j);
 			if(part.PFParticlePdgCode() == 11) {num_showers++; }
 			if(part.PFParticlePdgCode() == 13) {num_tracks++; }
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
+			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
+			if(part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu++; }
+			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
+			if(part.Origin() == "kUnknown")   { part_unmatched++; }
+		}//end pfp loop
+		if(part_cosmic > 0)
+		{
+			if(part_nue_cc > 0) {nue_cc_mixed++; continue; }
+			if(part_nue_nc > 0 || part_numu > 0) {other_mixed++; continue; }
+			cosmic++;
 		}
-		h_tracks_showers->Fill(num_tracks, num_showers);
-	}
+		if(part_cosmic == 0)
+		{
+			if(part_nue_cc    > 0)
+			{
+				nue_cc++;
+				h_tracks_showers->Fill(num_tracks, num_showers);
+				continue;
+			}
+			if(part_nue_nc    > 0) {nue_nc++;    continue; }
+			if(part_numu      > 0) {numu++;      continue; }
+			if(part_unmatched > 0) {unmatched++; continue; }
+		}
+	}//end tpco loop
 }
