@@ -12,7 +12,10 @@
 #include "TEfficiency.h"
 #include "TCanvas.h"
 #include "TH1.h"
+#include "TH2.h"
 #include "TGraph.h"
+#include "TPad.h"
+#include "TMarker.h"
 
 #include <iostream>
 #include <vector>
@@ -107,10 +110,13 @@ double calcNumNucleons(double _x1, double _x2, double _y1,
 void calcXSec(double _x1, double _x2, double _y1,
               double _y2, double _z1, double _z2,
               int n_total, int n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
-
 //***************************************************************************
 //***************************************************************************
 void xsec_plot(bool _verbose, double genie_xsec, double xsec);
+//***************************************************************************
+//***************************************************************************
+void PostCutPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco, bool _verbose, TH2I * h_tracks_showers);
+
 };
 
 #endif

@@ -20,6 +20,7 @@ int selection( const char * _file1){
 
 	TH1D * h_nue_eng_eff_den = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 6, 0, 6);
 	TH1D * h_nue_eng_eff_num = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 6, 0, 6);
+	TH2I * h_tracks_showers  = new TH2I("h_tracks_showers", "h_tracks_showers", 10, 0, 10, 10, 0, 10);
 
 	std::cout << "Running With: " << POT << " POT " << std::endl;
 	const double flux = POT * scaling;
@@ -184,6 +185,7 @@ int selection( const char * _file1){
 		hit_threshold_counter = hit_threshold_counter + tabulated_origins.at(7);
 
 		//if(mc_nu_id == 1 && tabulated_origins.at(0) == 1) {h_nue_eng_eff_num->Fill(mc_nu_energy); }
+		_functions_instance.selection_functions::PostCutPlots(tpc_object_container_v, passed_tpco, _verbose, h_tracks_showers);
 
 	}//end event loop
 
@@ -290,6 +292,10 @@ int selection( const char * _file1){
 	std::cout << " Genie value of Flux " << '\n' <<
 	        " Integrated Xsec:    " << genie_xsec << std::endl;
 
+//********************//
+//**** Histograms ****//
+//*******************//
+
 	TCanvas * efficency_c1 = new TCanvas();
 	efficency_c1->cd();
 	TEfficiency * eng_eff = new TEfficiency(*h_nue_eng_eff_num, *h_nue_eng_eff_den);
@@ -301,7 +307,17 @@ int selection( const char * _file1){
 	eng_eff->Draw("AP");
 	efficency_c1->Print("signal_selection_nu_energy_efficiency.pdf");
 
-	//xsec_plot(_verbose, genie_xsec, xsec_cc->at(1));
+	_functions_instance.selection_functions::xsec_plot(_verbose, genie_xsec, xsec_cc->at(1));
+
+	TCanvas * post_cuts_c1 = new TCanvas();
+	post_cuts_c1->cd();
+	h_tracks_showers->GetYaxis()->SetTitle("Reco Showers");
+	h_tracks_showers->GetXaxis()->SetTitle("Reco Tracks");
+	h_tracks_showers->SetTitle("Post Cuts - Showers/Tracks per Candidate Nue TPC Object");
+	h_tracks_showers->SetStats(kFALSE);
+	h_tracks_showers->Draw("colz");
+	post_cuts_c1->Print("post_cuts_showers_tracks.pdf");
+
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;
 

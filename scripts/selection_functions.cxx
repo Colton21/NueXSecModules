@@ -551,23 +551,135 @@ void selection_functions::calcXSec(double _x1, double _x2, double _y1,
 //***************************************************************************
 //***************************************************************************
 
-void xsec_plot(bool _verbose, double genie_xsec, double xsec)
+void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xsec)
 {
+
+	//setting verbose manually for this function...
+	_verbose = false;
+
+	std::cout << "-------------------------------" << std::endl;
+	std::cout << "Cross Section Plotting Function" << std::endl;
+	std::cout << "-------------------------------" << std::endl;
 
 	std::cout << "Opening NuMIFlux.root" << std::endl;
 	//first we need to open the root file
-	TFile * f = new TFile("NuMIFlux.root");
+	TFile * f = new TFile("../arxiv/NuMIFlux.root");
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TH1D * h_nue_flux = (TH1D*)f->Get("nueFluxHisto");
+	h_nue_flux->GetXaxis()->SetLimits(0.0, 5.0);//5 Gev
 
 	std::cout << "Opening argon_xsec_nue.root" << std::endl;
 	//this is a genie file with the cross section
-	TFile * xsec_f = new TFile("argon_xsec_nue.root");
+	TFile * xsec_f = new TFile("../arxiv/argon_xsec_nue.root");
 	if(!xsec_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TGraph * g_nue_xsec = (TGraph*)xsec_f->Get("nu_e_Ar40/tot_cc");
+	g_nue_xsec->GetXaxis()->SetLimits(0.0, 5.0);//5 GeV
+	g_nue_xsec->SetMinimum(0.0);
+	g_nue_xsec->SetMaximum(50e-39);
+
+	// double x[1] = {1.0};//take the average of the interacting energy or the flux energy?
+	// double y[1] = {genie_xsec};
+	// const int n = 1;
+	//TGraph * g_genie_point = new TGraph(n, x, y);
+	// g_genie_point->GetXaxis()->SetLimits(0.0, 5.0);//5 GeV
+	// g_genie_point->SetMinimum(0.0);
+	// g_genie_point->SetMaximum(50e-39);
+	TMarker m_genie_point(1.0, genie_xsec, 1);
+	TMarker m_my_point(1.0, xsec, 1);
+
+	const int n_bins = h_nue_flux->GetNbinsX();
+	double bin_flux_sum = 0;
+	double bin_interaction_sum = 0;
+
+	//std::cout << "Loop over energy bins of 50 MeV" << std::endl;
+	for(int bin = 0; bin < n_bins; bin++)
+	{
+		const double bin_flux = h_nue_flux->GetBinContent(bin);
+		bin_flux_sum = bin_flux_sum + bin_flux;
+
+		const double bin_energy = h_nue_flux->GetBinCenter(bin);
+		//g_nue_xsec->GetY()[bin] *= 1e-38 / 40;
+		//g_nue_xsec->GetY() [bin] = g_nue_xsec->Eval(bin_energy) * 1e-38 / 40;
+		//std::cout <<  bin_energy << " , " << g_nue_xsec->GetY() [bin] << std::endl;
+		const double bin_xsec_val = g_nue_xsec->Eval(bin_energy) * 1e-38 / 40;//this gets the units per nucleon per cm^2
+		const double bin_interactions = bin_xsec_val * bin_flux;
+		bin_interaction_sum = bin_interaction_sum + bin_interactions;
+
+		if(_verbose == true && bin_flux > 0.0)
+		{
+			std::cout << "Cross Section: " << bin_xsec_val << std::endl;
+			std::cout << "Bin Energy: " << bin_energy << '\t' << "Bin Flux: " << bin_flux << std::endl;
+			std::cout << "===================" << std::endl;
+			std::cout << "Interactions: " << bin_interactions << std::endl;
+			std::cout << "===================" << std::endl;
+		}
+	}
+	for(int bin = 0; bin < g_nue_xsec->GetN(); bin++)
+	{
+		g_nue_xsec->GetY() [bin] *= 1e-38 / 40;
+	}
+	if(_verbose)
+	{
+		std::cout << "Total Neutrinos: " << bin_flux_sum << std::endl;
+		std::cout << "Total Interactions: " << bin_interaction_sum << std::endl;
+	}
+	//the website: https://cdcvs.fnal.gov/redmine/projects/ubooneoffline/wiki/NuMI_Flux_Histograms
+	//states that the flux is scaled to 6e20 POT
+	const double pot_used = 6 * pow(10, 20);
+
+	if(_verbose)
+	{
+		std::cout << "Total POT used: " << pot_used << std::endl;
+		std::cout << "Final Result is: " << bin_flux_sum / pot_used << " nues per POT per cm^2" << std::endl;
+		std::cout << "SUM{Phi(E) * Sigma(E)} / SUM{Phi(E)} = " << bin_interaction_sum / bin_flux_sum << " cm^2" << std::endl;
+	}
+
+	h_nue_flux->SetStats(kFALSE);
+	h_nue_flux->SetTitle("");
+	g_nue_xsec->SetTitle("");
+	TCanvas * combined_c1 = new TCanvas();
+	combined_c1->cd();
+	TPad * pad1 = new TPad();
+	TPad * pad2 = new TPad();
+	pad2->SetFillStyle(4000); //will be transparent
+	pad2->SetFrameFillStyle(0);
+	pad1->Draw();
+	pad1->cd();
+	g_nue_xsec->Draw("");
+	m_genie_point.Draw("SAME");
+	m_my_point.Draw("SAME");
+	pad2->Draw();
+	pad2->cd();
+	h_nue_flux->Draw("Y+");
+
+
+	combined_c1->Print("combined_xsec.pdf");
 
 
 	if(f->IsOpen()) {f->Close(); }
 	if(f->IsOpen()) {xsec_f->Close(); }
 
+}
+
+void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                       std::vector<int> * passed_tpco, bool _verbose, TH2I * h_tracks_showers)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i) == 0) {continue; }
+		int num_tracks = 0;
+		int num_showers = 0;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const std::string tpc_obj_origin = tpc_obj.Origin();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			if(part.PFParticlePdgCode() == 11) {num_showers++; }
+			if(part.PFParticlePdgCode() == 13) {num_tracks++; }
+		}
+		h_tracks_showers->Fill(num_tracks, num_showers);
+	}
 }
