@@ -146,6 +146,16 @@ bool selection_functions::opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, d
 //***************************************************************************
 //***************************************************************************
 
+bool selection_functions::opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double flash_width_z, double tolerance)
+{
+	const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) ) - flash_width_z;
+	if(distance <= tolerance) {return true; }
+	return false;
+}
+
+//***************************************************************************
+//***************************************************************************
+
 void selection_functions::SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector< double> > * largest_flash_v_v)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
@@ -203,6 +213,7 @@ void selection_functions::SetXYflashVector(TFile * f, TTree * optical_tree, std:
 		largest_flash_v.push_back(fOpFlashCenterY);
 		largest_flash_v.push_back(fOpFlashCenterZ);
 		largest_flash_v.push_back(current_event);
+		largest_flash_v.push_back(fOpFlashWidthZ);
 		largest_flash_v_v->push_back(largest_flash_v);
 		largest_flash_v.clear();
 	}
@@ -285,6 +296,60 @@ void selection_functions::VtxNuDistance(std::vector<xsecAna::TPCObjectContainer>
 			}
 		} //end loop pfps
 		if(close_shower == 0)//false
+		{
+			passed_tpco->at(i) = 0;
+		}
+	}//end tpc object loop
+}
+
+//***************************************************************************
+//***************************************************************************
+//this function wants to remove particles too far from the reconstructed neutrino vertex
+void selection_functions::VtxTrackNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             double tolerance, std::vector<int> * passed_tpco, const bool _verbose)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i) == 0) {continue; }
+		bool close_track = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		//loop over pfparticles in the TPCO
+		//this ensures there is at least 1 track in the event we're looking at
+		int n_tracks = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			n_tracks++;
+		}
+		if(n_tracks == 0) {continue; }
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			//check if at least one shower is within the tolerance to tpco vtx
+			//if no shower within tolerance, discard tpco (i.e. it's not a cc nue)
+			if(pfp_pdg == 13)        //if it's a track
+			{
+				const double pfp_vtx_x = part.pfpVtxX();
+				const double pfp_vtx_y = part.pfpVtxY();
+				const double pfp_vtx_z = part.pfpVtxZ();
+				close_track = shwr_vtx_distance(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z,
+				                                pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, tolerance);
+				if(close_track == true)
+				{
+					if(_verbose) std::cout << " \t " << i << "[Track-To-Nue] \t Passed " << std::endl;
+					passed_tpco->at(i) = 1;
+					break;
+				}
+			}
+		} //end loop pfps
+		if(close_track == 0)//false
 		{
 			passed_tpco->at(i) = 0;
 		}
@@ -382,6 +447,35 @@ void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_
 
 //***************************************************************************
 //***************************************************************************
+void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+                                       const double tolerance_open_angle, const bool _verbose)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i) == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int leading_index = 0;
+		int leading_hits  = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const int n_pfp_hits = part.NumPFPHits();
+			if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+			{
+				leading_hits = n_pfp_hits;
+				leading_index = j;
+			}
+		}//end loop pfparticles
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+		if(leading_open_angle > tolerance_open_angle) {passed_tpco->at(i) = 0; }
+	}//end loop tpc objects
+}//end open angle cut
+//***************************************************************************
+//***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
 bool selection_functions::ValidTPCObjects(std::vector<int> * passed_tpco)
 {
@@ -398,33 +492,39 @@ bool selection_functions::ValidTPCObjects(std::vector<int> * passed_tpco)
 //***************************************************************************
 //***************************************************************************
 
-std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco)
+std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+                                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
 {
-	int nue_cc = 0;
-	int nue_cc_mixed = 0;
-	int cosmic = 0;
-	int nue_nc = 0;
-	int numu   = 0;
-	int unmatched = 0;
-	int other_mixed = 0;
-	int total = 0;
+	int nue_cc        = 0;
+	int nue_cc_mixed  = 0;
+	int nue_cc_out_fv = 0;
+	int cosmic        = 0;
+	int nue_nc        = 0;
+	int numu_cc       = 0;
+	int numu_cc_mixed = 0;
+	int numu_nc       = 0;
+	int unmatched     = 0;
+	int other_mixed   = 0;
+	int total         = 0;
 	int signal_tpco_num = -1;
 	std::vector<int> tabulated_origins;
-	tabulated_origins.resize(9);
+	tabulated_origins.resize(12);
+
+	bool true_in_tpc = false;
 
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		int part_nue_cc = 0;
-		int part_cosmic = 0;
-		int part_nue_nc = 0;
-		int part_numu   = 0;
+		int part_nue_cc    = 0;
+		int part_cosmic    = 0;
+		int part_nue_nc    = 0;
+		int part_numu_cc   = 0;
+		int part_numu_nc   = 0;
 		int part_unmatched = 0;
 
 		if(passed_tpco->at(i) == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const std::string tpc_obj_origin = tpc_obj.Origin();
-		if(tpc_obj_origin == "kCosmicRay") {cosmic++; }
 		const int n_pfp = tpc_obj.NumPFParticles();
 		//loop over pfparticles in the TPCO
 		for(int j = 0; j < n_pfp; j++)
@@ -432,37 +532,51 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 			auto const part = tpc_obj.GetParticle(j);
 			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
 			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
-			if(part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 1 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_nc++; }
 			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
 			if(part.Origin() == "kUnknown")   { part_unmatched++; }
 		}
 		//now to catagorise the tpco
 		if(part_cosmic > 0)
 		{
-			if(part_nue_cc > 0) {nue_cc_mixed++; continue; }
-			if(part_nue_nc > 0 || part_numu > 0) {other_mixed++; continue; }
+			if(part_nue_cc > 0)  {nue_cc_mixed++; continue; }
+			if(part_numu_cc > 0) {numu_cc_mixed++; continue; }
+			if(part_nue_nc > 0 || part_numu_nc > 0) {other_mixed++; continue; }
 			cosmic++;
 		}
+		//this uses the true neutrino vertex for this specific event
+		//not the true vtx per tpc object - maybe this can be fixed in the future...
+		//but using the true nu vtx only matters for the pure signal events,
+		//where the neutrino vertex IS the true tpc object vertex
+		true_in_tpc = in_fv(vtxX, vtxY, vtxZ,
+		                    _x1, _x2, _y1,
+		                    _y2, _z1, _z2);
 		if(part_cosmic == 0)
 		{
-			if(part_nue_cc    > 0) {nue_cc++;    signal_tpco_num = i; continue; }
-			if(part_nue_nc    > 0) {nue_nc++;    continue; }
-			if(part_numu      > 0) {numu++;      continue; }
-			if(part_unmatched > 0) {unmatched++; continue; }
+			if(part_nue_cc    > 0 && true_in_tpc == false) { nue_cc_out_fv++; continue; }
+			if(part_nue_cc    > 0) {nue_cc++;    signal_tpco_num = i;         continue; }
+			if(part_nue_nc    > 0) {nue_nc++;       continue; }
+			if(part_numu_cc   > 0) {numu_cc++;      continue; }
+			if(part_numu_nc   > 0) {numu_nc++;      continue; }
+			if(part_unmatched > 0) {unmatched++;    continue; }
 		}
 	}
 
-	total = nue_cc + nue_cc_mixed + cosmic + nue_nc + numu + unmatched + other_mixed;
+	total = nue_cc + nue_cc_mixed + nue_cc_out_fv + cosmic + nue_nc + numu_cc + numu_cc_mixed + numu_nc + unmatched + other_mixed;
 
-	tabulated_origins.at(0) = nue_cc;
-	tabulated_origins.at(1) = nue_cc_mixed;
-	tabulated_origins.at(2) = cosmic;
-	tabulated_origins.at(3) = nue_nc;
-	tabulated_origins.at(4) = numu;
-	tabulated_origins.at(5) = unmatched;
-	tabulated_origins.at(6) = other_mixed;
-	tabulated_origins.at(7) = total;
-	tabulated_origins.at(8) = signal_tpco_num;
+	tabulated_origins.at(0)  = nue_cc;
+	tabulated_origins.at(1)  = nue_cc_mixed;
+	tabulated_origins.at(2)  = cosmic;
+	tabulated_origins.at(3)  = nue_nc;
+	tabulated_origins.at(4)  = numu_cc;
+	tabulated_origins.at(5)  = unmatched;
+	tabulated_origins.at(6)  = other_mixed;
+	tabulated_origins.at(7)  = total;
+	tabulated_origins.at(8)  = signal_tpco_num;
+	tabulated_origins.at(9)  = nue_cc_out_fv;
+	tabulated_origins.at(10) = numu_nc;
+	tabulated_origins.at(11) = numu_cc_mixed;
 	return tabulated_origins;
 }
 
@@ -474,23 +588,29 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter,
                                     int counter,
                                     int counter_nue_cc,
                                     int counter_nue_cc_mixed,
+                                    int counter_nue_cc_out_fv,
                                     int counter_cosmic,
                                     int counter_nue_nc,
-                                    int counter_numu,
+                                    int counter_numu_cc,
+                                    int counter_numu_cc_mixed,
+                                    int counter_numu_nc,
                                     int counter_unmatched,
                                     int counter_other_mixed,
                                     std::string cut_name)
 {
 	std::cout << " <" << cut_name << "> " << std::endl;
-	std::cout << " Total Candidate Nue    : " << counter << std::endl;
-	std::cout << " Number of Nue CC       : " << counter_nue_cc << std::endl;
-	std::cout << " Number of Nue CC Mixed : " << counter_nue_cc_mixed << std::endl;
-	std::cout << " Number of Cosmic       : " << counter_cosmic << std::endl;
-	std::cout << " Number of Nue NC       : " << counter_nue_nc << std::endl;
-	std::cout << " Number of Numu         : " << counter_numu << std::endl;
-	std::cout << " Number of Unmatched    : " << counter_unmatched << std::endl;
-	std::cout << " Number of Other Mixed  : " << counter_other_mixed << std::endl;
-	std::cout << "------------------------" << std::endl;
+	std::cout << " Total Candidate Nue     : " << counter << std::endl;
+	std::cout << " Number of Nue CC        : " << counter_nue_cc << std::endl;
+	std::cout << " Number of Nue CC Mixed  : " << counter_nue_cc_mixed << std::endl;
+	std::cout << " Number of Nue CC out FV : " << counter_nue_cc_out_fv << std::endl;
+	std::cout << " Number of Cosmic        : " << counter_cosmic << std::endl;
+	std::cout << " Number of Nue NC        : " << counter_nue_nc << std::endl;
+	std::cout << " Number of Numu CC       : " << counter_numu_cc << std::endl;
+	std::cout << " Number of Numu CC Mixed : " << counter_numu_cc_mixed << std::endl;
+	std::cout << " Number of Numu NC       : " << counter_numu_nc << std::endl;
+	std::cout << " Number of Unmatched     : " << counter_unmatched << std::endl;
+	std::cout << " Number of Other Mixed   : " << counter_other_mixed << std::endl;
+	std::cout << "---------------------------" << std::endl;
 	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
 	const double purity = double(counter_nue_cc) / double(counter);
 	std::cout << " Efficiency       : " << efficiency << std::endl;
@@ -510,12 +630,12 @@ double selection_functions::calcNumNucleons(double _x1, double _x2, double _y1,
 	const double det_z1 = 0;
 	const double det_z2 = 1036.8;
 
-	const double x1 = det_x1 + x1;
-	const double x2 = det_x2 - x2;
-	const double y1 = det_y1 + y1;
-	const double y2 = det_y2 - y2;
-	const double z1 = det_z1 + z1;
-	const double z2 = det_z2 - z2;
+	const double x1 = (det_x1 + _x1);
+	const double x2 = (det_x2 - _x2);
+	const double y1 = (det_y1 + _y1);
+	const double y2 = (det_y2 - _y2);
+	const double z1 = (det_z1 + _z1);
+	const double z2 = (det_z2 - _z2);
 
 	const double vol = (x2 - x1) * (y2 - y1) * (z2 - z1); //cm^3
 
@@ -553,7 +673,7 @@ void selection_functions::calcXSec(double _x1, double _x2, double _y1,
 //***************************************************************************
 //***************************************************************************
 
-void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xsec)
+void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_energy, double stat_error)
 {
 
 	//setting verbose manually for this function...
@@ -579,15 +699,25 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 	g_nue_xsec->SetMinimum(0.0);
 	g_nue_xsec->SetMaximum(50e-39);
 
-	// double x[1] = {1.0};//take the average of the interacting energy or the flux energy?
-	// double y[1] = {genie_xsec};
-	// const int n = 1;
-	//TGraph * g_genie_point = new TGraph(n, x, y);
-	// g_genie_point->GetXaxis()->SetLimits(0.0, 5.0);//5 GeV
-	// g_genie_point->SetMinimum(0.0);
-	// g_genie_point->SetMaximum(50e-39);
-	TMarker m_genie_point(1.0, genie_xsec, 1);
-	TMarker m_my_point(1.0, xsec, 1);
+	double g_x[1] = {1.0};//take the average of the interacting energy or the flux energy?
+	double g_y[1] = {genie_xsec};
+	double g_ex[1] = {0.0};
+	double g_ey[1] = {0.0};
+	const int g_n = 1;
+	TGraphErrors * g_genie_point = new TGraphErrors(g_n, g_x, g_y, g_ex, g_ey);
+	g_genie_point->GetXaxis()->SetLimits(0.0, 5.0);//5 GeV
+	g_genie_point->SetMinimum(0.0);
+	g_genie_point->SetMaximum(50e-39);
+
+	double x[1] = {average_energy};
+	double y[1] = {xsec};
+	double ex[1] = {stat_error};
+	double ey[1] = {stat_error};
+	const int n = 1;
+	TGraphErrors * g_my_point = new TGraphErrors(n, x, y, ex, ey);
+	g_my_point->GetXaxis()->SetLimits(0.0, 5.0);
+	g_my_point->SetMinimum(0.0);
+	g_my_point->SetMaximum(50e-39);
 
 	const int n_bins = h_nue_flux->GetNbinsX();
 	double bin_flux_sum = 0;
@@ -648,8 +778,20 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 	pad1->Draw();
 	pad1->cd();
 	g_nue_xsec->Draw("");
-	m_genie_point.Draw("SAME");
-	m_my_point.Draw("SAME");
+	g_nue_xsec->GetXaxis()->SetLabelOffset(999);
+	g_nue_xsec->GetXaxis()->SetLabelSize(0);
+	g_nue_xsec->GetYaxis()->SetTitle("#nu_{e} CC Cross Section cm^2");
+	g_genie_point->GetXaxis()->SetLabelOffset(999);
+	g_genie_point->GetXaxis()->SetLabelSize(0);
+	g_genie_point->SetMarkerStyle(3);
+	g_genie_point->SetMarkerSize(1.5);
+	g_genie_point->Draw("SAMEP");
+	g_my_point->GetXaxis()->SetLabelOffset(999);
+	g_my_point->GetXaxis()->SetLabelSize(0);
+	g_my_point->SetMarkerStyle(3);
+	g_my_point->SetMarkerColor(30);
+	g_my_point->SetMarkerSize(1.5);
+	g_my_point->Draw("SAMEP");
 	pad2->Draw();
 	pad2->cd();
 	h_nue_flux->Draw("Y+");
@@ -664,50 +806,118 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 }
 
 void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                       std::vector<int> * passed_tpco, bool _verbose, TH2I * h_tracks_showers)
+                                       std::vector<int> * passed_tpco, bool _verbose,
+                                       TH2I * h_tracks_showers, TH2I * h_tracks_showers_cosmic, TH2I * h_tracks_showers_numu,
+                                       TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
+                                       TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_numu_nc,
+                                       TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nue_nc,
+                                       TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
+                                       TH1D * h_leading_shower_open_angle_unmatched,
+                                       TH1D * h_trk_vtx_dist_nue_cc, TH1D * h_trk_vtx_dist_nue_cc_mixed,
+                                       TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_numu_nc,
+                                       TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nue_nc,
+                                       TH1D * h_trk_vtx_dist_numu_cc_mixed, TH1D * h_trk_vtx_dist_other_mixed,
+                                       TH1D * h_trk_vtx_dist_unmatched)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	int nue_cc = 0;
-	int nue_cc_mixed = 0;
-	int cosmic = 0;
-	int nue_nc = 0;
-	int numu   = 0;
-	int unmatched = 0;
-	int other_mixed = 0;
+	int nue_cc        = 0;
+	int nue_cc_mixed  = 0;
+	int cosmic        = 0;
+	int nue_nc        = 0;
+	int numu_cc       = 0;
+	int numu_cc_mixed = 0;
+	int numu_nc       = 0;
+	int unmatched     = 0;
+	int other_mixed   = 0;
 	int total = 0;
 	int signal_tpco_num = -1;
 
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i) == 0) {continue; }
-		int part_nue_cc = 0;
-		int part_cosmic = 0;
-		int part_nue_nc = 0;
-		int part_numu   = 0;
+		int part_nue_cc    = 0;
+		int part_cosmic    = 0;
+		int part_nue_nc    = 0;
+		int part_numu_cc   = 0;
+		int part_numu_nc   = 0;
 		int part_unmatched = 0;
+
+		int leading_index = 0;
+		int most_hits = 0;
 
 		int num_tracks = 0;
 		int num_showers = 0;
+
+		double smallest_trk_vtx_dist = 1000;
+		bool has_track = false;
+
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const std::string tpc_obj_origin = tpc_obj.Origin();
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		const int n_pfp = tpc_obj.NumPFParticles();
 		//loop over pfparticles in the TPCO
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const int n_pfp_hits = part.NumPFPHits();
+
+			if(pfp_pdg == 13) //if it's a track
+			{
+				has_track = true;
+				const double pfp_vtx_x = part.pfpVtxX();
+				const double pfp_vtx_y = part.pfpVtxY();
+				const double pfp_vtx_z = part.pfpVtxZ();
+				const double trk_vtx_dist = sqrt(((tpc_vtx_x - pfp_vtx_x) * (tpc_vtx_x - pfp_vtx_x)) +
+				                                 ((tpc_vtx_y - pfp_vtx_y) * (tpc_vtx_y - pfp_vtx_y)) +
+				                                 ((tpc_vtx_z - pfp_vtx_z) * (tpc_vtx_z - pfp_vtx_z)));
+				if(trk_vtx_dist < smallest_trk_vtx_dist) {smallest_trk_vtx_dist = trk_vtx_dist; }
+				const double trk_length = part.pfpLength();
+				std::cout << trk_length << std::endl;
+			}
+
+			if(pfp_pdg == 11 && n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 			if(part.PFParticlePdgCode() == 11) {num_showers++; }
 			if(part.PFParticlePdgCode() == 13) {num_tracks++; }
 			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
 			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
-			if(part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 1 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_nc++; }
 			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
 			if(part.Origin() == "kUnknown")   { part_unmatched++; }
 		}//end pfp loop
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
 		if(part_cosmic > 0)
 		{
-			if(part_nue_cc > 0) {nue_cc_mixed++; continue; }
-			if(part_nue_nc > 0 || part_numu > 0) {other_mixed++; continue; }
+			if(part_nue_cc > 0)
+			{
+				nue_cc_mixed++;
+				h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_nue_cc_mixed->Fill(smallest_trk_vtx_dist); }
+				continue;
+			}
+			if(part_numu_cc > 0)
+			{
+				numu_cc_mixed++;
+				h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_numu_cc_mixed->Fill(smallest_trk_vtx_dist); }
+				continue;
+			}
+			if(part_nue_nc > 0 || part_numu_nc > 0)
+			{
+				other_mixed++;
+				h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_other_mixed->Fill(smallest_trk_vtx_dist); }
+				continue;
+			}
 			cosmic++;
+			h_tracks_showers_cosmic->Fill(num_tracks, num_showers);
+			h_leading_shower_open_angle_cosmic->Fill(leading_open_angle);
+			if(has_track) {h_trk_vtx_dist_cosmic->Fill(smallest_trk_vtx_dist); }
 		}
 		if(part_cosmic == 0)
 		{
@@ -715,11 +925,39 @@ void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> 
 			{
 				nue_cc++;
 				h_tracks_showers->Fill(num_tracks, num_showers);
+				h_leading_shower_open_angle_nue_cc->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_nue_cc->Fill(smallest_trk_vtx_dist); }
 				continue;
 			}
-			if(part_nue_nc    > 0) {nue_nc++;    continue; }
-			if(part_numu      > 0) {numu++;      continue; }
-			if(part_unmatched > 0) {unmatched++; continue; }
+			if(part_nue_nc    > 0)
+			{
+				nue_nc++;
+				h_leading_shower_open_angle_nue_nc->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_nue_nc->Fill(smallest_trk_vtx_dist); }
+				continue;
+			}
+			if(part_numu_cc   > 0)
+			{
+				numu_cc++;
+				h_tracks_showers_numu->Fill(num_tracks, num_showers);
+				h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_numu_cc->Fill(smallest_trk_vtx_dist); }
+				continue;
+			}
+			if(part_numu_nc   > 0)
+			{
+				numu_nc++;
+				h_leading_shower_open_angle_numu_nc->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_numu_nc->Fill(smallest_trk_vtx_dist); }
+				continue;
+			}
+			if(part_unmatched > 0)
+			{
+				unmatched++;
+				h_leading_shower_open_angle_unmatched->Fill(leading_open_angle);
+				if(has_track) {h_trk_vtx_dist_unmatched->Fill(smallest_trk_vtx_dist); }
+				continue;
+			}
 		}
 	}//end tpco loop
 }

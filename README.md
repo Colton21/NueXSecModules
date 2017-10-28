@@ -48,13 +48,11 @@ Lastly, we need to consulte GENIE and the NuMI flux histograms to find the prope
 
 This is a place where I will be tracking some issues:
 
-- Neutral current events are never being matched, why?
-- True Neutrino energy needs to be added for matched events.
 - A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero.
 - Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
 - Certain truth variables being filled have odd results - why can MC Direction be greater than 1?
 - Reco Momentum for recob::Track objects using StartMomentum() is always 1.
-- Cosmic information using MCParticles is not great (vtx where Corsika generated, etc), need to use MCTrack/MCShower for these.
+- Cosmic information using MCParticles is not great (vtx where Corsika generated, etc), need to use MCTrack/MCShower for these, but no associations in the MC files.
 
 ## To-Be Verified
 - All NuMI Nue + Cosmic sample.

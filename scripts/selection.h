@@ -8,8 +8,8 @@
 namespace xsecSelection {
 
 
-//const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
-const double POT = 2.90469e+21;    //POT - nue + cosmics
+const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
+//const double POT = 2.90469e+21;    //POT - nue + cosmics
 const double scaling = 1.52938e-11;  //nues / POT / cm^2
 const double genie_xsec = 5.05191e-39; //cm^2
 
@@ -18,12 +18,19 @@ const double genie_xsec = 5.05191e-39; //cm^2
 //*******************
 
 //fiducial volume
-const double _x1 = 0;
-const double _x2 = 0;
-const double _y1 = 0;
-const double _y2 = 0;
-const double _z1 = 0;
-const double _z2 = 0;
+const double _x1 = 15;
+const double _x2 = 15;
+const double _y1 = 30;
+const double _y2 = 15;
+const double _z1 = 15;
+const double _z2 = 15;
+
+// const double _x1 = 0;
+// const double _x2 = 0;
+// const double _y1 = 0;
+// const double _y2 = 0;
+// const double _z1 = 0;
+// const double _z2 = 0;
 
 //in time flash
 const int flash_pe_threshold = 50;
@@ -31,13 +38,23 @@ const double flash_time_start = 5;
 const double flash_time_end = 16;
 
 //vertex to flash
-const double tolerance = 100;//cm
+//standard 100 cm
+const double tolerance = 80;//cm
 
 //distance between pfp shower and nue object
-const double shwr_nue_tolerance = 50;//cm
+//standard 50 cm
+//Roberto runs with 4cm
+const double shwr_nue_tolerance = 4;//cm
+const double trk_nue_tolerance = 4;//cm
 
 //hit threshold for showers
-const double shwr_hit_threshold = 50;//hits
+//standard 50 hits
+const double shwr_hit_threshold = 100;//hits
+
+//tolerance for open angle
+//standard 20 degrees
+//Roberto uses 15 degrees
+const double tolerance_open_angle = 15;//degrees
 
 //********************
 //********************
@@ -63,43 +80,80 @@ int run_sum = 0;
 int reco_nue_counter = 0;
 int reco_nue_counter_nue_cc = 0;
 int reco_nue_counter_nue_cc_mixed = 0;
+int reco_nue_counter_nue_cc_out_fv = 0;
 int reco_nue_counter_cosmic = 0;
 int reco_nue_counter_nue_nc = 0;
-int reco_nue_counter_numu = 0;
+int reco_nue_counter_numu_cc = 0;
+int reco_nue_counter_numu_cc_mixed = 0;
+int reco_nue_counter_numu_nc = 0;
 int reco_nue_counter_unmatched = 0;
 int reco_nue_counter_other_mixed = 0;
 int in_fv_counter = 0;
 int in_fv_counter_nue_cc = 0;
 int in_fv_counter_nue_cc_mixed = 0;
+int in_fv_counter_nue_cc_out_fv = 0;
 int in_fv_counter_cosmic = 0;
 int in_fv_counter_nue_nc = 0;
-int in_fv_counter_numu = 0;
+int in_fv_counter_numu_cc = 0;
+int in_fv_counter_numu_cc_mixed = 0;
+int in_fv_counter_numu_nc = 0;
 int in_fv_counter_unmatched = 0;
 int in_fv_counter_other_mixed = 0;
 int vtx_flash_counter = 0;
 int vtx_flash_counter_nue_cc = 0;
 int vtx_flash_counter_nue_cc_mixed = 0;
+int vtx_flash_counter_nue_cc_out_fv = 0;
 int vtx_flash_counter_cosmic = 0;
 int vtx_flash_counter_nue_nc = 0;
-int vtx_flash_counter_numu = 0;
+int vtx_flash_counter_numu_cc = 0;
+int vtx_flash_counter_numu_cc_mixed = 0;
+int vtx_flash_counter_numu_nc = 0;
 int vtx_flash_counter_unmatched = 0;
 int vtx_flash_counter_other_mixed = 0;
 int shwr_tpco_counter = 0;
 int shwr_tpco_counter_nue_cc = 0;
 int shwr_tpco_counter_nue_cc_mixed = 0;
+int shwr_tpco_counter_nue_cc_out_fv = 0;
 int shwr_tpco_counter_cosmic = 0;
 int shwr_tpco_counter_nue_nc = 0;
-int shwr_tpco_counter_numu = 0;
+int shwr_tpco_counter_numu_cc = 0;
+int shwr_tpco_counter_numu_cc_mixed = 0;
+int shwr_tpco_counter_numu_nc = 0;
 int shwr_tpco_counter_unmatched = 0;
 int shwr_tpco_counter_other_mixed = 0;
+int trk_tpco_counter = 0;
+int trk_tpco_counter_nue_cc = 0;
+int trk_tpco_counter_nue_cc_mixed = 0;
+int trk_tpco_counter_nue_cc_out_fv = 0;
+int trk_tpco_counter_cosmic = 0;
+int trk_tpco_counter_nue_nc = 0;
+int trk_tpco_counter_numu_cc = 0;
+int trk_tpco_counter_numu_cc_mixed = 0;
+int trk_tpco_counter_numu_nc = 0;
+int trk_tpco_counter_unmatched = 0;
+int trk_tpco_counter_other_mixed = 0;
 int hit_threshold_counter = 0;
 int hit_threshold_counter_nue_cc = 0;
 int hit_threshold_counter_nue_cc_mixed = 0;
+int hit_threshold_counter_nue_cc_out_fv = 0;
 int hit_threshold_counter_cosmic = 0;
 int hit_threshold_counter_nue_nc = 0;
-int hit_threshold_counter_numu = 0;
+int hit_threshold_counter_numu_cc = 0;
+int hit_threshold_counter_numu_cc_mixed = 0;
+int hit_threshold_counter_numu_nc = 0;
 int hit_threshold_counter_unmatched = 0;
 int hit_threshold_counter_other_mixed = 0;
+int open_angle_counter = 0;
+int open_angle_counter_nue_cc = 0;
+int open_angle_counter_nue_cc_mixed = 0;
+int open_angle_counter_nue_cc_out_fv = 0;
+int open_angle_counter_cosmic = 0;
+int open_angle_counter_nue_nc = 0;
+int open_angle_counter_numu_cc = 0;
+int open_angle_counter_numu_cc_mixed = 0;
+int open_angle_counter_numu_nc = 0;
+int open_angle_counter_unmatched = 0;
+int open_angle_counter_other_mixed = 0;
 std::vector<int> tabulated_origins;
 
 

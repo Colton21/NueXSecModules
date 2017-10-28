@@ -13,7 +13,10 @@
 #include "TCanvas.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TLegend.h"
+#include "THStack.h"
 #include "TGraph.h"
+#include "TGraphErrors.h"
 #include "TPad.h"
 #include "TMarker.h"
 
@@ -53,6 +56,9 @@ void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
 bool opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double tolerance);
 //***************************************************************************
 //***************************************************************************
+bool opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double flash_width_z, double tolerance);
+//***************************************************************************
+//***************************************************************************
 void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector< double> > * largest_flash_v_v);
 //***************************************************************************
 //***************************************************************************
@@ -70,6 +76,11 @@ void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
 //***************************************************************************
 //***************************************************************************
 //this function wants to remove particles too far from the reconstructed neutrino vertex
+void VtxTrackNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        double tolerance, std::vector<int> * passed_tpco, const bool _verbose);
+//***************************************************************************
+//***************************************************************************
+//this function wants to remove particles too far from the reconstructed neutrino vertex
 void HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                   double threshold, std::vector<int> * passed_tpco, const bool _verbose);
 //***************************************************************************
@@ -82,11 +93,16 @@ void GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_
 void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco, const bool _verbose);
 //***************************************************************************
 //***************************************************************************
+void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco, const double tolerance_open_angle,
+                  const bool _verbose);
+//***************************************************************************
+//***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
 bool ValidTPCObjects(std::vector<int> * passed_tpco);
 //***************************************************************************
 //***************************************************************************
-std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco);
+std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+                                 double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
 //***************************************************************************
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
@@ -95,9 +111,12 @@ void PrintInfo(int mc_nue_cc_counter,
                int counter,
                int counter_nue_cc,
                int counter_nue_cc_mixed,
+               int counter_nue_cc_out_fv,
                int counter_cosmic,
                int counter_nue_nc,
-               int counter_numu,
+               int counter_numu_cc,
+               int counter_numu_cc_mixed,
+               int counter_numu_nc,
                int counter_unmatched,
                int counter_other_mixed,
                std::string cut_name);
@@ -112,10 +131,21 @@ void calcXSec(double _x1, double _x2, double _y1,
               int n_total, int n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************
 //***************************************************************************
-void xsec_plot(bool _verbose, double genie_xsec, double xsec);
+void xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_energy, double stat_error);
 //***************************************************************************
 //***************************************************************************
-void PostCutPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco, bool _verbose, TH2I * h_tracks_showers);
+void PostCutPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco, bool _verbose,
+                  TH2I * h_tracks_showers, TH2I * h_tracks_showers_cosmic, TH2I * h_tracks_showers_numu,
+                  TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
+                  TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_numu_nc,
+                  TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nue_nc,
+                  TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
+                  TH1D * h_leading_shower_open_angle_unmatched,
+                  TH1D * h_trk_vtx_dist_nue_cc, TH1D * h_trk_vtx_dist_nue_cc_mixed,
+                  TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_numu_nc,
+                  TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nue_nc,
+                  TH1D * h_trk_vtx_dist_numu_cc_mixed, TH1D * h_trk_vtx_dist_other_mixed,
+                  TH1D * h_trk_vtx_dist_unmatched);
 
 };
 
