@@ -322,10 +322,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<recob::Cluster> clusters_from_pfpart(pfp_h, e, _pfp_producer);
 	art::FindManyP<recob::Hit> hits_from_clusters(cluster_h, e, _pfp_producer);
 	//making a map of clusters to hit vectors
-	std::map <art::Ptr<recob::Cluster>, art::Ptr<std::vector<recob::Hit> > > ClusterToHitsMap;
-	for(auto const cluster : (*cluster_h) )
+	std::map < art::Ptr< recob::Cluster>, std::vector<art::Ptr < recob::Hit> > > ClusterToHitsMap;
+	std::vector<art::Ptr<recob::Cluster>> cluster_v;
+	art::fill_ptr_vector(cluster_v, cluster_h);
+	for(auto const cluster : cluster_v )
 	{
-		std::vector<art::Ptr<recob::Hit> > hits = hits_from_clusters.at(cluster->key());
+		std::vector<art::Ptr<recob::Hit> > hits = hits_from_clusters.at(cluster.key());
 		ClusterToHitsMap.insert(std::make_pair(cluster, hits));
 	}
 
@@ -671,7 +673,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
 					//trying to do dqdx!
-					xsecAna::utility::ConstructShowerdQdX(clusters, this_shower, _verbose);
+					xsecAna::utility::ConstructShowerdQdX(ClusterToHitsMap, clusters, this_shower, _verbose);
 				}
 			}//end pfp showers
 

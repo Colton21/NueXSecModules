@@ -181,33 +181,42 @@ void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, doub
 	return;
 }
 
-void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, art::Ptr<std::vector<recob::Hit> > > ClusterToHitsMap,
+void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr< recob::Hit> > > ClusterToHitsMap,
                                   std::vector<art::Ptr<recob::Cluster> > clusters, const art::Ptr<recob::Shower> shower, bool _verbose)
 {
 
-	const double _gain = 0;
+	//const double _gain = 0;
 
 	detinfo::DetectorProperties const * detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
-	const double drift = detprop->DriftVelocity() * 1e-3;
+	//const double drift = detprop->DriftVelocity() * 1e-3;
 
 	// TODO Use variable from detector properties!
 	// To get the time in ns -> 4.8 ms / 9600 ticks * 1e6 = 500
 	// 0.3 wire spacing
 
 	const double fromTickToNs = 4.8 / detprop->ReadOutWindowSize() * 1e6;
+	std::cout << " FRom Ticks to Ns: " << fromTickToNs << std::endl;
 	const double wireSpacing = 0.3;
 
 	const int n_clusters = clusters.size();
 
 	if(_verbose) {std::cout << "[dQdx] Clusters size " << n_clusters << std::endl; }
-	for(auto const cluster : clusters)
+	//these are the clusters associated with a given shower
+	for(auto const  cluster : clusters)
 	{
-		art::Ptr< std::vector < recob::Hits > > > hit_v = ClusterToHitsMap.find(cluster)->second;
-		const int start_wire = cluster->StartWire();
-		const double start_position = start_wire * wireSpacing;
-		std::cout << start_wire << std::endl;
-	}
+                auto const find_iter = ClusterToHitsMap.find(cluster);
+		if (find_iter == ClusterToHitsMap.end()){continue;}
+                std::vector<art::Ptr<recob::Hit>> hits_v = find_iter->second;
 
+		const int cluster_start_wire = cluster->StartWire();
+		const double cluster_start_position = cluster_start_wire * wireSpacing;
+		std::cout << "Cluster Start Position: " << cluster_start_position << std::endl;
+		for(auto const hit : hits_v)
+		{
+			const double  hit_pos = hit->WireID().Wire * wireSpacing;
+			std::cout << "Hits Position: " << hit_pos << std::endl;
+		}		
+	}
 }
 
 }//end namespace
