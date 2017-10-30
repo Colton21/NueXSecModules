@@ -3,6 +3,8 @@
 
 #include "AnaHelper.h"
 
+#include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+
 namespace xsecAna {
 
 class utility {
@@ -63,6 +65,9 @@ static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleL
 static void GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double & trackPurity, double & trackEfficiency );
 
 };
+
+static void ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, art::Ptr<std::vector<recob::Hit> > > ClusterToHitsMap,
+                                std::vector<art::Ptr<recob::Cluster> > clusters, const art::Ptr<recob::Shower> shower, bool _verbose);
 
 }//end namespace
 

@@ -181,4 +181,33 @@ void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, doub
 	return;
 }
 
+void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, art::Ptr<std::vector<recob::Hit> > > ClusterToHitsMap,
+                                  std::vector<art::Ptr<recob::Cluster> > clusters, const art::Ptr<recob::Shower> shower, bool _verbose)
+{
+
+	const double _gain = 0;
+
+	detinfo::DetectorProperties const * detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
+	const double drift = detprop->DriftVelocity() * 1e-3;
+
+	// TODO Use variable from detector properties!
+	// To get the time in ns -> 4.8 ms / 9600 ticks * 1e6 = 500
+	// 0.3 wire spacing
+
+	const double fromTickToNs = 4.8 / detprop->ReadOutWindowSize() * 1e6;
+	const double wireSpacing = 0.3;
+
+	const int n_clusters = clusters.size();
+
+	if(_verbose) {std::cout << "[dQdx] Clusters size " << n_clusters << std::endl; }
+	for(auto const cluster : clusters)
+	{
+		art::Ptr< std::vector < recob::Hits > > > hit_v = ClusterToHitsMap.find(cluster)->second;
+		const int start_wire = cluster->StartWire();
+		const double start_position = start_wire * wireSpacing;
+		std::cout << start_wire << std::endl;
+	}
+
+}
+
 }//end namespace

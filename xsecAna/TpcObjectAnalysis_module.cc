@@ -31,6 +31,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <map>
 
 namespace xsecAna {
 class TpcObjectAnalysis;
@@ -313,12 +314,25 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<recob::Track> tracks_from_pfp(pfp_h, e, _pfp_producer);
 	art::FindManyP<recob::Shower> showers_from_pfp(pfp_h, e, _pfp_producer);
 
+	//Need to get clusters for dQ/dX
+	art::Handle<std::vector<recob::Cluster > > cluster_h;
+	e.getByLabel(_pfp_producer, cluster_h);
+	if(!cluster_h.isValid()) {std::cout << "[Analyze] Cannot locate recob::Cluster. " << std::endl; }
+
+	art::FindManyP<recob::Cluster> clusters_from_pfpart(pfp_h, e, _pfp_producer);
+	art::FindManyP<recob::Hit> hits_from_clusters(cluster_h, e, _pfp_producer);
+	//making a map of clusters to hit vectors
+	std::map <art::Ptr<recob::Cluster>, art::Ptr<std::vector<recob::Hit> > > ClusterToHitsMap;
+	for(auto const cluster : (*cluster_h) )
+	{
+		std::vector<art::Ptr<recob::Hit> > hits = hits_from_clusters.at(cluster->key());
+		ClusterToHitsMap.insert(std::make_pair(cluster, hits));
+	}
+
 	// Get TPCObjects from the Event
 	art::Handle<std::vector<xsecAna::TPCObject> > tpcobj_h;
 	e.getByLabel(_tpcobject_producer, tpcobj_h);
-	if (!tpcobj_h.isValid()) {
-		std::cout << "[Analyze] Cannote locate ubana::TPCObject." << std::endl;
-	}
+	if (!tpcobj_h.isValid()) {std::cout << "[Analyze] Cannote locate xsecAna::TPCObject." << std::endl; }
 
 	// Get Ghosts
 	art::Handle<std::vector<xsecAna::MCGhost> > ghost_h;
@@ -639,6 +653,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
 				if(_verbose) {std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl; }
+				std::vector<art::Ptr<recob::Cluster> > clusters = clusters_from_pfpart.at(pfp.key());
 				//we want to take the first association, right?
 				if(showers.size() != 0)
 				{
@@ -654,6 +669,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_shower, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
+
+					//trying to do dqdx!
+					xsecAna::utility::ConstructShowerdQdX(clusters, this_shower, _verbose);
 				}
 			}//end pfp showers
 
