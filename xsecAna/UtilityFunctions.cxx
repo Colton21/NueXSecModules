@@ -182,13 +182,18 @@ void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, doub
 }
 
 void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr< recob::Hit> > > ClusterToHitsMap,
-                                  std::vector<art::Ptr<recob::Cluster> > clusters, const art::Ptr<recob::Shower> shower, bool _verbose)
+                                  std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
+				  const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > shower_cluster_dqdx, bool _verbose)
 {
 
 	//const double _gain = 0;
 
 	detinfo::DetectorProperties const * detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
-	//const double drift = detprop->DriftVelocity() * 1e-3;
+	const double drift = detprop->DriftVelocity() * 1e-3;
+
+
+  	TVector3 shower_dir(shower->Direction().X(), shower->Direction().Y(),
+                            shower->Direction().Z());
 
 	// TODO Use variable from detector properties!
 	// To get the time in ns -> 4.8 ms / 9600 ticks * 1e6 = 500
@@ -196,11 +201,13 @@ void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vecto
 
 	const double fromTickToNs = 4.8 / detprop->ReadOutWindowSize() * 1e6;
 	std::cout << " FRom Ticks to Ns: " << fromTickToNs << std::endl;
-	const double wireSpacing = 0.3;
+	const double wire_spacing = 0.3;
 
 	const int n_clusters = clusters.size();
+	shower_cluster_dqdx.resize(n_clusters);
 
 	if(_verbose) {std::cout << "[dQdx] Clusters size " << n_clusters << std::endl; }
+	int cluster_num = 0;
 	//these are the clusters associated with a given shower
 	for(auto const  cluster : clusters)
 	{
@@ -209,14 +216,62 @@ void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vecto
                 std::vector<art::Ptr<recob::Hit>> hits_v = find_iter->second;
 
 		const int cluster_start_wire = cluster->StartWire();
-		const double cluster_start_position = cluster_start_wire * wireSpacing;
-		std::cout << "Cluster Start Position: " << cluster_start_position << std::endl;
+		const int cluster_end_wire = cluster->EndWire();
+		const double cluster_start_position = cluster_start_wire * wire_spacing;
+		const double cluster_start_ns = drift * cluster->StartTick() * fromTickToNs;
+		std::vector< double > cluster_start = {cluster_start_position, cluster_start_ns};
+		const double cluster_end_position = cluster_end_wire * wire_spacing;
+		const double cluster_end_ns = drift * cluster->EndTick() * fromTickToNs;
+
+		const double cluster_length = sqrt(pow((cluster_end_position - cluster_start_position) ,2) + 
+						   pow((cluster_end_ns - cluster_start_ns) ,2));
+		if(cluster_length <= 0){std::cout << " [dQdx] Cluster Length is Less than 0!" << std::endl; continue;}
+
+		std::vector<double> cluster_axis = {cos(cluster->StartAngle()),
+                                        	    sin(cluster->StartAngle())};
+
+		// Build rectangle 4 x 1 cm around the cluster axis
+     		std::vector<std::vector<double>> rectangle_points;
+         	geoHelper.buildRectangle(_dQdxRectangleLength, _dQdxRectangleWidth,
+                                      cluster_start, cluster_axis, rectangle_points);
+
+
+		bool first_point = true;
+		shower_cluster_dqdx.resize(3);//the number of planes
+		std::vector<double> dqdx_plane0;
+		std::vector<double> dqdx_plane1;
+		std::vector<double> dqdx_plane2;
 		for(auto const hit : hits_v)
 		{
-			const double  hit_pos = hit->WireID().Wire * wireSpacing;
-			std::cout << "Hits Position: " << hit_pos << std::endl;
-		}		
-	}
-}
+			const double hit_position = hit->WireID().Wire * wire_spacing;
+			const double hit_ns       = hit->PeakTime() * drift * fromTickToNs;
+			std::vector < const double >  hit_pos = {hit_position, hit_ns};
+
+      			double wire_pitch = geoHelper.getPitch(shower_dir, cluster->Plane().Plane);
+			//check if the hits associated with the cluster are inside the box we define - standard is 4 x 1 cm
+			bool is_inside = geoHelper.isInside(hit_pos, points);
+
+      			// The function considers points on the border outside, manually add the first point
+      			if(first_point || is_inside)
+			{
+				const double charge = hit->Integral() * _gain;
+				if(cluster->Plane().Plane == 0){dqdx_plane0.push_back(charge / wire_pitch);}
+				if(cluster->Plane().Plane == 1){dqdx_plane1.push_back(charge / wire_pitch);}
+				if(cluster->Plane().Plane == 2){dqdx_plane2.push_back(charge / wire_pitch);}			
+			}
+			if(first_point == true){first_point = false;}
+		}//end looping hits
+
+	//Now I want to see the total integrated charge for this plane
+	const double total_dqdx_plane0 = std::accumulate(dqdx_plane0.begin(), dqdx_plane0.end(), 0.0);
+	const double total_dqdx_plane1 = std::accumulate(dqdx_plane1.begin(), dqdx_plane1.end(), 0.0);
+	const double total_dqdx_plane2 = std::accumulate(dqdx_plane2.begin(), dqdx_plane2.end(), 0.0);
+
+	shower_cluster_dqdx.at(cluster_num).at(0) = total_dqdx_plane0;
+	shower_cluster_dqdx.at(cluster_num).at(1) = total_dqdx_plane1;
+	shower_cluster_dqdx.at(cluster_num).at(2) = total_dqdx_plane2;
+	cluster_num++;		
+	}//end looping clusters
+}//end function dqdx
 
 }//end namespace

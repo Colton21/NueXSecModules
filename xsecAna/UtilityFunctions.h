@@ -3,11 +3,20 @@
 
 #include "AnaHelper.h"
 
+#include "GeometryHelper.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+#include <algorithm>
 
 namespace xsecAna {
 
 class utility {
+
+private:
+
+  double _data_gain = 240;
+  double _mc_gain = 200;
+
+  GeometryHelper geoHelper;
 
 public:
 
@@ -66,7 +75,8 @@ static void GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double
 
 
 static void ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr < recob::Hit> > > ClusterToHitsMap,
-                                std::vector<art::Ptr<recob::Cluster> > clusters, const art::Ptr<recob::Shower> shower, bool _verbose);
+                                std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
+				const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > shower_cluster_dqdx, bool _verbose);
 
 };
 
