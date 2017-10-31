@@ -183,7 +183,7 @@ void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, doub
 
 void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_data, std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr< recob::Hit> > > ClusterToHitsMap,
                                   std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
-				  const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > shower_cluster_dqdx, bool _verbose)
+				  const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx, bool _verbose)
 {
 
 	double _gain = 0;
@@ -209,7 +209,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 	const double wire_spacing = 0.3;
 
 	const int n_clusters = clusters.size();
-	shower_cluster_dqdx.resize(n_clusters);
+	//shower_cluster_dqdx.resize(n_clusters);
 
 	if(_verbose) {std::cout << "[dQdx] Clusters size: " << n_clusters << std::endl; }
 	int cluster_num = 0;
