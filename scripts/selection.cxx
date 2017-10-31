@@ -575,6 +575,7 @@ int selection( const char * _file1){
 	open_angle_stack->Add(h_leading_shower_open_angle_cosmic);
 	open_angle_stack->Add(h_leading_shower_open_angle_nue_cc_mixed);
 	open_angle_stack->Add(h_leading_shower_open_angle_nue_cc);
+	open_angle_stack->GetXaxis()->SetTitle("Shower Opening Angle [Degrees]");
 	open_angle_stack->Draw();
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
@@ -622,6 +623,7 @@ int selection( const char * _file1){
 	trk_vtx_dist_stack->Add(h_trk_vtx_dist_cosmic);
 	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_cc_mixed);
 	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_cc);
+	trk_vtx_dist_stack->GetXaxis()->SetTitle("Track to Nue Candidate Vertex Distance [cm]");
 	trk_vtx_dist_stack->Draw();
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");

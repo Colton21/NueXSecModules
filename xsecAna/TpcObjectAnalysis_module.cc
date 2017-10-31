@@ -126,6 +126,12 @@ double fMCNuVtxZ = -999;
 double fMCNuEnergy = -1;
 int fMCNuID = -1;
 
+double fMCNuDirX = -1;
+double fMCNuDirY = -1;
+double fMCNuDirZ = -1;
+
+int fMCNumParticles = 0;
+int fMCNumChargedParticles = 0;
 
 };
 
@@ -186,6 +192,11 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNuVtxZ", &fMCNuVtxZ, "fMCNuVtxZ/D");
 	mctruth_counter_tree->Branch("fMCNuEnergy", &fMCNuEnergy, "fMCNuEnergy/D");
 	mctruth_counter_tree->Branch("fMCNuID", &fMCNuID, "fMCNuID/I");
+	mctruth_counter_tree->Branch("fMCNuDirX", &fMCNuDirX, "fMCNuDirX/D");
+	mctruth_counter_tree->Branch("fMCNuDirY", &fMCNuDirY, "fMCNuDirY/D");
+	mctruth_counter_tree->Branch("fMCNuDirZ", &fMCNuDirZ, "fMCNuDirZ/D");
+	mctruth_counter_tree->Branch("fMCNumParticles", &fMCNumParticles, "fMCNumParticles/I");
+	mctruth_counter_tree->Branch("fMCNumChargedParticles", &fMCNumChargedParticles, "fMCNumChargedParticles/I");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -295,9 +306,24 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				fMCNuVtxY   = mc_nu.Nu().Vy();
 				fMCNuVtxZ   = mc_nu.Nu().Vz();
 				fMCNuEnergy = mc_nu.Nu().E();
+				fMCNuDirX   = (mc_nu.Nu().Px() / mc_nu.Nu().P());
+				fMCNuDirY   = (mc_nu.Nu().Py() / mc_nu.Nu().P());
+				fMCNuDirZ   = (mc_nu.Nu().Pz() / mc_nu.Nu().P());
 				event_neutrino = true;
 			}
+			//this should only give the stable final state particles
+			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
+			{
+				mc_num_particles++;
+				if(fMcparticle_pdg == 11 || fMcparticle_pdg == 13 || fMcparticle_pdg || fMcparticle_pdg == -11 || fMcparticle_pdg == -13
+				   fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
+				{
+					mc_num_charged_particles++;
+				}
+			}
 		}//end loop mc particles
+		fMCNumParticles = mc_num_particles;
+		fMCNumChargedParticles = mc_num_charged_particles;
 		mctruth_counter_tree->Fill();
 	}
 
