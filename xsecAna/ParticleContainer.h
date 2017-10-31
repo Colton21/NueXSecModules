@@ -4,6 +4,7 @@
 //#include "AnaHelper.h"
 
 #include <string>
+#include <vector>
 
 namespace xsecAna {
 
@@ -71,6 +72,8 @@ int n_matched_hits_w;
 
 double mc_open_angle;
 double pfp_open_angle;
+
+std::vector < std::vector < double > > pfp_cluster_dqdx;
 
 public:
 
@@ -141,6 +144,8 @@ void SetNumMatchedHitsW (int);
 void SetmcOpenAngle(double);
 void SetpfpOpenAngle(double);
 
+void SetPfpClusterdQdx(std::vector<std::vector<double> > );
+
 //need to write the getter functions too!
 
 int Index() const; //index is particle number in tpc object container
@@ -205,6 +210,8 @@ int NumMatchedHitsW () const;
 
 double mcOpenAngle  () const;
 double pfpOpenAngle () const;
+
+std::vector< std::vector< double > > PfpClusterdQdx () const;
 
 };//end class
 

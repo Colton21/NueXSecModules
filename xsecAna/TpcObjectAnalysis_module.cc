@@ -490,7 +490,17 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			int particle_mode = -1;
 			int particle_is_cc = -1;
 			//double mc_open_angle = 0; //unset
+			std::vector<art::Ptr<recob::Cluster> > clusters = clusters_from_pfpart.at(pfp.key());
+			const int num_clusters = clusters.size();
 			std::vector < std::vector< double > > shower_cluster_dqdx;
+			shower_cluster_dqdx.resize(num_clusters);
+			for(int clust = 0; clust < num_clusters; clust++)
+			{
+				shower_cluster_dqdx.at(clust).resize(3);
+				shower_cluster_dqdx.at(clust).at(0) = 0;
+				shower_cluster_dqdx.at(clust).at(1) = 0;
+				shower_cluster_dqdx.at(clust).at(2) = 0;
+			}
 
 			const int pfpPdg = pfp->PdgCode();
 			//if(_verbose) {std::cout << "[Analyze] PFP PDG Code " << pfpPdg << std::endl; }
@@ -662,7 +672,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			{
 				std::vector<art::Ptr<recob::Shower> > showers = showers_from_pfp.at(pfp.key());
 				if(_verbose) {std::cout << "[Analyze] \t\t n showers ass to this pfp: " << showers.size() << std::endl; }
-				std::vector<art::Ptr<recob::Cluster> > clusters = clusters_from_pfpart.at(pfp.key());
 				//we want to take the first association, right?
 				if(showers.size() != 0)
 				{
@@ -684,7 +693,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 									      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
 					for(auto const cluster_dqdx : shower_cluster_dqdx)
 					{
-						std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl;
+						//cluster dqdx is size 3 - one for each plane
+						if(_verbose){std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl;}
 					}
 				}
 			}//end pfp showers
@@ -703,6 +713,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetNumPFPHitsU(pfp_hits_u);
 			particle_container.SetNumPFPHitsV(pfp_hits_v);
 			particle_container.SetNumPFPHitsW(pfp_hits_w);
+			particle_container.SetPfpClusterdQdx(shower_cluster_dqdx);
 
 			tpc_object_container.AddParticle(particle_container);
 

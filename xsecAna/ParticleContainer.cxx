@@ -166,6 +166,10 @@ void ParticleContainer::SetpfpOpenAngle(double _pfp_open_angle){
 	pfp_open_angle = _pfp_open_angle;
 }
 
+void ParticleContainer::SetPfpClusterdQdx(std::vector<std::vector<double>> _pfp_cluster_dqdx){
+	pfp_cluster_dqdx = _pfp_cluster_dqdx;
+}
+
 //need to write the getter functions too!
 
 int ParticleContainer::Index() const {
@@ -329,6 +333,8 @@ double ParticleContainer::mcOpenAngle() const {
 double ParticleContainer::pfpOpenAngle() const {
 	return pfp_open_angle;
 }
-
+std::vector < std::vector < double > > ParticleContainer::PfpClusterdQdx() const {
+	return pfp_cluster_dqdx;
+}
 
 }//end namespace
