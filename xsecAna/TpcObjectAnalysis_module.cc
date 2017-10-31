@@ -329,7 +329,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::FindManyP<recob::Hit> hits_from_clusters(cluster_h, e, _pfp_producer);
 	//making a map of clusters to hit vectors
 	std::map < art::Ptr< recob::Cluster>, std::vector<art::Ptr < recob::Hit> > > ClusterToHitsMap;
-	std::vector<art::Ptr<recob::Cluster>> cluster_v;
+	std::vector<art::Ptr<recob::Cluster> > cluster_v;
 	art::fill_ptr_vector(cluster_v, cluster_h);
 	for(auto const cluster : cluster_v )
 	{
@@ -689,12 +689,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
 					//trying to do dqdx!
-					xsecAna::utility::ConstructShowerdQdX(geoHelper, isData, ClusterToHitsMap, clusters, 
-									      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
+					xsecAna::utility::ConstructShowerdQdX(geoHelper, isData, ClusterToHitsMap, clusters,
+					                                      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
 					for(auto const cluster_dqdx : shower_cluster_dqdx)
 					{
 						//cluster dqdx is size 3 - one for each plane
-						if(_verbose){std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl;}
+						if(_verbose) {std::cout << "[Analyze] [dQdx] Plane 0: " << cluster_dqdx.at(0) << std::endl; }
+						if(_verbose) {std::cout << "[Analyze] [dQdx] Plane 1: " << cluster_dqdx.at(1) << std::endl; }
+						if(_verbose) {std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl; }
 					}
 				}
 			}//end pfp showers
