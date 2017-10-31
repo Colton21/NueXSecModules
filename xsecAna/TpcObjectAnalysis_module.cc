@@ -501,6 +501,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				shower_cluster_dqdx.at(clust).at(1) = 0;
 				shower_cluster_dqdx.at(clust).at(2) = 0;
 			}
+			std::vector<double> shower_dEdx;
+			shower_dEdx.resize(3);
+			shower_dEdx.at(0) = 0;
+			shower_dEdx.at(1) = 0;
+			shower_dEdx.at(2) = 0;
 
 			const int pfpPdg = pfp->PdgCode();
 			//if(_verbose) {std::cout << "[Analyze] PFP PDG Code " << pfpPdg << std::endl; }
@@ -691,6 +696,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					//trying to do dqdx!
 					xsecAna::utility::ConstructShowerdQdX(geoHelper, isData, ClusterToHitsMap, clusters,
 					                                      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
+					//then dEdx!
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
 					for(auto const cluster_dqdx : shower_cluster_dqdx)
 					{
 						//cluster dqdx is size 3 - one for each plane
@@ -698,6 +705,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 						if(_verbose) {std::cout << "[Analyze] [dQdx] Plane 1: " << cluster_dqdx.at(1) << std::endl; }
 						if(_verbose) {std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl; }
 					}
+					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 0: " << shower_dEdx.at(0) << std::endl; }
+					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
+					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
 				}
 			}//end pfp showers
 
