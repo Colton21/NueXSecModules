@@ -211,11 +211,12 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 	const int n_clusters = clusters.size();
 	shower_cluster_dqdx.resize(n_clusters);
 
-	if(_verbose) {std::cout << "[dQdx] Clusters size " << n_clusters << std::endl; }
+	if(_verbose) {std::cout << "[dQdx] Clusters size: " << n_clusters << std::endl; }
 	int cluster_num = 0;
 	//these are the clusters associated with a given shower
 	for(auto const  cluster : clusters)
 	{
+		std::cout << "Cluster Num: " << cluster_num << std::endl;
                 auto const find_iter = ClusterToHitsMap.find(cluster);
 		if (find_iter == ClusterToHitsMap.end()){continue;}
                 std::vector<art::Ptr<recob::Hit>> hits_v = find_iter->second;
@@ -231,7 +232,6 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 		const double cluster_length = sqrt(pow((cluster_end_position - cluster_start_position) ,2) + 
 						   pow((cluster_end_ns - cluster_start_ns) ,2));
 		if(cluster_length <= 0){std::cout << " [dQdx] Cluster Length is Less than 0!" << std::endl; continue;}
-
 		std::vector<double> cluster_axis = {cos(cluster->StartAngle()),
                                         	    sin(cluster->StartAngle())};
 
@@ -240,9 +240,8 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
          	geoHelper.buildRectangle(_dQdxRectangleLength, _dQdxRectangleWidth,
                                       cluster_start, cluster_axis, rectangle_points);
 
-
 		bool first_point = true;
-		shower_cluster_dqdx.resize(3);//the number of planes
+		shower_cluster_dqdx.at(cluster_num).resize(3);//the number of planes
 		std::vector<double> dqdx_plane0;
 		std::vector<double> dqdx_plane1;
 		std::vector<double> dqdx_plane2;
@@ -251,7 +250,6 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 			const double hit_position = hit->WireID().Wire * wire_spacing;
 			const double hit_ns       = hit->PeakTime() * drift * fromTickToNs;
 			std::vector < double >  hit_pos = {hit_position, hit_ns};
-
       			double wire_pitch = geoHelper.getPitch(shower_dir, cluster->Plane().Plane);
 			//check if the hits associated with the cluster are inside the box we define - standard is 4 x 1 cm
 			bool is_inside = geoHelper.isInside(hit_pos, rectangle_points);
@@ -277,6 +275,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 	shower_cluster_dqdx.at(cluster_num).at(2) = total_dqdx_plane2;
 	cluster_num++;		
 	}//end looping clusters
+std::cout << "[dQdx] Finished Calculating dQdx" << std::endl;
 }//end function dqdx
 
 }//end namespace
