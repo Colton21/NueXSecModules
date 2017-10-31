@@ -27,6 +27,7 @@
 #include "MCGhost.h"
 #include "PostMCCorrections.h"
 #include "TPCObject.h"
+#include "GeometryHelper.h"
 
 #include <fstream>
 #include <iostream>
@@ -57,6 +58,11 @@ void endSubRun(art::SubRun const &sr) override;
 private:
 
 // Declare member data here.
+
+//these are used for the dQdx calculations
+xsecAna::GeometryHelper geoHelper;
+const double _dQdxRectangleLength = 4; //cm
+const double _dQdxRectangleWidth = 1; //cm
 
 //these should be art::InputTag
 //but several pandora functions want strings!
@@ -484,6 +490,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			int particle_mode = -1;
 			int particle_is_cc = -1;
 			//double mc_open_angle = 0; //unset
+			std::vector < std::vector< double > > shower_cluster_dqdx;
 
 			const int pfpPdg = pfp->PdgCode();
 			//if(_verbose) {std::cout << "[Analyze] PFP PDG Code " << pfpPdg << std::endl; }
@@ -673,7 +680,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
 					//trying to do dqdx!
-					xsecAna::utility::ConstructShowerdQdX(ClusterToHitsMap, clusters, this_shower, _verbose);
+					xsecAna::utility::ConstructShowerdQdX(geoHelper, isData, ClusterToHitsMap, clusters, 
+									      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
+					for(auto const cluster_dqdx : shower_cluster_dqdx)
+					{
+						std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl;
+					}
 				}
 			}//end pfp showers
 

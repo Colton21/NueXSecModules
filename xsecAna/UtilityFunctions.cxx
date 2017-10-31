@@ -181,12 +181,18 @@ void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, doub
 	return;
 }
 
-void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr< recob::Hit> > > ClusterToHitsMap,
+void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_data, std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr< recob::Hit> > > ClusterToHitsMap,
                                   std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
 				  const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > shower_cluster_dqdx, bool _verbose)
 {
 
-	//const double _gain = 0;
+	double _gain = 0;
+
+  	const double _data_gain = 240;
+  	const double _mc_gain = 200;
+
+	if(is_data){_gain = _data_gain;}
+	if(!is_data){_gain = _mc_gain;}
 
 	detinfo::DetectorProperties const * detprop = lar::providerFrom<detinfo::DetectorPropertiesService>();
 	const double drift = detprop->DriftVelocity() * 1e-3;
@@ -200,7 +206,6 @@ void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vecto
 	// 0.3 wire spacing
 
 	const double fromTickToNs = 4.8 / detprop->ReadOutWindowSize() * 1e6;
-	std::cout << " FRom Ticks to Ns: " << fromTickToNs << std::endl;
 	const double wire_spacing = 0.3;
 
 	const int n_clusters = clusters.size();
@@ -245,11 +250,11 @@ void utility::ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vecto
 		{
 			const double hit_position = hit->WireID().Wire * wire_spacing;
 			const double hit_ns       = hit->PeakTime() * drift * fromTickToNs;
-			std::vector < const double >  hit_pos = {hit_position, hit_ns};
+			std::vector < double >  hit_pos = {hit_position, hit_ns};
 
       			double wire_pitch = geoHelper.getPitch(shower_dir, cluster->Plane().Plane);
 			//check if the hits associated with the cluster are inside the box we define - standard is 4 x 1 cm
-			bool is_inside = geoHelper.isInside(hit_pos, points);
+			bool is_inside = geoHelper.isInside(hit_pos, rectangle_points);
 
       			// The function considers points on the border outside, manually add the first point
       			if(first_point || is_inside)

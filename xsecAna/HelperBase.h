@@ -12,7 +12,7 @@
 #include "art/Framework/Principal/Event.h"
 #include "art/Framework/Principal/Handle.h"
 
-namespace lee {
+namespace xsecAna {
 
 class HelperBase {
 public:

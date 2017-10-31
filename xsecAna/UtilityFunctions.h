@@ -11,13 +11,6 @@ namespace xsecAna {
 
 class utility {
 
-private:
-
-  double _data_gain = 240;
-  double _mc_gain = 200;
-
-  GeometryHelper geoHelper;
-
 public:
 
 /**
@@ -74,7 +67,7 @@ static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleL
 static void GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double & trackPurity, double & trackEfficiency );
 
 
-static void ConstructShowerdQdX(std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr < recob::Hit> > > ClusterToHitsMap,
+static void ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_data, std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr < recob::Hit> > > ClusterToHitsMap,
                                 std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
 				const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > shower_cluster_dqdx, bool _verbose);
 
