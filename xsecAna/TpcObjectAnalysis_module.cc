@@ -726,6 +726,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetNumPFPHitsV(pfp_hits_v);
 			particle_container.SetNumPFPHitsW(pfp_hits_w);
 			particle_container.SetPfpClusterdQdx(shower_cluster_dqdx);
+			particle_container.SetPfpdEdx(shower_dEdx);
 
 			tpc_object_container.AddParticle(particle_container);
 
