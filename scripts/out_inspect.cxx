@@ -269,6 +269,7 @@ int out_inspect(const char * _file1)
 				const int n_pfp_hits = part.NumPFPHits();
 				const int n_mc_hits = part.NumMCHits();
 				const double pfp_open_angle = part.pfpOpenAngle();
+				std::vector < std::vector < double > > pfp_cluster_dqdx = part.PfpClusterdQdx();
 				//if(mc_parent_pdg != 14) {continue; }
 
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
@@ -285,6 +286,13 @@ int out_inspect(const char * _file1)
 				std::cout << " \t \t Hits - Reco : " << n_pfp_hits << " - MC: " << "NOT SET" << std::endl;//n_mc_hits << std::endl;
 				std::cout << " \t \t Open Angle: " << pfp_open_angle << std::endl;
 				std::cout << " \t \t ----------------------------------------------------" << std::endl;
+
+				for(auto const cluster_dqdx : pfp_cluster_dqdx)
+				{
+					std::cout << " \t \t Cluster Plane 0: " << cluster_dqdx.at(0) << std::endl;
+					std::cout << " \t \t Cluster Plane 1: " << cluster_dqdx.at(1) << std::endl;
+					std::cout << " \t \t Cluster Plane 2: " << cluster_dqdx.at(2) << std::endl;
+				}
 
 				if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 				//categorise the tpco based on the origins of the particles it contains

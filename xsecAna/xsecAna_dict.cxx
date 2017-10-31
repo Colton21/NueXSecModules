@@ -57,7 +57,7 @@ namespace ROOT {
       ::xsecAna::ParticleContainer *ptr = 0;
       static ::TVirtualIsAProxy* isa_proxy = new ::TIsAProxy(typeid(::xsecAna::ParticleContainer));
       static ::ROOT::TGenericClassInfo 
-         instance("xsecAna::ParticleContainer", "ParticleContainer.h", 10,
+         instance("xsecAna::ParticleContainer", "ParticleContainer.h", 11,
                   typeid(::xsecAna::ParticleContainer), ::ROOT::Internal::DefineBehavior(ptr, ptr),
                   &xsecAnacLcLParticleContainer_Dictionary, isa_proxy, 0,
                   sizeof(::xsecAna::ParticleContainer) );
