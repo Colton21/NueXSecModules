@@ -924,6 +924,53 @@ int out_inspect(const char * _file1)
 	leg_shwr_to_vtx->Draw();
 	shwr_to_vtx_overlay_c1->Print("shwr_to_vtx_overlay.pdf");
 
+	TCanvas * shwr_dedx_stack_c1 = new TCanvas();
+	shwr_dedx_stack_c1->cd();
+	h_shwr_dedx_nue_cc->SetFillColor(30);
+	h_shwr_dedx_nue_cc_mixed->SetFillColor(38);
+	h_shwr_dedx_nue_nc->SetFillColor(28);
+	h_shwr_dedx_numu_cc->SetFillColor(36);
+	h_shwr_dedx_numu_cc_mixed->SetFillColor(39);
+	h_shwr_dedx_numu_nc->SetFillColor(46);
+	h_shwr_dedx_cosmic->SetFillColor(25);
+	h_shwr_dedx_other_mixed->SetFillColor(42);
+	h_shwr_dedx_unmatched->SetFillColor(12);
+	h_shwr_dedx_nue_cc->SetStats(kFALSE);
+	h_shwr_dedx_nue_cc_mixed->SetStats(kFALSE);
+	h_shwr_dedx_nue_nc->SetStats(kFALSE);
+	h_shwr_dedx_numu_cc->SetStats(kFALSE);
+	h_shwr_dedx_numu_cc_mixed->SetStats(kFALSE);
+	h_shwr_dedx_numu_nc->SetStats(kFALSE);
+	h_shwr_dedx_cosmic->SetStats(kFALSE);
+	h_shwr_dedx_other_mixed->SetStats(kFALSE);
+	h_shwr_dedx_unmatched->SetStats(kFALSE);
+	THStack * shwr_dedx_stack = new THStack();
+	shwr_dedx_stack->Add(h_shwr_dedx_nue_cc);
+	shwr_dedx_stack->Add(h_shwr_dedx_nue_cc_mixed);
+	shwr_dedx_stack->Add(h_shwr_dedx_nue_nc);
+	shwr_dedx_stack->Add(h_shwr_dedx_numu_cc);
+	shwr_dedx_stack->Add(h_shwr_dedx_numu_cc_mixed);
+	shwr_dedx_stack->Add(h_shwr_dedx_numu_nc);
+	shwr_dedx_stack->Add(h_shwr_dedx_cosmic);
+	shwr_dedx_stack->Add(h_shwr_dedx_other_mixed);
+	shwr_dedx_stack->Add(h_shwr_dedx_unmatched);
+	shwr_dedx_stack->GetXaxis()->SetTitle("dE/dx [MeV / cm]");
+	shwr_dedx_stack->Draw();
+	TLegend * leg_shwr_dedx = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_nue_cc,             "Nue CC", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_nue_cc_mixed,       "Nue CC Mixed", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_nue_nc,             "Nue NC", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_numu_cc,            "Numu CC", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_numu_cc_mixed,      "Numu CC Mixed", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_numu_nc,            "Numu NC", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_cosmic,             "Cosmic", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_other_mixed,        "Other Mixed", "f");
+	leg_shwr_dedx->AddEntry(h_shwr_dedx_unmatched,          "Unmatched", "f");
+	leg_shwr_dedx->Draw();
+	shwr_dedx_stack_c1->Print("shwr_dedx_stack.pdf");
+
+
 	TCanvas * shwr_to_vtx_tracks_c1 = new TCanvas();
 	shwr_to_vtx_tracks_c1->cd();
 	h_shwr_to_vtx_beam_electron_tracks->GetXaxis()->SetTitle("PFP Shower Vtx to Neutrino Candidate Vertex [cm]");
