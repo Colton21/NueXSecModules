@@ -395,26 +395,21 @@ int out_inspect(const char * _file1)
 			const double leading_pfp_open_angle = leading_shower.pfpOpenAngle();
 			const std::vector< double > leading_dedx = leading_shower.PfpdEdx();
 
-
-			//now to catagorise the tpco
 			if(part_cosmic > 0)
 			{
-				if(part_nue_cc > 0)                                                              {nue_cc_mixed++; tpco_cat = "nue_cc_mixed"; }
-				if(part_numu_cc > 0)                                                             {numu_cc_mixed++; tpco_cat = "numu_cc_mixed"; }
-				if(part_nue_cc == 0 && (part_nue_nc > 0 || part_numu_nc > 0))                       {other_mixed++; tpco_cat = "other_mixed"; }
-				if(part_nue_cc == 0 && part_nue_nc == 0 && part_numu_cc == 0)                       {cosmic++; tpco_cat = "cosmic"; }
+				if(part_nue_cc  > 0                       && tpco_cat == "null")    {nue_cc_mixed++;  tpco_cat = "nue_cc_mixed"; }
+				if(part_numu_cc > 0                       && tpco_cat == "null" )   {numu_cc_mixed++; tpco_cat = "numu_cc_mixed"; }
+				if((part_nue_nc  > 0 || part_numu_nc > 0) && tpco_cat == "null")    {other_mixed++;   tpco_cat = "other_mixed"; }
+				if(tpco_cat == "null") {cosmic++; tpco_cat = "cosmic"; }
 			}
-			bool true_in_tpc = true;
 			if(part_cosmic == 0)
 			{
-				if(part_nue_cc    > 0 && true_in_tpc == false)                                    {nue_cc_out_fv++; tpco_cat = "nue_cc_out_fv"; }
-				if(part_nue_cc    > 0 && true_in_tpc == true)                                     {nue_cc++; tpco_cat = "nue_cc"; }
-				if(part_nue_nc    > 0 && part_nue_cc == 0)                                        {nue_nc++; tpco_cat = "nue_nc"; }
-				if(part_numu_cc   > 0 && part_nue_cc == 0 && part_nue_nc == 0)                    {numu_cc++; tpco_cat = "numu_cc"; }
-				if(part_numu_nc   > 0 && part_nue_cc == 0 && part_nue_nc == 0)                    {numu_nc++; tpco_cat = "numu_nc"; }
-				if(part_unmatched > 0 && part_nue_cc == 0 && part_nue_nc == 0 && part_numu_cc == 0)  {unmatched++; tpco_cat = "unmatched"; }
+				if(part_nue_cc    > 0 && tpco_cat == "null") {nue_cc++;       tpco_cat = "nue_cc"; }
+				if(part_nue_nc    > 0 && tpco_cat == "null") {nue_nc++;       tpco_cat = "nue_nc"; }
+				if(part_numu_cc   > 0 && tpco_cat == "null") {numu_cc++;      tpco_cat = "numu_cc"; }
+				if(part_numu_nc   > 0 && tpco_cat == "null") {numu_nc++;      tpco_cat = "numu_nc"; }
+				if(part_unmatched > 0 && tpco_cat == "null") {unmatched++;    tpco_cat = "unmatched"; }
 			}
-
 
 			if(tpco_cat == "nue_cc" )       {h_shwr_open_angle_nue_cc->Fill        ( leading_pfp_open_angle * (180 / 3.1415)); }
 			if(tpco_cat == "nue_cc_mixed")  {h_shwr_open_angle_nue_cc_mixed->Fill  ( leading_pfp_open_angle * (180 / 3.1415)); }
@@ -954,8 +949,8 @@ int out_inspect(const char * _file1)
 	shwr_dedx_stack->Add(h_shwr_dedx_cosmic);
 	shwr_dedx_stack->Add(h_shwr_dedx_other_mixed);
 	shwr_dedx_stack->Add(h_shwr_dedx_unmatched);
-	shwr_dedx_stack->GetXaxis()->SetTitle("dE/dx [MeV / cm]");
 	shwr_dedx_stack->Draw();
+	shwr_dedx_stack->GetXaxis()->SetTitle("dE/dx [MeV / cm]");
 	TLegend * leg_shwr_dedx = new TLegend(0.75,0.75,0.95,0.95);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_shwr_dedx->AddEntry(h_shwr_dedx_nue_cc,             "Nue CC", "f");
@@ -1782,6 +1777,7 @@ int out_inspect(const char * _file1)
 	h_opt_time_pe->Draw("colz");
 	opt_c3->Print("opt_time_pe.pdf");
 
+	if(f->IsOpen()) {f->Close(); }
 
 	return 0;
 }//end out_inspect
