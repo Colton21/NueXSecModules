@@ -263,7 +263,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		}
 
 		bool event_neutrino = false;
-
+		int mc_num_particles = 0;
+		int mc_num_charged_particles = 0;
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
@@ -315,7 +316,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
 			{
 				mc_num_particles++;
-				if(fMcparticle_pdg == 11 || fMcparticle_pdg == 13 || fMcparticle_pdg || fMcparticle_pdg == -11 || fMcparticle_pdg == -13
+				if(fMcparticle_pdg == 11  || fMcparticle_pdg == 13   || fMcparticle_pdg == -11  || fMcparticle_pdg == -13 ||
 				   fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
 				{
 					mc_num_charged_particles++;
