@@ -124,6 +124,7 @@ double fMCNuVtxX = -999;
 double fMCNuVtxY = -999;
 double fMCNuVtxZ = -999;
 double fMCNuEnergy = -1;
+double fMCNuMomentum = -1;
 int fMCNuID = -1;
 
 double fMCNuDirX = -1;
@@ -191,6 +192,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNuVtxY", &fMCNuVtxY, "fMCNuVtxY/D");
 	mctruth_counter_tree->Branch("fMCNuVtxZ", &fMCNuVtxZ, "fMCNuVtxZ/D");
 	mctruth_counter_tree->Branch("fMCNuEnergy", &fMCNuEnergy, "fMCNuEnergy/D");
+	mctruth_counter_tree->Branch("fMCNuMomentum", &fMCNuMomentum, "fMCNuMomentum/D");
 	mctruth_counter_tree->Branch("fMCNuID", &fMCNuID, "fMCNuID/I");
 	mctruth_counter_tree->Branch("fMCNuDirX", &fMCNuDirX, "fMCNuDirX/D");
 	mctruth_counter_tree->Branch("fMCNuDirY", &fMCNuDirY, "fMCNuDirY/D");
@@ -302,13 +304,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				//this loop is only enerted once per event, assuming 1 nu event per event.
 				//this way we get the neutrino vertex and energy per event and can use this
 				//to calculate if it's in the FV in the future, during the selection.
-				fMCNuVtxX   = mc_nu.Nu().Vx();
-				fMCNuVtxY   = mc_nu.Nu().Vy();
-				fMCNuVtxZ   = mc_nu.Nu().Vz();
-				fMCNuEnergy = mc_nu.Nu().E();
-				fMCNuDirX   = (mc_nu.Nu().Px() / mc_nu.Nu().P());
-				fMCNuDirY   = (mc_nu.Nu().Py() / mc_nu.Nu().P());
-				fMCNuDirZ   = (mc_nu.Nu().Pz() / mc_nu.Nu().P());
+				fMCNuVtxX     = mc_nu.Nu().Vx();
+				fMCNuVtxY     = mc_nu.Nu().Vy();
+				fMCNuVtxZ     = mc_nu.Nu().Vz();
+				fMCNuEnergy   = mc_nu.Nu().E();
+				fMCNuMomentum = mc_nu.Nu().P();
+				fMCNuDirX     = (mc_nu.Nu().Px() / mc_nu.Nu().P());
+				fMCNuDirY     = (mc_nu.Nu().Py() / mc_nu.Nu().P());
+				fMCNuDirZ     = (mc_nu.Nu().Pz() / mc_nu.Nu().P());
 				event_neutrino = true;
 			}
 			//this should only give the stable final state particles

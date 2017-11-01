@@ -70,10 +70,18 @@ int mc_numu_cc_counter_bar = 0;
 int mc_nue_nc_counter_bar = 0;
 int mc_numu_nc_counter_bar = 0;
 double mc_nu_energy = 0;
+double mc_nu_momentum = 0;
 int mc_nu_id = -1;
 double mc_nu_vtx_x = -999;
 double mc_nu_vtx_y = -999;
 double mc_nu_vtx_z = -999;
+
+double mc_nu_dir_x = -999;
+double mc_nu_dir_y = -999;
+double mc_nu_dir_z = -999;
+
+int mc_nu_num_particles = 0;
+int mc_nu_num_charged_particles = 0;
 
 int run_sum = 0;
 
