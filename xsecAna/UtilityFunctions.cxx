@@ -232,8 +232,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 		const double cluster_length = sqrt(pow((cluster_end_position - cluster_start_position),2) +
 		                                   pow((cluster_end_ns - cluster_start_ns),2));
 		if(cluster_length <= 0) {std::cout << " [dQdx] Cluster Length is Less than 0!" << std::endl; continue; }
-		std::vector<double> cluster_axis = {cos(cluster->StartAngle()),
-			                            sin(cluster->StartAngle())};
+		std::vector<double> cluster_axis = {cos(cluster->StartAngle()), sin(cluster->StartAngle())};
 
 		// Build rectangle 4 x 1 cm around the cluster axis
 		std::vector<std::vector<double> > rectangle_points;

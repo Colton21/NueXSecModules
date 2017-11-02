@@ -500,12 +500,23 @@ int selection( const char * _file1){
 
 	TCanvas * test_c1 = new TCanvas();
 	test_c1->cd();
+	h_nue_eng_eff_num->GetXaxis()->SetTitle("Selected True Neutrino Energy [GeV]");
 	h_nue_eng_eff_num->Draw();
 	test_c1->Print("selected_true_neutrino_energy.pdf");
 	TCanvas * test_c2 = new TCanvas();
 	test_c2->cd();
+	h_nue_eng_eff_den->GetXaxis()->SetTitle("True Neutrino Energy [GeV]");
 	h_nue_eng_eff_den->Draw();
 	test_c2->Print("all_true_neutrino_energy.pdf");
+	TCanvas * num_part_c1 = new TCanvas();
+	num_part_c1->cd();
+	h_nue_num_part_eff_den->GetXaxis()->SetTitle("True Particle Multiplicity");
+	h_nue_num_part_eff_den->Draw();
+	num_part_c1->Print("all_true_neutrino_num_particles.pdf");
+	TCanvas * num_part_c2 = new TCanvas();
+	h_nue_num_part_eff_num->GetXaxis()->SetTitle("Selected True Particle Multiplicity");
+	h_nue_num_part_eff_num->Draw();
+	num_part_c2->Print("selected_true_neutrino_num_particles.pdf");
 
 
 	TCanvas * efficiency_c1 = new TCanvas();

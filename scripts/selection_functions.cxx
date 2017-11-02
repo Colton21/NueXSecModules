@@ -474,6 +474,36 @@ void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> 
 		if(leading_open_angle > tolerance_open_angle) {passed_tpco->at(i) = 0; }
 	}//end loop tpc objects
 }//end open angle cut
+
+//***************************************************************************
+//***************************************************************************
+void selection_functions::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+                                  const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i) == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int leading_index = 0;
+		int leading_hits  = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const int n_pfp_hits = part.NumPFPHits();
+			if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+			{
+				leading_hits = n_pfp_hits;
+				leading_index = j;
+			}
+		}//end loop pfparticles
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx();
+		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min) {passed_tpco->at(i) = 0; }
+	}//end loop tpc objects
+}//end dedx cut
 //***************************************************************************
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts

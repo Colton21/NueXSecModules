@@ -51,10 +51,16 @@ const double trk_nue_tolerance = 4;//cm
 //standard 50 hits
 const double shwr_hit_threshold = 100;//hits
 
-//tolerance for open angle
+//tolerance for leading shower open angle
 //standard 20 degrees
 //Roberto uses 15 degrees
 const double tolerance_open_angle = 15;//degrees
+
+//tolerance for dedx of leading shower
+//Roberto uses: 1.4 - 3 MeV / cm
+//standard is:
+const double tolerance_dedx_min = 0;
+const double tolerance_dedx_max = 10000;
 
 //********************
 //********************

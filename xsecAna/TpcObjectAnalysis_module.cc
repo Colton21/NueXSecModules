@@ -292,8 +292,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(_save_truth_info == true) {mcparticle_tree->Fill(); }
 			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && event_neutrino == false)
 			{
-				std::cout << fMCParticleID << '\t';
-				std::cout << fMCNuPdg << '\t';
+				//std::cout << fMCParticleID << '\t';
+				//std::cout << fMCNuPdg << '\t';
 				if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      fMCNuID = 1; }
 				if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     fMCNuID = 2; }
 				if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      fMCNuID = 3; }
@@ -365,8 +365,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	art::fill_ptr_vector(cluster_v, cluster_h);
 	for(auto const cluster : cluster_v )
 	{
-		std::vector<art::Ptr<recob::Hit> > hits = hits_from_clusters.at(cluster.key());
-		ClusterToHitsMap.insert(std::make_pair(cluster, hits));
+		std::vector<art::Ptr<recob::Hit> > hits_v = hits_from_clusters.at(cluster.key());
+		ClusterToHitsMap.insert(std::make_pair(cluster, hits_v));
 	}
 
 	// Get TPCObjects from the Event
