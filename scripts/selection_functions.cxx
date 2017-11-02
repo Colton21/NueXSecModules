@@ -875,7 +875,7 @@ void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> 
 				                                 ((tpc_vtx_z - pfp_vtx_z) * (tpc_vtx_z - pfp_vtx_z)));
 				if(trk_vtx_dist < smallest_trk_vtx_dist) {smallest_trk_vtx_dist = trk_vtx_dist; }
 				const double trk_length = part.pfpLength();
-				std::cout << trk_length << std::endl;
+				//std::cout << trk_length << std::endl;
 			}
 
 			if(pfp_pdg == 11 && n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }

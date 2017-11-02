@@ -27,20 +27,20 @@ int selection( const char * _file1){
 	TH1D * h_nue_vtx_y_eff_num         = new TH1D("h_nue_vtx_y_eff_num", "h_nue_vtx_y_eff_num", 10, -116.5, 116.5);
 	TH1D * h_nue_vtx_z_eff_den         = new TH1D("h_nue_vtx_z_eff_den", "h_nue_vtx_z_eff_den", 10, 0, 1036.8);
 	TH1D * h_nue_vtx_z_eff_num         = new TH1D("h_nue_vtx_z_eff_num", "h_nue_vtx_z_eff_num", 10, 0, 1036.8);
-	TH1D * h_nue_dir_x_eff_den         = new TH1D("h_nue_dir_x_eff_den", "h_nue_dir_x_eff_den", 10, -1, 1);
-	TH1D * h_nue_dir_x_eff_num         = new TH1D("h_nue_dir_x_eff_num", "h_nue_dir_x_eff_num", 10, -1, 1);
-	TH1D * h_nue_dir_y_eff_den         = new TH1D("h_nue_dir_y_eff_den", "h_nue_dir_y_eff_den", 10, -1, 1);
-	TH1D * h_nue_dir_y_eff_num         = new TH1D("h_nue_dir_y_eff_num", "h_nue_dir_y_eff_num", 10, -1, 1);
-	TH1D * h_nue_dir_z_eff_den         = new TH1D("h_nue_dir_z_eff_den", "h_nue_dir_z_eff_den", 10, -1, 1);
-	TH1D * h_nue_dir_z_eff_num         = new TH1D("h_nue_dir_z_eff_num", "h_nue_dir_z_eff_num", 10, -1, 1);
-	TH1D * h_nue_num_part_eff_den      = new TH1D("h_nue_num_part_eff_den", "h_nue_num_part_eff_den", 10, 0, 20);
-	TH1D * h_nue_num_part_eff_num      = new TH1D("h_nue_num_part_eff_num", "h_nue_num_part_eff_num", 10, 0, 20);
-	TH1D * h_nue_num_chrg_part_eff_den = new TH1D("h_nue_num_chrg_part_eff_den", "h_nue_num_chrg_part_eff_den", 10, 0, 20);
-	TH1D * h_nue_num_chrg_part_eff_num = new TH1D("h_nue_num_chrg_part_eff_num", "h_nue_num_chrg_part_eff_num", 10, 0, 20);
+	TH1D * h_nue_dir_x_eff_den         = new TH1D("h_nue_dir_x_eff_den", "h_nue_dir_x_eff_den", 20, -1, 1);
+	TH1D * h_nue_dir_x_eff_num         = new TH1D("h_nue_dir_x_eff_num", "h_nue_dir_x_eff_num", 20, -1, 1);
+	TH1D * h_nue_dir_y_eff_den         = new TH1D("h_nue_dir_y_eff_den", "h_nue_dir_y_eff_den", 20, -1, 1);
+	TH1D * h_nue_dir_y_eff_num         = new TH1D("h_nue_dir_y_eff_num", "h_nue_dir_y_eff_num", 20, -1, 1);
+	TH1D * h_nue_dir_z_eff_den         = new TH1D("h_nue_dir_z_eff_den", "h_nue_dir_z_eff_den", 20, -1, 1);
+	TH1D * h_nue_dir_z_eff_num         = new TH1D("h_nue_dir_z_eff_num", "h_nue_dir_z_eff_num", 20, -1, 1);
+	TH1D * h_nue_num_part_eff_den      = new TH1D("h_nue_num_part_eff_den", "h_nue_num_part_eff_den", 20, 0, 20);
+	TH1D * h_nue_num_part_eff_num      = new TH1D("h_nue_num_part_eff_num", "h_nue_num_part_eff_num", 20, 0, 20);
+	TH1D * h_nue_num_chrg_part_eff_den = new TH1D("h_nue_num_chrg_part_eff_den", "h_nue_num_chrg_part_eff_den", 20, 0, 20);
+	TH1D * h_nue_num_chrg_part_eff_num = new TH1D("h_nue_num_chrg_part_eff_num", "h_nue_num_chrg_part_eff_num", 20, 0, 20);
 	TH1D * h_nue_cos_theta_eff_den     = new TH1D("h_nue_cos_theta_eff_den", "h_nue_cos_theta_eff_den", 10, -1, 1);
 	TH1D * h_nue_cos_theta_eff_num     = new TH1D("h_nue_cos_theta_eff_num", "h_nue_cos_theta_eff_num", 10, -1, 1);
-	TH1D * h_nue_phi_eff_den           = new TH1D("h_nue_phi_eff_den", "h_nue_phi_eff_den", 10, -180, 180);
-	TH1D * h_nue_phi_eff_num           = new TH1D("h_nue_phi_eff_num", "h_nue_phi_eff_num", 10, -180, 180);
+	TH1D * h_nue_phi_eff_den           = new TH1D("h_nue_phi_eff_den", "h_nue_phi_eff_den", 60, -180, 180);
+	TH1D * h_nue_phi_eff_num           = new TH1D("h_nue_phi_eff_num", "h_nue_phi_eff_num", 60, -180, 180);
 
 	TH2I * h_tracks_showers         = new TH2I("h_tracks_showers", "h_tracks_showers", 8, 0, 8, 8, 0, 8);
 	TH2I * h_tracks_showers_cosmic  = new TH2I("h_tracks_showers_cosmic", "h_tracks_showers_cosmic", 8, 0, 8, 8, 0, 8);
@@ -79,7 +79,7 @@ int selection( const char * _file1){
 	mctruth_counter_tree->SetBranchAddress("mc_numu_cc_counter_bar", &mc_numu_cc_counter_bar);
 	mctruth_counter_tree->SetBranchAddress("mc_nue_nc_counter_bar",  &mc_nue_nc_counter_bar);
 	mctruth_counter_tree->SetBranchAddress("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar);
-	mctruth_counter_tree->SetBranchAddress("fMCNuEnegy", &mc_nu_energy);
+	mctruth_counter_tree->SetBranchAddress("fMCNuEnergy", &mc_nu_energy);
 	mctruth_counter_tree->SetBranchAddress("fMCNuMomentum", &mc_nu_momentum);
 	mctruth_counter_tree->SetBranchAddress("fMCNuID", &mc_nu_id);
 	mctruth_counter_tree->SetBranchAddress("fMCNuVtxX", &mc_nu_vtx_x);
@@ -163,7 +163,8 @@ int selection( const char * _file1){
 				h_nue_num_part_eff_den->Fill(mc_nu_num_particles);
 				h_nue_num_chrg_part_eff_den->Fill(mc_nu_num_charged_particles);
 				h_nue_cos_theta_eff_den->Fill(mc_cos_theta);
-				h_nue_phi_eff_den->Fill(mc_phi);
+				h_nue_phi_eff_den->Fill(mc_phi * (180 / 3.1415));
+				std::cout << "MC Phi: " << mc_phi * (180 / 3.1415) << std::endl;
 				total_mc_entries_inFV++;
 			}
 		}
@@ -563,7 +564,7 @@ int selection( const char * _file1){
 	efficiency_c5->Print("signal_selection_nu_dir_x_efficiency.pdf");
 	TCanvas * efficiency_c6 = new TCanvas();
 	efficiency_c6->cd();
-	TEfficiency * dir_y_eff = new TEfficiency(*h_nue_dir_x_eff_num, *h_nue_dir_x_eff_den);
+	TEfficiency * dir_y_eff = new TEfficiency(*h_nue_dir_y_eff_num, *h_nue_dir_y_eff_den);
 	dir_y_eff->SetTitle(";True Neutrino Dir Y;Efficiency");
 	dir_y_eff->SetLineColor(kGreen+3);
 	dir_y_eff->SetMarkerColor(kGreen+3);
@@ -573,7 +574,7 @@ int selection( const char * _file1){
 	efficiency_c6->Print("signal_selection_nu_dir_y_efficiency.pdf");
 	TCanvas * efficiency_c7 = new TCanvas();
 	efficiency_c7->cd();
-	TEfficiency * dir_z_eff = new TEfficiency(*h_nue_dir_x_eff_num, *h_nue_dir_x_eff_den);
+	TEfficiency * dir_z_eff = new TEfficiency(*h_nue_dir_z_eff_num, *h_nue_dir_z_eff_den);
 	dir_z_eff->SetTitle(";True Neutrino Dir Z;Efficiency");
 	dir_z_eff->SetLineColor(kGreen+3);
 	dir_z_eff->SetMarkerColor(kGreen+3);

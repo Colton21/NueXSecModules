@@ -319,6 +319,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
 			{
 				mc_num_particles++;
+				std::cout << " Stable Final State Particles " << fMcparticle_pdg << std::endl;
 				if(fMcparticle_pdg == 11  || fMcparticle_pdg == 13   || fMcparticle_pdg == -11  || fMcparticle_pdg == -13 ||
 				   fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
 				{
@@ -328,6 +329,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		}//end loop mc particles
 		fMCNumParticles = mc_num_particles;
 		fMCNumChargedParticles = mc_num_charged_particles;
+		std::cout << "MC Num Particles: " << mc_num_particles << std::endl;
 		mctruth_counter_tree->Fill();
 	}
 
