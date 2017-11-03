@@ -72,8 +72,8 @@ physics:
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
 
-      Debug: "true"
-      Verbose: "true"
+      Debug: "false"
+      Verbose: "false"
     }
   }
   analysis: [ AnalyzeTPCO ]

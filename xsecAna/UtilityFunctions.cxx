@@ -280,17 +280,17 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 		if (n_0 > 0)
 		{
 			std::nth_element(dqdx_plane0.begin(), dqdx_plane0.begin() + n_0, dqdx_plane0.end());
-			shower_cluster_dqdx.at(cluster_num).at(0) = dqdx_plane0.at(n);
+			shower_cluster_dqdx.at(cluster_num).at(0) = dqdx_plane0.at(n_0);
 		}
 		if (n_1 > 0)
 		{
 			std::nth_element(dqdx_plane1.begin(), dqdx_plane1.begin() + n_1, dqdx_plane1.end());
-			shower_cluster_dqdx.at(cluster_num).at(1) = dqdx_plane1.at(n);
+			shower_cluster_dqdx.at(cluster_num).at(1) = dqdx_plane1.at(n_1);
 		}
 		if (n_2 > 0)
 		{
 			std::nth_element(dqdx_plane2.begin(), dqdx_plane2.begin() + n_2, dqdx_plane2.end());
-			shower_cluster_dqdx.at(cluster_num).at(2) = dqdx_plane2.at(n);
+			shower_cluster_dqdx.at(cluster_num).at(2) = dqdx_plane2.at(n_2);
 		}
 
 		cluster_num++;
