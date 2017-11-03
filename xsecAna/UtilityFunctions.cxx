@@ -265,13 +265,34 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 		}//end looping hits
 
 		//Now I want to see the total integrated charge for this plane
-		const double total_dqdx_plane0 = std::accumulate(dqdx_plane0.begin(), dqdx_plane0.end(), 0.0);
-		const double total_dqdx_plane1 = std::accumulate(dqdx_plane1.begin(), dqdx_plane1.end(), 0.0);
-		const double total_dqdx_plane2 = std::accumulate(dqdx_plane2.begin(), dqdx_plane2.end(), 0.0);
+		const double total_dqdx_plane0 = std::accumulate(dqdx_plane0.begin(), dqdx_plane0.end(), 0.0) / _dQdxRectangleLength;
+		const double total_dqdx_plane1 = std::accumulate(dqdx_plane1.begin(), dqdx_plane1.end(), 0.0) / _dQdxRectangleLength;
+		const double total_dqdx_plane2 = std::accumulate(dqdx_plane2.begin(), dqdx_plane2.end(), 0.0) / _dQdxRectangleLength;
 
 		shower_cluster_dqdx.at(cluster_num).at(0) = total_dqdx_plane0;
 		shower_cluster_dqdx.at(cluster_num).at(1) = total_dqdx_plane1;
 		shower_cluster_dqdx.at(cluster_num).at(2) = total_dqdx_plane2;
+
+		// Get the median
+		size_t n_0 = dqdx_plane0.size() / 2;
+		size_t n_1 = dqdx_plane1.size() / 2;
+		size_t n_2 = dqdx_plane2.size() / 2;
+		if (n_0 > 0)
+		{
+			std::nth_element(dqdx_plane0.begin(), dqdx_plane0.begin() + n_0, dqdx_plane0.end());
+			shower_cluster_dqdx.at(cluster_num).at(0) = dqdx_plane0.at(n);
+		}
+		if (n_1 > 0)
+		{
+			std::nth_element(dqdx_plane1.begin(), dqdx_plane1.begin() + n_1, dqdx_plane1.end());
+			shower_cluster_dqdx.at(cluster_num).at(1) = dqdx_plane1.at(n);
+		}
+		if (n_2 > 0)
+		{
+			std::nth_element(dqdx_plane2.begin(), dqdx_plane2.begin() + n_2, dqdx_plane2.end());
+			shower_cluster_dqdx.at(cluster_num).at(2) = dqdx_plane2.at(n);
+		}
+
 		cluster_num++;
 	}//end looping clusters
 	std::cout << "[dQdx] Finished Calculating dQdx" << std::endl;
