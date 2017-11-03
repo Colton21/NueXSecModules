@@ -500,7 +500,7 @@ void selection_functions::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 			}
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx();
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min) {passed_tpco->at(i) = 0; }
 	}//end loop tpc objects
 }//end dedx cut
@@ -526,11 +526,21 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
                                                       double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
 {
 	int nue_cc        = 0;
+	int nue_cc_qe     = 0;
+	int nue_cc_res    = 0;
+	int nue_cc_dis    = 0;
+	int nue_cc_coh    = 0;
+	int nue_cc_mec    = 0;
 	int nue_cc_mixed  = 0;
 	int nue_cc_out_fv = 0;
 	int cosmic        = 0;
 	int nue_nc        = 0;
 	int numu_cc       = 0;
+	int numu_cc_qe    = 0;
+	int numu_cc_res   = 0;
+	int numu_cc_dis   = 0;
+	int numu_cc_coh   = 0;
+	int numu_cc_mec   = 0;
 	int numu_cc_mixed = 0;
 	int numu_nc       = 0;
 	int unmatched     = 0;
@@ -538,7 +548,7 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	int total         = 0;
 	int signal_tpco_num = -1;
 	std::vector<int> tabulated_origins;
-	tabulated_origins.resize(12);
+	tabulated_origins.resize(22);
 
 	bool true_in_tpc = false;
 
@@ -555,6 +565,7 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 		if(passed_tpco->at(i) == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const std::string tpc_obj_origin = tpc_obj.Origin();
+		const int tpc_obj_mode = tpc_obj.Mode();
 		const int n_pfp = tpc_obj.NumPFParticles();
 		//loop over pfparticles in the TPCO
 		for(int j = 0; j < n_pfp; j++)
@@ -585,14 +596,24 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 		if(part_cosmic == 0)
 		{
 			if(part_nue_cc    > 0 && true_in_tpc == false) { nue_cc_out_fv++; continue; }
-			if(part_nue_cc    > 0) {nue_cc++;    signal_tpco_num = i;         continue; }
-			if(part_nue_nc    > 0) {nue_nc++;       continue; }
-			if(part_numu_cc   > 0) {numu_cc++;      continue; }
-			if(part_numu_nc   > 0) {numu_nc++;      continue; }
-			if(part_unmatched > 0) {unmatched++;    continue; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 0)   {nue_cc_qe++;    signal_tpco_num = i;         continue; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 1)   {nue_cc_res++;   signal_tpco_num = i;         continue; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 2)   {nue_cc_dis++;   signal_tpco_num = i;         continue; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 3)   {nue_cc_coh++;   signal_tpco_num = i;         continue; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 10)  {nue_cc_mec++;   signal_tpco_num = i;         continue; }
+			if(part_nue_nc    > 0)                        {nue_nc++;           continue; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 0)   {numu_cc_qe++;       continue; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 1)   {numu_cc_res++;      continue; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 2)   {numu_cc_dis++;      continue; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 3)   {numu_cc_coh++;      continue; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 10)  {numu_cc_mec++;      continue; }
+			if(part_numu_nc   > 0)                        {numu_nc++;          continue; }
+			if(part_unmatched > 0)                        {unmatched++;        continue; }
 		}
-	}
+	}//end loop tpc objects
 
+	nue_cc = nue_cc_qe + nue_cc_res + nue_cc_dis + nue_cc_coh + nue_cc_mec;
+	numu_cc = numu_cc_qe + numu_cc_res + numu_cc_dis + numu_cc_coh + numu_cc_mec;
 	total = nue_cc + nue_cc_mixed + nue_cc_out_fv + cosmic + nue_nc + numu_cc + numu_cc_mixed + numu_nc + unmatched + other_mixed;
 
 	tabulated_origins.at(0)  = nue_cc;
@@ -607,6 +628,16 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	tabulated_origins.at(9)  = nue_cc_out_fv;
 	tabulated_origins.at(10) = numu_nc;
 	tabulated_origins.at(11) = numu_cc_mixed;
+	tabulated_origins.at(12) = nue_cc_qe;
+	tabulated_origins.at(13) = nue_cc_res;
+	tabulated_origins.at(14) = nue_cc_dis;
+	tabulated_origins.at(15) = nue_cc_coh;
+	tabulated_origins.at(16) = nue_cc_mec;
+	tabulated_origins.at(17) = numu_cc_qe;
+	tabulated_origins.at(18) = numu_cc_res;
+	tabulated_origins.at(19) = numu_cc_dis;
+	tabulated_origins.at(20) = numu_cc_coh;
+	tabulated_origins.at(21) = numu_cc_mec;
 	return tabulated_origins;
 }
 
@@ -626,6 +657,16 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter,
                                     int counter_numu_nc,
                                     int counter_unmatched,
                                     int counter_other_mixed,
+                                    int counter_nue_cc_qe,
+                                    int counter_nue_cc_res,
+                                    int counter_nue_cc_dis,
+                                    int counter_nue_cc_coh,
+                                    int counter_nue_cc_mec,
+                                    int counter_numu_cc_qe,
+                                    int counter_numu_cc_res,
+                                    int counter_numu_cc_dis,
+                                    int counter_numu_cc_coh,
+                                    int counter_numu_cc_mec,
                                     std::string cut_name)
 {
 	std::cout << " <" << cut_name << "> " << std::endl;
@@ -640,6 +681,17 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter,
 	std::cout << " Number of Numu NC       : " << counter_numu_nc << std::endl;
 	std::cout << " Number of Unmatched     : " << counter_unmatched << std::endl;
 	std::cout << " Number of Other Mixed   : " << counter_other_mixed << std::endl;
+	std::cout << "---------------------------" << std::endl;
+	std::cout << " Nue CC QE               : " << counter_nue_cc_qe   << std::endl;
+	std::cout << " Nue CC Res              : " << counter_nue_cc_res  << std::endl;
+	std::cout << " Nue CC DIS              : " << counter_nue_cc_dis  << std::endl;
+	std::cout << " Nue CC COH              : " << counter_nue_cc_coh  << std::endl;
+	std::cout << " Nue CC MEC              : " << counter_nue_cc_mec  << std::endl;
+	std::cout << " Numu CC QE              : " << counter_numu_cc_qe  << std::endl;
+	std::cout << " Numu CC Res             : " << counter_numu_cc_res << std::endl;
+	std::cout << " Numu CC DIS             : " << counter_numu_cc_dis << std::endl;
+	std::cout << " Numu CC COH             : " << counter_numu_cc_coh << std::endl;
+	std::cout << " Numu CC MEC             : " << counter_numu_cc_mec << std::endl;
 	std::cout << "---------------------------" << std::endl;
 	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
 	const double purity = double(counter_nue_cc) / double(counter);

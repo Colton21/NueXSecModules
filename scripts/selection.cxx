@@ -205,6 +205,16 @@ int selection( const char * _file1){
 		reco_nue_counter_unmatched     = reco_nue_counter_unmatched + tabulated_origins.at(5);
 		reco_nue_counter_other_mixed   = reco_nue_counter_other_mixed + tabulated_origins.at(6);
 		reco_nue_counter = reco_nue_counter + tabulated_origins.at(7);
+		reco_nue_counter_nue_cc_qe     += tabulated_origins.at(12);
+		reco_nue_counter_nue_cc_res    += tabulated_origins.at(13);
+		reco_nue_counter_nue_cc_dis    += tabulated_origins.at(14);
+		reco_nue_counter_nue_cc_coh    += tabulated_origins.at(15);
+		reco_nue_counter_nue_cc_mec    += tabulated_origins.at(16);
+		reco_nue_counter_numu_cc_qe    += tabulated_origins.at(17);
+		reco_nue_counter_numu_cc_res   += tabulated_origins.at(18);
+		reco_nue_counter_numu_cc_dis   += tabulated_origins.at(19);
+		reco_nue_counter_numu_cc_coh   += tabulated_origins.at(20);
+		reco_nue_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 		//in fv cut
 		_functions_instance.selection_functions::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
@@ -222,6 +232,16 @@ int selection( const char * _file1){
 		in_fv_counter_unmatched     = in_fv_counter_unmatched + tabulated_origins.at(5);
 		in_fv_counter_other_mixed   = in_fv_counter_other_mixed + tabulated_origins.at(6);
 		in_fv_counter = in_fv_counter + tabulated_origins.at(7);
+		in_fv_counter_nue_cc_qe     += tabulated_origins.at(12);
+		in_fv_counter_nue_cc_res    += tabulated_origins.at(13);
+		in_fv_counter_nue_cc_dis    += tabulated_origins.at(14);
+		in_fv_counter_nue_cc_coh    += tabulated_origins.at(15);
+		in_fv_counter_nue_cc_mec    += tabulated_origins.at(16);
+		in_fv_counter_numu_cc_qe    += tabulated_origins.at(17);
+		in_fv_counter_numu_cc_res   += tabulated_origins.at(18);
+		in_fv_counter_numu_cc_dis   += tabulated_origins.at(19);
+		in_fv_counter_numu_cc_coh   += tabulated_origins.at(20);
+		in_fv_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 		//vertex to flash cut
 		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
@@ -240,6 +260,16 @@ int selection( const char * _file1){
 		vtx_flash_counter_unmatched     = vtx_flash_counter_unmatched + tabulated_origins.at(5);
 		vtx_flash_counter_other_mixed   = vtx_flash_counter_other_mixed + tabulated_origins.at(6);
 		vtx_flash_counter = vtx_flash_counter + tabulated_origins.at(7);
+		vtx_flash_counter_nue_cc_qe     += tabulated_origins.at(12);
+		vtx_flash_counter_nue_cc_res    += tabulated_origins.at(13);
+		vtx_flash_counter_nue_cc_dis    += tabulated_origins.at(14);
+		vtx_flash_counter_nue_cc_coh    += tabulated_origins.at(15);
+		vtx_flash_counter_nue_cc_mec    += tabulated_origins.at(16);
+		vtx_flash_counter_numu_cc_qe    += tabulated_origins.at(17);
+		vtx_flash_counter_numu_cc_res   += tabulated_origins.at(18);
+		vtx_flash_counter_numu_cc_dis   += tabulated_origins.at(19);
+		vtx_flash_counter_numu_cc_coh   += tabulated_origins.at(20);
+		vtx_flash_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 		//distance between pfp shower and nue object cut
 		_functions_instance.selection_functions::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
@@ -257,6 +287,16 @@ int selection( const char * _file1){
 		shwr_tpco_counter_unmatched     = shwr_tpco_counter_unmatched + tabulated_origins.at(5);
 		shwr_tpco_counter_other_mixed   = shwr_tpco_counter_other_mixed + tabulated_origins.at(6);
 		shwr_tpco_counter = shwr_tpco_counter + tabulated_origins.at(7);
+		shwr_tpco_counter_nue_cc_qe     += tabulated_origins.at(12);
+		shwr_tpco_counter_nue_cc_res    += tabulated_origins.at(13);
+		shwr_tpco_counter_nue_cc_dis    += tabulated_origins.at(14);
+		shwr_tpco_counter_nue_cc_coh    += tabulated_origins.at(15);
+		shwr_tpco_counter_nue_cc_mec    += tabulated_origins.at(16);
+		shwr_tpco_counter_numu_cc_qe    += tabulated_origins.at(17);
+		shwr_tpco_counter_numu_cc_res   += tabulated_origins.at(18);
+		shwr_tpco_counter_numu_cc_dis   += tabulated_origins.at(19);
+		shwr_tpco_counter_numu_cc_coh   += tabulated_origins.at(20);
+		shwr_tpco_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 		_functions_instance.selection_functions::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
@@ -273,6 +313,16 @@ int selection( const char * _file1){
 		trk_tpco_counter_unmatched     = trk_tpco_counter_unmatched + tabulated_origins.at(5);
 		trk_tpco_counter_other_mixed   = trk_tpco_counter_other_mixed + tabulated_origins.at(6);
 		trk_tpco_counter               = trk_tpco_counter + tabulated_origins.at(7);
+		trk_tpco_counter_nue_cc_qe     += tabulated_origins.at(12);
+		trk_tpco_counter_nue_cc_res    += tabulated_origins.at(13);
+		trk_tpco_counter_nue_cc_dis    += tabulated_origins.at(14);
+		trk_tpco_counter_nue_cc_coh    += tabulated_origins.at(15);
+		trk_tpco_counter_nue_cc_mec    += tabulated_origins.at(16);
+		trk_tpco_counter_numu_cc_qe    += tabulated_origins.at(17);
+		trk_tpco_counter_numu_cc_res   += tabulated_origins.at(18);
+		trk_tpco_counter_numu_cc_dis   += tabulated_origins.at(19);
+		trk_tpco_counter_numu_cc_coh   += tabulated_origins.at(20);
+		trk_tpco_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 		//hit threshold for showers cut
 		_functions_instance.selection_functions::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
@@ -290,6 +340,16 @@ int selection( const char * _file1){
 		hit_threshold_counter_unmatched     = hit_threshold_counter_unmatched + tabulated_origins.at(5);
 		hit_threshold_counter_other_mixed   = hit_threshold_counter_other_mixed + tabulated_origins.at(6);
 		hit_threshold_counter = hit_threshold_counter + tabulated_origins.at(7);
+		hit_threshold_counter_nue_cc_qe     += tabulated_origins.at(12);
+		hit_threshold_counter_nue_cc_res    += tabulated_origins.at(13);
+		hit_threshold_counter_nue_cc_dis    += tabulated_origins.at(14);
+		hit_threshold_counter_nue_cc_coh    += tabulated_origins.at(15);
+		hit_threshold_counter_nue_cc_mec    += tabulated_origins.at(16);
+		hit_threshold_counter_numu_cc_qe    += tabulated_origins.at(17);
+		hit_threshold_counter_numu_cc_res   += tabulated_origins.at(18);
+		hit_threshold_counter_numu_cc_dis   += tabulated_origins.at(19);
+		hit_threshold_counter_numu_cc_coh   += tabulated_origins.at(20);
+		hit_threshold_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 		//open angle cut for the leading shower
 		_functions_instance.selection_functions::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
@@ -307,6 +367,16 @@ int selection( const char * _file1){
 		open_angle_counter_unmatched     = open_angle_counter_unmatched + tabulated_origins.at(5);
 		open_angle_counter_other_mixed   = open_angle_counter_other_mixed + tabulated_origins.at(6);
 		open_angle_counter               = open_angle_counter + tabulated_origins.at(7);
+		open_angle_counter_nue_cc_qe     += tabulated_origins.at(12);
+		open_angle_counter_nue_cc_res    += tabulated_origins.at(13);
+		open_angle_counter_nue_cc_dis    += tabulated_origins.at(14);
+		open_angle_counter_nue_cc_coh    += tabulated_origins.at(15);
+		open_angle_counter_nue_cc_mec    += tabulated_origins.at(16);
+		open_angle_counter_numu_cc_qe    += tabulated_origins.at(17);
+		open_angle_counter_numu_cc_res   += tabulated_origins.at(18);
+		open_angle_counter_numu_cc_dis   += tabulated_origins.at(19);
+		open_angle_counter_numu_cc_coh   += tabulated_origins.at(20);
+		open_angle_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
@@ -366,6 +436,16 @@ int selection( const char * _file1){
 	                                                    reco_nue_counter_numu_nc,
 	                                                    reco_nue_counter_unmatched,
 	                                                    reco_nue_counter_other_mixed,
+	                                                    reco_nue_counter_nue_cc_qe,
+	                                                    reco_nue_counter_nue_cc_res,
+	                                                    reco_nue_counter_nue_cc_dis,
+	                                                    reco_nue_counter_nue_cc_coh,
+	                                                    reco_nue_counter_nue_cc_mec,
+	                                                    reco_nue_counter_numu_cc_qe,
+	                                                    reco_nue_counter_numu_cc_res,
+	                                                    reco_nue_counter_numu_cc_dis,
+	                                                    reco_nue_counter_numu_cc_coh,
+	                                                    reco_nue_counter_numu_cc_mec,
 	                                                    "Reco Nue"
 	                                                    );
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
@@ -380,6 +460,16 @@ int selection( const char * _file1){
 	                                                    in_fv_counter_numu_nc,
 	                                                    in_fv_counter_unmatched,
 	                                                    in_fv_counter_other_mixed,
+	                                                    in_fv_counter_nue_cc_qe,
+	                                                    in_fv_counter_nue_cc_res,
+	                                                    in_fv_counter_nue_cc_dis,
+	                                                    in_fv_counter_nue_cc_coh,
+	                                                    in_fv_counter_nue_cc_mec,
+	                                                    in_fv_counter_numu_cc_qe,
+	                                                    in_fv_counter_numu_cc_res,
+	                                                    in_fv_counter_numu_cc_dis,
+	                                                    in_fv_counter_numu_cc_coh,
+	                                                    in_fv_counter_numu_cc_mec,
 	                                                    "In FV"
 	                                                    );
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
@@ -394,6 +484,16 @@ int selection( const char * _file1){
 	                                                    vtx_flash_counter_numu_nc,
 	                                                    vtx_flash_counter_unmatched,
 	                                                    vtx_flash_counter_other_mixed,
+	                                                    vtx_flash_counter_nue_cc_qe,
+	                                                    vtx_flash_counter_nue_cc_res,
+	                                                    vtx_flash_counter_nue_cc_dis,
+	                                                    vtx_flash_counter_nue_cc_coh,
+	                                                    vtx_flash_counter_nue_cc_mec,
+	                                                    vtx_flash_counter_numu_cc_qe,
+	                                                    vtx_flash_counter_numu_cc_res,
+	                                                    vtx_flash_counter_numu_cc_dis,
+	                                                    vtx_flash_counter_numu_cc_coh,
+	                                                    vtx_flash_counter_numu_cc_mec,
 	                                                    "Vtx-to-Flash"
 	                                                    );
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
@@ -408,6 +508,16 @@ int selection( const char * _file1){
 	                                                    shwr_tpco_counter_numu_nc,
 	                                                    shwr_tpco_counter_unmatched,
 	                                                    shwr_tpco_counter_other_mixed,
+	                                                    shwr_tpco_counter_nue_cc_qe,
+	                                                    shwr_tpco_counter_nue_cc_res,
+	                                                    shwr_tpco_counter_nue_cc_dis,
+	                                                    shwr_tpco_counter_nue_cc_coh,
+	                                                    shwr_tpco_counter_nue_cc_mec,
+	                                                    shwr_tpco_counter_numu_cc_qe,
+	                                                    shwr_tpco_counter_numu_cc_res,
+	                                                    shwr_tpco_counter_numu_cc_dis,
+	                                                    shwr_tpco_counter_numu_cc_coh,
+	                                                    shwr_tpco_counter_numu_cc_mec,
 	                                                    "Shower-to-TPCO"
 	                                                    );
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
@@ -422,6 +532,16 @@ int selection( const char * _file1){
 	                                                    trk_tpco_counter_numu_nc,
 	                                                    trk_tpco_counter_unmatched,
 	                                                    trk_tpco_counter_other_mixed,
+	                                                    trk_tpco_counter_nue_cc_qe,
+	                                                    trk_tpco_counter_nue_cc_res,
+	                                                    trk_tpco_counter_nue_cc_dis,
+	                                                    trk_tpco_counter_nue_cc_coh,
+	                                                    trk_tpco_counter_nue_cc_mec,
+	                                                    trk_tpco_counter_numu_cc_qe,
+	                                                    trk_tpco_counter_numu_cc_res,
+	                                                    trk_tpco_counter_numu_cc_dis,
+	                                                    trk_tpco_counter_numu_cc_coh,
+	                                                    trk_tpco_counter_numu_cc_mec,
 	                                                    "Track-to-TPCO"
 	                                                    );
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
@@ -436,6 +556,16 @@ int selection( const char * _file1){
 	                                                    hit_threshold_counter_numu_nc,
 	                                                    hit_threshold_counter_unmatched,
 	                                                    hit_threshold_counter_other_mixed,
+	                                                    hit_threshold_counter_nue_cc_qe,
+	                                                    hit_threshold_counter_nue_cc_res,
+	                                                    hit_threshold_counter_nue_cc_dis,
+	                                                    hit_threshold_counter_nue_cc_coh,
+	                                                    hit_threshold_counter_nue_cc_mec,
+	                                                    hit_threshold_counter_numu_cc_qe,
+	                                                    hit_threshold_counter_numu_cc_res,
+	                                                    hit_threshold_counter_numu_cc_dis,
+	                                                    hit_threshold_counter_numu_cc_coh,
+	                                                    hit_threshold_counter_numu_cc_mec,
 	                                                    "Hit Threshold"
 	                                                    );
 
@@ -451,6 +581,16 @@ int selection( const char * _file1){
 	                                                    open_angle_counter_numu_nc,
 	                                                    open_angle_counter_unmatched,
 	                                                    open_angle_counter_other_mixed,
+	                                                    open_angle_counter_nue_cc_qe,
+	                                                    open_angle_counter_nue_cc_res,
+	                                                    open_angle_counter_nue_cc_dis,
+	                                                    open_angle_counter_nue_cc_coh,
+	                                                    open_angle_counter_nue_cc_mec,
+	                                                    open_angle_counter_numu_cc_qe,
+	                                                    open_angle_counter_numu_cc_res,
+	                                                    open_angle_counter_numu_cc_dis,
+	                                                    open_angle_counter_numu_cc_coh,
+	                                                    open_angle_counter_numu_cc_mec,
 	                                                    "Open Angle"
 	                                                    );
 

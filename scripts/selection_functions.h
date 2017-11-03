@@ -98,7 +98,7 @@ void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
 //***************************************************************************
 //***************************************************************************
 void dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
-             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose)
+             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose);
 //***************************************************************************
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
@@ -123,6 +123,16 @@ void PrintInfo(int mc_nue_cc_counter,
                int counter_numu_nc,
                int counter_unmatched,
                int counter_other_mixed,
+               int counter_nue_cc_qe,
+               int counter_nue_cc_res,
+               int counter_nue_cc_dis,
+               int counter_nue_cc_coh,
+               int counter_nue_cc_mec,
+               int counter_numu_cc_qe,
+               int counter_numu_cc_res,
+               int counter_numu_cc_dis,
+               int counter_numu_cc_coh,
+               int counter_numu_cc_mec,
                std::string cut_name);
 //***************************************************************************
 //***************************************************************************
