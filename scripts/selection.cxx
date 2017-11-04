@@ -378,6 +378,33 @@ int selection( const char * _file1){
 		open_angle_counter_numu_cc_coh   += tabulated_origins.at(20);
 		open_angle_counter_numu_cc_mec   += tabulated_origins.at(21);
 
+		//dEdx cut for the leading shower
+		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		dedx_counter_nue_cc        += tabulated_origins.at(0);
+		dedx_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		dedx_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		dedx_counter_cosmic        += tabulated_origins.at(2);
+		dedx_counter_nue_nc        += tabulated_origins.at(3);
+		dedx_counter_numu_cc       += tabulated_origins.at(4);
+		dedx_counter_numu_cc_mixed += tabulated_origins.at(11);
+		dedx_counter_numu_nc       += tabulated_origins.at(10);
+		dedx_counter_unmatched     += tabulated_origins.at(5);
+		dedx_counter_other_mixed   += tabulated_origins.at(6);
+		dedx_counter               += tabulated_origins.at(7);
+		dedx_counter_nue_cc_qe     += tabulated_origins.at(12);
+		dedx_counter_nue_cc_res    += tabulated_origins.at(13);
+		dedx_counter_nue_cc_dis    += tabulated_origins.at(14);
+		dedx_counter_nue_cc_coh    += tabulated_origins.at(15);
+		dedx_counter_nue_cc_mec    += tabulated_origins.at(16);
+		dedx_counter_numu_cc_qe    += tabulated_origins.at(17);
+		dedx_counter_numu_cc_res   += tabulated_origins.at(18);
+		dedx_counter_numu_cc_dis   += tabulated_origins.at(19);
+		dedx_counter_numu_cc_coh   += tabulated_origins.at(20);
+		dedx_counter_numu_cc_mec   += tabulated_origins.at(21);
+
 
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
 		{
@@ -593,19 +620,43 @@ int selection( const char * _file1){
 	                                                    open_angle_counter_numu_cc_mec,
 	                                                    "Open Angle"
 	                                                    );
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
+	                                                    dedx_counter,
+	                                                    dedx_counter_nue_cc,
+	                                                    dedx_counter_nue_cc_mixed,
+	                                                    dedx_counter_nue_cc_out_fv,
+	                                                    dedx_counter_cosmic,
+	                                                    dedx_counter_nue_nc,
+	                                                    dedx_counter_numu_cc,
+	                                                    dedx_counter_numu_cc_mixed,
+	                                                    dedx_counter_numu_nc,
+	                                                    dedx_counter_unmatched,
+	                                                    dedx_counter_other_mixed,
+	                                                    dedx_counter_nue_cc_qe,
+	                                                    dedx_counter_nue_cc_res,
+	                                                    dedx_counter_nue_cc_dis,
+	                                                    dedx_counter_nue_cc_coh,
+	                                                    dedx_counter_nue_cc_mec,
+	                                                    dedx_counter_numu_cc_qe,
+	                                                    dedx_counter_numu_cc_res,
+	                                                    dedx_counter_numu_cc_dis,
+	                                                    dedx_counter_numu_cc_coh,
+	                                                    dedx_counter_numu_cc_mec,
+	                                                    " dE / dx "
+	                                                    );
 
 	std::vector<double> * xsec_cc = new std::vector<double>;
-	const double final_counter                = open_angle_counter;
-	const double final_counter_nue_cc         = open_angle_counter_nue_cc;
-	const double final_counter_nue_cc_mixed   = open_angle_counter_nue_cc_mixed;
-	const double final_counter_nue_cc_out_fv  = open_angle_counter_nue_cc_out_fv;
-	const double final_counter_cosmic         = open_angle_counter_cosmic;
-	const double final_counter_nue_nc         = open_angle_counter_nue_nc;
-	const double final_counter_numu_cc        = open_angle_counter_numu_cc;
-	const double final_counter_numu_cc_mixed  = open_angle_counter_numu_cc_mixed;
-	const double final_counter_numu_nc        = open_angle_counter_numu_nc;
-	const double final_counter_unmatched      = open_angle_counter_unmatched;
-	const double final_counter_other_mixed    = open_angle_counter_other_mixed;
+	const double final_counter                = dedx_counter;
+	const double final_counter_nue_cc         = dedx_counter_nue_cc;
+	const double final_counter_nue_cc_mixed   = dedx_counter_nue_cc_mixed;
+	const double final_counter_nue_cc_out_fv  = dedx_counter_nue_cc_out_fv;
+	const double final_counter_cosmic         = dedx_counter_cosmic;
+	const double final_counter_nue_nc         = dedx_counter_nue_nc;
+	const double final_counter_numu_cc        = dedx_counter_numu_cc;
+	const double final_counter_numu_cc_mixed  = dedx_counter_numu_cc_mixed;
+	const double final_counter_numu_nc        = dedx_counter_numu_nc;
+	const double final_counter_unmatched      = dedx_counter_unmatched;
+	const double final_counter_other_mixed    = dedx_counter_other_mixed;
 	const int n_total = final_counter;
 	const int n_bkg = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nue_nc
 	                   + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_numu_nc + final_counter_unmatched + final_counter_other_mixed);
@@ -654,9 +705,20 @@ int selection( const char * _file1){
 	h_nue_num_part_eff_den->Draw();
 	num_part_c1->Print("all_true_neutrino_num_particles.pdf");
 	TCanvas * num_part_c2 = new TCanvas();
+	num_part_c2->cd();
 	h_nue_num_part_eff_num->GetXaxis()->SetTitle("Selected True Particle Multiplicity");
 	h_nue_num_part_eff_num->Draw();
 	num_part_c2->Print("selected_true_neutrino_num_particles.pdf");
+	TCanvas * num_part_c3 = new TCanvas();
+	num_part_c3->cd();
+	h_nue_num_chrg_part_eff_den->GetXaxis()->SetTitle("True Charged Particle Multiplicity");
+	h_nue_num_chrg_part_eff_den->Draw();
+	num_part_c3->Print("all_true_neutrino_num_charged_particles.pdf");
+	TCanvas * num_part_c4 = new TCanvas();
+	num_part_c4->cd();
+	h_nue_num_chrg_part_eff_num->GetXaxis()->SetTitle("Selected Charged True Particle Multiplicity");
+	h_nue_num_chrg_part_eff_num->Draw();
+	num_part_c4->Print("selected_true_neutrino_num_charged_particles.pdf");
 
 
 	TCanvas * efficiency_c1 = new TCanvas();

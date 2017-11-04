@@ -58,9 +58,9 @@ const double tolerance_open_angle = 15;//degrees
 
 //tolerance for dedx of leading shower
 //Roberto uses: 1.4 - 3 MeV / cm
-//standard is:
-const double tolerance_dedx_min = 0;
-const double tolerance_dedx_max = 10000;
+//standard is: 0, 3.5
+const double tolerance_dedx_min = 1.4;
+const double tolerance_dedx_max = 3;
 
 //********************
 //********************
@@ -238,6 +238,27 @@ int open_angle_counter_numu_cc_res = 0;
 int open_angle_counter_numu_cc_dis = 0;
 int open_angle_counter_numu_cc_coh = 0;
 int open_angle_counter_numu_cc_mec = 0;
+int dedx_counter = 0;
+int dedx_counter_nue_cc = 0;
+int dedx_counter_nue_cc_mixed = 0;
+int dedx_counter_nue_cc_out_fv = 0;
+int dedx_counter_cosmic = 0;
+int dedx_counter_nue_nc = 0;
+int dedx_counter_numu_cc = 0;
+int dedx_counter_numu_cc_mixed = 0;
+int dedx_counter_numu_nc = 0;
+int dedx_counter_unmatched = 0;
+int dedx_counter_other_mixed = 0;
+int dedx_counter_nue_cc_qe  = 0;
+int dedx_counter_nue_cc_res = 0;
+int dedx_counter_nue_cc_dis = 0;
+int dedx_counter_nue_cc_coh = 0;
+int dedx_counter_nue_cc_mec = 0;
+int dedx_counter_numu_cc_qe  = 0;
+int dedx_counter_numu_cc_res = 0;
+int dedx_counter_numu_cc_dis = 0;
+int dedx_counter_numu_cc_coh = 0;
+int dedx_counter_numu_cc_mec = 0;
 std::vector<int> tabulated_origins;
 
 
