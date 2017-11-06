@@ -123,8 +123,13 @@ int mc_numu_nc_counter_bar = 0;
 double fMCNuVtxX = -999;
 double fMCNuVtxY = -999;
 double fMCNuVtxZ = -999;
+double fMCEleVtxX = -999;
+double fMCEleVtxY = -999;
+double fMCEleVtxZ = -999;
 double fMCNuEnergy = -1;
 double fMCNuMomentum = -1;
+double fMCEleEnergy = -1;
+double fMCEleMomentum = -1;
 int fMCNuID = -1;
 
 double fMCNuDirX = -1;
@@ -197,6 +202,11 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNuDirX", &fMCNuDirX, "fMCNuDirX/D");
 	mctruth_counter_tree->Branch("fMCNuDirY", &fMCNuDirY, "fMCNuDirY/D");
 	mctruth_counter_tree->Branch("fMCNuDirZ", &fMCNuDirZ, "fMCNuDirZ/D");
+	mctruth_counter_tree->Branch("fMCEleDirX", &fMCEleDirX, "fMCEleDirX/D");
+	mctruth_counter_tree->Branch("fMCEleDirY", &fMCEleDirY, "fMCEleDirY/D");
+	mctruth_counter_tree->Branch("fMCEleDirZ", &fMCEleDirZ, "fMCEleDirZ/D");
+	mctruth_counter_tree->Branch("fMCEleEnergy", &fMCEleEnergy, "fMCEleEnergy/D");
+	mctruth_counter_tree->Branch("fMCEleMomentum", &fMCEleMomentum, "fMCEleMomentum/D");
 	mctruth_counter_tree->Branch("fMCNumParticles", &fMCNumParticles, "fMCNumParticles/I");
 	mctruth_counter_tree->Branch("fMCNumChargedParticles", &fMCNumChargedParticles, "fMCNumChargedParticles/I");
 
@@ -313,6 +323,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				fMCNuDirX     = (mc_nu.Nu().Px() / mc_nu.Nu().P());
 				fMCNuDirY     = (mc_nu.Nu().Py() / mc_nu.Nu().P());
 				fMCNuDirZ     = (mc_nu.Nu().Pz() / mc_nu.Nu().P());
+				fMCEleDirX     = (mc_nu.Lepton().Px() / mc_nu.Lepton().P());
+				fMCEleDirY     = (mc_nu.Lepton().Py() / mc_nu.Lepton().P());
+				fMCEleDirZ     = (mc_nu.Lepton().Pz() / mc_nu.Lepton().P());
+				fMCEleEnergy   = mc_nu.Lepton().E();
+				fMCEleMomentum = mc_nu.Lepton().P();
 				event_neutrino = true;
 			}
 			//this should only give the stable final state particles
