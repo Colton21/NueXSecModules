@@ -21,6 +21,8 @@ int selection( const char * _file1){
 	//TEfficiency histograms
 	TH1D * h_nue_eng_eff_den           = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 8, 0, 4);
 	TH1D * h_nue_eng_eff_num           = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 8, 0, 4);
+	TH1D * h_ele_eng_eff_den           = new TH1D("h_ele_eng_eff_den", "h_nue_ele_eff_den", 8, 0, 4);
+	TH1D * h_ele_eng_eff_num           = new TH1D("h_ele_eng_eff_num", "h_nue_ele_eff_num", 8, 0, 4);
 	TH1D * h_nue_vtx_x_eff_den         = new TH1D("h_nue_vtx_x_eff_den", "h_nue_vtx_x_eff_den", 10, 0, 256.35);
 	TH1D * h_nue_vtx_x_eff_num         = new TH1D("h_nue_vtx_x_eff_num", "h_nue_vtx_x_eff_num", 10, 0, 256.35);
 	TH1D * h_nue_vtx_y_eff_den         = new TH1D("h_nue_vtx_y_eff_den", "h_nue_vtx_y_eff_den", 10, -116.5, 116.5);
@@ -33,6 +35,12 @@ int selection( const char * _file1){
 	TH1D * h_nue_dir_y_eff_num         = new TH1D("h_nue_dir_y_eff_num", "h_nue_dir_y_eff_num", 20, -1, 1);
 	TH1D * h_nue_dir_z_eff_den         = new TH1D("h_nue_dir_z_eff_den", "h_nue_dir_z_eff_den", 20, -1, 1);
 	TH1D * h_nue_dir_z_eff_num         = new TH1D("h_nue_dir_z_eff_num", "h_nue_dir_z_eff_num", 20, -1, 1);
+	TH1D * h_ele_dir_x_eff_den         = new TH1D("h_ele_dir_x_eff_den", "h_ele_dir_x_eff_den", 20, -1, 1);
+	TH1D * h_ele_dir_x_eff_num         = new TH1D("h_ele_dir_x_eff_num", "h_ele_dir_x_eff_num", 20, -1, 1);
+	TH1D * h_ele_dir_y_eff_den         = new TH1D("h_ele_dir_y_eff_den", "h_ele_dir_y_eff_den", 20, -1, 1);
+	TH1D * h_ele_dir_y_eff_num         = new TH1D("h_ele_dir_y_eff_num", "h_ele_dir_y_eff_num", 20, -1, 1);
+	TH1D * h_ele_dir_z_eff_den         = new TH1D("h_ele_dir_z_eff_den", "h_ele_dir_z_eff_den", 20, -1, 1);
+	TH1D * h_ele_dir_z_eff_num         = new TH1D("h_ele_dir_z_eff_num", "h_ele_dir_z_eff_num", 20, -1, 1);
 	TH1D * h_nue_num_part_eff_den      = new TH1D("h_nue_num_part_eff_den", "h_nue_num_part_eff_den", 20, 0, 20);
 	TH1D * h_nue_num_part_eff_num      = new TH1D("h_nue_num_part_eff_num", "h_nue_num_part_eff_num", 20, 0, 20);
 	TH1D * h_nue_num_chrg_part_eff_den = new TH1D("h_nue_num_chrg_part_eff_den", "h_nue_num_chrg_part_eff_den", 20, 0, 20);
@@ -41,6 +49,10 @@ int selection( const char * _file1){
 	TH1D * h_nue_cos_theta_eff_num     = new TH1D("h_nue_cos_theta_eff_num", "h_nue_cos_theta_eff_num", 10, -1, 1);
 	TH1D * h_nue_phi_eff_den           = new TH1D("h_nue_phi_eff_den", "h_nue_phi_eff_den", 60, -180, 180);
 	TH1D * h_nue_phi_eff_num           = new TH1D("h_nue_phi_eff_num", "h_nue_phi_eff_num", 60, -180, 180);
+	TH1D * h_ele_cos_theta_eff_den     = new TH1D("h_ele_cos_theta_eff_den", "h_ele_cos_theta_eff_den", 10, -1, 1);
+	TH1D * h_ele_cos_theta_eff_num     = new TH1D("h_ele_cos_theta_eff_num", "h_ele_cos_theta_eff_num", 10, -1, 1);
+	TH1D * h_ele_phi_eff_den           = new TH1D("h_ele_phi_eff_den", "h_ele_phi_eff_den", 60, -180, 180);
+	TH1D * h_ele_phi_eff_num           = new TH1D("h_ele_phi_eff_num", "h_ele_phi_eff_num", 60, -180, 180);
 
 	TH2I * h_tracks_showers         = new TH2I("h_tracks_showers", "h_tracks_showers", 8, 0, 8, 8, 0, 8);
 	TH2I * h_tracks_showers_cosmic  = new TH2I("h_tracks_showers_cosmic", "h_tracks_showers_cosmic", 8, 0, 8, 8, 0, 8);
@@ -90,6 +102,12 @@ int selection( const char * _file1){
 	mctruth_counter_tree->SetBranchAddress("fMCNuDirZ", &mc_nu_dir_z);
 	mctruth_counter_tree->SetBranchAddress("fMCNumParticles", &mc_nu_num_particles);
 	mctruth_counter_tree->SetBranchAddress("fMCNumChargedParticles", &mc_nu_num_charged_particles);
+	mctruth_counter_tree->SetBranchAddress("fMCEleDirX", &mc_ele_dir_x);
+	mctruth_counter_tree->SetBranchAddress("fMCEleDirY", &mc_ele_dir_y);
+	mctruth_counter_tree->SetBranchAddress("fMCEleDirZ", &mc_ele_dir_z);
+	mctruth_counter_tree->SetBranchAddress("fMCEleEnergy", &mc_ele_energy);
+	mctruth_counter_tree->SetBranchAddress("fMCEleMomentum", &mc_ele_momentum);
+
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entries << std::endl;
@@ -145,6 +163,9 @@ int selection( const char * _file1){
 		double mc_cos_theta = -999;
 		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z / mc_nu_momentum; }
 		const double mc_phi       = atan2(mc_nu_dir_y, mc_nu_dir_x);
+		double mc_ele_cos_theta = -999;
+		if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z / mc_ele_momentum; }
+		const double mc_ele_phi       = atan2(mc_ele_dir_y, mc_ele_dir_x);
 		if(mc_nu_id == 1 || mc_nu_id == 5)
 		//if this event is a true nue CC interaction and is inside the FV
 		//also include nue_cc_bar as in the tpco classification I use the nue-bar as well
@@ -154,17 +175,23 @@ int selection( const char * _file1){
 			                                                  _y2, _z1, _z2) == true)
 			{
 				h_nue_eng_eff_den->Fill(mc_nu_energy);
+				h_ele_eng_eff_den->Fill(mc_ele_energy);
 				h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x);
 				h_nue_vtx_y_eff_den->Fill(mc_nu_vtx_y);
 				h_nue_vtx_z_eff_den->Fill(mc_nu_vtx_z);
 				h_nue_dir_x_eff_den->Fill(mc_nu_dir_x);
 				h_nue_dir_y_eff_den->Fill(mc_nu_dir_y);
 				h_nue_dir_z_eff_den->Fill(mc_nu_dir_z);
+				h_ele_dir_x_eff_den->Fill(mc_ele_dir_x);
+				h_ele_dir_y_eff_den->Fill(mc_ele_dir_y);
+				h_ele_dir_z_eff_den->Fill(mc_ele_dir_z);
 				h_nue_num_part_eff_den->Fill(mc_nu_num_particles);
 				h_nue_num_chrg_part_eff_den->Fill(mc_nu_num_charged_particles);
 				h_nue_cos_theta_eff_den->Fill(mc_cos_theta);
 				h_nue_phi_eff_den->Fill(mc_phi * (180 / 3.1415));
-				std::cout << "MC Phi: " << mc_phi * (180 / 3.1415) << std::endl;
+				h_ele_cos_theta_eff_den->Fill(mc_ele_cos_theta);
+				h_ele_phi_eff_den->Fill(mc_ele_phi * (180 / 3.1415));
+				//std::cout << "MC Phi: " << mc_phi * (180 / 3.1415) << std::endl;
 				total_mc_entries_inFV++;
 			}
 		}
@@ -414,16 +441,22 @@ int selection( const char * _file1){
 			{
 				selected_energy_vector.push_back(mc_nu_energy);
 				h_nue_eng_eff_num->Fill(mc_nu_energy);
+				h_ele_eng_eff_num->Fill(mc_ele_energy);
 				h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
 				h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
 				h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z);
 				h_nue_dir_x_eff_num->Fill(mc_nu_dir_x);
 				h_nue_dir_y_eff_num->Fill(mc_nu_dir_y);
 				h_nue_dir_z_eff_num->Fill(mc_nu_dir_z);
+				h_ele_dir_x_eff_num->Fill(mc_ele_dir_x);
+				h_ele_dir_y_eff_num->Fill(mc_ele_dir_y);
+				h_ele_dir_z_eff_num->Fill(mc_ele_dir_z);
 				h_nue_num_part_eff_num->Fill(mc_nu_num_particles);
 				h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles);
 				h_nue_cos_theta_eff_num->Fill(mc_cos_theta);
 				h_nue_phi_eff_num->Fill(mc_phi);
+				h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
+				h_ele_phi_eff_num->Fill(mc_ele_phi);
 			}
 		}
 		_functions_instance.selection_functions::PostCutPlots(tpc_object_container_v, passed_tpco, _verbose,
@@ -835,6 +868,66 @@ int selection( const char * _file1){
 	phi_eff->SetMarkerSize(0.5);
 	phi_eff->Draw("AP");
 	efficiency_c11->Print("signal_selection_nu_phi_efficiency.pdf");
+	TCanvas * efficiency_c12 = new TCanvas();
+	efficiency_c12->cd();
+	TEfficiency * cos_ele_theta_eff = new TEfficiency(*h_ele_cos_theta_eff_num, *h_ele_cos_theta_eff_den);
+	cos_ele_theta_eff->SetTitle(";True Nue Electron Cos(#theta);Efficiency");
+	cos_ele_theta_eff->SetLineColor(kGreen+3);
+	cos_ele_theta_eff->SetMarkerColor(kGreen+3);
+	cos_ele_theta_eff->SetMarkerStyle(20);
+	cos_ele_theta_eff->SetMarkerSize(0.5);
+	cos_ele_theta_eff->Draw("AP");
+	efficiency_c12->Print("signal_selection_ele_cos_theta_efficiency.pdf");
+	TCanvas * efficiency_c13 = new TCanvas();
+	efficiency_c13->cd();
+	TEfficiency * ele_phi_eff = new TEfficiency(*h_ele_phi_eff_num, *h_ele_phi_eff_den);
+	ele_phi_eff->SetTitle(";True Nue Electron Phi;Efficiency");
+	ele_phi_eff->SetLineColor(kGreen+3);
+	ele_phi_eff->SetMarkerColor(kGreen+3);
+	ele_phi_eff->SetMarkerStyle(20);
+	ele_phi_eff->SetMarkerSize(0.5);
+	ele_phi_eff->Draw("AP");
+	efficiency_c13->Print("signal_selection_ele_phi_efficiency.pdf");
+	TCanvas * efficiency_c14 = new TCanvas();
+	efficiency_c14->cd();
+	TEfficiency * ele_dir_x_eff = new TEfficiency(*h_ele_dir_x_eff_num, *h_ele_dir_x_eff_den);
+	ele_dir_x_eff->SetTitle(";True Nue Electron Dir X;Efficiency");
+	ele_dir_x_eff->SetLineColor(kGreen+3);
+	ele_dir_x_eff->SetMarkerColor(kGreen+3);
+	ele_dir_x_eff->SetMarkerStyle(20);
+	ele_dir_x_eff->SetMarkerSize(0.5);
+	ele_dir_x_eff->Draw("AP");
+	efficiency_c14->Print("signal_selection_ele_dir_x_efficiency.pdf");
+	TCanvas * efficiency_c15 = new TCanvas();
+	efficiency_c15->cd();
+	TEfficiency * ele_dir_y_eff = new TEfficiency(*h_ele_dir_y_eff_num, *h_ele_dir_y_eff_den);
+	ele_dir_y_eff->SetTitle(";True Nue Electron Dir Y;Efficiency");
+	ele_dir_y_eff->SetLineColor(kGreen+3);
+	ele_dir_y_eff->SetMarkerColor(kGreen+3);
+	ele_dir_y_eff->SetMarkerStyle(20);
+	ele_dir_y_eff->SetMarkerSize(0.5);
+	ele_dir_y_eff->Draw("AP");
+	efficiency_c15->Print("signal_selection_ele_dir_y_efficiency.pdf");
+	TCanvas * efficiency_c16 = new TCanvas();
+	efficiency_c16->cd();
+	TEfficiency * ele_dir_z_eff = new TEfficiency(*h_ele_dir_z_eff_num, *h_ele_dir_z_eff_den);
+	ele_dir_z_eff->SetTitle(";True Nue Electron Dir Z;Efficiency");
+	ele_dir_z_eff->SetLineColor(kGreen+3);
+	ele_dir_z_eff->SetMarkerColor(kGreen+3);
+	ele_dir_z_eff->SetMarkerStyle(20);
+	ele_dir_z_eff->SetMarkerSize(0.5);
+	ele_dir_z_eff->Draw("AP");
+	efficiency_c16->Print("signal_selection_ele_dir_z_efficiency.pdf");
+	TCanvas * efficiency_c17 = new TCanvas();
+	efficiency_c17->cd();
+	TEfficiency * ele_eng_eff = new TEfficiency(*h_ele_eng_eff_num, *h_ele_eng_eff_den);
+	ele_eng_eff->SetTitle(";True Nue Electron Energy [GeV];Efficiency");
+	ele_eng_eff->SetLineColor(kGreen+3);
+	ele_eng_eff->SetMarkerColor(kGreen+3);
+	ele_eng_eff->SetMarkerStyle(20);
+	ele_eng_eff->SetMarkerSize(0.5);
+	ele_eng_eff->Draw("AP");
+	efficiency_c17->Print("signal_selection_ele_energy_efficiency.pdf");
 
 
 

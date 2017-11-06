@@ -85,6 +85,11 @@ double mc_nu_vtx_z = -999;
 double mc_nu_dir_x = -999;
 double mc_nu_dir_y = -999;
 double mc_nu_dir_z = -999;
+double mc_ele_dir_x = -999;
+double mc_ele_dir_y = -999;
+double mc_ele_dir_z = -999;
+double mc_ele_energy = 0;
+double mc_ele_momentum = 0;
 
 int mc_nu_num_particles = 0;
 int mc_nu_num_charged_particles = 0;
