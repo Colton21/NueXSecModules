@@ -6,6 +6,9 @@ Larsoft modules for use in the Nue Cross Section Analysis
 The module is a simple method to create a structured data products in an intiutive manner and links important information like the reconstructed and true quantities, such that the end user does not need to run any reco-true matching code prior to analysis.
 
 Be sure that you add NueXSecModules to your CMakeLists.txt before building with larsoft and then build with `mrb i`.
+*For First Time Use*
+You can simply do: `source ana_setup_script.sh`
+If you ever change any of the classes in `/xsecAna/` be sure to `source ana_setup_script.sh` again to build and update the libraries in `/scripts`.
 
 The total package is currently composed of three modules:
 
