@@ -429,6 +429,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 		// Reco vertex
 		double reco_nu_vtx[3];
+		//set to default values
+		reco_nu_vtx[0] = -999;
+		reco_nu_vtx[1] = -999;
+		reco_nu_vtx[2] = -999;
 		recob::Vertex tpcobj_nu_vtx = tpcobj.GetVertex();
 		tpcobj_nu_vtx.XYZ(reco_nu_vtx);
 		const double pfp_nu_vtx_x = reco_nu_vtx[0];

@@ -163,6 +163,17 @@ int out_inspect(const char * _file1)
 	TH1D * h_shwr_dedx_other_mixed     = new TH1D("h_shwr_dedx_other_mixed", "h_shwr_dedx_other_mixed", 20, 0, 10);
 	TH1D * h_shwr_dedx_unmatched       = new TH1D("h_shwr_dedx_unmatched", "h_shwr_dedx_unmatched", 20, 0, 10);
 
+	//leading shower dEdx vs cos(theta)
+	TH2D * h_shwr_dedx_theta_nue_cc          = new TH2D("h_shwr_dedx_theta_nue_cc", "h_shwr_dedx_theta_nue_cc", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_nue_cc_mixed    = new TH2D("h_shwr_dedx_theta_nue_cc_mixed", "h_shwr_dedx_theta_nue_cc_mixed", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_nue_nc          = new TH2D("h_shwr_dedx_theta_nue_nc", "h_shwr_dedx_theta_nue_nc", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_numu_cc         = new TH2D("h_shwr_dedx_theta_numu_cc", "h_shwr_dedx_theta_numu_cc", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_numu_cc_mixed   = new TH2D("h_shwr_dedx_theta_numu_cc_mixed", "h_shwr_dedx_theta_numu_cc_mixed", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_numu_nc         = new TH2D("h_shwr_dedx_theta_numu_nc", "h_shwr_dedx_theta_numu_nc", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_cosmic          = new TH2D("h_shwr_dedx_theta_cosmic", "h_shwr_dedx_theta_cosmic", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_other_mixed     = new TH2D("h_shwr_dedx_theta_other_mixed", "h_shwr_dedx_theta_other_mixed", 20, 0, 10, 10, -1, 1);
+	TH2D * h_shwr_dedx_theta_unmatched       = new TH2D("h_shwr_dedx_theta_unmatched", "h_shwr_dedx_theta_unmatched", 20, 0, 10, 10, -1,1);
+
 	//THStack *hs = new THStack(h_title,"");
 	int nue_cc = 0;
 	int nue_cc_mixed = 0;
@@ -394,6 +405,7 @@ int out_inspect(const char * _file1)
 			const int leading_hits = leading_shower.NumPFPHits();
 			const double leading_pfp_open_angle = leading_shower.pfpOpenAngle();
 			const std::vector< double > leading_dedx = leading_shower.PfpdEdx();
+			const double leading_cos_theta = cos(leading_shower.pfpTheta());
 
 			if(part_cosmic > 0)
 			{
@@ -423,6 +435,7 @@ int out_inspect(const char * _file1)
 				h_tracks_tpco_cat_nue_cc->Fill(n_tracks);
 				h_showers_tpco_cat_nue_cc->Fill(n_showers);
 				h_shwr_dedx_nue_cc->Fill(leading_dedx.at(2));//collection plane only
+				h_shwr_dedx_theta_nue_cc->Fill(leading_dedx.at(2), leading_cos_theta);
 				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 0.0); h_leading_shower_mc_pdg_pfp_hits_nue_cc_zoom->Fill(leading_hits, 0.0); }
 				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 1.0); h_leading_shower_mc_pdg_pfp_hits_nue_cc_zoom->Fill(leading_hits, 1.0); }
 				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc->Fill(leading_hits, 2.0); h_leading_shower_mc_pdg_pfp_hits_nue_cc_zoom->Fill(leading_hits, 2.0); }
@@ -442,6 +455,7 @@ int out_inspect(const char * _file1)
 				h_tracks_tpco_cat_nue_cc_mixed->Fill(n_tracks);
 				h_showers_tpco_cat_nue_cc_mixed->Fill(n_showers);
 				h_shwr_dedx_nue_cc_mixed->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_nue_cc_mixed->Fill(leading_dedx.at(2), leading_cos_theta);
 				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 0.0); h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed_zoom->Fill(leading_hits, 0.0); }
 				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 1.0); h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed_zoom->Fill(leading_hits, 1.0); }
 				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed->Fill(leading_hits, 2.0); h_leading_shower_mc_pdg_pfp_hits_nue_cc_mixed_zoom->Fill(leading_hits, 2.0); }
@@ -460,6 +474,7 @@ int out_inspect(const char * _file1)
 				h_tracks_tpco_cat_cosmic->Fill(n_tracks);
 				h_showers_tpco_cat_cosmic->Fill(n_showers);
 				h_shwr_dedx_cosmic->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_cosmic->Fill(leading_dedx.at(2), leading_cos_theta);
 				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 0.0); h_leading_shower_mc_pdg_pfp_hits_cosmic_zoom->Fill(leading_hits, 0.0); }
 				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 1.0); h_leading_shower_mc_pdg_pfp_hits_cosmic_zoom->Fill(leading_hits, 1.0); }
 				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_cosmic->Fill(leading_hits, 2.0); h_leading_shower_mc_pdg_pfp_hits_cosmic_zoom->Fill(leading_hits, 2.0); }
@@ -478,6 +493,7 @@ int out_inspect(const char * _file1)
 				h_tracks_tpco_cat_nue_nc->Fill(n_tracks);
 				h_showers_tpco_cat_nue_nc->Fill(n_showers);
 				h_shwr_dedx_nue_nc->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_nue_nc->Fill(leading_dedx.at(2), leading_cos_theta);
 				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 0.0); h_leading_shower_mc_pdg_pfp_hits_nue_nc_zoom->Fill(leading_hits, 0.0); }
 				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 1.0); h_leading_shower_mc_pdg_pfp_hits_nue_nc_zoom->Fill(leading_hits, 1.0); }
 				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_nue_nc->Fill(leading_hits, 2.0); h_leading_shower_mc_pdg_pfp_hits_nue_nc_zoom->Fill(leading_hits, 2.0); }
@@ -496,6 +512,7 @@ int out_inspect(const char * _file1)
 				h_tracks_tpco_cat_numu->Fill(n_tracks);
 				h_showers_tpco_cat_numu->Fill(n_showers);
 				h_shwr_dedx_numu_cc->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_numu_cc->Fill(leading_dedx.at(2), leading_cos_theta);
 				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 0.0); h_leading_shower_mc_pdg_pfp_hits_numu_zoom->Fill(leading_hits, 0.0); }
 				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 1.0); h_leading_shower_mc_pdg_pfp_hits_numu_zoom->Fill(leading_hits, 1.0); }
 				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_numu->Fill(leading_hits, 2.0); h_leading_shower_mc_pdg_pfp_hits_numu_zoom->Fill(leading_hits, 2.0); }
@@ -512,16 +529,19 @@ int out_inspect(const char * _file1)
 			if(tpco_cat == "numu_cc_mixed")
 			{
 				h_shwr_dedx_numu_cc_mixed->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_numu_cc_mixed->Fill(leading_dedx.at(2), leading_cos_theta);
 			}
 			if(tpco_cat == "numu_nc")
 			{
 				h_shwr_dedx_numu_nc->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_numu_nc->Fill(leading_dedx.at(2), leading_cos_theta);
 			}
 			if(tpco_cat == "other_mixed")
 			{
 				h_tracks_tpco_cat_other_mixed->Fill(n_tracks);
 				h_showers_tpco_cat_other_mixed->Fill(n_showers);
 				h_shwr_dedx_other_mixed->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_other_mixed->Fill(leading_dedx.at(2), leading_cos_theta);
 				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 0.0); h_leading_shower_mc_pdg_pfp_hits_other_mixed_zoom->Fill(leading_hits, 0.0); }
 				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 1.0); h_leading_shower_mc_pdg_pfp_hits_other_mixed_zoom->Fill(leading_hits, 1.0); }
 				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_other_mixed->Fill(leading_hits, 2.0); h_leading_shower_mc_pdg_pfp_hits_other_mixed_zoom->Fill(leading_hits, 2.0); }
@@ -540,6 +560,7 @@ int out_inspect(const char * _file1)
 				h_tracks_tpco_cat_unmatched->Fill(n_tracks);
 				h_showers_tpco_cat_unmatched->Fill(n_showers);
 				h_shwr_dedx_unmatched->Fill(leading_dedx.at(2));
+				h_shwr_dedx_theta_unmatched->Fill(leading_dedx.at(2), leading_cos_theta);
 				if(leading_mc_pdg == 11)                            {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 0.0); h_leading_shower_mc_pdg_pfp_hits_unmatched_zoom->Fill(leading_hits, 0.0); }
 				if(leading_mc_pdg == -11)                           {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 1.0); h_leading_shower_mc_pdg_pfp_hits_unmatched_zoom->Fill(leading_hits, 1.0); }
 				if(leading_mc_pdg == 13)                            {h_leading_shower_mc_pdg_pfp_hits_unmatched->Fill(leading_hits, 2.0); h_leading_shower_mc_pdg_pfp_hits_unmatched_zoom->Fill(leading_hits, 2.0); }
@@ -964,6 +985,61 @@ int out_inspect(const char * _file1)
 	h_shwr_dedx_unmatched->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
 	h_shwr_dedx_unmatched->Draw();
 	shwr_dedx_c9->Print("shwr_dedx_unmatched.pdf");
+
+	TCanvas * shwr_dedx_theta_c1 = new TCanvas();
+	shwr_dedx_theta_c1->cd();
+	h_shwr_dedx_theta_nue_cc->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_nue_cc->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_nue_cc->Draw("colz");
+	shwr_dedx_theta_c1->Print("shwr_dedx_theta_nue_cc.pdf");
+	TCanvas * shwr_dedx_theta_c2 = new TCanvas();
+	shwr_dedx_theta_c2->cd();
+	h_shwr_dedx_theta_nue_cc_mixed->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_nue_cc_mixed->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_nue_cc_mixed->Draw("colz");
+	shwr_dedx_theta_c2->Print("shwr_dedx_theta_nue_cc_mixed.pdf");
+	TCanvas * shwr_dedx_theta_c3 = new TCanvas();
+	shwr_dedx_theta_c3->cd();
+	h_shwr_dedx_theta_nue_nc->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_nue_nc->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_nue_nc->Draw("colz");
+	shwr_dedx_theta_c3->Print("shwr_dedx_theta_nue_nc.pdf");
+	TCanvas * shwr_dedx_theta_c4 = new TCanvas();
+	shwr_dedx_theta_c4->cd();
+	h_shwr_dedx_theta_numu_cc->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_numu_cc->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_numu_cc->Draw("colz");
+	shwr_dedx_theta_c4->Print("shwr_dedx_theta_numu_cc.pdf");
+	TCanvas * shwr_dedx_theta_c5 = new TCanvas();
+	shwr_dedx_theta_c5->cd();
+	h_shwr_dedx_theta_numu_cc_mixed->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_numu_cc_mixed->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_numu_cc_mixed->Draw("colz");
+	shwr_dedx_theta_c5->Print("shwr_dedx_theta_numu_cc_mixed.pdf");
+	TCanvas * shwr_dedx_theta_c6 = new TCanvas();
+	shwr_dedx_theta_c6->cd();
+	h_shwr_dedx_theta_numu_nc->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_numu_nc->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_numu_nc->Draw("colz");
+	shwr_dedx_theta_c6->Print("shwr_dedx_theta_numu_nc.pdf");
+	TCanvas * shwr_dedx_theta_c7 = new TCanvas();
+	shwr_dedx_theta_c7->cd();
+	h_shwr_dedx_theta_cosmic->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_cosmic->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_cosmic->Draw("colz");
+	shwr_dedx_theta_c7->Print("shwr_dedx_theta_cosmic.pdf");
+	TCanvas * shwr_dedx_theta_c8 = new TCanvas();
+	shwr_dedx_theta_c8->cd();
+	h_shwr_dedx_theta_other_mixed->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_other_mixed->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_other_mixed->Draw("colz");
+	shwr_dedx_theta_c8->Print("shwr_dedx_theta_other_mixed.pdf");
+	TCanvas * shwr_dedx_theta_c9 = new TCanvas();
+	shwr_dedx_theta_c9->cd();
+	h_shwr_dedx_theta_unmatched->GetXaxis()->SetTitle("dE/dx [MeV/cm]");
+	h_shwr_dedx_theta_unmatched->GetYaxis()->SetTitle("Cos(#theta)");
+	h_shwr_dedx_theta_unmatched->Draw("colz");
+	shwr_dedx_theta_c9->Print("shwr_dedx_theta_unmatched.pdf");
 
 
 	TCanvas * shwr_dedx_stack_c1 = new TCanvas();
