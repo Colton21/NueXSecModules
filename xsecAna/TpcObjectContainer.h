@@ -29,6 +29,9 @@ int is_cc;
 int mc_pdg_code;
 int pfp_pdg_code;
 
+int n_pfp_tracks;
+int n_pfp_showers;
+
 int mc_vtx;
 int mc_vtx_x;
 int mc_vtx_y;
@@ -83,6 +86,9 @@ void SetpfpPdgCode(int);
 void SetOrigin (std::string);//this is the origin coming from the tpcobject
 void SetCCNC (int); //true = CC, false = NC
 
+void SetNPfpTracks  (int);
+void SetNPfpShowers (int);
+
 //the tpc object takes the neutrino vertex
 void SetmcVtxX  (double);
 void SetmcVtxY  (double);
@@ -129,6 +135,8 @@ int CCNC            () const;
 int PFParticlePdgCode () const;
 int MCParticlePdgCode () const;
 
+int NPfPTracks  () const;
+int NPfpShowers () const;
 
 double mcVtxX  () const;
 double mcVtxY  () const;

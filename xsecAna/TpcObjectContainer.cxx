@@ -45,6 +45,13 @@ void TPCObjectContainer::SetCCNC (int _is_cc){
 	is_cc = _is_cc;
 }
 
+void TPCObjectContainer::SetNPfpTracks  (int _n_pfp_tracks){
+	n_pfp_trakcs = _n_pfp_tracks;
+}
+void TPCObjectContainer::SetNPfpShowers (int _n_pfp_showers){
+	n_pfp_showers = _n_pfp_showers;
+}
+
 //the tpc object pdg codes correspond to the in-coming neutrino object
 void TPCObjectContainer::SetmcPdgCode( int _mc_pdg_code){
 	mc_pdg_code = _mc_pdg_code;
@@ -142,6 +149,13 @@ int TPCObjectContainer::NumPFParticles () const {
 int TPCObjectContainer::NumPFPNeutrinos () const {
 	return n_pfp_nu;
 }
+int TPCObjectContainer::NPfPTracks  () const {
+	return n_pfp_tracks;
+}
+int TPCObjectContainer::NPfpShowers () const {
+	return n_pfp_showers;
+}
+
 int TPCObjectContainer::Mode () const {
 	return mode;
 }
