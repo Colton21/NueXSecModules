@@ -135,7 +135,7 @@ int CCNC            () const;
 int PFParticlePdgCode () const;
 int MCParticlePdgCode () const;
 
-int NPfPTracks  () const;
+int NPfpTracks  () const;
 int NPfpShowers () const;
 
 double mcVtxX  () const;

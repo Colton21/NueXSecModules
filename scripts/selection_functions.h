@@ -160,6 +160,30 @@ void PostCutPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
                   TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nue_nc,
                   TH1D * h_trk_vtx_dist_numu_cc_mixed, TH1D * h_trk_vtx_dist_other_mixed,
                   TH1D * h_trk_vtx_dist_unmatched);
+//***************************************************************************
+//***************************************************************************
+void TopologyPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                   TH2D * h_pfp_track_shower_nue_cc_qe,
+                   TH2D * h_pfp_track_shower_nue_cc_out_fv,
+                   TH2D * h_pfp_track_shower_nue_cc_res,
+                   TH2D * h_pfp_track_shower_nue_cc_dis,
+                   TH2D * h_pfp_track_shower_nue_cc_coh,
+                   TH2D * h_pfp_track_shower_nue_cc_mec,
+                   TH2D * h_pfp_track_shower_nue_nc,
+                   TH2D * h_pfp_track_shower_numu_cc_qe,
+                   TH2D * h_pfp_track_shower_numu_cc_res,
+                   TH2D * h_pfp_track_shower_numu_cc_dis,
+                   TH2D * h_pfp_track_shower_numu_cc_coh,
+                   TH2D * h_pfp_track_shower_numu_cc_mec,
+                   TH2D * h_pfp_track_shower_numu_nc,
+                   TH2D * h_pfp_track_shower_nue_cc_mixed,
+                   TH2D * h_pfp_track_shower_numu_cc_mixed,
+                   TH2D * h_pfp_track_shower_cosmic,
+                   TH2D * h_pfp_track_shower_other_mixed,
+                   TH2D * h_pfp_track_shower_unmatched);
+//***************************************************************************
+//***************************************************************************
 
 };
 

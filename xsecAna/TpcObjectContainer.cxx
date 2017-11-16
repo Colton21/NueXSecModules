@@ -149,7 +149,7 @@ int TPCObjectContainer::NumPFParticles () const {
 int TPCObjectContainer::NumPFPNeutrinos () const {
 	return n_pfp_nu;
 }
-int TPCObjectContainer::NPfPTracks  () const {
+int TPCObjectContainer::NPfpTracks  () const {
 	return n_pfp_tracks;
 }
 int TPCObjectContainer::NPfpShowers () const {
