@@ -240,17 +240,17 @@ int selection( const char * _file1){
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		reco_nue_counter_nue_cc        = reco_nue_counter_nue_cc + tabulated_origins.at(0);
-		reco_nue_counter_nue_cc_mixed  = reco_nue_counter_nue_cc_mixed + tabulated_origins.at(1);
-		reco_nue_counter_nue_cc_out_fv = reco_nue_counter_nue_cc_out_fv + tabulated_origins.at(9);
-		reco_nue_counter_cosmic        = reco_nue_counter_cosmic + tabulated_origins.at(2);
-		reco_nue_counter_nue_nc        = reco_nue_counter_nue_nc + tabulated_origins.at(3);
-		reco_nue_counter_numu_cc       = reco_nue_counter_numu_cc + tabulated_origins.at(4);
-		reco_nue_counter_numu_cc_mixed = reco_nue_counter_numu_cc_mixed + tabulated_origins.at(11);
-		reco_nue_counter_numu_nc       = reco_nue_counter_numu_nc + tabulated_origins.at(10);
-		reco_nue_counter_unmatched     = reco_nue_counter_unmatched + tabulated_origins.at(5);
-		reco_nue_counter_other_mixed   = reco_nue_counter_other_mixed + tabulated_origins.at(6);
-		reco_nue_counter = reco_nue_counter + tabulated_origins.at(7);
+		reco_nue_counter_nue_cc        += tabulated_origins.at(0);
+		reco_nue_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		reco_nue_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		reco_nue_counter_cosmic        += tabulated_origins.at(2);
+		reco_nue_counter_nue_nc        += tabulated_origins.at(3);
+		reco_nue_counter_numu_cc       += tabulated_origins.at(4);
+		reco_nue_counter_numu_cc_mixed += tabulated_origins.at(11);
+		reco_nue_counter_numu_nc       += tabulated_origins.at(10);
+		reco_nue_counter_unmatched     += tabulated_origins.at(5);
+		reco_nue_counter_other_mixed   += tabulated_origins.at(6);
+		reco_nue_counter               += tabulated_origins.at(7);
 		reco_nue_counter_nue_cc_qe     += tabulated_origins.at(12);
 		reco_nue_counter_nue_cc_res    += tabulated_origins.at(13);
 		reco_nue_counter_nue_cc_dis    += tabulated_origins.at(14);
@@ -262,6 +262,7 @@ int selection( const char * _file1){
 		reco_nue_counter_numu_cc_coh   += tabulated_origins.at(20);
 		reco_nue_counter_numu_cc_mec   += tabulated_origins.at(21);
 
+		//this doesn't normally sit here!
 		_functions_instance.selection_functions::TopologyPlots(tpc_object_container_v, passed_tpco,
 		                                                       _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                       h_pfp_track_shower_nue_cc_qe,
@@ -289,17 +290,17 @@ int selection( const char * _file1){
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		in_fv_counter_nue_cc        = in_fv_counter_nue_cc + tabulated_origins.at(0);
-		in_fv_counter_nue_cc_mixed  = in_fv_counter_nue_cc_mixed + tabulated_origins.at(1);
-		in_fv_counter_nue_cc_out_fv = in_fv_counter_nue_cc_out_fv + tabulated_origins.at(9);
-		in_fv_counter_cosmic        = in_fv_counter_cosmic + tabulated_origins.at(2);
-		in_fv_counter_nue_nc        = in_fv_counter_nue_nc + tabulated_origins.at(3);
-		in_fv_counter_numu_cc       = in_fv_counter_numu_cc + tabulated_origins.at(4);
-		in_fv_counter_numu_cc_mixed = in_fv_counter_numu_cc_mixed + tabulated_origins.at(11);
-		in_fv_counter_numu_nc       = in_fv_counter_numu_nc + tabulated_origins.at(10);
-		in_fv_counter_unmatched     = in_fv_counter_unmatched + tabulated_origins.at(5);
-		in_fv_counter_other_mixed   = in_fv_counter_other_mixed + tabulated_origins.at(6);
-		in_fv_counter = in_fv_counter + tabulated_origins.at(7);
+		in_fv_counter_nue_cc        += tabulated_origins.at(0);
+		in_fv_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		in_fv_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		in_fv_counter_cosmic        += tabulated_origins.at(2);
+		in_fv_counter_nue_nc        += tabulated_origins.at(3);
+		in_fv_counter_numu_cc       += tabulated_origins.at(4);
+		in_fv_counter_numu_cc_mixed += tabulated_origins.at(11);
+		in_fv_counter_numu_nc       += tabulated_origins.at(10);
+		in_fv_counter_unmatched     += tabulated_origins.at(5);
+		in_fv_counter_other_mixed   += tabulated_origins.at(6);
+		in_fv_counter               += tabulated_origins.at(7);
 		in_fv_counter_nue_cc_qe     += tabulated_origins.at(12);
 		in_fv_counter_nue_cc_res    += tabulated_origins.at(13);
 		in_fv_counter_nue_cc_dis    += tabulated_origins.at(14);
@@ -317,17 +318,17 @@ int selection( const char * _file1){
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		vtx_flash_counter_nue_cc        = vtx_flash_counter_nue_cc + tabulated_origins.at(0);
-		vtx_flash_counter_nue_cc_mixed  = vtx_flash_counter_nue_cc_mixed + tabulated_origins.at(1);
-		vtx_flash_counter_nue_cc_out_fv = vtx_flash_counter_nue_cc_out_fv + tabulated_origins.at(9);
-		vtx_flash_counter_cosmic        = vtx_flash_counter_cosmic + tabulated_origins.at(2);
-		vtx_flash_counter_nue_nc        = vtx_flash_counter_nue_nc + tabulated_origins.at(3);
-		vtx_flash_counter_numu_cc       = vtx_flash_counter_numu_cc + tabulated_origins.at(4);
-		vtx_flash_counter_numu_cc_mixed = vtx_flash_counter_numu_cc_mixed + tabulated_origins.at(11);
-		vtx_flash_counter_numu_nc       = vtx_flash_counter_numu_nc + tabulated_origins.at(10);
-		vtx_flash_counter_unmatched     = vtx_flash_counter_unmatched + tabulated_origins.at(5);
-		vtx_flash_counter_other_mixed   = vtx_flash_counter_other_mixed + tabulated_origins.at(6);
-		vtx_flash_counter = vtx_flash_counter + tabulated_origins.at(7);
+		vtx_flash_counter_nue_cc        += tabulated_origins.at(0);
+		vtx_flash_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		vtx_flash_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		vtx_flash_counter_cosmic        += tabulated_origins.at(2);
+		vtx_flash_counter_nue_nc        += tabulated_origins.at(3);
+		vtx_flash_counter_numu_cc       += tabulated_origins.at(4);
+		vtx_flash_counter_numu_cc_mixed += tabulated_origins.at(11);
+		vtx_flash_counter_numu_nc       += tabulated_origins.at(10);
+		vtx_flash_counter_unmatched     += tabulated_origins.at(5);
+		vtx_flash_counter_other_mixed   += tabulated_origins.at(6);
+		vtx_flash_counter               += tabulated_origins.at(7);
 		vtx_flash_counter_nue_cc_qe     += tabulated_origins.at(12);
 		vtx_flash_counter_nue_cc_res    += tabulated_origins.at(13);
 		vtx_flash_counter_nue_cc_dis    += tabulated_origins.at(14);
@@ -344,17 +345,17 @@ int selection( const char * _file1){
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		shwr_tpco_counter_nue_cc        = shwr_tpco_counter_nue_cc + tabulated_origins.at(0);
-		shwr_tpco_counter_nue_cc_mixed  = shwr_tpco_counter_nue_cc_mixed + tabulated_origins.at(1);
-		shwr_tpco_counter_nue_cc_out_fv = shwr_tpco_counter_nue_cc_out_fv + tabulated_origins.at(9);
-		shwr_tpco_counter_cosmic        = shwr_tpco_counter_cosmic + tabulated_origins.at(2);
-		shwr_tpco_counter_nue_nc        = shwr_tpco_counter_nue_nc + tabulated_origins.at(3);
-		shwr_tpco_counter_numu_cc       = shwr_tpco_counter_numu_cc + tabulated_origins.at(4);
-		shwr_tpco_counter_numu_cc_mixed = shwr_tpco_counter_numu_cc_mixed + tabulated_origins.at(11);
-		shwr_tpco_counter_numu_nc       = shwr_tpco_counter_numu_nc + tabulated_origins.at(10);
-		shwr_tpco_counter_unmatched     = shwr_tpco_counter_unmatched + tabulated_origins.at(5);
-		shwr_tpco_counter_other_mixed   = shwr_tpco_counter_other_mixed + tabulated_origins.at(6);
-		shwr_tpco_counter = shwr_tpco_counter + tabulated_origins.at(7);
+		shwr_tpco_counter_nue_cc        += tabulated_origins.at(0);
+		shwr_tpco_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		shwr_tpco_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		shwr_tpco_counter_cosmic        += tabulated_origins.at(2);
+		shwr_tpco_counter_nue_nc        += tabulated_origins.at(3);
+		shwr_tpco_counter_numu_cc       += tabulated_origins.at(4);
+		shwr_tpco_counter_numu_cc_mixed += tabulated_origins.at(11);
+		shwr_tpco_counter_numu_nc       += tabulated_origins.at(10);
+		shwr_tpco_counter_unmatched     += tabulated_origins.at(5);
+		shwr_tpco_counter_other_mixed   += tabulated_origins.at(6);
+		shwr_tpco_counter               += tabulated_origins.at(7);
 		shwr_tpco_counter_nue_cc_qe     += tabulated_origins.at(12);
 		shwr_tpco_counter_nue_cc_res    += tabulated_origins.at(13);
 		shwr_tpco_counter_nue_cc_dis    += tabulated_origins.at(14);
@@ -370,17 +371,17 @@ int selection( const char * _file1){
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		trk_tpco_counter_nue_cc        = trk_tpco_counter_nue_cc + tabulated_origins.at(0);
-		trk_tpco_counter_nue_cc_mixed  = trk_tpco_counter_nue_cc_mixed + tabulated_origins.at(1);
-		trk_tpco_counter_nue_cc_out_fv = trk_tpco_counter_nue_cc_out_fv + tabulated_origins.at(9);
-		trk_tpco_counter_cosmic        = trk_tpco_counter_cosmic + tabulated_origins.at(2);
-		trk_tpco_counter_nue_nc        = trk_tpco_counter_nue_nc + tabulated_origins.at(3);
-		trk_tpco_counter_numu_cc       = trk_tpco_counter_numu_cc + tabulated_origins.at(4);
-		trk_tpco_counter_numu_cc_mixed = trk_tpco_counter_numu_cc_mixed + tabulated_origins.at(11);
-		trk_tpco_counter_numu_nc       = trk_tpco_counter_numu_nc + tabulated_origins.at(10);
-		trk_tpco_counter_unmatched     = trk_tpco_counter_unmatched + tabulated_origins.at(5);
-		trk_tpco_counter_other_mixed   = trk_tpco_counter_other_mixed + tabulated_origins.at(6);
-		trk_tpco_counter               = trk_tpco_counter + tabulated_origins.at(7);
+		trk_tpco_counter_nue_cc        += tabulated_origins.at(0);
+		trk_tpco_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		trk_tpco_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		trk_tpco_counter_cosmic        += tabulated_origins.at(2);
+		trk_tpco_counter_nue_nc        += tabulated_origins.at(3);
+		trk_tpco_counter_numu_cc       += tabulated_origins.at(4);
+		trk_tpco_counter_numu_cc_mixed += tabulated_origins.at(11);
+		trk_tpco_counter_numu_nc       += tabulated_origins.at(10);
+		trk_tpco_counter_unmatched     += tabulated_origins.at(5);
+		trk_tpco_counter_other_mixed   += tabulated_origins.at(6);
+		trk_tpco_counter               += tabulated_origins.at(7);
 		trk_tpco_counter_nue_cc_qe     += tabulated_origins.at(12);
 		trk_tpco_counter_nue_cc_res    += tabulated_origins.at(13);
 		trk_tpco_counter_nue_cc_dis    += tabulated_origins.at(14);
@@ -397,17 +398,17 @@ int selection( const char * _file1){
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		hit_threshold_counter_nue_cc        = hit_threshold_counter_nue_cc + tabulated_origins.at(0);
-		hit_threshold_counter_nue_cc_mixed  = hit_threshold_counter_nue_cc_mixed + tabulated_origins.at(1);
-		hit_threshold_counter_nue_cc_out_fv = hit_threshold_counter_nue_cc_out_fv + tabulated_origins.at(9);
-		hit_threshold_counter_cosmic        = hit_threshold_counter_cosmic + tabulated_origins.at(2);
-		hit_threshold_counter_nue_nc        = hit_threshold_counter_nue_nc + tabulated_origins.at(3);
-		hit_threshold_counter_numu_cc       = hit_threshold_counter_numu_cc + tabulated_origins.at(4);
-		hit_threshold_counter_numu_cc_mixed = hit_threshold_counter_numu_cc_mixed + tabulated_origins.at(11);
-		hit_threshold_counter_numu_nc       = hit_threshold_counter_numu_nc + tabulated_origins.at(10);
-		hit_threshold_counter_unmatched     = hit_threshold_counter_unmatched + tabulated_origins.at(5);
-		hit_threshold_counter_other_mixed   = hit_threshold_counter_other_mixed + tabulated_origins.at(6);
-		hit_threshold_counter = hit_threshold_counter + tabulated_origins.at(7);
+		hit_threshold_counter_nue_cc        += tabulated_origins.at(0);
+		hit_threshold_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		hit_threshold_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		hit_threshold_counter_cosmic        += tabulated_origins.at(2);
+		hit_threshold_counter_nue_nc        += tabulated_origins.at(3);
+		hit_threshold_counter_numu_cc       += tabulated_origins.at(4);
+		hit_threshold_counter_numu_cc_mixed += tabulated_origins.at(11);
+		hit_threshold_counter_numu_nc       += tabulated_origins.at(10);
+		hit_threshold_counter_unmatched     += tabulated_origins.at(5);
+		hit_threshold_counter_other_mixed   += tabulated_origins.at(6);
+		hit_threshold_counter               += tabulated_origins.at(7);
 		hit_threshold_counter_nue_cc_qe     += tabulated_origins.at(12);
 		hit_threshold_counter_nue_cc_res    += tabulated_origins.at(13);
 		hit_threshold_counter_nue_cc_dis    += tabulated_origins.at(14);
@@ -424,17 +425,17 @@ int selection( const char * _file1){
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		open_angle_counter_nue_cc        = open_angle_counter_nue_cc + tabulated_origins.at(0);
-		open_angle_counter_nue_cc_mixed  = open_angle_counter_nue_cc_mixed + tabulated_origins.at(1);
-		open_angle_counter_nue_cc_out_fv = open_angle_counter_nue_cc_out_fv + tabulated_origins.at(9);
-		open_angle_counter_cosmic        = open_angle_counter_cosmic + tabulated_origins.at(2);
-		open_angle_counter_nue_nc        = open_angle_counter_nue_nc + tabulated_origins.at(3);
-		open_angle_counter_numu_cc       = open_angle_counter_numu_cc + tabulated_origins.at(4);
-		open_angle_counter_numu_cc_mixed = open_angle_counter_numu_cc_mixed + tabulated_origins.at(11);
-		open_angle_counter_numu_nc       = open_angle_counter_numu_nc + tabulated_origins.at(10);
-		open_angle_counter_unmatched     = open_angle_counter_unmatched + tabulated_origins.at(5);
-		open_angle_counter_other_mixed   = open_angle_counter_other_mixed + tabulated_origins.at(6);
-		open_angle_counter               = open_angle_counter + tabulated_origins.at(7);
+		open_angle_counter_nue_cc        += tabulated_origins.at(0);
+		open_angle_counter_nue_cc_mixed  += tabulated_origins.at(1);
+		open_angle_counter_nue_cc_out_fv += tabulated_origins.at(9);
+		open_angle_counter_cosmic        += tabulated_origins.at(2);
+		open_angle_counter_nue_nc        += tabulated_origins.at(3);
+		open_angle_counter_numu_cc       += tabulated_origins.at(4);
+		open_angle_counter_numu_cc_mixed += tabulated_origins.at(11);
+		open_angle_counter_numu_nc       += tabulated_origins.at(10);
+		open_angle_counter_unmatched     += tabulated_origins.at(5);
+		open_angle_counter_other_mixed   += tabulated_origins.at(6);
+		open_angle_counter               += tabulated_origins.at(7);
 		open_angle_counter_nue_cc_qe     += tabulated_origins.at(12);
 		open_angle_counter_nue_cc_res    += tabulated_origins.at(13);
 		open_angle_counter_nue_cc_dis    += tabulated_origins.at(14);
