@@ -440,6 +440,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		const double pfp_nu_vtx_z = reco_nu_vtx[2];
 		//_slc_nuvtx_fv[slice] = (UBXSecHelper::InFV(reco_nu_vtx) ? 1 : 0);
 
+		int n_pfp_tracks = 0;
+		int n_pfp_showers = 0;
+
 		xsecAna::TPCObjectContainer tpc_object_container;
 		tpc_object_container.SetpfpVtxX(pfp_nu_vtx_x);
 		tpc_object_container.SetpfpVtxY(pfp_nu_vtx_y);
@@ -525,8 +528,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			int pfp_hits_v = 0;
 			int pfp_hits_w = 0;
 			double pfp_open_angle = 0;
-			int n_pfp_tracks = 0;
-			int n_pfp_showers = 0;
 
 			double mc_vtx_x = -999;
 			double mc_vtx_y = -999;
@@ -722,7 +723,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
-					num_pfp_tracks++;
+					n_pfp_tracks++;
 				}
 			}//end pfp tracks
 
@@ -762,7 +763,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 0: " << shower_dEdx.at(0) << std::endl; }
 					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
 					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
-					num_pfp_showers++;
+					n_pfp_showers++;
 				}
 			}//end pfp showers
 
@@ -791,7 +792,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetCCNC(ccnc);
 		tpc_object_container.SetmcPdgCode(tpco_mc_pdg);
 		tpc_object_container.SetpfpPdgCode(tpco_pfp_pdg);
-		tpc_object_container.SetNPfPTracks(n_pfp_tracks);
+		tpc_object_container.SetNPfpTracks(n_pfp_tracks);
 		tpc_object_container.SetNPfpShowers(n_pfp_showers);
 		//tpc_object_container.SetmcPdgCode();
 

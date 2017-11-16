@@ -46,7 +46,7 @@ void TPCObjectContainer::SetCCNC (int _is_cc){
 }
 
 void TPCObjectContainer::SetNPfpTracks  (int _n_pfp_tracks){
-	n_pfp_trakcs = _n_pfp_tracks;
+	n_pfp_tracks = _n_pfp_tracks;
 }
 void TPCObjectContainer::SetNPfpShowers (int _n_pfp_showers){
 	n_pfp_showers = _n_pfp_showers;
