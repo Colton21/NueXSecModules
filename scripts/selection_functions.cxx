@@ -1106,7 +1106,7 @@ void selection_functions::TopologyPlots(std::vector<xsecAna::TPCObjectContainer>
 		std::string tpco_id;
 		//loop over pfparticles in the TPCO
 		int most_hits = 0;
-		int leading_index;
+		int leading_index = 0;
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);

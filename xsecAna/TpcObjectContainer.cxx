@@ -158,7 +158,7 @@ int TPCObjectContainer::NPfpTracks  () const {
 int TPCObjectContainer::NPfpShowers () const {
 	return n_pfp_showers;
 }
-ParticleContainer TPCObjectcontainer::LeadingParticle () const {
+ParticleContainer TPCObjectContainer::LeadingParticle () const {
 	return leading_particle;
 }
 
