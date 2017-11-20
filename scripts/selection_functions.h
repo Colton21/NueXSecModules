@@ -181,7 +181,25 @@ void TopologyPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
                    TH2D * h_pfp_track_shower_numu_cc_mixed,
                    TH2D * h_pfp_track_shower_cosmic,
                    TH2D * h_pfp_track_shower_other_mixed,
-                   TH2D * h_pfp_track_shower_unmatched);
+                   TH2D * h_pfp_track_shower_unmatched,
+                   TH2D * h_leading_shower_mc_pdg_nue_cc_qe,
+                   TH2D * h_leading_shower_mc_pdg_nue_cc_out_fv,
+                   TH2D * h_leading_shower_mc_pdg_nue_cc_res,
+                   TH2D * h_leading_shower_mc_pdg_nue_cc_dis,
+                   TH2D * h_leading_shower_mc_pdg_nue_cc_coh,
+                   TH2D * h_leading_shower_mc_pdg_nue_cc_mec,
+                   TH2D * h_leading_shower_mc_pdg_nue_nc,
+                   TH2D * h_leading_shower_mc_pdg_numu_cc_qe,
+                   TH2D * h_leading_shower_mc_pdg_numu_cc_res,
+                   TH2D * h_leading_shower_mc_pdg_numu_cc_dis,
+                   TH2D * h_leading_shower_mc_pdg_numu_cc_coh,
+                   TH2D * h_leading_shower_mc_pdg_numu_cc_mec,
+                   TH2D * h_leading_shower_mc_pdg_numu_nc,
+                   TH2D * h_leading_shower_mc_pdg_nue_cc_mixed,
+                   TH2D * h_leading_shower_mc_pdg_numu_cc_mixed,
+                   TH2D * h_leading_shower_mc_pdg_cosmic,
+                   TH2D * h_leading_shower_mc_pdg_other_mixed,
+                   TH2D * h_leading_shower_mc_pdg_unmatched    );
 //***************************************************************************
 //***************************************************************************
 

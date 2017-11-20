@@ -14,6 +14,7 @@ class TPCObjectContainer {
 private:
 
 std::vector<ParticleContainer> fParticleList;
+ParticleContainer leading_particle;
 
 int run;
 int subrun;
@@ -88,6 +89,7 @@ void SetCCNC (int); //true = CC, false = NC
 
 void SetNPfpTracks  (int);
 void SetNPfpShowers (int);
+void SetLeadingParticle (ParticleContainer);
 
 //the tpc object takes the neutrino vertex
 void SetmcVtxX  (double);
@@ -137,6 +139,7 @@ int MCParticlePdgCode () const;
 
 int NPfpTracks  () const;
 int NPfpShowers () const;
+ParticleContainer LeadingParticle() const;
 
 double mcVtxX  () const;
 double mcVtxY  () const;

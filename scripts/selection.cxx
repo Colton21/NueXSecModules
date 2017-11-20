@@ -97,6 +97,25 @@ int selection( const char * _file1){
 	TH2D * h_pfp_track_shower_other_mixed   = new TH2D("h_pfp_track_shower_other_mixed",   "h_pfp_track_shower_other_mixed", 10, 0, 10, 10, 0, 10);
 	TH2D * h_pfp_track_shower_unmatched     = new TH2D("h_pfp_track_shower_unmatched",     "h_pfp_track_shower_unmatched", 10, 0, 10, 10, 0, 10);
 
+	TH2D * h_leading_shower_mc_pdg_nue_cc_qe     = new TH2D("h_leading_shower_mc_pdg_nue_cc_qe",     "h_leading_shower_mc_pdg_nue_cc_qe",     3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_nue_cc_out_fv = new TH2D("h_leading_shower_mc_pdg_nue_cc_out_fv", "h_leading_shower_mc_pdg_nue_cc_out_fv", 3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_nue_cc_res    = new TH2D("h_leading_shower_mc_pdg_nue_cc_res",    "h_leading_shower_mc_pdg_nue_cc_res",    3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_nue_cc_dis    = new TH2D("h_leading_shower_mc_pdg_nue_cc_dis",    "h_leading_shower_mc_pdg_nue_cc_dis",    3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_nue_cc_coh    = new TH2D("h_leading_shower_mc_pdg_nue_cc_coh",    "h_leading_shower_mc_pdg_nue_cc_coh",    3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_nue_cc_mec    = new TH2D("h_leading_shower_mc_pdg_nue_cc_mec",    "h_leading_shower_mc_pdg_nue_cc_mec",    3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_nue_nc        = new TH2D("h_leading_shower_mc_pdg_nue_nc",        "h_leading_shower_mc_pdg_nue_nc",        3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_numu_cc_qe    = new TH2D("h_leading_shower_mc_pdg_numu_cc_qe",    "h_leading_shower_mc_pdg_numu_cc_qe",    3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_numu_cc_res   = new TH2D("h_leading_shower_mc_pdg_numu_cc_res",   "h_leading_shower_mc_pdg_numu_cc_res",   3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_numu_cc_dis   = new TH2D("h_leading_shower_mc_pdg_numu_cc_dis",   "h_leading_shower_mc_pdg_numu_cc_dis",   3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_numu_cc_coh   = new TH2D("h_leading_shower_mc_pdg_numu_cc_coh",   "h_leading_shower_mc_pdg_numu_cc_coh",   3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_numu_cc_mec   = new TH2D("h_leading_shower_mc_pdg_numu_cc_mec",   "h_leading_shower_mc_pdg_numu_cc_mec",   3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_numu_nc       = new TH2D("h_leading_shower_mc_pdg_numu_nc",       "h_leading_shower_mc_pdg_numu_nc",       3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_nue_cc_mixed  = new TH2D("h_leading_shower_mc_pdg_nue_cc_mixed",  "h_leading_shower_mc_pdg_nue_cc_mixed",  3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_numu_cc_mixed = new TH2D("h_leading_shower_mc_pdg_numu_cc_mixed", "h_leading_shower_mc_pdg_numu_cc_mixed", 3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_cosmic        = new TH2D("h_leading_shower_mc_pdg_cosmic",        "h_leading_shower_mc_pdg_cosmic",        3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_other_mixed   = new TH2D("h_leading_shower_mc_pdg_other_mixed",   "h_leading_shower_mc_pdg_other_mixed",   3, 0, 3, 10, 0, 10);
+	TH2D * h_leading_shower_mc_pdg_unmatched     = new TH2D("h_leading_shower_mc_pdg_unmatched",     "h_leading_shower_mc_pdg_unmatched",     3, 0, 3, 10, 0, 10);
+
 	std::cout << "Running With: " << POT << " POT " << std::endl;
 	const double flux = POT * scaling;
 
@@ -282,7 +301,25 @@ int selection( const char * _file1){
 		                                                       h_pfp_track_shower_numu_cc_mixed,
 		                                                       h_pfp_track_shower_cosmic,
 		                                                       h_pfp_track_shower_other_mixed,
-		                                                       h_pfp_track_shower_unmatched);
+		                                                       h_pfp_track_shower_unmatched,
+		                                                       h_leading_shower_mc_pdg_nue_cc_qe,
+		                                                       h_leading_shower_mc_pdg_nue_cc_out_fv,
+		                                                       h_leading_shower_mc_pdg_nue_cc_res,
+		                                                       h_leading_shower_mc_pdg_nue_cc_dis,
+		                                                       h_leading_shower_mc_pdg_nue_cc_coh,
+		                                                       h_leading_shower_mc_pdg_nue_cc_mec,
+		                                                       h_leading_shower_mc_pdg_nue_nc,
+		                                                       h_leading_shower_mc_pdg_numu_cc_qe,
+		                                                       h_leading_shower_mc_pdg_numu_cc_res,
+		                                                       h_leading_shower_mc_pdg_numu_cc_dis,
+		                                                       h_leading_shower_mc_pdg_numu_cc_coh,
+		                                                       h_leading_shower_mc_pdg_numu_cc_mec,
+		                                                       h_leading_shower_mc_pdg_numu_nc,
+		                                                       h_leading_shower_mc_pdg_nue_cc_mixed,
+		                                                       h_leading_shower_mc_pdg_numu_cc_mixed,
+		                                                       h_leading_shower_mc_pdg_cosmic,
+		                                                       h_leading_shower_mc_pdg_other_mixed,
+		                                                       h_leading_shower_mc_pdg_unmatched);
 
 
 		//in fv cut
@@ -475,6 +512,7 @@ int selection( const char * _file1){
 		dedx_counter_numu_cc_mec   += tabulated_origins.at(21);
 
 
+		//these are for the tefficiency plots, post all cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
 		{
 			if(_functions_instance.selection_functions::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -513,6 +551,7 @@ int selection( const char * _file1){
 		                                                      h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nue_nc,
 		                                                      h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
 		                                                      h_trk_vtx_dist_unmatched);
+
 		// _functions_instance.selection_functions::TopologyPlots(tpc_object_container_v, passed_tpco,
 		//                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		//                                                        h_pfp_track_shower_nue_cc_qe,
@@ -532,7 +571,25 @@ int selection( const char * _file1){
 		//                                                        h_pfp_track_shower_numu_cc_mixed,
 		//                                                        h_pfp_track_shower_cosmic,
 		//                                                        h_pfp_track_shower_other_mixed,
-		//                                                        h_pfp_track_shower_unmatched);
+		//                                                        h_pfp_track_shower_unmatched,
+		//                                                        h_leading_shower_mc_pdg_nue_cc_qe,
+		//                                                        h_leading_shower_mc_pdg_nue_cc_out_fv,
+		//                                                        h_leading_shower_mc_pdg_nue_cc_res,
+		//                                                        h_leading_shower_mc_pdg_nue_cc_dis,
+		//                                                        h_leading_shower_mc_pdg_nue_cc_coh,
+		//                                                        h_leading_shower_mc_pdg_nue_cc_mec,
+		//                                                        h_leading_shower_mc_pdg_nue_nc,
+		//                                                        h_leading_shower_mc_pdg_numu_cc_qe,
+		//                                                        h_leading_shower_mc_pdg_numu_cc_res,
+		//                                                        h_leading_shower_mc_pdg_numu_cc_dis,
+		//                                                        h_leading_shower_mc_pdg_numu_cc_coh,
+		//                                                        h_leading_shower_mc_pdg_numu_cc_mec,
+		//                                                        h_leading_shower_mc_pdg_numu_nc,
+		//                                                        h_leading_shower_mc_pdg_nue_cc_mixed,
+		//                                                        h_leading_shower_mc_pdg_numu_cc_mixed,
+		//                                                        h_leading_shower_mc_pdg_cosmic,
+		//                                                        h_leading_shower_mc_pdg_other_mixed,
+		//                                                        h_leading_shower_mc_pdg_unmatched);
 
 	}//end event loop
 
