@@ -1081,7 +1081,44 @@ void selection_functions::TopologyPlots(std::vector<xsecAna::TPCObjectContainer>
                                         TH2D * h_leading_shower_mc_pdg_numu_cc_mixed,
                                         TH2D * h_leading_shower_mc_pdg_cosmic,
                                         TH2D * h_leading_shower_mc_pdg_other_mixed,
-                                        TH2D * h_leading_shower_mc_pdg_unmatched    )
+                                        TH2D * h_leading_shower_mc_pdg_unmatched,
+                                        TH1D * h_pfp_track_nue_cc_qe,
+                                        TH1D * h_pfp_track_nue_cc_out_fv,
+                                        TH1D * h_pfp_track_nue_cc_res,
+                                        TH1D * h_pfp_track_nue_cc_dis,
+                                        TH1D * h_pfp_track_nue_cc_coh,
+                                        TH1D * h_pfp_track_nue_cc_mec,
+                                        TH1D * h_pfp_track_nue_nc,
+                                        TH1D * h_pfp_track_numu_cc_qe,
+                                        TH1D * h_pfp_track_numu_cc_res,
+                                        TH1D * h_pfp_track_numu_cc_dis,
+                                        TH1D * h_pfp_track_numu_cc_coh,
+                                        TH1D * h_pfp_track_numu_cc_mec,
+                                        TH1D * h_pfp_track_numu_nc,
+                                        TH1D * h_pfp_track_nue_cc_mixed,
+                                        TH1D * h_pfp_track_numu_cc_mixed,
+                                        TH1D * h_pfp_track_cosmic,
+                                        TH1D * h_pfp_track_other_mixed,
+                                        TH1D * h_pfp_track_unmatched,
+                                        TH1D * h_pfp_shower_nue_cc_qe,
+                                        TH1D * h_pfp_shower_nue_cc_out_fv,
+                                        TH1D * h_pfp_shower_nue_cc_res,
+                                        TH1D * h_pfp_shower_nue_cc_dis,
+                                        TH1D * h_pfp_shower_nue_cc_coh,
+                                        TH1D * h_pfp_shower_nue_cc_mec,
+                                        TH1D * h_pfp_shower_nue_nc,
+                                        TH1D * h_pfp_shower_numu_cc_qe,
+                                        TH1D * h_pfp_shower_numu_cc_res,
+                                        TH1D * h_pfp_shower_numu_cc_dis,
+                                        TH1D * h_pfp_shower_numu_cc_coh,
+                                        TH1D * h_pfp_shower_numu_cc_mec,
+                                        TH1D * h_pfp_shower_numu_nc,
+                                        TH1D * h_pfp_shower_nue_cc_mixed,
+                                        TH1D * h_pfp_shower_numu_cc_mixed,
+                                        TH1D * h_pfp_shower_cosmic,
+                                        TH1D * h_pfp_shower_other_mixed,
+                                        TH1D * h_pfp_shower_unmatched
+                                        )
 {
 	bool true_in_tpc = false;
 
@@ -1175,91 +1212,127 @@ void selection_functions::TopologyPlots(std::vector<xsecAna::TPCObjectContainer>
 		if(tpco_id == "nue_cc_qe")
 		{
 			h_pfp_track_shower_nue_cc_qe->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_cc_qe->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_cc_qe->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_qe->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
 			h_pfp_track_shower_nue_cc_out_fv->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_cc_out_fv->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_cc_out_fv->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_out_fv->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_res")
 		{
 			h_pfp_track_shower_nue_cc_res->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_cc_res->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_cc_res->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_res->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_dis")
 		{
 			h_pfp_track_shower_nue_cc_dis->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_cc_dis->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_cc_dis->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_dis->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_coh")
 		{
 			h_pfp_track_shower_nue_cc_coh->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_cc_coh->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_cc_coh->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_coh->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_mec")
 		{
 			h_pfp_track_shower_nue_cc_mec->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_cc_mec->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_cc_mec->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_mec->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_nc")
 		{
 			h_pfp_track_shower_nue_nc->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_nc->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_nc->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_nc->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
 			h_pfp_track_shower_numu_cc_qe->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_numu_cc_qe->Fill(n_pfp_tracks);
+			h_pfp_shower_numu_cc_qe->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_qe->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "numu_cc_res")
 		{
 			h_pfp_track_shower_numu_cc_res->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_numu_cc_res->Fill(n_pfp_tracks);
+			h_pfp_shower_numu_cc_res->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_res->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "numu_cc_dis")
 		{
 			h_pfp_track_shower_numu_cc_dis->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_numu_cc_dis->Fill(n_pfp_tracks);
+			h_pfp_shower_numu_cc_dis->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_dis->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "numu_cc_coh")
 		{
 			h_pfp_track_shower_numu_cc_coh->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_numu_cc_coh->Fill(n_pfp_tracks);
+			h_pfp_shower_numu_cc_coh->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_coh->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "numu_cc_mec")
 		{
 			h_pfp_track_shower_numu_cc_mec->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_numu_cc_mec->Fill(n_pfp_tracks);
+			h_pfp_shower_numu_cc_mec->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_mec->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "numu_nc")
 		{
 			h_pfp_track_shower_numu_nc->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_numu_nc->Fill(n_pfp_tracks);
+			h_pfp_shower_numu_nc->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_nc->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
 			h_pfp_track_shower_nue_cc_mixed->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nue_cc_mixed->Fill(n_pfp_tracks);
+			h_pfp_shower_nue_cc_mixed->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_mixed->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
 			h_pfp_track_shower_numu_cc_mixed->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_numu_cc_mixed->Fill(n_pfp_tracks);
+			h_pfp_shower_numu_cc_mixed->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_mixed->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "cosmic")
 		{
 			h_pfp_track_shower_cosmic->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_cosmic->Fill(n_pfp_tracks);
+			h_pfp_shower_cosmic->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_cosmic->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "other_mixed")
 		{
 			h_pfp_track_shower_other_mixed->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_other_mixed->Fill(n_pfp_tracks);
+			h_pfp_shower_other_mixed->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_other_mixed->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "unmatched")
 		{
 			h_pfp_track_shower_unmatched->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_unmatched->Fill(n_pfp_tracks);
+			h_pfp_shower_unmatched->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_unmatched->Fill(leading_origin_int, leading_pdg_int);
 		}
 	}        //end loop tpc objects
