@@ -108,13 +108,13 @@ bool selection_functions::in_fv(double x, double y, double z,
 
 void selection_functions::fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                               double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                              std::vector<int> * passed_tpco, const bool _verbose)
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	if(passed_tpco->size() != n_tpc_obj) {std::cout << "Passed TPCO Vector Size != nTPCO!" << std::endl; }
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		//this vertex (tpcobject container) is the vertex of the pfp neutrino
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
@@ -123,12 +123,13 @@ void selection_functions::fiducial_volume_cut(std::vector<xsecAna::TPCObjectCont
 		const bool InFV = in_fv(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2);
 		if(InFV == 1)//true
 		{
-			passed_tpco->at(i) = 1;
+			passed_tpco->at(i).first = 1;
 			if(_verbose) {std::cout << " \t " << i << "[Fid Volume Cut] \t Passed" << std::endl; }
 		}
 		if(InFV == 0)//false
 		{
-			passed_tpco->at(i) = 0;
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "InFV";
 		}
 	}//end tpc object loop
 }
@@ -223,12 +224,12 @@ void selection_functions::SetXYflashVector(TFile * f, TTree * optical_tree, std:
 //***************************************************************************
 
 void selection_functions::flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                           double tolerance, std::vector<int> * passed_tpco, const bool _verbose)
+                                           double tolerance, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
@@ -236,12 +237,13 @@ void selection_functions::flashRecoVtxDist(std::vector< double > largest_flash_v
 		const bool is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tolerance);
 		if(is_close == 1)//true
 		{
-			passed_tpco->at(i) = 1;
+			passed_tpco->at(i).first = 1;
 			if(_verbose) std::cout << " \t " << i << "[Vertex-To-Flash] \t Passed " << std::endl;
 		}
 		if(is_close == 0)//false
 		{
-			passed_tpco->at(i) = 0;
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "FlashDist";
 		}
 	}        //end tpc object loop
 }//end flashRecoVtxDist
@@ -261,12 +263,12 @@ bool selection_functions::shwr_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, 
 //***************************************************************************
 //this function wants to remove particles too far from the reconstructed neutrino vertex
 void selection_functions::VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                        double tolerance, std::vector<int> * passed_tpco, const bool _verbose)
+                                        double tolerance, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		bool close_shower = false;
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
@@ -290,14 +292,15 @@ void selection_functions::VtxNuDistance(std::vector<xsecAna::TPCObjectContainer>
 				if(close_shower == true)
 				{
 					if(_verbose) std::cout << " \t " << i << "[Shower-To-Nue] \t Passed " << std::endl;
-					passed_tpco->at(i) = 1;
+					passed_tpco->at(i).first = 1;
 					break;
 				}
 			}
 		} //end loop pfps
 		if(close_shower == 0)//false
 		{
-			passed_tpco->at(i) = 0;
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "ShwrVtx";
 		}
 	}//end tpc object loop
 }
@@ -306,12 +309,12 @@ void selection_functions::VtxNuDistance(std::vector<xsecAna::TPCObjectContainer>
 //***************************************************************************
 //this function wants to remove particles too far from the reconstructed neutrino vertex
 void selection_functions::VtxTrackNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                             double tolerance, std::vector<int> * passed_tpco, const bool _verbose)
+                                             double tolerance, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		bool close_track = false;
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
@@ -344,14 +347,15 @@ void selection_functions::VtxTrackNuDistance(std::vector<xsecAna::TPCObjectConta
 				if(close_track == true)
 				{
 					if(_verbose) std::cout << " \t " << i << "[Track-To-Nue] \t Passed " << std::endl;
-					passed_tpco->at(i) = 1;
+					passed_tpco->at(i).first = 1;
 					break;
 				}
 			}
 		} //end loop pfps
 		if(close_track == 0)//false
 		{
-			passed_tpco->at(i) = 0;
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "TrkVtx";
 		}
 	}//end tpc object loop
 }
@@ -360,12 +364,12 @@ void selection_functions::VtxTrackNuDistance(std::vector<xsecAna::TPCObjectConta
 //***************************************************************************
 //this function wants to remove particles too far from the reconstructed neutrino vertex
 void selection_functions::HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                       double threshold, std::vector<int> * passed_tpco, const bool _verbose)
+                                       double threshold, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		bool over_threshold = false;
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
@@ -384,14 +388,15 @@ void selection_functions::HitThreshold(std::vector<xsecAna::TPCObjectContainer> 
 				if(over_threshold == true)
 				{
 					if(_verbose) std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
-					passed_tpco->at(i) = 1;
+					passed_tpco->at(i).first = 1;
 					break;
 				}
 			}
 		} //end loop pfps
 		if(over_threshold == 0)//false
 		{
-			passed_tpco->at(i) = 0;
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "HitThreshold";
 		}
 	}//end tpc object loop
 }
@@ -413,12 +418,13 @@ void selection_functions::GetOrigins(std::vector<xsecAna::TPCObjectContainer> * 
 //***************************************************************************
 //***************************************************************************
 //this function simply checks if the tpc object is a nue
-void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco, const bool _verbose)
+void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                 std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 
@@ -435,11 +441,12 @@ void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		}//end loop pfparticles
 		if(has_nue == false)
 		{
-			passed_tpco->at(i) = 0;
+			passed_tpco->at(i).first = 0;
 		}
 		if(has_nue == true)
 		{
-			passed_tpco->at(i) = 1;
+			passed_tpco->at(i).first = 1;
+			passed_tpco->at(i).second = "HasNue";
 			if(_verbose) std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl;
 		}
 	}
@@ -447,13 +454,13 @@ void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_
 
 //***************************************************************************
 //***************************************************************************
-void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
                                        const double tolerance_open_angle, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		int leading_index = 0;
@@ -471,19 +478,23 @@ void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> 
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
-		if(leading_open_angle > tolerance_open_angle) {passed_tpco->at(i) = 0; }
+		if(leading_open_angle > tolerance_open_angle)
+		{
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "OpenAngle";
+		}
 	}//end loop tpc objects
 }//end open angle cut
 
 //***************************************************************************
 //***************************************************************************
-void selection_functions::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+void selection_functions::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
                                   const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		int leading_index = 0;
@@ -501,19 +512,23 @@ void selection_functions::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min) {passed_tpco->at(i) = 0; }
+		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min)
+		{
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "dEdX";
+		}
 	}//end loop tpc objects
 }//end dedx cut
 //***************************************************************************
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
-bool selection_functions::ValidTPCObjects(std::vector<int> * passed_tpco)
+bool selection_functions::ValidTPCObjects(std::vector<std::pair<int, std::string> > * passed_tpco)
 {
 	const int n_tpco = passed_tpco->size();
 	int pass_sum = 0;
-	for(int const tpco : * passed_tpco)
+	for(auto const tpco : * passed_tpco)
 	{
-		pass_sum = pass_sum + tpco;
+		pass_sum = pass_sum + tpco.first;
 	}
 	//0 --> failed tpco, 1 --> passed tpco
 	if(pass_sum == 0) {return false; }
@@ -522,8 +537,9 @@ bool selection_functions::ValidTPCObjects(std::vector<int> * passed_tpco)
 //***************************************************************************
 //***************************************************************************
 
-std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
-                                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
+std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                      std::vector<std::pair<int, std::string> > * passed_tpco, double _x1, double _x2, double _y1, double _y2,
+                                                      double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
 {
 	int nue_cc        = 0;
 	int nue_cc_qe     = 0;
@@ -562,7 +578,7 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 		int part_numu_nc   = 0;
 		int part_unmatched = 0;
 
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const std::string tpc_obj_origin = tpc_obj.Origin();
 		const int tpc_obj_mode = tpc_obj.Mode();
@@ -915,7 +931,7 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 }
 
 void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                       std::vector<int> * passed_tpco, bool _verbose,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                        TH2I * h_tracks_showers, TH2I * h_tracks_showers_cosmic, TH2I * h_tracks_showers_numu,
                                        TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
                                        TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_numu_nc,
@@ -943,7 +959,7 @@ void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> 
 
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		int part_nue_cc    = 0;
 		int part_cosmic    = 0;
 		int part_nue_nc    = 0;
@@ -1071,7 +1087,7 @@ void selection_functions::PostCutPlots(std::vector<xsecAna::TPCObjectContainer> 
 	}//end tpco loop
 }
 
-void selection_functions::TopologyPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<int> * passed_tpco,
+void selection_functions::TopologyPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                                         TH2D * h_pfp_track_shower_nue_cc_qe,
                                         TH2D * h_pfp_track_shower_nue_cc_out_fv,
@@ -1159,7 +1175,7 @@ void selection_functions::TopologyPlots(std::vector<xsecAna::TPCObjectContainer>
 		int part_numu_nc   = 0;
 		int part_unmatched = 0;
 
-		if(passed_tpco->at(i) == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		bool tpco_id_valid = false;
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const std::string tpc_obj_origin = tpc_obj.Origin();

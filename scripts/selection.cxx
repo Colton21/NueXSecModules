@@ -168,8 +168,13 @@ int selection( const char * _file1){
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
 
 		//List of TPC Objects which pass the cuts
-		std::vector<int> * passed_tpco = new std::vector<int>;
-		passed_tpco->resize(tpc_object_container_v->size(), 1);
+		std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
+		passed_tpco->resize(tpc_object_container_v->size());
+		for(int i = 0; i < passed_tpco->size(); i++)
+		{
+			passed_tpco->at(i).first = 1;
+			passed_tpco->at(i).second = "Passed";
+		}
 
 		//** start the cuts here **
 
@@ -468,17 +473,17 @@ int selection( const char * _file1){
 	                                                    );
 
 	std::vector<double> * xsec_cc = new std::vector<double>;
-	const double final_counter                = dedx_counter;
-	const double final_counter_nue_cc         = dedx_counter_nue_cc;
-	const double final_counter_nue_cc_mixed   = dedx_counter_nue_cc_mixed;
-	const double final_counter_nue_cc_out_fv  = dedx_counter_nue_cc_out_fv;
-	const double final_counter_cosmic         = dedx_counter_cosmic;
-	const double final_counter_nue_nc         = dedx_counter_nue_nc;
-	const double final_counter_numu_cc        = dedx_counter_numu_cc;
-	const double final_counter_numu_cc_mixed  = dedx_counter_numu_cc_mixed;
-	const double final_counter_numu_nc        = dedx_counter_numu_nc;
-	const double final_counter_unmatched      = dedx_counter_unmatched;
-	const double final_counter_other_mixed    = dedx_counter_other_mixed;
+	const double final_counter                = dedx_counter_v->at(7);
+	const double final_counter_nue_cc         = dedx_counter_v->at(0);
+	const double final_counter_nue_cc_mixed   = dedx_counter_v->at(1);
+	const double final_counter_nue_cc_out_fv  = dedx_counter_v->at(9);
+	const double final_counter_cosmic         = dedx_counter_v->at(2);
+	const double final_counter_nue_nc         = dedx_counter_v->at(3);
+	const double final_counter_numu_cc        = dedx_counter_v->at(4);
+	const double final_counter_numu_cc_mixed  = dedx_counter_v->at(11);
+	const double final_counter_numu_nc        = dedx_counter_v->at(10);
+	const double final_counter_unmatched      = dedx_counter_v->at(5);
+	const double final_counter_other_mixed    = dedx_counter_v->at(6);
 	const int n_total = final_counter;
 	const int n_bkg = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nue_nc
 	                   + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_numu_nc + final_counter_unmatched + final_counter_other_mixed);
