@@ -96,6 +96,15 @@ int mc_nu_num_charged_particles = 0;
 
 int run_sum = 0;
 
+// std::vector<int> reco_nue_counter_v;
+// std::vector<int> in_fv_counter_v;
+// std::vector<int> vtx_flash_counter_v;
+// std::vector<int> shwr_tpco_counter_v;
+// std::vector<int> trk_tpco_counter_v;
+// std::vector<int> hit_threshold_counter_v;
+// std::vector<int> open_angle_counter_v;
+// std::vector<int> dedx_counter_v;
+
 int reco_nue_counter = 0;
 int reco_nue_counter_nue_cc = 0;
 int reco_nue_counter_nue_cc_mixed = 0;

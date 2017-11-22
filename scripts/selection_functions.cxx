@@ -640,35 +640,62 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	tabulated_origins.at(21) = numu_cc_mec;
 	return tabulated_origins;
 }
-
+//***************************************************************************
+//***************************************************************************
+void selection_functions::TotalOrigins(std::vector<int> tabulated_origins, std::vector<int> * total_cut_origins)
+{
+	total_cut_origins->at(0)  += tabulated_origins.at(0);
+	total_cut_origins->at(1)  += tabulated_origins.at(1);
+	total_cut_origins->at(9)  += tabulated_origins.at(9);
+	total_cut_origins->at(2)  += tabulated_origins.at(2);
+	total_cut_origins->at(3)  += tabulated_origins.at(3);
+	total_cut_origins->at(4)  += tabulated_origins.at(4);
+	total_cut_origins->at(11) += tabulated_origins.at(11);
+	total_cut_origins->at(10) += tabulated_origins.at(10);
+	total_cut_origins->at(5)  += tabulated_origins.at(5);
+	total_cut_origins->at(6)  += tabulated_origins.at(6);
+	total_cut_origins->at(7)  += tabulated_origins.at(7);
+	total_cut_origins->at(12) += tabulated_origins.at(12);
+	total_cut_origins->at(13) += tabulated_origins.at(13);
+	total_cut_origins->at(14) += tabulated_origins.at(14);
+	total_cut_origins->at(15) += tabulated_origins.at(15);
+	total_cut_origins->at(16) += tabulated_origins.at(16);
+	total_cut_origins->at(17) += tabulated_origins.at(17);
+	total_cut_origins->at(18) += tabulated_origins.at(18);
+	total_cut_origins->at(19) += tabulated_origins.at(19);
+	total_cut_origins->at(20) += tabulated_origins.at(20);
+	total_cut_origins->at(21) += tabulated_origins.at(21);
+}
 //***************************************************************************
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
 void selection_functions::PrintInfo(int mc_nue_cc_counter,
-                                    int counter,
-                                    int counter_nue_cc,
-                                    int counter_nue_cc_mixed,
-                                    int counter_nue_cc_out_fv,
-                                    int counter_cosmic,
-                                    int counter_nue_nc,
-                                    int counter_numu_cc,
-                                    int counter_numu_cc_mixed,
-                                    int counter_numu_nc,
-                                    int counter_unmatched,
-                                    int counter_other_mixed,
-                                    int counter_nue_cc_qe,
-                                    int counter_nue_cc_res,
-                                    int counter_nue_cc_dis,
-                                    int counter_nue_cc_coh,
-                                    int counter_nue_cc_mec,
-                                    int counter_numu_cc_qe,
-                                    int counter_numu_cc_res,
-                                    int counter_numu_cc_dis,
-                                    int counter_numu_cc_coh,
-                                    int counter_numu_cc_mec,
+                                    std::vector<int> * counter_v,
                                     std::string cut_name)
 {
+	int counter                = counter_v->at(7);
+	int counter_nue_cc         = counter_v->at(0);
+	int counter_nue_cc_mixed   = counter_v->at(1);
+	int counter_nue_cc_out_fv  = counter_v->at(9);
+	int counter_cosmic         = counter_v->at(2);
+	int counter_nue_nc         = counter_v->at(3);
+	int counter_numu_cc        = counter_v->at(4);
+	int counter_numu_cc_mixed  = counter_v->at(11);
+	int counter_numu_nc        = counter_v->at(10);
+	int counter_unmatched      = counter_v->at(5);
+	int counter_other_mixed    = counter_v->at(6);
+	int counter_nue_cc_qe      = counter_v->at(12);
+	int counter_nue_cc_res     = counter_v->at(13);
+	int counter_nue_cc_dis     = counter_v->at(14);
+	int counter_nue_cc_coh     = counter_v->at(15);
+	int counter_nue_cc_mec     = counter_v->at(16);
+	int counter_numu_cc_qe     = counter_v->at(17);
+	int counter_numu_cc_res    = counter_v->at(18);
+	int counter_numu_cc_dis    = counter_v->at(19);
+	int counter_numu_cc_coh    = counter_v->at(20);
+	int counter_numu_cc_mec    = counter_v->at(21);
+
 	std::cout << " <" << cut_name << "> " << std::endl;
 	std::cout << " Total Candidate Nue     : " << counter << std::endl;
 	std::cout << " Number of Nue CC        : " << counter_nue_cc << std::endl;

@@ -109,30 +109,13 @@ std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_
                                  double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
 //***************************************************************************
 //***************************************************************************
+void TotalOrigins(std::vector<int> tabulated_origins, std::vector<int> * total_cut_origins);
+//***************************************************************************
+//***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
 void PrintInfo(int mc_nue_cc_counter,
-               int counter,
-               int counter_nue_cc,
-               int counter_nue_cc_mixed,
-               int counter_nue_cc_out_fv,
-               int counter_cosmic,
-               int counter_nue_nc,
-               int counter_numu_cc,
-               int counter_numu_cc_mixed,
-               int counter_numu_nc,
-               int counter_unmatched,
-               int counter_other_mixed,
-               int counter_nue_cc_qe,
-               int counter_nue_cc_res,
-               int counter_nue_cc_dis,
-               int counter_nue_cc_coh,
-               int counter_nue_cc_mec,
-               int counter_numu_cc_qe,
-               int counter_numu_cc_res,
-               int counter_numu_cc_dis,
-               int counter_numu_cc_coh,
-               int counter_numu_cc_mec,
+               std::vector<int> * counter_v,
                std::string cut_name);
 //***************************************************************************
 //***************************************************************************
