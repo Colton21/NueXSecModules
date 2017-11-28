@@ -62,6 +62,10 @@ int selection( const char * _file1){
 	std::cout << "MC Numu CC Counter Bar : " << mc_numu_cc_counter_bar << std::endl;
 	std::cout << "MC Numu NC Counter Bar : " << mc_numu_nc_counter_bar << std::endl;
 
+	std::vector<int> * in_time_counter_v = new std::vector<int>;
+	in_time_counter_v->resize(22, 0);
+	std::vector<int> * pe_counter_v = new std::vector<int>;
+	pe_counter_v->resize(22, 0);
 	std::vector<int> * reco_nue_counter_v = new std::vector<int>;
 	reco_nue_counter_v->resize(22, 0);
 	std::vector<int> * in_fv_counter_v = new std::vector<int>;
@@ -84,6 +88,11 @@ int selection( const char * _file1){
 	std::cout << "=====================" << std::endl;
 
 	std::vector<int> * passed_runs = new std::vector<int>;
+	//passed runs is filled with 0, 1, or 2
+	//0 = not in time
+	//1 = passed - in time and PE threshold
+	// 2 = in-time, but not enough PE -- this counts against my efficiency
+
 	const int total_entries = mytree->GetEntries();
 	std::cout << "Total Events: " << total_entries << std::endl;
 
@@ -115,8 +124,17 @@ int selection( const char * _file1){
 			std::cout << "[EVENT NUMBER] \t " << event << std::endl;
 			std::cout << "----------------------" << std::endl;
 		}
-
+		mytree->GetEntry(event);
 		mctruth_counter_tree->GetEntry(event);
+		//***********************************************************
+		//this is where the in-time optical cut actually takes effect
+		//***********************************************************
+		if(passed_runs->at(event) == 0)
+		{
+			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
+			continue;
+		}//false
+
 		double mc_cos_theta = -999;
 		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z / mc_nu_momentum; }
 		const double mc_phi       = atan2(mc_nu_dir_y, mc_nu_dir_x);
@@ -152,15 +170,6 @@ int selection( const char * _file1){
 				total_mc_entries_inFV++;
 			}
 		}
-
-		mytree->GetEntry(event);
-		//this is where the in-time optical cut actually takes effect
-		if(passed_runs->at(event) == 0)
-		{
-			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
-			continue;
-		}//false
-
 		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
 		_functions_instance.selection_functions::GetOrigins(tpc_object_container_v, tpco_origin_v);
 
@@ -177,6 +186,22 @@ int selection( const char * _file1){
 		}
 
 		//** start the cuts here **
+
+		//***********************************************************
+		//this is where the in-time optical cut again takes effect
+		//***********************************************************
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v);
+		//PE threshold cut
+		if(passed_runs->at(event) == 2)
+		{
+			if(_verbose) std::cout << "[Passed In-Time Cut] [Failed PE Threshold] " << std::endl;
+			continue;
+		}
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v);
 
 		//reco nue cut
 		_functions_instance.selection_functions::HasNue(tpc_object_container_v, passed_tpco, _verbose);
@@ -269,6 +294,14 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
 
+		_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose,
+		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                          h_vtx_flash_nue_cc, h_vtx_flash_nue_cc_mixed,
+		                                                          h_vtx_flash_numu_cc, h_vtx_flash_numu_nc,
+		                                                          h_vtx_flash_cosmic, h_vtx_flash_nue_nc,
+		                                                          h_vtx_flash_numu_cc_mixed, h_vtx_flash_other_mixed,
+		                                                          h_vtx_flash_unmatched);
+
 		//vertex to flash cut
 		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
 		                                                          tolerance, passed_tpco, _verbose);
@@ -277,6 +310,19 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
 
+
+		_functions_instance.selection_functions::PostCutsShwrVtx(tpc_object_container_v, passed_tpco, _verbose,
+		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                         h_shwr_vtx_dist_nue_cc,
+		                                                         h_shwr_vtx_dist_nue_cc_mixed,
+		                                                         h_shwr_vtx_dist_numu_cc,
+		                                                         h_shwr_vtx_dist_numu_nc,
+		                                                         h_shwr_vtx_dist_cosmic,
+		                                                         h_shwr_vtx_dist_nue_nc,
+		                                                         h_shwr_vtx_dist_numu_cc_mixed,
+		                                                         h_shwr_vtx_dist_other_mixed,
+		                                                         h_shwr_vtx_dist_unmatched     );
+
 		//distance between pfp shower and nue object cut
 		_functions_instance.selection_functions::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
@@ -284,6 +330,7 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
 
+		//distance between pfp track and nue object cut
 		_functions_instance.selection_functions::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
@@ -439,6 +486,14 @@ int selection( const char * _file1){
 
 	//we also want some metrics to print at the end
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
+	                                                    in_time_counter_v,
+	                                                    "In Time"
+	                                                    );
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
+	                                                    pe_counter_v,
+	                                                    "PE Threshold"
+	                                                    );
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
 	                                                    reco_nue_counter_v,
 	                                                    "Reco Nue"
 	                                                    );
@@ -524,6 +579,7 @@ int selection( const char * _file1){
 	TCanvas * test_c2 = new TCanvas();
 	test_c2->cd();
 	h_nue_eng_eff_den->GetXaxis()->SetTitle("True Neutrino Energy [GeV]");
+	h_nue_eng_eff_den->GetYaxis()->SetTitle("Events");
 	h_nue_eng_eff_den->Draw();
 	test_c2->Print("all_true_neutrino_energy.pdf");
 	TCanvas * num_part_c1 = new TCanvas();
@@ -805,6 +861,56 @@ int selection( const char * _file1){
 	leg_stack->Draw();
 	open_angle_stack_c1->Print("post_cuts_leading_shower_open_angle.pdf");
 
+
+
+	TCanvas * vtx_to_flash_c1 = new TCanvas();
+	vtx_to_flash_c1->cd();
+	THStack * vtx_to_flash_stack = new THStack();
+	h_vtx_flash_nue_cc->SetStats(kFALSE);
+	h_vtx_flash_nue_cc_mixed->SetStats(kFALSE);
+	h_vtx_flash_numu_cc->SetStats(kFALSE);
+	h_vtx_flash_numu_nc->SetStats(kFALSE);
+	h_vtx_flash_cosmic->SetStats(kFALSE);
+	h_vtx_flash_nue_nc->SetStats(kFALSE);
+	h_vtx_flash_numu_cc_mixed->SetStats(kFALSE);
+	h_vtx_flash_other_mixed->SetStats(kFALSE);
+	h_vtx_flash_unmatched->SetStats(kFALSE);
+	h_vtx_flash_nue_cc->SetFillColor(30);
+	h_vtx_flash_nue_cc_mixed->SetFillColor(38);
+	h_vtx_flash_numu_cc->SetFillColor(28);
+	h_vtx_flash_numu_nc->SetFillColor(36);
+	h_vtx_flash_cosmic->SetFillColor(39);
+	h_vtx_flash_nue_nc->SetFillColor(46);
+	h_vtx_flash_numu_cc_mixed->SetFillColor(25);
+	h_vtx_flash_other_mixed->SetFillColor(42);
+	h_vtx_flash_unmatched->SetFillColor(12);
+	vtx_to_flash_stack->Add(h_vtx_flash_nue_cc);
+	vtx_to_flash_stack->Add(h_vtx_flash_nue_cc_mixed);
+	vtx_to_flash_stack->Add(h_vtx_flash_numu_cc);
+	vtx_to_flash_stack->Add(h_vtx_flash_numu_nc);
+	vtx_to_flash_stack->Add(h_vtx_flash_cosmic);
+	vtx_to_flash_stack->Add(h_vtx_flash_nue_nc);
+	vtx_to_flash_stack->Add(h_vtx_flash_numu_cc_mixed);
+	vtx_to_flash_stack->Add(h_vtx_flash_other_mixed);
+	vtx_to_flash_stack->Add(h_vtx_flash_unmatched);
+	vtx_to_flash_stack->Draw();
+	vtx_to_flash_stack->GetXaxis()->SetTitle("2D Distance From Largest Flash to Reco Nu Vtx [cm]");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack_flash = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack_flash->AddEntry(h_vtx_flash_nue_cc,          "Nue CC", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_cosmic,          "Cosmic", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_numu_cc,         "Numu CC", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_nue_nc,          "Nue NC", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_numu_nc,         "Numu NC", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_other_mixed,     "Other Mixed", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_unmatched,       "Unmatched", "f");
+	leg_stack_flash->Draw();
+	vtx_to_flash_c1->Print("post_cuts_vtx_to_flash_distance.pdf");
+
 	TCanvas * trk_vtx_dist_stack_c1 = new TCanvas();
 	trk_vtx_dist_stack_c1->cd();
 	THStack * trk_vtx_dist_stack = new THStack();
@@ -852,6 +958,55 @@ int selection( const char * _file1){
 	leg_stack2->AddEntry(h_trk_vtx_dist_unmatched,       "Unmatched", "f");
 	leg_stack2->Draw();
 	trk_vtx_dist_stack_c1->Print("post_cuts_track_to_vtx.pdf");
+
+
+	TCanvas * shwr_vtx_dist_stack_c1 = new TCanvas();
+	shwr_vtx_dist_stack_c1->cd();
+	THStack * shwr_vtx_dist_stack = new THStack();
+	h_shwr_vtx_dist_nue_cc->SetStats(kFALSE);
+	h_shwr_vtx_dist_nue_cc_mixed->SetStats(kFALSE);
+	h_shwr_vtx_dist_numu_cc->SetStats(kFALSE);
+	h_shwr_vtx_dist_numu_nc->SetStats(kFALSE);
+	h_shwr_vtx_dist_cosmic->SetStats(kFALSE);
+	h_shwr_vtx_dist_nue_nc->SetStats(kFALSE);
+	h_shwr_vtx_dist_numu_cc_mixed->SetStats(kFALSE);
+	h_shwr_vtx_dist_other_mixed->SetStats(kFALSE);
+	h_shwr_vtx_dist_unmatched->SetStats(kFALSE);
+	h_shwr_vtx_dist_nue_cc->SetFillColor(30);
+	h_shwr_vtx_dist_nue_cc_mixed->SetFillColor(38);
+	h_shwr_vtx_dist_numu_cc->SetFillColor(28);
+	h_shwr_vtx_dist_numu_nc->SetFillColor(36);
+	h_shwr_vtx_dist_cosmic->SetFillColor(39);
+	h_shwr_vtx_dist_nue_nc->SetFillColor(46);
+	h_shwr_vtx_dist_numu_cc_mixed->SetFillColor(25);
+	h_shwr_vtx_dist_other_mixed->SetFillColor(42);
+	h_shwr_vtx_dist_unmatched->SetFillColor(12);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_unmatched);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_other_mixed);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_nc);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_nc);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc_mixed);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_cosmic);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_cc_mixed);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_cc);
+	shwr_vtx_dist_stack->Draw();
+	shwr_vtx_dist_stack->GetXaxis()->SetTitle("Track to Nue Candidate Vertex Distance [cm]");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack_shwr = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nue_cc,          "Nue CC", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_cosmic,          "Cosmic", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_numu_cc,         "Numu CC", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nue_nc,          "Nue NC", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_numu_nc,         "Numu NC", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_other_mixed,     "Other Mixed", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_unmatched,       "Unmatched", "f");
+	leg_stack_shwr->Draw();
+	shwr_vtx_dist_stack_c1->Print("post_cuts_shower_to_vtx.pdf");
 
 	TCanvas * track_stack_c1 = new TCanvas();
 	track_stack_c1->cd();

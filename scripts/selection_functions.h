@@ -221,7 +221,28 @@ void TopologyPlots(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
                    TH1D * h_pfp_shower_unmatched    );
 //***************************************************************************
 //***************************************************************************
-
+void PostCutsVtxFlash(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                      TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_mixed,
+                      TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_numu_nc,
+                      TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nue_nc,
+                      TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                      TH1D * h_vtx_flash_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                     TH1D * h_shwr_vtx_dist_nue_cc,
+                     TH1D * h_shwr_vtx_dist_nue_cc_mixed,
+                     TH1D * h_shwr_vtx_dist_numu_cc,
+                     TH1D * h_shwr_vtx_dist_numu_nc,
+                     TH1D * h_shwr_vtx_dist_cosmic,
+                     TH1D * h_shwr_vtx_dist_nue_nc,
+                     TH1D * h_shwr_vtx_dist_numu_cc_mixed,
+                     TH1D * h_shwr_vtx_dist_other_mixed,
+                     TH1D * h_shwr_vtx_dist_unmatched     );
 };
 
 #endif

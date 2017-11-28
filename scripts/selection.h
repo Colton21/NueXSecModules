@@ -234,6 +234,27 @@ TH1D * h_pfp_shower_cosmic        = new TH1D("h_pfp_shower_cosmic",        "h_pf
 TH1D * h_pfp_shower_other_mixed   = new TH1D("h_pfp_shower_other_mixed",   "h_pfp_shower_other_mixed",   10, 0, 10);
 TH1D * h_pfp_shower_unmatched     = new TH1D("h_pfp_shower_unmatched",     "h_pfp_shower_unmatched",     10, 0, 10);
 
+
+TH1D * h_vtx_flash_nue_cc        = new TH1D("h_vtx_flash_nue_cc",         "h_vtx_flash_nue_cc",        40, 0, 200);
+TH1D * h_vtx_flash_nue_cc_mixed  = new TH1D("h_vtx_flash_nue_cc_mixed",   "h_vtx_flash_nue_cc_mixed",  40, 0, 200);
+TH1D * h_vtx_flash_numu_cc       = new TH1D("h_vtx_flash_numu_cc",        "h_vtx_flash_numu_cc_mixed", 40, 0, 200);
+TH1D * h_vtx_flash_numu_nc       = new TH1D("h_vtx_flash_numu_nc",        "h_vtx_flash_numu_nc",       40, 0, 200);
+TH1D * h_vtx_flash_cosmic        = new TH1D("h_vtx_flash_cosmic",         "h_vtx_flash_cosmic",        40, 0, 200);
+TH1D * h_vtx_flash_nue_nc        = new TH1D("h_vtx_flash_nue_nc",         "h_vtx_flash_nue_nc",        40, 0, 200);
+TH1D * h_vtx_flash_numu_cc_mixed = new TH1D("h_vtx_flash_numu_cc_mixed",  "h_vtx_flash_numu_cc_mixed", 40, 0, 200);
+TH1D * h_vtx_flash_other_mixed   = new TH1D("h_vtx_flash_other_mixed",    "h_vtx_flash_other_mixed",   40, 0, 200);
+TH1D * h_vtx_flash_unmatched     = new TH1D("h_vtx_flash_unmatched",      "h_vtx_flash_unmatched",     40, 0, 200);
+
+TH1D * h_shwr_vtx_dist_nue_cc        = new TH1D("h_shwr_vtx_dist_nue_cc",         "h_shwr_vtx_dist_nue_cc",        20, 0, 20);
+TH1D * h_shwr_vtx_dist_nue_cc_mixed  = new TH1D("h_shwr_vtx_dist_nue_cc_mixed",   "h_shwr_vtx_dist_nue_cc_mixed",  20, 0, 20);
+TH1D * h_shwr_vtx_dist_numu_cc       = new TH1D("h_shwr_vtx_dist_numu_cc",        "h_shwr_vtx_dist_numu_cc",       20, 0, 20);
+TH1D * h_shwr_vtx_dist_numu_nc       = new TH1D("h_shwr_vtx_dist_numu_nc",        "h_shwr_vtx_dist_numu_nc",       20, 0, 20);
+TH1D * h_shwr_vtx_dist_cosmic        = new TH1D("h_shwr_vtx_dist_cosmic",         "h_shwr_vtx_dist_cosmic",        20, 0, 20);
+TH1D * h_shwr_vtx_dist_nue_nc        = new TH1D("h_shwr_vtx_dist_nue_nc",         "h_shwr_vtx_dist_nue_nc",        20, 0, 20);
+TH1D * h_shwr_vtx_dist_numu_cc_mixed = new TH1D("h_shwr_vtx_dist_numu_cc_mixed",  "h_shwr_vtx_dist_numu_cc_mixed", 20, 0, 20);
+TH1D * h_shwr_vtx_dist_other_mixed   = new TH1D("h_shwr_vtx_dist_other_mixed",    "h_shwr_vtx_dist_other_mixed",   20, 0, 20);
+TH1D * h_shwr_vtx_dist_unmatched     = new TH1D("h_shwr_vtx_dist_unmatched",      "h_shwr_vtx_dist_unmatched",     20, 0, 20);
+
 }//end namespace
 
 #endif

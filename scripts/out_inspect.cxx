@@ -1616,6 +1616,7 @@ int out_inspect(const char * _file1)
 	h_opt_time_pe->GetYaxis()->SetTitleOffset(1.3);
 	h_opt_time_pe->GetXaxis()->SetTitle("Time [us]");
 	h_opt_time_pe->GetYaxis()->SetTitle("Photoelectrons");
+	h_opt_time_pe->SetStats(kFALSE);
 	TCanvas * opt_c3 = new TCanvas();
 
 

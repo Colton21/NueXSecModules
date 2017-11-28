@@ -11,6 +11,7 @@ int selection_functions::flash_in_time(int flash_pe, int flash_pe_threshold, dou
 		{
 			return 1;//true
 		}
+		return 2;//in-time, flash too small
 	}
 	return 0;//false
 }
@@ -1381,3 +1382,366 @@ void selection_functions::TopologyPlots(std::vector<xsecAna::TPCObjectContainer>
 	}        //end loop tpc objects
 
 }//end function
+void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                           TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_mixed,
+                                           TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_numu_nc,
+                                           TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nue_nc,
+                                           TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                                           TH1D * h_vtx_flash_unmatched)
+{
+	bool true_in_tpc = false;
+
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		int part_nue_cc    = 0;
+		int part_cosmic    = 0;
+		int part_nue_nc    = 0;
+		int part_numu_cc   = 0;
+		int part_numu_nc   = 0;
+		int part_unmatched = 0;
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool tpco_id_valid = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const std::string tpc_obj_origin = tpc_obj.Origin();
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		std::string tpco_id;
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
+			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 1 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_nc++; }
+			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
+			if(part.Origin() == "kUnknown")   { part_unmatched++; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const std::string leading_origin = leading_shower.Origin();
+		double leading_origin_int;
+		if(leading_origin == "kBeamNeutrino") {leading_origin_int = 0.0; }
+		if(leading_origin == "kCosmicRay")    {leading_origin_int = 1.0; }
+		if(leading_origin == "kUnknown")      {leading_origin_int = 2.0; }
+		const int leading_mc_pdg = leading_shower.MCPdgCode();
+		double leading_pdg_int;
+		if(leading_mc_pdg == 11)                            {leading_pdg_int = 0.0;  }
+		if(leading_mc_pdg == -11)                           {leading_pdg_int = 1.0;  }
+		if(leading_mc_pdg == 13)                            {leading_pdg_int = 2.0;  }
+		if(leading_mc_pdg == -13)                           {leading_pdg_int = 3.0;  }
+		if(leading_mc_pdg == 22)                            {leading_pdg_int = 4.0;  }
+		if(leading_mc_pdg == 211 ||
+		   leading_mc_pdg == -211)                          {leading_pdg_int = 5.0;  }
+		if(leading_mc_pdg == 2212)                          {leading_pdg_int = 6.0;  }
+		if(leading_mc_pdg == 2112)                          {leading_pdg_int = 7.0;  }
+		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+		   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+		   leading_mc_pdg == -321)                          {leading_pdg_int = 8.0; }
+		if(leading_mc_pdg == 0)                             {leading_pdg_int = 9.0; }
+		//now to catagorise the tpco
+		if(part_cosmic > 0)
+		{
+			if(part_nue_cc > 0)                                               { tpco_id = "nue_cc_mixed";  tpco_id_valid = true; }
+			if(part_numu_cc > 0 && tpco_id_valid == false)                    { tpco_id = "numu_cc_mixed"; tpco_id_valid = true; }
+			if((part_nue_nc > 0 || part_numu_nc > 0) && tpco_id_valid == false) { tpco_id = "other_mixed";   tpco_id_valid = true; }
+			if(tpco_id_valid == false)                                        { tpco_id = "cosmic";        tpco_id_valid = true; }
+		}
+		//this uses the true neutrino vertex for this specific event
+		//not the true vtx per tpc object - maybe this can be fixed in the future...
+		//but using the true nu vtx only matters for the pure signal events,
+		//where the neutrino vertex IS the true tpc object vertex
+		true_in_tpc = in_fv(vtxX, vtxY, vtxZ,
+		                    _x1, _x2, _y1,
+		                    _y2, _z1, _z2);
+		if(part_cosmic == 0)
+		{
+			if(part_nue_cc    > 0 && true_in_tpc == false && tpco_id_valid == false) { tpco_id = "nue_cc_out_fv";    tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 0    && tpco_id_valid == false) { tpco_id = "nue_cc_qe";        tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 1    && tpco_id_valid == false) { tpco_id = "nue_cc_res";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 2    && tpco_id_valid == false) { tpco_id = "nue_cc_dis";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 3    && tpco_id_valid == false) { tpco_id = "nue_cc_coh";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 10   && tpco_id_valid == false) { tpco_id = "nue_cc_mec";       tpco_id_valid = true; }
+			if(part_nue_nc    > 0                         && tpco_id_valid == false) { tpco_id = "nue_nc";           tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 0    && tpco_id_valid == false) { tpco_id = "numu_cc_qe";       tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 1    && tpco_id_valid == false) { tpco_id = "numu_cc_res";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 2    && tpco_id_valid == false) { tpco_id = "numu_cc_dis";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 3    && tpco_id_valid == false) { tpco_id = "numu_cc_coh";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 10   && tpco_id_valid == false) { tpco_id = "numu_cc_mec";      tpco_id_valid = true; }
+			if(part_numu_nc   > 0                         && tpco_id_valid == false) { tpco_id = "numu_nc";          tpco_id_valid = true; }
+			if(part_unmatched > 0                         && tpco_id_valid == false) { tpco_id = "unmatched";        tpco_id_valid = true; }
+		}
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		//if(tpco_id == "nue_cc_out_fv")
+		//{
+		//	h_vtx_flash_nue_cc_out_fv->Fill(distance);
+		//}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_nc")
+		{
+			h_vtx_flash_nue_nc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_nc")
+		{
+			h_vtx_flash_numu_nc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_vtx_flash_nue_cc_mixed->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_vtx_flash_numu_cc_mixed->Fill(distance);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_vtx_flash_cosmic->Fill(distance);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_vtx_flash_other_mixed->Fill(distance);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_vtx_flash_unmatched->Fill(distance);
+		}
+	}        //end loop tpc objects
+}//end function
+
+void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                          TH1D * h_shwr_vtx_dist_nue_cc,
+                                          TH1D * h_shwr_vtx_dist_nue_cc_mixed,
+                                          TH1D * h_shwr_vtx_dist_numu_cc,
+                                          TH1D * h_shwr_vtx_dist_numu_nc,
+                                          TH1D * h_shwr_vtx_dist_cosmic,
+                                          TH1D * h_shwr_vtx_dist_nue_nc,
+                                          TH1D * h_shwr_vtx_dist_numu_cc_mixed,
+                                          TH1D * h_shwr_vtx_dist_other_mixed,
+                                          TH1D * h_shwr_vtx_dist_unmatched     )
+{
+	bool true_in_tpc = false;
+
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		int part_nue_cc    = 0;
+		int part_cosmic    = 0;
+		int part_nue_nc    = 0;
+		int part_numu_cc   = 0;
+		int part_numu_nc   = 0;
+		int part_unmatched = 0;
+
+
+		double smallest_trk_vtx_dist = 1000;
+		bool has_track = false;
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool tpco_id_valid = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const std::string tpc_obj_origin = tpc_obj.Origin();
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		std::string tpco_id;
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
+			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 1 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_nc++; }
+			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
+			if(part.Origin() == "kUnknown")   { part_unmatched++; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const std::string leading_origin = leading_shower.Origin();
+		const double leading_vtx_x = leading_shower.pfpVtxX();
+		const double leading_vtx_y = leading_shower.pfpVtxY();
+		const double leading_vtx_z = leading_shower.pfpVtxZ();
+		const double distance = sqrt(pow((tpc_vtx_x - leading_vtx_x), 2) +
+		                             pow((tpc_vtx_y - leading_vtx_y), 2) +
+		                             pow((tpc_vtx_z - leading_vtx_z), 2));
+		double leading_origin_int;
+		if(leading_origin == "kBeamNeutrino") {leading_origin_int = 0.0; }
+		if(leading_origin == "kCosmicRay")    {leading_origin_int = 1.0; }
+		if(leading_origin == "kUnknown")      {leading_origin_int = 2.0; }
+		const int leading_mc_pdg = leading_shower.MCPdgCode();
+		double leading_pdg_int;
+		if(leading_mc_pdg == 11)                            {leading_pdg_int = 0.0;  }
+		if(leading_mc_pdg == -11)                           {leading_pdg_int = 1.0;  }
+		if(leading_mc_pdg == 13)                            {leading_pdg_int = 2.0;  }
+		if(leading_mc_pdg == -13)                           {leading_pdg_int = 3.0;  }
+		if(leading_mc_pdg == 22)                            {leading_pdg_int = 4.0;  }
+		if(leading_mc_pdg == 211 ||
+		   leading_mc_pdg == -211)                          {leading_pdg_int = 5.0;  }
+		if(leading_mc_pdg == 2212)                          {leading_pdg_int = 6.0;  }
+		if(leading_mc_pdg == 2112)                          {leading_pdg_int = 7.0;  }
+		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 ||
+		   leading_mc_pdg == 311 || leading_mc_pdg == 321 ||
+		   leading_mc_pdg == -321)                          {leading_pdg_int = 8.0; }
+		if(leading_mc_pdg == 0)                             {leading_pdg_int = 9.0; }
+		//now to catagorise the tpco
+		if(part_cosmic > 0)
+		{
+			if(part_nue_cc > 0)                                               { tpco_id = "nue_cc_mixed";  tpco_id_valid = true; }
+			if(part_numu_cc > 0 && tpco_id_valid == false)                    { tpco_id = "numu_cc_mixed"; tpco_id_valid = true; }
+			if((part_nue_nc > 0 || part_numu_nc > 0) && tpco_id_valid == false) { tpco_id = "other_mixed";   tpco_id_valid = true; }
+			if(tpco_id_valid == false)                                        { tpco_id = "cosmic";        tpco_id_valid = true; }
+		}
+		//this uses the true neutrino vertex for this specific event
+		//not the true vtx per tpc object - maybe this can be fixed in the future...
+		//but using the true nu vtx only matters for the pure signal events,
+		//where the neutrino vertex IS the true tpc object vertex
+		true_in_tpc = in_fv(vtxX, vtxY, vtxZ,
+		                    _x1, _x2, _y1,
+		                    _y2, _z1, _z2);
+		if(part_cosmic == 0)
+		{
+			if(part_nue_cc    > 0 && true_in_tpc == false && tpco_id_valid == false) { tpco_id = "nue_cc_out_fv";    tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 0    && tpco_id_valid == false) { tpco_id = "nue_cc_qe";        tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 1    && tpco_id_valid == false) { tpco_id = "nue_cc_res";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 2    && tpco_id_valid == false) { tpco_id = "nue_cc_dis";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 3    && tpco_id_valid == false) { tpco_id = "nue_cc_coh";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 10   && tpco_id_valid == false) { tpco_id = "nue_cc_mec";       tpco_id_valid = true; }
+			if(part_nue_nc    > 0                         && tpco_id_valid == false) { tpco_id = "nue_nc";           tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 0    && tpco_id_valid == false) { tpco_id = "numu_cc_qe";       tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 1    && tpco_id_valid == false) { tpco_id = "numu_cc_res";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 2    && tpco_id_valid == false) { tpco_id = "numu_cc_dis";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 3    && tpco_id_valid == false) { tpco_id = "numu_cc_coh";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 10   && tpco_id_valid == false) { tpco_id = "numu_cc_mec";      tpco_id_valid = true; }
+			if(part_numu_nc   > 0                         && tpco_id_valid == false) { tpco_id = "numu_nc";          tpco_id_valid = true; }
+			if(part_unmatched > 0                         && tpco_id_valid == false) { tpco_id = "unmatched";        tpco_id_valid = true; }
+		}
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_shwr_vtx_dist_nue_cc->Fill(distance);
+		}
+		//if(tpco_id == "nue_cc_out_fv")
+		//{
+		//	h_vtx_flash_nue_cc_out_fv->Fill(distance);
+		//}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_shwr_vtx_dist_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_shwr_vtx_dist_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_shwr_vtx_dist_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_shwr_vtx_dist_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_nc")
+		{
+			h_shwr_vtx_dist_nue_nc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_shwr_vtx_dist_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_shwr_vtx_dist_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_shwr_vtx_dist_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_shwr_vtx_dist_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_shwr_vtx_dist_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_nc")
+		{
+			h_shwr_vtx_dist_numu_nc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_shwr_vtx_dist_nue_cc_mixed->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_shwr_vtx_dist_numu_cc_mixed->Fill(distance);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_shwr_vtx_dist_cosmic->Fill(distance);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_shwr_vtx_dist_other_mixed->Fill(distance);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_shwr_vtx_dist_unmatched->Fill(distance);
+		}
+	}        //end loop tpc objects
+}
