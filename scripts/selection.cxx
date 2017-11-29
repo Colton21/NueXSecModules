@@ -5,6 +5,7 @@ int selection( const char * _file1){
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
+	const bool _post_cuts_verbose = true;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
@@ -82,6 +83,10 @@ int selection( const char * _file1){
 	open_angle_counter_v->resize(22, 0);
 	std::vector<int> * dedx_counter_v = new std::vector<int>;
 	dedx_counter_v->resize(22, 0);
+
+	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
+	std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string> >;
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
@@ -473,6 +478,8 @@ int selection( const char * _file1){
 		//                                                        h_pfp_shower_other_mixed,
 		//                                                        h_pfp_shower_unmatched);
 
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, post_cuts_v);
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -566,6 +573,8 @@ int selection( const char * _file1){
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Genie value of Flux " << '\n' <<
 	        " Integrated Xsec:    " << genie_xsec << std::endl;
+
+	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v, _post_cuts_verbose); }
 
 //********************//
 //**** Histograms ****//

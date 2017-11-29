@@ -101,6 +101,14 @@ void dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, 
              const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose);
 //***************************************************************************
 //***************************************************************************
+void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco,
+                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v);
+//***************************************************************************
+//***************************************************************************
+void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v, bool _post_cuts_verbose);
+//***************************************************************************
+//***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
 bool ValidTPCObjects(std::vector<std::pair<int, std::string> > * passed_tpco);
 //***************************************************************************

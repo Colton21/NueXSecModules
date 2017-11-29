@@ -443,11 +443,11 @@ void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		if(has_nue == false)
 		{
 			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "HasNue";
 		}
 		if(has_nue == true)
 		{
 			passed_tpco->at(i).first = 1;
-			passed_tpco->at(i).second = "HasNue";
 			if(_verbose) std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl;
 		}
 	}
@@ -522,6 +522,111 @@ void selection_functions::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 }//end dedx cut
 //***************************************************************************
 //***************************************************************************
+void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco,
+                                            std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v)
+{
+	bool true_in_tpc = true;
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		const std::string reason = passed_tpco->at(i).second; //this should always return passed
+		bool tpco_id_valid = false;
+		std::string tpco_id = "Invalid";
+		int part_nue_cc    = 0;
+		int part_cosmic    = 0;
+		int part_nue_nc    = 0;
+		int part_numu_cc   = 0;
+		int part_numu_nc   = 0;
+		int part_unmatched = 0;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double pfp_vtx_x = tpc_obj.pfpVtxX();
+		const double pfp_vtx_y = tpc_obj.pfpVtxY();
+		const double pfp_vtx_z = tpc_obj.pfpVtxZ();
+		const int run_num = tpc_obj.RunNumber();
+		const int event_num = tpc_obj.EventNumber();
+
+		const std::string tpc_obj_origin = tpc_obj.Origin();
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
+			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
+			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 1 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_nc++; }
+			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
+			if(part.Origin() == "kUnknown")   { part_unmatched++; }
+		}
+
+
+		if(part_cosmic > 0)
+		{
+			if(part_nue_cc > 0)                                                 { tpco_id = "nue_cc_mixed";  tpco_id_valid = true; }
+			if(part_numu_cc > 0 && tpco_id_valid == false)                      { tpco_id = "numu_cc_mixed"; tpco_id_valid = true; }
+			if((part_nue_nc > 0 || part_numu_nc > 0) && tpco_id_valid == false) { tpco_id = "other_mixed";   tpco_id_valid = true; }
+			if(tpco_id_valid == false)                                          { tpco_id = "cosmic";        tpco_id_valid = true; }
+		}
+		if(part_cosmic == 0)
+		{
+			if(part_nue_cc    > 0 && true_in_tpc == false && tpco_id_valid == false) { tpco_id = "nue_cc_out_fv";    tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 0    && tpco_id_valid == false) { tpco_id = "nue_cc_qe";        tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 1    && tpco_id_valid == false) { tpco_id = "nue_cc_res";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 2    && tpco_id_valid == false) { tpco_id = "nue_cc_dis";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 3    && tpco_id_valid == false) { tpco_id = "nue_cc_coh";       tpco_id_valid = true; }
+			if(part_nue_cc    > 0 && tpc_obj_mode == 10   && tpco_id_valid == false) { tpco_id = "nue_cc_mec";       tpco_id_valid = true; }
+			if(part_nue_nc    > 0                         && tpco_id_valid == false) { tpco_id = "nue_nc";           tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 0    && tpco_id_valid == false) { tpco_id = "numu_cc_qe";       tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 1    && tpco_id_valid == false) { tpco_id = "numu_cc_res";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 2    && tpco_id_valid == false) { tpco_id = "numu_cc_dis";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 3    && tpco_id_valid == false) { tpco_id = "numu_cc_coh";      tpco_id_valid = true; }
+			if(part_numu_cc   > 0 && tpc_obj_mode == 10   && tpco_id_valid == false) { tpco_id = "numu_cc_mec";      tpco_id_valid = true; }
+			if(part_numu_nc   > 0                         && tpco_id_valid == false) { tpco_id = "numu_nc";          tpco_id_valid = true; }
+			if(part_unmatched > 0                         && tpco_id_valid == false) { tpco_id = "unmatched";        tpco_id_valid = true; }
+		}
+
+		std::tuple<int, int, double, double, double, std::string, std::string> my_tuple =
+		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id);
+		post_cuts_v->push_back(my_tuple);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v,
+                                             bool _post_cuts_verbose)
+{
+	const int passed_events = post_cuts_v->size();
+	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+	std::cout << "Total Passed Events: " << passed_events << std::endl;
+	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+	for(auto const my_tuple: * post_cuts_v)
+	{
+		const int event_num = std::get<0>(my_tuple);
+		const int run_num = std::get<1>(my_tuple);
+		const double pfp_vtx_x = std::get<2>(my_tuple);
+		const double pfp_vtx_y = std::get<3>(my_tuple);
+		const double pfp_vtx_z = std::get<4>(my_tuple);
+		const std::string reason = std::get<5>(my_tuple);
+		const std::string event_type = std::get<6>(my_tuple);
+		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+		std::cout << "Event Type  : " << event_type << std::endl;
+		std::cout << "Event Number: " << event_num << std::endl;
+		std::cout << "Run Number  : " << run_num << std::endl;
+		std::cout << "Pfp Vtx X   : " << pfp_vtx_x << std::endl;
+		std::cout << "Pfp Vtx Y   : " << pfp_vtx_y << std::endl;
+		std::cout << "Pfp Vtx Z   : " << pfp_vtx_z << std::endl;
+		std::cout << "TPCO Reason : " << reason << std::endl;
+		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+	}
+	std::cout << "   * * * END * * *   " << std::endl;
+	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+}
+
+//***************************************************************************
+//***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
 bool selection_functions::ValidTPCObjects(std::vector<std::pair<int, std::string> > * passed_tpco)
 {
@@ -537,7 +642,6 @@ bool selection_functions::ValidTPCObjects(std::vector<std::pair<int, std::string
 }
 //***************************************************************************
 //***************************************************************************
-
 std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                       std::vector<std::pair<int, std::string> > * passed_tpco, double _x1, double _x2, double _y1, double _y2,
                                                       double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
@@ -1454,10 +1558,10 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 		//now to catagorise the tpco
 		if(part_cosmic > 0)
 		{
-			if(part_nue_cc > 0)                                               { tpco_id = "nue_cc_mixed";  tpco_id_valid = true; }
-			if(part_numu_cc > 0 && tpco_id_valid == false)                    { tpco_id = "numu_cc_mixed"; tpco_id_valid = true; }
+			if(part_nue_cc > 0)                                                 { tpco_id = "nue_cc_mixed";  tpco_id_valid = true; }
+			if(part_numu_cc > 0 && tpco_id_valid == false)                      { tpco_id = "numu_cc_mixed"; tpco_id_valid = true; }
 			if((part_nue_nc > 0 || part_numu_nc > 0) && tpco_id_valid == false) { tpco_id = "other_mixed";   tpco_id_valid = true; }
-			if(tpco_id_valid == false)                                        { tpco_id = "cosmic";        tpco_id_valid = true; }
+			if(tpco_id_valid == false)                                          { tpco_id = "cosmic";        tpco_id_valid = true; }
 		}
 		//this uses the true neutrino vertex for this specific event
 		//not the true vtx per tpc object - maybe this can be fixed in the future...
