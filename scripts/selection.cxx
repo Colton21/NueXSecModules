@@ -315,7 +315,6 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
 
-
 		_functions_instance.selection_functions::PostCutsShwrVtx(tpc_object_container_v, passed_tpco, _verbose,
 		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                         h_shwr_vtx_dist_nue_cc,
@@ -355,6 +354,18 @@ int selection( const char * _file1){
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
+
+		_functions_instance.selection_functions::PostCutsdEdx(tpc_object_container_v, passed_tpco, _verbose,
+		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                      h_dedx_cuts_nue_cc,
+		                                                      h_dedx_cuts_nue_cc_mixed,
+		                                                      h_dedx_cuts_numu_cc,
+		                                                      h_dedx_cuts_numu_nc,
+		                                                      h_dedx_cuts_cosmic,
+		                                                      h_dedx_cuts_nue_nc,
+		                                                      h_dedx_cuts_numu_cc_mixed,
+		                                                      h_dedx_cuts_other_mixed,
+		                                                      h_dedx_cuts_unmatched     );
 
 		//dEdx cut for the leading shower
 		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
