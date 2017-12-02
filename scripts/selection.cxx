@@ -882,6 +882,53 @@ int selection( const char * _file1){
 	open_angle_stack_c1->Print("post_cuts_leading_shower_open_angle.pdf");
 
 
+	TCanvas * dedx_cuts_c1 = new TCanvas();
+	dedx_cuts_c1->cd();
+	THStack * dedx_cuts_stack = new THStack();
+	h_dedx_cuts_nue_cc->SetStats(kFALSE);
+	h_dedx_cuts_nue_cc_mixed->SetStats(kFALSE);
+	h_dedx_cuts_numu_cc->SetStats(kFALSE);
+	h_dedx_cuts_numu_nc->SetStats(kFALSE);
+	h_dedx_cuts_cosmic->SetStats(kFALSE);
+	h_dedx_cuts_nue_nc->SetStats(kFALSE);
+	h_dedx_cuts_numu_cc_mixed->SetStats(kFALSE);
+	h_dedx_cuts_other_mixed->SetStats(kFALSE);
+	h_dedx_cuts_unmatched->SetStats(kFALSE);
+	h_dedx_cuts_nue_cc->SetFillColor(30);
+	h_dedx_cuts_nue_cc_mixed->SetFillColor(38);
+	h_dedx_cuts_numu_cc->SetFillColor(28);
+	h_dedx_cuts_numu_nc->SetFillColor(36);
+	h_dedx_cuts_cosmic->SetFillColor(39);
+	h_dedx_cuts_nue_nc->SetFillColor(46);
+	h_dedx_cuts_numu_cc_mixed->SetFillColor(25);
+	h_dedx_cuts_other_mixed->SetFillColor(42);
+	h_dedx_cuts_unmatched->SetFillColor(12);
+	dedx_cuts_stack->Add(h_dedx_cuts_nue_cc);
+	dedx_cuts_stack->Add(h_dedx_cuts_nue_cc_mixed);
+	dedx_cuts_stack->Add(h_dedx_cuts_numu_cc);
+	dedx_cuts_stack->Add(h_dedx_cuts_numu_nc);
+	dedx_cuts_stack->Add(h_dedx_cuts_cosmic);
+	dedx_cuts_stack->Add(h_dedx_cuts_nue_nc);
+	dedx_cuts_stack->Add(h_dedx_cuts_numu_cc_mixed);
+	dedx_cuts_stack->Add(h_dedx_cuts_other_mixed);
+	dedx_cuts_stack->Add(h_dedx_cuts_unmatched);
+	dedx_cuts_stack->Draw();
+	dedx_cuts_stack->GetXaxis()->SetTitle("Collection Plane dE/dx [MeV/cm]");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack_dedx = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack_dedx->AddEntry(h_dedx_cuts_nue_cc,          "Nue CC", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_cosmic,          "Cosmic", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_numu_cc,         "Numu CC", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_nue_nc,          "Nue NC", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_numu_nc,         "Numu NC", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_other_mixed,     "Other Mixed", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_unmatched,       "Unmatched", "f");
+	leg_stack_dedx->Draw();
+	dedx_cuts_c1->Print("post_cuts_dedx_cuts.pdf");
 
 	TCanvas * vtx_to_flash_c1 = new TCanvas();
 	vtx_to_flash_c1->cd();

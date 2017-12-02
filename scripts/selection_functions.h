@@ -97,6 +97,21 @@ void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
                   const bool _verbose);
 //***************************************************************************
 //***************************************************************************
+void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                  double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                  double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
+                  TH1D * h_dedx_cuts_nue_cc,
+                  TH1D * h_dedx_cuts_nue_cc_mixed,
+                  TH1D * h_dedx_cuts_numu_cc,
+                  TH1D * h_dedx_cuts_numu_nc,
+                  TH1D * h_dedx_cuts_cosmic,
+                  TH1D * h_dedx_cuts_nue_nc,
+                  TH1D * h_dedx_cuts_numu_cc_mixed,
+                  TH1D * h_dedx_cuts_other_mixed,
+                  TH1D * h_dedx_cuts_unmatched     );
+//***************************************************************************
+//***************************************************************************
 void dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
              const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose);
 //***************************************************************************
