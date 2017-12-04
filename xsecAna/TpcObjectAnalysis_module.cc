@@ -257,8 +257,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	//MC Particle Information
 	art::ServiceHandle<cheat::BackTracker> bt;
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
-	e.getByLabel("largeant", MCParticleHandle);
-	if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
+	if(_is_mc == true)
+	{
+		e.getByLabel("largeant", MCParticleHandle);
+		if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
+	}
 
 	//I need the MC Track for later - getting cosmic info from MCParticle->MCTrack
 	//std::string mc_track_tag = "mcreco";
