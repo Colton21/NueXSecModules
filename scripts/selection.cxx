@@ -5,7 +5,7 @@ int selection( const char * _file1){
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
-	const bool _post_cuts_verbose = true;
+	const bool _post_cuts_verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
@@ -92,14 +92,15 @@ int selection( const char * _file1){
 	std::cout << "== Begin Selection ==" << std::endl;
 	std::cout << "=====================" << std::endl;
 
+	const int total_entries = mytree->GetEntries();
+	std::cout << "Total Events: " << total_entries << std::endl;
+
 	std::vector<int> * passed_runs = new std::vector<int>;
 	//passed runs is filled with 0, 1, or 2
 	//0 = not in time
 	//1 = passed - in time and PE threshold
 	// 2 = in-time, but not enough PE -- this counts against my efficiency
-
-	const int total_entries = mytree->GetEntries();
-	std::cout << "Total Events: " << total_entries << std::endl;
+	passed_runs->resize(total_entries);
 
 	//let's do the in-time cut as the very first thing
 	std::cout << "=====================" << std::endl;
@@ -109,14 +110,23 @@ int selection( const char * _file1){
 	_functions_instance.selection_functions::loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
 	                                                      flash_time_end, passed_runs);
 
+	for(auto const run : * passed_runs)
+	{
+		if(run == 1) {run_sum++; }
+		if(run == 0) {out_of_time_sum++; }
+		if(run == 2) {low_pe_sum++; }
+	}
+	std::cout << " -------------------------------------- " << std::endl;
+	std::cout << "Passed Runs Vector Size: " << passed_runs->size() << std::endl;
+	std::cout << "Number Events In-Time & > 50 PE: " << run_sum << std::endl;
+	std::cout << "Number Events Not In-Time      : " << out_of_time_sum << std::endl;
+	std::cout << "Number Events In-Time & < 50 PE: " << low_pe_sum << std::endl;
+	std::cout << " -------------------------------------- " << std::endl;
+
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
-	_functions_instance.selection_functions::SetXYflashVector(f, optree, largest_flash_v_v);
+	_functions_instance.selection_functions::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end);
 	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v->size() << std::endl;
-
-	for(auto const run : * passed_runs) {run_sum = run_sum + run; }
-	std::cout << "Passed Runs Vector Size: " << passed_runs->size() << std::endl;
-	std::cout << "Number Passed Events: " << run_sum << std::endl;
 
 	//**********************************
 	//now let's do the TPCO related cuts
@@ -208,7 +218,9 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v);
 
-		//reco nue cut
+		//****************************
+		// ****** reco nue cut *******
+		//****************************
 		_functions_instance.selection_functions::HasNue(tpc_object_container_v, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
@@ -216,89 +228,94 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v);
 
 		//this doesn't normally sit here!
-		_functions_instance.selection_functions::TopologyPlots(tpc_object_container_v, passed_tpco,
-		                                                       _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                       h_pfp_track_shower_nue_cc_qe,
-		                                                       h_pfp_track_shower_nue_cc_out_fv,
-		                                                       h_pfp_track_shower_nue_cc_res,
-		                                                       h_pfp_track_shower_nue_cc_dis,
-		                                                       h_pfp_track_shower_nue_cc_coh,
-		                                                       h_pfp_track_shower_nue_cc_mec,
-		                                                       h_pfp_track_shower_nue_nc,
-		                                                       h_pfp_track_shower_numu_cc_qe,
-		                                                       h_pfp_track_shower_numu_cc_res,
-		                                                       h_pfp_track_shower_numu_cc_dis,
-		                                                       h_pfp_track_shower_numu_cc_coh,
-		                                                       h_pfp_track_shower_numu_cc_mec,
-		                                                       h_pfp_track_shower_numu_nc,
-		                                                       h_pfp_track_shower_nue_cc_mixed,
-		                                                       h_pfp_track_shower_numu_cc_mixed,
-		                                                       h_pfp_track_shower_cosmic,
-		                                                       h_pfp_track_shower_other_mixed,
-		                                                       h_pfp_track_shower_unmatched,
-		                                                       h_leading_shower_mc_pdg_nue_cc_qe,
-		                                                       h_leading_shower_mc_pdg_nue_cc_out_fv,
-		                                                       h_leading_shower_mc_pdg_nue_cc_res,
-		                                                       h_leading_shower_mc_pdg_nue_cc_dis,
-		                                                       h_leading_shower_mc_pdg_nue_cc_coh,
-		                                                       h_leading_shower_mc_pdg_nue_cc_mec,
-		                                                       h_leading_shower_mc_pdg_nue_nc,
-		                                                       h_leading_shower_mc_pdg_numu_cc_qe,
-		                                                       h_leading_shower_mc_pdg_numu_cc_res,
-		                                                       h_leading_shower_mc_pdg_numu_cc_dis,
-		                                                       h_leading_shower_mc_pdg_numu_cc_coh,
-		                                                       h_leading_shower_mc_pdg_numu_cc_mec,
-		                                                       h_leading_shower_mc_pdg_numu_nc,
-		                                                       h_leading_shower_mc_pdg_nue_cc_mixed,
-		                                                       h_leading_shower_mc_pdg_numu_cc_mixed,
-		                                                       h_leading_shower_mc_pdg_cosmic,
-		                                                       h_leading_shower_mc_pdg_other_mixed,
-		                                                       h_leading_shower_mc_pdg_unmatched,
-		                                                       h_pfp_track_nue_cc_qe,
-		                                                       h_pfp_track_nue_cc_out_fv,
-		                                                       h_pfp_track_nue_cc_res,
-		                                                       h_pfp_track_nue_cc_dis,
-		                                                       h_pfp_track_nue_cc_coh,
-		                                                       h_pfp_track_nue_cc_mec,
-		                                                       h_pfp_track_nue_nc,
-		                                                       h_pfp_track_numu_cc_qe,
-		                                                       h_pfp_track_numu_cc_res,
-		                                                       h_pfp_track_numu_cc_dis,
-		                                                       h_pfp_track_numu_cc_coh,
-		                                                       h_pfp_track_numu_cc_mec,
-		                                                       h_pfp_track_numu_nc,
-		                                                       h_pfp_track_nue_cc_mixed,
-		                                                       h_pfp_track_numu_cc_mixed,
-		                                                       h_pfp_track_cosmic,
-		                                                       h_pfp_track_other_mixed,
-		                                                       h_pfp_track_unmatched,
-		                                                       h_pfp_shower_nue_cc_qe,
-		                                                       h_pfp_shower_nue_cc_out_fv,
-		                                                       h_pfp_shower_nue_cc_res,
-		                                                       h_pfp_shower_nue_cc_dis,
-		                                                       h_pfp_shower_nue_cc_coh,
-		                                                       h_pfp_shower_nue_cc_mec,
-		                                                       h_pfp_shower_nue_nc,
-		                                                       h_pfp_shower_numu_cc_qe,
-		                                                       h_pfp_shower_numu_cc_res,
-		                                                       h_pfp_shower_numu_cc_dis,
-		                                                       h_pfp_shower_numu_cc_coh,
-		                                                       h_pfp_shower_numu_cc_mec,
-		                                                       h_pfp_shower_numu_nc,
-		                                                       h_pfp_shower_nue_cc_mixed,
-		                                                       h_pfp_shower_numu_cc_mixed,
-		                                                       h_pfp_shower_cosmic,
-		                                                       h_pfp_shower_other_mixed,
-		                                                       h_pfp_shower_unmatched);
+		_functions_instance.selection_functions::TopologyPlots1(tpc_object_container_v, passed_tpco,
+		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                        h_pfp_track_shower_nue_cc_qe,
+		                                                        h_pfp_track_shower_nue_cc_out_fv,
+		                                                        h_pfp_track_shower_nue_cc_res,
+		                                                        h_pfp_track_shower_nue_cc_dis,
+		                                                        h_pfp_track_shower_nue_cc_coh,
+		                                                        h_pfp_track_shower_nue_cc_mec,
+		                                                        h_pfp_track_shower_nue_nc,
+		                                                        h_pfp_track_shower_numu_cc_qe,
+		                                                        h_pfp_track_shower_numu_cc_res,
+		                                                        h_pfp_track_shower_numu_cc_dis,
+		                                                        h_pfp_track_shower_numu_cc_coh,
+		                                                        h_pfp_track_shower_numu_cc_mec,
+		                                                        h_pfp_track_shower_numu_nc,
+		                                                        h_pfp_track_shower_nue_cc_mixed,
+		                                                        h_pfp_track_shower_numu_cc_mixed,
+		                                                        h_pfp_track_shower_cosmic,
+		                                                        h_pfp_track_shower_other_mixed,
+		                                                        h_pfp_track_shower_unmatched,
+		                                                        h_leading_shower_mc_pdg_nue_cc_qe,
+		                                                        h_leading_shower_mc_pdg_nue_cc_out_fv,
+		                                                        h_leading_shower_mc_pdg_nue_cc_res,
+		                                                        h_leading_shower_mc_pdg_nue_cc_dis,
+		                                                        h_leading_shower_mc_pdg_nue_cc_coh,
+		                                                        h_leading_shower_mc_pdg_nue_cc_mec,
+		                                                        h_leading_shower_mc_pdg_nue_nc,
+		                                                        h_leading_shower_mc_pdg_numu_cc_qe,
+		                                                        h_leading_shower_mc_pdg_numu_cc_res,
+		                                                        h_leading_shower_mc_pdg_numu_cc_dis,
+		                                                        h_leading_shower_mc_pdg_numu_cc_coh,
+		                                                        h_leading_shower_mc_pdg_numu_cc_mec,
+		                                                        h_leading_shower_mc_pdg_numu_nc,
+		                                                        h_leading_shower_mc_pdg_nue_cc_mixed,
+		                                                        h_leading_shower_mc_pdg_numu_cc_mixed,
+		                                                        h_leading_shower_mc_pdg_cosmic,
+		                                                        h_leading_shower_mc_pdg_other_mixed,
+		                                                        h_leading_shower_mc_pdg_unmatched,
+		                                                        h_pfp_track_nue_cc_qe,
+		                                                        h_pfp_track_nue_cc_out_fv,
+		                                                        h_pfp_track_nue_cc_res,
+		                                                        h_pfp_track_nue_cc_dis,
+		                                                        h_pfp_track_nue_cc_coh,
+		                                                        h_pfp_track_nue_cc_mec,
+		                                                        h_pfp_track_nue_nc,
+		                                                        h_pfp_track_numu_cc_qe,
+		                                                        h_pfp_track_numu_cc_res,
+		                                                        h_pfp_track_numu_cc_dis,
+		                                                        h_pfp_track_numu_cc_coh,
+		                                                        h_pfp_track_numu_cc_mec,
+		                                                        h_pfp_track_numu_nc,
+		                                                        h_pfp_track_nue_cc_mixed,
+		                                                        h_pfp_track_numu_cc_mixed,
+		                                                        h_pfp_track_cosmic,
+		                                                        h_pfp_track_other_mixed,
+		                                                        h_pfp_track_unmatched,
+		                                                        h_pfp_shower_nue_cc_qe,
+		                                                        h_pfp_shower_nue_cc_out_fv,
+		                                                        h_pfp_shower_nue_cc_res,
+		                                                        h_pfp_shower_nue_cc_dis,
+		                                                        h_pfp_shower_nue_cc_coh,
+		                                                        h_pfp_shower_nue_cc_mec,
+		                                                        h_pfp_shower_nue_nc,
+		                                                        h_pfp_shower_numu_cc_qe,
+		                                                        h_pfp_shower_numu_cc_res,
+		                                                        h_pfp_shower_numu_cc_dis,
+		                                                        h_pfp_shower_numu_cc_coh,
+		                                                        h_pfp_shower_numu_cc_mec,
+		                                                        h_pfp_shower_numu_nc,
+		                                                        h_pfp_shower_nue_cc_mixed,
+		                                                        h_pfp_shower_numu_cc_mixed,
+		                                                        h_pfp_shower_cosmic,
+		                                                        h_pfp_shower_other_mixed,
+		                                                        h_pfp_shower_unmatched);
 
 
-		//in fv cut
+		//************************
+		//******** in fv cut *****
+		//************************
 		_functions_instance.selection_functions::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
 
+		//*****************************
+		//**** vertex to flash cut ****
+		//*****************************
 		_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose,
 		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                          h_vtx_flash_nue_cc, h_vtx_flash_nue_cc_mixed,
@@ -307,7 +324,6 @@ int selection( const char * _file1){
 		                                                          h_vtx_flash_numu_cc_mixed, h_vtx_flash_other_mixed,
 		                                                          h_vtx_flash_unmatched);
 
-		//vertex to flash cut
 		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
 		                                                          tolerance, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
@@ -315,6 +331,9 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
 
+		//******************************************************
+		//*** distance between pfp shower and nue object cut ***
+		//******************************************************
 		_functions_instance.selection_functions::PostCutsShwrVtx(tpc_object_container_v, passed_tpco, _verbose,
 		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                         h_shwr_vtx_dist_nue_cc,
@@ -327,47 +346,73 @@ int selection( const char * _file1){
 		                                                         h_shwr_vtx_dist_other_mixed,
 		                                                         h_shwr_vtx_dist_unmatched     );
 
-		//distance between pfp shower and nue object cut
 		_functions_instance.selection_functions::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
 
-		//distance between pfp track and nue object cut
+
+		//******************************************************
+		// **** distance between pfp track and nue object cut **
+		//******************************************************
+		_functions_instance.selection_functions::PostCutTrkVtx(tpc_object_container_v, passed_tpco, _verbose,
+		                                                       _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                       h_trk_vtx_dist_nue_cc, h_trk_vtx_dist_nue_cc_mixed,
+		                                                       h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_numu_nc,
+		                                                       h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nue_nc,
+		                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
+		                                                       h_trk_vtx_dist_unmatched);
 		_functions_instance.selection_functions::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v);
 
-		//hit threshold for showers cut
+		//****************************************************
+		// ******** hit threshold for showers cut *************
+		//******************************************************
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
+		{
+			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose,
+			                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+			                                                             h_shwr_hits_nu_eng, h_shwr_hits_ele_eng);
+		}
+
 		_functions_instance.selection_functions::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v);
 
-		//open angle cut for the leading shower
+
+		//*****************************************************
+		//****** open angle cut for the leading shower ********
+		//******************************************************
+		_functions_instance.selection_functions::PostCutOpenAngle(tpc_object_container_v, passed_tpco, _verbose,
+		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                          h_leading_shower_open_angle_nue_cc, h_leading_shower_open_angle_nue_cc_mixed,
+		                                                          h_leading_shower_open_angle_numu_cc, h_leading_shower_open_angle_numu_nc,
+		                                                          h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nue_nc,
+		                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
+		                                                          h_leading_shower_open_angle_unmatched);
 		_functions_instance.selection_functions::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
 
+		//*****************************************************
+		//*********** dEdx cut for the leading shower *********
+		//******************************************************
 		_functions_instance.selection_functions::PostCutsdEdx(tpc_object_container_v, passed_tpco, _verbose,
 		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                      h_dedx_cuts_nue_cc,
-		                                                      h_dedx_cuts_nue_cc_mixed,
-		                                                      h_dedx_cuts_numu_cc,
-		                                                      h_dedx_cuts_numu_nc,
-		                                                      h_dedx_cuts_cosmic,
-		                                                      h_dedx_cuts_nue_nc,
-		                                                      h_dedx_cuts_numu_cc_mixed,
-		                                                      h_dedx_cuts_other_mixed,
+		                                                      h_dedx_cuts_nue_cc, h_dedx_cuts_nue_cc_mixed,
+		                                                      h_dedx_cuts_numu_cc, h_dedx_cuts_numu_nc,
+		                                                      h_dedx_cuts_cosmic, h_dedx_cuts_nue_nc,
+		                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
 		                                                      h_dedx_cuts_unmatched     );
 
-		//dEdx cut for the leading shower
 		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco,
@@ -401,95 +446,83 @@ int selection( const char * _file1){
 				h_ele_phi_eff_num->Fill(mc_ele_phi);
 			}
 		}
-		_functions_instance.selection_functions::PostCutPlots(tpc_object_container_v, passed_tpco, _verbose,
-		                                                      h_tracks_showers, h_tracks_showers_cosmic, h_tracks_showers_numu,
-		                                                      h_leading_shower_open_angle_nue_cc, h_leading_shower_open_angle_nue_cc_mixed,
-		                                                      h_leading_shower_open_angle_numu_cc, h_leading_shower_open_angle_numu_nc,
-		                                                      h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nue_nc,
-		                                                      h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
-		                                                      h_leading_shower_open_angle_unmatched,
-		                                                      h_trk_vtx_dist_nue_cc, h_trk_vtx_dist_nue_cc_mixed,
-		                                                      h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_numu_nc,
-		                                                      h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nue_nc,
-		                                                      h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
-		                                                      h_trk_vtx_dist_unmatched);
+		_functions_instance.selection_functions::TopologyPlots2(tpc_object_container_v, passed_tpco,
+		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                        h_pfp_track_shower_nue_cc_qe_last,
+		                                                        h_pfp_track_shower_nue_cc_out_fv_last,
+		                                                        h_pfp_track_shower_nue_cc_res_last,
+		                                                        h_pfp_track_shower_nue_cc_dis_last,
+		                                                        h_pfp_track_shower_nue_cc_coh_last,
+		                                                        h_pfp_track_shower_nue_cc_mec_last,
+		                                                        h_pfp_track_shower_nue_nc_last,
+		                                                        h_pfp_track_shower_numu_cc_qe_last,
+		                                                        h_pfp_track_shower_numu_cc_res_last,
+		                                                        h_pfp_track_shower_numu_cc_dis_last,
+		                                                        h_pfp_track_shower_numu_cc_coh_last,
+		                                                        h_pfp_track_shower_numu_cc_mec_last,
+		                                                        h_pfp_track_shower_numu_nc_last,
+		                                                        h_pfp_track_shower_nue_cc_mixed_last,
+		                                                        h_pfp_track_shower_numu_cc_mixed_last,
+		                                                        h_pfp_track_shower_cosmic_last,
+		                                                        h_pfp_track_shower_other_mixed_last,
+		                                                        h_pfp_track_shower_unmatched_last,
+		                                                        h_leading_shower_mc_pdg_nue_cc_qe_last,
+		                                                        h_leading_shower_mc_pdg_nue_cc_out_fv_last,
+		                                                        h_leading_shower_mc_pdg_nue_cc_res_last,
+		                                                        h_leading_shower_mc_pdg_nue_cc_dis_last,
+		                                                        h_leading_shower_mc_pdg_nue_cc_coh_last,
+		                                                        h_leading_shower_mc_pdg_nue_cc_mec_last,
+		                                                        h_leading_shower_mc_pdg_nue_nc_last,
+		                                                        h_leading_shower_mc_pdg_numu_cc_qe_last,
+		                                                        h_leading_shower_mc_pdg_numu_cc_res_last,
+		                                                        h_leading_shower_mc_pdg_numu_cc_dis_last,
+		                                                        h_leading_shower_mc_pdg_numu_cc_coh_last,
+		                                                        h_leading_shower_mc_pdg_numu_cc_mec_last,
+		                                                        h_leading_shower_mc_pdg_numu_nc_last,
+		                                                        h_leading_shower_mc_pdg_nue_cc_mixed_last,
+		                                                        h_leading_shower_mc_pdg_numu_cc_mixed_last,
+		                                                        h_leading_shower_mc_pdg_cosmic_last,
+		                                                        h_leading_shower_mc_pdg_other_mixed_last,
+		                                                        h_leading_shower_mc_pdg_unmatched_last,
+		                                                        h_pfp_track_nue_cc_qe_last,
+		                                                        h_pfp_track_nue_cc_out_fv_last,
+		                                                        h_pfp_track_nue_cc_res_last,
+		                                                        h_pfp_track_nue_cc_dis_last,
+		                                                        h_pfp_track_nue_cc_coh_last,
+		                                                        h_pfp_track_nue_cc_mec_last,
+		                                                        h_pfp_track_nue_nc_last,
+		                                                        h_pfp_track_numu_cc_qe_last,
+		                                                        h_pfp_track_numu_cc_res_last,
+		                                                        h_pfp_track_numu_cc_dis_last,
+		                                                        h_pfp_track_numu_cc_coh_last,
+		                                                        h_pfp_track_numu_cc_mec_last,
+		                                                        h_pfp_track_numu_nc_last,
+		                                                        h_pfp_track_nue_cc_mixed_last,
+		                                                        h_pfp_track_numu_cc_mixed_last,
+		                                                        h_pfp_track_cosmic_last,
+		                                                        h_pfp_track_other_mixed_last,
+		                                                        h_pfp_track_unmatched_last,
+		                                                        h_pfp_shower_nue_cc_qe_last,
+		                                                        h_pfp_shower_nue_cc_out_fv_last,
+		                                                        h_pfp_shower_nue_cc_res_last,
+		                                                        h_pfp_shower_nue_cc_dis_last,
+		                                                        h_pfp_shower_nue_cc_coh_last,
+		                                                        h_pfp_shower_nue_cc_mec_last,
+		                                                        h_pfp_shower_nue_nc_last,
+		                                                        h_pfp_shower_numu_cc_qe_last,
+		                                                        h_pfp_shower_numu_cc_res_last,
+		                                                        h_pfp_shower_numu_cc_dis_last,
+		                                                        h_pfp_shower_numu_cc_coh_last,
+		                                                        h_pfp_shower_numu_cc_mec_last,
+		                                                        h_pfp_shower_numu_nc_last,
+		                                                        h_pfp_shower_nue_cc_mixed_last,
+		                                                        h_pfp_shower_numu_cc_mixed_last,
+		                                                        h_pfp_shower_cosmic_last,
+		                                                        h_pfp_shower_other_mixed_last,
+		                                                        h_pfp_shower_unmatched_last);
 
-		// _functions_instance.selection_functions::TopologyPlots(tpc_object_container_v, passed_tpco,
-		//                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		//                                                        h_pfp_track_shower_nue_cc_qe,
-		//                                                        h_pfp_track_shower_nue_cc_out_fv,
-		//                                                        h_pfp_track_shower_nue_cc_res,
-		//                                                        h_pfp_track_shower_nue_cc_dis,
-		//                                                        h_pfp_track_shower_nue_cc_coh,
-		//                                                        h_pfp_track_shower_nue_cc_mec,
-		//                                                        h_pfp_track_shower_nue_nc,
-		//                                                        h_pfp_track_shower_numu_cc_qe,
-		//                                                        h_pfp_track_shower_numu_cc_res,
-		//                                                        h_pfp_track_shower_numu_cc_dis,
-		//                                                        h_pfp_track_shower_numu_cc_coh,
-		//                                                        h_pfp_track_shower_numu_cc_mec,
-		//                                                        h_pfp_track_shower_numu_nc,
-		//                                                        h_pfp_track_shower_nue_cc_mixed,
-		//                                                        h_pfp_track_shower_numu_cc_mixed,
-		//                                                        h_pfp_track_shower_cosmic,
-		//                                                        h_pfp_track_shower_other_mixed,
-		//                                                        h_pfp_track_shower_unmatched,
-		//                                                        h_leading_shower_mc_pdg_nue_cc_qe,
-		//                                                        h_leading_shower_mc_pdg_nue_cc_out_fv,
-		//                                                        h_leading_shower_mc_pdg_nue_cc_res,
-		//                                                        h_leading_shower_mc_pdg_nue_cc_dis,
-		//                                                        h_leading_shower_mc_pdg_nue_cc_coh,
-		//                                                        h_leading_shower_mc_pdg_nue_cc_mec,
-		//                                                        h_leading_shower_mc_pdg_nue_nc,
-		//                                                        h_leading_shower_mc_pdg_numu_cc_qe,
-		//                                                        h_leading_shower_mc_pdg_numu_cc_res,
-		//                                                        h_leading_shower_mc_pdg_numu_cc_dis,
-		//                                                        h_leading_shower_mc_pdg_numu_cc_coh,
-		//                                                        h_leading_shower_mc_pdg_numu_cc_mec,
-		//                                                        h_leading_shower_mc_pdg_numu_nc,
-		//                                                        h_leading_shower_mc_pdg_nue_cc_mixed,
-		//                                                        h_leading_shower_mc_pdg_numu_cc_mixed,
-		//                                                        h_leading_shower_mc_pdg_cosmic,
-		//                                                        h_leading_shower_mc_pdg_other_mixed,
-		//                                                        h_leading_shower_mc_pdg_unmatched
-		//                                                        h_pfp_track_nue_cc_qe,
-		//                                                        h_pfp_track_nue_cc_out_fv,
-		//                                                        h_pfp_track_nue_cc_res,
-		//                                                        h_pfp_track_nue_cc_dis,
-		//                                                        h_pfp_track_nue_cc_coh,
-		//                                                        h_pfp_track_nue_cc_mec,
-		//                                                        h_pfp_track_nue_nc,
-		//                                                        h_pfp_track_numu_cc_qe,
-		//                                                        h_pfp_track_numu_cc_res,
-		//                                                        h_pfp_track_numu_cc_dis,
-		//                                                        h_pfp_track_numu_cc_coh,
-		//                                                        h_pfp_track_numu_cc_mec,
-		//                                                        h_pfp_track_numu_nc,
-		//                                                        h_pfp_track_nue_cc_mixed,
-		//                                                        h_pfp_track_numu_cc_mixed,
-		//                                                        h_pfp_track_cosmic,
-		//                                                        h_pfp_track_other_mixed,
-		//                                                        h_pfp_track_unmatched,
-		//                                                        h_pfp_shower_nue_cc_qe,
-		//                                                        h_pfp_shower_nue_cc_out_fv,
-		//                                                        h_pfp_shower_nue_cc_res,
-		//                                                        h_pfp_shower_nue_cc_dis,
-		//                                                        h_pfp_shower_nue_cc_coh,
-		//                                                        h_pfp_shower_nue_cc_mec,
-		//                                                        h_pfp_shower_nue_nc,
-		//                                                        h_pfp_shower_numu_cc_qe,
-		//                                                        h_pfp_shower_numu_cc_res,
-		//                                                        h_pfp_shower_numu_cc_dis,
-		//                                                        h_pfp_shower_numu_cc_coh,
-		//                                                        h_pfp_shower_numu_cc_mec,
-		//                                                        h_pfp_shower_numu_nc,
-		//                                                        h_pfp_shower_nue_cc_mixed,
-		//                                                        h_pfp_shower_numu_cc_mixed,
-		//                                                        h_pfp_shower_cosmic,
-		//                                                        h_pfp_shower_other_mixed,
-		//                                                        h_pfp_shower_unmatched);
-
-		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, post_cuts_v);
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco,
+		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
 
 	}//end event loop
 
@@ -849,20 +882,20 @@ int selection( const char * _file1){
 	h_leading_shower_open_angle_nue_cc_mixed->SetFillColor(38);
 	h_leading_shower_open_angle_numu_cc->SetFillColor(28);
 	h_leading_shower_open_angle_numu_nc->SetFillColor(36);
-	h_leading_shower_open_angle_cosmic->SetFillColor(39);
+	h_leading_shower_open_angle_cosmic->SetFillColor(1);
 	h_leading_shower_open_angle_nue_nc->SetFillColor(46);
-	h_leading_shower_open_angle_numu_cc_mixed->SetFillColor(25);
+	h_leading_shower_open_angle_numu_cc_mixed->SetFillColor(20);
 	h_leading_shower_open_angle_other_mixed->SetFillColor(42);
 	h_leading_shower_open_angle_unmatched->SetFillColor(12);
-	open_angle_stack->Add(h_leading_shower_open_angle_unmatched);
-	open_angle_stack->Add(h_leading_shower_open_angle_other_mixed);
-	open_angle_stack->Add(h_leading_shower_open_angle_numu_nc);
-	open_angle_stack->Add(h_leading_shower_open_angle_nue_nc);
-	open_angle_stack->Add(h_leading_shower_open_angle_numu_cc_mixed);
-	open_angle_stack->Add(h_leading_shower_open_angle_numu_cc);
-	open_angle_stack->Add(h_leading_shower_open_angle_cosmic);
-	open_angle_stack->Add(h_leading_shower_open_angle_nue_cc_mixed);
 	open_angle_stack->Add(h_leading_shower_open_angle_nue_cc);
+	open_angle_stack->Add(h_leading_shower_open_angle_nue_cc_mixed);
+	open_angle_stack->Add(h_leading_shower_open_angle_cosmic);
+	open_angle_stack->Add(h_leading_shower_open_angle_numu_cc);
+	open_angle_stack->Add(h_leading_shower_open_angle_numu_cc_mixed);
+	open_angle_stack->Add(h_leading_shower_open_angle_nue_nc);
+	open_angle_stack->Add(h_leading_shower_open_angle_numu_nc);
+	open_angle_stack->Add(h_leading_shower_open_angle_other_mixed);
+	open_angle_stack->Add(h_leading_shower_open_angle_unmatched);
 	open_angle_stack->Draw();
 	open_angle_stack->GetXaxis()->SetTitle("Shower Opening Angle [Degrees]");
 
@@ -898,7 +931,7 @@ int selection( const char * _file1){
 	h_dedx_cuts_nue_cc_mixed->SetFillColor(38);
 	h_dedx_cuts_numu_cc->SetFillColor(28);
 	h_dedx_cuts_numu_nc->SetFillColor(36);
-	h_dedx_cuts_cosmic->SetFillColor(39);
+	h_dedx_cuts_cosmic->SetFillColor(1);
 	h_dedx_cuts_nue_nc->SetFillColor(46);
 	h_dedx_cuts_numu_cc_mixed->SetFillColor(25);
 	h_dedx_cuts_other_mixed->SetFillColor(42);
@@ -946,7 +979,7 @@ int selection( const char * _file1){
 	h_vtx_flash_nue_cc_mixed->SetFillColor(38);
 	h_vtx_flash_numu_cc->SetFillColor(28);
 	h_vtx_flash_numu_nc->SetFillColor(36);
-	h_vtx_flash_cosmic->SetFillColor(39);
+	h_vtx_flash_cosmic->SetFillColor(1);
 	h_vtx_flash_nue_nc->SetFillColor(46);
 	h_vtx_flash_numu_cc_mixed->SetFillColor(25);
 	h_vtx_flash_other_mixed->SetFillColor(42);
@@ -994,20 +1027,20 @@ int selection( const char * _file1){
 	h_trk_vtx_dist_nue_cc_mixed->SetFillColor(38);
 	h_trk_vtx_dist_numu_cc->SetFillColor(28);
 	h_trk_vtx_dist_numu_nc->SetFillColor(36);
-	h_trk_vtx_dist_cosmic->SetFillColor(39);
+	h_trk_vtx_dist_cosmic->SetFillColor(1);
 	h_trk_vtx_dist_nue_nc->SetFillColor(46);
 	h_trk_vtx_dist_numu_cc_mixed->SetFillColor(25);
 	h_trk_vtx_dist_other_mixed->SetFillColor(42);
 	h_trk_vtx_dist_unmatched->SetFillColor(12);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_unmatched);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_other_mixed);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_nc);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_nc);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_cc_mixed);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_cc);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_cosmic);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_cc_mixed);
 	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_cc);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_cc_mixed);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_cosmic);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_cc);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_cc_mixed);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_nc);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_nc);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_other_mixed);
+	trk_vtx_dist_stack->Add(h_trk_vtx_dist_unmatched);
 	trk_vtx_dist_stack->Draw();
 	trk_vtx_dist_stack->GetXaxis()->SetTitle("Track to Nue Candidate Vertex Distance [cm]");
 
@@ -1043,20 +1076,20 @@ int selection( const char * _file1){
 	h_shwr_vtx_dist_nue_cc_mixed->SetFillColor(38);
 	h_shwr_vtx_dist_numu_cc->SetFillColor(28);
 	h_shwr_vtx_dist_numu_nc->SetFillColor(36);
-	h_shwr_vtx_dist_cosmic->SetFillColor(39);
+	h_shwr_vtx_dist_cosmic->SetFillColor(1);
 	h_shwr_vtx_dist_nue_nc->SetFillColor(46);
 	h_shwr_vtx_dist_numu_cc_mixed->SetFillColor(25);
 	h_shwr_vtx_dist_other_mixed->SetFillColor(42);
 	h_shwr_vtx_dist_unmatched->SetFillColor(12);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_unmatched);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_other_mixed);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_nc);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_nc);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc_mixed);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_cosmic);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_cc_mixed);
 	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_cc);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_cc_mixed);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_cosmic);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc_mixed);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_nc);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_nc);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_other_mixed);
+	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_unmatched);
 	shwr_vtx_dist_stack->Draw();
 	shwr_vtx_dist_stack->GetXaxis()->SetTitle("Track to Nue Candidate Vertex Distance [cm]");
 
@@ -1346,6 +1379,278 @@ int selection( const char * _file1){
 	h_pfp_track_shower_unmatched->GetYaxis()->SetTitle("PFP Showers");
 	track_shower_c18->Print("selected_pfp_track_shower_unmatched.pdf");
 
+	TCanvas * track_stack_c2 = new TCanvas();
+	track_stack_c2->cd();
+	THStack * h_track_stack_last = new THStack();
+	h_pfp_track_nue_cc_qe_last->SetStats(kFALSE);
+	h_pfp_track_nue_cc_out_fv_last->SetStats(kFALSE);
+	h_pfp_track_nue_cc_res_last->SetStats(kFALSE);
+	h_pfp_track_nue_cc_dis_last->SetStats(kFALSE);
+	h_pfp_track_nue_cc_coh_last->SetStats(kFALSE);
+	h_pfp_track_nue_cc_mec_last->SetStats(kFALSE);
+	h_pfp_track_nue_nc_last->SetStats(kFALSE);
+	h_pfp_track_numu_cc_qe_last->SetStats(kFALSE);
+	h_pfp_track_numu_cc_res_last->SetStats(kFALSE);
+	h_pfp_track_numu_cc_dis_last->SetStats(kFALSE);
+	h_pfp_track_numu_cc_coh_last->SetStats(kFALSE);
+	h_pfp_track_numu_cc_mec_last->SetStats(kFALSE);
+	h_pfp_track_numu_nc_last->SetStats(kFALSE);
+	h_pfp_track_nue_cc_mixed_last->SetStats(kFALSE);
+	h_pfp_track_numu_cc_mixed_last->SetStats(kFALSE);
+	h_pfp_track_cosmic_last->SetStats(kFALSE);
+	h_pfp_track_other_mixed_last->SetStats(kFALSE);
+	h_pfp_track_unmatched_last->SetStats(kFALSE);
+	h_pfp_track_nue_cc_qe_last->SetFillColor(30);
+	h_pfp_track_nue_cc_out_fv_last->SetFillColor(45);
+	h_pfp_track_nue_cc_res_last->SetFillColor(31);
+	h_pfp_track_nue_cc_dis_last->SetFillColor(32);
+	h_pfp_track_nue_cc_coh_last->SetFillColor(33);
+	h_pfp_track_nue_cc_mec_last->SetFillColor(34);
+	h_pfp_track_nue_nc_last->SetFillColor(46);
+	h_pfp_track_numu_cc_qe_last->SetFillColor(28);
+	h_pfp_track_numu_cc_res_last->SetFillColor(27);
+	h_pfp_track_numu_cc_dis_last->SetFillColor(26);
+	h_pfp_track_numu_cc_coh_last->SetFillColor(23);
+	h_pfp_track_numu_cc_mec_last->SetFillColor(22);
+	h_pfp_track_numu_nc_last->SetFillColor(36);
+	h_pfp_track_nue_cc_mixed_last->SetFillColor(38);
+	h_pfp_track_numu_cc_mixed_last->SetFillColor(25);
+	h_pfp_track_cosmic_last->SetFillColor(39);
+	h_pfp_track_other_mixed_last->SetFillColor(42);
+	h_pfp_track_unmatched_last->SetFillColor(12);
+	h_track_stack_last->Add(h_pfp_track_nue_cc_qe_last    );
+	h_track_stack_last->Add(h_pfp_track_nue_cc_out_fv_last);
+	h_track_stack_last->Add(h_pfp_track_nue_cc_res_last   );
+	h_track_stack_last->Add(h_pfp_track_nue_cc_dis_last   );
+	h_track_stack_last->Add(h_pfp_track_nue_cc_coh_last   );
+	h_track_stack_last->Add(h_pfp_track_nue_cc_mec_last   );
+	h_track_stack_last->Add(h_pfp_track_nue_nc_last       );
+	h_track_stack_last->Add(h_pfp_track_numu_cc_qe_last   );
+	h_track_stack_last->Add(h_pfp_track_numu_cc_res_last  );
+	h_track_stack_last->Add(h_pfp_track_numu_cc_dis_last  );
+	h_track_stack_last->Add(h_pfp_track_numu_cc_coh_last  );
+	h_track_stack_last->Add(h_pfp_track_numu_cc_mec_last  );
+	h_track_stack_last->Add(h_pfp_track_numu_nc_last      );
+	h_track_stack_last->Add(h_pfp_track_nue_cc_mixed_last );
+	h_track_stack_last->Add(h_pfp_track_numu_cc_mixed_last);
+	h_track_stack_last->Add(h_pfp_track_cosmic_last       );
+	h_track_stack_last->Add(h_pfp_track_other_mixed_last  );
+	h_track_stack_last->Add(h_pfp_track_unmatched_last    );
+	h_track_stack_last->Draw();
+	h_track_stack_last->GetXaxis()->SetTitle("Reconstructed Tracks in Candidate Neutrino Object");
+	TLegend * leg_track_stack_l2 = new TLegend(0.75, 0.50, 0.95, 0.95);
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_qe_last,      "Nue CC QE", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_out_fv_last,  "Nue CC Out FV", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_res_last,     "Nue CC Res", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_dis_last,     "Nue CC DIS", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_coh_last,     "Nue CC Coh", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_mec_last,     "Nue CC MEC", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_nc_last,         "Nue NC", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_qe_last,     "Numu CC QE", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_res_last,    "Numu CC Res", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_dis_last,    "Numu CC DIS", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_coh_last,    "Numu CC Coh", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_mec_last,    "Numu CC MEC", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_numu_nc_last,        "Numu NC", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_mixed_last,   "Nue CC Mixed", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_mixed_last,  "Numu CC Mixed", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_cosmic_last,         "Cosmic", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_other_mixed_last,    "Other Mixed", "f");
+	leg_track_stack_l2->AddEntry(h_pfp_track_unmatched_last,      "Unmatched", "f");
+	leg_track_stack_l2->Draw();
+	track_stack_c2->Print("selected_pfp_track_stack_last.pdf");
+
+	TCanvas * shower_stack_c2 = new TCanvas();
+	shower_stack_c2->cd();
+	THStack * h_shower_stack_last = new THStack();
+	h_pfp_shower_nue_cc_qe_last->SetStats(kFALSE);
+	h_pfp_shower_nue_cc_out_fv_last->SetStats(kFALSE);
+	h_pfp_shower_nue_cc_res_last->SetStats(kFALSE);
+	h_pfp_shower_nue_cc_dis_last->SetStats(kFALSE);
+	h_pfp_shower_nue_cc_coh_last->SetStats(kFALSE);
+	h_pfp_shower_nue_cc_mec_last->SetStats(kFALSE);
+	h_pfp_shower_nue_nc_last->SetStats(kFALSE);
+	h_pfp_shower_numu_cc_qe_last->SetStats(kFALSE);
+	h_pfp_shower_numu_cc_res_last->SetStats(kFALSE);
+	h_pfp_shower_numu_cc_dis_last->SetStats(kFALSE);
+	h_pfp_shower_numu_cc_coh_last->SetStats(kFALSE);
+	h_pfp_shower_numu_cc_mec_last->SetStats(kFALSE);
+	h_pfp_shower_numu_nc_last->SetStats(kFALSE);
+	h_pfp_shower_nue_cc_mixed_last->SetStats(kFALSE);
+	h_pfp_shower_numu_cc_mixed_last->SetStats(kFALSE);
+	h_pfp_shower_cosmic_last->SetStats(kFALSE);
+	h_pfp_shower_other_mixed_last->SetStats(kFALSE);
+	h_pfp_shower_unmatched_last->SetStats(kFALSE);
+	h_pfp_shower_nue_cc_qe_last->SetFillColor(30);
+	h_pfp_shower_nue_cc_out_fv_last->SetFillColor(45);
+	h_pfp_shower_nue_cc_res_last->SetFillColor(31);
+	h_pfp_shower_nue_cc_dis_last->SetFillColor(32);
+	h_pfp_shower_nue_cc_coh_last->SetFillColor(33);
+	h_pfp_shower_nue_cc_mec_last->SetFillColor(34);
+	h_pfp_shower_nue_nc_last->SetFillColor(46);
+	h_pfp_shower_numu_cc_qe_last->SetFillColor(28);
+	h_pfp_shower_numu_cc_res_last->SetFillColor(27);
+	h_pfp_shower_numu_cc_dis_last->SetFillColor(26);
+	h_pfp_shower_numu_cc_coh_last->SetFillColor(23);
+	h_pfp_shower_numu_cc_mec_last->SetFillColor(22);
+	h_pfp_shower_numu_nc_last->SetFillColor(36);
+	h_pfp_shower_nue_cc_mixed_last->SetFillColor(38);
+	h_pfp_shower_numu_cc_mixed_last->SetFillColor(25);
+	h_pfp_shower_cosmic_last->SetFillColor(39);
+	h_pfp_shower_other_mixed_last->SetFillColor(42);
+	h_pfp_shower_unmatched_last->SetFillColor(12);
+	h_shower_stack_last->Add(h_pfp_shower_nue_cc_qe_last    );
+	h_shower_stack_last->Add(h_pfp_shower_nue_cc_out_fv_last);
+	h_shower_stack_last->Add(h_pfp_shower_nue_cc_res_last   );
+	h_shower_stack_last->Add(h_pfp_shower_nue_cc_dis_last   );
+	h_shower_stack_last->Add(h_pfp_shower_nue_cc_coh_last   );
+	h_shower_stack_last->Add(h_pfp_shower_nue_cc_mec_last   );
+	h_shower_stack_last->Add(h_pfp_shower_nue_nc_last       );
+	h_shower_stack_last->Add(h_pfp_shower_numu_cc_qe_last   );
+	h_shower_stack_last->Add(h_pfp_shower_numu_cc_res_last  );
+	h_shower_stack_last->Add(h_pfp_shower_numu_cc_dis_last  );
+	h_shower_stack_last->Add(h_pfp_shower_numu_cc_coh_last  );
+	h_shower_stack_last->Add(h_pfp_shower_numu_cc_mec_last  );
+	h_shower_stack_last->Add(h_pfp_shower_numu_nc_last      );
+	h_shower_stack_last->Add(h_pfp_shower_nue_cc_mixed_last );
+	h_shower_stack_last->Add(h_pfp_shower_numu_cc_mixed_last);
+	h_shower_stack_last->Add(h_pfp_shower_cosmic_last       );
+	h_shower_stack_last->Add(h_pfp_shower_other_mixed_last  );
+	h_shower_stack_last->Add(h_pfp_shower_unmatched_last    );
+	h_shower_stack_last->Draw();
+	h_shower_stack->GetXaxis()->SetTitle("Reconstructed Showers in Candidate Neutrino Object");
+	TLegend * leg_shower_stack_l2 = new TLegend(0.75, 0.50, 0.95, 0.95);
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_qe_last,      "Nue CC QE", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_out_fv_last,  "Nue CC Out FV", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_res_last,     "Nue CC Res", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_dis_last,     "Nue CC DIS", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_coh_last,     "Nue CC Coh", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_mec_last,     "Nue CC MEC", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_nc_last,         "Nue NC", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_qe_last,     "Numu CC QE", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_res_last,    "Numu CC Res", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_dis_last,    "Numu CC DIS", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_coh_last,    "Numu CC Coh", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_mec_last,    "Numu CC MEC", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_nc_last,        "Numu NC", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_mixed_last,   "Nue CC Mixed", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_mixed_last,  "Numu CC Mixed", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_cosmic_last,         "Cosmic", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_other_mixed_last,    "Other Mixed", "f");
+	leg_shower_stack_l2->AddEntry(h_pfp_shower_unmatched_last,      "Unmatched", "f");
+	leg_shower_stack_l2->Draw();
+	shower_stack_c2->Print("selected_pfp_shower_stack_last.pdf");
+
+	TCanvas * track_shower_c1_last = new TCanvas();
+	track_shower_c1_last->cd();
+	h_pfp_track_shower_nue_cc_qe_last->Draw("colz");
+	h_pfp_track_shower_nue_cc_qe_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_cc_qe_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c1_last->Print("selected_pfp_track_shower_nue_cc_qe_last.pdf");
+	TCanvas * track_shower_c2_last = new TCanvas();
+	track_shower_c2_last->cd();
+	h_pfp_track_shower_nue_cc_out_fv_last->Draw("colz");
+	h_pfp_track_shower_nue_cc_out_fv_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_cc_out_fv_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c2_last->Print("selected_pfp_track_shower_nue_cc_out_fv_last.pdf");
+	TCanvas * track_shower_c3_last = new TCanvas();
+	track_shower_c3_last->cd();
+	h_pfp_track_shower_nue_cc_res_last->Draw("colz");
+	h_pfp_track_shower_nue_cc_res_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_cc_res_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c3_last->Print("selected_pfp_track_shower_nue_cc_res_last.pdf");
+	TCanvas * track_shower_c4_last = new TCanvas();
+	track_shower_c4_last->cd();
+	h_pfp_track_shower_nue_cc_dis_last->Draw("colz");
+	h_pfp_track_shower_nue_cc_dis_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_cc_dis_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c4_last->Print("selected_pfp_track_shower_nue_cc_dis_last.pdf");
+	TCanvas * track_shower_c5_last = new TCanvas();
+	track_shower_c5_last->cd();
+	h_pfp_track_shower_nue_cc_coh_last->Draw("colz");
+	h_pfp_track_shower_nue_cc_coh_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_cc_coh_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c5_last->Print("selected_pfp_track_shower_nue_cc_coh_last.pdf");
+	TCanvas * track_shower_c6_last = new TCanvas();
+	track_shower_c6_last->cd();
+	h_pfp_track_shower_nue_cc_mec_last->Draw("colz");
+	h_pfp_track_shower_nue_cc_mec_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_cc_mec_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c6_last->Print("selected_pfp_track_shower_nue_cc_mec_last.pdf");
+	TCanvas * track_shower_c7_last = new TCanvas();
+	track_shower_c7_last->cd();
+	h_pfp_track_shower_nue_nc_last->Draw("colz");
+	h_pfp_track_shower_nue_nc_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_nc_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c7_last->Print("selected_pfp_track_shower_nue_nc_last.pdf");
+	TCanvas * track_shower_c8_last = new TCanvas();
+	track_shower_c8_last->cd();
+	h_pfp_track_shower_numu_cc_qe_last->Draw("colz");
+	h_pfp_track_shower_numu_cc_qe_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_numu_cc_qe_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c8_last->Print("selected_pfp_track_shower_numu_cc_qe_last.pdf");
+	TCanvas * track_shower_c9_last = new TCanvas();
+	track_shower_c9_last->cd();
+	h_pfp_track_shower_numu_cc_res_last->Draw("colz");
+	h_pfp_track_shower_numu_cc_res_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_numu_cc_res_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c9_last->Print("selected_pfp_track_shower_numu_cc_res_last.pdf");
+	TCanvas * track_shower_c10_last = new TCanvas();
+	track_shower_c10_last->cd();
+	h_pfp_track_shower_numu_cc_dis_last->Draw("colz");
+	h_pfp_track_shower_numu_cc_dis_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_numu_cc_dis_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c10_last->Print("selected_pfp_track_shower_numu_cc_dis_last.pdf");
+	TCanvas * track_shower_c11_last = new TCanvas();
+	track_shower_c11_last->cd();
+	h_pfp_track_shower_numu_cc_coh_last->Draw("colz");
+	h_pfp_track_shower_numu_cc_coh_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_numu_cc_coh_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c11_last->Print("selected_pfp_track_shower_numu_cc_coh_last.pdf");
+	TCanvas * track_shower_c12_last = new TCanvas();
+	track_shower_c12_last->cd();
+	h_pfp_track_shower_numu_cc_mec_last->Draw("colz");
+	h_pfp_track_shower_numu_cc_mec_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_numu_cc_mec_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c12_last->Print("selected_pfp_track_shower_numu_cc_mec_last.pdf");
+	TCanvas * track_shower_c13_last = new TCanvas();
+	track_shower_c13_last->cd();
+	h_pfp_track_shower_numu_nc_last->Draw("colz");
+	h_pfp_track_shower_numu_nc_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_numu_nc_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c13_last->Print("selected_pfp_track_shower_numu_nc_last.pdf");
+	TCanvas * track_shower_c14_last = new TCanvas();
+	track_shower_c14_last->cd();
+	h_pfp_track_shower_nue_cc_mixed_last->Draw("colz");
+	h_pfp_track_shower_nue_cc_mixed_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_nue_cc_mixed_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c14_last->Print("selected_pfp_track_shower_nue_cc_mixed_last.pdf");
+	TCanvas * track_shower_c15_last = new TCanvas();
+	track_shower_c15_last->cd();
+	h_pfp_track_shower_numu_cc_mixed_last->Draw("colz");
+	h_pfp_track_shower_numu_cc_mixed_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_numu_cc_mixed_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c15_last->Print("selected_pfp_track_shower_numu_cc_mixed_last.pdf");
+	TCanvas * track_shower_c16_last = new TCanvas();
+	track_shower_c16_last->cd();
+	h_pfp_track_shower_cosmic_last->Draw("colz");
+	h_pfp_track_shower_cosmic_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_cosmic_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c16_last->Print("selected_pfp_track_shower_cosmic_last.pdf");
+	TCanvas * track_shower_c17_last = new TCanvas();
+	track_shower_c17_last->cd();
+	h_pfp_track_shower_other_mixed_last->Draw("colz");
+	h_pfp_track_shower_other_mixed_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_other_mixed_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c17_last->Print("selected_pfp_track_shower_other_mixed_last.pdf");
+	TCanvas * track_shower_c18_last = new TCanvas();
+	track_shower_c18_last->cd();
+	h_pfp_track_shower_unmatched_last->Draw("colz");
+	h_pfp_track_shower_unmatched_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_unmatched_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c18_last->Print("selected_pfp_track_shower_unmatched_last.pdf");
+	//********************************************************************
+
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
 	for (int i=1; i<= 3; i++)
 	{
@@ -1536,6 +1841,20 @@ int selection( const char * _file1){
 	h_leading_shower_mc_pdg_unmatched->GetYaxis()->SetTitle("Leading Shower True Particle");
 	leading_c18->Print("selected_leading_shower_mc_pdg_unmatched.pdf");
 
+
+	TCanvas * hits_eng_c1 = new TCanvas();
+	hits_eng_c1->cd();
+	h_shwr_hits_nu_eng->Draw("colz");
+	h_shwr_hits_nu_eng->GetXaxis()->SetTitle("True Selected Neutrino Energy [GeV]");
+	h_shwr_hits_nu_eng->GetYaxis()->SetTitle("Selected Signal Electron Shower Hits");
+	hits_eng_c1->Print("shwr_hits_nu_eng.pdf");
+
+	TCanvas * hits_eng_c2 = new TCanvas();
+	hits_eng_c2->cd();
+	h_shwr_hits_ele_eng->Draw("colz");
+	h_shwr_hits_ele_eng->GetXaxis()->SetTitle("True Selected Electron Energy [GeV]");
+	h_shwr_hits_ele_eng->GetYaxis()->SetTitle("Selected Signal Electron Shower Hits");
+	hits_eng_c2->Print("shwr_hits_ele_eng.pdf");
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;
 
