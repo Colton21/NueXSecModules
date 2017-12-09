@@ -365,6 +365,13 @@ void PostCutHitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          double vtxX, double vtxY, double vtxZ,
                          double mc_nu_energy, double mc_ele_energy,
                          TH2D * h_shwr_hits_nu_eng, TH2D * h_shwr_hits_ele_eng);
+//***************************************************************************
+//***************************************************************************
+void TopologyEfficiency(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                        double vtxX, double vtxY, double vtxZ,
+                        std::vector<int> * no_track, std::vector<int> * has_track);
 };
 
 #endif

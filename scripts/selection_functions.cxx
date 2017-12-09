@@ -2151,3 +2151,74 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 		}//if classified as pure nue cc in fv, i.e. signal
 	} //end loop tpc objects
 }
+//***************************************************************************
+//***************************************************************************
+void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                             double vtxX, double vtxY, double vtxZ,
+                                             std::vector<int> * no_track, std::vector<int> * has_track)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool tpco_id_valid = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+
+		if(n_pfp_showers == 0)
+		{
+			std::cout << "Event with No Shower! WTF! " << std::endl;
+			continue;
+		}
+		//signal
+		if(n_pfp_tracks == 0)
+		{
+			if(tpco_id == "nue_cc_qe"  ||
+			   tpco_id == "nue_cc_res" ||
+			   tpco_id == "nue_cc_dis" ||
+			   tpco_id == "nue_cc_mec" ||
+			   tpco_id == "nue_cc_coh")
+			{
+				no_track->at(0) += 1;
+			}
+			//not signal
+			if(tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_cc_res" &&
+			   tpco_id != "nue_cc_dis" &&
+			   tpco_id != "nue_cc_mec" &&
+			   tpco_id != "nue_cc_coh")
+			{
+				no_track->at(1) += 1;
+			}
+		}
+		if(n_pfp_tracks >= 1)
+		{
+			if(tpco_id == "nue_cc_qe"  ||
+			   tpco_id == "nue_cc_res" ||
+			   tpco_id == "nue_cc_dis" ||
+			   tpco_id == "nue_cc_mec" ||
+			   tpco_id == "nue_cc_coh")
+			{
+				has_track->at(0) += 1;
+			}
+			//not signal
+			if(tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_cc_res" &&
+			   tpco_id != "nue_cc_dis" &&
+			   tpco_id != "nue_cc_mec" &&
+			   tpco_id != "nue_cc_coh")
+			{
+				has_track->at(1) += 1;
+			}
+		}
+	}//end loop tpc objects
+}
+//***************************************************************************
+//***************************************************************************

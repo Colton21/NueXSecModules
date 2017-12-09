@@ -84,6 +84,11 @@ int selection( const char * _file1){
 	std::vector<int> * dedx_counter_v = new std::vector<int>;
 	dedx_counter_v->resize(22, 0);
 
+	std::vector<int> * has_track = new std::vector<int>;
+	has_track->resize(2, 0);
+	std::vector<int> * no_track = new std::vector<int>;
+	no_track->resize(2, 0);
+
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v
 	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string> >;
@@ -109,7 +114,6 @@ int selection( const char * _file1){
 
 	_functions_instance.selection_functions::loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
 	                                                      flash_time_end, passed_runs);
-
 	for(auto const run : * passed_runs)
 	{
 		if(run == 1) {run_sum++; }
@@ -521,6 +525,11 @@ int selection( const char * _file1){
 		                                                        h_pfp_shower_other_mixed_last,
 		                                                        h_pfp_shower_unmatched_last);
 
+		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose,
+		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                            no_track, has_track);
+
 		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco,
 		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
 
@@ -577,6 +586,15 @@ int selection( const char * _file1){
 	                                                    dedx_counter_v,
 	                                                    " dE / dx "
 	                                                    );
+
+	std::cout << "---------------------" << std::endl;
+	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
+	std::cout << "No Track Bkg   : " << no_track->at(1) << std::endl;
+	std::cout << "Relative Purity: " << double(no_track->at(0)) / double(no_track->at(0) + no_track->at(1)) << std::endl;
+	std::cout << "1+ Track Signal: " << has_track->at(0) << std::endl;
+	std::cout << "1+ Track Bkg   : " << has_track->at(1) << std::endl;
+	std::cout << "Relative Purity: " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
+	std::cout << "---------------------" << std::endl;
 
 	std::vector<double> * xsec_cc = new std::vector<double>;
 	const double final_counter                = dedx_counter_v->at(7);
