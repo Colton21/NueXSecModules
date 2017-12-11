@@ -138,6 +138,7 @@ double fMCNuDirZ = -1;
 
 int fMCNumParticles = 0;
 int fMCNumChargedParticles = 0;
+bool has_pi0 = false;
 
 };
 
@@ -281,7 +282,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		bool event_neutrino = false;
 		int mc_num_particles = 0;
 		int mc_num_charged_particles = 0;
-		bool has_pi0 = false;
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
