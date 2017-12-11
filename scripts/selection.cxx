@@ -48,6 +48,7 @@ int selection( const char * _file1){
 	mctruth_counter_tree->SetBranchAddress("fMCEleDirZ", &mc_ele_dir_z);
 	mctruth_counter_tree->SetBranchAddress("fMCEleEnergy", &mc_ele_energy);
 	mctruth_counter_tree->SetBranchAddress("fMCEleMomentum", &mc_ele_momentum);
+	mctruth_counter_tree->SetBranchAddress("has_pi0", &has_pi0);
 
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
@@ -145,6 +146,7 @@ int selection( const char * _file1){
 		}
 		mytree->GetEntry(event);
 		mctruth_counter_tree->GetEntry(event);
+		std::cout << "Pi0?: " << has_pi0 << std::endl;
 		//***********************************************************
 		//this is where the in-time optical cut actually takes effect
 		//***********************************************************
