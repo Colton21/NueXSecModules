@@ -282,6 +282,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		bool event_neutrino = false;
 		int mc_num_particles = 0;
 		int mc_num_charged_particles = 0;
+		has_pi0 = false;
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
