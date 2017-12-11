@@ -334,6 +334,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				event_neutrino = true;
 			}
 			//this should only give the stable final state particles
+			if(fMcparticle_pdg == 111)
+			{
+				std::cout << "------------" << std::endl;
+				std::cout << "--- Pi0! ---" << std::endl;
+				std::cout << "Mother: " << fMCMother << std::endl;
+				std::cout << "Status Code: " << mcparticle.StatusCode() << std::endl;
+			}
 			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
 			{
 				mc_num_particles++;

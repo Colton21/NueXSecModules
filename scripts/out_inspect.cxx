@@ -1607,12 +1607,12 @@ int out_inspect(const char * _file1)
 	h_opt_time->GetXaxis()->SetTitle("Time [us]");
 	h_opt_time->GetYaxis()->SetTitle("Flashes");
 	TCanvas * opt_c1 = new TCanvas();
-	TH1D * h_opt_pe = new TH1D("h_opt_pe", "h_opt_pe", 50, 0, 15000);
+	TH1D * h_opt_pe = new TH1D("h_opt_pe", "h_opt_pe", 50, 0, 500);
 	h_opt_pe->GetYaxis()->SetTitleOffset(1.3);
 	h_opt_pe->GetXaxis()->SetTitle("Photoelectrons");
 	h_opt_pe->GetYaxis()->SetTitle("Flashes");
 	TCanvas * opt_c2 = new TCanvas();
-	TH2D * h_opt_time_pe = new TH2D("h_opt_time_pe", "h_opt_time_pe", 20, 0, 20, 20, 0, 15000);
+	TH2D * h_opt_time_pe = new TH2D("h_opt_time_pe", "h_opt_time_pe", 20, 0, 20, 20, 0, 200);
 	h_opt_time_pe->GetYaxis()->SetTitleOffset(1.3);
 	h_opt_time_pe->GetXaxis()->SetTitle("Time [us]");
 	h_opt_time_pe->GetYaxis()->SetTitle("Photoelectrons");
