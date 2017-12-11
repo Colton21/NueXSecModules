@@ -76,6 +76,8 @@ bool _cosmic_only;
 
 xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 
+	std::cout << "We are here!" << std::endl;
+
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
 	_geantModuleLabel               = p.get<std::string>("GeantModule");
