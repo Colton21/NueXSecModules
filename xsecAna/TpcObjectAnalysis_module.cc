@@ -209,6 +209,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCEleMomentum", &fMCEleMomentum, "fMCEleMomentum/D");
 	mctruth_counter_tree->Branch("fMCNumParticles", &fMCNumParticles, "fMCNumParticles/I");
 	mctruth_counter_tree->Branch("fMCNumChargedParticles", &fMCNumChargedParticles, "fMCNumChargedParticles/I");
+	mctruth_counter_tree->Branch("has_pi0", &has_pi0, "has_pi0/O");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -280,6 +281,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		bool event_neutrino = false;
 		int mc_num_particles = 0;
 		int mc_num_charged_particles = 0;
+		bool has_pi0 = false;
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
@@ -334,17 +336,15 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				event_neutrino = true;
 			}
 			//this should only give the stable final state particles
-			if(fMcparticle_pdg == 111)
-			{
-				std::cout << "------------" << std::endl;
-				std::cout << "--- Pi0! ---" << std::endl;
-				std::cout << "Mother: " << fMCMother << std::endl;
-				std::cout << "Status Code: " << mcparticle.StatusCode() << std::endl;
-			}
 			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
 			{
 				mc_num_particles++;
-				std::cout << " Stable Final State Particles " << fMcparticle_pdg << std::endl;
+				if(_verbose) {std::cout << " [MCTruth] Stable Final State Particles " << fMcparticle_pdg << std::endl; }
+				if(fMcparticle_pdg == 111)
+				{
+					has_pi0 = true;
+					if(_verbose) {std::cout << " [MCTruth] Event has Neutrino Induced Pi0" << std::endl; }
+				}
 				if(fMcparticle_pdg == 11  || fMcparticle_pdg == 13   || fMcparticle_pdg == -11  || fMcparticle_pdg == -13 ||
 				   fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
 				{
