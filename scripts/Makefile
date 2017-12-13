@@ -1,11 +1,11 @@
+XSECANADIR=../xsecAna
 CXX=g++
 CXXFLAGS=$(shell root-config --cflags)
-LIBS=$(shell root-config --libs)
+CPPFLAGS=-I$(XSECANADIR)
+LIBS=$(shell root-config --libs) -L$(XSECANADIR) -luboonecode_uboone_NueXSecModules # -lxsecAna_dict
 LD=g++
 LDFLAGS=
 DEBUGFLAGS= -O0 -D _DEBUG
-
-XSECANALIBS=../xsecAna/libxsecAna.so ../xsecAna/libxsecAna_dict.so
 
 TARGETNAMES=out_inspect selection potSum
 FUNCTIONCLASSOBJECT=selection_functions.o
@@ -22,7 +22,7 @@ clean:
 	rm -f $(OBJECTS) $(TARGETS)
 
 %.o: %.cxx
-	$(CXX) $(CXXFLAGS) $(DEBUGFLAGS) -c -o "$@" $^
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(DEBUGFLAGS) -c -o "$@" $^
 
-%.exe : %.o $(XSECANALIBS) $(FUNCTIONCLASSOBJECT)
+%.exe : %.o $(FUNCTIONCLASSOBJECT)
 	$(LD) $(LDFLAGS) $(LIBS) -o "$@" $^
