@@ -31,8 +31,8 @@ $(TARGET): $(OBJECTS) $(HEADERS) LinkDef.h
 	$(CXX) $(CXXFLAGS) $(LIBS) $(DEBUGFLAGS) $(LDFLAGS) -o $(TARGET) $(OBJECTS)
 
 $(DICTNAME).cxx: $(HEADERS) LinkDef.h
-	#rootcling -f $@ -rml lib$(TARGETNAME)_dict.so -rmf lib$(TARGETNAME)_dict.rootmap $^
-	rootcling -f $@ $^
+	rootcling -f $@ -rml lib$(TARGETNAME)_dict.so -rmf lib$(TARGETNAME)_dict.rootmap $^
+#	rootcling -f $@ $^
 
 %.o: %.cxx
 	$(CXX) $(COMPILE_FLAGS) $(CXXFLAGS) $(OPTFLAGS) -c -o "$@" $^

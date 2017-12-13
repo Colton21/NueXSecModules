@@ -49,3 +49,4 @@ scripts/potSum
 potFinder/mem.db
 potFinder/time.db
 *_dict.cxx
+*.rootmap
