@@ -1751,6 +1751,8 @@ int out_inspect(const char * _file1)
 	int last_event = 0;
 	int last_run = 0;
 	std::vector < std::vector < double > > largest_flash_v_v;
+	const double flash_time_min = 5;
+	const double flash_time_max = 16;
 
 	const int opt_entries = optree->GetEntries();
 	for(int i = 0; i < opt_entries; i++)
@@ -1764,7 +1766,7 @@ int out_inspect(const char * _file1)
 		// std::cout << "[Optical Info] \t WidthZ:  " << fOpFlashWidthZ << std::endl;
 		// std::cout << "[Optical Info] \t CenterY: " << fOpFlashCenterY << std::endl;
 		// std::cout << "[Optical Info] \t CenterZ: " << fOpFlashCenterZ << std::endl;
-		h_opt_pe->Fill(fOpFlashPE);
+		if(fOpFlashTime <= flash_time_max && fOpFlashTime >= flash_time_min) {h_opt_pe->Fill(fOpFlashPE); }
 		h_opt_time->Fill(fOpFlashTime);
 		h_opt_time_pe->Fill(fOpFlashTime, fOpFlashPE);
 		current_run = fRun;

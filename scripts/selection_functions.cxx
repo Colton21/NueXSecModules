@@ -190,7 +190,8 @@ bool selection_functions::opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, d
 //***************************************************************************
 //***************************************************************************
 
-bool selection_functions::opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double flash_width_z, double tolerance)
+bool selection_functions::opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z,
+                                                 double flash_width_z, double tolerance)
 {
 	const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) ) - flash_width_z;
 	if(distance <= tolerance) {return true; }
@@ -566,14 +567,16 @@ void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> 
 //***************************************************************************
 void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                       bool has_pi0,
                                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                        double vtxX, double vtxY, double vtxZ,
                                        TH1D * h_dedx_cuts_nue_cc,
                                        TH1D * h_dedx_cuts_nue_cc_mixed,
+                                       TH1D * h_dedx_cuts_nue_cc_out_fv,
                                        TH1D * h_dedx_cuts_numu_cc,
-                                       TH1D * h_dedx_cuts_numu_nc,
+                                       TH1D * h_dedx_cuts_nc,
                                        TH1D * h_dedx_cuts_cosmic,
-                                       TH1D * h_dedx_cuts_nue_nc,
+                                       TH1D * h_dedx_cuts_nc_pi0,
                                        TH1D * h_dedx_cuts_numu_cc_mixed,
                                        TH1D * h_dedx_cuts_other_mixed,
                                        TH1D * h_dedx_cuts_unmatched     )
@@ -595,7 +598,7 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		const int n_pfp = tpc_obj.NumPFParticles();
 		//loop over pfparticles in the TPCO
 		int most_hits = 0;
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
@@ -605,10 +608,10 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		{
 			h_dedx_cuts_nue_cc->Fill(leading_dedx);
 		}
-		//if(tpco_id == "nue_cc_out_fv")
-		//{
-		//	h_dedx_cuts_nue_cc_out_fv->Fill(leading_dedx);
-		//}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_dedx_cuts_nue_cc_out_fv->Fill(leading_dedx);
+		}
 		if(tpco_id == "nue_cc_res")
 		{
 			h_dedx_cuts_nue_cc->Fill(leading_dedx);
@@ -624,10 +627,6 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		if(tpco_id == "nue_cc_mec")
 		{
 			h_dedx_cuts_nue_cc->Fill(leading_dedx);
-		}
-		if(tpco_id == "nue_nc")
-		{
-			h_dedx_cuts_nue_nc->Fill(leading_dedx);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
@@ -649,9 +648,13 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		{
 			h_dedx_cuts_numu_cc->Fill(leading_dedx);
 		}
-		if(tpco_id == "numu_nc")
+		if(tpco_id == "nc")
 		{
-			h_dedx_cuts_numu_nc->Fill(leading_dedx);
+			h_dedx_cuts_nc->Fill(leading_dedx);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_dedx_cuts_nc_pi0->Fill(leading_dedx);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
@@ -711,10 +714,10 @@ void selection_functions::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 //***************************************************************************
 //***************************************************************************
 void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                            std::vector<std::pair<int, std::string> > * passed_tpco,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                             double vtxX, double vtxY, double vtxZ,
-                                            std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v)
+                                            std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v)
 {
 	bool true_in_tpc = true;
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -728,22 +731,24 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		const double pfp_vtx_z = tpc_obj.pfpVtxZ();
 		const int run_num = tpc_obj.RunNumber();
 		const int event_num = tpc_obj.EventNumber();
+		const int num_tracks = tpc_obj.NPfpTracks();
+		const int num_showers = tpc_obj.NPfpShowers();
 
 		const std::string tpc_obj_origin = tpc_obj.Origin();
 		const int tpc_obj_mode = tpc_obj.Mode();
 		const int n_pfp = tpc_obj.NumPFParticles();
 
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		std::string tpco_id = tpco_class.first;
 
-		std::tuple<int, int, double, double, double, std::string, std::string> my_tuple =
-		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id);
+		std::tuple<int, int, double, double, double, std::string, std::string, int, int> my_tuple =
+		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v,
+void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v,
                                              bool _post_cuts_verbose)
 {
 	const int passed_events = post_cuts_v->size();
@@ -759,14 +764,18 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, do
 		const double pfp_vtx_z = std::get<4>(my_tuple);
 		const std::string reason = std::get<5>(my_tuple);
 		const std::string event_type = std::get<6>(my_tuple);
+		const int num_tracks = std::get<7>(my_tuple);
+		const int num_showers = std::get<8>(my_tuple);
 		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
-		std::cout << "Event Type  : " << event_type << std::endl;
-		std::cout << "Event Number: " << event_num << std::endl;
-		std::cout << "Run Number  : " << run_num << std::endl;
-		std::cout << "Pfp Vtx X   : " << pfp_vtx_x << std::endl;
-		std::cout << "Pfp Vtx Y   : " << pfp_vtx_y << std::endl;
-		std::cout << "Pfp Vtx Z   : " << pfp_vtx_z << std::endl;
-		std::cout << "TPCO Reason : " << reason << std::endl;
+		std::cout << "Event Type     : " << event_type << std::endl;
+		std::cout << "Event Number   : " << event_num << std::endl;
+		std::cout << "Run Number     : " << run_num << std::endl;
+		std::cout << "Num PFP Tracks : " << num_tracks << std::endl;
+		std::cout << "Num PFP Showers: " << num_showers << std::endl;
+		std::cout << "Pfp Vtx X      : " << pfp_vtx_x << std::endl;
+		std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
+		std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
+		std::cout << "TPCO Reason    : " << reason << std::endl;
 		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 	}
 	std::cout << "   * * * END * * *   " << std::endl;
@@ -791,7 +800,8 @@ bool selection_functions::ValidTPCObjects(std::vector<std::pair<int, std::string
 //***************************************************************************
 //***************************************************************************
 std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                      std::vector<std::pair<int, std::string> > * passed_tpco, double _x1, double _x2, double _y1, double _y2,
+                                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
+                                                      double _x1, double _x2, double _y1, double _y2,
                                                       double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
 {
 	int nue_cc        = 0;
@@ -803,7 +813,7 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	int nue_cc_mixed  = 0;
 	int nue_cc_out_fv = 0;
 	int cosmic        = 0;
-	int nue_nc        = 0;
+	int nc            = 0;
 	int numu_cc       = 0;
 	int numu_cc_qe    = 0;
 	int numu_cc_res   = 0;
@@ -811,7 +821,7 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	int numu_cc_coh   = 0;
 	int numu_cc_mec   = 0;
 	int numu_cc_mixed = 0;
-	int numu_nc       = 0;
+	int nc_pi0        = 0;
 	int unmatched     = 0;
 	int other_mixed   = 0;
 	int total         = 0;
@@ -824,78 +834,48 @@ std::vector<int> selection_functions::TabulateOrigins(std::vector<xsecAna::TPCOb
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		int part_nue_cc    = 0;
-		int part_cosmic    = 0;
-		int part_nue_nc    = 0;
-		int part_numu_cc   = 0;
-		int part_numu_nc   = 0;
-		int part_unmatched = 0;
-
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		const std::string tpc_obj_origin = tpc_obj.Origin();
-		const int tpc_obj_mode = tpc_obj.Mode();
-		const int n_pfp = tpc_obj.NumPFParticles();
 		//loop over pfparticles in the TPCO
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
-			if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
-			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
-			if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 1 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_nc++; }
-			if(part.Origin() == "kCosmicRay") { part_cosmic++; }
-			if(part.Origin() == "kUnknown")   { part_unmatched++; }
-		}
-		//now to catagorise the tpco
-		if(part_cosmic > 0)
-		{
-			if(part_nue_cc > 0)  {nue_cc_mixed++; continue; }
-			if(part_numu_cc > 0) {numu_cc_mixed++; continue; }
-			if(part_nue_nc > 0 || part_numu_nc > 0) {other_mixed++; continue; }
-			cosmic++;
-		}
-		//this uses the true neutrino vertex for this specific event
-		//not the true vtx per tpc object - maybe this can be fixed in the future...
-		//but using the true nu vtx only matters for the pure signal events,
-		//where the neutrino vertex IS the true tpc object vertex
-		true_in_tpc = in_fv(vtxX, vtxY, vtxZ,
-		                    _x1, _x2, _y1,
-		                    _y2, _z1, _z2);
-		if(part_cosmic == 0)
-		{
-			if(part_nue_cc    > 0 && true_in_tpc == false) { nue_cc_out_fv++; continue; }
-			if(part_nue_cc    > 0 && tpc_obj_mode == 0)   {nue_cc_qe++;    signal_tpco_num = i;         continue; }
-			if(part_nue_cc    > 0 && tpc_obj_mode == 1)   {nue_cc_res++;   signal_tpco_num = i;         continue; }
-			if(part_nue_cc    > 0 && tpc_obj_mode == 2)   {nue_cc_dis++;   signal_tpco_num = i;         continue; }
-			if(part_nue_cc    > 0 && tpc_obj_mode == 3)   {nue_cc_coh++;   signal_tpco_num = i;         continue; }
-			if(part_nue_cc    > 0 && tpc_obj_mode == 10)  {nue_cc_mec++;   signal_tpco_num = i;         continue; }
-			if(part_nue_nc    > 0)                        {nue_nc++;           continue; }
-			if(part_numu_cc   > 0 && tpc_obj_mode == 0)   {numu_cc_qe++;       continue; }
-			if(part_numu_cc   > 0 && tpc_obj_mode == 1)   {numu_cc_res++;      continue; }
-			if(part_numu_cc   > 0 && tpc_obj_mode == 2)   {numu_cc_dis++;      continue; }
-			if(part_numu_cc   > 0 && tpc_obj_mode == 3)   {numu_cc_coh++;      continue; }
-			if(part_numu_cc   > 0 && tpc_obj_mode == 10)  {numu_cc_mec++;      continue; }
-			if(part_numu_nc   > 0)                        {numu_nc++;          continue; }
-			if(part_unmatched > 0)                        {unmatched++;        continue; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_class.first;
+
+		if(tpco_id == "nue_cc_qe")     {nue_cc_qe++; }
+		if(tpco_id == "nue_cc_out_fv") {nue_cc_out_fv++; }
+		if(tpco_id == "nue_cc_res")    {nue_cc_res++; }
+		if(tpco_id == "nue_cc_coh")    {nue_cc_coh++; }
+		if(tpco_id == "nue_cc_dis")    {nue_cc_dis++; }
+		if(tpco_id == "nue_cc_mec")    {nue_cc_mec++; }
+		if(tpco_id == "nue_cc_mixed")  {nue_cc_mixed++; }
+		if(tpco_id == "nc")            {nc++; }
+		if(tpco_id == "numu_cc_qe")    {numu_cc_qe++; }
+		if(tpco_id == "numu_cc_res")   {numu_cc_res++; }
+		if(tpco_id == "numu_cc_coh")   {numu_cc_coh++; }
+		if(tpco_id == "numu_cc_dis")   {numu_cc_dis++; }
+		if(tpco_id == "numu_cc_mec")   {numu_cc_mec++; }
+		if(tpco_id == "numu_cc_mixed") {numu_cc_mixed++; }
+		if(tpco_id == "nc_pi0")        {nc_pi0++; }
+		if(tpco_id == "cosmic")        {cosmic++; }
+		if(tpco_id == "other_mixed")   {other_mixed++; }
+		if(tpco_id == "unmatched")     {unmatched++; }
 	}//end loop tpc objects
 
 	nue_cc = nue_cc_qe + nue_cc_res + nue_cc_dis + nue_cc_coh + nue_cc_mec;
 	numu_cc = numu_cc_qe + numu_cc_res + numu_cc_dis + numu_cc_coh + numu_cc_mec;
-	total = nue_cc + nue_cc_mixed + nue_cc_out_fv + cosmic + nue_nc + numu_cc + numu_cc_mixed + numu_nc + unmatched + other_mixed;
+	total = nue_cc + nue_cc_mixed + nue_cc_out_fv + cosmic + nc + numu_cc + numu_cc_mixed + nc_pi0 + unmatched + other_mixed;
 
 	tabulated_origins.at(0)  = nue_cc;
 	tabulated_origins.at(1)  = nue_cc_mixed;
 	tabulated_origins.at(2)  = cosmic;
-	tabulated_origins.at(3)  = nue_nc;
+	tabulated_origins.at(3)  = nc;
 	tabulated_origins.at(4)  = numu_cc;
 	tabulated_origins.at(5)  = unmatched;
 	tabulated_origins.at(6)  = other_mixed;
 	tabulated_origins.at(7)  = total;
 	tabulated_origins.at(8)  = signal_tpco_num;
 	tabulated_origins.at(9)  = nue_cc_out_fv;
-	tabulated_origins.at(10) = numu_nc;
+	tabulated_origins.at(10) = nc_pi0;
 	tabulated_origins.at(11) = numu_cc_mixed;
 	tabulated_origins.at(12) = nue_cc_qe;
 	tabulated_origins.at(13) = nue_cc_res;
@@ -948,10 +928,10 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter,
 	int counter_nue_cc_mixed   = counter_v->at(1);
 	int counter_nue_cc_out_fv  = counter_v->at(9);
 	int counter_cosmic         = counter_v->at(2);
-	int counter_nue_nc         = counter_v->at(3);
+	int counter_nc             = counter_v->at(3);
 	int counter_numu_cc        = counter_v->at(4);
 	int counter_numu_cc_mixed  = counter_v->at(11);
-	int counter_numu_nc        = counter_v->at(10);
+	int counter_nc_pi0         = counter_v->at(10);
 	int counter_unmatched      = counter_v->at(5);
 	int counter_other_mixed    = counter_v->at(6);
 	int counter_nue_cc_qe      = counter_v->at(12);
@@ -971,10 +951,10 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter,
 	std::cout << " Number of Nue CC Mixed  : " << counter_nue_cc_mixed << std::endl;
 	std::cout << " Number of Nue CC out FV : " << counter_nue_cc_out_fv << std::endl;
 	std::cout << " Number of Cosmic        : " << counter_cosmic << std::endl;
-	std::cout << " Number of Nue NC        : " << counter_nue_nc << std::endl;
 	std::cout << " Number of Numu CC       : " << counter_numu_cc << std::endl;
 	std::cout << " Number of Numu CC Mixed : " << counter_numu_cc_mixed << std::endl;
-	std::cout << " Number of Numu NC       : " << counter_numu_nc << std::endl;
+	std::cout << " Number of NC            : " << counter_nc << std::endl;
+	std::cout << " Number of NC Pi0        : " << counter_nc_pi0 << std::endl;
 	std::cout << " Number of Unmatched     : " << counter_unmatched << std::endl;
 	std::cout << " Number of Other Mixed   : " << counter_other_mixed << std::endl;
 	std::cout << "---------------------------" << std::endl;
@@ -998,14 +978,14 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter,
 }
 //***************************************************************************
 //***************************************************************************
-std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj,
+std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0,
                                                                  double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
 {
 	int part_nue_cc    = 0;
 	int part_cosmic    = 0;
-	int part_nue_nc    = 0;
+	int part_nc        = 0;
+	int part_nc_pi0    = 0;
 	int part_numu_cc   = 0;
-	int part_numu_nc   = 0;
 	int part_unmatched = 0;
 	bool true_in_tpc = false;
 
@@ -1019,9 +999,12 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		const int n_pfp_hits = part.NumPFPHits();
 		if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
-		if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_nc++; }
 		if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
-		if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 1 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_nc++; }
+		if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino")
+		{
+			if(has_pi0 == true) {part_nc_pi0++; }
+			if(has_pi0 == false) {part_nc++; }
+		}
 		if(part.Origin() == "kCosmicRay") { part_cosmic++; }
 		if(part.Origin() == "kUnknown")   { part_unmatched++; }
 	}
@@ -1031,7 +1014,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	{
 		if(part_nue_cc  > 0 )                        { return std::make_pair("nue_cc_mixed", leading_index);  }
 		if(part_numu_cc > 0 )                        { return std::make_pair("numu_cc_mixed", leading_index); }
-		if(part_nue_nc  > 0 || part_numu_nc > 0)     { return std::make_pair("other_mixed", leading_index);   }
+		if(part_nc  > 0 || part_nc_pi0 > 0)          { return std::make_pair("other_mixed", leading_index);   }
 		return std::make_pair("cosmic", leading_index);
 	}
 	//this uses the true neutrino vertex for this specific event
@@ -1043,20 +1026,20 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	                    _y2, _z1, _z2);
 	if(part_cosmic == 0)
 	{
-		if(part_nue_cc    > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index); }
-		if(part_nue_cc    > 0 && tpc_obj_mode == 0   ) { return std::make_pair("nue_cc_qe", leading_index);     }
-		if(part_nue_cc    > 0 && tpc_obj_mode == 1   ) { return std::make_pair("nue_cc_res", leading_index);    }
-		if(part_nue_cc    > 0 && tpc_obj_mode == 2   ) { return std::make_pair("nue_cc_dis", leading_index);    }
-		if(part_nue_cc    > 0 && tpc_obj_mode == 3   ) { return std::make_pair("nue_cc_coh", leading_index);    }
-		if(part_nue_cc    > 0 && tpc_obj_mode == 10  ) { return std::make_pair("nue_cc_mec", leading_index);    }
-		if(part_nue_nc    > 0                        ) { return std::make_pair("nue_nc", leading_index);        }
-		if(part_numu_cc   > 0 && tpc_obj_mode == 0   ) { return std::make_pair("numu_cc_qe", leading_index);    }
-		if(part_numu_cc   > 0 && tpc_obj_mode == 1   ) { return std::make_pair("numu_cc_res", leading_index);   }
-		if(part_numu_cc   > 0 && tpc_obj_mode == 2   ) { return std::make_pair("numu_cc_dis", leading_index);   }
-		if(part_numu_cc   > 0 && tpc_obj_mode == 3   ) { return std::make_pair("numu_cc_coh", leading_index);   }
-		if(part_numu_cc   > 0 && tpc_obj_mode == 10  ) { return std::make_pair("numu_cc_mec", leading_index);   }
-		if(part_numu_nc   > 0                        ) { return std::make_pair("numu_nc", leading_index);       }
-		if(part_unmatched > 0                        ) { return std::make_pair("unmatched", leading_index);     }
+		if(part_nue_cc    > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
+		if(part_nue_cc    > 0 && tpc_obj_mode == 0   ) { return std::make_pair("nue_cc_qe",     leading_index);   }
+		if(part_nue_cc    > 0 && tpc_obj_mode == 1   ) { return std::make_pair("nue_cc_res",    leading_index);   }
+		if(part_nue_cc    > 0 && tpc_obj_mode == 2   ) { return std::make_pair("nue_cc_dis",    leading_index);   }
+		if(part_nue_cc    > 0 && tpc_obj_mode == 3   ) { return std::make_pair("nue_cc_coh",    leading_index);   }
+		if(part_nue_cc    > 0 && tpc_obj_mode == 10  ) { return std::make_pair("nue_cc_mec",    leading_index);   }
+		if(part_numu_cc   > 0 && tpc_obj_mode == 0   ) { return std::make_pair("numu_cc_qe",    leading_index);   }
+		if(part_numu_cc   > 0 && tpc_obj_mode == 1   ) { return std::make_pair("numu_cc_res",   leading_index);   }
+		if(part_numu_cc   > 0 && tpc_obj_mode == 2   ) { return std::make_pair("numu_cc_dis",   leading_index);   }
+		if(part_numu_cc   > 0 && tpc_obj_mode == 3   ) { return std::make_pair("numu_cc_coh",   leading_index);   }
+		if(part_numu_cc   > 0 && tpc_obj_mode == 10  ) { return std::make_pair("numu_cc_mec",   leading_index);   }
+		if(part_nc        > 0                        ) { return std::make_pair("nc",            leading_index);   }
+		if(part_nc_pi0    > 0                        ) { return std::make_pair("nc_pi0",        leading_index);   }
+		if(part_unmatched > 0                        ) { return std::make_pair("unmatched",     leading_index);   }
 	}
 	//return the string for the tpco id
 }//end function
@@ -1247,11 +1230,11 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                            double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                                            TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
-                                           TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_numu_nc,
-                                           TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nue_nc,
+                                           TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
+                                           TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                                            TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
                                            TH1D * h_leading_shower_open_angle_unmatched)
 {
@@ -1261,7 +1244,7 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 		if(passed_tpco->at(i).first == 0) {continue; }
 
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
@@ -1287,17 +1270,17 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 		{
 			h_leading_shower_open_angle_nue_cc->Fill(leading_open_angle);
 		}
-		if(tpco_id == "nue_nc")
-		{
-			h_leading_shower_open_angle_nue_nc->Fill(leading_open_angle);
-		}
 		if(tpco_id == "numu_cc_qe" || tpco_id == "numu_cc_res" || tpco_id == "numu_cc_dis" || tpco_id == "numu_cc_coh" || tpco_id == "numu_cc_mec")
 		{
 			h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle);
 		}
-		if(tpco_id == "numu_nc")
+		if(tpco_id == "nc")
 		{
-			h_leading_shower_open_angle_numu_nc->Fill(leading_open_angle);
+			h_leading_shower_open_angle_nc->Fill(leading_open_angle);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_leading_shower_open_angle_nc_pi0->Fill(leading_open_angle);
 		}
 		if(tpco_id == "unmatched")
 		{
@@ -1308,11 +1291,11 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                                         TH1D * h_trk_vtx_dist_nue_cc, TH1D * h_trk_vtx_dist_nue_cc_mixed,
-                                        TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_numu_nc,
-                                        TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nue_nc,
+                                        TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_nc,
+                                        TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nc_pi0,
                                         TH1D * h_trk_vtx_dist_numu_cc_mixed, TH1D * h_trk_vtx_dist_other_mixed,
                                         TH1D * h_trk_vtx_dist_unmatched)
 {
@@ -1356,7 +1339,7 @@ void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer>
 				//std::cout << trk_length << std::endl;
 			}
 		}//end pfp loop
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj,
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0,
 		                                                         _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		std::string tpco_id = tpco_class.first;
 		if(tpco_id == "nue_cc_mixed")
@@ -1379,17 +1362,17 @@ void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer>
 		{
 			if(has_track) {h_trk_vtx_dist_nue_cc->Fill(smallest_trk_vtx_dist); }
 		}
-		if(tpco_id == "nue_nc")
-		{
-			if(has_track) {h_trk_vtx_dist_nue_nc->Fill(smallest_trk_vtx_dist); }
-		}
 		if(tpco_id == "numu_cc_qe" || tpco_id == "numu_cc_res" || tpco_id == "numu_cc_dis" || tpco_id == "numu_cc_coh" || tpco_id == "numu_cc_mec")
 		{
 			if(has_track) {h_trk_vtx_dist_numu_cc->Fill(smallest_trk_vtx_dist); }
 		}
-		if(tpco_id == "numu_nc")
+		if(tpco_id == "nc")
 		{
-			if(has_track) {h_trk_vtx_dist_numu_nc->Fill(smallest_trk_vtx_dist); }
+			if(has_track) {h_trk_vtx_dist_nc->Fill(smallest_trk_vtx_dist); }
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			if(has_track) {h_trk_vtx_dist_nc_pi0->Fill(smallest_trk_vtx_dist); }
 		}
 		if(tpco_id == "unmatched")
 		{
@@ -1399,21 +1382,23 @@ void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer>
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
+                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                         double vtxX, double vtxY, double vtxZ,
                                          TH2D * h_pfp_track_shower_nue_cc_qe,
                                          TH2D * h_pfp_track_shower_nue_cc_out_fv,
                                          TH2D * h_pfp_track_shower_nue_cc_res,
                                          TH2D * h_pfp_track_shower_nue_cc_dis,
                                          TH2D * h_pfp_track_shower_nue_cc_coh,
                                          TH2D * h_pfp_track_shower_nue_cc_mec,
-                                         TH2D * h_pfp_track_shower_nue_nc,
+                                         TH2D * h_pfp_track_shower_nc,
                                          TH2D * h_pfp_track_shower_numu_cc_qe,
                                          TH2D * h_pfp_track_shower_numu_cc_res,
                                          TH2D * h_pfp_track_shower_numu_cc_dis,
                                          TH2D * h_pfp_track_shower_numu_cc_coh,
                                          TH2D * h_pfp_track_shower_numu_cc_mec,
-                                         TH2D * h_pfp_track_shower_numu_nc,
+                                         TH2D * h_pfp_track_shower_nc_pi0,
                                          TH2D * h_pfp_track_shower_nue_cc_mixed,
                                          TH2D * h_pfp_track_shower_numu_cc_mixed,
                                          TH2D * h_pfp_track_shower_cosmic,
@@ -1425,13 +1410,13 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_dis,
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_coh,
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_mec,
-                                         TH2D * h_leading_shower_mc_pdg_nue_nc,
+                                         TH2D * h_leading_shower_mc_pdg_nc,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_qe,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_res,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_dis,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_coh,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_mec,
-                                         TH2D * h_leading_shower_mc_pdg_numu_nc,
+                                         TH2D * h_leading_shower_mc_pdg_nc_pi0,
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_mixed,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_mixed,
                                          TH2D * h_leading_shower_mc_pdg_cosmic,
@@ -1443,13 +1428,13 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
                                          TH1D * h_pfp_track_nue_cc_dis,
                                          TH1D * h_pfp_track_nue_cc_coh,
                                          TH1D * h_pfp_track_nue_cc_mec,
-                                         TH1D * h_pfp_track_nue_nc,
+                                         TH1D * h_pfp_track_nc,
                                          TH1D * h_pfp_track_numu_cc_qe,
                                          TH1D * h_pfp_track_numu_cc_res,
                                          TH1D * h_pfp_track_numu_cc_dis,
                                          TH1D * h_pfp_track_numu_cc_coh,
                                          TH1D * h_pfp_track_numu_cc_mec,
-                                         TH1D * h_pfp_track_numu_nc,
+                                         TH1D * h_pfp_track_nc_pi0,
                                          TH1D * h_pfp_track_nue_cc_mixed,
                                          TH1D * h_pfp_track_numu_cc_mixed,
                                          TH1D * h_pfp_track_cosmic,
@@ -1461,13 +1446,13 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
                                          TH1D * h_pfp_shower_nue_cc_dis,
                                          TH1D * h_pfp_shower_nue_cc_coh,
                                          TH1D * h_pfp_shower_nue_cc_mec,
-                                         TH1D * h_pfp_shower_nue_nc,
+                                         TH1D * h_pfp_shower_nc,
                                          TH1D * h_pfp_shower_numu_cc_qe,
                                          TH1D * h_pfp_shower_numu_cc_res,
                                          TH1D * h_pfp_shower_numu_cc_dis,
                                          TH1D * h_pfp_shower_numu_cc_coh,
                                          TH1D * h_pfp_shower_numu_cc_mec,
-                                         TH1D * h_pfp_shower_numu_nc,
+                                         TH1D * h_pfp_shower_nc_pi0,
                                          TH1D * h_pfp_shower_nue_cc_mixed,
                                          TH1D * h_pfp_shower_numu_cc_mixed,
                                          TH1D * h_pfp_shower_cosmic,
@@ -1489,7 +1474,7 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks  = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
@@ -1556,13 +1541,6 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 			h_pfp_shower_nue_cc_mec->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_mec->Fill(leading_origin_int, leading_pdg_int);
 		}
-		if(tpco_id == "nue_nc")
-		{
-			h_pfp_track_shower_nue_nc->Fill(n_pfp_tracks, n_pfp_showers);
-			h_pfp_track_nue_nc->Fill(n_pfp_tracks);
-			h_pfp_shower_nue_nc->Fill(n_pfp_showers);
-			h_leading_shower_mc_pdg_nue_nc->Fill(leading_origin_int, leading_pdg_int);
-		}
 		if(tpco_id == "numu_cc_qe")
 		{
 			h_pfp_track_shower_numu_cc_qe->Fill(n_pfp_tracks, n_pfp_showers);
@@ -1598,12 +1576,19 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 			h_pfp_shower_numu_cc_mec->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_mec->Fill(leading_origin_int, leading_pdg_int);
 		}
-		if(tpco_id == "numu_nc")
+		if(tpco_id == "nc")
 		{
-			h_pfp_track_shower_numu_nc->Fill(n_pfp_tracks, n_pfp_showers);
-			h_pfp_track_numu_nc->Fill(n_pfp_tracks);
-			h_pfp_shower_numu_nc->Fill(n_pfp_showers);
-			h_leading_shower_mc_pdg_numu_nc->Fill(leading_origin_int, leading_pdg_int);
+			h_pfp_track_shower_nc->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nc->Fill(n_pfp_tracks);
+			h_pfp_shower_nc->Fill(n_pfp_showers);
+			h_leading_shower_mc_pdg_nc->Fill(leading_origin_int, leading_pdg_int);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_pfp_track_shower_nc_pi0->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nc_pi0->Fill(n_pfp_tracks);
+			h_pfp_shower_nc_pi0->Fill(n_pfp_showers);
+			h_leading_shower_mc_pdg_nc_pi0->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
@@ -1645,21 +1630,23 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 }//end function
 //***************************************************************************
 //***************************************************************************
-void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
+                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                         double vtxX, double vtxY, double vtxZ,
                                          TH2D * h_pfp_track_shower_nue_cc_qe,
                                          TH2D * h_pfp_track_shower_nue_cc_out_fv,
                                          TH2D * h_pfp_track_shower_nue_cc_res,
                                          TH2D * h_pfp_track_shower_nue_cc_dis,
                                          TH2D * h_pfp_track_shower_nue_cc_coh,
                                          TH2D * h_pfp_track_shower_nue_cc_mec,
-                                         TH2D * h_pfp_track_shower_nue_nc,
+                                         TH2D * h_pfp_track_shower_nc,
                                          TH2D * h_pfp_track_shower_numu_cc_qe,
                                          TH2D * h_pfp_track_shower_numu_cc_res,
                                          TH2D * h_pfp_track_shower_numu_cc_dis,
                                          TH2D * h_pfp_track_shower_numu_cc_coh,
                                          TH2D * h_pfp_track_shower_numu_cc_mec,
-                                         TH2D * h_pfp_track_shower_numu_nc,
+                                         TH2D * h_pfp_track_shower_nc_pi0,
                                          TH2D * h_pfp_track_shower_nue_cc_mixed,
                                          TH2D * h_pfp_track_shower_numu_cc_mixed,
                                          TH2D * h_pfp_track_shower_cosmic,
@@ -1671,13 +1658,13 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_dis,
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_coh,
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_mec,
-                                         TH2D * h_leading_shower_mc_pdg_nue_nc,
+                                         TH2D * h_leading_shower_mc_pdg_nc,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_qe,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_res,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_dis,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_coh,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_mec,
-                                         TH2D * h_leading_shower_mc_pdg_numu_nc,
+                                         TH2D * h_leading_shower_mc_pdg_nc_pi0,
                                          TH2D * h_leading_shower_mc_pdg_nue_cc_mixed,
                                          TH2D * h_leading_shower_mc_pdg_numu_cc_mixed,
                                          TH2D * h_leading_shower_mc_pdg_cosmic,
@@ -1689,13 +1676,13 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
                                          TH1D * h_pfp_track_nue_cc_dis,
                                          TH1D * h_pfp_track_nue_cc_coh,
                                          TH1D * h_pfp_track_nue_cc_mec,
-                                         TH1D * h_pfp_track_nue_nc,
+                                         TH1D * h_pfp_track_nc,
                                          TH1D * h_pfp_track_numu_cc_qe,
                                          TH1D * h_pfp_track_numu_cc_res,
                                          TH1D * h_pfp_track_numu_cc_dis,
                                          TH1D * h_pfp_track_numu_cc_coh,
                                          TH1D * h_pfp_track_numu_cc_mec,
-                                         TH1D * h_pfp_track_numu_nc,
+                                         TH1D * h_pfp_track_nc_pi0,
                                          TH1D * h_pfp_track_nue_cc_mixed,
                                          TH1D * h_pfp_track_numu_cc_mixed,
                                          TH1D * h_pfp_track_cosmic,
@@ -1707,13 +1694,13 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
                                          TH1D * h_pfp_shower_nue_cc_dis,
                                          TH1D * h_pfp_shower_nue_cc_coh,
                                          TH1D * h_pfp_shower_nue_cc_mec,
-                                         TH1D * h_pfp_shower_nue_nc,
+                                         TH1D * h_pfp_shower_nc,
                                          TH1D * h_pfp_shower_numu_cc_qe,
                                          TH1D * h_pfp_shower_numu_cc_res,
                                          TH1D * h_pfp_shower_numu_cc_dis,
                                          TH1D * h_pfp_shower_numu_cc_coh,
                                          TH1D * h_pfp_shower_numu_cc_mec,
-                                         TH1D * h_pfp_shower_numu_nc,
+                                         TH1D * h_pfp_shower_nc_pi0,
                                          TH1D * h_pfp_shower_nue_cc_mixed,
                                          TH1D * h_pfp_shower_numu_cc_mixed,
                                          TH1D * h_pfp_shower_cosmic,
@@ -1735,7 +1722,7 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks  = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
@@ -1802,13 +1789,6 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 			h_pfp_shower_nue_cc_mec->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_nue_cc_mec->Fill(leading_origin_int, leading_pdg_int);
 		}
-		if(tpco_id == "nue_nc")
-		{
-			h_pfp_track_shower_nue_nc->Fill(n_pfp_tracks, n_pfp_showers);
-			h_pfp_track_nue_nc->Fill(n_pfp_tracks);
-			h_pfp_shower_nue_nc->Fill(n_pfp_showers);
-			h_leading_shower_mc_pdg_nue_nc->Fill(leading_origin_int, leading_pdg_int);
-		}
 		if(tpco_id == "numu_cc_qe")
 		{
 			h_pfp_track_shower_numu_cc_qe->Fill(n_pfp_tracks, n_pfp_showers);
@@ -1844,12 +1824,19 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 			h_pfp_shower_numu_cc_mec->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_mec->Fill(leading_origin_int, leading_pdg_int);
 		}
-		if(tpco_id == "numu_nc")
+		if(tpco_id == "nc")
 		{
-			h_pfp_track_shower_numu_nc->Fill(n_pfp_tracks, n_pfp_showers);
-			h_pfp_track_numu_nc->Fill(n_pfp_tracks);
-			h_pfp_shower_numu_nc->Fill(n_pfp_showers);
-			h_leading_shower_mc_pdg_numu_nc->Fill(leading_origin_int, leading_pdg_int);
+			h_pfp_track_shower_nc->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nc->Fill(n_pfp_tracks);
+			h_pfp_shower_nc->Fill(n_pfp_showers);
+			h_leading_shower_mc_pdg_nc->Fill(leading_origin_int, leading_pdg_int);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_pfp_track_shower_nc_pi0->Fill(n_pfp_tracks, n_pfp_showers);
+			h_pfp_track_nc_pi0->Fill(n_pfp_tracks);
+			h_pfp_shower_nc_pi0->Fill(n_pfp_showers);
+			h_leading_shower_mc_pdg_nc_pi0->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
@@ -1892,11 +1879,11 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                            double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                                            TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_mixed,
-                                           TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_numu_nc,
-                                           TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nue_nc,
+                                           TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                                           TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
                                            TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
                                            TH1D * h_vtx_flash_unmatched)
 {
@@ -1917,7 +1904,7 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 		const double flash_vtx_z = largest_flash_v.at(1);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
 
@@ -1945,10 +1932,6 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 		{
 			h_vtx_flash_nue_cc->Fill(distance);
 		}
-		if(tpco_id == "nue_nc")
-		{
-			h_vtx_flash_nue_nc->Fill(distance);
-		}
 		if(tpco_id == "numu_cc_qe")
 		{
 			h_vtx_flash_numu_cc->Fill(distance);
@@ -1969,9 +1952,13 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 		{
 			h_vtx_flash_numu_cc->Fill(distance);
 		}
-		if(tpco_id == "numu_nc")
+		if(tpco_id == "nc")
 		{
-			h_vtx_flash_numu_nc->Fill(distance);
+			h_vtx_flash_nc->Fill(distance);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_vtx_flash_nc_pi0->Fill(distance);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
@@ -1998,14 +1985,14 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                                           TH1D * h_shwr_vtx_dist_nue_cc,
                                           TH1D * h_shwr_vtx_dist_nue_cc_mixed,
                                           TH1D * h_shwr_vtx_dist_numu_cc,
-                                          TH1D * h_shwr_vtx_dist_numu_nc,
+                                          TH1D * h_shwr_vtx_dist_nc,
                                           TH1D * h_shwr_vtx_dist_cosmic,
-                                          TH1D * h_shwr_vtx_dist_nue_nc,
+                                          TH1D * h_shwr_vtx_dist_nc_pi0,
                                           TH1D * h_shwr_vtx_dist_numu_cc_mixed,
                                           TH1D * h_shwr_vtx_dist_other_mixed,
                                           TH1D * h_shwr_vtx_dist_unmatched     )
@@ -2023,7 +2010,7 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		const int tpc_obj_mode = tpc_obj.Mode();
 		const int n_pfp = tpc_obj.NumPFParticles();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
@@ -2063,10 +2050,6 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 		{
 			h_shwr_vtx_dist_nue_cc->Fill(distance);
 		}
-		if(tpco_id == "nue_nc")
-		{
-			h_shwr_vtx_dist_nue_nc->Fill(distance);
-		}
 		if(tpco_id == "numu_cc_qe")
 		{
 			h_shwr_vtx_dist_numu_cc->Fill(distance);
@@ -2087,9 +2070,13 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 		{
 			h_shwr_vtx_dist_numu_cc->Fill(distance);
 		}
-		if(tpco_id == "numu_nc")
+		if(tpco_id == "nc")
 		{
-			h_shwr_vtx_dist_numu_nc->Fill(distance);
+			h_shwr_vtx_dist_nc->Fill(distance);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_shwr_vtx_dist_nc_pi0->Fill(distance);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
@@ -2116,7 +2103,7 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                               double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                               double vtxX, double vtxY, double vtxZ,
                                               double mc_nu_energy, double mc_ele_energy,
@@ -2129,7 +2116,7 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 		bool tpco_id_valid = false;
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
 
@@ -2154,7 +2141,7 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 //***************************************************************************
 //***************************************************************************
 void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                              double vtxX, double vtxY, double vtxZ,
                                              std::vector<int> * no_track, std::vector<int> * has_track)
@@ -2169,7 +2156,7 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		std::string tpco_id = tpco_class.first;
 
 		if(n_pfp_showers == 0)
@@ -2219,6 +2206,21 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 			}
 		}
 	}//end loop tpc objects
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
+                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                                    std::vector<int> tabulated_origins, double mc_nu_energy,
+                                                    double mc_ele_energy, TH1D * h_selected_nu_energy, TH1D * h_selected_ele_energy)
+{
+	//this checks if there is a true nue/nue-bar CC event and a selected nue_cc signal event, true in FV
+	if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1) {
+		if(in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2) == true) {
+			h_selected_nu_energy->Fill(mc_nu_energy);
+			h_selected_ele_energy->Fill(mc_ele_energy);
+		}
+	}
 }
 //***************************************************************************
 //***************************************************************************

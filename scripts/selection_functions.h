@@ -102,15 +102,16 @@ void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
 //***************************************************************************
 //***************************************************************************
 void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                   double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
                   TH1D * h_dedx_cuts_nue_cc,
                   TH1D * h_dedx_cuts_nue_cc_mixed,
+                  TH1D * h_dedx_cuts_nue_cc_out_fv,
                   TH1D * h_dedx_cuts_numu_cc,
-                  TH1D * h_dedx_cuts_numu_nc,
+                  TH1D * h_dedx_cuts_nc,
                   TH1D * h_dedx_cuts_cosmic,
-                  TH1D * h_dedx_cuts_nue_nc,
+                  TH1D * h_dedx_cuts_nc_pi0,
                   TH1D * h_dedx_cuts_numu_cc_mixed,
                   TH1D * h_dedx_cuts_other_mixed,
                   TH1D * h_dedx_cuts_unmatched     );
@@ -121,13 +122,13 @@ void dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, 
 //***************************************************************************
 //***************************************************************************
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                       std::vector<std::pair<int, std::string> > * passed_tpco,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                        double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
-                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v);
 //***************************************************************************
 //***************************************************************************
-void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string> > * post_cuts_v, bool _post_cuts_verbose);
+void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v, bool _post_cuts_verbose);
 //***************************************************************************
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
@@ -135,7 +136,7 @@ bool ValidTPCObjects(std::vector<std::pair<int, std::string> > * passed_tpco);
 //***************************************************************************
 //***************************************************************************
 std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                                 double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
+                                 bool has_pi0, double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
 //***************************************************************************
 //***************************************************************************
 void TotalOrigins(std::vector<int> tabulated_origins, std::vector<int> * total_cut_origins);
@@ -148,7 +149,7 @@ void PrintInfo(int mc_nue_cc_counter,
                std::string cut_name);
 //***************************************************************************
 //***************************************************************************
-std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj,
+std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0,
                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
 //***************************************************************************
 //***************************************************************************
@@ -165,25 +166,27 @@ void xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_ene
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                       double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                       TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
-                      TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_numu_nc,
-                      TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nue_nc,
+                      TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
+                      TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                       TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
                       TH1D * h_leading_shower_open_angle_unmatched);
 //***************************************************************************
 //***************************************************************************
 void PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                   bool has_pi0,
                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                    TH1D * h_trk_vtx_dist_nue_cc, TH1D * h_trk_vtx_dist_nue_cc_mixed,
-                   TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_numu_nc,
-                   TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nue_nc,
+                   TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_nc,
+                   TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nc_pi0,
                    TH1D * h_trk_vtx_dist_numu_cc_mixed, TH1D * h_trk_vtx_dist_other_mixed,
                    TH1D * h_trk_vtx_dist_unmatched);
 //***************************************************************************
 //***************************************************************************
-void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
+void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                    std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                     TH2D * h_pfp_track_shower_nue_cc_qe,
                     TH2D * h_pfp_track_shower_nue_cc_out_fv,
@@ -191,13 +194,13 @@ void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH2D * h_pfp_track_shower_nue_cc_dis,
                     TH2D * h_pfp_track_shower_nue_cc_coh,
                     TH2D * h_pfp_track_shower_nue_cc_mec,
-                    TH2D * h_pfp_track_shower_nue_nc,
+                    TH2D * h_pfp_track_shower_nc,
                     TH2D * h_pfp_track_shower_numu_cc_qe,
                     TH2D * h_pfp_track_shower_numu_cc_res,
                     TH2D * h_pfp_track_shower_numu_cc_dis,
                     TH2D * h_pfp_track_shower_numu_cc_coh,
                     TH2D * h_pfp_track_shower_numu_cc_mec,
-                    TH2D * h_pfp_track_shower_numu_nc,
+                    TH2D * h_pfp_track_shower_nc_pi0,
                     TH2D * h_pfp_track_shower_nue_cc_mixed,
                     TH2D * h_pfp_track_shower_numu_cc_mixed,
                     TH2D * h_pfp_track_shower_cosmic,
@@ -209,13 +212,13 @@ void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH2D * h_leading_shower_mc_pdg_nue_cc_dis,
                     TH2D * h_leading_shower_mc_pdg_nue_cc_coh,
                     TH2D * h_leading_shower_mc_pdg_nue_cc_mec,
-                    TH2D * h_leading_shower_mc_pdg_nue_nc,
+                    TH2D * h_leading_shower_mc_pdg_nc,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_qe,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_res,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_dis,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_coh,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_mec,
-                    TH2D * h_leading_shower_mc_pdg_numu_nc,
+                    TH2D * h_leading_shower_mc_pdg_nc_pi0,
                     TH2D * h_leading_shower_mc_pdg_nue_cc_mixed,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_mixed,
                     TH2D * h_leading_shower_mc_pdg_cosmic,
@@ -227,13 +230,13 @@ void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH1D * h_pfp_track_nue_cc_dis,
                     TH1D * h_pfp_track_nue_cc_coh,
                     TH1D * h_pfp_track_nue_cc_mec,
-                    TH1D * h_pfp_track_nue_nc,
+                    TH1D * h_pfp_track_nc,
                     TH1D * h_pfp_track_numu_cc_qe,
                     TH1D * h_pfp_track_numu_cc_res,
                     TH1D * h_pfp_track_numu_cc_dis,
                     TH1D * h_pfp_track_numu_cc_coh,
                     TH1D * h_pfp_track_numu_cc_mec,
-                    TH1D * h_pfp_track_numu_nc,
+                    TH1D * h_pfp_track_nc_pi0,
                     TH1D * h_pfp_track_nue_cc_mixed,
                     TH1D * h_pfp_track_numu_cc_mixed,
                     TH1D * h_pfp_track_cosmic,
@@ -245,13 +248,13 @@ void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH1D * h_pfp_shower_nue_cc_dis,
                     TH1D * h_pfp_shower_nue_cc_coh,
                     TH1D * h_pfp_shower_nue_cc_mec,
-                    TH1D * h_pfp_shower_nue_nc,
+                    TH1D * h_pfp_shower_nc,
                     TH1D * h_pfp_shower_numu_cc_qe,
                     TH1D * h_pfp_shower_numu_cc_res,
                     TH1D * h_pfp_shower_numu_cc_dis,
                     TH1D * h_pfp_shower_numu_cc_coh,
                     TH1D * h_pfp_shower_numu_cc_mec,
-                    TH1D * h_pfp_shower_numu_nc,
+                    TH1D * h_pfp_shower_nc_pi0,
                     TH1D * h_pfp_shower_nue_cc_mixed,
                     TH1D * h_pfp_shower_numu_cc_mixed,
                     TH1D * h_pfp_shower_cosmic,
@@ -259,7 +262,8 @@ void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH1D * h_pfp_shower_unmatched    );
 //***************************************************************************
 //***************************************************************************
-void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
+void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                    std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                     TH2D * h_pfp_track_shower_nue_cc_qe,
                     TH2D * h_pfp_track_shower_nue_cc_out_fv,
@@ -267,13 +271,13 @@ void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH2D * h_pfp_track_shower_nue_cc_dis,
                     TH2D * h_pfp_track_shower_nue_cc_coh,
                     TH2D * h_pfp_track_shower_nue_cc_mec,
-                    TH2D * h_pfp_track_shower_nue_nc,
+                    TH2D * h_pfp_track_shower_nc,
                     TH2D * h_pfp_track_shower_numu_cc_qe,
                     TH2D * h_pfp_track_shower_numu_cc_res,
                     TH2D * h_pfp_track_shower_numu_cc_dis,
                     TH2D * h_pfp_track_shower_numu_cc_coh,
                     TH2D * h_pfp_track_shower_numu_cc_mec,
-                    TH2D * h_pfp_track_shower_numu_nc,
+                    TH2D * h_pfp_track_shower_nc_pi0,
                     TH2D * h_pfp_track_shower_nue_cc_mixed,
                     TH2D * h_pfp_track_shower_numu_cc_mixed,
                     TH2D * h_pfp_track_shower_cosmic,
@@ -285,13 +289,13 @@ void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH2D * h_leading_shower_mc_pdg_nue_cc_dis,
                     TH2D * h_leading_shower_mc_pdg_nue_cc_coh,
                     TH2D * h_leading_shower_mc_pdg_nue_cc_mec,
-                    TH2D * h_leading_shower_mc_pdg_nue_nc,
+                    TH2D * h_leading_shower_mc_pdg_nc,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_qe,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_res,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_dis,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_coh,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_mec,
-                    TH2D * h_leading_shower_mc_pdg_numu_nc,
+                    TH2D * h_leading_shower_mc_pdg_nc_pi0,
                     TH2D * h_leading_shower_mc_pdg_nue_cc_mixed,
                     TH2D * h_leading_shower_mc_pdg_numu_cc_mixed,
                     TH2D * h_leading_shower_mc_pdg_cosmic,
@@ -303,13 +307,13 @@ void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH1D * h_pfp_track_nue_cc_dis,
                     TH1D * h_pfp_track_nue_cc_coh,
                     TH1D * h_pfp_track_nue_cc_mec,
-                    TH1D * h_pfp_track_nue_nc,
+                    TH1D * h_pfp_track_nc,
                     TH1D * h_pfp_track_numu_cc_qe,
                     TH1D * h_pfp_track_numu_cc_res,
                     TH1D * h_pfp_track_numu_cc_dis,
                     TH1D * h_pfp_track_numu_cc_coh,
                     TH1D * h_pfp_track_numu_cc_mec,
-                    TH1D * h_pfp_track_numu_nc,
+                    TH1D * h_pfp_track_nc_pi0,
                     TH1D * h_pfp_track_nue_cc_mixed,
                     TH1D * h_pfp_track_numu_cc_mixed,
                     TH1D * h_pfp_track_cosmic,
@@ -321,13 +325,13 @@ void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH1D * h_pfp_shower_nue_cc_dis,
                     TH1D * h_pfp_shower_nue_cc_coh,
                     TH1D * h_pfp_shower_nue_cc_mec,
-                    TH1D * h_pfp_shower_nue_nc,
+                    TH1D * h_pfp_shower_nc,
                     TH1D * h_pfp_shower_numu_cc_qe,
                     TH1D * h_pfp_shower_numu_cc_res,
                     TH1D * h_pfp_shower_numu_cc_dis,
                     TH1D * h_pfp_shower_numu_cc_coh,
                     TH1D * h_pfp_shower_numu_cc_mec,
-                    TH1D * h_pfp_shower_numu_nc,
+                    TH1D * h_pfp_shower_nc_pi0,
                     TH1D * h_pfp_shower_nue_cc_mixed,
                     TH1D * h_pfp_shower_numu_cc_mixed,
                     TH1D * h_pfp_shower_cosmic,
@@ -336,31 +340,31 @@ void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
 //***************************************************************************
 //***************************************************************************
 void PostCutsVtxFlash(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                       double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                       TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_mixed,
-                      TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_numu_nc,
-                      TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nue_nc,
+                      TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                      TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
                       TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
                       TH1D * h_vtx_flash_unmatched);
 //***************************************************************************
 //***************************************************************************
 void PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
                      TH1D * h_shwr_vtx_dist_nue_cc,
                      TH1D * h_shwr_vtx_dist_nue_cc_mixed,
                      TH1D * h_shwr_vtx_dist_numu_cc,
-                     TH1D * h_shwr_vtx_dist_numu_nc,
+                     TH1D * h_shwr_vtx_dist_nc,
                      TH1D * h_shwr_vtx_dist_cosmic,
-                     TH1D * h_shwr_vtx_dist_nue_nc,
+                     TH1D * h_shwr_vtx_dist_nc_pi0,
                      TH1D * h_shwr_vtx_dist_numu_cc_mixed,
                      TH1D * h_shwr_vtx_dist_other_mixed,
                      TH1D * h_shwr_vtx_dist_unmatched     );
 //***************************************************************************
 //***************************************************************************
 void PostCutHitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                          double vtxX, double vtxY, double vtxZ,
                          double mc_nu_energy, double mc_ele_energy,
@@ -368,10 +372,19 @@ void PostCutHitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
 //***************************************************************************
 //***************************************************************************
 void TopologyEfficiency(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                         double vtxX, double vtxY, double vtxZ,
                         std::vector<int> * no_track, std::vector<int> * has_track);
+//***************************************************************************
+//***************************************************************************
+void SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
+                               double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                               std::vector<int> tabulated_origins, double mc_nu_energy,
+                               double mc_ele_energy, TH1D * h_selected_nu_energy, TH1D * h_selected_ele_energy);
+//***************************************************************************
+//***************************************************************************
 };
+
 
 #endif
