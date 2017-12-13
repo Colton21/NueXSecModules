@@ -14,7 +14,7 @@ class TPCObjectContainer {
 private:
 
 std::vector<ParticleContainer> fParticleList;
-ParticleContainer leading_particle;
+//ParticleContainer leading_particle;
 
 int run;
 int subrun;
