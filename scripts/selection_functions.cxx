@@ -183,6 +183,7 @@ void selection_functions::fiducial_volume_cut(std::vector<xsecAna::TPCObjectCont
 bool selection_functions::opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double tolerance)
 {
 	const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+	//const double distance = tpc_vtx_z - flash_vtx_z;
 	if(distance <= tolerance) {return true; }
 	return false;
 }
@@ -361,6 +362,8 @@ void selection_functions::VtxNuDistance(std::vector<xsecAna::TPCObjectContainer>
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		//loop over pfparticles in the TPCO
+		const int n_tracks = tpc_obj.NPfpTracks();
+		//if(n_tracks == 0) {continue; } //this is here for testing how the cut responds when I only cut for !=0 tracks
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
@@ -533,7 +536,7 @@ void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_
 //***************************************************************************
 //***************************************************************************
 void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                                       const double tolerance_open_angle, const bool _verbose)
+                                       const std::vector<double> tolerance_open_angle, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -556,7 +559,7 @@ void selection_functions::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> 
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
-		if(leading_open_angle > tolerance_open_angle)
+		if(leading_open_angle > tolerance_open_angle.at(1) || leading_open_angle < tolerance_open_angle.at(0))
 		{
 			passed_tpco->at(i).first = 0;
 			passed_tpco->at(i).second = "OpenAngle";
@@ -1904,6 +1907,7 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 		const double flash_vtx_z = largest_flash_v.at(1);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		//const double distance = std::abs(tpc_vtx_z - flash_vtx_z);
 		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
@@ -2256,6 +2260,20 @@ void selection_functions::ChargeShare(std::vector<xsecAna::TPCObjectContainer> *
 			h_charge_share_nue_cc_mixed->Fill(neutrino_charge_share);
 		}//end if tpco == nue_cc_mixed
 	}//end loop tpco
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> tabulated_origins,
+                                    TH1D * h_flash_t0_diff)
+{
+	//if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
+	//{
+	double largest_op_flash_time = largest_flash_v.at(4);
+	double difference = largest_op_flash_time - (mc_nu_time / 1000);
+	//std::cout << "Largest OpFlash Time: " << largest_op_flash_time << " , MC Nu Time: " << mc_nu_time / 1000 << std::endl;
+	//std::cout << "Largest Flash Time - MC Nu Time: " << difference << std::endl;
+	h_flash_t0_diff->Fill(difference);
+	//}
 }
 //***************************************************************************
 //***************************************************************************

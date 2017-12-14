@@ -97,8 +97,8 @@ void GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_
 void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
 //***************************************************************************
 //***************************************************************************
-void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco, const double tolerance_open_angle,
-                  const bool _verbose);
+void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
+                  const std::vector<double> tolerance_open_angle, const bool _verbose);
 //***************************************************************************
 //***************************************************************************
 void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -390,6 +390,10 @@ void ChargeShare(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  double vtxX, double vtxY, double vtxZ, TH1D * h_charge_share_nue_cc_mixed);
 //***************************************************************************
 //***************************************************************************
+void FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> tabulated_origins, TH1D * h_flash_t0_diff);
+//***************************************************************************
+//***************************************************************************
+
 };
 
 

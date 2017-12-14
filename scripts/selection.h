@@ -55,7 +55,7 @@ const double shwr_hit_threshold = 100;//hits
 //tolerance for leading shower open angle
 //standard 20 degrees
 //Roberto uses 15 degrees
-const double tolerance_open_angle = 15;//degrees
+const std::vector<double> tolerance_open_angle {2, 15};//degrees
 
 //tolerance for dedx of leading shower
 //Roberto uses: 1.4 - 3 MeV / cm
@@ -92,6 +92,7 @@ double mc_ele_dir_z = -999;
 double mc_ele_energy = 0;
 double mc_ele_momentum = 0;
 bool has_pi0 = false;
+double mc_nu_time = -1;
 
 int mc_nu_num_particles = 0;
 int mc_nu_num_charged_particles = 0;
@@ -375,6 +376,8 @@ TH1D * h_selected_nu_energy_dedx           = new TH1D ("h_selected_nu_energy_ded
 TH1D * h_selected_ele_energy_dedx          = new TH1D ("h_selected_ele_energy_dedx", "h_selected_ele_energy_dedx", 20, 0, 5);
 
 TH1D * h_charge_share_nue_cc_mixed   = new TH1D("h_charge_share_nue_cc_mixed", "h_charge_share_nue_cc_mixed", 10, 0, 1);
+
+TH1D * h_flash_t0_diff = new TH1D ("h_flash_t0_diff", "h_flash_t0_diff", 40, -10, 10);
 
 }//end namespace
 

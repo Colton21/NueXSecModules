@@ -5,7 +5,7 @@ int selection( const char * _file1){
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
-	const bool _post_cuts_verbose = true;
+	const bool _post_cuts_verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
@@ -49,6 +49,7 @@ int selection( const char * _file1){
 	mctruth_counter_tree->SetBranchAddress("fMCEleEnergy", &mc_ele_energy);
 	mctruth_counter_tree->SetBranchAddress("fMCEleMomentum", &mc_ele_momentum);
 	mctruth_counter_tree->SetBranchAddress("has_pi0", &has_pi0);
+	mctruth_counter_tree->SetBranchAddress("fMCNuTime", &mc_nu_time);
 
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
@@ -204,9 +205,6 @@ int selection( const char * _file1){
 			passed_tpco->at(i).first = 1;
 			passed_tpco->at(i).second = "Passed";
 		}
-
-		//** start the cuts here **
-
 		//***********************************************************
 		//this is where the in-time optical cut again takes effect
 		//***********************************************************
@@ -235,6 +233,9 @@ int selection( const char * _file1){
 		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue);
+		//** Testing flash vs neutrino interaction for origin **
+		_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins, h_flash_t0_diff);
+
 
 
 		//pre most cuts hits
@@ -1089,7 +1090,7 @@ int selection( const char * _file1){
 	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_other_mixed);
 	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_unmatched);
 	shwr_vtx_dist_stack->Draw();
-	shwr_vtx_dist_stack->GetXaxis()->SetTitle("Track to Nue Candidate Vertex Distance [cm]");
+	shwr_vtx_dist_stack->GetXaxis()->SetTitle("Shower to Nue Candidate Vertex Distance [cm]");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack_shwr = new TLegend(0.75,0.75,0.95,0.95);
@@ -1099,8 +1100,8 @@ int selection( const char * _file1){
 	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_cosmic,          "Cosmic", "f");
 	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_numu_cc,         "Numu CC", "f");
 	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nc,          "NC", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nc_pi0,         "NC Pi0", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nc,              "NC", "f");
+	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nc_pi0,          "NC Pi0", "f");
 	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_other_mixed,     "Other Mixed", "f");
 	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_unmatched,       "Unmatched", "f");
 	leg_stack_shwr->Draw();
@@ -2006,6 +2007,13 @@ int selection( const char * _file1){
 	h_charge_share_nue_cc_mixed->GetXaxis()->SetTitle("Neutrino Charge Fraction - Selected Nue CC Mixed");
 	h_charge_share_nue_cc_mixed->Draw();
 	charge_share_nue_cc_mixed->Print("charge_fraction_nue_cc_mixed.pdf");
+
+	TCanvas * flash_t0_diff_c1 = new TCanvas();
+	flash_t0_diff_c1->cd();
+	h_flash_t0_diff->GetXaxis()->SetTitle("Largest Flash Time - True Neutrino Interaction Time [us]");
+	h_flash_t0_diff->Draw();
+	flash_t0_diff_c1->Print("flash_t0_diff.pdf");
+
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;
 
