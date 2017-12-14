@@ -462,6 +462,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetpfpVtxY(pfp_nu_vtx_y);
 		tpc_object_container.SetpfpVtxZ(pfp_nu_vtx_z);
 		tpc_object_container.SetRunNumber(run);
+		tpc_object_container.SetIsData(_is_data);
 		//tpc_object_container.SetSubRunNumber();
 		tpc_object_container.SetEventNumber(event);
 		tpc_object_container.SetIndex(tpc_object_counter);

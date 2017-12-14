@@ -16,7 +16,9 @@ ParticleContainer TPCObjectContainer::GetParticle(int _i) const {
 }
 
 //
-
+void TPCObjectContainer::SetIsData    (int _is_data){
+	is_data = _is_data;
+}
 void TPCObjectContainer::SetRunNumber (int run_number){
 	run = run_number;
 }
@@ -133,6 +135,9 @@ void TPCObjectContainer::SetNumMatchedHitsW (int _n_matched_hits_w){
 //Getter Functions
 //----------------
 
+int TPCObjectContainer::IsData    () const {
+	return is_data;
+}
 int TPCObjectContainer::RunNumber () const {
 	return run;
 }
@@ -159,8 +164,8 @@ int TPCObjectContainer::NPfpShowers () const {
 	return n_pfp_showers;
 }
 /*ParticleContainer TPCObjectContainer::LeadingParticle () const {
-	return leading_particle;
-}*/
+        return leading_particle;
+   }*/
 
 int TPCObjectContainer::Mode () const {
 	return mode;

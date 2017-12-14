@@ -16,6 +16,7 @@ private:
 std::vector<ParticleContainer> fParticleList;
 //ParticleContainer leading_particle;
 
+int is_data;
 int run;
 int subrun;
 int event;
@@ -69,6 +70,7 @@ ParticleContainer GetParticle (int) const;
 //Setter Functions
 //----------------
 
+void SetIsData (int);//0 = false, 1 = true
 void SetRunNumber (int);
 void SetSubRunNumber (int);
 void SetEventNumber(int);   //event
@@ -123,6 +125,7 @@ void SetNumMatchedHitsW (int);
 //Getter Functions
 //----------------
 
+int IsData        () const;
 int RunNumber     () const;
 int SubRunNumber  () const;
 int EventNumber   () const;
