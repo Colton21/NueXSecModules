@@ -384,6 +384,12 @@ void SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_vtx_x, double mc_nu_vt
                                double mc_ele_energy, TH1D * h_selected_nu_energy, TH1D * h_selected_ele_energy);
 //***************************************************************************
 //***************************************************************************
+void ChargeShare(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                 double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                 double vtxX, double vtxY, double vtxZ, TH1D * h_charge_share_nue_cc_mixed);
+//***************************************************************************
+//***************************************************************************
 };
 
 

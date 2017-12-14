@@ -8,7 +8,8 @@
 namespace xsecSelection {
 
 
-const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
+//const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
+const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
 //const double POT = 2.90469e+21;    //POT - nue + cosmics
 const double scaling = 1.52938e-11;  //nues / POT / cm^2
 const double genie_xsec = 5.05191e-39; //cm^2
@@ -372,6 +373,8 @@ TH1D * h_selected_nu_energy_open_angle     = new TH1D ("h_selected_nu_energy_ope
 TH1D * h_selected_ele_energy_open_angle    = new TH1D ("h_selected_ele_energy_open_angle", "h_selected_ele_energy_open_angle", 20, 0, 5);
 TH1D * h_selected_nu_energy_dedx           = new TH1D ("h_selected_nu_energy_dedx", "h_selected_nu_energy_dedx", 20, 0, 5);
 TH1D * h_selected_ele_energy_dedx          = new TH1D ("h_selected_ele_energy_dedx", "h_selected_ele_energy_dedx", 20, 0, 5);
+
+TH1D * h_charge_share_nue_cc_mixed   = new TH1D("h_charge_share_nue_cc_mixed", "h_charge_share_nue_cc_mixed", 10, 0, 1);
 
 }//end namespace
 

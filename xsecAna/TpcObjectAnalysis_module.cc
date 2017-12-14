@@ -139,6 +139,7 @@ double fMCNuDirZ = -1;
 int fMCNumParticles = 0;
 int fMCNumChargedParticles = 0;
 bool has_pi0 = false;
+double fMCNuTime = -1;
 
 };
 
@@ -211,6 +212,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNumParticles", &fMCNumParticles, "fMCNumParticles/I");
 	mctruth_counter_tree->Branch("fMCNumChargedParticles", &fMCNumChargedParticles, "fMCNumChargedParticles/I");
 	mctruth_counter_tree->Branch("has_pi0", &has_pi0, "has_pi0/O");
+	mctruth_counter_tree->Branch("fMCNuTime", &fMCNuTime, "fMCNuTime/D");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -334,6 +336,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				fMCEleDirZ     = (mc_nu.Lepton().Pz() / mc_nu.Lepton().P());
 				fMCEleEnergy   = mc_nu.Lepton().E();
 				fMCEleMomentum = mc_nu.Lepton().P();
+				fMCNuTime      = mc_nu.Nu().Trajectory().T(0);
 				event_neutrino = true;
 			}
 			//this should only give the stable final state particles

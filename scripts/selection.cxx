@@ -505,6 +505,10 @@ int selection( const char * _file1){
 		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                            no_track, has_track);
+		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_charge_share_nue_cc_mixed);
 
 		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
@@ -1995,6 +1999,13 @@ int selection( const char * _file1){
 	leg_sequential2->AddEntry(h_selected_ele_energy_dedx,           "dE/dx", "f");
 	leg_sequential2->Draw();
 	sequential_ele_energy_c1->Print("sequential_ele_energy.pdf");
+
+
+	TCanvas * charge_share_nue_cc_mixed = new TCanvas();
+	charge_share_nue_cc_mixed->cd();
+	h_charge_share_nue_cc_mixed->GetXaxis()->SetTitle("Neutrino Charge Fraction - Selected Nue CC Mixed");
+	h_charge_share_nue_cc_mixed->Draw();
+	charge_share_nue_cc_mixed->Print("charge_fraction_nue_cc_mixed.pdf");
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;
 

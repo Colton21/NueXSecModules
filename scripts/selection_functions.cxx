@@ -2224,3 +2224,38 @@ void selection_functions::SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_v
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::ChargeShare(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                      double vtxX, double vtxY, double vtxZ, TH1D * h_charge_share_nue_cc_mixed)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool tpco_id_valid = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		if(tpco_id == "nue_cc_mixed")
+		{
+			int neutrino_charge = 0;
+			int cosmic_charge = 0;
+			for(int j = 0; j < n_pfp; j++)
+			{
+				auto const part = tpc_obj.GetParticle(j);
+				const int n_pfp_hits = part.NumPFPHits();
+				if(part.Origin() == "kBeamNeutrino") {neutrino_charge += n_pfp_hits; }
+				if(part.Origin() == "kCosmicRay")    {cosmic_charge += n_pfp_hits; }
+			}
+			const double neutrino_charge_share = double(neutrino_charge) / double(neutrino_charge + cosmic_charge);
+			h_charge_share_nue_cc_mixed->Fill(neutrino_charge_share);
+		}//end if tpco == nue_cc_mixed
+	}//end loop tpco
+}
+//***************************************************************************
+//***************************************************************************
