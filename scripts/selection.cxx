@@ -390,7 +390,13 @@ int selection( const char * _file1){
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_hit_threshold, h_selected_ele_energy_hit_threshold);
 
-
+		_functions_instance.selection_functions::dEdxVsOpenAngle(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                         h_dedx_open_angle_nue_cc, h_dedx_open_angle_nue_cc_out_fv,
+		                                                         h_dedx_open_angle_nue_cc_mixed, h_dedx_open_angle_numu_cc,
+		                                                         h_dedx_open_angle_numu_cc_mixed, h_dedx_open_angle_nc,
+		                                                         h_dedx_open_angle_nc_pi0, h_dedx_open_angle_cosmic,
+		                                                         h_dedx_open_angle_other_mixed, h_dedx_open_angle_unmatched);
 		//*****************************************************
 		//****** open angle cut for the leading shower ********
 		//******************************************************
@@ -2013,6 +2019,77 @@ int selection( const char * _file1){
 	h_flash_t0_diff->GetXaxis()->SetTitle("Largest Flash Time - True Neutrino Interaction Time [us]");
 	h_flash_t0_diff->Draw();
 	flash_t0_diff_c1->Print("flash_t0_diff.pdf");
+
+
+	TCanvas * dedx_open_angle_c1 = new TCanvas();
+	dedx_open_angle_c1->cd();
+	h_dedx_open_angle_nue_cc->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_nue_cc->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_nue_cc->Draw("colz");
+	dedx_open_angle_c1->Print("dedx_open_angle_nue_cc.pdf");
+
+	TCanvas * dedx_open_angle_c2 = new TCanvas();
+	dedx_open_angle_c2->cd();
+	h_dedx_open_angle_nue_cc_out_fv->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_nue_cc_out_fv->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_nue_cc_out_fv->Draw("colz");
+	dedx_open_angle_c2->Print("dedx_open_angle_nue_cc_out_fv.pdf");
+
+	TCanvas * dedx_open_angle_c3 = new TCanvas();
+	dedx_open_angle_c3->cd();
+	h_dedx_open_angle_nue_cc_mixed->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_nue_cc_mixed->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_nue_cc_mixed->Draw("colz");
+	dedx_open_angle_c3->Print("dedx_open_angle_nue_cc_mixed.pdf");
+
+	TCanvas * dedx_open_angle_c4 = new TCanvas();
+	dedx_open_angle_c4->cd();
+	h_dedx_open_angle_numu_cc->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_numu_cc->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_numu_cc->Draw("colz");
+	dedx_open_angle_c4->Print("dedx_open_angle_numu_cc.pdf");
+
+	TCanvas * dedx_open_angle_c5 = new TCanvas();
+	dedx_open_angle_c5->cd();
+	h_dedx_open_angle_numu_cc_mixed->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_numu_cc_mixed->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_numu_cc_mixed->Draw("colz");
+	dedx_open_angle_c5->Print("dedx_open_angle_numu_cc_mixed.pdf");
+
+	TCanvas * dedx_open_angle_c6 = new TCanvas();
+	dedx_open_angle_c6->cd();
+	h_dedx_open_angle_nc->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_nc->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_nc->Draw("colz");
+	dedx_open_angle_c6->Print("dedx_open_angle_nc.pdf");
+
+	TCanvas * dedx_open_angle_c7 = new TCanvas();
+	dedx_open_angle_c7->cd();
+	h_dedx_open_angle_nc_pi0->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_nc_pi0->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_nc_pi0->Draw("colz");
+	dedx_open_angle_c7->Print("dedx_open_angle_nc_pi0.pdf");
+
+	TCanvas * dedx_open_angle_c8 = new TCanvas();
+	dedx_open_angle_c8->cd();
+	h_dedx_open_angle_cosmic->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_cosmic->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_cosmic->Draw("colz");
+	dedx_open_angle_c8->Print("dedx_open_angle_cosmic.pdf");
+
+	TCanvas * dedx_open_angle_c9 = new TCanvas();
+	dedx_open_angle_c9->cd();
+	h_dedx_open_angle_other_mixed->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_other_mixed->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_other_mixed->Draw("colz");
+	dedx_open_angle_c9->Print("dedx_open_angle_other_mixed.pdf");
+
+	TCanvas * dedx_open_angle_c10 = new TCanvas();
+	dedx_open_angle_c10->cd();
+	h_dedx_open_angle_unmatched->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
+	h_dedx_open_angle_unmatched->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
+	h_dedx_open_angle_unmatched->Draw("colz");
+	dedx_open_angle_c10->Print("dedx_open_angle_unmatched.pdf");
 
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;

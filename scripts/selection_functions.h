@@ -393,6 +393,22 @@ void ChargeShare(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
 void FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> tabulated_origins, TH1D * h_flash_t0_diff);
 //***************************************************************************
 //***************************************************************************
+void dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                     double vtxX, double vtxY, double vtxZ,
+                     TH2D * h_dedx_open_angle_nue_cc,
+                     TH2D * h_dedx_open_angle_nue_cc_out_fv,
+                     TH2D * h_dedx_open_angle_nue_cc_mixed,
+                     TH2D * h_dedx_open_angle_numu_cc,
+                     TH2D * h_dedx_open_angle_numu_cc_mixed,
+                     TH2D * h_dedx_open_angle_nc,
+                     TH2D * h_dedx_open_angle_nc_pi0,
+                     TH2D * h_dedx_open_angle_cosmic,
+                     TH2D * h_dedx_open_angle_other_mixed,
+                     TH2D * h_dedx_open_angle_unmatched);
+//***************************************************************************
+//***************************************************************************
 
 };
 

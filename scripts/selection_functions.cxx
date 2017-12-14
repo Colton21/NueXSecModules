@@ -2277,3 +2277,111 @@ void selection_functions::FlashTot0(std::vector< double> largest_flash_v, double
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                          double vtxX, double vtxY, double vtxZ,
+                                          TH2D * h_dedx_open_angle_nue_cc,
+                                          TH2D * h_dedx_open_angle_nue_cc_out_fv,
+                                          TH2D * h_dedx_open_angle_nue_cc_mixed,
+                                          TH2D * h_dedx_open_angle_numu_cc,
+                                          TH2D * h_dedx_open_angle_numu_cc_mixed,
+                                          TH2D * h_dedx_open_angle_nc,
+                                          TH2D * h_dedx_open_angle_nc_pi0,
+                                          TH2D * h_dedx_open_angle_cosmic,
+                                          TH2D * h_dedx_open_angle_other_mixed,
+                                          TH2D * h_dedx_open_angle_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool tpco_id_valid = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const std::string leading_origin = leading_shower.Origin();
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_dedx_open_angle_nue_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_dedx_open_angle_nue_cc_out_fv->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_dedx_open_angle_nue_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_dedx_open_angle_nue_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_dedx_open_angle_nue_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_dedx_open_angle_nue_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_dedx_open_angle_numu_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_dedx_open_angle_numu_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_dedx_open_angle_numu_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_dedx_open_angle_numu_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_dedx_open_angle_numu_cc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nc")
+		{
+			h_dedx_open_angle_nc->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_dedx_open_angle_nc_pi0->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_dedx_open_angle_nue_cc_mixed->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_dedx_open_angle_numu_cc_mixed->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_dedx_open_angle_cosmic->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_dedx_open_angle_other_mixed->Fill(leading_dedx, leading_open_angle);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_dedx_open_angle_unmatched->Fill(leading_dedx, leading_open_angle);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************

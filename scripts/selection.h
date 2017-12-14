@@ -379,6 +379,18 @@ TH1D * h_charge_share_nue_cc_mixed   = new TH1D("h_charge_share_nue_cc_mixed", "
 
 TH1D * h_flash_t0_diff = new TH1D ("h_flash_t0_diff", "h_flash_t0_diff", 40, -10, 10);
 
+
+TH2D * h_dedx_open_angle_nue_cc        = new TH2D("h_dedx_open_angle_nue_cc",         "h_dedx_open_angle_nue_cc",        20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_nue_cc_mixed  = new TH2D("h_dedx_open_angle_nue_cc_mixed",   "h_dedx_open_angle_nue_cc_mixed",  20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_nue_cc_out_fv = new TH2D("h_dedx_open_angle_nue_cc_out_fv",  "h_dedx_open_angle_nue_cc_out_fv", 20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_numu_cc       = new TH2D("h_dedx_open_angle_numu_cc",        "h_dedx_open_angle_numu_cc",       20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_nc_pi0        = new TH2D("h_dedx_open_angle_nc_pi0",         "h_dedx_open_angle_nc_pi0",        20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_cosmic        = new TH2D("h_dedx_open_angle_cosmic",         "h_dedx_open_angle_cosmic",        20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_nc            = new TH2D("h_dedx_open_angle_nc",             "h_dedx_open_angle_nc",            20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_numu_cc_mixed = new TH2D("h_dedx_open_angle_numu_cc_mixed",  "h_dedx_open_angle_numu_cc_mixed", 20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_other_mixed   = new TH2D("h_dedx_open_angle_other_mixed",    "h_dedx_open_angle_other_mixed",   20, 0, 10, 20, 0, 45);
+TH2D * h_dedx_open_angle_unmatched     = new TH2D("h_dedx_open_angle_unmatched",      "h_dedx_open_angle_unmatched",     20, 0, 10, 20, 0, 45);
+
 }//end namespace
 
 #endif
