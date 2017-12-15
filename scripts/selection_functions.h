@@ -409,7 +409,38 @@ void dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH2D * h_dedx_open_angle_unmatched);
 //***************************************************************************
 //***************************************************************************
-
+void ShowerLengthvsHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                        double vtxX, double vtxY, double vtxZ,
+                        TH2D * h_shwr_len_hits_nue_cc,
+                        TH2D * h_shwr_len_hits_nue_cc_out_fv,
+                        TH2D * h_shwr_len_hits_nue_cc_mixed,
+                        TH2D * h_shwr_len_hits_numu_cc,
+                        TH2D * h_shwr_len_hits_numu_cc_mixed,
+                        TH2D * h_shwr_len_hits_nc,
+                        TH2D * h_shwr_len_hits_nc_pi0,
+                        TH2D * h_shwr_len_hits_cosmic,
+                        TH2D * h_shwr_len_hits_other_mixed,
+                        TH2D * h_shwr_len_hits_unmatched);
+//***************************************************************************
+//***************************************************************************
+void SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                          double vtxX, double vtxY, double vtxZ,
+                          TH1D * h_second_shwr_dist_nue_cc,
+                          TH1D * h_second_shwr_dist_nue_cc_out_fv,
+                          TH1D * h_second_shwr_dist_nue_cc_mixed,
+                          TH1D * h_second_shwr_dist_numu_cc,
+                          TH1D * h_second_shwr_dist_numu_cc_mixed,
+                          TH1D * h_second_shwr_dist_nc,
+                          TH1D * h_second_shwr_dist_nc_pi0,
+                          TH1D * h_second_shwr_dist_cosmic,
+                          TH1D * h_second_shwr_dist_other_mixed,
+                          TH1D * h_second_shwr_dist_unmatched);
+//***************************************************************************
+//***************************************************************************
 };
 
 

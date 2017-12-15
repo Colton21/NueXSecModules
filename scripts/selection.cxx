@@ -235,8 +235,14 @@ int selection( const char * _file1){
 		                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue);
 		//** Testing flash vs neutrino interaction for origin **
 		_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins, h_flash_t0_diff);
-
-
+		//** Testing leading shower length vs hits **//
+		_functions_instance.selection_functions::ShowerLengthvsHits(tpc_object_container_v, passed_tpco, _verbose, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                            h_shwr_len_hits_nue_cc, h_shwr_len_hits_nue_cc_out_fv,
+		                                                            h_shwr_len_hits_nue_cc_mixed, h_shwr_len_hits_numu_cc,
+		                                                            h_shwr_len_hits_numu_cc_mixed, h_shwr_len_hits_nc,
+		                                                            h_shwr_len_hits_nc_pi0, h_shwr_len_hits_cosmic,
+		                                                            h_shwr_len_hits_other_mixed, h_shwr_len_hits_unmatched);
 
 		//pre most cuts hits
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
@@ -310,8 +316,7 @@ int selection( const char * _file1){
 		                                                          h_vtx_flash_numu_cc_mixed, h_vtx_flash_other_mixed,
 		                                                          h_vtx_flash_unmatched);
 
-		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v,
-		                                                          tolerance, passed_tpco, _verbose);
+		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
@@ -429,7 +434,7 @@ int selection( const char * _file1){
 		                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
 		                                                      h_dedx_cuts_unmatched     );
 
-		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+		//_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
@@ -512,6 +517,16 @@ int selection( const char * _file1){
 		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                            no_track, has_track);
+
+		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                              _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                              mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                              h_second_shwr_dist_nue_cc, h_second_shwr_dist_nue_cc_out_fv,
+		                                                              h_second_shwr_dist_nue_cc_mixed, h_second_shwr_dist_numu_cc,
+		                                                              h_second_shwr_dist_numu_cc_mixed, h_second_shwr_dist_nc,
+		                                                              h_second_shwr_dist_nc_pi0, h_second_shwr_dist_cosmic,
+		                                                              h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
+
 		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -2090,6 +2105,139 @@ int selection( const char * _file1){
 	h_dedx_open_angle_unmatched->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
 	h_dedx_open_angle_unmatched->Draw("colz");
 	dedx_open_angle_c10->Print("dedx_open_angle_unmatched.pdf");
+
+
+	TCanvas * shwr_len_hits_c1 = new TCanvas();
+	shwr_len_hits_c1->cd();
+	h_shwr_len_hits_nue_cc->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_nue_cc->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_nue_cc->Draw("colz");
+	shwr_len_hits_c1->Print("shwr_len_hits_nue_cc.pdf");
+
+	TCanvas * shwr_len_hits_c2 = new TCanvas();
+	shwr_len_hits_c2->cd();
+	h_shwr_len_hits_nue_cc_out_fv->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_nue_cc_out_fv->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_nue_cc_out_fv->Draw("colz");
+	shwr_len_hits_c2->Print("shwr_len_hits_nue_cc_out_fv.pdf");
+
+	TCanvas * shwr_len_hits_c3 = new TCanvas();
+	shwr_len_hits_c3->cd();
+	h_shwr_len_hits_nue_cc_mixed->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_nue_cc_mixed->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_nue_cc_mixed->Draw("colz");
+	shwr_len_hits_c3->Print("shwr_len_hits_nue_cc_mixed.pdf");
+
+	TCanvas * shwr_len_hits_c4 = new TCanvas();
+	shwr_len_hits_c4->cd();
+	h_shwr_len_hits_numu_cc->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_numu_cc->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_numu_cc->Draw("colz");
+	shwr_len_hits_c4->Print("shwr_len_hits_numu_cc.pdf");
+
+	TCanvas * shwr_len_hits_c5 = new TCanvas();
+	shwr_len_hits_c5->cd();
+	h_shwr_len_hits_numu_cc_mixed->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_numu_cc_mixed->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_numu_cc_mixed->Draw("colz");
+	shwr_len_hits_c5->Print("shwr_len_hits_numu_cc_mixed.pdf");
+
+	TCanvas * shwr_len_hits_c6 = new TCanvas();
+	shwr_len_hits_c6->cd();
+	h_shwr_len_hits_nc->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_nc->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_nc->Draw("colz");
+	shwr_len_hits_c6->Print("shwr_len_hits_nc.pdf");
+
+	TCanvas * shwr_len_hits_c7 = new TCanvas();
+	shwr_len_hits_c7->cd();
+	h_shwr_len_hits_nc_pi0->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_nc_pi0->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_nc_pi0->Draw("colz");
+	shwr_len_hits_c7->Print("shwr_len_hits_nc_pi0.pdf");
+
+	TCanvas * shwr_len_hits_c8 = new TCanvas();
+	shwr_len_hits_c8->cd();
+	h_shwr_len_hits_cosmic->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_cosmic->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_cosmic->Draw("colz");
+	shwr_len_hits_c8->Print("shwr_len_hits_cosmic.pdf");
+
+	TCanvas * shwr_len_hits_c9 = new TCanvas();
+	shwr_len_hits_c9->cd();
+	h_shwr_len_hits_other_mixed->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_other_mixed->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_other_mixed->Draw("colz");
+	shwr_len_hits_c9->Print("shwr_len_hits_other_mixed.pdf");
+
+	TCanvas * shwr_len_hits_c10 = new TCanvas();
+	shwr_len_hits_c10->cd();
+	h_shwr_len_hits_unmatched->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_unmatched->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_unmatched->Draw("colz");
+	shwr_len_hits_c10->Print("shwr_len_hits_unmatched.pdf");
+
+
+
+	TCanvas * second_shwr_dist_c1 = new TCanvas();
+	second_shwr_dist_c1->cd();
+	h_second_shwr_dist_nue_cc->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_nue_cc->Draw();
+	second_shwr_dist_c1->Print("second_shwr_dist_nue_cc.pdf");
+
+	TCanvas * second_shwr_dist_c2 = new TCanvas();
+	second_shwr_dist_c2->cd();
+	h_second_shwr_dist_nue_cc_out_fv->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_nue_cc_out_fv->Draw();
+	second_shwr_dist_c2->Print("second_shwr_dist_nue_cc_out_fv.pdf");
+
+	TCanvas * second_shwr_dist_c3 = new TCanvas();
+	second_shwr_dist_c3->cd();
+	h_second_shwr_dist_nue_cc_mixed->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_nue_cc_mixed->Draw();
+	second_shwr_dist_c3->Print("second_shwr_dist_nue_cc_mixed.pdf");
+
+	TCanvas * second_shwr_dist_c4 = new TCanvas();
+	second_shwr_dist_c4->cd();
+	h_second_shwr_dist_numu_cc->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_numu_cc->Draw();
+	second_shwr_dist_c4->Print("second_shwr_dist_numu_cc.pdf");
+
+	TCanvas * second_shwr_dist_c5 = new TCanvas();
+	second_shwr_dist_c5->cd();
+	h_second_shwr_dist_numu_cc_mixed->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_numu_cc_mixed->Draw();
+	second_shwr_dist_c5->Print("second_shwr_dist_numu_cc_mixed.pdf");
+
+	TCanvas * second_shwr_dist_c6 = new TCanvas();
+	second_shwr_dist_c6->cd();
+	h_second_shwr_dist_nc->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_nc->Draw();
+	second_shwr_dist_c6->Print("second_shwr_dist_nc.pdf");
+
+	TCanvas * second_shwr_dist_c7 = new TCanvas();
+	second_shwr_dist_c7->cd();
+	h_second_shwr_dist_nc_pi0->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_nc_pi0->Draw();
+	second_shwr_dist_c7->Print("second_shwr_dist_nc_pi0.pdf");
+
+	TCanvas * second_shwr_dist_c8 = new TCanvas();
+	second_shwr_dist_c8->cd();
+	h_second_shwr_dist_cosmic->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_cosmic->Draw();
+	second_shwr_dist_c8->Print("second_shwr_dist_cosmic.pdf");
+
+	TCanvas * second_shwr_dist_c9 = new TCanvas();
+	second_shwr_dist_c9->cd();
+	h_second_shwr_dist_other_mixed->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_other_mixed->Draw();
+	second_shwr_dist_c9->Print("second_shwr_dist_other_mixed.pdf");
+
+	TCanvas * second_shwr_dist_c10 = new TCanvas();
+	second_shwr_dist_c10->cd();
+	h_second_shwr_dist_unmatched->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
+	h_second_shwr_dist_unmatched->Draw();
+	second_shwr_dist_c10->Print("second_shwr_dist_unmatched.pdf");
 
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;

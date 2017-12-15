@@ -391,6 +391,28 @@ TH2D * h_dedx_open_angle_numu_cc_mixed = new TH2D("h_dedx_open_angle_numu_cc_mix
 TH2D * h_dedx_open_angle_other_mixed   = new TH2D("h_dedx_open_angle_other_mixed",    "h_dedx_open_angle_other_mixed",   20, 0, 10, 20, 0, 45);
 TH2D * h_dedx_open_angle_unmatched     = new TH2D("h_dedx_open_angle_unmatched",      "h_dedx_open_angle_unmatched",     20, 0, 10, 20, 0, 45);
 
+TH2D * h_shwr_len_hits_nue_cc          = new TH2D("h_shwr_len_hits_nue_cc",        "h_shwr_len_hits_nue_cc",          20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_nue_cc_out_fv   = new TH2D("h_shwr_len_hits_nue_cc_out_fv", "h_shwr_len_hits_nue_cc_out_fv",   20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_nue_cc_mixed    = new TH2D("h_shwr_len_hits_nue_cc_mixed",  "h_shwr_len_hits_nue_cc_mixed",    20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_numu_cc         = new TH2D("h_shwr_len_hits_numu_cc",       "h_shwr_len_hits_numu_cc",         20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_numu_cc_mixed   = new TH2D("h_shwr_len_hits_numu_cc_mixed", "h_shwr_len_hits_numu_cc_mixed",   20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_nc              = new TH2D("h_shwr_len_hits_nc",            "h_shwr_len_hits_nc",              20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_nc_pi0          = new TH2D("h_shwr_len_hits_nc_pi0",        "h_shwr_len_hits_nc_pi0",          20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_cosmic          = new TH2D("h_shwr_len_hits_cosmic",        "h_shwr_len_hits_cosmic",          20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_other_mixed     = new TH2D("h_shwr_len_hits_other_mixed",   "h_shwr_len_hits_other_mixed",     20, 0, 50, 20, 0, 500);
+TH2D * h_shwr_len_hits_unmatched       = new TH2D("h_shwr_len_hits_unmatched",     "h_shwr_len_hits_unmatched",       20, 0, 50, 20, 0, 500);
+
+TH1D * h_second_shwr_dist_nue_cc         = new TH1D ("h_second_shwr_dist_nue_cc",         "h_second_shwr_dist_nue_cc",         20, 0, 160);
+TH1D * h_second_shwr_dist_nue_cc_out_fv  = new TH1D ("h_second_shwr_dist_nue_cc_out_fv",  "h_second_shwr_dist_nue_cc_out_fv",  20, 0, 160);
+TH1D * h_second_shwr_dist_nue_cc_mixed   = new TH1D ("h_second_shwr_dist_nue_cc_mixed",   "h_second_shwr_dist_nue_cc_mixed",   20, 0, 160);
+TH1D * h_second_shwr_dist_numu_cc        = new TH1D ("h_second_shwr_dist_numu_cc",        "h_second_shwr_dist_numu_cc",        20, 0, 160);
+TH1D * h_second_shwr_dist_numu_cc_mixed  = new TH1D ("h_second_shwr_dist_numu_cc_mixed",  "h_second_shwr_dist_numu_cc_mixed",  20, 0, 160);
+TH1D * h_second_shwr_dist_nc             = new TH1D ("h_second_shwr_dist_nc",             "h_second_shwr_dist_nc",             20, 0, 160);
+TH1D * h_second_shwr_dist_nc_pi0         = new TH1D ("h_second_shwr_dist_nc_pi0",         "h_second_shwr_dist_nc_pi0",         20, 0, 160);
+TH1D * h_second_shwr_dist_cosmic         = new TH1D ("h_second_shwr_dist_cosmic",         "h_second_shwr_dist_cosmic",         20, 0, 160);
+TH1D * h_second_shwr_dist_other_mixed    = new TH1D ("h_second_shwr_dist_other_mixed",    "h_second_shwr_dist_other_mixed",    20, 0, 160);
+TH1D * h_second_shwr_dist_unmatched      = new TH1D ("h_second_shwr_dist_unmatched",      "h_second_shwr_dist_unmatched",      20, 0, 160);
+
 }//end namespace
 
 #endif

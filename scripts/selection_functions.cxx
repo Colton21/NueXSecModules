@@ -2385,3 +2385,236 @@ void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContaine
 }
 //***************************************************************************
 //***************************************************************************
+//shower hits vs shower length, to see if we can better use the hit threshold cut to remove less signal?
+void selection_functions::ShowerLengthvsHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                             double vtxX, double vtxY, double vtxZ,
+                                             TH2D * h_shwr_len_hits_nue_cc,
+                                             TH2D * h_shwr_len_hits_nue_cc_out_fv,
+                                             TH2D * h_shwr_len_hits_nue_cc_mixed,
+                                             TH2D * h_shwr_len_hits_numu_cc,
+                                             TH2D * h_shwr_len_hits_numu_cc_mixed,
+                                             TH2D * h_shwr_len_hits_nc,
+                                             TH2D * h_shwr_len_hits_nc_pi0,
+                                             TH2D * h_shwr_len_hits_cosmic,
+                                             TH2D * h_shwr_len_hits_other_mixed,
+                                             TH2D * h_shwr_len_hits_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool tpco_id_valid = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int leading_hits = leading_shower.NumPFPHits();
+		const double leading_length = leading_shower.pfpLength();
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_shwr_len_hits_nue_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_shwr_len_hits_nue_cc_out_fv->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_shwr_len_hits_nue_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_shwr_len_hits_nue_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_shwr_len_hits_nue_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_shwr_len_hits_nue_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_shwr_len_hits_numu_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_shwr_len_hits_numu_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_shwr_len_hits_numu_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_shwr_len_hits_numu_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_shwr_len_hits_numu_cc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nc")
+		{
+			h_shwr_len_hits_nc->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_shwr_len_hits_nc_pi0->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_shwr_len_hits_nue_cc_mixed->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_shwr_len_hits_numu_cc_mixed->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_shwr_len_hits_cosmic->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_shwr_len_hits_other_mixed->Fill(leading_length, leading_hits);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_shwr_len_hits_unmatched->Fill(leading_length, leading_hits);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                               double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                               double vtxX, double vtxY, double vtxZ,
+                                               TH1D * h_second_shwr_dist_nue_cc,
+                                               TH1D * h_second_shwr_dist_nue_cc_out_fv,
+                                               TH1D * h_second_shwr_dist_nue_cc_mixed,
+                                               TH1D * h_second_shwr_dist_numu_cc,
+                                               TH1D * h_second_shwr_dist_numu_cc_mixed,
+                                               TH1D * h_second_shwr_dist_nc,
+                                               TH1D * h_second_shwr_dist_nc_pi0,
+                                               TH1D * h_second_shwr_dist_cosmic,
+                                               TH1D * h_second_shwr_dist_other_mixed,
+                                               TH1D * h_second_shwr_dist_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool tpco_id_valid = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		const double tpco_vtx_x = tpc_obj.pfpVtxX();
+		const double tpco_vtx_y = tpc_obj.pfpVtxY();
+		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		//int leading_index = tpco_class.second;
+		//auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		if(n_pfp_showers > 3)
+		{
+			for(int j = 0; j < n_pfp; j++)
+			{
+				auto const part = tpc_obj.GetParticle(j);
+				const int pfp_pdg = part.PFParticlePdgCode();
+				const double pfp_vtx_x = part.pfpVtxX();
+				const double pfp_vtx_y = part.pfpVtxY();
+				const double pfp_vtx_z = part.pfpVtxZ();
+				const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
+				                             pow((pfp_vtx_y - tpco_vtx_y),2) +
+				                             pow((pfp_vtx_z - tpco_vtx_z),2));
+				if(pfp_pdg == 11)//22 cm is ~ 2 radiation lengths
+				{
+					if(tpco_id == "nue_cc_qe")
+					{
+						h_second_shwr_dist_nue_cc->Fill(distance);
+					}
+					if(tpco_id == "nue_cc_out_fv")
+					{
+						h_second_shwr_dist_nue_cc_out_fv->Fill(distance);
+					}
+					if(tpco_id == "nue_cc_res")
+					{
+						h_second_shwr_dist_nue_cc->Fill(distance);
+					}
+					if(tpco_id == "nue_cc_dis")
+					{
+						h_second_shwr_dist_nue_cc->Fill(distance);
+					}
+					if(tpco_id == "nue_cc_coh")
+					{
+						h_second_shwr_dist_nue_cc->Fill(distance);
+					}
+					if(tpco_id == "nue_cc_mec")
+					{
+						h_second_shwr_dist_nue_cc->Fill(distance);
+					}
+					if(tpco_id == "numu_cc_qe")
+					{
+						h_second_shwr_dist_numu_cc->Fill(distance);
+					}
+					if(tpco_id == "numu_cc_res")
+					{
+						h_second_shwr_dist_numu_cc->Fill(distance);
+					}
+					if(tpco_id == "numu_cc_dis")
+					{
+						h_second_shwr_dist_numu_cc->Fill(distance);
+					}
+					if(tpco_id == "numu_cc_coh")
+					{
+						h_second_shwr_dist_numu_cc->Fill(distance);
+					}
+					if(tpco_id == "numu_cc_mec")
+					{
+						h_second_shwr_dist_numu_cc->Fill(distance);
+					}
+					if(tpco_id == "nc")
+					{
+						h_second_shwr_dist_nc->Fill(distance);
+					}
+					if(tpco_id == "nc_pi0")
+					{
+						h_second_shwr_dist_nc_pi0->Fill(distance);
+					}
+					if(tpco_id == "nue_cc_mixed")
+					{
+						h_second_shwr_dist_nue_cc_mixed->Fill(distance);
+					}
+					if(tpco_id == "numu_cc_mixed")
+					{
+						h_second_shwr_dist_numu_cc_mixed->Fill(distance);
+					}
+					if(tpco_id == "cosmic")
+					{
+						h_second_shwr_dist_cosmic->Fill(distance);
+					}
+					if(tpco_id == "other_mixed")
+					{
+						h_second_shwr_dist_other_mixed->Fill(distance);
+					}
+					if(tpco_id == "unmatched")
+					{
+						h_second_shwr_dist_unmatched->Fill(distance);
+					}
+				}//end if reco shower
+			}//end loop pfp
+		}//end if tpco > 3 reco showers
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
