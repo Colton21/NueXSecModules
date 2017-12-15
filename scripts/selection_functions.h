@@ -441,6 +441,10 @@ void SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_
                           TH1D * h_second_shwr_dist_unmatched);
 //***************************************************************************
 //***************************************************************************
+void SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double dist_tolerance);
+//***************************************************************************
+//***************************************************************************
 };
 
 

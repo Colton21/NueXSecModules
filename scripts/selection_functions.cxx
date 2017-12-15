@@ -2493,6 +2493,48 @@ void selection_functions::ShowerLengthvsHits(std::vector<xsecAna::TPCObjectConta
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double dist_tolerance)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		const double tpco_vtx_x = tpc_obj.pfpVtxX();
+		const double tpco_vtx_y = tpc_obj.pfpVtxY();
+		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
+		if(n_pfp_showers > 3)
+		{
+			for(int j = 0; j < n_pfp; j++)
+			{
+				auto const part = tpc_obj.GetParticle(j);
+				const int pfp_pdg = part.PFParticlePdgCode();
+				const double pfp_vtx_x = part.pfpVtxX();
+				const double pfp_vtx_y = part.pfpVtxY();
+				const double pfp_vtx_z = part.pfpVtxZ();
+				const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
+				                             pow((pfp_vtx_y - tpco_vtx_y),2) +
+				                             pow((pfp_vtx_z - tpco_vtx_z),2));
+				if(pfp_pdg == 11)//22 cm is ~ 2 radiation lengths
+				{
+					if(distance > dist_tolerance)
+					{
+						passed_tpco->at(i).first = 0;
+						passed_tpco->at(i).second = "SecondaryDist";
+						if(_verbose) {std::cout << "[SecondaryDist] TPC Object Failed!" << std::endl; }
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                                double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
@@ -2513,7 +2555,6 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
-		bool tpco_id_valid = false;
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();

@@ -63,6 +63,11 @@ const std::vector<double> tolerance_open_angle {2, 15};//degrees
 const double tolerance_dedx_min = 1.4;
 const double tolerance_dedx_max = 3;
 
+//tolerance for distance from the reco nue vtx for TPCO w/ >3 showers
+const double dist_tolerance = 22; //cm
+//22 cm is something like ~2 radiation lengths - I expect that TPCO w/ >3 showers
+//should have most of the activity around the nucleus right? or at least within the 22 cm
+
 //********************
 //********************
 

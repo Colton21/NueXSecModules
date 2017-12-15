@@ -85,6 +85,8 @@ int selection( const char * _file1){
 	open_angle_counter_v->resize(22, 0);
 	std::vector<int> * dedx_counter_v = new std::vector<int>;
 	dedx_counter_v->resize(22, 0);
+	std::vector<int> * secondary_shower_counter_v = new std::vector<int>;
+	secondary_shower_counter_v->resize(22, 0);
 
 	std::vector<int> * has_track = new std::vector<int>;
 	has_track->resize(2, 0);
@@ -434,7 +436,7 @@ int selection( const char * _file1){
 		                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
 		                                                      h_dedx_cuts_unmatched     );
 
-		//_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
@@ -535,6 +537,15 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
 
+
+
+		_functions_instance.selection_functions::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
+
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -547,47 +558,17 @@ int selection( const char * _file1){
 	//change mc_nue_cc_counter to total_mc_entries_inFV once files are ready!
 
 	//we also want some metrics to print at the end
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    in_time_counter_v,
-	                                                    "In Time"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    pe_counter_v,
-	                                                    "PE Threshold"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    reco_nue_counter_v,
-	                                                    "Reco Nue"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    in_fv_counter_v,
-	                                                    "In FV"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    vtx_flash_counter_v,
-	                                                    "Vtx-to-Flash"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    shwr_tpco_counter_v,
-	                                                    "Shower-to-TPCO"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    trk_tpco_counter_v,
-	                                                    "Track-to-TPCO"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    hit_threshold_counter_v,
-	                                                    "Hit Threshold"
-	                                                    );
-
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    open_angle_counter_v,
-	                                                    "Open Angle"
-	                                                    );
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV,
-	                                                    dedx_counter_v,
-	                                                    " dE / dx "
-	                                                    );
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v, "In Time");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v, "PE Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v, "Reco Nue");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v, "In FV");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v, "Vtx-to-Flash");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v, "Shower-to-TPCO");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v, "Track-to-TPCO");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,"Hit Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v, "Open Angle");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, " dE / dx ");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, ">3 Shower TPCO Dist");
 
 	std::cout << "---------------------" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
