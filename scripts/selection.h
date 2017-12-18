@@ -68,6 +68,9 @@ const double dist_tolerance = 22; //cm
 //22 cm is something like ~2 radiation lengths - I expect that TPCO w/ >3 showers
 //should have most of the activity around the nucleus right? or at least within the 22 cm
 
+//tolerance for hits/length - these should be a property of a shower if it's true
+const double pfp_hits_length_tolerance = 3; //hits/cm
+
 //********************
 //********************
 
@@ -417,6 +420,17 @@ TH1D * h_second_shwr_dist_nc_pi0         = new TH1D ("h_second_shwr_dist_nc_pi0"
 TH1D * h_second_shwr_dist_cosmic         = new TH1D ("h_second_shwr_dist_cosmic",         "h_second_shwr_dist_cosmic",         20, 0, 160);
 TH1D * h_second_shwr_dist_other_mixed    = new TH1D ("h_second_shwr_dist_other_mixed",    "h_second_shwr_dist_other_mixed",    20, 0, 160);
 TH1D * h_second_shwr_dist_unmatched      = new TH1D ("h_second_shwr_dist_unmatched",      "h_second_shwr_dist_unmatched",      20, 0, 160);
+
+TH1D * h_hit_length_ratio_nue_cc         = new TH1D ("h_hit_length_ratio_nue_cc",         "h_hit_length_ratio_nue_cc",         20, 0, 20);
+TH1D * h_hit_length_ratio_nue_cc_out_fv  = new TH1D ("h_hit_length_ratio_nue_cc_out_fv",  "h_hit_length_ratio_nue_cc_out_fv",  20, 0, 20);
+TH1D * h_hit_length_ratio_nue_cc_mixed   = new TH1D ("h_hit_length_ratio_nue_cc_mixed",   "h_hit_length_ratio_nue_cc_mixed",   20, 0, 20);
+TH1D * h_hit_length_ratio_numu_cc        = new TH1D ("h_hit_length_ratio_numu_cc",        "h_hit_length_ratio_numu_cc",        20, 0, 20);
+TH1D * h_hit_length_ratio_numu_cc_mixed  = new TH1D ("h_hit_length_ratio_numu_cc_mixed",  "h_hit_length_ratio_numu_cc_mixed",  20, 0, 20);
+TH1D * h_hit_length_ratio_nc             = new TH1D ("h_hit_length_ratio_nc",             "h_hit_length_ratio_nc",             20, 0, 20);
+TH1D * h_hit_length_ratio_nc_pi0         = new TH1D ("h_hit_length_ratio_nc_pi0",         "h_hit_length_ratio_nc_pi0",         20, 0, 20);
+TH1D * h_hit_length_ratio_cosmic         = new TH1D ("h_hit_length_ratio_cosmic",         "h_hit_length_ratio_cosmic",         20, 0, 20);
+TH1D * h_hit_length_ratio_other_mixed    = new TH1D ("h_hit_length_ratio_other_mixed",    "h_hit_length_ratio_other_mixed",    20, 0, 20);
+TH1D * h_hit_length_ratio_unmatched      = new TH1D ("h_hit_length_ratio_unmatched",      "h_hit_length_ratio_unmatched",      20, 0, 20);
 
 }//end namespace
 

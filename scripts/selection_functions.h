@@ -390,7 +390,9 @@ void ChargeShare(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  double vtxX, double vtxY, double vtxZ, TH1D * h_charge_share_nue_cc_mixed);
 //***************************************************************************
 //***************************************************************************
-void FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> tabulated_origins, TH1D * h_flash_t0_diff);
+void FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> tabulated_origins,
+               double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+               double vtxX, double vtxY, double vtxZ, TH1D * h_flash_t0_diff);
 //***************************************************************************
 //***************************************************************************
 void dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -443,6 +445,27 @@ void SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_
 //***************************************************************************
 void SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double dist_tolerance);
+//***************************************************************************
+//***************************************************************************
+void HitLengthRatio(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                    double vtxX, double vtxY, double vtxZ,
+                    TH1D * h_hit_length_ratio_nue_cc,
+                    TH1D * h_hit_length_ratio_nue_cc_out_fv,
+                    TH1D * h_hit_length_ratio_nue_cc_mixed,
+                    TH1D * h_hit_length_ratio_numu_cc,
+                    TH1D * h_hit_length_ratio_numu_cc_mixed,
+                    TH1D * h_hit_length_ratio_nc,
+                    TH1D * h_hit_length_ratio_nc_pi0,
+                    TH1D * h_hit_length_ratio_cosmic,
+                    TH1D * h_hit_length_ratio_other_mixed,
+                    TH1D * h_hit_length_ratio_unmatched);
+//***************************************************************************
+//***************************************************************************
+void HitLengthRatioCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                       const double pfp_hits_length_tolerance);
 //***************************************************************************
 //***************************************************************************
 };

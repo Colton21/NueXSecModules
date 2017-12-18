@@ -87,6 +87,8 @@ int selection( const char * _file1){
 	dedx_counter_v->resize(22, 0);
 	std::vector<int> * secondary_shower_counter_v = new std::vector<int>;
 	secondary_shower_counter_v->resize(22, 0);
+	std::vector<int> * hit_lengthRatio_counter_v = new std::vector<int>;
+	hit_lengthRatio_counter_v->resize(22, 0);
 
 	std::vector<int> * has_track = new std::vector<int>;
 	has_track->resize(2, 0);
@@ -236,7 +238,8 @@ int selection( const char * _file1){
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue);
 		//** Testing flash vs neutrino interaction for origin **
-		_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins, h_flash_t0_diff);
+		_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins,
+		                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,h_flash_t0_diff);
 		//** Testing leading shower length vs hits **//
 		_functions_instance.selection_functions::ShowerLengthvsHits(tpc_object_container_v, passed_tpco, _verbose, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -294,6 +297,15 @@ int selection( const char * _file1){
 		                                                        h_pfp_shower_nc_pi0, h_pfp_shower_nue_cc_mixed,
 		                                                        h_pfp_shower_numu_cc_mixed, h_pfp_shower_cosmic,
 		                                                        h_pfp_shower_other_mixed, h_pfp_shower_unmatched);
+
+		// _functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		//                                                               _x1, _x2, _y1, _y2, _z1, _z2,
+		//                                                               mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		//                                                               h_second_shwr_dist_nue_cc, h_second_shwr_dist_nue_cc_out_fv,
+		//                                                               h_second_shwr_dist_nue_cc_mixed, h_second_shwr_dist_numu_cc,
+		//                                                               h_second_shwr_dist_numu_cc_mixed, h_second_shwr_dist_nc,
+		//                                                               h_second_shwr_dist_nc_pi0, h_second_shwr_dist_cosmic,
+		//                                                               h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
 		//************************
 		//******** in fv cut *****
 		//************************
@@ -313,8 +325,8 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                          h_vtx_flash_nue_cc, h_vtx_flash_nue_cc_mixed,
-		                                                          h_vtx_flash_numu_cc, h_vtx_flash_nc_pi0,
-		                                                          h_vtx_flash_cosmic, h_vtx_flash_nc,
+		                                                          h_vtx_flash_numu_cc, h_vtx_flash_nc,
+		                                                          h_vtx_flash_cosmic, h_vtx_flash_nc_pi0,
 		                                                          h_vtx_flash_numu_cc_mixed, h_vtx_flash_other_mixed,
 		                                                          h_vtx_flash_unmatched);
 
@@ -336,9 +348,9 @@ int selection( const char * _file1){
 		                                                         h_shwr_vtx_dist_nue_cc,
 		                                                         h_shwr_vtx_dist_nue_cc_mixed,
 		                                                         h_shwr_vtx_dist_numu_cc,
-		                                                         h_shwr_vtx_dist_nc_pi0,
-		                                                         h_shwr_vtx_dist_cosmic,
 		                                                         h_shwr_vtx_dist_nc,
+		                                                         h_shwr_vtx_dist_cosmic,
+		                                                         h_shwr_vtx_dist_nc_pi0,
 		                                                         h_shwr_vtx_dist_numu_cc_mixed,
 		                                                         h_shwr_vtx_dist_other_mixed,
 		                                                         h_shwr_vtx_dist_unmatched     );
@@ -360,8 +372,8 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::PostCutTrkVtx(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                       _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                       h_trk_vtx_dist_nue_cc, h_trk_vtx_dist_nue_cc_mixed,
-		                                                       h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_nc_pi0,
-		                                                       h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nc,
+		                                                       h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_nc,
+		                                                       h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nc_pi0,
 		                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
 		                                                       h_trk_vtx_dist_unmatched);
 		_functions_instance.selection_functions::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
@@ -410,8 +422,8 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::PostCutOpenAngle(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                          h_leading_shower_open_angle_nue_cc, h_leading_shower_open_angle_nue_cc_mixed,
-		                                                          h_leading_shower_open_angle_numu_cc, h_leading_shower_open_angle_nc_pi0,
-		                                                          h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nc,
+		                                                          h_leading_shower_open_angle_numu_cc, h_leading_shower_open_angle_nc,
+		                                                          h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nc_pi0,
 		                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
 		                                                          h_leading_shower_open_angle_unmatched);
 		_functions_instance.selection_functions::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
@@ -431,8 +443,8 @@ int selection( const char * _file1){
 		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                      h_dedx_cuts_nue_cc, h_dedx_cuts_nue_cc_mixed,
 		                                                      h_dedx_cuts_nue_cc_out_fv,
-		                                                      h_dedx_cuts_numu_cc, h_dedx_cuts_nc_pi0,
-		                                                      h_dedx_cuts_cosmic, h_dedx_cuts_nc,
+		                                                      h_dedx_cuts_numu_cc, h_dedx_cuts_nc,
+		                                                      h_dedx_cuts_cosmic, h_dedx_cuts_nc_pi0,
 		                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
 		                                                      h_dedx_cuts_unmatched     );
 
@@ -520,6 +532,14 @@ int selection( const char * _file1){
 		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                            no_track, has_track);
 
+		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_charge_share_nue_cc_mixed);
+
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
+
 		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                              _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                              mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -529,21 +549,35 @@ int selection( const char * _file1){
 		                                                              h_second_shwr_dist_nc_pi0, h_second_shwr_dist_cosmic,
 		                                                              h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
 
-		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                     h_charge_share_nue_cc_mixed);
+		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                        h_hit_length_ratio_nue_cc,
+		                                                        h_hit_length_ratio_nue_cc_out_fv,
+		                                                        h_hit_length_ratio_nue_cc_mixed,
+		                                                        h_hit_length_ratio_numu_cc,
+		                                                        h_hit_length_ratio_numu_cc_mixed,
+		                                                        h_hit_length_ratio_nc,
+		                                                        h_hit_length_ratio_nc_pi0,
+		                                                        h_hit_length_ratio_cosmic,
+		                                                        h_hit_length_ratio_other_mixed,
+		                                                        h_hit_length_ratio_unmatched);
 
-		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
-
-
-
+//***************************************************************************
 		_functions_instance.selection_functions::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
 		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
+
+
+
+
+		_functions_instance.selection_functions::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
+
 
 
 	}//end event loop
@@ -569,14 +603,16 @@ int selection( const char * _file1){
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v, "Open Angle");
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, " dE / dx ");
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, ">3 Shower TPCO Dist");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, "Hit Length Ratio");
 
 	std::cout << "---------------------" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
 	std::cout << "No Track Bkg   : " << no_track->at(1) << std::endl;
-	std::cout << "Relative Purity: " << double(no_track->at(0)) / double(no_track->at(0) + no_track->at(1)) << std::endl;
+	std::cout << "Purity         : " << double(no_track->at(0)) / double(no_track->at(0) + no_track->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
 	std::cout << "1+ Track Signal: " << has_track->at(0) << std::endl;
 	std::cout << "1+ Track Bkg   : " << has_track->at(1) << std::endl;
-	std::cout << "Relative Purity: " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
+	std::cout << "Purity         : " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
 	std::cout << "---------------------" << std::endl;
 
 	std::vector<double> * xsec_cc = new std::vector<double>;
@@ -908,8 +944,8 @@ int selection( const char * _file1){
 	leg_stack->AddEntry(h_leading_shower_open_angle_cosmic,          "Cosmic", "f");
 	leg_stack->AddEntry(h_leading_shower_open_angle_numu_cc,         "Numu CC", "f");
 	leg_stack->AddEntry(h_leading_shower_open_angle_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_nc,          "NC", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_nc_pi0,         "NC Pi0", "f");
+	leg_stack->AddEntry(h_leading_shower_open_angle_nc,              "NC", "f");
+	leg_stack->AddEntry(h_leading_shower_open_angle_nc_pi0,          "NC Pi0", "f");
 	leg_stack->AddEntry(h_leading_shower_open_angle_other_mixed,     "Other Mixed", "f");
 	leg_stack->AddEntry(h_leading_shower_open_angle_unmatched,       "Unmatched", "f");
 	leg_stack->Draw();
@@ -939,11 +975,11 @@ int selection( const char * _file1){
 	h_dedx_cuts_unmatched->SetFillColor(12);
 	dedx_cuts_stack->Add(h_dedx_cuts_nue_cc);
 	dedx_cuts_stack->Add(h_dedx_cuts_nue_cc_mixed);
-	dedx_cuts_stack->Add(h_dedx_cuts_numu_cc);
-	dedx_cuts_stack->Add(h_dedx_cuts_nc_pi0);
 	dedx_cuts_stack->Add(h_dedx_cuts_cosmic);
-	dedx_cuts_stack->Add(h_dedx_cuts_nc);
+	dedx_cuts_stack->Add(h_dedx_cuts_numu_cc);
 	dedx_cuts_stack->Add(h_dedx_cuts_numu_cc_mixed);
+	dedx_cuts_stack->Add(h_dedx_cuts_nc);
+	dedx_cuts_stack->Add(h_dedx_cuts_nc_pi0);
 	dedx_cuts_stack->Add(h_dedx_cuts_other_mixed);
 	dedx_cuts_stack->Add(h_dedx_cuts_unmatched);
 	dedx_cuts_stack->Draw();
@@ -957,8 +993,8 @@ int selection( const char * _file1){
 	leg_stack_dedx->AddEntry(h_dedx_cuts_cosmic,          "Cosmic", "f");
 	leg_stack_dedx->AddEntry(h_dedx_cuts_numu_cc,         "Numu CC", "f");
 	leg_stack_dedx->AddEntry(h_dedx_cuts_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_nc,          "NC", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_nc_pi0,         "NC Pi0", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_nc,              "NC", "f");
+	leg_stack_dedx->AddEntry(h_dedx_cuts_nc_pi0,          "NC Pi0", "f");
 	leg_stack_dedx->AddEntry(h_dedx_cuts_other_mixed,     "Other Mixed", "f");
 	leg_stack_dedx->AddEntry(h_dedx_cuts_unmatched,       "Unmatched", "f");
 	leg_stack_dedx->Draw();
@@ -987,11 +1023,11 @@ int selection( const char * _file1){
 	h_vtx_flash_unmatched->SetFillColor(12);
 	vtx_to_flash_stack->Add(h_vtx_flash_nue_cc);
 	vtx_to_flash_stack->Add(h_vtx_flash_nue_cc_mixed);
-	vtx_to_flash_stack->Add(h_vtx_flash_numu_cc);
-	vtx_to_flash_stack->Add(h_vtx_flash_nc_pi0);
 	vtx_to_flash_stack->Add(h_vtx_flash_cosmic);
-	vtx_to_flash_stack->Add(h_vtx_flash_nc);
+	vtx_to_flash_stack->Add(h_vtx_flash_numu_cc);
 	vtx_to_flash_stack->Add(h_vtx_flash_numu_cc_mixed);
+	vtx_to_flash_stack->Add(h_vtx_flash_nc);
+	vtx_to_flash_stack->Add(h_vtx_flash_nc_pi0);
 	vtx_to_flash_stack->Add(h_vtx_flash_other_mixed);
 	vtx_to_flash_stack->Add(h_vtx_flash_unmatched);
 	vtx_to_flash_stack->Draw();
@@ -1005,8 +1041,8 @@ int selection( const char * _file1){
 	leg_stack_flash->AddEntry(h_vtx_flash_cosmic,          "Cosmic", "f");
 	leg_stack_flash->AddEntry(h_vtx_flash_numu_cc,         "Numu CC", "f");
 	leg_stack_flash->AddEntry(h_vtx_flash_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_nc,          "NC", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_nc_pi0,         "NC Pi0", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_nc,              "NC", "f");
+	leg_stack_flash->AddEntry(h_vtx_flash_nc_pi0,          "NC Pi0", "f");
 	leg_stack_flash->AddEntry(h_vtx_flash_other_mixed,     "Other Mixed", "f");
 	leg_stack_flash->AddEntry(h_vtx_flash_unmatched,       "Unmatched", "f");
 	leg_stack_flash->Draw();
@@ -1053,8 +1089,8 @@ int selection( const char * _file1){
 	leg_stack2->AddEntry(h_trk_vtx_dist_cosmic,          "Cosmic", "f");
 	leg_stack2->AddEntry(h_trk_vtx_dist_numu_cc,         "Numu CC", "f");
 	leg_stack2->AddEntry(h_trk_vtx_dist_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_nc,          "NC", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_nc_pi0,         "NC Pi0", "f");
+	leg_stack2->AddEntry(h_trk_vtx_dist_nc,              "NC", "f");
+	leg_stack2->AddEntry(h_trk_vtx_dist_nc_pi0,          "NC Pi0", "f");
 	leg_stack2->AddEntry(h_trk_vtx_dist_other_mixed,     "Other Mixed", "f");
 	leg_stack2->AddEntry(h_trk_vtx_dist_unmatched,       "Unmatched", "f");
 	leg_stack2->Draw();
@@ -2013,6 +2049,7 @@ int selection( const char * _file1){
 	TCanvas * flash_t0_diff_c1 = new TCanvas();
 	flash_t0_diff_c1->cd();
 	h_flash_t0_diff->GetXaxis()->SetTitle("Largest Flash Time - True Neutrino Interaction Time [us]");
+	flash_t0_diff_c1->SetLogy();
 	h_flash_t0_diff->Draw();
 	flash_t0_diff_c1->Print("flash_t0_diff.pdf");
 
@@ -2219,6 +2256,104 @@ int selection( const char * _file1){
 	h_second_shwr_dist_unmatched->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
 	h_second_shwr_dist_unmatched->Draw();
 	second_shwr_dist_c10->Print("second_shwr_dist_unmatched.pdf");
+
+	TCanvas * second_shwr_dist_stack_c1 = new TCanvas();
+	second_shwr_dist_stack_c1->cd();
+	THStack * h_second_shwr_dist_stack = new THStack();
+	h_second_shwr_dist_nue_cc->SetStats(kFALSE);
+	h_second_shwr_dist_nue_cc_mixed->SetStats(kFALSE);
+	h_second_shwr_dist_numu_cc->SetStats(kFALSE);
+	h_second_shwr_dist_nc_pi0->SetStats(kFALSE);
+	h_second_shwr_dist_cosmic->SetStats(kFALSE);
+	h_second_shwr_dist_nc->SetStats(kFALSE);
+	h_second_shwr_dist_numu_cc_mixed->SetStats(kFALSE);
+	h_second_shwr_dist_other_mixed->SetStats(kFALSE);
+	h_second_shwr_dist_unmatched->SetStats(kFALSE);
+	h_second_shwr_dist_nue_cc->SetFillColor(30);
+	h_second_shwr_dist_nue_cc_mixed->SetFillColor(38);
+	h_second_shwr_dist_numu_cc->SetFillColor(28);
+	h_second_shwr_dist_nc_pi0->SetFillColor(36);
+	h_second_shwr_dist_cosmic->SetFillColor(1);
+	h_second_shwr_dist_nc->SetFillColor(46);
+	h_second_shwr_dist_numu_cc_mixed->SetFillColor(20);
+	h_second_shwr_dist_other_mixed->SetFillColor(42);
+	h_second_shwr_dist_unmatched->SetFillColor(12);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nue_cc);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nue_cc_mixed);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_cosmic);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_numu_cc);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_numu_cc_mixed);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nc);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nc_pi0);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_other_mixed);
+	h_second_shwr_dist_stack->Add(h_second_shwr_dist_unmatched);
+	h_second_shwr_dist_stack->Draw();
+	h_second_shwr_dist_stack->GetXaxis()->SetTitle("(TPCO > 3 Reco Shower) Secondary Shwr-Vtx Distance [cm]");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack_second = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack_second->AddEntry(h_second_shwr_dist_nue_cc,          "Nue CC", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_cosmic,          "Cosmic", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_numu_cc,         "Numu CC", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_nc,              "NC", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_nc_pi0,          "NC Pi0", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_other_mixed,     "Other Mixed", "f");
+	leg_stack_second->AddEntry(h_second_shwr_dist_unmatched,       "Unmatched", "f");
+	leg_stack_second->Draw();
+	second_shwr_dist_stack_c1->Print("post_second_shwr_dist.pdf");
+
+
+
+	TCanvas * hit_length_ratio_stack_c1 = new TCanvas();
+	hit_length_ratio_stack_c1->cd();
+	THStack * h_hit_length_ratio_stack = new THStack();
+	h_hit_length_ratio_nue_cc->SetStats(kFALSE);
+	h_hit_length_ratio_nue_cc_mixed->SetStats(kFALSE);
+	h_hit_length_ratio_numu_cc->SetStats(kFALSE);
+	h_hit_length_ratio_nc_pi0->SetStats(kFALSE);
+	h_hit_length_ratio_cosmic->SetStats(kFALSE);
+	h_hit_length_ratio_nc->SetStats(kFALSE);
+	h_hit_length_ratio_numu_cc_mixed->SetStats(kFALSE);
+	h_hit_length_ratio_other_mixed->SetStats(kFALSE);
+	h_hit_length_ratio_unmatched->SetStats(kFALSE);
+	h_hit_length_ratio_nue_cc->SetFillColor(30);
+	h_hit_length_ratio_nue_cc_mixed->SetFillColor(38);
+	h_hit_length_ratio_numu_cc->SetFillColor(28);
+	h_hit_length_ratio_nc_pi0->SetFillColor(36);
+	h_hit_length_ratio_cosmic->SetFillColor(1);
+	h_hit_length_ratio_nc->SetFillColor(46);
+	h_hit_length_ratio_numu_cc_mixed->SetFillColor(20);
+	h_hit_length_ratio_other_mixed->SetFillColor(42);
+	h_hit_length_ratio_unmatched->SetFillColor(12);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nue_cc);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nue_cc_mixed);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_cosmic);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_numu_cc);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_numu_cc_mixed);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nc);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nc_pi0);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_other_mixed);
+	h_hit_length_ratio_stack->Add(h_hit_length_ratio_unmatched);
+	h_hit_length_ratio_stack->Draw();
+	h_hit_length_ratio_stack->GetXaxis()->SetTitle("Leading Shower (Hits / Length) [cm^-1]");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack_hit_length_ratio = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nue_cc,          "Nue CC", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_cosmic,          "Cosmic", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_numu_cc,         "Numu CC", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nc,              "NC", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nc_pi0,          "NC Pi0", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_other_mixed,     "Other Mixed", "f");
+	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_unmatched,       "Unmatched", "f");
+	leg_stack_hit_length_ratio->Draw();
+	hit_length_ratio_stack_c1->Print("post_hit_length_ratio.pdf");
 
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;

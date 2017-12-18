@@ -2264,16 +2264,21 @@ void selection_functions::ChargeShare(std::vector<xsecAna::TPCObjectContainer> *
 //***************************************************************************
 //***************************************************************************
 void selection_functions::FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> tabulated_origins,
-                                    TH1D * h_flash_t0_diff)
+                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                    double vtxX, double vtxY, double vtxZ, TH1D * h_flash_t0_diff)
 {
-	//if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
-	//{
-	double largest_op_flash_time = largest_flash_v.at(4);
-	double difference = largest_op_flash_time - (mc_nu_time / 1000);
-	//std::cout << "Largest OpFlash Time: " << largest_op_flash_time << " , MC Nu Time: " << mc_nu_time / 1000 << std::endl;
-	//std::cout << "Largest Flash Time - MC Nu Time: " << difference << std::endl;
-	h_flash_t0_diff->Fill(difference);
-	//}
+	if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
+	{
+		const bool InFV = in_fv(vtxX, vtxY, vtxZ, _x1, _x2, _y1, _y2, _z1, _z2);
+		if(InFV == true)
+		{
+			double largest_op_flash_time = largest_flash_v.at(4);
+			double difference = largest_op_flash_time - (mc_nu_time / 1000);
+			//std::cout << "Largest OpFlash Time: " << largest_op_flash_time << " , MC Nu Time: " << mc_nu_time / 1000 << std::endl;
+			//std::cout << "Largest Flash Time - MC Nu Time: " << difference << std::endl;
+			h_flash_t0_diff->Fill(difference);
+		}
+	}
 }
 //***************************************************************************
 //***************************************************************************
@@ -2507,10 +2512,24 @@ void selection_functions::SecondaryShowersDistCut(std::vector<xsecAna::TPCObject
 		const double tpco_vtx_x = tpc_obj.pfpVtxX();
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
+		int leading_index = 0;
+		int leading_hits  = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const int n_pfp_hits = part.NumPFPHits();
+			if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+			{
+				leading_hits = n_pfp_hits;
+				leading_index = j;
+			}
+		}//end loop pfparticles
 		if(n_pfp_showers > 3)
 		{
 			for(int j = 0; j < n_pfp; j++)
 			{
+				if(j == leading_index) {continue; }//we assume leading shower == electron shower
 				auto const part = tpc_obj.GetParticle(j);
 				const int pfp_pdg = part.PFParticlePdgCode();
 				const double pfp_vtx_x = part.pfpVtxX();
@@ -2529,6 +2548,50 @@ void selection_functions::SecondaryShowersDistCut(std::vector<xsecAna::TPCObject
 						break;
 					}
 				}
+			}//end loop pfp
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::HitLengthRatioCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                            const double pfp_hits_length_tolerance)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		int leading_index = 0;
+		int leading_hits  = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const int n_pfp_hits = part.NumPFPHits();
+			if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+			{
+				leading_hits = n_pfp_hits;
+				leading_index = j;
+			}
+		}//end loop pfparticles
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int pfp_pdg = leading_shower.PFParticlePdgCode();
+		const double pfp_hits = leading_shower.NumPFPHits();
+		const double pfp_length = leading_shower.pfpLength();
+		const double pfp_hits_length_ratio = (pfp_hits / pfp_length);
+
+		if(pfp_pdg == 11)
+		{
+			if(pfp_hits_length_ratio < pfp_hits_length_tolerance)
+			{
+				passed_tpco->at(i).first = 0;
+				passed_tpco->at(i).second = "HitLengthRatio";
+				if(_verbose) {std::cout << "[HitLengthRatio] TPC Object Failed!" << std::endl; }
 			}
 		}
 	}
@@ -2564,12 +2627,13 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
 		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		std::string tpco_id = tpco_class.first;
-		//int leading_index = tpco_class.second;
+		int leading_index = tpco_class.second;
 		//auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		if(n_pfp_showers > 3)
 		{
 			for(int j = 0; j < n_pfp; j++)
 			{
+				if(j == leading_index) {continue; }//we assume leading shower == electron shower
 				auto const part = tpc_obj.GetParticle(j);
 				const int pfp_pdg = part.PFParticlePdgCode();
 				const double pfp_vtx_x = part.pfpVtxX();
@@ -2659,3 +2723,216 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 }//end function
 //***************************************************************************
 //***************************************************************************
+void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                         double vtxX, double vtxY, double vtxZ,
+                                         TH1D * h_hit_length_ratio_nue_cc,
+                                         TH1D * h_hit_length_ratio_nue_cc_out_fv,
+                                         TH1D * h_hit_length_ratio_nue_cc_mixed,
+                                         TH1D * h_hit_length_ratio_numu_cc,
+                                         TH1D * h_hit_length_ratio_numu_cc_mixed,
+                                         TH1D * h_hit_length_ratio_nc,
+                                         TH1D * h_hit_length_ratio_nc_pi0,
+                                         TH1D * h_hit_length_ratio_cosmic,
+                                         TH1D * h_hit_length_ratio_other_mixed,
+                                         TH1D * h_hit_length_ratio_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int pfp_pdg = leading_shower.PFParticlePdgCode();
+		const double pfp_hits = leading_shower.NumPFPHits();
+		const double pfp_length = leading_shower.pfpLength();
+		const double pfp_hits_length_ratio = (pfp_hits / pfp_length);
+		//for(int j = 0; j < n_pfp; j++)
+		//{
+		//auto const part = tpc_obj.GetParticle(j);
+		//const int pfp_pdg = part.PFParticlePdgCode();
+		if(pfp_pdg == 11)
+		{
+			if(tpco_id == "nue_cc_qe")
+			{
+				h_hit_length_ratio_nue_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nue_cc_out_fv")
+			{
+				h_hit_length_ratio_nue_cc_out_fv->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nue_cc_res")
+			{
+				h_hit_length_ratio_nue_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nue_cc_dis")
+			{
+				h_hit_length_ratio_nue_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nue_cc_coh")
+			{
+				h_hit_length_ratio_nue_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nue_cc_mec")
+			{
+				h_hit_length_ratio_nue_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "numu_cc_qe")
+			{
+				h_hit_length_ratio_numu_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "numu_cc_res")
+			{
+				h_hit_length_ratio_numu_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "numu_cc_dis")
+			{
+				h_hit_length_ratio_numu_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "numu_cc_coh")
+			{
+				h_hit_length_ratio_numu_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "numu_cc_mec")
+			{
+				h_hit_length_ratio_numu_cc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nc")
+			{
+				h_hit_length_ratio_nc->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nc_pi0")
+			{
+				h_hit_length_ratio_nc_pi0->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "nue_cc_mixed")
+			{
+				h_hit_length_ratio_nue_cc_mixed->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "numu_cc_mixed")
+			{
+				h_hit_length_ratio_numu_cc_mixed->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "cosmic")
+			{
+				h_hit_length_ratio_cosmic->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "other_mixed")
+			{
+				h_hit_length_ratio_other_mixed->Fill(pfp_hits_length_ratio);
+			}
+			if(tpco_id == "unmatched")
+			{
+				h_hit_length_ratio_unmatched->Fill(pfp_hits_length_ratio);
+			}
+		}                //end if reco shower
+		//}        //end loop pfp
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                        double vtxX, double vtxY, double vtxZ,)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	std::vector<double> selection_purity;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		const std::string failure_reason = passed_tpco->at(i).second;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		int leading_index = tpco_class.second;
+
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_hit_length_ratio_nue_cc_out_fv->Fill(failure_reason);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+		}
+		if(tpco_id == "nc")
+		{
+			h_hit_length_ratio_nc->Fill(failure_reason);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_hit_length_ratio_nc_pi0->Fill(failure_reason);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_hit_length_ratio_nue_cc_mixed->Fill(failure_reason);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_hit_length_ratio_numu_cc_mixed->Fill(failure_reason);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_hit_length_ratio_cosmic->Fill(failure_reason);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_hit_length_ratio_other_mixed->Fill(failure_reason);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_hit_length_ratio_unmatched->Fill(failure_reason);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
+
+//end functions
