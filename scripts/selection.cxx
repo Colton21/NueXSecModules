@@ -229,7 +229,7 @@ int selection( const char * _file1){
 		// ****** reco nue cut *******
 		//****************************
 		_functions_instance.selection_functions::HasNue(tpc_object_container_v, passed_tpco, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v);
@@ -310,7 +310,7 @@ int selection( const char * _file1){
 		//******** in fv cut *****
 		//************************
 		_functions_instance.selection_functions::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
@@ -331,7 +331,7 @@ int selection( const char * _file1){
 		                                                          h_vtx_flash_unmatched);
 
 		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
@@ -356,7 +356,7 @@ int selection( const char * _file1){
 		                                                         h_shwr_vtx_dist_unmatched     );
 
 		_functions_instance.selection_functions::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
@@ -377,7 +377,7 @@ int selection( const char * _file1){
 		                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
 		                                                       h_trk_vtx_dist_unmatched);
 		_functions_instance.selection_functions::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v);
@@ -400,7 +400,7 @@ int selection( const char * _file1){
 		}
 
 		_functions_instance.selection_functions::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v);
@@ -427,7 +427,7 @@ int selection( const char * _file1){
 		                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
 		                                                          h_leading_shower_open_angle_unmatched);
 		_functions_instance.selection_functions::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
@@ -449,7 +449,7 @@ int selection( const char * _file1){
 		                                                      h_dedx_cuts_unmatched     );
 
 		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
@@ -564,7 +564,7 @@ int selection( const char * _file1){
 
 //***************************************************************************
 		_functions_instance.selection_functions::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
@@ -573,12 +573,18 @@ int selection( const char * _file1){
 
 
 		_functions_instance.selection_functions::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
-		if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
 
-
+		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, has_pi0, _verbose, _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                       mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
+		                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
+		                                                       h_failure_reason_numu_cc_mixed, h_failure_reason_nc,
+		                                                       h_failure_reason_nc_pi0, h_failure_reason_cosmic,
+		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
 
 	}//end event loop
 
@@ -2354,6 +2360,142 @@ int selection( const char * _file1){
 	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_unmatched,       "Unmatched", "f");
 	leg_stack_hit_length_ratio->Draw();
 	hit_length_ratio_stack_c1->Print("post_hit_length_ratio.pdf");
+
+
+	TCanvas * failure_reason_stack_c1 = new TCanvas();
+	failure_reason_stack_c1->cd();
+	THStack * h_failure_reason_stack = new THStack();
+	h_failure_reason_nue_cc->SetStats(kFALSE);
+	h_failure_reason_nue_cc_mixed->SetStats(kFALSE);
+	h_failure_reason_numu_cc->SetStats(kFALSE);
+	h_failure_reason_nc_pi0->SetStats(kFALSE);
+	h_failure_reason_cosmic->SetStats(kFALSE);
+	h_failure_reason_nc->SetStats(kFALSE);
+	h_failure_reason_numu_cc_mixed->SetStats(kFALSE);
+	h_failure_reason_other_mixed->SetStats(kFALSE);
+	h_failure_reason_unmatched->SetStats(kFALSE);
+	h_failure_reason_nue_cc->SetFillColor(30);
+	h_failure_reason_nue_cc_mixed->SetFillColor(38);
+	h_failure_reason_numu_cc->SetFillColor(28);
+	h_failure_reason_nc_pi0->SetFillColor(36);
+	h_failure_reason_cosmic->SetFillColor(1);
+	h_failure_reason_nc->SetFillColor(46);
+	h_failure_reason_numu_cc_mixed->SetFillColor(20);
+	h_failure_reason_other_mixed->SetFillColor(42);
+	h_failure_reason_unmatched->SetFillColor(12);
+	h_failure_reason_stack->Draw();
+
+	std::vector<double> remaining_nue_cc;
+	std::vector<double> remaining_nue_cc_mixed;
+	std::vector<double> remaining_numu_cc;
+	std::vector<double> remaining_numu_cc_mixed;
+	std::vector<double> remaining_cosmic;
+	std::vector<double> remaining_nc;
+	std::vector<double> remaining_nc_pi0;
+	std::vector<double> remaining_other_mixed;
+	std::vector<double> remaining_unmatched;
+
+	double bin_content_nue_cc_prev = pe_counter_v->at(0);
+	double bin_content_nue_cc_mixed_prev = pe_counter_v->at(1);
+	double bin_content_numu_cc_prev = pe_counter_v->at(4);
+	double bin_content_nc_pi0_prev = pe_counter_v->at(10);
+	double bin_content_cosmic_prev = pe_counter_v->at(2);
+	double bin_content_nc_prev = pe_counter_v->at(3);
+	double bin_content_numu_cc_mixed_prev = pe_counter_v->at(11);
+	double bin_content_other_mixed_prev = pe_counter_v->at(6);
+	double bin_content_unmatched_prev = pe_counter_v->at(5);
+
+	for (int i=1; i<= 22; i++)
+	{
+
+		double bin_content_nue_cc                   = h_failure_reason_nue_cc->GetBinContent(i);
+		double bin_content_nue_cc_mixed             = h_failure_reason_nue_cc_mixed->GetBinContent(i);
+		double bin_content_numu_cc                  = h_failure_reason_numu_cc->GetBinContent(i);
+		double bin_content_nc_pi0                   = h_failure_reason_nc_pi0->GetBinContent(i);
+		double bin_content_cosmic                   = h_failure_reason_cosmic->GetBinContent(i);
+		double bin_content_nc                       = h_failure_reason_nc->GetBinContent(i);
+		double bin_content_numu_cc_mixed            = h_failure_reason_numu_cc_mixed->GetBinContent(i);
+		double bin_content_other_mixed              = h_failure_reason_other_mixed->GetBinContent(i);
+		double bin_content_unmatched                = h_failure_reason_unmatched->GetBinContent(i);
+		if(i % 2 != 0)
+		{
+			const double ratio_nue_cc        = double(bin_content_nue_cc) / double(bin_content_nue_cc_prev);
+			const double ratio_nue_cc_mixed  = double(bin_content_nue_cc_mixed) / double(bin_content_nue_cc_mixed_prev);
+			const double ratio_numu_cc       = double(bin_content_numu_cc) / double(bin_content_numu_cc_prev);
+			const double ratio_numu_cc_mixed = double(bin_content_numu_cc_mixed) / double(bin_content_numu_cc_mixed_prev);
+			const double ratio_cosmic        = double(bin_content_cosmic) / double(bin_content_cosmic_prev);
+			const double ratio_nc            = double(bin_content_nc) / double(bin_content_nc_prev);
+			const double ratio_nc_pi0        = double(bin_content_nc_pi0) / double(bin_content_nc_pi0_prev);
+			const double ratio_other_mixed   = double(bin_content_other_mixed) / double(bin_content_other_mixed_prev);
+			const double ratio_unmatched     = double(bin_content_unmatched) / double(bin_content_unmatched_prev);
+
+			bin_content_nue_cc_prev              -= bin_content_nue_cc;
+			bin_content_nue_cc_mixed_prev        -= bin_content_nue_cc_mixed;
+			bin_content_numu_cc_prev             -= bin_content_numu_cc;
+			bin_content_nc_pi0_prev              -= bin_content_nc_pi0;
+			bin_content_cosmic_prev              -= bin_content_cosmic;
+			bin_content_nc_prev                  -= bin_content_nc;
+			bin_content_numu_cc_mixed_prev       -= bin_content_numu_cc_mixed;
+			bin_content_other_mixed_prev         -= bin_content_other_mixed;
+			bin_content_unmatched_prev           -= bin_content_unmatched;
+
+			remaining_nue_cc.push_back(ratio_nue_cc);
+			remaining_nue_cc_mixed.push_back(ratio_nue_cc_mixed);
+			remaining_numu_cc.push_back(ratio_numu_cc);
+			remaining_numu_cc_mixed.push_back(ratio_numu_cc_mixed);
+			remaining_cosmic.push_back(ratio_cosmic);
+			remaining_nc.push_back(ratio_nc);
+			remaining_nc_pi0.push_back(ratio_nc_pi0);
+			remaining_other_mixed.push_back(ratio_other_mixed);
+			remaining_unmatched.push_back(ratio_unmatched);
+		}
+	}
+	for (int i = 0; i < remaining_nue_cc.size(); i++)
+	{
+		h_failure_reason_nue_cc->SetBinContent((i*2)+1,         remaining_nue_cc.at(i));
+		h_failure_reason_nue_cc_mixed->SetBinContent((i*2)+1,   remaining_nue_cc_mixed.at(i));
+		h_failure_reason_numu_cc->SetBinContent((i*2)+1,        remaining_numu_cc.at(i));
+		h_failure_reason_nc_pi0->SetBinContent((i*2)+1,         remaining_nc_pi0.at(i));
+		h_failure_reason_cosmic->SetBinContent((i*2)+1,         remaining_cosmic.at(i));
+		h_failure_reason_nc->SetBinContent((i*2)+1,             remaining_nc.at(i));
+		h_failure_reason_numu_cc_mixed->SetBinContent((i*2)+1,  remaining_numu_cc_mixed.at(i));
+		h_failure_reason_other_mixed->SetBinContent((i*2)+1,    remaining_other_mixed.at(i));
+		h_failure_reason_unmatched->SetBinContent((i*2)+1,      remaining_unmatched.at(i));
+	}
+
+	h_failure_reason_stack->Add(h_failure_reason_nue_cc);
+	h_failure_reason_stack->Add(h_failure_reason_nue_cc_mixed);
+	h_failure_reason_stack->Add(h_failure_reason_cosmic);
+	h_failure_reason_stack->Add(h_failure_reason_numu_cc);
+	h_failure_reason_stack->Add(h_failure_reason_numu_cc_mixed);
+	h_failure_reason_stack->Add(h_failure_reason_nc);
+	h_failure_reason_stack->Add(h_failure_reason_nc_pi0);
+	h_failure_reason_stack->Add(h_failure_reason_other_mixed);
+	h_failure_reason_stack->Add(h_failure_reason_unmatched);
+	h_failure_reason_stack->Draw();
+	h_failure_reason_stack->GetXaxis()->SetTitle("Failure Reason");
+	h_failure_reason_stack->GetYaxis()->SetTitle("Rejected / (Rejected + Selected)");
+	const char * str_cut[22] = {"HasNue", " ", "InFV", " ", "FlshDist", " ", "ShwrVtx", " ", "TrkVtx", " ", "Hits", " ",
+		                    "OpenAngle", " ", "dEdx", " ", "2ndDist", " ", "HitLength", " ", "Passed", " "};
+	for (int i=1; i<= 22; i++)
+	{
+		h_failure_reason_stack->GetXaxis()->SetBinLabel(i,str_cut[(i-1)]);
+	}
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack_failure_reason = new TLegend(0.865,0.75,0.99,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack_failure_reason->AddEntry(h_failure_reason_nue_cc,          "Nue CC", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_cosmic,          "Cosmic", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_numu_cc,         "Numu CC", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_nc,              "NC", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_nc_pi0,          "NC Pi0", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_other_mixed,     "Other Mixed", "f");
+	leg_stack_failure_reason->AddEntry(h_failure_reason_unmatched,       "Unmatched", "f");
+	leg_stack_failure_reason->Draw();
+	failure_reason_stack_c1->Print("failure_reason_stack.pdf");
 
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;

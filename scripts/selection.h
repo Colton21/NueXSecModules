@@ -432,6 +432,17 @@ TH1D * h_hit_length_ratio_cosmic         = new TH1D ("h_hit_length_ratio_cosmic"
 TH1D * h_hit_length_ratio_other_mixed    = new TH1D ("h_hit_length_ratio_other_mixed",    "h_hit_length_ratio_other_mixed",    20, 0, 20);
 TH1D * h_hit_length_ratio_unmatched      = new TH1D ("h_hit_length_ratio_unmatched",      "h_hit_length_ratio_unmatched",      20, 0, 20);
 
+TH1D * h_failure_reason_nue_cc         = new TH1D ("h_failure_reason_nue_cc",         "h_failure_reason_nue_cc",         22, 0, 11);
+TH1D * h_failure_reason_nue_cc_out_fv  = new TH1D ("h_failure_reason_nue_cc_out_fv",  "h_failure_reason_nue_cc_out_fv",  22, 0, 11);
+TH1D * h_failure_reason_nue_cc_mixed   = new TH1D ("h_failure_reason_nue_cc_mixed",   "h_failure_reason_nue_cc_mixed",   22, 0, 11);
+TH1D * h_failure_reason_numu_cc        = new TH1D ("h_failure_reason_numu_cc",        "h_failure_reason_numu_cc",        22, 0, 11);
+TH1D * h_failure_reason_numu_cc_mixed  = new TH1D ("h_failure_reason_numu_cc_mixed",  "h_failure_reason_numu_cc_mixed",  22, 0, 11);
+TH1D * h_failure_reason_nc             = new TH1D ("h_failure_reason_nc",             "h_failure_reason_nc",             22, 0, 11);
+TH1D * h_failure_reason_nc_pi0         = new TH1D ("h_failure_reason_nc_pi0",         "h_failure_reason_nc_pi0",         22, 0, 11);
+TH1D * h_failure_reason_cosmic         = new TH1D ("h_failure_reason_cosmic",         "h_failure_reason_cosmic",         22, 0, 11);
+TH1D * h_failure_reason_other_mixed    = new TH1D ("h_failure_reason_other_mixed",    "h_failure_reason_other_mixed",    22, 0, 11);
+TH1D * h_failure_reason_unmatched      = new TH1D ("h_failure_reason_unmatched",      "h_failure_reason_unmatched",      22, 0, 11);
+
 }//end namespace
 
 #endif

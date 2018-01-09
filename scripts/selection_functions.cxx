@@ -527,6 +527,7 @@ void selection_functions::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_
 		}
 		if(has_nue == true)
 		{
+			//* this might cause some problems later - is it doing anything??? *//
 			passed_tpco->at(i).first = 1;
 			if(_verbose) std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl;
 		}
@@ -1005,7 +1006,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
 		if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino")
 		{
-			if(has_pi0 == true) {part_nc_pi0++; }
+			if(has_pi0 == true)  {part_nc_pi0++; }
 			if(has_pi0 == false) {part_nc++; }
 		}
 		if(part.Origin() == "kCosmicRay") { part_cosmic++; }
@@ -2151,7 +2152,6 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
                                              std::vector<int> * no_track, std::vector<int> * has_track)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2234,7 +2234,6 @@ void selection_functions::ChargeShare(std::vector<xsecAna::TPCObjectContainer> *
                                       double vtxX, double vtxY, double vtxZ, TH1D * h_charge_share_nue_cc_mixed)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2298,7 +2297,6 @@ void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContaine
                                           TH2D * h_dedx_open_angle_unmatched)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2407,7 +2405,6 @@ void selection_functions::ShowerLengthvsHits(std::vector<xsecAna::TPCObjectConta
                                              TH2D * h_shwr_len_hits_unmatched)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2502,7 +2499,6 @@ void selection_functions::SecondaryShowersDistCut(std::vector<xsecAna::TPCObject
                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double dist_tolerance)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2559,7 +2555,6 @@ void selection_functions::HitLengthRatioCut(std::vector<xsecAna::TPCObjectContai
                                             const double pfp_hits_length_tolerance)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2614,7 +2609,6 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
                                                TH1D * h_second_shwr_dist_unmatched)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2739,7 +2733,6 @@ void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer
                                          TH1D * h_hit_length_ratio_unmatched)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -2755,10 +2748,6 @@ void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer
 		const double pfp_hits = leading_shower.NumPFPHits();
 		const double pfp_length = leading_shower.pfpLength();
 		const double pfp_hits_length_ratio = (pfp_hits / pfp_length);
-		//for(int j = 0; j < n_pfp; j++)
-		//{
-		//auto const part = tpc_obj.GetParticle(j);
-		//const int pfp_pdg = part.PFParticlePdgCode();
 		if(pfp_pdg == 11)
 		{
 			if(tpco_id == "nue_cc_qe")
@@ -2834,103 +2823,126 @@ void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer
 				h_hit_length_ratio_unmatched->Fill(pfp_hits_length_ratio);
 			}
 		}                //end if reco shower
-		//}        //end loop pfp
 	}//end loop tpco
 }//end function
 //***************************************************************************
 //***************************************************************************
+int selection_functions::MapFailureCutToString(const std::string failure_cut)
+{
+	int failure_reason = 10.0;
+	if(failure_cut == "Passed")         {return failure_reason;   }
+	if(failure_cut == "HasNue")         {failure_reason = 0.0;    }
+	if(failure_cut == "InFV")           {failure_reason = 1.0;    }
+	if(failure_cut == "FlashDist")      {failure_reason = 2.0;    }
+	if(failure_cut == "ShwrVtx")        {failure_reason = 3.0;    }
+	if(failure_cut == "TrkVtx")         {failure_reason = 4.0;    }
+	if(failure_cut == "HitThreshold")   {failure_reason = 5.0;    }
+	if(failure_cut == "OpenAngle")      {failure_reason = 6.0;    }
+	if(failure_cut == "dEdX")           {failure_reason = 7.0;    }
+	if(failure_cut == "SecondaryDist")  {failure_reason = 8.0;    }
+	if(failure_cut == "HitLengthRatio") {failure_reason = 9.0;    }
+	return failure_reason;
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                        double vtxX, double vtxY, double vtxZ,)
+                                        double vtxX, double vtxY, double vtxZ,
+                                        TH1D * h_failure_reason_nue_cc,
+                                        TH1D * h_failure_reason_nue_cc_out_fv,
+                                        TH1D * h_failure_reason_nue_cc_mixed,
+                                        TH1D * h_failure_reason_numu_cc,
+                                        TH1D * h_failure_reason_numu_cc_mixed,
+                                        TH1D * h_failure_reason_nc,
+                                        TH1D * h_failure_reason_nc_pi0,
+                                        TH1D * h_failure_reason_cosmic,
+                                        TH1D * h_failure_reason_other_mixed,
+                                        TH1D * h_failure_reason_unmatched)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	std::vector<double> selection_purity;
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		if(passed_tpco->at(i).first == 0) {continue; }
-		const std::string failure_reason = passed_tpco->at(i).second;
+		//if(passed_tpco->at(i).first == 0) {continue; }
+		const std::string failure_cut = passed_tpco->at(i).second;
+		const int failure_reason = MapFailureCutToString(failure_cut);
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		const int n_pfp = tpc_obj.NumPFParticles();
-		const int n_pfp_tracks = tpc_obj.NPfpTracks();
-		const int n_pfp_showers = tpc_obj.NPfpShowers();
 		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		std::string tpco_id = tpco_class.first;
-		int leading_index = tpco_class.second;
 
 		if(tpco_id == "nue_cc_qe")
 		{
-			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+			h_failure_reason_nue_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
-			h_hit_length_ratio_nue_cc_out_fv->Fill(failure_reason);
+			h_failure_reason_nue_cc_out_fv->Fill(failure_reason);
 		}
 		if(tpco_id == "nue_cc_res")
 		{
-			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+			h_failure_reason_nue_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "nue_cc_dis")
 		{
-			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+			h_failure_reason_nue_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "nue_cc_coh")
 		{
-			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+			h_failure_reason_nue_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "nue_cc_mec")
 		{
-			h_hit_length_ratio_nue_cc->Fill(failure_reason);
+			h_failure_reason_nue_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
-			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+			h_failure_reason_numu_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "numu_cc_res")
 		{
-			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+			h_failure_reason_numu_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "numu_cc_dis")
 		{
-			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+			h_failure_reason_numu_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "numu_cc_coh")
 		{
-			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+			h_failure_reason_numu_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "numu_cc_mec")
 		{
-			h_hit_length_ratio_numu_cc->Fill(failure_reason);
+			h_failure_reason_numu_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "nc")
 		{
-			h_hit_length_ratio_nc->Fill(failure_reason);
+			h_failure_reason_nc->Fill(failure_reason);
 		}
 		if(tpco_id == "nc_pi0")
 		{
-			h_hit_length_ratio_nc_pi0->Fill(failure_reason);
+			h_failure_reason_nc_pi0->Fill(failure_reason);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
-			h_hit_length_ratio_nue_cc_mixed->Fill(failure_reason);
+			h_failure_reason_nue_cc_mixed->Fill(failure_reason);
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_hit_length_ratio_numu_cc_mixed->Fill(failure_reason);
+			h_failure_reason_numu_cc_mixed->Fill(failure_reason);
 		}
 		if(tpco_id == "cosmic")
 		{
-			h_hit_length_ratio_cosmic->Fill(failure_reason);
+			h_failure_reason_cosmic->Fill(failure_reason);
 		}
 		if(tpco_id == "other_mixed")
 		{
-			h_hit_length_ratio_other_mixed->Fill(failure_reason);
+			h_failure_reason_other_mixed->Fill(failure_reason);
 		}
 		if(tpco_id == "unmatched")
 		{
-			h_hit_length_ratio_unmatched->Fill(failure_reason);
+			h_failure_reason_unmatched->Fill(failure_reason);
 		}
-	}
+	}//end loop tpco
 }
 //***************************************************************************
 //***************************************************************************

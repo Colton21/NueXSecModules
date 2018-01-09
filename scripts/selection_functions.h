@@ -468,6 +468,25 @@ void HitLengthRatioCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        const double pfp_hits_length_tolerance);
 //***************************************************************************
 //***************************************************************************
+int MapFailureCutToString(const std::string failure_cut);
+//***************************************************************************
+//***************************************************************************
+void FailureReason(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                   std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
+                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                   double vtxX, double vtxY, double vtxZ,
+                   TH1D * h_failure_reason_nue_cc,
+                   TH1D * h_failure_reason_nue_cc_out_fv,
+                   TH1D * h_failure_reason_nue_cc_mixed,
+                   TH1D * h_failure_reason_numu_cc,
+                   TH1D * h_failure_reason_numu_cc_mixed,
+                   TH1D * h_failure_reason_nc,
+                   TH1D * h_failure_reason_nc_pi0,
+                   TH1D * h_failure_reason_cosmic,
+                   TH1D * h_failure_reason_other_mixed,
+                   TH1D * h_failure_reason_unmatched);
+//***************************************************************************
+//***************************************************************************
 };
 
 
