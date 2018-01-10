@@ -215,6 +215,10 @@ int selection( const char * _file1){
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v);
+		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
+		                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut);
 		//PE threshold cut
 		if(passed_runs->at(event) == 2)
 		{
@@ -1963,35 +1967,50 @@ int selection( const char * _file1){
 
 	TCanvas * sequential_nu_energy_c1 = new TCanvas();
 	sequential_nu_energy_c1->cd();
+	h_selected_nu_energy_no_cut->SetStats(kFALSE);
+	h_selected_nu_energy_no_cut->SetFillColor(29);
+	h_selected_nu_energy_no_cut->GetXaxis()->SetTitle("True Signal Neutrino Energy [GeV]");
+	const double nu_energy_no_cut_integral = h_selected_nu_energy_no_cut->Integral();
+	h_selected_nu_energy_no_cut->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_no_cut->Draw("hist");
 	h_selected_nu_energy_reco_nue->SetFillColor(30);
 	h_selected_nu_energy_reco_nue->SetStats(kFALSE);
-	h_selected_nu_energy_reco_nue->GetXaxis()->SetTitle("True Signal Neutrino Energy [GeV]");
-	h_selected_nu_energy_reco_nue->Draw();
+	//h_selected_nu_energy_reco_nue->GetXaxis()->SetTitle("True Signal Neutrino Energy [GeV]");
+	h_selected_nu_energy_reco_nue->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_reco_nue->Draw("hist same");
 	h_selected_nu_energy_in_fv->SetFillColor(45);
 	h_selected_nu_energy_in_fv->SetStats(kFALSE);
-	h_selected_nu_energy_in_fv->Draw("same");
+	h_selected_nu_energy_in_fv->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_in_fv->Draw("hist same");
 	h_selected_nu_energy_vtx_flash->SetFillColor(28);
 	h_selected_nu_energy_vtx_flash->SetStats(kFALSE);
-	h_selected_nu_energy_vtx_flash->Draw("same");
+	h_selected_nu_energy_vtx_flash->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_vtx_flash->Draw("hist same");
 	h_selected_nu_energy_shwr_vtx->SetFillColor(26);
 	h_selected_nu_energy_shwr_vtx->SetStats(kFALSE);
-	h_selected_nu_energy_shwr_vtx->Draw("same");
+	h_selected_nu_energy_shwr_vtx->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_shwr_vtx->Draw("hist same");
 	h_selected_nu_energy_trk_vtx->SetFillColor(36);
 	h_selected_nu_energy_trk_vtx->SetStats(kFALSE);
-	h_selected_nu_energy_trk_vtx->Draw("same");
+	h_selected_nu_energy_trk_vtx->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_trk_vtx->Draw("hist same");
 	h_selected_nu_energy_hit_threshold->SetFillColor(39);
 	h_selected_nu_energy_hit_threshold->SetStats(kFALSE);
-	h_selected_nu_energy_hit_threshold->Draw("same");
+	h_selected_nu_energy_hit_threshold->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_hit_threshold->Draw("hist same");
 	h_selected_nu_energy_open_angle->SetFillColor(42);
 	h_selected_nu_energy_open_angle->SetStats(kFALSE);
-	h_selected_nu_energy_open_angle->Draw("same");
+	h_selected_nu_energy_open_angle->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_open_angle->Draw("hist same");
 	h_selected_nu_energy_dedx->SetFillColor(12);
 	h_selected_nu_energy_dedx->SetStats(kFALSE);
-	h_selected_nu_energy_dedx->Draw("same");
+	h_selected_nu_energy_dedx->Scale(1./nu_energy_no_cut_integral);
+	h_selected_nu_energy_dedx->Draw("hist same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_sequential1 = new TLegend(0.65,0.65,0.85,0.85);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_sequential1->AddEntry(h_selected_nu_energy_no_cut,         "No Cuts",  "f");
 	leg_sequential1->AddEntry(h_selected_nu_energy_reco_nue,       "Reco Nue", "f");
 	leg_sequential1->AddEntry(h_selected_nu_energy_in_fv,          "Fiducial Volume", "f");
 	leg_sequential1->AddEntry(h_selected_nu_energy_vtx_flash,      "Vtx To Flash", "f");
@@ -2005,35 +2024,50 @@ int selection( const char * _file1){
 
 	TCanvas * sequential_ele_energy_c1 = new TCanvas();
 	sequential_ele_energy_c1->cd();
+	h_selected_ele_energy_no_cut->SetStats(kFALSE);
+	h_selected_ele_energy_no_cut->SetFillColor(29);
+	h_selected_ele_energy_no_cut->GetXaxis()->SetTitle("True Selected Electron Energy [GeV]");
+	const double ele_energy_no_cut_integral = h_selected_ele_energy_no_cut->Integral();
+	h_selected_ele_energy_no_cut->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_no_cut->Draw("hist");
 	h_selected_ele_energy_reco_nue->SetFillColor(30);
 	h_selected_ele_energy_reco_nue->SetStats(kFALSE);
-	h_selected_ele_energy_reco_nue->GetXaxis()->SetTitle("True Signal Electron Energy [GeV]");
-	h_selected_ele_energy_reco_nue->Draw();
+	//h_selected_ele_energy_reco_nue->GetXaxis()->SetTitle("True Signal Electron Energy [GeV]");
+	h_selected_ele_energy_reco_nue->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_reco_nue->Draw("hist same");
 	h_selected_ele_energy_in_fv->SetFillColor(45);
 	h_selected_ele_energy_in_fv->SetStats(kFALSE);
-	h_selected_ele_energy_in_fv->Draw("same");
+	h_selected_ele_energy_in_fv->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_in_fv->Draw("hist same");
 	h_selected_ele_energy_vtx_flash->SetFillColor(28);
 	h_selected_ele_energy_vtx_flash->SetStats(kFALSE);
-	h_selected_ele_energy_vtx_flash->Draw("same");
+	h_selected_ele_energy_vtx_flash->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_vtx_flash->Draw("hist same");
 	h_selected_ele_energy_shwr_vtx->SetFillColor(26);
 	h_selected_ele_energy_shwr_vtx->SetStats(kFALSE);
-	h_selected_ele_energy_shwr_vtx->Draw("same");
+	h_selected_ele_energy_shwr_vtx->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_shwr_vtx->Draw("hist same");
 	h_selected_ele_energy_trk_vtx->SetFillColor(36);
 	h_selected_ele_energy_trk_vtx->SetStats(kFALSE);
-	h_selected_ele_energy_trk_vtx->Draw("same");
+	h_selected_ele_energy_trk_vtx->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_trk_vtx->Draw("hist same");
 	h_selected_ele_energy_hit_threshold->SetFillColor(39);
 	h_selected_ele_energy_hit_threshold->SetStats(kFALSE);
-	h_selected_ele_energy_hit_threshold->Draw("same");
+	h_selected_ele_energy_hit_threshold->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_hit_threshold->Draw("hist same");
 	h_selected_ele_energy_open_angle->SetFillColor(42);
 	h_selected_ele_energy_open_angle->SetStats(kFALSE);
-	h_selected_ele_energy_open_angle->Draw("same");
+	h_selected_ele_energy_open_angle->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_open_angle->Draw("hist same");
 	h_selected_ele_energy_dedx->SetFillColor(12);
 	h_selected_ele_energy_dedx->SetStats(kFALSE);
-	h_selected_ele_energy_dedx->Draw("same");
+	h_selected_ele_energy_dedx->Scale(1./ele_energy_no_cut_integral);
+	h_selected_ele_energy_dedx->Draw("hist same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_sequential2 = new TLegend(0.65,0.60,0.85,0.85);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_sequential2->AddEntry(h_selected_ele_energy_no_cut,         "No Cuts",  "f");
 	leg_sequential2->AddEntry(h_selected_ele_energy_reco_nue,       "Reco Nue", "f");
 	leg_sequential2->AddEntry(h_selected_ele_energy_in_fv,          "Fiducial Volume", "f");
 	leg_sequential2->AddEntry(h_selected_ele_energy_vtx_flash,      "Vtx To Flash", "f");

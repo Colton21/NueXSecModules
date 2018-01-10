@@ -366,22 +366,24 @@ TH2D * h_shwr_hits_nu_eng_last       = new TH2D ("h_shwr_hits_nu_eng_last",     
 TH2D * h_shwr_hits_ele_eng_last      = new TH2D ("h_shwr_hits_ele_eng_last",      "h_shwr_hits_ele_eng_last", 20, 0, 2, 20, 0, 5000);
 
 
-TH1D * h_selected_nu_energy_reco_nue       = new TH1D ("h_selected_nu_energy_reco_nue", "h_selected_nu_energy_reco_nue", 20, 0, 5);
-TH1D * h_selected_ele_energy_reco_nue      = new TH1D ("h_selected_ele_energy_reco_nue", "h_selected_ele_energy_reco_nue", 20, 0, 5);
-TH1D * h_selected_nu_energy_in_fv          = new TH1D ("h_selected_nu_energy_in_fv", "h_selected_nu_energy_in_fv", 20, 0, 5);
-TH1D * h_selected_ele_energy_in_fv         = new TH1D ("h_selected_ele_energy_in_fv", "h_selected_ele_energy_in_fv", 20, 0, 5);
-TH1D * h_selected_nu_energy_vtx_flash      = new TH1D ("h_selected_nu_energy_vtx_flash", "h_selected_nu_energy_vtx_flash", 20, 0, 5);
-TH1D * h_selected_ele_energy_vtx_flash     = new TH1D ("h_selected_ele_energy_vtx_flash", "h_selected_ele_energy_vtx_flash", 20, 0, 5);
-TH1D * h_selected_nu_energy_shwr_vtx       = new TH1D ("h_selected_nu_energy_shwr_vtx", "h_selected_nu_energy_shwr_vtx", 20, 0, 5);
-TH1D * h_selected_ele_energy_shwr_vtx      = new TH1D ("h_selected_ele_energy_shwr_vtx", "h_selected_ele_energy_shwr_vtx", 20, 0, 5);
-TH1D * h_selected_nu_energy_trk_vtx        = new TH1D ("h_selected_nu_energy_trk_vtx", "h_selected_nu_energy_trk_vtx", 20, 0, 5);
-TH1D * h_selected_ele_energy_trk_vtx       = new TH1D ("h_selected_ele_energy_trk_vtx", "h_selected_ele_energy_trk_vtx", 20, 0, 5);
-TH1D * h_selected_nu_energy_hit_threshold  = new TH1D ("h_selected_nu_energy_hit_threshold", "h_selected_nu_energy_nu_threshold", 20, 0, 5);
+TH1D * h_selected_nu_energy_no_cut         = new TH1D ("h_selected_nu_energy_no_cut",         "h_selected_nu_energy_no_cut", 20, 0, 5);
+TH1D * h_selected_ele_energy_no_cut        = new TH1D ("h_selected_ele_energy_no_cut",        "h_selected_ele_energy_no_cut", 20, 0, 5);
+TH1D * h_selected_nu_energy_reco_nue       = new TH1D ("h_selected_nu_energy_reco_nue",       "h_selected_nu_energy_reco_nue", 20, 0, 5);
+TH1D * h_selected_ele_energy_reco_nue      = new TH1D ("h_selected_ele_energy_reco_nue",      "h_selected_ele_energy_reco_nue", 20, 0, 5);
+TH1D * h_selected_nu_energy_in_fv          = new TH1D ("h_selected_nu_energy_in_fv",          "h_selected_nu_energy_in_fv", 20, 0, 5);
+TH1D * h_selected_ele_energy_in_fv         = new TH1D ("h_selected_ele_energy_in_fv",         "h_selected_ele_energy_in_fv", 20, 0, 5);
+TH1D * h_selected_nu_energy_vtx_flash      = new TH1D ("h_selected_nu_energy_vtx_flash",      "h_selected_nu_energy_vtx_flash", 20, 0, 5);
+TH1D * h_selected_ele_energy_vtx_flash     = new TH1D ("h_selected_ele_energy_vtx_flash",     "h_selected_ele_energy_vtx_flash", 20, 0, 5);
+TH1D * h_selected_nu_energy_shwr_vtx       = new TH1D ("h_selected_nu_energy_shwr_vtx",       "h_selected_nu_energy_shwr_vtx", 20, 0, 5);
+TH1D * h_selected_ele_energy_shwr_vtx      = new TH1D ("h_selected_ele_energy_shwr_vtx",      "h_selected_ele_energy_shwr_vtx", 20, 0, 5);
+TH1D * h_selected_nu_energy_trk_vtx        = new TH1D ("h_selected_nu_energy_trk_vtx",        "h_selected_nu_energy_trk_vtx", 20, 0, 5);
+TH1D * h_selected_ele_energy_trk_vtx       = new TH1D ("h_selected_ele_energy_trk_vtx",       "h_selected_ele_energy_trk_vtx", 20, 0, 5);
+TH1D * h_selected_nu_energy_hit_threshold  = new TH1D ("h_selected_nu_energy_hit_threshold",  "h_selected_nu_energy_nu_threshold", 20, 0, 5);
 TH1D * h_selected_ele_energy_hit_threshold = new TH1D ("h_selected_ele_energy_hit_threshold", "h_selected_ele_energy_hit_threshold", 20, 0, 5);
-TH1D * h_selected_nu_energy_open_angle     = new TH1D ("h_selected_nu_energy_open_angle", "h_selected_nu_energy_open_angle", 20, 0, 5);
-TH1D * h_selected_ele_energy_open_angle    = new TH1D ("h_selected_ele_energy_open_angle", "h_selected_ele_energy_open_angle", 20, 0, 5);
-TH1D * h_selected_nu_energy_dedx           = new TH1D ("h_selected_nu_energy_dedx", "h_selected_nu_energy_dedx", 20, 0, 5);
-TH1D * h_selected_ele_energy_dedx          = new TH1D ("h_selected_ele_energy_dedx", "h_selected_ele_energy_dedx", 20, 0, 5);
+TH1D * h_selected_nu_energy_open_angle     = new TH1D ("h_selected_nu_energy_open_angle",     "h_selected_nu_energy_open_angle", 20, 0, 5);
+TH1D * h_selected_ele_energy_open_angle    = new TH1D ("h_selected_ele_energy_open_angle",    "h_selected_ele_energy_open_angle", 20, 0, 5);
+TH1D * h_selected_nu_energy_dedx           = new TH1D ("h_selected_nu_energy_dedx",           "h_selected_nu_energy_dedx", 20, 0, 5);
+TH1D * h_selected_ele_energy_dedx          = new TH1D ("h_selected_ele_energy_dedx",          "h_selected_ele_energy_dedx", 20, 0, 5);
 
 TH1D * h_charge_share_nue_cc_mixed   = new TH1D("h_charge_share_nue_cc_mixed", "h_charge_share_nue_cc_mixed", 10, 0, 1);
 
