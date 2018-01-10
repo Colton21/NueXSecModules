@@ -233,7 +233,6 @@ int selection( const char * _file1){
 		// ****** reco nue cut *******
 		//****************************
 		_functions_instance.selection_functions::HasNue(tpc_object_container_v, passed_tpco, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v);
@@ -314,7 +313,6 @@ int selection( const char * _file1){
 		//******** in fv cut *****
 		//************************
 		_functions_instance.selection_functions::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
@@ -335,7 +333,6 @@ int selection( const char * _file1){
 		                                                          h_vtx_flash_unmatched);
 
 		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
@@ -360,7 +357,6 @@ int selection( const char * _file1){
 		                                                         h_shwr_vtx_dist_unmatched     );
 
 		_functions_instance.selection_functions::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
@@ -381,7 +377,6 @@ int selection( const char * _file1){
 		                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
 		                                                       h_trk_vtx_dist_unmatched);
 		_functions_instance.selection_functions::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v);
@@ -404,7 +399,6 @@ int selection( const char * _file1){
 		}
 
 		_functions_instance.selection_functions::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v);
@@ -431,7 +425,6 @@ int selection( const char * _file1){
 		                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
 		                                                          h_leading_shower_open_angle_unmatched);
 		_functions_instance.selection_functions::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
@@ -453,7 +446,6 @@ int selection( const char * _file1){
 		                                                      h_dedx_cuts_unmatched     );
 
 		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
