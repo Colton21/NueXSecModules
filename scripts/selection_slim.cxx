@@ -1,4 +1,4 @@
-#include "selection.h"
+#include "selection_slim.h"
 
 namespace xsecSelection {
 int selection( const char * _file1){
