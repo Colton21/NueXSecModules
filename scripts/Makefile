@@ -7,8 +7,8 @@ LD=g++
 LDFLAGS=
 DEBUGFLAGS= -O0 -g -D _DEBUG
 
-TARGETNAMES=out_inspect selection potSum selection_slim
-FUNCTIONCLASSOBJECT=selection_functions.o
+TARGETNAMES=out_inspect selection potSum selection_slim selection_dataplots selection_datamc
+FUNCTIONCLASSOBJECT=selection_functions.o selection_functions_data.o
 
 TARGETS=$(TARGETNAMES:%=%.exe)
 OBJECTS=$(TARGETNAMES:%=%.o)
