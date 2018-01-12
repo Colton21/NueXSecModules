@@ -244,8 +244,7 @@ void selection_functions_data::TopologyPlots2Data(std::vector<xsecAna::TPCObject
 //***************************************************************************
 //***************************************************************************
 void selection_functions_data::PostCutsVtxFlashData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                                                    TH1D * h_vtx_flash_data)
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)

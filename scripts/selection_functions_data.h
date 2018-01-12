@@ -81,8 +81,7 @@ void TopologyPlots2Data(std::vector<xsecAna::TPCObjectContainer> * tpc_object_co
 //***************************************************************************
 //***************************************************************************
 void PostCutsVtxFlashData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                          TH1D * h_vtx_flash_data);
+                          std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data);
 //***************************************************************************
 //***************************************************************************
 void PostCutsShwrVtxData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
