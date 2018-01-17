@@ -29,6 +29,7 @@ int selection( const char * _file1, const char * _file2){
 
 	selection_functions _functions_instance;
 	selection_functions_data _data_functions_instance;
+	selection_cuts _cuts_instance;
 
 	std::cout << "Running With: " << POT << " POT " << std::endl;
 	const double flux = POT * scaling;
@@ -134,8 +135,8 @@ int selection( const char * _file1, const char * _file2){
 	// 2 = in-time, but not enough PE -- this counts against my efficiency
 	data_passed_runs->resize(data_total_entries);
 
-	_functions_instance.selection_functions::loop_flashes(f_data, data_optree, flash_pe_threshold, flash_time_start,
-	                                                      flash_time_end, data_passed_runs);
+	_cuts_instance.selection_cuts::loop_flashes(f_data, data_optree, flash_pe_threshold, flash_time_start,
+	                                            flash_time_end, data_passed_runs);
 	for(auto const run : * data_passed_runs)
 	{
 		if(run == 1) {run_sum++; }
@@ -151,7 +152,7 @@ int selection( const char * _file1, const char * _file2){
 
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * data_largest_flash_v_v = new std::vector < std::vector < double > >;
-	_functions_instance.selection_functions::SetXYflashVector(f_data, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end);
+	_cuts_instance.selection_cuts::SetXYflashVector(f_data, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end);
 	std::cout << "-Data- Largest Flash Vector Size: " << data_largest_flash_v_v->size() << std::endl;
 
 	//**********************************
@@ -175,7 +176,7 @@ int selection( const char * _file1, const char * _file2){
 			continue;
 		}//false
 		std::vector<std::string> * tpco_origin_v = new std::vector<std::string>;
-		_functions_instance.selection_functions::GetOrigins(data_tpc_object_container_v, tpco_origin_v);
+		_cuts_instance.selection_cuts::GetOrigins(data_tpc_object_container_v, tpco_origin_v);
 		//**********************************************************************
 		//Get Run and Subrun*
 		//run and subrun number should be the same for all tpc obj in one event
@@ -215,7 +216,7 @@ int selection( const char * _file1, const char * _file2){
 		//****************************
 		// ****** reco nue cut *******
 		//****************************
-		_functions_instance.selection_functions::HasNue(data_tpc_object_container_v, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::HasNue(data_tpc_object_container_v, passed_tpco, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_reco_nue_counter_v);
 
@@ -230,7 +231,7 @@ int selection( const char * _file1, const char * _file2){
 		//************************
 		//******** in fv cut *****
 		//************************
-		_functions_instance.selection_functions::fiducial_volume_cut(data_tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::fiducial_volume_cut(data_tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_in_fv_counter_v);
 
@@ -238,8 +239,7 @@ int selection( const char * _file1, const char * _file2){
 		//**** vertex to flash cut ****
 		//*****************************
 		_data_functions_instance.selection_functions_data::PostCutsVtxFlashData(largest_flash_v, data_tpc_object_container_v, passed_tpco, h_vtx_flash_data);
-
-		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, data_tpc_object_container_v, tolerance, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, data_tpc_object_container_v, tolerance, passed_tpco, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_vtx_flash_counter_v);
 
@@ -248,7 +248,7 @@ int selection( const char * _file1, const char * _file2){
 		//******************************************************
 		_data_functions_instance.selection_functions_data::PostCutsShwrVtxData(data_tpc_object_container_v, passed_tpco, _verbose, h_shwr_vtx_dist_data);
 
-		_functions_instance.selection_functions::VtxNuDistance(data_tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::VtxNuDistance(data_tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_shwr_tpco_counter_v);
 
@@ -256,14 +256,14 @@ int selection( const char * _file1, const char * _file2){
 		// **** distance between pfp track and nue object cut **
 		//******************************************************
 		_data_functions_instance.selection_functions_data::PostCutTrkVtxData(data_tpc_object_container_v, passed_tpco, _verbose, h_trk_vtx_dist_data);
-		_functions_instance.selection_functions::VtxTrackNuDistance(data_tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::VtxTrackNuDistance(data_tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_trk_tpco_counter_v);
 
 		//****************************************************
 		// ******** hit threshold for showers cut *************
 		//******************************************************
-		_functions_instance.selection_functions::HitThreshold(data_tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::HitThreshold(data_tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_hit_threshold_counter_v);
 
@@ -272,7 +272,7 @@ int selection( const char * _file1, const char * _file2){
 		//****** open angle cut for the leading shower ********
 		//******************************************************
 		_data_functions_instance.selection_functions_data::PostCutOpenAngleData(data_tpc_object_container_v, passed_tpco, _verbose, h_leading_shower_open_angle_data);
-		_functions_instance.selection_functions::OpenAngleCut(data_tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
+		_cuts_instance.selection_cuts::OpenAngleCut(data_tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_open_angle_counter_v);
 
@@ -280,7 +280,7 @@ int selection( const char * _file1, const char * _file2){
 		//*********** dEdx cut for the leading shower *********
 		//******************************************************
 		_data_functions_instance.selection_functions_data::PostCutsdEdxData(data_tpc_object_container_v, passed_tpco, _verbose, h_dedx_cuts_data);
-		_functions_instance.selection_functions::dEdxCut(data_tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+		_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_dedx_counter_v);
 
@@ -300,15 +300,12 @@ int selection( const char * _file1, const char * _file2){
 		_data_functions_instance.selection_functions_data::HitLengthRatioData(data_tpc_object_container_v, passed_tpco, _verbose, h_hit_length_ratio_data);
 
 //***************************************************************************
-		_functions_instance.selection_functions::SecondaryShowersDistCut(data_tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+		_cuts_instance.selection_cuts::SecondaryShowersDistCut(data_tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
 		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_secondary_shower_counter_v);
 
-
-
-
-		_functions_instance.selection_functions::HitLengthRatioCut(data_tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+		_cuts_instance.selection_cuts::HitLengthRatioCut(data_tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
 		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_hit_lengthRatio_counter_v);
@@ -388,8 +385,8 @@ int selection( const char * _file1, const char * _file2){
 	std::cout << "==== In Time Cut ====" << std::endl;
 	std::cout << "=====================" << std::endl;
 
-	_functions_instance.selection_functions::loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
-	                                                      flash_time_end, passed_runs);
+	_cuts_instance.selection_cuts::loop_flashes(f, optree, flash_pe_threshold, flash_time_start,
+	                                            flash_time_end, passed_runs);
 	run_sum = 0;
 	out_of_time_sum = 0;
 	low_pe_sum = 0;
@@ -408,7 +405,7 @@ int selection( const char * _file1, const char * _file2){
 
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
-	_functions_instance.selection_functions::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end);
+	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end);
 	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v->size() << std::endl;
 
 	//**********************************
@@ -443,9 +440,7 @@ int selection( const char * _file1, const char * _file2){
 		//if this event is a true nue CC interaction and is inside the FV
 		//also include nue_cc_bar as in the tpco classification I use the nue-bar as well
 		{
-			if(_functions_instance.selection_functions::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-			                                                  _x1, _x2, _y1,
-			                                                  _y2, _z1, _z2) == true)
+			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2) == true)
 			{
 				h_nue_eng_eff_den->Fill(mc_nu_energy);
 				h_ele_eng_eff_den->Fill(mc_ele_energy);
@@ -469,7 +464,7 @@ int selection( const char * _file1, const char * _file2){
 			}
 		}
 		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
-		_functions_instance.selection_functions::GetOrigins(tpc_object_container_v, tpco_origin_v);
+		_cuts_instance.selection_cuts::GetOrigins(tpc_object_container_v, tpco_origin_v);
 
 		//XY Position of largest flash
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
@@ -505,7 +500,7 @@ int selection( const char * _file1, const char * _file2){
 		//****************************
 		// ****** reco nue cut *******
 		//****************************
-		_functions_instance.selection_functions::HasNue(tpc_object_container_v, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::HasNue(tpc_object_container_v, passed_tpco, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v);
@@ -585,7 +580,7 @@ int selection( const char * _file1, const char * _file2){
 		//************************
 		//******** in fv cut *****
 		//************************
-		_functions_instance.selection_functions::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
@@ -605,7 +600,7 @@ int selection( const char * _file1, const char * _file2){
 		                                                          h_vtx_flash_numu_cc_mixed, h_vtx_flash_other_mixed,
 		                                                          h_vtx_flash_unmatched);
 
-		_functions_instance.selection_functions::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
@@ -629,7 +624,7 @@ int selection( const char * _file1, const char * _file2){
 		                                                         h_shwr_vtx_dist_other_mixed,
 		                                                         h_shwr_vtx_dist_unmatched     );
 
-		_functions_instance.selection_functions::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
@@ -649,7 +644,7 @@ int selection( const char * _file1, const char * _file2){
 		                                                       h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nc_pi0,
 		                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
 		                                                       h_trk_vtx_dist_unmatched);
-		_functions_instance.selection_functions::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v);
@@ -671,7 +666,7 @@ int selection( const char * _file1, const char * _file2){
 			                                                             h_shwr_hits_nu_eng_zoom_last, h_shwr_hits_ele_eng_zoom_last);
 		}
 
-		_functions_instance.selection_functions::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
+		_cuts_instance.selection_cuts::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v);
@@ -697,7 +692,7 @@ int selection( const char * _file1, const char * _file2){
 		                                                          h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nc_pi0,
 		                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
 		                                                          h_leading_shower_open_angle_unmatched);
-		_functions_instance.selection_functions::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
+		_cuts_instance.selection_cuts::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
@@ -718,7 +713,7 @@ int selection( const char * _file1, const char * _file2){
 		                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
 		                                                      h_dedx_cuts_unmatched     );
 
-		_functions_instance.selection_functions::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
@@ -733,9 +728,9 @@ int selection( const char * _file1, const char * _file2){
 		//these are for the tefficiency plots, post all cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
 		{
-			if(_functions_instance.selection_functions::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-			                                                  _x1, _x2, _y1,
-			                                                  _y2, _z1, _z2) == true)
+			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+			                                        _x1, _x2, _y1,
+			                                        _y2, _z1, _z2) == true)
 			{
 				selected_energy_vector.push_back(mc_nu_energy);
 				h_nue_eng_eff_num->Fill(mc_nu_energy);
@@ -832,7 +827,7 @@ int selection( const char * _file1, const char * _file2){
 		                                                        h_hit_length_ratio_unmatched);
 
 //***************************************************************************
-		_functions_instance.selection_functions::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+		_cuts_instance.selection_cuts::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
 		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
@@ -841,7 +836,7 @@ int selection( const char * _file1, const char * _file2){
 
 
 
-		_functions_instance.selection_functions::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
 		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);

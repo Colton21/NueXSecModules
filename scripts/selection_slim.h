@@ -2,6 +2,7 @@
 #define SELECTION_h
 
 #include "selection_functions.h"
+#include "selection_cuts.h"
 
 #include "../xsecAna/LinkDef.h"
 

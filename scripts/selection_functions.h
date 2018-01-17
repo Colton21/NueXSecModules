@@ -35,72 +35,6 @@ public:
 selection_functions()=default;
 
 //***************************************************************************
-//***************************************************************************
-bool flash_in_time(double flash_time, double flash_start, double flash_end);
-//***************************************************************************
-//***************************************************************************
-bool flash_pe(int flash_pe, int flash_pe_threshold);
-//***************************************************************************
-//***************************************************************************
-void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                  double flash_time_end, std::vector<int> * _passed_runs);
-//***************************************************************************
-//***************************************************************************
-bool in_fv(double x, double y, double z,
-           double x1, double x2, double y1,
-           double y2, double z1, double z2);
-//***************************************************************************
-//***************************************************************************
-void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                         std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
-//***************************************************************************
-//***************************************************************************
-bool opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double tolerance);
-//***************************************************************************
-//***************************************************************************
-bool opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double flash_width_z, double tolerance);
-//***************************************************************************
-//***************************************************************************
-void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector< double> > * largest_flash_v_v,
-                      double flash_time_start, double flash_time_end);
-//***************************************************************************
-//***************************************************************************
-void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                      double tolerance, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
-//***************************************************************************
-//***************************************************************************
-bool shwr_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, double tpc_vtx_z,
-                       double pfp_vtx_x, double pfp_vtx_y, double pfp_vtx_z, double tolerance);
-//***************************************************************************
-//***************************************************************************
-//this function wants to remove particles too far from the reconstructed neutrino vertex
-void VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                   double tolerance, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
-//***************************************************************************
-//***************************************************************************
-//this function wants to remove particles too far from the reconstructed neutrino vertex
-void VtxTrackNuDistance(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                        double tolerance, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
-//***************************************************************************
-//***************************************************************************
-//this function wants to remove particles too far from the reconstructed neutrino vertex
-void HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                  double threshold, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
-//***************************************************************************
-//***************************************************************************
-//this gives a list of all of the origins of the tpc objects
-void GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::string> * tpco_origin_v);
-//***************************************************************************
-//***************************************************************************
-//this function simply checks if the tpc object is a nue
-void HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
-//***************************************************************************
-//***************************************************************************
-void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                  const std::vector<double> tolerance_open_angle, const bool _verbose);
-//***************************************************************************
-//***************************************************************************
 void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
@@ -115,11 +49,6 @@ void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
                   TH1D * h_dedx_cuts_numu_cc_mixed,
                   TH1D * h_dedx_cuts_other_mixed,
                   TH1D * h_dedx_cuts_unmatched     );
-//***************************************************************************
-//***************************************************************************
-void dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose);
-//***************************************************************************
 //***************************************************************************
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
@@ -443,10 +372,6 @@ void SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_
                           TH1D * h_second_shwr_dist_unmatched);
 //***************************************************************************
 //***************************************************************************
-void SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double dist_tolerance);
-//***************************************************************************
-//***************************************************************************
 void HitLengthRatio(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
@@ -461,11 +386,6 @@ void HitLengthRatio(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH1D * h_hit_length_ratio_cosmic,
                     TH1D * h_hit_length_ratio_other_mixed,
                     TH1D * h_hit_length_ratio_unmatched);
-//***************************************************************************
-//***************************************************************************
-void HitLengthRatioCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                       const double pfp_hits_length_tolerance);
 //***************************************************************************
 //***************************************************************************
 int MapFailureCutToString(const std::string failure_cut);
