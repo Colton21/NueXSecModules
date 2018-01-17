@@ -229,6 +229,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 	run = e.id().run();
 	event = e.id().event();
+	subrun = e.id().subrRun();
 	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
 	if(_cosmic_only == true) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
@@ -463,7 +464,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetpfpVtxZ(pfp_nu_vtx_z);
 		tpc_object_container.SetRunNumber(run);
 		tpc_object_container.SetIsData(_is_data);
-		//tpc_object_container.SetSubRunNumber();
+		tpc_object_container.SetSubRunNumber(subrun);
 		tpc_object_container.SetEventNumber(event);
 		tpc_object_container.SetIndex(tpc_object_counter);
 		//convert simb::Origin_t object to std::string
