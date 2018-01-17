@@ -7,6 +7,7 @@ int selection( const char * _file1, const char * _file2){
 	std::cout << "File Path: " << _file2 << std::endl;
 	const bool _verbose = false;
 	const bool _post_cuts_verbose = false;
+	const bool data_post_cuts_verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file: " << _file1 << "!" << std::endl; exit(1); }
@@ -316,6 +317,22 @@ int selection( const char * _file1, const char * _file2){
 
 	}//end event loop
 	run_subrun_file.close();
+
+	//we also want some metrics to print at the end
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_in_time_counter_v, "In Time");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_pe_counter_v, "PE Threshold");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_reco_nue_counter_v, "Reco Nue");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_in_fv_counter_v, "In FV");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_vtx_flash_counter_v, "Vtx-to-Flash");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_shwr_tpco_counter_v, "Shower-to-TPCO");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_trk_tpco_counter_v, "Track-to-TPCO");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_hit_threshold_counter_v,"Hit Threshold");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_open_angle_counter_v, "Open Angle");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_dedx_counter_v, " dE / dx ");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_secondary_shower_counter_v, ">3 Shower TPCO Dist");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_hit_lengthRatio_counter_v, "Hit Length Ratio");
+
+	if(data_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(data_post_cuts_v, data_post_cuts_verbose); }
 
 	//*********************************************
 	std::cout << "======================" << std::endl;
@@ -1209,6 +1226,10 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack->Draw();
 	open_angle_stack_c1->Print("post_cuts_leading_shower_open_angle.pdf");
 
+	//h_leading_shower_open_angle_data->Scale(129.588);
+	h_leading_shower_open_angle_data->Draw("P E1 same");
+	open_angle_stack_c1->Print("data_mc_post_cuts_leading_shower_open_angle.pdf");
+
 
 	TCanvas * dedx_cuts_c1 = new TCanvas();
 	dedx_cuts_c1->cd();
@@ -1258,6 +1279,9 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_dedx->Draw();
 	dedx_cuts_c1->Print("post_cuts_dedx_cuts.pdf");
 
+	h_dedx_cuts_data->Draw("P E1 same");
+	dedx_cuts_c1->Print("data_mc_post_cuts_dedx_cuts.pdf");
+
 	TCanvas * vtx_to_flash_c1 = new TCanvas();
 	vtx_to_flash_c1->cd();
 	THStack * vtx_to_flash_stack = new THStack();
@@ -1305,6 +1329,9 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_flash->AddEntry(h_vtx_flash_unmatched,       "Unmatched", "f");
 	leg_stack_flash->Draw();
 	vtx_to_flash_c1->Print("post_cuts_vtx_to_flash_distance.pdf");
+
+	h_vtx_flash_data->Draw("P E1 same");
+	vtx_to_flash_c1->Print("data_mc_vtx_to_flash_distance.pdf");
 
 	TCanvas * trk_vtx_dist_stack_c1 = new TCanvas();
 	trk_vtx_dist_stack_c1->cd();
@@ -1354,6 +1381,8 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack2->Draw();
 	trk_vtx_dist_stack_c1->Print("post_cuts_track_to_vtx.pdf");
 
+	h_trk_vtx_dist_data->Draw("P E1 same");
+	trk_vtx_dist_stack_c1->Print("data_mc_post_cuts_track_to_vtx.pdf");
 
 	TCanvas * shwr_vtx_dist_stack_c1 = new TCanvas();
 	shwr_vtx_dist_stack_c1->cd();
@@ -1402,6 +1431,9 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_unmatched,       "Unmatched", "f");
 	leg_stack_shwr->Draw();
 	shwr_vtx_dist_stack_c1->Print("post_cuts_shower_to_vtx.pdf");
+
+	h_shwr_vtx_dist_data->Draw("P E1 same");
+	shwr_vtx_dist_stack_c1->Print("data_mc_post_cuts_shower_to_vtx.pdf");
 
 	TCanvas * track_stack_c1 = new TCanvas();
 	track_stack_c1->cd();
@@ -1484,6 +1516,9 @@ int selection( const char * _file1, const char * _file2){
 	leg_track_stack_l1->Draw();
 	track_stack_c1->Print("selected_pfp_track_stack.pdf");
 
+	h_pfp_track_data->Draw("P E1 same");
+	track_stack_c1->Print("data_mc_selected_pfp_track_stack.pdf");
+
 	TCanvas * shower_stack_c1 = new TCanvas();
 	shower_stack_c1->cd();
 	THStack * h_shower_stack = new THStack();
@@ -1564,6 +1599,9 @@ int selection( const char * _file1, const char * _file2){
 	leg_shower_stack_l1->AddEntry(h_pfp_shower_unmatched,      "Unmatched", "f");
 	leg_shower_stack_l1->Draw();
 	shower_stack_c1->Print("selected_pfp_shower_stack.pdf");
+
+	h_pfp_shower_data->Draw("P E1 same");
+	shower_stack_c1->Print("data_mc_selected_pfp_shower_stack.pdf");
 
 	TCanvas * track_shower_c1 = new TCanvas();
 	track_shower_c1->cd();
@@ -1673,6 +1711,12 @@ int selection( const char * _file1, const char * _file2){
 	h_pfp_track_shower_unmatched->GetXaxis()->SetTitle("PFP Tracks ");
 	h_pfp_track_shower_unmatched->GetYaxis()->SetTitle("PFP Showers");
 	track_shower_c18->Print("selected_pfp_track_shower_unmatched.pdf");
+	TCanvas * track_shower_c19 = new TCanvas();
+	track_shower_c19->cd();
+	h_pfp_track_shower_data->Draw("colz");
+	h_pfp_track_shower_data->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_data->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c19->Print("selected_pfp_track_shower_data.pdf");
 
 	TCanvas * track_stack_c2 = new TCanvas();
 	track_stack_c2->cd();
@@ -1755,6 +1799,9 @@ int selection( const char * _file1, const char * _file2){
 	leg_track_stack_l2->Draw();
 	track_stack_c2->Print("selected_pfp_track_stack_last.pdf");
 
+	h_pfp_track_data_last->Draw("P E1 same");
+	track_stack_c2->Print("data_mc_selected_pfp_track_stack_last.pdf");
+
 	TCanvas * shower_stack_c2 = new TCanvas();
 	shower_stack_c2->cd();
 	THStack * h_shower_stack_last = new THStack();
@@ -1835,6 +1882,9 @@ int selection( const char * _file1, const char * _file2){
 	leg_shower_stack_l2->AddEntry(h_pfp_shower_unmatched_last,      "Unmatched", "f");
 	leg_shower_stack_l2->Draw();
 	shower_stack_c2->Print("selected_pfp_shower_stack_last.pdf");
+
+	h_pfp_shower_data_last->Draw("P E1 same");
+	shower_stack_c2->Print("data_mc_selected_pfp_shower_stack_last.pdf");
 
 	TCanvas * track_shower_c1_last = new TCanvas();
 	track_shower_c1_last->cd();
@@ -1944,6 +1994,12 @@ int selection( const char * _file1, const char * _file2){
 	h_pfp_track_shower_unmatched_last->GetXaxis()->SetTitle("PFP Tracks ");
 	h_pfp_track_shower_unmatched_last->GetYaxis()->SetTitle("PFP Showers");
 	track_shower_c18_last->Print("selected_pfp_track_shower_unmatched_last.pdf");
+	TCanvas * track_shower_c19_last = new TCanvas();
+	track_shower_c19_last->cd();
+	h_pfp_track_shower_data_last->Draw("colz");
+	h_pfp_track_shower_data_last->GetXaxis()->SetTitle("PFP Tracks ");
+	h_pfp_track_shower_data_last->GetYaxis()->SetTitle("PFP Showers");
+	track_shower_c19_last->Print("selected_pfp_track_shower_data_last.pdf");
 	//********************************************************************
 
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
@@ -2483,6 +2539,12 @@ int selection( const char * _file1, const char * _file2){
 	h_shwr_len_hits_unmatched->Draw("colz");
 	shwr_len_hits_c10->Print("shwr_len_hits_unmatched.pdf");
 
+	TCanvas * shwr_len_hits_c11 = new TCanvas();
+	shwr_len_hits_c11->cd();
+	h_shwr_len_hits_data->GetXaxis()->SetTitle("Leading Shower Length [cm]");
+	h_shwr_len_hits_data->GetYaxis()->SetTitle("Leading Shower Hits");
+	h_shwr_len_hits_data->Draw("colz");
+	shwr_len_hits_c11->Print("shwr_len_hits_data.pdf");
 
 
 	TCanvas * second_shwr_dist_c1 = new TCanvas();
@@ -2593,7 +2655,8 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_second->Draw();
 	second_shwr_dist_stack_c1->Print("post_second_shwr_dist.pdf");
 
-
+	h_second_shwr_dist_data->Draw("P E1 same");
+	second_shwr_dist_stack_c1->Print("data_mc_post_second_shwr_dist.pdf");
 
 	TCanvas * hit_length_ratio_stack_c1 = new TCanvas();
 	hit_length_ratio_stack_c1->cd();
@@ -2643,10 +2706,13 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_hit_length_ratio->Draw();
 	hit_length_ratio_stack_c1->Print("post_hit_length_ratio.pdf");
 
+	h_hit_length_ratio_data->Draw("P E1 same");
+	hit_length_ratio_stack_c1->Print("data_mc_post_hit_length_ratio.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
 	THStack * h_failure_reason_stack = new THStack();
+	h_failure_reason_data->SetStats(kFALSE);
 	h_failure_reason_nue_cc->SetStats(kFALSE);
 	h_failure_reason_nue_cc_mixed->SetStats(kFALSE);
 	h_failure_reason_numu_cc->SetStats(kFALSE);
@@ -2667,6 +2733,7 @@ int selection( const char * _file1, const char * _file2){
 	h_failure_reason_unmatched->SetFillColor(12);
 	h_failure_reason_stack->Draw();
 
+	std::vector<double> remaining_data;
 	std::vector<double> remaining_nue_cc;
 	std::vector<double> remaining_nue_cc_mixed;
 	std::vector<double> remaining_numu_cc;
@@ -2677,19 +2744,20 @@ int selection( const char * _file1, const char * _file2){
 	std::vector<double> remaining_other_mixed;
 	std::vector<double> remaining_unmatched;
 
-	double bin_content_nue_cc_prev = pe_counter_v->at(0);
-	double bin_content_nue_cc_mixed_prev = pe_counter_v->at(1);
-	double bin_content_numu_cc_prev = pe_counter_v->at(4);
-	double bin_content_nc_pi0_prev = pe_counter_v->at(10);
-	double bin_content_cosmic_prev = pe_counter_v->at(2);
-	double bin_content_nc_prev = pe_counter_v->at(3);
+	double bin_content_data_prev          = data_pe_counter_v->at(5);
+	double bin_content_nue_cc_prev        = pe_counter_v->at(0);
+	double bin_content_nue_cc_mixed_prev  = pe_counter_v->at(1);
+	double bin_content_numu_cc_prev       = pe_counter_v->at(4);
+	double bin_content_nc_pi0_prev        = pe_counter_v->at(10);
+	double bin_content_cosmic_prev        = pe_counter_v->at(2);
+	double bin_content_nc_prev            = pe_counter_v->at(3);
 	double bin_content_numu_cc_mixed_prev = pe_counter_v->at(11);
-	double bin_content_other_mixed_prev = pe_counter_v->at(6);
-	double bin_content_unmatched_prev = pe_counter_v->at(5);
+	double bin_content_other_mixed_prev   = pe_counter_v->at(6);
+	double bin_content_unmatched_prev     = pe_counter_v->at(5);
 
 	for (int i=1; i<= 22; i++)
 	{
-
+		double bin_content_data                     = h_failure_reason_data->GetBinContent(i);
 		double bin_content_nue_cc                   = h_failure_reason_nue_cc->GetBinContent(i);
 		double bin_content_nue_cc_mixed             = h_failure_reason_nue_cc_mixed->GetBinContent(i);
 		double bin_content_numu_cc                  = h_failure_reason_numu_cc->GetBinContent(i);
@@ -2701,6 +2769,7 @@ int selection( const char * _file1, const char * _file2){
 		double bin_content_unmatched                = h_failure_reason_unmatched->GetBinContent(i);
 		if(i % 2 != 0)
 		{
+			const double ratio_data          = double(bin_content_data)   / double(bin_content_data_prev);
 			const double ratio_nue_cc        = double(bin_content_nue_cc) / double(bin_content_nue_cc_prev);
 			const double ratio_nue_cc_mixed  = double(bin_content_nue_cc_mixed) / double(bin_content_nue_cc_mixed_prev);
 			const double ratio_numu_cc       = double(bin_content_numu_cc) / double(bin_content_numu_cc_prev);
@@ -2711,6 +2780,7 @@ int selection( const char * _file1, const char * _file2){
 			const double ratio_other_mixed   = double(bin_content_other_mixed) / double(bin_content_other_mixed_prev);
 			const double ratio_unmatched     = double(bin_content_unmatched) / double(bin_content_unmatched_prev);
 
+			bin_content_data_prev                -= bin_content_data;
 			bin_content_nue_cc_prev              -= bin_content_nue_cc;
 			bin_content_nue_cc_mixed_prev        -= bin_content_nue_cc_mixed;
 			bin_content_numu_cc_prev             -= bin_content_numu_cc;
@@ -2721,6 +2791,7 @@ int selection( const char * _file1, const char * _file2){
 			bin_content_other_mixed_prev         -= bin_content_other_mixed;
 			bin_content_unmatched_prev           -= bin_content_unmatched;
 
+			remaining_data.push_back(ratio_data);
 			remaining_nue_cc.push_back(ratio_nue_cc);
 			remaining_nue_cc_mixed.push_back(ratio_nue_cc_mixed);
 			remaining_numu_cc.push_back(ratio_numu_cc);
@@ -2734,6 +2805,7 @@ int selection( const char * _file1, const char * _file2){
 	}
 	for (int i = 0; i < remaining_nue_cc.size(); i++)
 	{
+		h_failure_reason_data->SetBinContent((i*2)+1,           remaining_data.at(i));
 		h_failure_reason_nue_cc->SetBinContent((i*2)+1,         remaining_nue_cc.at(i));
 		h_failure_reason_nue_cc_mixed->SetBinContent((i*2)+1,   remaining_nue_cc_mixed.at(i));
 		h_failure_reason_numu_cc->SetBinContent((i*2)+1,        remaining_numu_cc.at(i));
@@ -2745,6 +2817,7 @@ int selection( const char * _file1, const char * _file2){
 		h_failure_reason_unmatched->SetBinContent((i*2)+1,      remaining_unmatched.at(i));
 	}
 
+	h_failure_reason_stack->Add(h_failure_reason_data);
 	h_failure_reason_stack->Add(h_failure_reason_nue_cc);
 	h_failure_reason_stack->Add(h_failure_reason_nue_cc_mixed);
 	h_failure_reason_stack->Add(h_failure_reason_cosmic);
@@ -2767,6 +2840,7 @@ int selection( const char * _file1, const char * _file2){
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack_failure_reason = new TLegend(0.865,0.75,0.99,0.95);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack_failure_reason->AddEntry(h_failure_reason_data,          "Data", "f");
 	leg_stack_failure_reason->AddEntry(h_failure_reason_nue_cc,          "Nue CC", "f");
 	leg_stack_failure_reason->AddEntry(h_failure_reason_nue_cc_mixed,    "Nue CC Mixed", "f");
 	leg_stack_failure_reason->AddEntry(h_failure_reason_cosmic,          "Cosmic", "f");

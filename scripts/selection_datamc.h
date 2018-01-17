@@ -12,10 +12,13 @@ namespace xsecSelection {
 
 
 //const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
-const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
+const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample (~December)
 //const double POT = 2.90469e+21;    //POT - nue + cosmics
 const double scaling = 1.52938e-11;  //nues / POT / cm^2
 const double genie_xsec = 5.05191e-39; //cm^2
+
+//small april data set pot 9.507e+17 POT
+//ratio to scale data by -
 
 //*******************
 // Cut Values
@@ -154,16 +157,16 @@ TH2I * h_tracks_showers         = new TH2I("h_tracks_showers", "h_tracks_showers
 TH2I * h_tracks_showers_cosmic  = new TH2I("h_tracks_showers_cosmic", "h_tracks_showers_cosmic", 8, 0, 8, 8, 0, 8);
 TH2I * h_tracks_showers_numu    = new TH2I("h_tracks_showers_numu", "h_tracks_showers_numu", 8, 0, 8, 8, 0, 8);
 
-TH1D * h_leading_shower_open_angle_nue_cc        = new TH1D("h_leading_shower_open_angle_nue_cc", "h_leading_shower_open_angle_nue_cc", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_nue_cc_mixed  = new TH1D("h_leading_shower_open_angle_nue_cc_mixed", "h_leading_shower_open_angle_nue_cc_mixed", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_numu_cc       = new TH1D("h_leading_shower_open_angle_numu_cc", "h_leading_shower_open_angle_numu_cc", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_nc            = new TH1D("h_leading_shower_open_angle_nc", "h_leading_shower_open_angle_nc", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_cosmic        = new TH1D("h_leading_shower_open_angle_cosmic", "h_leading_shower_open_angle_cosmic", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_nc_pi0        = new TH1D("h_leading_shower_open_angle_nc_pi0", "h_leading_shower_open_angle_nc_pi0", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_nue_cc        = new TH1D("h_leading_shower_open_angle_nue_cc",        "h_leading_shower_open_angle_nue_cc", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_nue_cc_mixed  = new TH1D("h_leading_shower_open_angle_nue_cc_mixed",  "h_leading_shower_open_angle_nue_cc_mixed", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_numu_cc       = new TH1D("h_leading_shower_open_angle_numu_cc",       "h_leading_shower_open_angle_numu_cc", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_nc            = new TH1D("h_leading_shower_open_angle_nc",            "h_leading_shower_open_angle_nc", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_cosmic        = new TH1D("h_leading_shower_open_angle_cosmic",        "h_leading_shower_open_angle_cosmic", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_nc_pi0        = new TH1D("h_leading_shower_open_angle_nc_pi0",        "h_leading_shower_open_angle_nc_pi0", 25, 0, 50);
 TH1D * h_leading_shower_open_angle_numu_cc_mixed = new TH1D("h_leading_shower_open_angle_numu_cc_mixed", "h_leading_shower_open_angle_numu_cc_mixed", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_other_mixed   = new TH1D("h_leading_shower_open_angle_other_mixed", "h_leading_shower_open_angle_other_mixed", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_unmatched     = new TH1D("h_leading_shower_open_angle_unmatched", "h_leading_shower_open_angle_unmatched", 25, 0, 50);
-TH1D * h_leading_shower_open_angle_data          = new TH1D("h_leading_shower_open_angle_data",      "h_leading_shower_open_angle_data",      25, 0, 50);
+TH1D * h_leading_shower_open_angle_other_mixed   = new TH1D("h_leading_shower_open_angle_other_mixed",   "h_leading_shower_open_angle_other_mixed", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_unmatched     = new TH1D("h_leading_shower_open_angle_unmatched",     "h_leading_shower_open_angle_unmatched", 25, 0, 50);
+TH1D * h_leading_shower_open_angle_data          = new TH1D("h_leading_shower_open_angle_data",          "h_leading_shower_open_angle_data",      25, 0, 50);
 
 TH1D * h_trk_vtx_dist_nue_cc        = new TH1D("h_trk_vtx_dist_nue_cc", "h_trk_vtx_dist_nue_cc", 25, 0, 20);
 TH1D * h_trk_vtx_dist_nue_cc_mixed  = new TH1D("h_trk_vtx_dist_nue_cc_mixed", "h_trk_vtx_dist_nue_cc_mixed", 25, 0, 20);
@@ -214,7 +217,6 @@ TH2D * h_leading_shower_mc_pdg_numu_cc_mixed = new TH2D("h_leading_shower_mc_pdg
 TH2D * h_leading_shower_mc_pdg_cosmic        = new TH2D("h_leading_shower_mc_pdg_cosmic",        "h_leading_shower_mc_pdg_cosmic",        3, 0, 3, 10, 0, 10);
 TH2D * h_leading_shower_mc_pdg_other_mixed   = new TH2D("h_leading_shower_mc_pdg_other_mixed",   "h_leading_shower_mc_pdg_other_mixed",   3, 0, 3, 10, 0, 10);
 TH2D * h_leading_shower_mc_pdg_unmatched     = new TH2D("h_leading_shower_mc_pdg_unmatched",     "h_leading_shower_mc_pdg_unmatched",     3, 0, 3, 10, 0, 10);
-TH2D * h_leading_shower_mc_pdg_data          = new TH2D("h_leading_shower_mc_pdg_data",          "h_leading_shower_mc_pdg_data",          3, 0, 3, 10, 0, 10);
 
 TH1D * h_pfp_track_nue_cc_qe     = new TH1D("h_pfp_track_nue_cc_qe",     "h_pfp_track_nue_cc_qe",     10, 0, 10);
 TH1D * h_pfp_track_nue_cc_out_fv = new TH1D("h_pfp_track_nue_cc_out_fv", "h_pfp_track_nue_cc_out_fv", 10, 0, 10);
