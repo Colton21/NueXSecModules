@@ -21,6 +21,8 @@ const double genie_xsec = 5.05191e-39; //cm^2
 //small april data set pot 9.507e+17 POT
 //ratio to scale data by -
 
+const double data_mc_scale_factor = 1.299;
+
 //*******************
 // Cut Values
 //*******************

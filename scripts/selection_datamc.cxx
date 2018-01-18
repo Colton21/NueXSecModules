@@ -1221,10 +1221,29 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack->Draw();
 	open_angle_stack_c1->Print("post_cuts_leading_shower_open_angle.pdf");
 
-	//h_leading_shower_open_angle_data->Scale(129.588);
+	double open_angle_integral_nue_cc = h_leading_shower_open_angle_nue_cc->Integral();
+	double open_angle_integral_nue_cc_mixed = h_leading_shower_open_angle_nue_cc_mixed->Integral();
+	double open_angle_integral_cosmic = h_leading_shower_open_angle_cosmic->Integral();
+	double open_angle_integral_numu_cc = h_leading_shower_open_angle_numu_cc->Integral();
+	double open_angle_integral_numu_cc_mixed = h_leading_shower_open_angle_numu_cc_mixed->Integral();
+	double open_angle_integral_nc = h_leading_shower_open_angle_nc->Integral();
+	double open_angle_integral_nc_pi0 = h_leading_shower_open_angle_nc_pi0->Integral();
+	double open_angle_integral_other_mixed = h_leading_shower_open_angle_other_mixed->Integral();
+	double open_angle_integral_unmatched = h_leading_shower_open_angle_unmatched->Integral();
+	double open_angle_integral = open_angle_integral_nue_cc
+	                             + open_angle_integral_nue_cc_mixed
+	                             + open_angle_integral_cosmic
+	                             + open_angle_integral_numu_cc
+	                             + open_angle_integral_numu_cc_mixed
+	                             + open_angle_integral_nc
+	                             + open_angle_integral_nc_pi0
+	                             + open_angle_integral_other_mixed
+	                             + open_angle_integral_unmatched;
+	//h_leading_shower_open_angle_data->Scale(1.29916); //- relative scaling (on-beam - off-beam) and POT
+	//h_leading_shower_open_angle_data->Scale(5.619); //- POT scaling
+	h_leading_shower_open_angle_data->Scale((open_angle_integral / h_leading_shower_open_angle_data->Integral()) * data_mc_scale_factor);
 	h_leading_shower_open_angle_data->Draw("P E1 same");
 	open_angle_stack_c1->Print("data_mc_post_cuts_leading_shower_open_angle.pdf");
-
 
 	TCanvas * dedx_cuts_c1 = new TCanvas();
 	dedx_cuts_c1->cd();
@@ -1274,6 +1293,28 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_dedx->Draw();
 	dedx_cuts_c1->Print("post_cuts_dedx_cuts.pdf");
 
+	double dedx_integral_nue_cc         = h_dedx_cuts_nue_cc->Integral();
+	double dedx_integral_nue_cc_mixed   = h_dedx_cuts_nue_cc_mixed->Integral();
+	double dedx_integral_cosmic         = h_dedx_cuts_cosmic->Integral();
+	double dedx_integral_numu_cc        = h_dedx_cuts_numu_cc->Integral();
+	double dedx_integral_numu_cc_mixed  = h_dedx_cuts_numu_cc_mixed->Integral();
+	double dedx_integral_nc             = h_dedx_cuts_nc->Integral();
+	double dedx_integral_nc_pi0         = h_dedx_cuts_nc_pi0->Integral();
+	double dedx_integral_other_mixed    = h_dedx_cuts_other_mixed->Integral();
+	double dedx_integral_unmatched      = h_dedx_cuts_unmatched->Integral();
+	double dedx_integral = dedx_integral_nue_cc
+	                       + dedx_integral_nue_cc_mixed
+	                       + dedx_integral_cosmic
+	                       + dedx_integral_numu_cc
+	                       + dedx_integral_numu_cc_mixed
+	                       + dedx_integral_nc
+	                       + dedx_integral_nc_pi0
+	                       + dedx_integral_other_mixed
+	                       + dedx_integral_unmatched;
+
+	//h_dedx_cuts_data->Scale(1.2991626);
+	//h_dedx_cuts_data->Scale(5.619);
+	h_dedx_cuts_data->Scale((dedx_integral / h_dedx_cuts_data->Integral()) * data_mc_scale_factor);
 	h_dedx_cuts_data->Draw("P E1 same");
 	dedx_cuts_c1->Print("data_mc_post_cuts_dedx_cuts.pdf");
 
@@ -1325,6 +1366,28 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_flash->Draw();
 	vtx_to_flash_c1->Print("post_cuts_vtx_to_flash_distance.pdf");
 
+	double vtx_flash_integral_nue_cc         = h_vtx_flash_nue_cc->Integral();
+	double vtx_flash_integral_nue_cc_mixed   = h_vtx_flash_nue_cc_mixed->Integral();
+	double vtx_flash_integral_cosmic         = h_vtx_flash_cosmic->Integral();
+	double vtx_flash_integral_numu_cc        = h_vtx_flash_numu_cc->Integral();
+	double vtx_flash_integral_numu_cc_mixed  = h_vtx_flash_numu_cc_mixed->Integral();
+	double vtx_flash_integral_nc             = h_vtx_flash_nc->Integral();
+	double vtx_flash_integral_nc_pi0         = h_vtx_flash_nc_pi0->Integral();
+	double vtx_flash_integral_other_mixed    = h_vtx_flash_other_mixed->Integral();
+	double vtx_flash_integral_unmatched      = h_vtx_flash_unmatched->Integral();
+	double vtx_flash_integral = vtx_flash_integral_nue_cc
+	                            + vtx_flash_integral_nue_cc_mixed
+	                            + vtx_flash_integral_cosmic
+	                            + vtx_flash_integral_numu_cc
+	                            + vtx_flash_integral_numu_cc_mixed
+	                            + vtx_flash_integral_nc
+	                            + vtx_flash_integral_nc_pi0
+	                            + vtx_flash_integral_other_mixed
+	                            + vtx_flash_integral_unmatched;
+
+	//h_vtx_flash_data->Scale(1.2991626);
+	//h_vtx_flash_data->Scale(5.619);
+	h_vtx_flash_data->Scale((vtx_flash_integral / h_vtx_flash_data->Integral()) * data_mc_scale_factor);
 	h_vtx_flash_data->Draw("P E1 same");
 	vtx_to_flash_c1->Print("data_mc_vtx_to_flash_distance.pdf");
 
@@ -1376,6 +1439,28 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack2->Draw();
 	trk_vtx_dist_stack_c1->Print("post_cuts_track_to_vtx.pdf");
 
+	double trk_vtx_integral_nue_cc          = h_trk_vtx_dist_nue_cc->Integral();
+	double trk_vtx_integral_nue_cc_mixed    = h_trk_vtx_dist_nue_cc_mixed->Integral();
+	double trk_vtx_integral_cosmic          = h_trk_vtx_dist_cosmic->Integral();
+	double trk_vtx_integral_numu_cc         = h_trk_vtx_dist_numu_cc->Integral();
+	double trk_vtx_integral_numu_cc_mixed   = h_trk_vtx_dist_numu_cc_mixed->Integral();
+	double trk_vtx_integral_nc              = h_trk_vtx_dist_nc->Integral();
+	double trk_vtx_integral_nc_pi0          = h_trk_vtx_dist_nc_pi0->Integral();
+	double trk_vtx_integral_other_mixed     = h_trk_vtx_dist_other_mixed->Integral();
+	double trk_vtx_integral_unmatched       = h_trk_vtx_dist_unmatched->Integral();
+	double trk_vtx_integral = trk_vtx_integral_nue_cc
+	                          + trk_vtx_integral_nue_cc_mixed
+	                          + trk_vtx_integral_cosmic
+	                          + trk_vtx_integral_numu_cc
+	                          + trk_vtx_integral_numu_cc_mixed
+	                          + trk_vtx_integral_nc
+	                          + trk_vtx_integral_nc_pi0
+	                          + trk_vtx_integral_other_mixed
+	                          + trk_vtx_integral_unmatched;
+
+	//h_trk_vtx_dist_data->Scale(1.2991626);
+	//h_trk_vtx_dist_data->Scale(5.619);
+	h_trk_vtx_dist_data->Scale((trk_vtx_integral / h_trk_vtx_dist_data->Integral()) * data_mc_scale_factor);
 	h_trk_vtx_dist_data->Draw("P E1 same");
 	trk_vtx_dist_stack_c1->Print("data_mc_post_cuts_track_to_vtx.pdf");
 
@@ -1427,6 +1512,28 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_shwr->Draw();
 	shwr_vtx_dist_stack_c1->Print("post_cuts_shower_to_vtx.pdf");
 
+	double shwr_vtx_integral_nue_cc         = h_shwr_vtx_dist_nue_cc->Integral();
+	double shwr_vtx_integral_nue_cc_mixed   = h_shwr_vtx_dist_nue_cc_mixed->Integral();
+	double shwr_vtx_integral_cosmic         = h_shwr_vtx_dist_cosmic->Integral();
+	double shwr_vtx_integral_numu_cc        = h_shwr_vtx_dist_numu_cc->Integral();
+	double shwr_vtx_integral_numu_cc_mixed  = h_shwr_vtx_dist_numu_cc_mixed->Integral();
+	double shwr_vtx_integral_nc             = h_shwr_vtx_dist_nc->Integral();
+	double shwr_vtx_integral_nc_pi0         = h_shwr_vtx_dist_nc_pi0->Integral();
+	double shwr_vtx_integral_other_mixed    = h_shwr_vtx_dist_other_mixed->Integral();
+	double shwr_vtx_integral_unmatched      = h_shwr_vtx_dist_unmatched->Integral();
+	double shwr_vtx_integral = shwr_vtx_integral_nue_cc
+	                           + shwr_vtx_integral_nue_cc_mixed
+	                           + shwr_vtx_integral_cosmic
+	                           + shwr_vtx_integral_numu_cc
+	                           + shwr_vtx_integral_numu_cc_mixed
+	                           + shwr_vtx_integral_nc
+	                           + shwr_vtx_integral_nc_pi0
+	                           + shwr_vtx_integral_other_mixed
+	                           + shwr_vtx_integral_unmatched;
+
+	//h_shwr_vtx_dist_data->Scale(1.2991626);
+	//h_shwr_vtx_dist_data->Scale(5.619);
+	h_shwr_vtx_dist_data->Scale((shwr_vtx_integral / h_shwr_vtx_dist_data->Integral()) * data_mc_scale_factor);
 	h_shwr_vtx_dist_data->Draw("P E1 same");
 	shwr_vtx_dist_stack_c1->Print("data_mc_post_cuts_shower_to_vtx.pdf");
 
@@ -1511,6 +1618,8 @@ int selection( const char * _file1, const char * _file2){
 	leg_track_stack_l1->Draw();
 	track_stack_c1->Print("selected_pfp_track_stack.pdf");
 
+	//h_pfp_track_data->Scale(1.2991626);
+	h_pfp_track_data->Scale(5.619);
 	h_pfp_track_data->Draw("P E1 same");
 	track_stack_c1->Print("data_mc_selected_pfp_track_stack.pdf");
 
@@ -1595,6 +1704,8 @@ int selection( const char * _file1, const char * _file2){
 	leg_shower_stack_l1->Draw();
 	shower_stack_c1->Print("selected_pfp_shower_stack.pdf");
 
+	//h_pfp_shower_data->Scale(1.2991626);
+	h_pfp_shower_data->Scale(5.619);
 	h_pfp_shower_data->Draw("P E1 same");
 	shower_stack_c1->Print("data_mc_selected_pfp_shower_stack.pdf");
 
@@ -1794,6 +1905,8 @@ int selection( const char * _file1, const char * _file2){
 	leg_track_stack_l2->Draw();
 	track_stack_c2->Print("selected_pfp_track_stack_last.pdf");
 
+	//h_pfp_track_data_last->Scale(1.2991626);
+	h_pfp_track_data_last->Scale(5.619);
 	h_pfp_track_data_last->Draw("P E1 same");
 	track_stack_c2->Print("data_mc_selected_pfp_track_stack_last.pdf");
 
@@ -1878,6 +1991,8 @@ int selection( const char * _file1, const char * _file2){
 	leg_shower_stack_l2->Draw();
 	shower_stack_c2->Print("selected_pfp_shower_stack_last.pdf");
 
+	//h_pfp_shower_data_last->Scale(1.2991626);
+	h_pfp_shower_data_last->Scale(5.619);
 	h_pfp_shower_data_last->Draw("P E1 same");
 	shower_stack_c2->Print("data_mc_selected_pfp_shower_stack_last.pdf");
 
@@ -2650,6 +2765,28 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_second->Draw();
 	second_shwr_dist_stack_c1->Print("post_second_shwr_dist.pdf");
 
+	double second_shwr_dist_integral_nue_cc         = h_second_shwr_dist_nue_cc->Integral();
+	double second_shwr_dist_integral_nue_cc_mixed   = h_second_shwr_dist_nue_cc_mixed->Integral();
+	double second_shwr_dist_integral_cosmic         = h_second_shwr_dist_cosmic->Integral();
+	double second_shwr_dist_integral_numu_cc        = h_second_shwr_dist_numu_cc->Integral();
+	double second_shwr_dist_integral_numu_cc_mixed  = h_second_shwr_dist_numu_cc_mixed->Integral();
+	double second_shwr_dist_integral_nc             = h_second_shwr_dist_nc->Integral();
+	double second_shwr_dist_integral_nc_pi0         = h_second_shwr_dist_nc_pi0->Integral();
+	double second_shwr_dist_integral_other_mixed    = h_second_shwr_dist_other_mixed->Integral();
+	double second_shwr_dist_integral_unmatched      = h_second_shwr_dist_unmatched->Integral();
+	double second_shwr_dist_integral = second_shwr_dist_integral_nue_cc
+	                                   + second_shwr_dist_integral_nue_cc_mixed
+	                                   + second_shwr_dist_integral_cosmic
+	                                   + second_shwr_dist_integral_numu_cc
+	                                   + second_shwr_dist_integral_numu_cc_mixed
+	                                   + second_shwr_dist_integral_nc
+	                                   + second_shwr_dist_integral_nc_pi0
+	                                   + second_shwr_dist_integral_other_mixed
+	                                   + second_shwr_dist_integral_unmatched;
+
+	//h_second_shwr_dist_data->Scale(1.2991626);
+	//h_second_shwr_dist_data->Scale(5.619);
+	h_second_shwr_dist_data->Scale((second_shwr_dist_integral / h_second_shwr_dist_data->Integral()) * data_mc_scale_factor);
 	h_second_shwr_dist_data->Draw("P E1 same");
 	second_shwr_dist_stack_c1->Print("data_mc_post_second_shwr_dist.pdf");
 
@@ -2701,6 +2838,28 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_hit_length_ratio->Draw();
 	hit_length_ratio_stack_c1->Print("post_hit_length_ratio.pdf");
 
+	double hit_length_ratio_integral_nue_cc         = h_hit_length_ratio_nue_cc->Integral();
+	double hit_length_ratio_integral_nue_cc_mixed   = h_hit_length_ratio_nue_cc_mixed->Integral();
+	double hit_length_ratio_integral_cosmic         = h_hit_length_ratio_cosmic->Integral();
+	double hit_length_ratio_integral_numu_cc        = h_hit_length_ratio_numu_cc->Integral();
+	double hit_length_ratio_integral_numu_cc_mixed  = h_hit_length_ratio_numu_cc_mixed->Integral();
+	double hit_length_ratio_integral_nc             = h_hit_length_ratio_nc->Integral();
+	double hit_length_ratio_integral_nc_pi0         = h_hit_length_ratio_nc_pi0->Integral();
+	double hit_length_ratio_integral_other_mixed    = h_hit_length_ratio_other_mixed->Integral();
+	double hit_length_ratio_integral_unmatched      = h_hit_length_ratio_unmatched->Integral();
+	double hit_length_ratio_integral = hit_length_ratio_integral_nue_cc
+	                                   + hit_length_ratio_integral_nue_cc_mixed
+	                                   + hit_length_ratio_integral_cosmic
+	                                   + hit_length_ratio_integral_numu_cc
+	                                   + hit_length_ratio_integral_numu_cc_mixed
+	                                   + hit_length_ratio_integral_nc
+	                                   + hit_length_ratio_integral_nc_pi0
+	                                   + hit_length_ratio_integral_other_mixed
+	                                   + hit_length_ratio_integral_unmatched;
+
+	//h_hit_length_ratio_data->Scale(1.2991626);
+	//h_hit_length_ratio_data->Scale(5.619);
+	h_hit_length_ratio_data->Scale((hit_length_ratio_integral / h_hit_length_ratio_data->Integral()) * data_mc_scale_factor);
 	h_hit_length_ratio_data->Draw("P E1 same");
 	hit_length_ratio_stack_c1->Print("data_mc_post_hit_length_ratio.pdf");
 
