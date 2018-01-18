@@ -6,10 +6,13 @@ Larsoft modules for use in the Nue Cross Section Analysis
 The module is a simple method to create a structured data products in an intiutive manner and links important information like the reconstructed and true quantities, such that the end user does not need to run any reco-true matching code prior to analysis.
 
 Be sure that you add NueXSecModules to your CMakeLists.txt before building with larsoft and then build with `mrb i`.
-*For First Time Use*
-You can simply do: `source ana_setup_script.sh`
+*For First Time Use with MRB Setup*
+You can simply do: `source ana_setup_script.sh`. This cleans and builds both the larsoft repository (where the libraries live) and the analysis scripts.
+If you plan to do development of the analysis scripts (stand-alone C++ code), then simply build both the `xsecAna` and `scripts` repositories by hand.
 If you ever change any of the classes in `/xsecAna/` be sure to `source ana_setup_script.sh` again to build and update the libraries in `/scripts`.
+With the last update to my Makefile, if you are on the GPVM or on a device with SIP (system integrity protection) disabled, then ROOT will be able to find the libraries located in `xsecAna`. If this is not the case for you, simply copy the relevant libraries and ROOTMAP to the `scripts` repository. You'll need to do this any time you make a change to the library files.
 
+##Larsoft Moduels
 The total package is currently composed of three modules:
 
 1. Reco-true matching module - this module constructed the "MC Ghosts".
@@ -24,12 +27,22 @@ The `xsecAna` directory contains the modules which are used in LArsoft. In this 
 
 If anyone intends to apply these two container classes outside of my module's framework, then simply be aware of the following: as I have constructed two custom data products, we need to make sure that the proper library information is generated. This means looking at the Linkdef.h, classes_def.h, and classes.h files.
 
+##Analysis and Test Scripts
+
 The scripts directory is where I have some test and analysis scripts. `out_inspect.cxx` is a simple ROOT script, which will print out the information contained in your generated file. Here you can check to make sure the modules are doing what you wish.
+As for performing the $\nu_{e}$ selection, you can run one of the `selection` scripts. The `selection_slim` script is simplest and a good place to understand the individual cuts implemented. Other versions of the `selection` scripts involve a good deal of plotting code. If you want to create ROOT plots based on the cut variables you should run one of these.
 
-I will also be adding an analysis script which performs some cuts and generates some plots. If you find that you'd like to include all of the MC Truth information, then be sure to set the fcl parameter. There are a very large number of MCParticles and this inflates the size of the output file, as such they're only saved when requested. This should keep the size of the output file more managable and improve speed of the analysis scritps.
+For example if you want to do a data/mc comparison you might do:
+```
+make
+./selection_datamc.exe path_to_mc_file path_to_data_file1
+```
 
-**Important**: as we are using a set of custom data products in the ROOT output file, we need to tell ROOT how to read these. If you try to run the scripts before doing this step, you will likely be told to generate a dictionary file or two. To avoid this problem first you'll want to make sure you `make clean` and then `make` in the `xsecAna` directory. This make file will compile the `TPCObjectContainer` and `ParticleContainer` classes and construct two libraries: `libxsecAna.so` and `libxsecAna_dict.so`. These libraries are what will tell ROOT how to understand the output file. If your `$LD_LIBRARY_PATH` is set to the directory where you run your scripts, you can either copy the libraries over, or append to your library path by doing:
+If you find that you'd like to include all of the MC Truth information, then be sure to set the fcl parameter. There are a very large number of MCParticles and this inflates the size of the output file, as such they're only saved when requested. This should keep the size of the output file more managable and improve speed of the analysis scritps.
 
+**Important**: If your analysis scripts are unable to find the library files read on: as we are using a set of custom data products in the ROOT output file, we need to tell ROOT how to read these. If you try to run the scripts before doing this step, you will likely be told to generate a dictionary file or two. To avoid this problem first you'll want to make sure you `make clean` and then `make` in the `xsecAna` directory. This make file will compile the `TPCObjectContainer` and `ParticleContainer` classes and construct a number of libraries. Simply make sure these are copied over to the `scripts` directory if you are unable to direct ROOT to the `xsecAna` directory (due to SIP for example).
+
+Setting your $LD_LIBRARY_PATH may also solve this problem.
 ```bash
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/path/to/library/
 export LD_LIBRARY_PATH
@@ -51,16 +64,13 @@ Lastly, we need to consulte GENIE and the NuMI flux histograms to find the prope
 
 This is a place where I will be tracking some issues:
 
-- A good amount of true variables are not being filled properly - some look like they are pointing to addresses, others are simply zero.
-- Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` 
-- Certain truth variables being filled have odd results - why can MC Direction be greater than 1?
+- Some MC Variables I'm not using are sometimes confused when the pfparticle comes from a cosmic.
+- Some MC Truth variables are simply not set - `xsecAna::TPCObjectContainer.MCHits()` -- this is unused.
 - Reco Momentum for recob::Track objects using StartMomentum() is always 1.
 - Cosmic information using MCParticles is not great (vtx where Corsika generated, etc), need to use MCTrack/MCShower for these, but no associations in the MC files.
 
 ## To-Be Verified
-- All NuMI Nue + Cosmic sample.
-- All NuMI In-Time Cosmic sample - looking at the timing distribution, I think it might be wrong.
-- All NuMI + Cosmic sample.
+- EXT NuMI Data
 
 
 ## Acknowledgements
