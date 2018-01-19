@@ -3,6 +3,7 @@
 
 #include "selection_functions.h"
 #include "selection_cuts.h"
+#include "histogram_functions.h"
 
 #include "../xsecAna/LinkDef.h"
 

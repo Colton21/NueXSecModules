@@ -661,1032 +661,214 @@ int selection( const char * _file1){
 //**** Histograms ****//
 //*******************//
 
-	TCanvas * test_c1 = new TCanvas();
-	test_c1->cd();
-	h_nue_eng_eff_num->GetXaxis()->SetTitle("Selected True Neutrino Energy [GeV]");
-	h_nue_eng_eff_num->Draw();
-	test_c1->Print("selected_true_neutrino_energy.pdf");
-	TCanvas * test_c2 = new TCanvas();
-	test_c2->cd();
-	h_nue_eng_eff_den->GetXaxis()->SetTitle("True Neutrino Energy [GeV]");
-	h_nue_eng_eff_den->GetYaxis()->SetTitle("Events");
-	h_nue_eng_eff_den->Draw();
-	test_c2->Print("all_true_neutrino_energy.pdf");
-	TCanvas * num_part_c1 = new TCanvas();
-	num_part_c1->cd();
-	h_nue_num_part_eff_den->GetXaxis()->SetTitle("True Particle Multiplicity");
-	h_nue_num_part_eff_den->Draw();
-	num_part_c1->Print("all_true_neutrino_num_particles.pdf");
-	TCanvas * num_part_c2 = new TCanvas();
-	num_part_c2->cd();
-	h_nue_num_part_eff_num->GetXaxis()->SetTitle("Selected True Particle Multiplicity");
-	h_nue_num_part_eff_num->Draw();
-	num_part_c2->Print("selected_true_neutrino_num_particles.pdf");
-	TCanvas * num_part_c3 = new TCanvas();
-	num_part_c3->cd();
-	h_nue_num_chrg_part_eff_den->GetXaxis()->SetTitle("True Charged Particle Multiplicity");
-	h_nue_num_chrg_part_eff_den->Draw();
-	num_part_c3->Print("all_true_neutrino_num_charged_particles.pdf");
-	TCanvas * num_part_c4 = new TCanvas();
-	num_part_c4->cd();
-	h_nue_num_chrg_part_eff_num->GetXaxis()->SetTitle("Selected Charged True Particle Multiplicity");
-	h_nue_num_chrg_part_eff_num->Draw();
-	num_part_c4->Print("selected_true_neutrino_num_charged_particles.pdf");
+	//histogram_functions::1DHistogram (TH1 histogram, const std::string x_axis_name, const std::string * print_name)
 
+	histogram_functions::Plot1DHistogram (h_nue_eng_eff_num, "True Neutrino Energy [GeV]", "selected_true_neutrino_energy.pdf");
+	histogram_functions::Plot1DHistogram (h_nue_eng_eff_den, "True Neutrino Energy [GeV]", "all_true_neutrino_energy.pdf");
+	histogram_functions::Plot1DHistogram (h_nue_num_part_eff_den, "True Particle Multiplicity", "all_true_neutrino_num_particles.pdf");
+	histogram_functions::Plot1DHistogram (h_nue_num_part_eff_num, "Selected True Particle Multiplicity", "selected_true_neutrino_num_particles.pdf");
+	histogram_functions::Plot1DHistogram (h_nue_num_chrg_part_eff_den, "True Charged Particle Multiplicity", "all_true_neutrino_num_charged_particles.pdf");
+	histogram_functions::Plot1DHistogram (h_nue_num_chrg_part_eff_num, "Selected Charged True Particle Multiplicity",
+	                                      "selected_true_neutrino_num_charged_particles.pdf");
 
-	TCanvas * efficiency_c1 = new TCanvas();
-	efficiency_c1->cd();
-	TEfficiency * eng_eff = new TEfficiency(*h_nue_eng_eff_num, *h_nue_eng_eff_den);
-	eng_eff->SetTitle(";True Neutrino Energy [GeV];Efficiency");
-	eng_eff->SetLineColor(kGreen+3);
-	eng_eff->SetMarkerColor(kGreen+3);
-	eng_eff->SetMarkerStyle(20);
-	eng_eff->SetMarkerSize(0.5);
-	eng_eff->Draw("AP");
-	efficiency_c1->Print("signal_selection_nu_energy_efficiency.pdf");
-
-	TCanvas * efficiency_c2 = new TCanvas();
-	efficiency_c2->cd();
-	TEfficiency * vtx_x_eff = new TEfficiency(*h_nue_vtx_x_eff_num, *h_nue_vtx_x_eff_den);
-	vtx_x_eff->SetTitle(";True Neutrino Vtx X [cm];Efficiency");
-	vtx_x_eff->SetLineColor(kGreen+3);
-	vtx_x_eff->SetMarkerColor(kGreen+3);
-	vtx_x_eff->SetMarkerStyle(20);
-	vtx_x_eff->SetMarkerSize(0.5);
-	vtx_x_eff->Draw("AP");
-	efficiency_c2->Print("signal_selection_nu_vtx_x_efficiency.pdf");
-
-	TCanvas * efficiency_c3 = new TCanvas();
-	efficiency_c3->cd();
-	TEfficiency * vtx_y_eff = new TEfficiency(*h_nue_vtx_y_eff_num, *h_nue_vtx_y_eff_den);
-	vtx_y_eff->SetTitle(";True Neutrino Vtx Y [cm];Efficiency");
-	vtx_y_eff->SetLineColor(kGreen+3);
-	vtx_y_eff->SetMarkerColor(kGreen+3);
-	vtx_y_eff->SetMarkerStyle(20);
-	vtx_y_eff->SetMarkerSize(0.5);
-	vtx_y_eff->Draw("AP");
-	efficiency_c3->Print("signal_selection_nu_vtx_y_efficiency.pdf");
-
-	TCanvas * efficiency_c4 = new TCanvas();
-	efficiency_c4->cd();
-	TEfficiency * vtx_z_eff = new TEfficiency(*h_nue_vtx_z_eff_num, *h_nue_vtx_z_eff_den);
-	vtx_z_eff->SetTitle(";True Neutrino Vtx Z [cm];Efficiency");
-	vtx_z_eff->SetLineColor(kGreen+3);
-	vtx_z_eff->SetMarkerColor(kGreen+3);
-	vtx_z_eff->SetMarkerStyle(20);
-	vtx_z_eff->SetMarkerSize(0.5);
-	vtx_z_eff->Draw("AP");
-	efficiency_c4->Print("signal_selection_nu_vtx_z_efficiency.pdf");
-
-	TCanvas * efficiency_c5 = new TCanvas();
-	efficiency_c5->cd();
-	TEfficiency * dir_x_eff = new TEfficiency(*h_nue_dir_x_eff_num, *h_nue_dir_x_eff_den);
-	dir_x_eff->SetTitle(";True Neutrino Dir X;Efficiency");
-	dir_x_eff->SetLineColor(kGreen+3);
-	dir_x_eff->SetMarkerColor(kGreen+3);
-	dir_x_eff->SetMarkerStyle(20);
-	dir_x_eff->SetMarkerSize(0.5);
-	dir_x_eff->Draw("AP");
-	efficiency_c5->Print("signal_selection_nu_dir_x_efficiency.pdf");
-	TCanvas * efficiency_c6 = new TCanvas();
-	efficiency_c6->cd();
-	TEfficiency * dir_y_eff = new TEfficiency(*h_nue_dir_y_eff_num, *h_nue_dir_y_eff_den);
-	dir_y_eff->SetTitle(";True Neutrino Dir Y;Efficiency");
-	dir_y_eff->SetLineColor(kGreen+3);
-	dir_y_eff->SetMarkerColor(kGreen+3);
-	dir_y_eff->SetMarkerStyle(20);
-	dir_y_eff->SetMarkerSize(0.5);
-	dir_y_eff->Draw("AP");
-	efficiency_c6->Print("signal_selection_nu_dir_y_efficiency.pdf");
-	TCanvas * efficiency_c7 = new TCanvas();
-	efficiency_c7->cd();
-	TEfficiency * dir_z_eff = new TEfficiency(*h_nue_dir_z_eff_num, *h_nue_dir_z_eff_den);
-	dir_z_eff->SetTitle(";True Neutrino Dir Z;Efficiency");
-	dir_z_eff->SetLineColor(kGreen+3);
-	dir_z_eff->SetMarkerColor(kGreen+3);
-	dir_z_eff->SetMarkerStyle(20);
-	dir_z_eff->SetMarkerSize(0.5);
-	dir_z_eff->Draw("AP");
-	efficiency_c7->Print("signal_selection_nu_dir_z_efficiency.pdf");
-	TCanvas * efficiency_c8 = new TCanvas();
-	efficiency_c8->cd();
-	TEfficiency * num_particles_eff = new TEfficiency(*h_nue_num_part_eff_num, *h_nue_num_part_eff_den);
-	num_particles_eff->SetTitle(";True Particle Multiplicity;Efficiency");
-	num_particles_eff->SetLineColor(kGreen+3);
-	num_particles_eff->SetMarkerColor(kGreen+3);
-	num_particles_eff->SetMarkerStyle(20);
-	num_particles_eff->SetMarkerSize(0.5);
-	num_particles_eff->Draw("AP");
-	efficiency_c8->Print("signal_selection_nu_num_particles_efficiency.pdf");
-	TCanvas * efficiency_c9 = new TCanvas();
-	efficiency_c9->cd();
-	TEfficiency * num_charged_particles_eff = new TEfficiency(*h_nue_num_chrg_part_eff_num, *h_nue_num_chrg_part_eff_den);
-	num_charged_particles_eff->SetTitle(";True Charged Particle Multiplicity;Efficiency");
-	num_charged_particles_eff->SetLineColor(kGreen+3);
-	num_charged_particles_eff->SetMarkerColor(kGreen+3);
-	num_charged_particles_eff->SetMarkerStyle(20);
-	num_charged_particles_eff->SetMarkerSize(0.5);
-	num_charged_particles_eff->Draw("AP");
-	efficiency_c9->Print("signal_selection_nu_num_charged_particles_efficiency.pdf");
-	TCanvas * efficiency_c10 = new TCanvas();
-	efficiency_c10->cd();
-	TEfficiency * cos_theta_eff = new TEfficiency(*h_nue_cos_theta_eff_num, *h_nue_cos_theta_eff_den);
-	cos_theta_eff->SetTitle(";True Neutrino Cos(#theta);Efficiency");
-	cos_theta_eff->SetLineColor(kGreen+3);
-	cos_theta_eff->SetMarkerColor(kGreen+3);
-	cos_theta_eff->SetMarkerStyle(20);
-	cos_theta_eff->SetMarkerSize(0.5);
-	cos_theta_eff->Draw("AP");
-	efficiency_c10->Print("signal_selection_nu_cos_theta_efficiency.pdf");
-	TCanvas * efficiency_c11 = new TCanvas();
-	efficiency_c11->cd();
-	TEfficiency * phi_eff = new TEfficiency(*h_nue_phi_eff_num, *h_nue_phi_eff_den);
-	phi_eff->SetTitle(";True Neutrino Phi;Efficiency");
-	phi_eff->SetLineColor(kGreen+3);
-	phi_eff->SetMarkerColor(kGreen+3);
-	phi_eff->SetMarkerStyle(20);
-	phi_eff->SetMarkerSize(0.5);
-	phi_eff->Draw("AP");
-	efficiency_c11->Print("signal_selection_nu_phi_efficiency.pdf");
-	TCanvas * efficiency_c12 = new TCanvas();
-	efficiency_c12->cd();
-	TEfficiency * cos_ele_theta_eff = new TEfficiency(*h_ele_cos_theta_eff_num, *h_ele_cos_theta_eff_den);
-	cos_ele_theta_eff->SetTitle(";True Nue Electron Cos(#theta);Efficiency");
-	cos_ele_theta_eff->SetLineColor(kGreen+3);
-	cos_ele_theta_eff->SetMarkerColor(kGreen+3);
-	cos_ele_theta_eff->SetMarkerStyle(20);
-	cos_ele_theta_eff->SetMarkerSize(0.5);
-	cos_ele_theta_eff->Draw("AP");
-	efficiency_c12->Print("signal_selection_ele_cos_theta_efficiency.pdf");
-	TCanvas * efficiency_c13 = new TCanvas();
-	efficiency_c13->cd();
-	TEfficiency * ele_phi_eff = new TEfficiency(*h_ele_phi_eff_num, *h_ele_phi_eff_den);
-	ele_phi_eff->SetTitle(";True Nue Electron Phi;Efficiency");
-	ele_phi_eff->SetLineColor(kGreen+3);
-	ele_phi_eff->SetMarkerColor(kGreen+3);
-	ele_phi_eff->SetMarkerStyle(20);
-	ele_phi_eff->SetMarkerSize(0.5);
-	ele_phi_eff->Draw("AP");
-	efficiency_c13->Print("signal_selection_ele_phi_efficiency.pdf");
-	TCanvas * efficiency_c14 = new TCanvas();
-	efficiency_c14->cd();
-	TEfficiency * ele_dir_x_eff = new TEfficiency(*h_ele_dir_x_eff_num, *h_ele_dir_x_eff_den);
-	ele_dir_x_eff->SetTitle(";True Nue Electron Dir X;Efficiency");
-	ele_dir_x_eff->SetLineColor(kGreen+3);
-	ele_dir_x_eff->SetMarkerColor(kGreen+3);
-	ele_dir_x_eff->SetMarkerStyle(20);
-	ele_dir_x_eff->SetMarkerSize(0.5);
-	ele_dir_x_eff->Draw("AP");
-	efficiency_c14->Print("signal_selection_ele_dir_x_efficiency.pdf");
-	TCanvas * efficiency_c15 = new TCanvas();
-	efficiency_c15->cd();
-	TEfficiency * ele_dir_y_eff = new TEfficiency(*h_ele_dir_y_eff_num, *h_ele_dir_y_eff_den);
-	ele_dir_y_eff->SetTitle(";True Nue Electron Dir Y;Efficiency");
-	ele_dir_y_eff->SetLineColor(kGreen+3);
-	ele_dir_y_eff->SetMarkerColor(kGreen+3);
-	ele_dir_y_eff->SetMarkerStyle(20);
-	ele_dir_y_eff->SetMarkerSize(0.5);
-	ele_dir_y_eff->Draw("AP");
-	efficiency_c15->Print("signal_selection_ele_dir_y_efficiency.pdf");
-	TCanvas * efficiency_c16 = new TCanvas();
-	efficiency_c16->cd();
-	TEfficiency * ele_dir_z_eff = new TEfficiency(*h_ele_dir_z_eff_num, *h_ele_dir_z_eff_den);
-	ele_dir_z_eff->SetTitle(";True Nue Electron Dir Z;Efficiency");
-	ele_dir_z_eff->SetLineColor(kGreen+3);
-	ele_dir_z_eff->SetMarkerColor(kGreen+3);
-	ele_dir_z_eff->SetMarkerStyle(20);
-	ele_dir_z_eff->SetMarkerSize(0.5);
-	ele_dir_z_eff->Draw("AP");
-	efficiency_c16->Print("signal_selection_ele_dir_z_efficiency.pdf");
-	TCanvas * efficiency_c17 = new TCanvas();
-	efficiency_c17->cd();
-	TEfficiency * ele_eng_eff = new TEfficiency(*h_ele_eng_eff_num, *h_ele_eng_eff_den);
-	ele_eng_eff->SetTitle(";True Nue Electron Energy [GeV];Efficiency");
-	ele_eng_eff->SetLineColor(kGreen+3);
-	ele_eng_eff->SetMarkerColor(kGreen+3);
-	ele_eng_eff->SetMarkerStyle(20);
-	ele_eng_eff->SetMarkerSize(0.5);
-	ele_eng_eff->Draw("AP");
-	efficiency_c17->Print("signal_selection_ele_energy_efficiency.pdf");
-
-
+	histogram_functions::PlotTEfficiency (h_nue_eng_eff_num, h_nue_eng_eff_den,
+	                                      ";True Neutrino Energy [GeV];Efficiency", "signal_selection_nu_energy_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_vtx_x_eff_num, h_nue_vtx_x_eff_den,
+	                                      ";True Neutrino Vtx X [cm];Efficiency", "signal_selection_nu_vtx_x_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_vtx_y_eff_num, h_nue_vtx_y_eff_den,
+	                                      ";True Neutrino Vtx Y [cm];Efficiency", "signal_selection_nu_vtx_y_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_vtx_z_eff_num, h_nue_vtx_z_eff_den,
+	                                      ";True Neutrino Vtx Z [cm];Efficiency", "signal_selection_nu_vtx_z_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_dir_x_eff_num, h_nue_dir_x_eff_den,
+	                                      ";True Neutrino Dir X;Efficiency", "signal_selection_nu_dir_x_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_dir_y_eff_num, h_nue_dir_y_eff_den,
+	                                      ";True Neutrino Dir Y;Efficiency", "signal_selection_nu_dir_y_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_dir_z_eff_num, h_nue_dir_z_eff_den,
+	                                      ";True Neutrino Dir Z;Efficiency", "signal_selection_nu_dir_z_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_num_part_eff_num, h_nue_num_part_eff_den,
+	                                      ";True Particle Multiplicity;Efficiency", "signal_selection_nu_num_particles_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_num_chrg_part_eff_num, h_nue_num_chrg_part_eff_den,
+	                                      ";True Charged Particle Multiplicity;Efficiency", "signal_selection_nu_num_charged_particles_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_cos_theta_eff_num, h_nue_cos_theta_eff_den,
+	                                      ";True Neutrino Cos(#theta);Efficiency", "signal_selection_nu_cos_theta_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_nue_phi_eff_num, h_nue_phi_eff_den, ";True Neutrino Phi;Efficiency", "signal_selection_nu_phi_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_cos_theta_eff_num, h_ele_cos_theta_eff_den,
+	                                      ";True Nue Electron Cos(#theta);Efficiency", "signal_selection_ele_cos_theta_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_phi_eff_num, h_ele_phi_eff_den, ";True Nue Electron Phi;Efficiency", "signal_selection_ele_phi_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_dir_x_eff_num, h_ele_dir_x_eff_den,
+	                                      ";True Nue Electron Dir X;Efficiency", "signal_selection_ele_dir_x_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_dir_y_eff_num, h_ele_dir_y_eff_den,
+	                                      ";True Nue Electron Dir Y;Efficiency", "signal_selection_ele_dir_y_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_dir_z_eff_num, h_ele_dir_z_eff_den,
+	                                      ";True Nue Electron Dir Z;Efficiency", "signal_selection_ele_dir_z_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, ";True Nue Electron Energy;Efficiency", "signal_selection_ele_energy_efficiency.pdf");
 
 	double all_energy = 0;
 	for(auto const energy : selected_energy_vector) {all_energy += energy; }
 	const double average_true_energy = all_energy / selected_energy_vector.size();
 	_functions_instance.selection_functions::xsec_plot(_verbose, genie_xsec, xsec_cc->at(0), average_true_energy, xsec_cc->at(1));
 
-	TCanvas * post_cuts_c1 = new TCanvas();
-	post_cuts_c1->cd();
-	h_tracks_showers->GetYaxis()->SetTitle("Reco Showers");
-	h_tracks_showers->GetXaxis()->SetTitle("Reco Tracks");
-	h_tracks_showers->SetTitle("Post Cuts - Showers/Tracks per Candidate Nue TPC Object");
-	h_tracks_showers->SetStats(kFALSE);
-	h_tracks_showers->Draw("colz");
-	post_cuts_c1->Print("post_cuts_showers_tracks.pdf");
 
-	TCanvas * post_cuts_c2 = new TCanvas();
-	post_cuts_c2->cd();
-	h_tracks_showers_cosmic->GetYaxis()->SetTitle("Reco Showers");
-	h_tracks_showers_cosmic->GetXaxis()->SetTitle("Reco Tracks");
-	h_tracks_showers_cosmic->SetTitle("Post Cuts - Showers/Tracks per Candidate Nue TPC Object");
-	h_tracks_showers_cosmic->SetStats(kFALSE);
-	h_tracks_showers_cosmic->Draw("colz");
-	post_cuts_c2->Print("post_cuts_showers_tracks_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_tracks_showers, "Post Cuts - Showers/Tracks per Candidate Nue TPC Object",
+	                                      "Reco Tracks", "Reco Showers", "post_cuts_showers_tracks.pdf");
+	histogram_functions::Plot2DHistogram (h_tracks_showers, "Post Cuts - Showers/Tracks per Candidate Nue TPC Object",
+	                                      "Reco Tracks", "Reco Showers", "post_cuts_showers_tracks_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_tracks_showers, "Post Cuts - Showers/Tracks per Candidate Nue TPC Object",
+	                                      "Reco Tracks", "Reco Showers", "post_cuts_showers_tracks_numu.pdf");
 
-	TCanvas * post_cuts_c3 = new TCanvas();
-	post_cuts_c3->cd();
-	h_tracks_showers_numu->GetYaxis()->SetTitle("Reco Showers");
-	h_tracks_showers_numu->GetXaxis()->SetTitle("Reco Tracks");
-	h_tracks_showers_numu->SetTitle("Post Cuts - Showers/Tracks per Candidate Nue TPC Object");
-	h_tracks_showers_numu->SetStats(kFALSE);
-	h_tracks_showers_numu->Draw("colz");
-	post_cuts_c3->Print("post_cuts_showers_tracks_numu.pdf");
+	histogram_functions::PlotSimpleStack (h_leading_shower_open_angle_nue_cc,  h_leading_shower_open_angle_nue_cc_mixed,
+	                                      h_leading_shower_open_angle_numu_cc, h_leading_shower_open_angle_numu_cc_mixed,
+	                                      h_leading_shower_open_angle_cosmic,  h_leading_shower_open_angle_nc,
+	                                      h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
+	                                      h_leading_shower_open_angle_unmatched, "",
+	                                      "Shower Opening Angle [Degrees]", "", "post_cuts_leading_shower_open_angle.pdf");
 
-	TCanvas * open_angle_stack_c1 = new TCanvas();
-	open_angle_stack_c1->cd();
-	THStack * open_angle_stack = new THStack();
-	h_leading_shower_open_angle_nue_cc->SetStats(kFALSE);
-	h_leading_shower_open_angle_nue_cc_mixed->SetStats(kFALSE);
-	h_leading_shower_open_angle_numu_cc->SetStats(kFALSE);
-	h_leading_shower_open_angle_nc_pi0->SetStats(kFALSE);
-	h_leading_shower_open_angle_cosmic->SetStats(kFALSE);
-	h_leading_shower_open_angle_nc->SetStats(kFALSE);
-	h_leading_shower_open_angle_numu_cc_mixed->SetStats(kFALSE);
-	h_leading_shower_open_angle_other_mixed->SetStats(kFALSE);
-	h_leading_shower_open_angle_unmatched->SetStats(kFALSE);
-	h_leading_shower_open_angle_nue_cc->SetFillColor(30);
-	h_leading_shower_open_angle_nue_cc_mixed->SetFillColor(38);
-	h_leading_shower_open_angle_numu_cc->SetFillColor(28);
-	h_leading_shower_open_angle_nc_pi0->SetFillColor(36);
-	h_leading_shower_open_angle_cosmic->SetFillColor(1);
-	h_leading_shower_open_angle_nc->SetFillColor(46);
-	h_leading_shower_open_angle_numu_cc_mixed->SetFillColor(20);
-	h_leading_shower_open_angle_other_mixed->SetFillColor(42);
-	h_leading_shower_open_angle_unmatched->SetFillColor(12);
-	open_angle_stack->Add(h_leading_shower_open_angle_nue_cc);
-	open_angle_stack->Add(h_leading_shower_open_angle_nue_cc_mixed);
-	open_angle_stack->Add(h_leading_shower_open_angle_cosmic);
-	open_angle_stack->Add(h_leading_shower_open_angle_numu_cc);
-	open_angle_stack->Add(h_leading_shower_open_angle_numu_cc_mixed);
-	open_angle_stack->Add(h_leading_shower_open_angle_nc);
-	open_angle_stack->Add(h_leading_shower_open_angle_nc_pi0);
-	open_angle_stack->Add(h_leading_shower_open_angle_other_mixed);
-	open_angle_stack->Add(h_leading_shower_open_angle_unmatched);
-	open_angle_stack->Draw();
-	open_angle_stack->GetXaxis()->SetTitle("Shower Opening Angle [Degrees]");
+	histogram_functions::PlotSimpleStack (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
+	                                      h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
+	                                      h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
+	                                      h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
+	                                      h_dedx_cuts_unmatched, "",
+	                                      "Collection Plane dE/dx [MeV/cm]", "", "post_cuts_dedx_cuts.pdf");
 
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_leading_shower_open_angle_nue_cc,          "Nue CC", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_cosmic,          "Cosmic", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_numu_cc,         "Numu CC", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_nc,              "NC", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_nc_pi0,          "NC Pi0", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_other_mixed,     "Other Mixed", "f");
-	leg_stack->AddEntry(h_leading_shower_open_angle_unmatched,       "Unmatched", "f");
-	leg_stack->Draw();
-	open_angle_stack_c1->Print("post_cuts_leading_shower_open_angle.pdf");
+	histogram_functions::PlotSimpleStack (h_vtx_flash_nue_cc,  h_vtx_flash_nue_cc_mixed,
+	                                      h_vtx_flash_numu_cc, h_vtx_flash_numu_cc_mixed,
+	                                      h_vtx_flash_cosmic,  h_vtx_flash_nc,
+	                                      h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
+	                                      h_vtx_flash_unmatched, "",
+	                                      "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "", "post_cuts_vtx_to_flash_distance.pdf");
 
+	histogram_functions::PlotSimpleStack (h_trk_vtx_dist_nue_cc,  h_trk_vtx_dist_nue_cc_mixed,
+	                                      h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_numu_cc_mixed,
+	                                      h_trk_vtx_dist_cosmic,  h_trk_vtx_dist_nc,
+	                                      h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
+	                                      h_trk_vtx_dist_unmatched, "",
+	                                      "Track to Nue Candidate Vertex Distance [cm]", "", "post_cuts_track_to_vtx.pdf");
 
-	TCanvas * dedx_cuts_c1 = new TCanvas();
-	dedx_cuts_c1->cd();
-	THStack * dedx_cuts_stack = new THStack();
-	h_dedx_cuts_nue_cc->SetStats(kFALSE);
-	h_dedx_cuts_nue_cc_mixed->SetStats(kFALSE);
-	h_dedx_cuts_numu_cc->SetStats(kFALSE);
-	h_dedx_cuts_nc_pi0->SetStats(kFALSE);
-	h_dedx_cuts_cosmic->SetStats(kFALSE);
-	h_dedx_cuts_nc->SetStats(kFALSE);
-	h_dedx_cuts_numu_cc_mixed->SetStats(kFALSE);
-	h_dedx_cuts_other_mixed->SetStats(kFALSE);
-	h_dedx_cuts_unmatched->SetStats(kFALSE);
-	h_dedx_cuts_nue_cc->SetFillColor(30);
-	h_dedx_cuts_nue_cc_mixed->SetFillColor(38);
-	h_dedx_cuts_numu_cc->SetFillColor(28);
-	h_dedx_cuts_nc_pi0->SetFillColor(36);
-	h_dedx_cuts_cosmic->SetFillColor(1);
-	h_dedx_cuts_nc->SetFillColor(46);
-	h_dedx_cuts_numu_cc_mixed->SetFillColor(25);
-	h_dedx_cuts_other_mixed->SetFillColor(42);
-	h_dedx_cuts_unmatched->SetFillColor(12);
-	dedx_cuts_stack->Add(h_dedx_cuts_nue_cc);
-	dedx_cuts_stack->Add(h_dedx_cuts_nue_cc_mixed);
-	dedx_cuts_stack->Add(h_dedx_cuts_cosmic);
-	dedx_cuts_stack->Add(h_dedx_cuts_numu_cc);
-	dedx_cuts_stack->Add(h_dedx_cuts_numu_cc_mixed);
-	dedx_cuts_stack->Add(h_dedx_cuts_nc);
-	dedx_cuts_stack->Add(h_dedx_cuts_nc_pi0);
-	dedx_cuts_stack->Add(h_dedx_cuts_other_mixed);
-	dedx_cuts_stack->Add(h_dedx_cuts_unmatched);
-	dedx_cuts_stack->Draw();
-	dedx_cuts_stack->GetXaxis()->SetTitle("Collection Plane dE/dx [MeV/cm]");
+	histogram_functions::PlotSimpleStack (h_shwr_vtx_dist_nue_cc,  h_shwr_vtx_dist_nue_cc_mixed,
+	                                      h_shwr_vtx_dist_numu_cc, h_shwr_vtx_dist_numu_cc_mixed,
+	                                      h_shwr_vtx_dist_cosmic,  h_shwr_vtx_dist_nc,
+	                                      h_shwr_vtx_dist_nc_pi0,  h_shwr_vtx_dist_other_mixed,
+	                                      h_shwr_vtx_dist_unmatched, "",
+	                                      "Shower to Nue Candidate Vertex Distance [cm]", "", "post_cuts_shower_to_vtx.pdf");
 
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack_dedx = new TLegend(0.75,0.75,0.95,0.95);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack_dedx->AddEntry(h_dedx_cuts_nue_cc,          "Nue CC", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_cosmic,          "Cosmic", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_numu_cc,         "Numu CC", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_nc,              "NC", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_nc_pi0,          "NC Pi0", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_other_mixed,     "Other Mixed", "f");
-	leg_stack_dedx->AddEntry(h_dedx_cuts_unmatched,       "Unmatched", "f");
-	leg_stack_dedx->Draw();
-	dedx_cuts_c1->Print("post_cuts_dedx_cuts.pdf");
+	histogram_functions::PlotDetailStack(h_pfp_track_nue_cc_qe,
+	                                     h_pfp_track_nue_cc_out_fv,
+	                                     h_pfp_track_nue_cc_res,
+	                                     h_pfp_track_nue_cc_dis,
+	                                     h_pfp_track_nue_cc_coh,
+	                                     h_pfp_track_nue_cc_mec,
+	                                     h_pfp_track_nue_cc_mixed,
+	                                     h_pfp_track_numu_cc_qe,
+	                                     h_pfp_track_numu_cc_res,
+	                                     h_pfp_track_numu_cc_dis,
+	                                     h_pfp_track_numu_cc_coh,
+	                                     h_pfp_track_numu_cc_mec,
+	                                     h_pfp_track_numu_cc_mixed,
+	                                     h_pfp_track_cosmic,
+	                                     h_pfp_track_nc,
+	                                     h_pfp_track_nc_pi0,
+	                                     h_pfp_track_other_mixed,
+	                                     h_pfp_track_unmatched,
+	                                     "Reconstructed Tracks in Candidate Neutrino Object", "", "selected_pfp_track_stack.pdf");
 
-	TCanvas * vtx_to_flash_c1 = new TCanvas();
-	vtx_to_flash_c1->cd();
-	THStack * vtx_to_flash_stack = new THStack();
-	h_vtx_flash_nue_cc->SetStats(kFALSE);
-	h_vtx_flash_nue_cc_mixed->SetStats(kFALSE);
-	h_vtx_flash_numu_cc->SetStats(kFALSE);
-	h_vtx_flash_nc_pi0->SetStats(kFALSE);
-	h_vtx_flash_cosmic->SetStats(kFALSE);
-	h_vtx_flash_nc->SetStats(kFALSE);
-	h_vtx_flash_numu_cc_mixed->SetStats(kFALSE);
-	h_vtx_flash_other_mixed->SetStats(kFALSE);
-	h_vtx_flash_unmatched->SetStats(kFALSE);
-	h_vtx_flash_nue_cc->SetFillColor(30);
-	h_vtx_flash_nue_cc_mixed->SetFillColor(38);
-	h_vtx_flash_numu_cc->SetFillColor(28);
-	h_vtx_flash_nc_pi0->SetFillColor(36);
-	h_vtx_flash_cosmic->SetFillColor(1);
-	h_vtx_flash_nc->SetFillColor(46);
-	h_vtx_flash_numu_cc_mixed->SetFillColor(25);
-	h_vtx_flash_other_mixed->SetFillColor(42);
-	h_vtx_flash_unmatched->SetFillColor(12);
-	vtx_to_flash_stack->Add(h_vtx_flash_nue_cc);
-	vtx_to_flash_stack->Add(h_vtx_flash_nue_cc_mixed);
-	vtx_to_flash_stack->Add(h_vtx_flash_cosmic);
-	vtx_to_flash_stack->Add(h_vtx_flash_numu_cc);
-	vtx_to_flash_stack->Add(h_vtx_flash_numu_cc_mixed);
-	vtx_to_flash_stack->Add(h_vtx_flash_nc);
-	vtx_to_flash_stack->Add(h_vtx_flash_nc_pi0);
-	vtx_to_flash_stack->Add(h_vtx_flash_other_mixed);
-	vtx_to_flash_stack->Add(h_vtx_flash_unmatched);
-	vtx_to_flash_stack->Draw();
-	vtx_to_flash_stack->GetXaxis()->SetTitle("2D Distance From Largest Flash to Reco Nu Vtx [cm]");
+	histogram_functions::PlotDetailStack(h_pfp_shower_nue_cc_qe,
+	                                     h_pfp_shower_nue_cc_out_fv,
+	                                     h_pfp_shower_nue_cc_res,
+	                                     h_pfp_shower_nue_cc_dis,
+	                                     h_pfp_shower_nue_cc_coh,
+	                                     h_pfp_shower_nue_cc_mec,
+	                                     h_pfp_shower_nue_cc_mixed,
+	                                     h_pfp_shower_numu_cc_qe,
+	                                     h_pfp_shower_numu_cc_res,
+	                                     h_pfp_shower_numu_cc_dis,
+	                                     h_pfp_shower_numu_cc_coh,
+	                                     h_pfp_shower_numu_cc_mec,
+	                                     h_pfp_shower_numu_cc_mixed,
+	                                     h_pfp_shower_cosmic,
+	                                     h_pfp_shower_nc,
+	                                     h_pfp_shower_nc_pi0,
+	                                     h_pfp_shower_other_mixed,
+	                                     h_pfp_shower_unmatched,
+	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_stack.pdf");
 
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack_flash = new TLegend(0.75,0.75,0.95,0.95);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack_flash->AddEntry(h_vtx_flash_nue_cc,          "Nue CC", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_cosmic,          "Cosmic", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_numu_cc,         "Numu CC", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_nc,              "NC", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_nc_pi0,          "NC Pi0", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_other_mixed,     "Other Mixed", "f");
-	leg_stack_flash->AddEntry(h_vtx_flash_unmatched,       "Unmatched", "f");
-	leg_stack_flash->Draw();
-	vtx_to_flash_c1->Print("post_cuts_vtx_to_flash_distance.pdf");
-
-	TCanvas * trk_vtx_dist_stack_c1 = new TCanvas();
-	trk_vtx_dist_stack_c1->cd();
-	THStack * trk_vtx_dist_stack = new THStack();
-	h_trk_vtx_dist_nue_cc->SetStats(kFALSE);
-	h_trk_vtx_dist_nue_cc_mixed->SetStats(kFALSE);
-	h_trk_vtx_dist_numu_cc->SetStats(kFALSE);
-	h_trk_vtx_dist_nc_pi0->SetStats(kFALSE);
-	h_trk_vtx_dist_cosmic->SetStats(kFALSE);
-	h_trk_vtx_dist_nc->SetStats(kFALSE);
-	h_trk_vtx_dist_numu_cc_mixed->SetStats(kFALSE);
-	h_trk_vtx_dist_other_mixed->SetStats(kFALSE);
-	h_trk_vtx_dist_unmatched->SetStats(kFALSE);
-	h_trk_vtx_dist_nue_cc->SetFillColor(30);
-	h_trk_vtx_dist_nue_cc_mixed->SetFillColor(38);
-	h_trk_vtx_dist_numu_cc->SetFillColor(28);
-	h_trk_vtx_dist_nc_pi0->SetFillColor(36);
-	h_trk_vtx_dist_cosmic->SetFillColor(1);
-	h_trk_vtx_dist_nc->SetFillColor(46);
-	h_trk_vtx_dist_numu_cc_mixed->SetFillColor(25);
-	h_trk_vtx_dist_other_mixed->SetFillColor(42);
-	h_trk_vtx_dist_unmatched->SetFillColor(12);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_cc);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nue_cc_mixed);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_cosmic);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_cc);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_numu_cc_mixed);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nc);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_nc_pi0);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_other_mixed);
-	trk_vtx_dist_stack->Add(h_trk_vtx_dist_unmatched);
-	trk_vtx_dist_stack->Draw();
-	trk_vtx_dist_stack->GetXaxis()->SetTitle("Track to Nue Candidate Vertex Distance [cm]");
-
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack2 = new TLegend(0.75,0.75,0.95,0.95);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack2->AddEntry(h_trk_vtx_dist_nue_cc,          "Nue CC", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_cosmic,          "Cosmic", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_numu_cc,         "Numu CC", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_nc,              "NC", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_nc_pi0,          "NC Pi0", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_other_mixed,     "Other Mixed", "f");
-	leg_stack2->AddEntry(h_trk_vtx_dist_unmatched,       "Unmatched", "f");
-	leg_stack2->Draw();
-	trk_vtx_dist_stack_c1->Print("post_cuts_track_to_vtx.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_qe, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_qe.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_out_fv, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_res, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_res.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_dis, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_dis.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_coh, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_coh.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_mec, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_mec.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_mixed, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_qe, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_qe.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_res, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_res.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_dis, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_dis.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_coh, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_coh.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_mec, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_mec.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_mixed, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nc, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nc.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nc_pi0, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_cosmic, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_other_mixed, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_other_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_unmatched, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_unmatched.pdf");
 
 
-	TCanvas * shwr_vtx_dist_stack_c1 = new TCanvas();
-	shwr_vtx_dist_stack_c1->cd();
-	THStack * shwr_vtx_dist_stack = new THStack();
-	h_shwr_vtx_dist_nue_cc->SetStats(kFALSE);
-	h_shwr_vtx_dist_nue_cc_mixed->SetStats(kFALSE);
-	h_shwr_vtx_dist_numu_cc->SetStats(kFALSE);
-	h_shwr_vtx_dist_nc_pi0->SetStats(kFALSE);
-	h_shwr_vtx_dist_cosmic->SetStats(kFALSE);
-	h_shwr_vtx_dist_nc->SetStats(kFALSE);
-	h_shwr_vtx_dist_numu_cc_mixed->SetStats(kFALSE);
-	h_shwr_vtx_dist_other_mixed->SetStats(kFALSE);
-	h_shwr_vtx_dist_unmatched->SetStats(kFALSE);
-	h_shwr_vtx_dist_nue_cc->SetFillColor(30);
-	h_shwr_vtx_dist_nue_cc_mixed->SetFillColor(38);
-	h_shwr_vtx_dist_numu_cc->SetFillColor(28);
-	h_shwr_vtx_dist_nc_pi0->SetFillColor(36);
-	h_shwr_vtx_dist_cosmic->SetFillColor(1);
-	h_shwr_vtx_dist_nc->SetFillColor(46);
-	h_shwr_vtx_dist_numu_cc_mixed->SetFillColor(25);
-	h_shwr_vtx_dist_other_mixed->SetFillColor(42);
-	h_shwr_vtx_dist_unmatched->SetFillColor(12);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_cc);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nue_cc_mixed);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_cosmic);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_numu_cc_mixed);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nc);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_nc_pi0);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_other_mixed);
-	shwr_vtx_dist_stack->Add(h_shwr_vtx_dist_unmatched);
-	shwr_vtx_dist_stack->Draw();
-	shwr_vtx_dist_stack->GetXaxis()->SetTitle("Shower to Nue Candidate Vertex Distance [cm]");
+	histogram_functions::PlotDetailStack(h_pfp_track_nue_cc_qe_last,
+	                                     h_pfp_track_nue_cc_out_fv_last,
+	                                     h_pfp_track_nue_cc_res_last,
+	                                     h_pfp_track_nue_cc_dis_last,
+	                                     h_pfp_track_nue_cc_coh_last,
+	                                     h_pfp_track_nue_cc_mec_last,
+	                                     h_pfp_track_nue_cc_mixed_last,
+	                                     h_pfp_track_numu_cc_qe_last,
+	                                     h_pfp_track_numu_cc_res_last,
+	                                     h_pfp_track_numu_cc_dis_last,
+	                                     h_pfp_track_numu_cc_coh_last,
+	                                     h_pfp_track_numu_cc_mec_last,
+	                                     h_pfp_track_numu_cc_mixed_last,
+	                                     h_pfp_track_cosmic_last,
+	                                     h_pfp_track_nc_last,
+	                                     h_pfp_track_nc_pi0_last,
+	                                     h_pfp_track_other_mixed_last,
+	                                     h_pfp_track_unmatched_last,
+	                                     "Reconstructed Tracks in Candidate Neutrino Object", "", "selected_pfp_track_stack.pdf");
 
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack_shwr = new TLegend(0.75,0.75,0.95,0.95);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nue_cc,          "Nue CC", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_cosmic,          "Cosmic", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_numu_cc,         "Numu CC", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nc,              "NC", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_nc_pi0,          "NC Pi0", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_other_mixed,     "Other Mixed", "f");
-	leg_stack_shwr->AddEntry(h_shwr_vtx_dist_unmatched,       "Unmatched", "f");
-	leg_stack_shwr->Draw();
-	shwr_vtx_dist_stack_c1->Print("post_cuts_shower_to_vtx.pdf");
+	histogram_functions::PlotDetailStack(h_pfp_shower_nue_cc_qe_last,
+	                                     h_pfp_shower_nue_cc_out_fv_last,
+	                                     h_pfp_shower_nue_cc_res_last,
+	                                     h_pfp_shower_nue_cc_dis_last,
+	                                     h_pfp_shower_nue_cc_coh_last,
+	                                     h_pfp_shower_nue_cc_mec_last,
+	                                     h_pfp_shower_nue_cc_mixed_last,
+	                                     h_pfp_shower_numu_cc_qe_last,
+	                                     h_pfp_shower_numu_cc_res_last,
+	                                     h_pfp_shower_numu_cc_dis_last,
+	                                     h_pfp_shower_numu_cc_coh_last,
+	                                     h_pfp_shower_numu_cc_mec_last,
+	                                     h_pfp_shower_numu_cc_mixed_last,
+	                                     h_pfp_shower_cosmic_last,
+	                                     h_pfp_shower_nc_last,
+	                                     h_pfp_shower_nc_pi0_last,
+	                                     h_pfp_shower_other_mixed_last,
+	                                     h_pfp_shower_unmatched_last,
+	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_stack.pdf");
 
-	TCanvas * track_stack_c1 = new TCanvas();
-	track_stack_c1->cd();
-	THStack * h_track_stack = new THStack();
-	h_pfp_track_nue_cc_qe->SetStats(kFALSE);
-	h_pfp_track_nue_cc_out_fv->SetStats(kFALSE);
-	h_pfp_track_nue_cc_res->SetStats(kFALSE);
-	h_pfp_track_nue_cc_dis->SetStats(kFALSE);
-	h_pfp_track_nue_cc_coh->SetStats(kFALSE);
-	h_pfp_track_nue_cc_mec->SetStats(kFALSE);
-	h_pfp_track_nc->SetStats(kFALSE);
-	h_pfp_track_numu_cc_qe->SetStats(kFALSE);
-	h_pfp_track_numu_cc_res->SetStats(kFALSE);
-	h_pfp_track_numu_cc_dis->SetStats(kFALSE);
-	h_pfp_track_numu_cc_coh->SetStats(kFALSE);
-	h_pfp_track_numu_cc_mec->SetStats(kFALSE);
-	h_pfp_track_nc_pi0->SetStats(kFALSE);
-	h_pfp_track_nue_cc_mixed->SetStats(kFALSE);
-	h_pfp_track_numu_cc_mixed->SetStats(kFALSE);
-	h_pfp_track_cosmic->SetStats(kFALSE);
-	h_pfp_track_other_mixed->SetStats(kFALSE);
-	h_pfp_track_unmatched->SetStats(kFALSE);
-	h_pfp_track_nue_cc_qe->SetFillColor(30);
-	h_pfp_track_nue_cc_out_fv->SetFillColor(45);
-	h_pfp_track_nue_cc_res->SetFillColor(31);
-	h_pfp_track_nue_cc_dis->SetFillColor(32);
-	h_pfp_track_nue_cc_coh->SetFillColor(33);
-	h_pfp_track_nue_cc_mec->SetFillColor(34);
-	h_pfp_track_nc->SetFillColor(46);
-	h_pfp_track_numu_cc_qe->SetFillColor(28);
-	h_pfp_track_numu_cc_res->SetFillColor(27);
-	h_pfp_track_numu_cc_dis->SetFillColor(26);
-	h_pfp_track_numu_cc_coh->SetFillColor(23);
-	h_pfp_track_numu_cc_mec->SetFillColor(22);
-	h_pfp_track_nc_pi0->SetFillColor(36);
-	h_pfp_track_nue_cc_mixed->SetFillColor(38);
-	h_pfp_track_numu_cc_mixed->SetFillColor(25);
-	h_pfp_track_cosmic->SetFillColor(39);
-	h_pfp_track_other_mixed->SetFillColor(42);
-	h_pfp_track_unmatched->SetFillColor(12);
-	h_track_stack->Add(h_pfp_track_nue_cc_qe    );
-	h_track_stack->Add(h_pfp_track_nue_cc_out_fv);
-	h_track_stack->Add(h_pfp_track_nue_cc_res   );
-	h_track_stack->Add(h_pfp_track_nue_cc_dis   );
-	h_track_stack->Add(h_pfp_track_nue_cc_coh   );
-	h_track_stack->Add(h_pfp_track_nue_cc_mec   );
-	h_track_stack->Add(h_pfp_track_nc       );
-	h_track_stack->Add(h_pfp_track_numu_cc_qe   );
-	h_track_stack->Add(h_pfp_track_numu_cc_res  );
-	h_track_stack->Add(h_pfp_track_numu_cc_dis  );
-	h_track_stack->Add(h_pfp_track_numu_cc_coh  );
-	h_track_stack->Add(h_pfp_track_numu_cc_mec  );
-	h_track_stack->Add(h_pfp_track_nc_pi0      );
-	h_track_stack->Add(h_pfp_track_nue_cc_mixed );
-	h_track_stack->Add(h_pfp_track_numu_cc_mixed);
-	h_track_stack->Add(h_pfp_track_cosmic       );
-	h_track_stack->Add(h_pfp_track_other_mixed  );
-	h_track_stack->Add(h_pfp_track_unmatched    );
-	h_track_stack->Draw();
-	h_track_stack->GetXaxis()->SetTitle("Reconstructed Tracks in Candidate Neutrino Object");
-	TLegend * leg_track_stack_l1 = new TLegend(0.75, 0.50, 0.95, 0.95);
-	leg_track_stack_l1->AddEntry(h_pfp_track_nue_cc_qe,      "Nue CC QE", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nue_cc_out_fv,  "Nue CC Out FV", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nue_cc_res,     "Nue CC Res", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nue_cc_dis,     "Nue CC DIS", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nue_cc_coh,     "Nue CC Coh", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nue_cc_mec,     "Nue CC MEC", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nc,         "NC", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_numu_cc_qe,     "Numu CC QE", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_numu_cc_res,    "Numu CC Res", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_numu_cc_dis,    "Numu CC DIS", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_numu_cc_coh,    "Numu CC Coh", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_numu_cc_mec,    "Numu CC MEC", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nc_pi0,        "NC Pi0", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_nue_cc_mixed,   "Nue CC Mixed", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_numu_cc_mixed,  "Numu CC Mixed", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_cosmic,         "Cosmic", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_other_mixed,    "Other Mixed", "f");
-	leg_track_stack_l1->AddEntry(h_pfp_track_unmatched,      "Unmatched", "f");
-	leg_track_stack_l1->Draw();
-	track_stack_c1->Print("selected_pfp_track_stack.pdf");
-
-	TCanvas * shower_stack_c1 = new TCanvas();
-	shower_stack_c1->cd();
-	THStack * h_shower_stack = new THStack();
-	h_pfp_shower_nue_cc_qe->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_out_fv->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_res->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_dis->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_coh->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_mec->SetStats(kFALSE);
-	h_pfp_shower_nc->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_qe->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_res->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_dis->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_coh->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_mec->SetStats(kFALSE);
-	h_pfp_shower_nc_pi0->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_mixed->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_mixed->SetStats(kFALSE);
-	h_pfp_shower_cosmic->SetStats(kFALSE);
-	h_pfp_shower_other_mixed->SetStats(kFALSE);
-	h_pfp_shower_unmatched->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_qe->SetFillColor(30);
-	h_pfp_shower_nue_cc_out_fv->SetFillColor(45);
-	h_pfp_shower_nue_cc_res->SetFillColor(31);
-	h_pfp_shower_nue_cc_dis->SetFillColor(32);
-	h_pfp_shower_nue_cc_coh->SetFillColor(33);
-	h_pfp_shower_nue_cc_mec->SetFillColor(34);
-	h_pfp_shower_nc->SetFillColor(46);
-	h_pfp_shower_numu_cc_qe->SetFillColor(28);
-	h_pfp_shower_numu_cc_res->SetFillColor(27);
-	h_pfp_shower_numu_cc_dis->SetFillColor(26);
-	h_pfp_shower_numu_cc_coh->SetFillColor(23);
-	h_pfp_shower_numu_cc_mec->SetFillColor(22);
-	h_pfp_shower_nc_pi0->SetFillColor(36);
-	h_pfp_shower_nue_cc_mixed->SetFillColor(38);
-	h_pfp_shower_numu_cc_mixed->SetFillColor(25);
-	h_pfp_shower_cosmic->SetFillColor(39);
-	h_pfp_shower_other_mixed->SetFillColor(42);
-	h_pfp_shower_unmatched->SetFillColor(12);
-	h_shower_stack->Add(h_pfp_shower_nue_cc_qe    );
-	h_shower_stack->Add(h_pfp_shower_nue_cc_out_fv);
-	h_shower_stack->Add(h_pfp_shower_nue_cc_res   );
-	h_shower_stack->Add(h_pfp_shower_nue_cc_dis   );
-	h_shower_stack->Add(h_pfp_shower_nue_cc_coh   );
-	h_shower_stack->Add(h_pfp_shower_nue_cc_mec   );
-	h_shower_stack->Add(h_pfp_shower_nc       );
-	h_shower_stack->Add(h_pfp_shower_numu_cc_qe   );
-	h_shower_stack->Add(h_pfp_shower_numu_cc_res  );
-	h_shower_stack->Add(h_pfp_shower_numu_cc_dis  );
-	h_shower_stack->Add(h_pfp_shower_numu_cc_coh  );
-	h_shower_stack->Add(h_pfp_shower_numu_cc_mec  );
-	h_shower_stack->Add(h_pfp_shower_nc_pi0      );
-	h_shower_stack->Add(h_pfp_shower_nue_cc_mixed );
-	h_shower_stack->Add(h_pfp_shower_numu_cc_mixed);
-	h_shower_stack->Add(h_pfp_shower_cosmic       );
-	h_shower_stack->Add(h_pfp_shower_other_mixed  );
-	h_shower_stack->Add(h_pfp_shower_unmatched    );
-	h_shower_stack->Draw();
-	h_shower_stack->GetXaxis()->SetTitle("Reconstructed Showers in Candidate Neutrino Object");
-	TLegend * leg_shower_stack_l1 = new TLegend(0.75, 0.50, 0.95, 0.95);
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nue_cc_qe,      "Nue CC QE", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nue_cc_out_fv,  "Nue CC Out FV", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nue_cc_res,     "Nue CC Res", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nue_cc_dis,     "Nue CC DIS", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nue_cc_coh,     "Nue CC Coh", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nue_cc_mec,     "Nue CC MEC", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nc,         "NC", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_numu_cc_qe,     "Numu CC QE", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_numu_cc_res,    "Numu CC Res", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_numu_cc_dis,    "Numu CC DIS", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_numu_cc_coh,    "Numu CC Coh", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_numu_cc_mec,    "Numu CC MEC", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nc_pi0,        "NC Pi0", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_nue_cc_mixed,   "Nue CC Mixed", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_numu_cc_mixed,  "Numu CC Mixed", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_cosmic,         "Cosmic", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_other_mixed,    "Other Mixed", "f");
-	leg_shower_stack_l1->AddEntry(h_pfp_shower_unmatched,      "Unmatched", "f");
-	leg_shower_stack_l1->Draw();
-	shower_stack_c1->Print("selected_pfp_shower_stack.pdf");
-
-	TCanvas * track_shower_c1 = new TCanvas();
-	track_shower_c1->cd();
-	h_pfp_track_shower_nue_cc_qe->Draw("colz");
-	h_pfp_track_shower_nue_cc_qe->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_qe->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c1->Print("selected_pfp_track_shower_nue_cc_qe.pdf");
-	TCanvas * track_shower_c2 = new TCanvas();
-	track_shower_c2->cd();
-	h_pfp_track_shower_nue_cc_out_fv->Draw("colz");
-	h_pfp_track_shower_nue_cc_out_fv->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_out_fv->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c2->Print("selected_pfp_track_shower_nue_cc_out_fv.pdf");
-	TCanvas * track_shower_c3 = new TCanvas();
-	track_shower_c3->cd();
-	h_pfp_track_shower_nue_cc_res->Draw("colz");
-	h_pfp_track_shower_nue_cc_res->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_res->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c3->Print("selected_pfp_track_shower_nue_cc_res.pdf");
-	TCanvas * track_shower_c4 = new TCanvas();
-	track_shower_c4->cd();
-	h_pfp_track_shower_nue_cc_dis->Draw("colz");
-	h_pfp_track_shower_nue_cc_dis->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_dis->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c4->Print("selected_pfp_track_shower_nue_cc_dis.pdf");
-	TCanvas * track_shower_c5 = new TCanvas();
-	track_shower_c5->cd();
-	h_pfp_track_shower_nue_cc_coh->Draw("colz");
-	h_pfp_track_shower_nue_cc_coh->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_coh->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c5->Print("selected_pfp_track_shower_nue_cc_coh.pdf");
-	TCanvas * track_shower_c6 = new TCanvas();
-	track_shower_c6->cd();
-	h_pfp_track_shower_nue_cc_mec->Draw("colz");
-	h_pfp_track_shower_nue_cc_mec->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_mec->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c6->Print("selected_pfp_track_shower_nue_cc_mec.pdf");
-	TCanvas * track_shower_c7 = new TCanvas();
-	track_shower_c7->cd();
-	h_pfp_track_shower_nc->Draw("colz");
-	h_pfp_track_shower_nc->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nc->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c7->Print("selected_pfp_track_shower_nc.pdf");
-	TCanvas * track_shower_c8 = new TCanvas();
-	track_shower_c8->cd();
-	h_pfp_track_shower_numu_cc_qe->Draw("colz");
-	h_pfp_track_shower_numu_cc_qe->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_qe->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c8->Print("selected_pfp_track_shower_numu_cc_qe.pdf");
-	TCanvas * track_shower_c9 = new TCanvas();
-	track_shower_c9->cd();
-	h_pfp_track_shower_numu_cc_res->Draw("colz");
-	h_pfp_track_shower_numu_cc_res->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_res->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c9->Print("selected_pfp_track_shower_numu_cc_res.pdf");
-	TCanvas * track_shower_c10 = new TCanvas();
-	track_shower_c10->cd();
-	h_pfp_track_shower_numu_cc_dis->Draw("colz");
-	h_pfp_track_shower_numu_cc_dis->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_dis->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c10->Print("selected_pfp_track_shower_numu_cc_dis.pdf");
-	TCanvas * track_shower_c11 = new TCanvas();
-	track_shower_c11->cd();
-	h_pfp_track_shower_numu_cc_coh->Draw("colz");
-	h_pfp_track_shower_numu_cc_coh->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_coh->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c11->Print("selected_pfp_track_shower_numu_cc_coh.pdf");
-	TCanvas * track_shower_c12 = new TCanvas();
-	track_shower_c12->cd();
-	h_pfp_track_shower_numu_cc_mec->Draw("colz");
-	h_pfp_track_shower_numu_cc_mec->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_mec->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c12->Print("selected_pfp_track_shower_numu_cc_mec.pdf");
-	TCanvas * track_shower_c13 = new TCanvas();
-	track_shower_c13->cd();
-	h_pfp_track_shower_nc_pi0->Draw("colz");
-	h_pfp_track_shower_nc_pi0->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nc_pi0->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c13->Print("selected_pfp_track_shower_nc_pi0.pdf");
-	TCanvas * track_shower_c14 = new TCanvas();
-	track_shower_c14->cd();
-	h_pfp_track_shower_nue_cc_mixed->Draw("colz");
-	h_pfp_track_shower_nue_cc_mixed->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_mixed->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c14->Print("selected_pfp_track_shower_nue_cc_mixed.pdf");
-	TCanvas * track_shower_c15 = new TCanvas();
-	track_shower_c15->cd();
-	h_pfp_track_shower_numu_cc_mixed->Draw("colz");
-	h_pfp_track_shower_numu_cc_mixed->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_mixed->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c15->Print("selected_pfp_track_shower_numu_cc_mixed.pdf");
-	TCanvas * track_shower_c16 = new TCanvas();
-	track_shower_c16->cd();
-	h_pfp_track_shower_cosmic->Draw("colz");
-	h_pfp_track_shower_cosmic->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_cosmic->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c16->Print("selected_pfp_track_shower_cosmic.pdf");
-	TCanvas * track_shower_c17 = new TCanvas();
-	track_shower_c17->cd();
-	h_pfp_track_shower_other_mixed->Draw("colz");
-	h_pfp_track_shower_other_mixed->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_other_mixed->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c17->Print("selected_pfp_track_shower_other_mixed.pdf");
-	TCanvas * track_shower_c18 = new TCanvas();
-	track_shower_c18->cd();
-	h_pfp_track_shower_unmatched->Draw("colz");
-	h_pfp_track_shower_unmatched->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_unmatched->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c18->Print("selected_pfp_track_shower_unmatched.pdf");
-
-	TCanvas * track_stack_c2 = new TCanvas();
-	track_stack_c2->cd();
-	THStack * h_track_stack_last = new THStack();
-	h_pfp_track_nue_cc_qe_last->SetStats(kFALSE);
-	h_pfp_track_nue_cc_out_fv_last->SetStats(kFALSE);
-	h_pfp_track_nue_cc_res_last->SetStats(kFALSE);
-	h_pfp_track_nue_cc_dis_last->SetStats(kFALSE);
-	h_pfp_track_nue_cc_coh_last->SetStats(kFALSE);
-	h_pfp_track_nue_cc_mec_last->SetStats(kFALSE);
-	h_pfp_track_nc_last->SetStats(kFALSE);
-	h_pfp_track_numu_cc_qe_last->SetStats(kFALSE);
-	h_pfp_track_numu_cc_res_last->SetStats(kFALSE);
-	h_pfp_track_numu_cc_dis_last->SetStats(kFALSE);
-	h_pfp_track_numu_cc_coh_last->SetStats(kFALSE);
-	h_pfp_track_numu_cc_mec_last->SetStats(kFALSE);
-	h_pfp_track_nc_pi0_last->SetStats(kFALSE);
-	h_pfp_track_nue_cc_mixed_last->SetStats(kFALSE);
-	h_pfp_track_numu_cc_mixed_last->SetStats(kFALSE);
-	h_pfp_track_cosmic_last->SetStats(kFALSE);
-	h_pfp_track_other_mixed_last->SetStats(kFALSE);
-	h_pfp_track_unmatched_last->SetStats(kFALSE);
-	h_pfp_track_nue_cc_qe_last->SetFillColor(30);
-	h_pfp_track_nue_cc_out_fv_last->SetFillColor(45);
-	h_pfp_track_nue_cc_res_last->SetFillColor(31);
-	h_pfp_track_nue_cc_dis_last->SetFillColor(32);
-	h_pfp_track_nue_cc_coh_last->SetFillColor(33);
-	h_pfp_track_nue_cc_mec_last->SetFillColor(34);
-	h_pfp_track_nc_last->SetFillColor(46);
-	h_pfp_track_numu_cc_qe_last->SetFillColor(28);
-	h_pfp_track_numu_cc_res_last->SetFillColor(27);
-	h_pfp_track_numu_cc_dis_last->SetFillColor(26);
-	h_pfp_track_numu_cc_coh_last->SetFillColor(23);
-	h_pfp_track_numu_cc_mec_last->SetFillColor(22);
-	h_pfp_track_nc_pi0_last->SetFillColor(36);
-	h_pfp_track_nue_cc_mixed_last->SetFillColor(38);
-	h_pfp_track_numu_cc_mixed_last->SetFillColor(25);
-	h_pfp_track_cosmic_last->SetFillColor(39);
-	h_pfp_track_other_mixed_last->SetFillColor(42);
-	h_pfp_track_unmatched_last->SetFillColor(12);
-	h_track_stack_last->Add(h_pfp_track_nue_cc_qe_last    );
-	h_track_stack_last->Add(h_pfp_track_nue_cc_out_fv_last);
-	h_track_stack_last->Add(h_pfp_track_nue_cc_res_last   );
-	h_track_stack_last->Add(h_pfp_track_nue_cc_dis_last   );
-	h_track_stack_last->Add(h_pfp_track_nue_cc_coh_last   );
-	h_track_stack_last->Add(h_pfp_track_nue_cc_mec_last   );
-	h_track_stack_last->Add(h_pfp_track_nc_last       );
-	h_track_stack_last->Add(h_pfp_track_numu_cc_qe_last   );
-	h_track_stack_last->Add(h_pfp_track_numu_cc_res_last  );
-	h_track_stack_last->Add(h_pfp_track_numu_cc_dis_last  );
-	h_track_stack_last->Add(h_pfp_track_numu_cc_coh_last  );
-	h_track_stack_last->Add(h_pfp_track_numu_cc_mec_last  );
-	h_track_stack_last->Add(h_pfp_track_nc_pi0_last      );
-	h_track_stack_last->Add(h_pfp_track_nue_cc_mixed_last );
-	h_track_stack_last->Add(h_pfp_track_numu_cc_mixed_last);
-	h_track_stack_last->Add(h_pfp_track_cosmic_last       );
-	h_track_stack_last->Add(h_pfp_track_other_mixed_last  );
-	h_track_stack_last->Add(h_pfp_track_unmatched_last    );
-	h_track_stack_last->Draw();
-	h_track_stack_last->GetXaxis()->SetTitle("Reconstructed Tracks in Candidate Neutrino Object");
-	TLegend * leg_track_stack_l2 = new TLegend(0.75, 0.50, 0.95, 0.95);
-	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_qe_last,      "Nue CC QE", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_out_fv_last,  "Nue CC Out FV", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_res_last,     "Nue CC Res", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_dis_last,     "Nue CC DIS", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_coh_last,     "Nue CC Coh", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_mec_last,     "Nue CC MEC", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nc_last,         "NC", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_qe_last,     "Numu CC QE", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_res_last,    "Numu CC Res", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_dis_last,    "Numu CC DIS", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_coh_last,    "Numu CC Coh", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_mec_last,    "Numu CC MEC", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nc_pi0_last,        "NC Pi0", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_nue_cc_mixed_last,   "Nue CC Mixed", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_numu_cc_mixed_last,  "Numu CC Mixed", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_cosmic_last,         "Cosmic", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_other_mixed_last,    "Other Mixed", "f");
-	leg_track_stack_l2->AddEntry(h_pfp_track_unmatched_last,      "Unmatched", "f");
-	leg_track_stack_l2->Draw();
-	track_stack_c2->Print("selected_pfp_track_stack_last.pdf");
-
-	TCanvas * shower_stack_c2 = new TCanvas();
-	shower_stack_c2->cd();
-	THStack * h_shower_stack_last = new THStack();
-	h_pfp_shower_nue_cc_qe_last->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_out_fv_last->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_res_last->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_dis_last->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_coh_last->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_mec_last->SetStats(kFALSE);
-	h_pfp_shower_nc_last->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_qe_last->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_res_last->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_dis_last->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_coh_last->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_mec_last->SetStats(kFALSE);
-	h_pfp_shower_nc_pi0_last->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_mixed_last->SetStats(kFALSE);
-	h_pfp_shower_numu_cc_mixed_last->SetStats(kFALSE);
-	h_pfp_shower_cosmic_last->SetStats(kFALSE);
-	h_pfp_shower_other_mixed_last->SetStats(kFALSE);
-	h_pfp_shower_unmatched_last->SetStats(kFALSE);
-	h_pfp_shower_nue_cc_qe_last->SetFillColor(30);
-	h_pfp_shower_nue_cc_out_fv_last->SetFillColor(45);
-	h_pfp_shower_nue_cc_res_last->SetFillColor(31);
-	h_pfp_shower_nue_cc_dis_last->SetFillColor(32);
-	h_pfp_shower_nue_cc_coh_last->SetFillColor(33);
-	h_pfp_shower_nue_cc_mec_last->SetFillColor(34);
-	h_pfp_shower_nc_last->SetFillColor(46);
-	h_pfp_shower_numu_cc_qe_last->SetFillColor(28);
-	h_pfp_shower_numu_cc_res_last->SetFillColor(27);
-	h_pfp_shower_numu_cc_dis_last->SetFillColor(26);
-	h_pfp_shower_numu_cc_coh_last->SetFillColor(23);
-	h_pfp_shower_numu_cc_mec_last->SetFillColor(22);
-	h_pfp_shower_nc_pi0_last->SetFillColor(36);
-	h_pfp_shower_nue_cc_mixed_last->SetFillColor(38);
-	h_pfp_shower_numu_cc_mixed_last->SetFillColor(25);
-	h_pfp_shower_cosmic_last->SetFillColor(39);
-	h_pfp_shower_other_mixed_last->SetFillColor(42);
-	h_pfp_shower_unmatched_last->SetFillColor(12);
-	h_shower_stack_last->Add(h_pfp_shower_nue_cc_qe_last    );
-	h_shower_stack_last->Add(h_pfp_shower_nue_cc_out_fv_last);
-	h_shower_stack_last->Add(h_pfp_shower_nue_cc_res_last   );
-	h_shower_stack_last->Add(h_pfp_shower_nue_cc_dis_last   );
-	h_shower_stack_last->Add(h_pfp_shower_nue_cc_coh_last   );
-	h_shower_stack_last->Add(h_pfp_shower_nue_cc_mec_last   );
-	h_shower_stack_last->Add(h_pfp_shower_nc_last       );
-	h_shower_stack_last->Add(h_pfp_shower_numu_cc_qe_last   );
-	h_shower_stack_last->Add(h_pfp_shower_numu_cc_res_last  );
-	h_shower_stack_last->Add(h_pfp_shower_numu_cc_dis_last  );
-	h_shower_stack_last->Add(h_pfp_shower_numu_cc_coh_last  );
-	h_shower_stack_last->Add(h_pfp_shower_numu_cc_mec_last  );
-	h_shower_stack_last->Add(h_pfp_shower_nc_pi0_last      );
-	h_shower_stack_last->Add(h_pfp_shower_nue_cc_mixed_last );
-	h_shower_stack_last->Add(h_pfp_shower_numu_cc_mixed_last);
-	h_shower_stack_last->Add(h_pfp_shower_cosmic_last       );
-	h_shower_stack_last->Add(h_pfp_shower_other_mixed_last  );
-	h_shower_stack_last->Add(h_pfp_shower_unmatched_last    );
-	h_shower_stack_last->Draw();
-	h_shower_stack->GetXaxis()->SetTitle("Reconstructed Showers in Candidate Neutrino Object");
-	TLegend * leg_shower_stack_l2 = new TLegend(0.75, 0.50, 0.95, 0.95);
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_qe_last,      "Nue CC QE", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_out_fv_last,  "Nue CC Out FV", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_res_last,     "Nue CC Res", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_dis_last,     "Nue CC DIS", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_coh_last,     "Nue CC Coh", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_mec_last,     "Nue CC MEC", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nc_last,         "NC", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_qe_last,     "Numu CC QE", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_res_last,    "Numu CC Res", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_dis_last,    "Numu CC DIS", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_coh_last,    "Numu CC Coh", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_mec_last,    "Numu CC MEC", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nc_pi0_last,        "NC Pi0", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_nue_cc_mixed_last,   "Nue CC Mixed", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_numu_cc_mixed_last,  "Numu CC Mixed", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_cosmic_last,         "Cosmic", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_other_mixed_last,    "Other Mixed", "f");
-	leg_shower_stack_l2->AddEntry(h_pfp_shower_unmatched_last,      "Unmatched", "f");
-	leg_shower_stack_l2->Draw();
-	shower_stack_c2->Print("selected_pfp_shower_stack_last.pdf");
-
-	TCanvas * track_shower_c1_last = new TCanvas();
-	track_shower_c1_last->cd();
-	h_pfp_track_shower_nue_cc_qe_last->Draw("colz");
-	h_pfp_track_shower_nue_cc_qe_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_qe_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c1_last->Print("selected_pfp_track_shower_nue_cc_qe_last.pdf");
-	TCanvas * track_shower_c2_last = new TCanvas();
-	track_shower_c2_last->cd();
-	h_pfp_track_shower_nue_cc_out_fv_last->Draw("colz");
-	h_pfp_track_shower_nue_cc_out_fv_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_out_fv_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c2_last->Print("selected_pfp_track_shower_nue_cc_out_fv_last.pdf");
-	TCanvas * track_shower_c3_last = new TCanvas();
-	track_shower_c3_last->cd();
-	h_pfp_track_shower_nue_cc_res_last->Draw("colz");
-	h_pfp_track_shower_nue_cc_res_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_res_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c3_last->Print("selected_pfp_track_shower_nue_cc_res_last.pdf");
-	TCanvas * track_shower_c4_last = new TCanvas();
-	track_shower_c4_last->cd();
-	h_pfp_track_shower_nue_cc_dis_last->Draw("colz");
-	h_pfp_track_shower_nue_cc_dis_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_dis_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c4_last->Print("selected_pfp_track_shower_nue_cc_dis_last.pdf");
-	TCanvas * track_shower_c5_last = new TCanvas();
-	track_shower_c5_last->cd();
-	h_pfp_track_shower_nue_cc_coh_last->Draw("colz");
-	h_pfp_track_shower_nue_cc_coh_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_coh_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c5_last->Print("selected_pfp_track_shower_nue_cc_coh_last.pdf");
-	TCanvas * track_shower_c6_last = new TCanvas();
-	track_shower_c6_last->cd();
-	h_pfp_track_shower_nue_cc_mec_last->Draw("colz");
-	h_pfp_track_shower_nue_cc_mec_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_mec_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c6_last->Print("selected_pfp_track_shower_nue_cc_mec_last.pdf");
-	TCanvas * track_shower_c7_last = new TCanvas();
-	track_shower_c7_last->cd();
-	h_pfp_track_shower_nc_last->Draw("colz");
-	h_pfp_track_shower_nc_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nc_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c7_last->Print("selected_pfp_track_shower_nc_last.pdf");
-	TCanvas * track_shower_c8_last = new TCanvas();
-	track_shower_c8_last->cd();
-	h_pfp_track_shower_numu_cc_qe_last->Draw("colz");
-	h_pfp_track_shower_numu_cc_qe_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_qe_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c8_last->Print("selected_pfp_track_shower_numu_cc_qe_last.pdf");
-	TCanvas * track_shower_c9_last = new TCanvas();
-	track_shower_c9_last->cd();
-	h_pfp_track_shower_numu_cc_res_last->Draw("colz");
-	h_pfp_track_shower_numu_cc_res_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_res_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c9_last->Print("selected_pfp_track_shower_numu_cc_res_last.pdf");
-	TCanvas * track_shower_c10_last = new TCanvas();
-	track_shower_c10_last->cd();
-	h_pfp_track_shower_numu_cc_dis_last->Draw("colz");
-	h_pfp_track_shower_numu_cc_dis_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_dis_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c10_last->Print("selected_pfp_track_shower_numu_cc_dis_last.pdf");
-	TCanvas * track_shower_c11_last = new TCanvas();
-	track_shower_c11_last->cd();
-	h_pfp_track_shower_numu_cc_coh_last->Draw("colz");
-	h_pfp_track_shower_numu_cc_coh_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_coh_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c11_last->Print("selected_pfp_track_shower_numu_cc_coh_last.pdf");
-	TCanvas * track_shower_c12_last = new TCanvas();
-	track_shower_c12_last->cd();
-	h_pfp_track_shower_numu_cc_mec_last->Draw("colz");
-	h_pfp_track_shower_numu_cc_mec_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_mec_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c12_last->Print("selected_pfp_track_shower_numu_cc_mec_last.pdf");
-	TCanvas * track_shower_c13_last = new TCanvas();
-	track_shower_c13_last->cd();
-	h_pfp_track_shower_nc_pi0_last->Draw("colz");
-	h_pfp_track_shower_nc_pi0_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nc_pi0_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c13_last->Print("selected_pfp_track_shower_nc_pi0_last.pdf");
-	TCanvas * track_shower_c14_last = new TCanvas();
-	track_shower_c14_last->cd();
-	h_pfp_track_shower_nue_cc_mixed_last->Draw("colz");
-	h_pfp_track_shower_nue_cc_mixed_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_nue_cc_mixed_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c14_last->Print("selected_pfp_track_shower_nue_cc_mixed_last.pdf");
-	TCanvas * track_shower_c15_last = new TCanvas();
-	track_shower_c15_last->cd();
-	h_pfp_track_shower_numu_cc_mixed_last->Draw("colz");
-	h_pfp_track_shower_numu_cc_mixed_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_numu_cc_mixed_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c15_last->Print("selected_pfp_track_shower_numu_cc_mixed_last.pdf");
-	TCanvas * track_shower_c16_last = new TCanvas();
-	track_shower_c16_last->cd();
-	h_pfp_track_shower_cosmic_last->Draw("colz");
-	h_pfp_track_shower_cosmic_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_cosmic_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c16_last->Print("selected_pfp_track_shower_cosmic_last.pdf");
-	TCanvas * track_shower_c17_last = new TCanvas();
-	track_shower_c17_last->cd();
-	h_pfp_track_shower_other_mixed_last->Draw("colz");
-	h_pfp_track_shower_other_mixed_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_other_mixed_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c17_last->Print("selected_pfp_track_shower_other_mixed_last.pdf");
-	TCanvas * track_shower_c18_last = new TCanvas();
-	track_shower_c18_last->cd();
-	h_pfp_track_shower_unmatched_last->Draw("colz");
-	h_pfp_track_shower_unmatched_last->GetXaxis()->SetTitle("PFP Tracks ");
-	h_pfp_track_shower_unmatched_last->GetYaxis()->SetTitle("PFP Showers");
-	track_shower_c18_last->Print("selected_pfp_track_shower_unmatched_last.pdf");
-	//********************************************************************
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_qe_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_qe_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_out_fv_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_out_fv_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_res_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_res_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_dis_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_dis_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_coh_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_coh_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_mec_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_mec_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_mixed_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_mixed_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_qe_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_qe_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_res_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_res_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_dis_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_dis_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_coh_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_coh_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_mec_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_mec_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_mixed_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_mixed_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nc_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nc_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nc_pi0_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nc_pi0_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_cosmic_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_cosmic_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_other_mixed_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_other_mixed_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_unmatched_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_unmatched_last.pdf");
 
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
 	for (int i=1; i<= 3; i++)
@@ -1733,207 +915,55 @@ int selection( const char * _file1){
 		h_leading_shower_mc_pdg_unmatched->GetYaxis()->SetBinLabel(i,str_mc_particle[i-1]);
 		h_leading_shower_mc_pdg_cosmic->GetYaxis()->SetBinLabel(i,str_mc_particle[i-1]);
 	}
-	TCanvas * leading_c1 = new TCanvas();
-	leading_c1->cd();
-	h_leading_shower_mc_pdg_nue_cc_qe->Draw("colz");
-	h_leading_shower_mc_pdg_nue_cc_qe->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nue_cc_qe->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nue_cc_qe->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nue_cc_qe->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c1->Print("selected_leading_shower_mc_pdg_nue_cc_qe.pdf");
-	TCanvas * leading_c2 = new TCanvas();
-	leading_c2->cd();
-	h_leading_shower_mc_pdg_nue_cc_out_fv->Draw("colz");
-	h_leading_shower_mc_pdg_nue_cc_out_fv->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nue_cc_out_fv->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nue_cc_out_fv->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nue_cc_out_fv->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c2->Print("selected_leading_shower_mc_pdg_nue_cc_out_fv.pdf");
-	TCanvas * leading_c3 = new TCanvas();
-	leading_c3->cd();
-	h_leading_shower_mc_pdg_nue_cc_res->Draw("colz");
-	h_leading_shower_mc_pdg_nue_cc_res->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nue_cc_res->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nue_cc_res->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nue_cc_res->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c3->Print("selected_leading_shower_mc_pdg_nue_cc_res.pdf");
-	TCanvas * leading_c4 = new TCanvas();
-	leading_c4->cd();
-	h_leading_shower_mc_pdg_nue_cc_dis->Draw("colz");
-	h_leading_shower_mc_pdg_nue_cc_dis->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nue_cc_dis->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nue_cc_dis->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nue_cc_dis->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c4->Print("selected_leading_shower_mc_pdg_nue_cc_dis.pdf");
-	TCanvas * leading_c5 = new TCanvas();
-	leading_c5->cd();
-	h_leading_shower_mc_pdg_nue_cc_coh->Draw("colz");
-	h_leading_shower_mc_pdg_nue_cc_coh->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nue_cc_coh->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nue_cc_coh->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nue_cc_coh->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c5->Print("selected_leading_shower_mc_pdg_nue_cc_coh.pdf");
-	TCanvas * leading_c6 = new TCanvas();
-	leading_c6->cd();
-	h_leading_shower_mc_pdg_nue_cc_mec->Draw("colz");
-	h_leading_shower_mc_pdg_nue_cc_mec->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nue_cc_mec->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nue_cc_mec->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nue_cc_mec->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c6->Print("selected_leading_shower_mc_pdg_nue_cc_mec.pdf");
-	TCanvas * leading_c7 = new TCanvas();
-	leading_c7->cd();
-	h_leading_shower_mc_pdg_nc->Draw("colz");
-	h_leading_shower_mc_pdg_nc->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nc->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nc->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nc->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c7->Print("selected_leading_shower_mc_pdg_nc.pdf");
-	TCanvas * leading_c8 = new TCanvas();
-	leading_c8->cd();
-	h_leading_shower_mc_pdg_numu_cc_qe->Draw("colz");
-	h_leading_shower_mc_pdg_numu_cc_qe->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_numu_cc_qe->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_numu_cc_qe->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_numu_cc_qe->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c8->Print("selected_leading_shower_mc_pdg_numu_cc_qe.pdf");
-	TCanvas * leading_c9 = new TCanvas();
-	leading_c9->cd();
-	h_leading_shower_mc_pdg_numu_cc_res->Draw("colz");
-	h_leading_shower_mc_pdg_numu_cc_res->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_numu_cc_res->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_numu_cc_res->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_numu_cc_res->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c9->Print("selected_leading_shower_mc_pdg_numu_cc_res.pdf");
-	TCanvas * leading_c10 = new TCanvas();
-	leading_c10->cd();
-	h_leading_shower_mc_pdg_numu_cc_dis->Draw("colz");
-	h_leading_shower_mc_pdg_numu_cc_dis->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_numu_cc_dis->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_numu_cc_dis->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_numu_cc_dis->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c10->Print("selected_leading_shower_mc_pdg_numu_cc_dis.pdf");
-	TCanvas * leading_c11 = new TCanvas();
-	leading_c11->cd();
-	h_leading_shower_mc_pdg_numu_cc_coh->Draw("colz");
-	h_leading_shower_mc_pdg_numu_cc_coh->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_numu_cc_coh->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_numu_cc_coh->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_numu_cc_coh->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c11->Print("selected_leading_shower_mc_pdg_numu_cc_coh.pdf");
-	TCanvas * leading_c12 = new TCanvas();
-	leading_c12->cd();
-	h_leading_shower_mc_pdg_numu_cc_mec->Draw("colz");
-	h_leading_shower_mc_pdg_numu_cc_mec->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_numu_cc_mec->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_numu_cc_mec->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_numu_cc_mec->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c12->Print("selected_leading_shower_mc_pdg_numu_cc_mec.pdf");
-	TCanvas * leading_c13 = new TCanvas();
-	leading_c13->cd();
-	h_leading_shower_mc_pdg_nc_pi0->Draw("colz");
-	h_leading_shower_mc_pdg_nc_pi0->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nc_pi0->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nc_pi0->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nc_pi0->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c13->Print("selected_leading_shower_mc_pdg_nc_pi0.pdf");
-	TCanvas * leading_c14 = new TCanvas();
-	leading_c14->cd();
-	h_leading_shower_mc_pdg_nue_cc_mixed->Draw("colz");
-	h_leading_shower_mc_pdg_nue_cc_mixed->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_nue_cc_mixed->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_nue_cc_mixed->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_nue_cc_mixed->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c14->Print("selected_leading_shower_mc_pdg_nue_cc_mixed.pdf");
-	TCanvas * leading_c15 = new TCanvas();
-	leading_c15->cd();
-	h_leading_shower_mc_pdg_numu_cc_mixed->Draw("colz");
-	h_leading_shower_mc_pdg_numu_cc_mixed->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_numu_cc_mixed->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_numu_cc_mixed->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_numu_cc_mixed->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c15->Print("selected_leading_shower_mc_pdg_numu_cc_mixed.pdf");
-	TCanvas * leading_c16 = new TCanvas();
-	leading_c16->cd();
-	h_leading_shower_mc_pdg_cosmic->Draw("colz");
-	h_leading_shower_mc_pdg_cosmic->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_cosmic->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_cosmic->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_cosmic->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c16->Print("selected_leading_shower_mc_pdg_cosmic.pdf");
-	TCanvas * leading_c17 = new TCanvas();
-	leading_c17->cd();
-	h_leading_shower_mc_pdg_other_mixed->Draw("colz");
-	h_leading_shower_mc_pdg_other_mixed->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_other_mixed->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_other_mixed->GetXaxis()->SetTitle("Leading Shower Origin ");
-	h_leading_shower_mc_pdg_other_mixed->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c17->Print("selected_leading_shower_mc_pdg_other_mixed.pdf");
-	TCanvas * leading_c18 = new TCanvas();
-	leading_c18->cd();
-	h_leading_shower_mc_pdg_unmatched->Draw("colz");
-	h_leading_shower_mc_pdg_unmatched->GetYaxis()->SetLabelOffset(0.002);
-	h_leading_shower_mc_pdg_unmatched->GetYaxis()->SetTitleOffset(1.35);
-	h_leading_shower_mc_pdg_unmatched->GetXaxis()->SetTitle("Leading Shower Origin");
-	h_leading_shower_mc_pdg_unmatched->GetYaxis()->SetTitle("Leading Shower True Particle");
-	leading_c18->Print("selected_leading_shower_mc_pdg_unmatched.pdf");
 
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nue_cc_qe, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nue_cc_qe.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nue_cc_out_fv, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nue_cc_res, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nue_cc_res.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nue_cc_dis, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nue_cc_dis.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nue_cc_coh, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nue_cc_coh.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nue_cc_mec, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nue_cc_mec.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nue_cc_mixed, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_numu_cc_qe, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_numu_cc_qe.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_numu_cc_res, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_numu_cc_res.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_numu_cc_dis, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_numu_cc_dis.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_numu_cc_coh, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_numu_cc_coh.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_numu_cc_mec, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_numu_cc_mec.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_numu_cc_mixed, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_numu_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nc, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nc.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_nc_pi0, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_cosmic, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_cosmic.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_other_mixed, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdf_other_mixed.pdf");
+	histogram_functions::Plot2DHistogramOffSet (h_leading_shower_mc_pdg_unmatched, 0.002, 1.35, "",
+	                                            "Leading Shower Origin", "Leading Shower True Particle", "selected_leading_shower_mc_pdg_unmatched.pdf");
 
-	TCanvas * hits_eng_c1 = new TCanvas();
-	hits_eng_c1->cd();
-	h_shwr_hits_nu_eng->Draw("colz");
-	h_shwr_hits_nu_eng->GetXaxis()->SetTitle("True Neutrino Energy [GeV]");
-	h_shwr_hits_nu_eng->GetYaxis()->SetTitle("Signal Electron Shower Hits");
-	hits_eng_c1->Print("shwr_hits_nu_eng.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng, "", "True Neutrino Energy [GeV]", "Signal Electron Shower Hits", "shwr_hits_nu_eng.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng, "", "True Electron Energy [GeV]", "Signal Electron Shower Hits", "shwr_hits_ele_eng.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng_zoom, "", "True Neutrino Energy [GeV]", "Signal Electron Shower Hits", "shwr_hits_nu_eng_zoom.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng_zoom, "", "True Electron Energy [GeV]", "Signal Electron Shower Hits", "shwr_hits_ele_eng_zoom.pdf");
 
-	TCanvas * hits_eng_c2 = new TCanvas();
-	hits_eng_c2->cd();
-	h_shwr_hits_ele_eng->Draw("colz");
-	h_shwr_hits_ele_eng->GetXaxis()->SetTitle("True Electron Energy [GeV]");
-	h_shwr_hits_ele_eng->GetYaxis()->SetTitle("Signal Electron Shower Hits");
-	hits_eng_c2->Print("shwr_hits_ele_eng.pdf");
-
-	TCanvas * hits_eng_c3 = new TCanvas();
-	hits_eng_c3->cd();
-	h_shwr_hits_nu_eng_zoom->Draw("colz");
-	h_shwr_hits_nu_eng_zoom->GetXaxis()->SetTitle("True Neutrino Energy [GeV]");
-	h_shwr_hits_nu_eng_zoom->GetYaxis()->SetTitle("Signal Electron Shower Hits");
-	hits_eng_c3->Print("shwr_hits_nu_eng_zoom.pdf");
-
-	TCanvas * hits_eng_c4 = new TCanvas();
-	hits_eng_c4->cd();
-	h_shwr_hits_ele_eng_zoom->Draw("colz");
-	h_shwr_hits_ele_eng_zoom->GetXaxis()->SetTitle("True Electron Energy [GeV]");
-	h_shwr_hits_ele_eng_zoom->GetYaxis()->SetTitle("Signal Electron Shower Hits");
-	hits_eng_c4->Print("shwr_hits_ele_eng_zoom.pdf");
-
-	TCanvas * hits_eng_c1_last = new TCanvas();
-	hits_eng_c1_last->cd();
-	h_shwr_hits_nu_eng_last->Draw("colz");
-	h_shwr_hits_nu_eng_last->GetXaxis()->SetTitle("True Selected Neutrino Energy [GeV]");
-	h_shwr_hits_nu_eng_last->GetYaxis()->SetTitle("Selected Signal Electron Shower Hits");
-	hits_eng_c1_last->Print("shwr_hits_nu_eng_last.pdf");
-
-	TCanvas * hits_eng_c2_last = new TCanvas();
-	hits_eng_c2_last->cd();
-	h_shwr_hits_ele_eng_last->Draw("colz");
-	h_shwr_hits_ele_eng_last->GetXaxis()->SetTitle("True Selected Electron Energy [GeV]");
-	h_shwr_hits_ele_eng_last->GetYaxis()->SetTitle("Selected Signal Electron Shower Hits");
-	hits_eng_c2_last->Print("shwr_hits_ele_eng_last.pdf");
-
-	TCanvas * hits_eng_c3_last = new TCanvas();
-	hits_eng_c3_last->cd();
-	h_shwr_hits_nu_eng_zoom_last->Draw("colz");
-	h_shwr_hits_nu_eng_zoom_last->GetXaxis()->SetTitle("True Selected Neutrino Energy [GeV]");
-	h_shwr_hits_nu_eng_zoom_last->GetYaxis()->SetTitle("Selected Signal Electron Shower Hits");
-	hits_eng_c3_last->Print("shwr_hits_nu_eng_zoom_last.pdf");
-
-	TCanvas * hits_eng_c4_last = new TCanvas();
-	hits_eng_c4_last->cd();
-	h_shwr_hits_ele_eng_zoom_last->Draw("colz");
-	h_shwr_hits_ele_eng_zoom_last->GetXaxis()->SetTitle("True Selected Electron Energy [GeV]");
-	h_shwr_hits_ele_eng_zoom_last->GetYaxis()->SetTitle("Selected Signal Electron Shower Hits");
-	hits_eng_c4_last->Print("shwr_hits_ele_eng_zoom_last.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng_last, "", "True Neutrino Energy [GeV]", "Signal Electron Shower Hits", "shwr_hits_nu_eng_last.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng_last, "", "True Electron Energy [GeV]", "Signal Electron Shower Hits", "shwr_hits_ele_eng_last.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng_zoom_last, "", "True Neutrino Energy [GeV]",
+	                                      "Signal Electron Shower Hits", "shwr_hits_nu_eng_zoom_last.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng_zoom_last, "", "True Electron Energy [GeV]",
+	                                      "Signal Electron Shower Hits", "shwr_hits_ele_eng_zoom_last.pdf");
 
 	h_pfp_shower_nue_cc_qe_last->SetFillColor(30);
 	h_pfp_shower_nue_cc_out_fv_last->SetFillColor(45);
@@ -1955,204 +985,46 @@ int selection( const char * _file1){
 	h_pfp_shower_unmatched_last->SetFillColor(12);
 
 
-	TCanvas * sequential_nu_energy_c1 = new TCanvas();
-	sequential_nu_energy_c1->cd();
-	h_selected_nu_energy_no_cut->SetStats(kFALSE);
-	h_selected_nu_energy_no_cut->SetFillColor(29);
-	h_selected_nu_energy_no_cut->GetXaxis()->SetTitle("True Signal Neutrino Energy [GeV]");
-	const double nu_energy_no_cut_integral = h_selected_nu_energy_no_cut->Integral();
-	h_selected_nu_energy_no_cut->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_no_cut->Draw("hist");
-	h_selected_nu_energy_reco_nue->SetFillColor(30);
-	h_selected_nu_energy_reco_nue->SetStats(kFALSE);
-	//h_selected_nu_energy_reco_nue->GetXaxis()->SetTitle("True Signal Neutrino Energy [GeV]");
-	h_selected_nu_energy_reco_nue->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_reco_nue->Draw("hist same");
-	h_selected_nu_energy_in_fv->SetFillColor(45);
-	h_selected_nu_energy_in_fv->SetStats(kFALSE);
-	h_selected_nu_energy_in_fv->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_in_fv->Draw("hist same");
-	h_selected_nu_energy_vtx_flash->SetFillColor(28);
-	h_selected_nu_energy_vtx_flash->SetStats(kFALSE);
-	h_selected_nu_energy_vtx_flash->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_vtx_flash->Draw("hist same");
-	h_selected_nu_energy_shwr_vtx->SetFillColor(26);
-	h_selected_nu_energy_shwr_vtx->SetStats(kFALSE);
-	h_selected_nu_energy_shwr_vtx->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_shwr_vtx->Draw("hist same");
-	h_selected_nu_energy_trk_vtx->SetFillColor(36);
-	h_selected_nu_energy_trk_vtx->SetStats(kFALSE);
-	h_selected_nu_energy_trk_vtx->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_trk_vtx->Draw("hist same");
-	h_selected_nu_energy_hit_threshold->SetFillColor(39);
-	h_selected_nu_energy_hit_threshold->SetStats(kFALSE);
-	h_selected_nu_energy_hit_threshold->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_hit_threshold->Draw("hist same");
-	h_selected_nu_energy_open_angle->SetFillColor(42);
-	h_selected_nu_energy_open_angle->SetStats(kFALSE);
-	h_selected_nu_energy_open_angle->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_open_angle->Draw("hist same");
-	h_selected_nu_energy_dedx->SetFillColor(12);
-	h_selected_nu_energy_dedx->SetStats(kFALSE);
-	h_selected_nu_energy_dedx->Scale(1./nu_energy_no_cut_integral);
-	h_selected_nu_energy_dedx->Draw("hist same");
-
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_sequential1 = new TLegend(0.65,0.65,0.85,0.85);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_sequential1->AddEntry(h_selected_nu_energy_no_cut,         "No Cuts",  "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_reco_nue,       "Reco Nue", "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_in_fv,          "Fiducial Volume", "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_vtx_flash,      "Vtx To Flash", "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_shwr_vtx,       "Shower Vtx", "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_trk_vtx,        "Track Vtx", "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_hit_threshold,  "Hits", "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_open_angle,     "Open Angle", "f");
-	leg_sequential1->AddEntry(h_selected_nu_energy_dedx,           "dE/dx", "f");
-	leg_sequential1->Draw();
-	sequential_nu_energy_c1->Print("sequential_nu_energy.pdf");
-
-	TCanvas * sequential_ele_energy_c1 = new TCanvas();
-	sequential_ele_energy_c1->cd();
-	h_selected_ele_energy_no_cut->SetStats(kFALSE);
-	h_selected_ele_energy_no_cut->SetFillColor(29);
-	h_selected_ele_energy_no_cut->GetXaxis()->SetTitle("True Selected Electron Energy [GeV]");
-	const double ele_energy_no_cut_integral = h_selected_ele_energy_no_cut->Integral();
-	h_selected_ele_energy_no_cut->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_no_cut->Draw("hist");
-	h_selected_ele_energy_reco_nue->SetFillColor(30);
-	h_selected_ele_energy_reco_nue->SetStats(kFALSE);
-	//h_selected_ele_energy_reco_nue->GetXaxis()->SetTitle("True Signal Electron Energy [GeV]");
-	h_selected_ele_energy_reco_nue->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_reco_nue->Draw("hist same");
-	h_selected_ele_energy_in_fv->SetFillColor(45);
-	h_selected_ele_energy_in_fv->SetStats(kFALSE);
-	h_selected_ele_energy_in_fv->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_in_fv->Draw("hist same");
-	h_selected_ele_energy_vtx_flash->SetFillColor(28);
-	h_selected_ele_energy_vtx_flash->SetStats(kFALSE);
-	h_selected_ele_energy_vtx_flash->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_vtx_flash->Draw("hist same");
-	h_selected_ele_energy_shwr_vtx->SetFillColor(26);
-	h_selected_ele_energy_shwr_vtx->SetStats(kFALSE);
-	h_selected_ele_energy_shwr_vtx->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_shwr_vtx->Draw("hist same");
-	h_selected_ele_energy_trk_vtx->SetFillColor(36);
-	h_selected_ele_energy_trk_vtx->SetStats(kFALSE);
-	h_selected_ele_energy_trk_vtx->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_trk_vtx->Draw("hist same");
-	h_selected_ele_energy_hit_threshold->SetFillColor(39);
-	h_selected_ele_energy_hit_threshold->SetStats(kFALSE);
-	h_selected_ele_energy_hit_threshold->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_hit_threshold->Draw("hist same");
-	h_selected_ele_energy_open_angle->SetFillColor(42);
-	h_selected_ele_energy_open_angle->SetStats(kFALSE);
-	h_selected_ele_energy_open_angle->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_open_angle->Draw("hist same");
-	h_selected_ele_energy_dedx->SetFillColor(12);
-	h_selected_ele_energy_dedx->SetStats(kFALSE);
-	h_selected_ele_energy_dedx->Scale(1./ele_energy_no_cut_integral);
-	h_selected_ele_energy_dedx->Draw("hist same");
-
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_sequential2 = new TLegend(0.65,0.60,0.85,0.85);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_sequential2->AddEntry(h_selected_ele_energy_no_cut,         "No Cuts",  "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_reco_nue,       "Reco Nue", "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_in_fv,          "Fiducial Volume", "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_vtx_flash,      "Vtx To Flash", "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_shwr_vtx,       "Shower Vtx", "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_trk_vtx,        "Track Vtx", "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_hit_threshold,  "Hits", "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_open_angle,     "Open Angle", "f");
-	leg_sequential2->AddEntry(h_selected_ele_energy_dedx,           "dE/dx", "f");
-	leg_sequential2->Draw();
-	sequential_ele_energy_c1->Print("sequential_ele_energy.pdf");
+	histogram_functions::PostHistogramOverlay(h_selected_nu_energy_no_cut,        h_selected_nu_energy_reco_nue,
+	                                          h_selected_nu_energy_in_fv,         h_selected_nu_energy_vtx_flash,
+	                                          h_selected_nu_energy_shwr_vtx,      h_selected_nu_energy_trk_vtx,
+	                                          h_selected_nu_energy_hit_threshold, h_selected_nu_energy_open_angle,
+	                                          h_selected_nu_energy_dedx,
+	                                          "True Signal Neutrino Energy [GeV]", "", "sequential_nu_energy.pdf");
+	histogram_functions::PostHistogramOverlay(h_selected_ele_energy_no_cut,       h_selected_ele_energy_reco_nue,
+	                                          h_selected_ele_energy_in_fv,        h_selected_ele_energy_vtx_flash,
+	                                          h_selected_ele_energy_shwr_vtx,     h_selected_ele_energy_trk_vtx,
+	                                          h_selected_ele_energy_hit_threshold,h_selected_ele_energy_open_angle,
+	                                          h_selected_ele_energy_dedx,
+	                                          "True Signal Electron Energy [GeV]", "", "sequential_ele_energy.pdf");
 
 
-	TCanvas * charge_share_nue_cc_mixed = new TCanvas();
-	charge_share_nue_cc_mixed->cd();
-	h_charge_share_nue_cc_mixed->GetXaxis()->SetTitle("Neutrino Charge Fraction - Selected Nue CC Mixed");
-	h_charge_share_nue_cc_mixed->Draw();
-	charge_share_nue_cc_mixed->Print("charge_fraction_nue_cc_mixed.pdf");
+	histogram_functions::Plot1DHistogram (h_charge_share_nue_cc_mixed, "Neutrino Charge Fraction - Selected Nue CC Mixed", "charge_fraction_nue_cc_mixed.pdf");
+	histogram_functions::Plot1DHistogram (h_flash_t0_diff, "Largest Flash Time - True Neutrino Interaction Time [us]", "flash_t0_diff.pdf");
 
-	TCanvas * flash_t0_diff_c1 = new TCanvas();
-	flash_t0_diff_c1->cd();
-	h_flash_t0_diff->GetXaxis()->SetTitle("Largest Flash Time - True Neutrino Interaction Time [us]");
-	flash_t0_diff_c1->SetLogy();
-	h_flash_t0_diff->Draw();
-	flash_t0_diff_c1->Print("flash_t0_diff.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc_out_fv, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc_mixed, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_numu_cc, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_numu_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_numu_cc_mixed, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_numu_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nc, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_nc.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nc_pi0, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_cosmic, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_other_mixed, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_other_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_dedx_open_angle_unmatched, "", "Leading Shower dEdx [MeV/cm]",
+	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_unmatched.pdf");
 
-
-	TCanvas * dedx_open_angle_c1 = new TCanvas();
-	dedx_open_angle_c1->cd();
-	h_dedx_open_angle_nue_cc->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_nue_cc->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_nue_cc->Draw("colz");
-	dedx_open_angle_c1->Print("dedx_open_angle_nue_cc.pdf");
-
-	TCanvas * dedx_open_angle_c2 = new TCanvas();
-	dedx_open_angle_c2->cd();
-	h_dedx_open_angle_nue_cc_out_fv->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_nue_cc_out_fv->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_nue_cc_out_fv->Draw("colz");
-	dedx_open_angle_c2->Print("dedx_open_angle_nue_cc_out_fv.pdf");
-
-	TCanvas * dedx_open_angle_c3 = new TCanvas();
-	dedx_open_angle_c3->cd();
-	h_dedx_open_angle_nue_cc_mixed->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_nue_cc_mixed->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_nue_cc_mixed->Draw("colz");
-	dedx_open_angle_c3->Print("dedx_open_angle_nue_cc_mixed.pdf");
-
-	TCanvas * dedx_open_angle_c4 = new TCanvas();
-	dedx_open_angle_c4->cd();
-	h_dedx_open_angle_numu_cc->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_numu_cc->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_numu_cc->Draw("colz");
-	dedx_open_angle_c4->Print("dedx_open_angle_numu_cc.pdf");
-
-	TCanvas * dedx_open_angle_c5 = new TCanvas();
-	dedx_open_angle_c5->cd();
-	h_dedx_open_angle_numu_cc_mixed->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_numu_cc_mixed->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_numu_cc_mixed->Draw("colz");
-	dedx_open_angle_c5->Print("dedx_open_angle_numu_cc_mixed.pdf");
-
-	TCanvas * dedx_open_angle_c6 = new TCanvas();
-	dedx_open_angle_c6->cd();
-	h_dedx_open_angle_nc->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_nc->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_nc->Draw("colz");
-	dedx_open_angle_c6->Print("dedx_open_angle_nc.pdf");
-
-	TCanvas * dedx_open_angle_c7 = new TCanvas();
-	dedx_open_angle_c7->cd();
-	h_dedx_open_angle_nc_pi0->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_nc_pi0->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_nc_pi0->Draw("colz");
-	dedx_open_angle_c7->Print("dedx_open_angle_nc_pi0.pdf");
-
-	TCanvas * dedx_open_angle_c8 = new TCanvas();
-	dedx_open_angle_c8->cd();
-	h_dedx_open_angle_cosmic->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_cosmic->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_cosmic->Draw("colz");
-	dedx_open_angle_c8->Print("dedx_open_angle_cosmic.pdf");
-
-	TCanvas * dedx_open_angle_c9 = new TCanvas();
-	dedx_open_angle_c9->cd();
-	h_dedx_open_angle_other_mixed->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_other_mixed->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_other_mixed->Draw("colz");
-	dedx_open_angle_c9->Print("dedx_open_angle_other_mixed.pdf");
-
-	TCanvas * dedx_open_angle_c10 = new TCanvas();
-	dedx_open_angle_c10->cd();
-	h_dedx_open_angle_unmatched->GetXaxis()->SetTitle("Leading Shower dEdx [MeV/cm]");
-	h_dedx_open_angle_unmatched->GetYaxis()->SetTitle("Leading Shower Open Angle [Degrees]");
-	h_dedx_open_angle_unmatched->Draw("colz");
-	dedx_open_angle_c10->Print("dedx_open_angle_unmatched.pdf");
 
 
 	TCanvas * shwr_len_hits_c1 = new TCanvas();
