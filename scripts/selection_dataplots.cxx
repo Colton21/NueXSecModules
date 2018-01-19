@@ -97,8 +97,8 @@ int selection( const char * _file1){
 	no_track->resize(2, 0);
 
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
-	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> >;
+	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;

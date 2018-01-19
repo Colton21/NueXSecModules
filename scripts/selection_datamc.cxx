@@ -117,8 +117,8 @@ int selection( const char * _file1, const char * _file2){
 	data_no_track->resize(2, 0);
 
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
-	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * data_post_cuts_v
-	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> >;
+	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * data_post_cuts_v
+	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	//need a text file with the run, subrun output
 	std::ofstream run_subrun_file;
@@ -370,8 +370,8 @@ int selection( const char * _file1, const char * _file2){
 	std::cout << "Total Events: " << total_entries << std::endl;
 
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
-	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> >;
+	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	std::vector<int> * passed_runs = new std::vector<int>;
 	//passed runs is filled with 0, 1, or 2

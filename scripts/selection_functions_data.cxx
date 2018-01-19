@@ -4,7 +4,7 @@
 //***************************************************************************
 void selection_functions_data::FillPostCutVectorData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                      std::vector<std::pair<int, std::string> > * passed_tpco,
-                                                     std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v)
+                                                     std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -21,9 +21,12 @@ void selection_functions_data::FillPostCutVectorData(std::vector<xsecAna::TPCObj
 		const int num_showers = tpc_obj.NPfpShowers();
 		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
 		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double opening_angle = leading_shower.pfpOpenAngle();
 
-		std::tuple<int, int, double, double, double, std::string, std::string, int, int> my_tuple =
-		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers);
+		std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> my_tuple =
+		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers, opening_angle);
 		post_cuts_v->push_back(my_tuple);
 	}
 }

@@ -130,6 +130,18 @@ bool selection_cuts::in_fv(double x, double y, double z,
 	if(x <= det_x1 + x1 || x >= det_x2 - x2) {return false; }
 	if(y <= det_y1 + y1 || y >= det_y2 - y2) {return false; }
 	if(z <= det_z1 + z1 || z >= det_z2 - z2) {return false; }
+
+
+	//we also want to consider the dead region in the detector
+	//let's expand our FV to exclude the region of wires 7136-7263
+	//Since it's collection plane --> (7136-4800) * 0.3 = 700.8 cm start
+	// (7263-4800) * 0.3 = 738.9 cm end
+	// const double dead_z_start = 700.8;
+	// const double dead_z_end = 738.9;
+	// const double dead_tolerance = 10; //cm
+	// if( z >= dead_z_start - dead_tolerance && z <= dead_z_end + dead_tolerance) {return false; }
+	//did not have a positive effect ...
+
 	else{return true; }
 }
 //***************************************************************************

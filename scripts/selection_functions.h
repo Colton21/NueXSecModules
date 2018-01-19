@@ -54,10 +54,11 @@ void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                        double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
-                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
 //***************************************************************************
 //***************************************************************************
-void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v, bool _post_cuts_verbose);
+void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double,
+                                               std::string, std::string, int, int, double> > * post_cuts_v, bool _post_cuts_verbose);
 //***************************************************************************
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts

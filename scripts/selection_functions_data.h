@@ -36,7 +36,7 @@ selection_functions_data()=default;
 
 void FillPostCutVectorData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                            std::vector<std::pair<int, std::string> > * passed_tpco,
-                           std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v);
+                           std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
 //***************************************************************************
 //***************************************************************************
 std::vector<int> TabulateOriginsData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

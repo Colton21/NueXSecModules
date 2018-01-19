@@ -115,7 +115,7 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                             double vtxX, double vtxY, double vtxZ,
-                                            std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v)
+                                            std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -136,15 +136,18 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 
 		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double opening_angle = leading_shower.pfpOpenAngle();
 
-		std::tuple<int, int, double, double, double, std::string, std::string, int, int> my_tuple =
-		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers);
+		std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> my_tuple =
+		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers, opening_angle);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v,
+void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
                                              bool _post_cuts_verbose)
 {
 	const int passed_events = post_cuts_v->size();
@@ -162,6 +165,7 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, do
 		const std::string event_type = std::get<6>(my_tuple);
 		const int num_tracks = std::get<7>(my_tuple);
 		const int num_showers = std::get<8>(my_tuple);
+		const double opening_angle = std::get<9>(my_tuple);
 		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 		std::cout << "Event Type     : " << event_type << std::endl;
 		std::cout << "Event Number   : " << event_num << std::endl;
@@ -171,6 +175,7 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, do
 		std::cout << "Pfp Vtx X      : " << pfp_vtx_x << std::endl;
 		std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
 		std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
+		std::cout << "Opening Angle  : " << opening_angle << std::endl;
 		std::cout << "TPCO Reason    : " << reason << std::endl;
 		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 	}

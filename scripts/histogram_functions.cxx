@@ -32,8 +32,8 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 {
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
-	histogram->GetYaxis()->SetTitle(x_axis_name);
-	histogram->GetXaxis()->SetTitle(y_axis_name);
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetYaxis()->SetTitle(y_axis_name);
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
 	histogram->Draw("colz");

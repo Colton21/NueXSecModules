@@ -97,8 +97,8 @@ int selection( const char * _file1){
 	no_track->resize(2, 0);
 
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
-	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int> >;
+	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
@@ -451,6 +451,51 @@ int selection( const char * _file1){
 		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_dedx, h_selected_ele_energy_dedx);
+
+		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                              _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                              mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                              h_second_shwr_dist_nue_cc, h_second_shwr_dist_nue_cc_out_fv,
+		                                                              h_second_shwr_dist_nue_cc_mixed, h_second_shwr_dist_numu_cc,
+		                                                              h_second_shwr_dist_numu_cc_mixed, h_second_shwr_dist_nc,
+		                                                              h_second_shwr_dist_nc_pi0, h_second_shwr_dist_cosmic,
+		                                                              h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
+
+		//***************************************************************************
+		_cuts_instance.selection_cuts::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
+
+
+		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                        h_hit_length_ratio_nue_cc,
+		                                                        h_hit_length_ratio_nue_cc_out_fv,
+		                                                        h_hit_length_ratio_nue_cc_mixed,
+		                                                        h_hit_length_ratio_numu_cc,
+		                                                        h_hit_length_ratio_numu_cc_mixed,
+		                                                        h_hit_length_ratio_nc,
+		                                                        h_hit_length_ratio_nc_pi0,
+		                                                        h_hit_length_ratio_cosmic,
+		                                                        h_hit_length_ratio_other_mixed,
+		                                                        h_hit_length_ratio_unmatched);
+
+		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
+
+		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, has_pi0, _verbose, _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                       mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
+		                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
+		                                                       h_failure_reason_numu_cc_mixed, h_failure_reason_nc,
+		                                                       h_failure_reason_nc_pi0, h_failure_reason_cosmic,
+		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
+
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
@@ -533,52 +578,6 @@ int selection( const char * _file1){
 
 		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
-
-		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                              _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                              mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                              h_second_shwr_dist_nue_cc, h_second_shwr_dist_nue_cc_out_fv,
-		                                                              h_second_shwr_dist_nue_cc_mixed, h_second_shwr_dist_numu_cc,
-		                                                              h_second_shwr_dist_numu_cc_mixed, h_second_shwr_dist_nc,
-		                                                              h_second_shwr_dist_nc_pi0, h_second_shwr_dist_cosmic,
-		                                                              h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
-
-		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                        h_hit_length_ratio_nue_cc,
-		                                                        h_hit_length_ratio_nue_cc_out_fv,
-		                                                        h_hit_length_ratio_nue_cc_mixed,
-		                                                        h_hit_length_ratio_numu_cc,
-		                                                        h_hit_length_ratio_numu_cc_mixed,
-		                                                        h_hit_length_ratio_nc,
-		                                                        h_hit_length_ratio_nc_pi0,
-		                                                        h_hit_length_ratio_cosmic,
-		                                                        h_hit_length_ratio_other_mixed,
-		                                                        h_hit_length_ratio_unmatched);
-
-//***************************************************************************
-		_cuts_instance.selection_cuts::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
-
-
-
-
-		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
-
-		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, has_pi0, _verbose, _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                       mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
-		                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
-		                                                       h_failure_reason_numu_cc_mixed, h_failure_reason_nc,
-		                                                       h_failure_reason_nc_pi0, h_failure_reason_cosmic,
-		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
 
 	}//end event loop
 
