@@ -1025,238 +1025,51 @@ int selection( const char * _file1){
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_unmatched, "", "Leading Shower dEdx [MeV/cm]",
 	                                      "Leading Shower Open Angle [Degrees]", "dedx_open_angle_unmatched.pdf");
 
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_nue_cc, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_nue_cc_out_fv, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_nue_cc_mixed, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_numu_cc, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_numu_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_numu_cc_mixed, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_numu_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_nc, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_nc.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_nc_pi0, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_cosmic, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_other_mixed, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_other_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_shwr_len_hits_unmatched, "", "Leading Shower Length [cm]",
+	                                      "Leading Shower Hits", "shwr_len_hits_unmatched.pdf");
 
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_nue_cc, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_nue_cc.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_nue_cc_out_fv, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_nue_cc_out_fv.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_nue_cc_mixed, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_nue_cc_mixed.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_numu_cc, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_numu_cc.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_numu_cc_mixed, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_numu_cc_mixed.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_nc, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_nc.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_nc_pi0, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_nc_pi0.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_cosmic, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_cosmic.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_other_mixed, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_other_mixed.pdf");
+	histogram_functions::Plot1DHistogram (h_second_shwr_dist_unmatched, "(TPCO w/ > 3 showers) Shower-Vtx Distance [cm]", "second_shwr_dist_unmatched.pdf");
 
-	TCanvas * shwr_len_hits_c1 = new TCanvas();
-	shwr_len_hits_c1->cd();
-	h_shwr_len_hits_nue_cc->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_nue_cc->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_nue_cc->Draw("colz");
-	shwr_len_hits_c1->Print("shwr_len_hits_nue_cc.pdf");
+	histogram_functions::PlotSimpleStack (h_second_shwr_dist_nue_cc,  h_second_shwr_dist_nue_cc_mixed,
+	                                      h_second_shwr_dist_numu_cc, h_second_shwr_dist_numu_cc_mixed,
+	                                      h_second_shwr_dist_cosmic,  h_second_shwr_dist_nc,
+	                                      h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
+	                                      h_second_shwr_dist_unmatched, "",
+	                                      "(TPCO > 3 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "", "post_second_shwr_dist.pdf");
 
-	TCanvas * shwr_len_hits_c2 = new TCanvas();
-	shwr_len_hits_c2->cd();
-	h_shwr_len_hits_nue_cc_out_fv->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_nue_cc_out_fv->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_nue_cc_out_fv->Draw("colz");
-	shwr_len_hits_c2->Print("shwr_len_hits_nue_cc_out_fv.pdf");
-
-	TCanvas * shwr_len_hits_c3 = new TCanvas();
-	shwr_len_hits_c3->cd();
-	h_shwr_len_hits_nue_cc_mixed->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_nue_cc_mixed->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_nue_cc_mixed->Draw("colz");
-	shwr_len_hits_c3->Print("shwr_len_hits_nue_cc_mixed.pdf");
-
-	TCanvas * shwr_len_hits_c4 = new TCanvas();
-	shwr_len_hits_c4->cd();
-	h_shwr_len_hits_numu_cc->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_numu_cc->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_numu_cc->Draw("colz");
-	shwr_len_hits_c4->Print("shwr_len_hits_numu_cc.pdf");
-
-	TCanvas * shwr_len_hits_c5 = new TCanvas();
-	shwr_len_hits_c5->cd();
-	h_shwr_len_hits_numu_cc_mixed->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_numu_cc_mixed->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_numu_cc_mixed->Draw("colz");
-	shwr_len_hits_c5->Print("shwr_len_hits_numu_cc_mixed.pdf");
-
-	TCanvas * shwr_len_hits_c6 = new TCanvas();
-	shwr_len_hits_c6->cd();
-	h_shwr_len_hits_nc->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_nc->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_nc->Draw("colz");
-	shwr_len_hits_c6->Print("shwr_len_hits_nc.pdf");
-
-	TCanvas * shwr_len_hits_c7 = new TCanvas();
-	shwr_len_hits_c7->cd();
-	h_shwr_len_hits_nc_pi0->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_nc_pi0->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_nc_pi0->Draw("colz");
-	shwr_len_hits_c7->Print("shwr_len_hits_nc_pi0.pdf");
-
-	TCanvas * shwr_len_hits_c8 = new TCanvas();
-	shwr_len_hits_c8->cd();
-	h_shwr_len_hits_cosmic->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_cosmic->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_cosmic->Draw("colz");
-	shwr_len_hits_c8->Print("shwr_len_hits_cosmic.pdf");
-
-	TCanvas * shwr_len_hits_c9 = new TCanvas();
-	shwr_len_hits_c9->cd();
-	h_shwr_len_hits_other_mixed->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_other_mixed->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_other_mixed->Draw("colz");
-	shwr_len_hits_c9->Print("shwr_len_hits_other_mixed.pdf");
-
-	TCanvas * shwr_len_hits_c10 = new TCanvas();
-	shwr_len_hits_c10->cd();
-	h_shwr_len_hits_unmatched->GetXaxis()->SetTitle("Leading Shower Length [cm]");
-	h_shwr_len_hits_unmatched->GetYaxis()->SetTitle("Leading Shower Hits");
-	h_shwr_len_hits_unmatched->Draw("colz");
-	shwr_len_hits_c10->Print("shwr_len_hits_unmatched.pdf");
-
-
-
-	TCanvas * second_shwr_dist_c1 = new TCanvas();
-	second_shwr_dist_c1->cd();
-	h_second_shwr_dist_nue_cc->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_nue_cc->Draw();
-	second_shwr_dist_c1->Print("second_shwr_dist_nue_cc.pdf");
-
-	TCanvas * second_shwr_dist_c2 = new TCanvas();
-	second_shwr_dist_c2->cd();
-	h_second_shwr_dist_nue_cc_out_fv->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_nue_cc_out_fv->Draw();
-	second_shwr_dist_c2->Print("second_shwr_dist_nue_cc_out_fv.pdf");
-
-	TCanvas * second_shwr_dist_c3 = new TCanvas();
-	second_shwr_dist_c3->cd();
-	h_second_shwr_dist_nue_cc_mixed->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_nue_cc_mixed->Draw();
-	second_shwr_dist_c3->Print("second_shwr_dist_nue_cc_mixed.pdf");
-
-	TCanvas * second_shwr_dist_c4 = new TCanvas();
-	second_shwr_dist_c4->cd();
-	h_second_shwr_dist_numu_cc->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_numu_cc->Draw();
-	second_shwr_dist_c4->Print("second_shwr_dist_numu_cc.pdf");
-
-	TCanvas * second_shwr_dist_c5 = new TCanvas();
-	second_shwr_dist_c5->cd();
-	h_second_shwr_dist_numu_cc_mixed->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_numu_cc_mixed->Draw();
-	second_shwr_dist_c5->Print("second_shwr_dist_numu_cc_mixed.pdf");
-
-	TCanvas * second_shwr_dist_c6 = new TCanvas();
-	second_shwr_dist_c6->cd();
-	h_second_shwr_dist_nc->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_nc->Draw();
-	second_shwr_dist_c6->Print("second_shwr_dist_nc.pdf");
-
-	TCanvas * second_shwr_dist_c7 = new TCanvas();
-	second_shwr_dist_c7->cd();
-	h_second_shwr_dist_nc_pi0->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_nc_pi0->Draw();
-	second_shwr_dist_c7->Print("second_shwr_dist_nc_pi0.pdf");
-
-	TCanvas * second_shwr_dist_c8 = new TCanvas();
-	second_shwr_dist_c8->cd();
-	h_second_shwr_dist_cosmic->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_cosmic->Draw();
-	second_shwr_dist_c8->Print("second_shwr_dist_cosmic.pdf");
-
-	TCanvas * second_shwr_dist_c9 = new TCanvas();
-	second_shwr_dist_c9->cd();
-	h_second_shwr_dist_other_mixed->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_other_mixed->Draw();
-	second_shwr_dist_c9->Print("second_shwr_dist_other_mixed.pdf");
-
-	TCanvas * second_shwr_dist_c10 = new TCanvas();
-	second_shwr_dist_c10->cd();
-	h_second_shwr_dist_unmatched->GetXaxis()->SetTitle("(TPCO w/ > 3 Showers) Shower-Vtx Distance [cm]");
-	h_second_shwr_dist_unmatched->Draw();
-	second_shwr_dist_c10->Print("second_shwr_dist_unmatched.pdf");
-
-	TCanvas * second_shwr_dist_stack_c1 = new TCanvas();
-	second_shwr_dist_stack_c1->cd();
-	THStack * h_second_shwr_dist_stack = new THStack();
-	h_second_shwr_dist_nue_cc->SetStats(kFALSE);
-	h_second_shwr_dist_nue_cc_mixed->SetStats(kFALSE);
-	h_second_shwr_dist_numu_cc->SetStats(kFALSE);
-	h_second_shwr_dist_nc_pi0->SetStats(kFALSE);
-	h_second_shwr_dist_cosmic->SetStats(kFALSE);
-	h_second_shwr_dist_nc->SetStats(kFALSE);
-	h_second_shwr_dist_numu_cc_mixed->SetStats(kFALSE);
-	h_second_shwr_dist_other_mixed->SetStats(kFALSE);
-	h_second_shwr_dist_unmatched->SetStats(kFALSE);
-	h_second_shwr_dist_nue_cc->SetFillColor(30);
-	h_second_shwr_dist_nue_cc_mixed->SetFillColor(38);
-	h_second_shwr_dist_numu_cc->SetFillColor(28);
-	h_second_shwr_dist_nc_pi0->SetFillColor(36);
-	h_second_shwr_dist_cosmic->SetFillColor(1);
-	h_second_shwr_dist_nc->SetFillColor(46);
-	h_second_shwr_dist_numu_cc_mixed->SetFillColor(20);
-	h_second_shwr_dist_other_mixed->SetFillColor(42);
-	h_second_shwr_dist_unmatched->SetFillColor(12);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nue_cc);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nue_cc_mixed);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_cosmic);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_numu_cc);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_numu_cc_mixed);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nc);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_nc_pi0);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_other_mixed);
-	h_second_shwr_dist_stack->Add(h_second_shwr_dist_unmatched);
-	h_second_shwr_dist_stack->Draw();
-	h_second_shwr_dist_stack->GetXaxis()->SetTitle("(TPCO > 3 Reco Shower) Secondary Shwr-Vtx Distance [cm]");
-
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack_second = new TLegend(0.75,0.75,0.95,0.95);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack_second->AddEntry(h_second_shwr_dist_nue_cc,          "Nue CC", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_cosmic,          "Cosmic", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_numu_cc,         "Numu CC", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_nc,              "NC", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_nc_pi0,          "NC Pi0", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_other_mixed,     "Other Mixed", "f");
-	leg_stack_second->AddEntry(h_second_shwr_dist_unmatched,       "Unmatched", "f");
-	leg_stack_second->Draw();
-	second_shwr_dist_stack_c1->Print("post_second_shwr_dist.pdf");
-
-
-
-	TCanvas * hit_length_ratio_stack_c1 = new TCanvas();
-	hit_length_ratio_stack_c1->cd();
-	THStack * h_hit_length_ratio_stack = new THStack();
-	h_hit_length_ratio_nue_cc->SetStats(kFALSE);
-	h_hit_length_ratio_nue_cc_mixed->SetStats(kFALSE);
-	h_hit_length_ratio_numu_cc->SetStats(kFALSE);
-	h_hit_length_ratio_nc_pi0->SetStats(kFALSE);
-	h_hit_length_ratio_cosmic->SetStats(kFALSE);
-	h_hit_length_ratio_nc->SetStats(kFALSE);
-	h_hit_length_ratio_numu_cc_mixed->SetStats(kFALSE);
-	h_hit_length_ratio_other_mixed->SetStats(kFALSE);
-	h_hit_length_ratio_unmatched->SetStats(kFALSE);
-	h_hit_length_ratio_nue_cc->SetFillColor(30);
-	h_hit_length_ratio_nue_cc_mixed->SetFillColor(38);
-	h_hit_length_ratio_numu_cc->SetFillColor(28);
-	h_hit_length_ratio_nc_pi0->SetFillColor(36);
-	h_hit_length_ratio_cosmic->SetFillColor(1);
-	h_hit_length_ratio_nc->SetFillColor(46);
-	h_hit_length_ratio_numu_cc_mixed->SetFillColor(20);
-	h_hit_length_ratio_other_mixed->SetFillColor(42);
-	h_hit_length_ratio_unmatched->SetFillColor(12);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nue_cc);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nue_cc_mixed);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_cosmic);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_numu_cc);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_numu_cc_mixed);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nc);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_nc_pi0);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_other_mixed);
-	h_hit_length_ratio_stack->Add(h_hit_length_ratio_unmatched);
-	h_hit_length_ratio_stack->Draw();
-	h_hit_length_ratio_stack->GetXaxis()->SetTitle("Leading Shower (Hits / Length) [cm^-1]");
-
-	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack_hit_length_ratio = new TLegend(0.75,0.75,0.95,0.95);
-	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nue_cc,          "Nue CC", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_cosmic,          "Cosmic", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_numu_cc,         "Numu CC", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nc,              "NC", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_nc_pi0,          "NC Pi0", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_other_mixed,     "Other Mixed", "f");
-	leg_stack_hit_length_ratio->AddEntry(h_hit_length_ratio_unmatched,       "Unmatched", "f");
-	leg_stack_hit_length_ratio->Draw();
-	hit_length_ratio_stack_c1->Print("post_hit_length_ratio.pdf");
-
+	histogram_functions::PlotSimpleStack (h_hit_length_ratio_nue_cc,  h_hit_length_ratio_nue_cc_mixed,
+	                                      h_hit_length_ratio_numu_cc, h_hit_length_ratio_numu_cc_mixed,
+	                                      h_hit_length_ratio_cosmic,  h_hit_length_ratio_nc,
+	                                      h_hit_length_ratio_nc_pi0,  h_hit_length_ratio_other_mixed,
+	                                      h_hit_length_ratio_unmatched, "",
+	                                      "Leading Shower (Hits / Length) [cm^-1]", "", "post_hit_length_ratio.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

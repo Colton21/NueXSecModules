@@ -272,3 +272,189 @@ void histogram_functions::PostHistogramOverlay(TH1 * h_no_cut, TH1 * h_reco_nue,
 	leg_sequential1->Draw();
 	c1->Print(print_name);
 }
+
+void histogram_functions::PlotDataMC(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                     TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_data, const double data_mc_scale_factor,
+                                     const char * x_axis_name, const char * y_axis_name, const char * print_name, const char * data_print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+	h_nue_cc->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_numu_cc_mixed->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_nue_cc->SetFillColor(30);
+	h_nue_cc_mixed->SetFillColor(38);
+	h_numu_cc->SetFillColor(28);
+	h_nc_pi0->SetFillColor(36);
+	h_cosmic->SetFillColor(1);
+	h_nc->SetFillColor(46);
+	h_numu_cc_mixed->SetFillColor(20);
+	h_other_mixed->SetFillColor(42);
+	h_unmatched->SetFillColor(12);
+	stack->Add(h_nue_cc);
+	stack->Add(h_nue_cc_mixed);
+	stack->Add(h_cosmic);
+	stack->Add(h_numu_cc);
+	stack->Add(h_numu_cc_mixed);
+	stack->Add(h_nc);
+	stack->Add(h_nc_pi0);
+	stack->Add(h_other_mixed);
+	stack->Add(h_unmatched);
+	stack->Draw();
+	stack->GetXaxis()->SetTitle(x_axis_name);
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_nue_cc,          "Nue CC", "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic", "f");
+	leg_stack->AddEntry(h_numu_cc,         "Numu CC", "f");
+	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack->AddEntry(h_nc,              "NC", "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0", "f");
+	leg_stack->AddEntry(h_other_mixed,     "Other Mixed", "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched", "f");
+	leg_stack->Draw();
+	c1->Print(print_name);
+
+	double integral_nue_cc          = h_nue_cc->Integral();
+	double integral_nue_cc_mixed    = h_nue_cc_mixed->Integral();
+	double integral_cosmic          = h_cosmic->Integral();
+	double integral_numu_cc         = h_numu_cc->Integral();
+	double integral_numu_cc_mixed   = h_numu_cc_mixed->Integral();
+	double integral_nc              = h_nc->Integral();
+	double integral_nc_pi0          = h_nc_pi0->Integral();
+	double integral_other_mixed     = h_other_mixed->Integral();
+	double integral_unmatched       = h_unmatched->Integral();
+	double integral                 = integral_nue_cc
+	                                  + integral_nue_cc_mixed
+	                                  + integral_cosmic
+	                                  + integral_numu_cc
+	                                  + integral_numu_cc_mixed
+	                                  + integral_nc
+	                                  + integral_nc_pi0
+	                                  + integral_other_mixed
+	                                  + integral_unmatched;
+	//h_leading_shower_open_angle_data->Scale(1.29916); //- relative scaling (on-beam - off-beam) and POT
+	//h_leading_shower_open_angle_data->Scale(5.619); //- POT scaling
+	h_data->Scale((integral / h_data->Integral()) * data_mc_scale_factor);
+	h_data->Draw("P E1 same");
+	c1->Print(data_print_name);
+}
+
+void histogram_functions::PlotDetailDataMCStack(TH1 * h_nue_cc_qe,
+                                                TH1 * h_nue_cc_out_fv,
+                                                TH1 * h_nue_cc_res,
+                                                TH1 * h_nue_cc_dis,
+                                                TH1 * h_nue_cc_coh,
+                                                TH1 * h_nue_cc_mec,
+                                                TH1 * h_nue_cc_mixed,
+                                                TH1 * h_numu_cc_qe,
+                                                TH1 * h_numu_cc_res,
+                                                TH1 * h_numu_cc_dis,
+                                                TH1 * h_numu_cc_coh,
+                                                TH1 * h_numu_cc_mec,
+                                                TH1 * h_numu_cc_mixed,
+                                                TH1 * h_cosmic,
+                                                TH1 * h_nc,
+                                                TH1 * h_nc_pi0,
+                                                TH1 * h_other_mixed,
+                                                TH1 * h_unmatched,
+                                                TH1 * h_data,
+                                                const double data_mc_scale_factor,
+                                                const char * x_axis_name, const char * y_axis_name, const char * print_name, const char * data_print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+	h_nue_cc_qe->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
+	h_nue_cc_res->SetStats(kFALSE);
+	h_nue_cc_dis->SetStats(kFALSE);
+	h_nue_cc_coh->SetStats(kFALSE);
+	h_nue_cc_mec->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_numu_cc_qe->SetStats(kFALSE);
+	h_numu_cc_res->SetStats(kFALSE);
+	h_numu_cc_dis->SetStats(kFALSE);
+	h_numu_cc_coh->SetStats(kFALSE);
+	h_numu_cc_mec->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc_mixed->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_nue_cc_qe->SetFillColor(30);
+	h_nue_cc_out_fv->SetFillColor(45);
+	h_nue_cc_res->SetFillColor(31);
+	h_nue_cc_dis->SetFillColor(32);
+	h_nue_cc_coh->SetFillColor(33);
+	h_nue_cc_mec->SetFillColor(34);
+	h_nc->SetFillColor(46);
+	h_numu_cc_qe->SetFillColor(28);
+	h_numu_cc_res->SetFillColor(27);
+	h_numu_cc_dis->SetFillColor(26);
+	h_numu_cc_coh->SetFillColor(23);
+	h_numu_cc_mec->SetFillColor(22);
+	h_nc_pi0->SetFillColor(36);
+	h_nue_cc_mixed->SetFillColor(38);
+	h_numu_cc_mixed->SetFillColor(25);
+	h_cosmic->SetFillColor(39);
+	h_other_mixed->SetFillColor(42);
+	h_unmatched->SetFillColor(12);
+	stack->Add(h_nue_cc_qe    );
+	stack->Add(h_nue_cc_out_fv);
+	stack->Add(h_nue_cc_res   );
+	stack->Add(h_nue_cc_dis   );
+	stack->Add(h_nue_cc_coh   );
+	stack->Add(h_nue_cc_mec   );
+	stack->Add(h_nc       );
+	stack->Add(h_numu_cc_qe   );
+	stack->Add(h_numu_cc_res  );
+	stack->Add(h_numu_cc_dis  );
+	stack->Add(h_numu_cc_coh  );
+	stack->Add(h_numu_cc_mec  );
+	stack->Add(h_nc_pi0      );
+	stack->Add(h_nue_cc_mixed );
+	stack->Add(h_numu_cc_mixed);
+	stack->Add(h_cosmic       );
+	stack->Add(h_other_mixed  );
+	stack->Add(h_unmatched    );
+	stack->Draw();
+	stack->GetXaxis()->SetTitle(x_axis_name);
+	TLegend * leg_track_stack_l1 = new TLegend(0.75, 0.50, 0.95, 0.95);
+	leg_track_stack_l1->AddEntry(h_nue_cc_qe,      "Nue CC QE", "f");
+	leg_track_stack_l1->AddEntry(h_nue_cc_out_fv,  "Nue CC Out FV", "f");
+	leg_track_stack_l1->AddEntry(h_nue_cc_res,     "Nue CC Res", "f");
+	leg_track_stack_l1->AddEntry(h_nue_cc_dis,     "Nue CC DIS", "f");
+	leg_track_stack_l1->AddEntry(h_nue_cc_coh,     "Nue CC Coh", "f");
+	leg_track_stack_l1->AddEntry(h_nue_cc_mec,     "Nue CC MEC", "f");
+	leg_track_stack_l1->AddEntry(h_nc,         "NC", "f");
+	leg_track_stack_l1->AddEntry(h_numu_cc_qe,     "Numu CC QE", "f");
+	leg_track_stack_l1->AddEntry(h_numu_cc_res,    "Numu CC Res", "f");
+	leg_track_stack_l1->AddEntry(h_numu_cc_dis,    "Numu CC DIS", "f");
+	leg_track_stack_l1->AddEntry(h_numu_cc_coh,    "Numu CC Coh", "f");
+	leg_track_stack_l1->AddEntry(h_numu_cc_mec,    "Numu CC MEC", "f");
+	leg_track_stack_l1->AddEntry(h_nc_pi0,        "NC Pi0", "f");
+	leg_track_stack_l1->AddEntry(h_nue_cc_mixed,   "Nue CC Mixed", "f");
+	leg_track_stack_l1->AddEntry(h_numu_cc_mixed,  "Numu CC Mixed", "f");
+	leg_track_stack_l1->AddEntry(h_cosmic,         "Cosmic", "f");
+	leg_track_stack_l1->AddEntry(h_other_mixed,    "Other Mixed", "f");
+	leg_track_stack_l1->AddEntry(h_unmatched,      "Unmatched", "f");
+	leg_track_stack_l1->Draw();
+	c1->Print(print_name);
+
+	//h_pfp_track_data->Scale(1.2991626);
+	h_data->Scale(data_mc_scale_factor);
+	h_data->Draw("P E1 same");
+	c1->Print(data_print_name);
+}

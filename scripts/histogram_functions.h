@@ -57,6 +57,32 @@ static void PostHistogramOverlay(TH1 * h_no_cut, TH1 * h_reco_nue,
                                  TH1 * h_trk_vtx, TH1 * h_hit_threshold,
                                  TH1 * h_open_angle, TH1 * h_dedx,
                                  const char * x_axis_name, const char * y_axis_name, const char * print_name);
+
+static void PlotDataMC(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                       TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_data, const double data_mc_scale_factor,
+                       const char * x_axis_name, const char * y_axis_name, const char * print_name, const char * data_print_name);
+
+static void PlotDetailDataMCStack(TH1 * h_nue_cc_qe,
+                                  TH1 * h_nue_cc_out_fv,
+                                  TH1 * h_nue_cc_res,
+                                  TH1 * h_nue_cc_dis,
+                                  TH1 * h_nue_cc_coh,
+                                  TH1 * h_nue_cc_mec,
+                                  TH1 * h_nue_cc_mixed,
+                                  TH1 * h_numu_cc_qe,
+                                  TH1 * h_numu_cc_res,
+                                  TH1 * h_numu_cc_dis,
+                                  TH1 * h_numu_cc_coh,
+                                  TH1 * h_numu_cc_mec,
+                                  TH1 * h_numu_cc_mixed,
+                                  TH1 * h_cosmic,
+                                  TH1 * h_nc,
+                                  TH1 * h_nc_pi0,
+                                  TH1 * h_other_mixed,
+                                  TH1 * h_unmatched,
+                                  TH1 * h_data,
+                                  const double data_mc_scale_factor,
+                                  const char * x_axis_name, const char * y_axis_name, const char * print_name, const char * data_print_name);
 };
 
 #endif
