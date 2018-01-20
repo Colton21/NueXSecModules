@@ -579,6 +579,20 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
 
+
+		_functions_instance.selection_functions::TrackLength(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
+		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_trk_length_nue_cc,
+		                                                     h_trk_length_nue_cc_out_fv,
+		                                                     h_trk_length_nue_cc_mixed,
+		                                                     h_trk_length_numu_cc,
+		                                                     h_trk_length_numu_cc_mixed,
+		                                                     h_trk_length_nc,
+		                                                     h_trk_length_nc_pi0,
+		                                                     h_trk_length_cosmic,
+		                                                     h_trk_length_other_mixed,
+		                                                     h_trk_length_unmatched);
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -1069,6 +1083,15 @@ int selection( const char * _file1){
 	                                      h_hit_length_ratio_nc_pi0,  h_hit_length_ratio_other_mixed,
 	                                      h_hit_length_ratio_unmatched, "",
 	                                      "Leading Shower (Hits / Length) [cm^-1]", "", "post_hit_length_ratio.pdf");
+
+	histogram_functions::PlotSimpleStack (h_trk_length_nue_cc,  h_trk_length_nue_cc_mixed,
+	                                      h_trk_length_numu_cc, h_trk_length_numu_cc_mixed,
+	                                      h_trk_length_cosmic,  h_trk_length_nc,
+	                                      h_trk_length_nc_pi0,  h_trk_length_other_mixed,
+	                                      h_trk_length_unmatched, "",
+	                                      "All Track Lengths [cm]", "", "post_all_track_lengths.pdf");
+
+
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

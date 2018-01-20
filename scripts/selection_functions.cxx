@@ -2092,6 +2092,122 @@ void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer
 }//end function
 //***************************************************************************
 //***************************************************************************
+void selection_functions::TrackLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                      double vtxX, double vtxY, double vtxZ,
+                                      TH1D * h_trk_length_nue_cc,
+                                      TH1D * h_trk_length_nue_cc_out_fv,
+                                      TH1D * h_trk_length_nue_cc_mixed,
+                                      TH1D * h_trk_length_numu_cc,
+                                      TH1D * h_trk_length_numu_cc_mixed,
+                                      TH1D * h_trk_length_nc,
+                                      TH1D * h_trk_length_nc_pi0,
+                                      TH1D * h_trk_length_cosmic,
+                                      TH1D * h_trk_length_other_mixed,
+                                      TH1D * h_trk_length_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		//if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		std::vector< double > trk_length_v;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double trk_length = pfp.pfpLength();
+				trk_length_v.push_back(trk_length);
+			}
+		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+
+		for(const double trk_length : trk_length_v)
+		{
+			if(tpco_id == "nue_cc_qe")
+			{
+				h_trk_length_nue_cc->Fill(trk_length);
+			}
+			if(tpco_id == "nue_cc_out_fv")
+			{
+				h_trk_length_nue_cc_out_fv->Fill(trk_length);
+			}
+			if(tpco_id == "nue_cc_res")
+			{
+				h_trk_length_nue_cc->Fill(trk_length);
+			}
+			if(tpco_id == "nue_cc_dis")
+			{
+				h_trk_length_nue_cc->Fill(trk_length);
+			}
+			if(tpco_id == "nue_cc_coh")
+			{
+				h_trk_length_nue_cc->Fill(trk_length);
+			}
+			if(tpco_id == "nue_cc_mec")
+			{
+				h_trk_length_nue_cc->Fill(trk_length);
+			}
+			if(tpco_id == "numu_cc_qe")
+			{
+				h_trk_length_numu_cc->Fill(trk_length);
+			}
+			if(tpco_id == "numu_cc_res")
+			{
+				h_trk_length_numu_cc->Fill(trk_length);
+			}
+			if(tpco_id == "numu_cc_dis")
+			{
+				h_trk_length_numu_cc->Fill(trk_length);
+			}
+			if(tpco_id == "numu_cc_coh")
+			{
+				h_trk_length_numu_cc->Fill(trk_length);
+			}
+			if(tpco_id == "numu_cc_mec")
+			{
+				h_trk_length_numu_cc->Fill(trk_length);
+			}
+			if(tpco_id == "nc")
+			{
+				h_trk_length_nc->Fill(trk_length);
+			}
+			if(tpco_id == "nc_pi0")
+			{
+				h_trk_length_nc_pi0->Fill(trk_length);
+			}
+			if(tpco_id == "nue_cc_mixed")
+			{
+				h_trk_length_nue_cc_mixed->Fill(trk_length);
+			}
+			if(tpco_id == "numu_cc_mixed")
+			{
+				h_trk_length_numu_cc_mixed->Fill(trk_length);
+			}
+			if(tpco_id == "cosmic")
+			{
+				h_trk_length_cosmic->Fill(trk_length);
+			}
+			if(tpco_id == "other_mixed")
+			{
+				h_trk_length_other_mixed->Fill(trk_length);
+			}
+			if(tpco_id == "unmatched")
+			{
+				h_trk_length_unmatched->Fill(trk_length);
+			}
+		}
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
 int selection_functions::MapFailureCutToString(const std::string failure_cut)
 {
 	int failure_reason = 10.0;
