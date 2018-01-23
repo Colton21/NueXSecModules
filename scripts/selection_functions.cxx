@@ -182,6 +182,60 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, do
 	std::cout << "   * * * END * * *   " << std::endl;
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 }
+void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
+                                             bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity)
+{
+	int signal_events_1 = 0;
+	int signal_events_2 = 0;
+	int signal_events_3 = 0;
+	int signal_events_4 = 0;
+	int bkg_events_1 = 0;
+	int bkg_events_2 = 0;
+	int bkg_events_3 = 0;
+	int bkg_events_4 = 0;
+	//this loops through all events which passed the selection cuts
+	for(auto const my_tuple : * post_cuts_v)
+	{
+		const int event_num = std::get<0>(my_tuple);
+		const int run_num = std::get<1>(my_tuple);
+		const double pfp_vtx_x = std::get<2>(my_tuple);
+		const double pfp_vtx_y = std::get<3>(my_tuple);
+		const double pfp_vtx_z = std::get<4>(my_tuple);
+		const std::string reason = std::get<5>(my_tuple);
+		const std::string event_type = std::get<6>(my_tuple);
+		const int num_tracks = std::get<7>(my_tuple);
+		const int num_showers = std::get<8>(my_tuple);
+		const double opening_angle = std::get<9>(my_tuple);
+
+		int signal_bkg = 0;
+		if(event_type == "nue_cc_qe" || event_type == "nue_cc_res" || event_type == "nue_cc_dis" || event_type == "nue_cc_coh" || event_type == "nue_cc_mec")
+		{
+			signal_bkg = 1;
+		}
+		if(signal_bkg == 1)
+		{
+			if(num_showers == 1) {signal_events_1++; }
+			if(num_showers == 2) {signal_events_2++; }
+			if(num_showers == 3) {signal_events_3++; }
+			if(num_showers >= 4) {signal_events_4++; }
+		}
+		if(signal_bkg == 0)
+		{
+			if(num_showers == 1) {bkg_events_1++; }
+			if(num_showers == 2) {bkg_events_2++; }
+			if(num_showers == 3) {bkg_events_3++; }
+			if(num_showers >= 4) {bkg_events_4++; }
+		}
+	}
+	double purity_1 = double(signal_events_1) / (double(signal_events_1) + double(bkg_events_1));
+	double purity_2 = double(signal_events_2) / (double(signal_events_2) + double(bkg_events_2));
+	double purity_3 = double(signal_events_3) / (double(signal_events_3) + double(bkg_events_3));
+	double purity_4 = double(signal_events_4) / (double(signal_events_4) + double(bkg_events_4));
+	post_cuts_num_showers_purity->Fill(1, purity_1);
+	post_cuts_num_showers_purity->Fill(2, purity_2);
+	post_cuts_num_showers_purity->Fill(3, purity_3);
+	post_cuts_num_showers_purity->Fill(4, purity_4);
+}
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
 bool selection_functions::ValidTPCObjects(std::vector<std::pair<int, std::string> > * passed_tpco)
@@ -649,22 +703,10 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
-		if(tpco_id == "nue_cc_mixed")
-		{
-			h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle);
-		}
-		if(tpco_id == "numu_cc_mixed")
-		{
-			h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle);
-		}
-		if(tpco_id == "other_mixed")
-		{
-			h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle);
-		}
-		if(tpco_id == "cosmic")
-		{
-			h_leading_shower_open_angle_cosmic->Fill(leading_open_angle);
-		}
+		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "cosmic")        {h_leading_shower_open_angle_cosmic->Fill(leading_open_angle); }
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec")
 		{
 			h_leading_shower_open_angle_nue_cc->Fill(leading_open_angle);
@@ -673,18 +715,93 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 		{
 			h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle);
 		}
-		if(tpco_id == "nc")
+		if(tpco_id == "nc")        {h_leading_shower_open_angle_nc->Fill(leading_open_angle); }
+		if(tpco_id == "nc_pi0")    {h_leading_shower_open_angle_nc_pi0->Fill(leading_open_angle); }
+		if(tpco_id == "unmatched") {h_leading_shower_open_angle_unmatched->Fill(leading_open_angle); }
+	}//end tpco loop
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                                  double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                                  TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
+                                                  TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
+                                                  TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
+                                                  TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
+                                                  TH1D * h_leading_shower_open_angle_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		if(n_pfp_showers != 1) {continue; }
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_class.first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
+		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "cosmic")        {h_leading_shower_open_angle_cosmic->Fill(leading_open_angle); }
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec")
 		{
-			h_leading_shower_open_angle_nc->Fill(leading_open_angle);
+			h_leading_shower_open_angle_nue_cc->Fill(leading_open_angle);
 		}
-		if(tpco_id == "nc_pi0")
+		if(tpco_id == "numu_cc_qe" || tpco_id == "numu_cc_res" || tpco_id == "numu_cc_dis" || tpco_id == "numu_cc_coh" || tpco_id == "numu_cc_mec")
 		{
-			h_leading_shower_open_angle_nc_pi0->Fill(leading_open_angle);
+			h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle);
 		}
-		if(tpco_id == "unmatched")
+		if(tpco_id == "nc")        {h_leading_shower_open_angle_nc->Fill(leading_open_angle); }
+		if(tpco_id == "nc_pi0")    {h_leading_shower_open_angle_nc_pi0->Fill(leading_open_angle); }
+		if(tpco_id == "unmatched") {h_leading_shower_open_angle_unmatched->Fill(leading_open_angle); }
+	}//end tpco loop
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                                      TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
+                                                      TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
+                                                      TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
+                                                      TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
+                                                      TH1D * h_leading_shower_open_angle_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		if(n_pfp_showers  < 2) {continue; }
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_class.first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
+		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "cosmic")        {h_leading_shower_open_angle_cosmic->Fill(leading_open_angle); }
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec")
 		{
-			h_leading_shower_open_angle_unmatched->Fill(leading_open_angle);
+			h_leading_shower_open_angle_nue_cc->Fill(leading_open_angle);
 		}
+		if(tpco_id == "numu_cc_qe" || tpco_id == "numu_cc_res" || tpco_id == "numu_cc_dis" || tpco_id == "numu_cc_coh" || tpco_id == "numu_cc_mec")
+		{
+			h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle);
+		}
+		if(tpco_id == "nc")        {h_leading_shower_open_angle_nc->Fill(leading_open_angle); }
+		if(tpco_id == "nc_pi0")    {h_leading_shower_open_angle_nc_pi0->Fill(leading_open_angle); }
+		if(tpco_id == "unmatched") {h_leading_shower_open_angle_unmatched->Fill(leading_open_angle); }
 	}//end tpco loop
 }
 //***************************************************************************
@@ -1019,6 +1136,61 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 			h_pfp_shower_unmatched->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_unmatched->Fill(leading_origin_int, leading_pdg_int);
 		}
+	}        //end loop tpc objects
+
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::NumShowersOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
+                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                              double vtxX, double vtxY, double vtxZ,
+                                              TH1D * h_pfp_shower_open_angle_nue_cc_qe,
+                                              TH1D * h_pfp_shower_open_angle_nue_cc_out_fv,
+                                              TH1D * h_pfp_shower_open_angle_nue_cc_res,
+                                              TH1D * h_pfp_shower_open_angle_nue_cc_dis,
+                                              TH1D * h_pfp_shower_open_angle_nue_cc_coh,
+                                              TH1D * h_pfp_shower_open_angle_nue_cc_mec,
+                                              TH1D * h_pfp_shower_open_angle_nc,
+                                              TH1D * h_pfp_shower_open_angle_numu_cc_qe,
+                                              TH1D * h_pfp_shower_open_angle_numu_cc_res,
+                                              TH1D * h_pfp_shower_open_angle_numu_cc_dis,
+                                              TH1D * h_pfp_shower_open_angle_numu_cc_coh,
+                                              TH1D * h_pfp_shower_open_angle_numu_cc_mec,
+                                              TH1D * h_pfp_shower_open_angle_nc_pi0,
+                                              TH1D * h_pfp_shower_open_angle_nue_cc_mixed,
+                                              TH1D * h_pfp_shower_open_angle_numu_cc_mixed,
+                                              TH1D * h_pfp_shower_open_angle_cosmic,
+                                              TH1D * h_pfp_shower_open_angle_other_mixed,
+                                              TH1D * h_pfp_shower_open_angle_unmatched
+                                              )
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		if(tpco_id == "nue_cc_qe")      {h_pfp_shower_open_angle_nue_cc_qe->Fill(n_pfp_showers); }
+		if(tpco_id == "nue_cc_out_fv")  {h_pfp_shower_open_angle_nue_cc_out_fv->Fill(n_pfp_showers); }
+		if(tpco_id == "nue_cc_res")     {h_pfp_shower_open_angle_nue_cc_res->Fill(n_pfp_showers); }
+		if(tpco_id == "nue_cc_dis")     {h_pfp_shower_open_angle_nue_cc_dis->Fill(n_pfp_showers); }
+		if(tpco_id == "nue_cc_coh")     {h_pfp_shower_open_angle_nue_cc_coh->Fill(n_pfp_showers); }
+		if(tpco_id == "nue_cc_mec")     {h_pfp_shower_open_angle_nue_cc_mec->Fill(n_pfp_showers); }
+		if(tpco_id == "numu_cc_qe")     {h_pfp_shower_open_angle_numu_cc_qe->Fill(n_pfp_showers); }
+		if(tpco_id == "numu_cc_res")    {h_pfp_shower_open_angle_numu_cc_res->Fill(n_pfp_showers); }
+		if(tpco_id == "numu_cc_dis")    {h_pfp_shower_open_angle_numu_cc_dis->Fill(n_pfp_showers); }
+		if(tpco_id == "numu_cc_coh")    {h_pfp_shower_open_angle_numu_cc_coh->Fill(n_pfp_showers); }
+		if(tpco_id == "numu_cc_mec")    {h_pfp_shower_open_angle_numu_cc_mec->Fill(n_pfp_showers); }
+		if(tpco_id == "nc")             {h_pfp_shower_open_angle_nc->Fill(n_pfp_showers); }
+		if(tpco_id == "nc_pi0")         {h_pfp_shower_open_angle_nc_pi0->Fill(n_pfp_showers); }
+		if(tpco_id == "nue_cc_mixed")   {h_pfp_shower_open_angle_nue_cc_mixed->Fill(n_pfp_showers); }
+		if(tpco_id == "numu_cc_mixed")  {h_pfp_shower_open_angle_numu_cc_mixed->Fill(n_pfp_showers); }
+		if(tpco_id == "cosmic")         {h_pfp_shower_open_angle_cosmic->Fill(n_pfp_showers); }
+		if(tpco_id == "other_mixed")    {h_pfp_shower_open_angle_other_mixed->Fill(n_pfp_showers); }
+		if(tpco_id == "unmatched")      {h_pfp_shower_open_angle_unmatched->Fill(n_pfp_showers); }
 	}        //end loop tpc objects
 
 }//end function
@@ -1531,12 +1703,6 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
 		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
 		std::string tpco_id = tpco_class.first;
-
-		if(n_pfp_showers == 0)
-		{
-			std::cout << "Event with No Shower! WTF! " << std::endl;
-			continue;
-		}
 		//signal
 		if(n_pfp_tracks == 0)
 		{
@@ -2110,7 +2276,7 @@ void selection_functions::TrackLength(std::vector<xsecAna::TPCObjectContainer> *
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
-		//if(passed_tpco->at(i).first == 0) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
@@ -2131,79 +2297,420 @@ void selection_functions::TrackLength(std::vector<xsecAna::TPCObjectContainer> *
 
 		for(const double trk_length : trk_length_v)
 		{
-			if(tpco_id == "nue_cc_qe")
+			if(tpco_id == "nue_cc_qe")      {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_out_fv")  {h_trk_length_nue_cc_out_fv->Fill(trk_length); }
+			if(tpco_id == "nue_cc_res")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_dis")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_coh")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_mec")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_qe")     {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_res")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_dis")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_coh")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_mec")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "nc")             {h_trk_length_nc->Fill(trk_length); }
+			if(tpco_id == "nc_pi0")         {h_trk_length_nc_pi0->Fill(trk_length); }
+			if(tpco_id == "nue_cc_mixed")   {h_trk_length_nue_cc_mixed->Fill(trk_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc_mixed->Fill(trk_length); }
+			if(tpco_id == "cosmic")         {h_trk_length_cosmic->Fill(trk_length); }
+			if(tpco_id == "other_mixed")    {h_trk_length_other_mixed->Fill(trk_length); }
+			if(tpco_id == "unmatched")      {h_trk_length_unmatched->Fill(trk_length); }
+		}
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::LongestTrackLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                             double vtxX, double vtxY, double vtxZ,
+                                             TH1D * h_trk_length_nue_cc,
+                                             TH1D * h_trk_length_nue_cc_out_fv,
+                                             TH1D * h_trk_length_nue_cc_mixed,
+                                             TH1D * h_trk_length_numu_cc,
+                                             TH1D * h_trk_length_numu_cc_mixed,
+                                             TH1D * h_trk_length_nc,
+                                             TH1D * h_trk_length_nc_pi0,
+                                             TH1D * h_trk_length_cosmic,
+                                             TH1D * h_trk_length_other_mixed,
+                                             TH1D * h_trk_length_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		std::vector< double > trk_length_v;
+		double longest_track = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
 			{
-				h_trk_length_nue_cc->Fill(trk_length);
-			}
-			if(tpco_id == "nue_cc_out_fv")
-			{
-				h_trk_length_nue_cc_out_fv->Fill(trk_length);
-			}
-			if(tpco_id == "nue_cc_res")
-			{
-				h_trk_length_nue_cc->Fill(trk_length);
-			}
-			if(tpco_id == "nue_cc_dis")
-			{
-				h_trk_length_nue_cc->Fill(trk_length);
-			}
-			if(tpco_id == "nue_cc_coh")
-			{
-				h_trk_length_nue_cc->Fill(trk_length);
-			}
-			if(tpco_id == "nue_cc_mec")
-			{
-				h_trk_length_nue_cc->Fill(trk_length);
-			}
-			if(tpco_id == "numu_cc_qe")
-			{
-				h_trk_length_numu_cc->Fill(trk_length);
-			}
-			if(tpco_id == "numu_cc_res")
-			{
-				h_trk_length_numu_cc->Fill(trk_length);
-			}
-			if(tpco_id == "numu_cc_dis")
-			{
-				h_trk_length_numu_cc->Fill(trk_length);
-			}
-			if(tpco_id == "numu_cc_coh")
-			{
-				h_trk_length_numu_cc->Fill(trk_length);
-			}
-			if(tpco_id == "numu_cc_mec")
-			{
-				h_trk_length_numu_cc->Fill(trk_length);
-			}
-			if(tpco_id == "nc")
-			{
-				h_trk_length_nc->Fill(trk_length);
-			}
-			if(tpco_id == "nc_pi0")
-			{
-				h_trk_length_nc_pi0->Fill(trk_length);
-			}
-			if(tpco_id == "nue_cc_mixed")
-			{
-				h_trk_length_nue_cc_mixed->Fill(trk_length);
-			}
-			if(tpco_id == "numu_cc_mixed")
-			{
-				h_trk_length_numu_cc_mixed->Fill(trk_length);
-			}
-			if(tpco_id == "cosmic")
-			{
-				h_trk_length_cosmic->Fill(trk_length);
-			}
-			if(tpco_id == "other_mixed")
-			{
-				h_trk_length_other_mixed->Fill(trk_length);
-			}
-			if(tpco_id == "unmatched")
-			{
-				h_trk_length_unmatched->Fill(trk_length);
+				const double trk_length = pfp.pfpLength();
+				if(trk_length > longest_track)
+				{
+					trk_length_v.clear();
+					trk_length_v.push_back(trk_length);
+					longest_track = trk_length;
+				}
 			}
 		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+
+		for(const double trk_length : trk_length_v)
+		{
+			if(tpco_id == "nue_cc_qe")      {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_out_fv")  {h_trk_length_nue_cc_out_fv->Fill(trk_length); }
+			if(tpco_id == "nue_cc_res")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_dis")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_coh")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "nue_cc_mec")     {h_trk_length_nue_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_qe")     {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_res")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_dis")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_coh")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "numu_cc_mec")    {h_trk_length_numu_cc->Fill(trk_length); }
+			if(tpco_id == "nc")             {h_trk_length_nc->Fill(trk_length); }
+			if(tpco_id == "nc_pi0")         {h_trk_length_nc_pi0->Fill(trk_length); }
+			if(tpco_id == "nue_cc_mixed")   {h_trk_length_nue_cc_mixed->Fill(trk_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc_mixed->Fill(trk_length); }
+			if(tpco_id == "cosmic")         {h_trk_length_cosmic->Fill(trk_length); }
+			if(tpco_id == "other_mixed")    {h_trk_length_other_mixed->Fill(trk_length); }
+			if(tpco_id == "unmatched")      {h_trk_length_unmatched->Fill(trk_length); }
+		}
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::ShowerLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                       double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                       double vtxX, double vtxY, double vtxZ,
+                                       TH1D * h_shwr_length_nue_cc,
+                                       TH1D * h_shwr_length_nue_cc_out_fv,
+                                       TH1D * h_shwr_length_nue_cc_mixed,
+                                       TH1D * h_shwr_length_numu_cc,
+                                       TH1D * h_shwr_length_numu_cc_mixed,
+                                       TH1D * h_shwr_length_nc,
+                                       TH1D * h_shwr_length_nc_pi0,
+                                       TH1D * h_shwr_length_cosmic,
+                                       TH1D * h_shwr_length_other_mixed,
+                                       TH1D * h_shwr_length_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::vector< double > shwr_length_v;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				const double shwr_length = pfp.pfpLength();
+				shwr_length_v.push_back(shwr_length);
+			}
+		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+
+		for(const double shwr_length : shwr_length_v)
+		{
+			if(tpco_id == "nue_cc_qe")      {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_out_fv")  {h_shwr_length_nue_cc_out_fv->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_res")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_dis")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_coh")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_mec")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_qe")     {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_res")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_dis")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_coh")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_mec")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "nc")             {h_shwr_length_nc->Fill(shwr_length); }
+			if(tpco_id == "nc_pi0")         {h_shwr_length_nc_pi0->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_mixed")   {h_shwr_length_nue_cc_mixed->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(shwr_length); }
+			if(tpco_id == "cosmic")         {h_shwr_length_cosmic->Fill(shwr_length); }
+			if(tpco_id == "other_mixed")    {h_shwr_length_other_mixed->Fill(shwr_length); }
+			if(tpco_id == "unmatched")      {h_shwr_length_unmatched->Fill(shwr_length); }
+		}
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::LongestShowerLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                              double vtxX, double vtxY, double vtxZ,
+                                              TH1D * h_shwr_length_nue_cc,
+                                              TH1D * h_shwr_length_nue_cc_out_fv,
+                                              TH1D * h_shwr_length_nue_cc_mixed,
+                                              TH1D * h_shwr_length_numu_cc,
+                                              TH1D * h_shwr_length_numu_cc_mixed,
+                                              TH1D * h_shwr_length_nc,
+                                              TH1D * h_shwr_length_nc_pi0,
+                                              TH1D * h_shwr_length_cosmic,
+                                              TH1D * h_shwr_length_other_mixed,
+                                              TH1D * h_shwr_length_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::vector< double > shwr_length_v;
+		double longest_shower = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				const double shwr_length = pfp.pfpLength();
+				if(shwr_length > longest_shower)
+				{
+					shwr_length_v.clear();
+					shwr_length_v.push_back(shwr_length);
+					longest_shower = shwr_length;
+				}
+			}
+		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+
+		for(const double shwr_length : shwr_length_v)
+		{
+			if(tpco_id == "nue_cc_qe")      {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_out_fv")  {h_shwr_length_nue_cc_out_fv->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_res")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_dis")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_coh")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_mec")     {h_shwr_length_nue_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_qe")     {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_res")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_dis")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_coh")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_mec")    {h_shwr_length_numu_cc->Fill(shwr_length); }
+			if(tpco_id == "nc")             {h_shwr_length_nc->Fill(shwr_length); }
+			if(tpco_id == "nc_pi0")         {h_shwr_length_nc_pi0->Fill(shwr_length); }
+			if(tpco_id == "nue_cc_mixed")   {h_shwr_length_nue_cc_mixed->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(shwr_length); }
+			if(tpco_id == "cosmic")         {h_shwr_length_cosmic->Fill(shwr_length); }
+			if(tpco_id == "other_mixed")    {h_shwr_length_other_mixed->Fill(shwr_length); }
+			if(tpco_id == "unmatched")      {h_shwr_length_unmatched->Fill(shwr_length); }
+		}
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::LeadingShowerLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                              double vtxX, double vtxY, double vtxZ,
+                                              TH1D * h_shwr_length_nue_cc,
+                                              TH1D * h_shwr_length_nue_cc_out_fv,
+                                              TH1D * h_shwr_length_nue_cc_mixed,
+                                              TH1D * h_shwr_length_numu_cc,
+                                              TH1D * h_shwr_length_numu_cc_mixed,
+                                              TH1D * h_shwr_length_nc,
+                                              TH1D * h_shwr_length_nc_pi0,
+                                              TH1D * h_shwr_length_cosmic,
+                                              TH1D * h_shwr_length_other_mixed,
+                                              TH1D * h_shwr_length_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shwr_length = leading_shower.pfpLength();
+
+		if(tpco_id == "nue_cc_qe")      {h_shwr_length_nue_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "nue_cc_out_fv")  {h_shwr_length_nue_cc_out_fv->Fill(leading_shwr_length); }
+		if(tpco_id == "nue_cc_res")     {h_shwr_length_nue_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "nue_cc_dis")     {h_shwr_length_nue_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "nue_cc_coh")     {h_shwr_length_nue_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "nue_cc_mec")     {h_shwr_length_nue_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "numu_cc_qe")     {h_shwr_length_numu_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "numu_cc_res")    {h_shwr_length_numu_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "numu_cc_dis")    {h_shwr_length_numu_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "numu_cc_coh")    {h_shwr_length_numu_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "numu_cc_mec")    {h_shwr_length_numu_cc->Fill(leading_shwr_length); }
+		if(tpco_id == "nc")             {h_shwr_length_nc->Fill(leading_shwr_length); }
+		if(tpco_id == "nc_pi0")         {h_shwr_length_nc_pi0->Fill(leading_shwr_length); }
+		if(tpco_id == "nue_cc_mixed")   {h_shwr_length_nue_cc_mixed->Fill(leading_shwr_length); }
+		if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(leading_shwr_length); }
+		if(tpco_id == "cosmic")         {h_shwr_length_cosmic->Fill(leading_shwr_length); }
+		if(tpco_id == "other_mixed")    {h_shwr_length_other_mixed->Fill(leading_shwr_length); }
+		if(tpco_id == "unmatched")      {h_shwr_length_unmatched->Fill(leading_shwr_length); }
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::LeadingShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                                    double vtxX, double vtxY, double vtxZ,
+                                                    TH1D * h_shwr_trk_length_nue_cc,
+                                                    TH1D * h_shwr_trk_length_nue_cc_out_fv,
+                                                    TH1D * h_shwr_trk_length_nue_cc_mixed,
+                                                    TH1D * h_shwr_trk_length_numu_cc,
+                                                    TH1D * h_shwr_trk_length_numu_cc_mixed,
+                                                    TH1D * h_shwr_trk_length_nc,
+                                                    TH1D * h_shwr_trk_length_nc_pi0,
+                                                    TH1D * h_shwr_trk_length_cosmic,
+                                                    TH1D * h_shwr_trk_length_other_mixed,
+                                                    TH1D * h_shwr_trk_length_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shwr_length = leading_shower.pfpLength();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		std::vector< double > trk_length_v;
+		double longest_track = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double trk_length = pfp.pfpLength();
+				if(trk_length > longest_track)
+				{
+					trk_length_v.clear();
+					trk_length_v.push_back(trk_length);
+					longest_track = trk_length;
+				}
+			}
+		}
+		const double longest_trk_leading_shwr_ratio = longest_track / leading_shwr_length;
+
+		if(tpco_id == "nue_cc_qe")      {h_shwr_trk_length_nue_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nue_cc_out_fv")  {h_shwr_trk_length_nue_cc_out_fv->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nue_cc_res")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nue_cc_dis")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nue_cc_coh")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nue_cc_mec")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "numu_cc_qe")     {h_shwr_trk_length_numu_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "numu_cc_res")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "numu_cc_dis")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "numu_cc_coh")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "numu_cc_mec")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nc")             {h_shwr_trk_length_nc->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nc_pi0")         {h_shwr_trk_length_nc_pi0->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "nue_cc_mixed")   {h_shwr_trk_length_nue_cc_mixed->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc_mixed->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "cosmic")         {h_shwr_trk_length_cosmic->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "other_mixed")    {h_shwr_trk_length_other_mixed->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "unmatched")      {h_shwr_trk_length_unmatched->Fill(longest_trk_leading_shwr_ratio); }
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::LongestShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                                    double vtxX, double vtxY, double vtxZ,
+                                                    TH1D * h_shwr_trk_length_nue_cc,
+                                                    TH1D * h_shwr_trk_length_nue_cc_out_fv,
+                                                    TH1D * h_shwr_trk_length_nue_cc_mixed,
+                                                    TH1D * h_shwr_trk_length_numu_cc,
+                                                    TH1D * h_shwr_trk_length_numu_cc_mixed,
+                                                    TH1D * h_shwr_trk_length_nc,
+                                                    TH1D * h_shwr_trk_length_nc_pi0,
+                                                    TH1D * h_shwr_trk_length_cosmic,
+                                                    TH1D * h_shwr_trk_length_other_mixed,
+                                                    TH1D * h_shwr_trk_length_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		std::vector< double > trk_length_v;
+		std::vector< double > shwr_length_v;
+		double longest_shower = 0;
+		double longest_track = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double trk_length = pfp.pfpLength();
+				if(trk_length > longest_track)
+				{
+					trk_length_v.clear();
+					trk_length_v.push_back(trk_length);
+					longest_track = trk_length;
+				}
+			}
+			if(pfp_pdg == 11)
+			{
+				const double shwr_length = pfp.pfpLength();
+				if(shwr_length > longest_shower)
+				{
+					shwr_length_v.clear();
+					shwr_length_v.push_back(shwr_length);
+					longest_shower = shwr_length;
+				}
+			}
+		}
+		const double longest_trk_longest_shwr_ratio = longest_track / longest_shower;
+
+		if(tpco_id == "nue_cc_qe")      {h_shwr_trk_length_nue_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nue_cc_out_fv")  {h_shwr_trk_length_nue_cc_out_fv->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nue_cc_res")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nue_cc_dis")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nue_cc_coh")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nue_cc_mec")     {h_shwr_trk_length_nue_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "numu_cc_qe")     {h_shwr_trk_length_numu_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "numu_cc_res")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "numu_cc_dis")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "numu_cc_coh")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "numu_cc_mec")    {h_shwr_trk_length_numu_cc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nc")             {h_shwr_trk_length_nc->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nc_pi0")         {h_shwr_trk_length_nc_pi0->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "nue_cc_mixed")   {h_shwr_trk_length_nue_cc_mixed->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc_mixed->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "cosmic")         {h_shwr_trk_length_cosmic->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "other_mixed")    {h_shwr_trk_length_other_mixed->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "unmatched")      {h_shwr_trk_length_unmatched->Fill(longest_trk_longest_shwr_ratio); }
 	}//end loop tpco
 }//end function
 //***************************************************************************

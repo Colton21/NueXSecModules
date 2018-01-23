@@ -99,6 +99,8 @@ int selection( const char * _file1){
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
 	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_open_angle_cuts_v
+	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
@@ -415,6 +417,29 @@ int selection( const char * _file1){
 		//*****************************************************
 		//****** open angle cut for the leading shower ********
 		//******************************************************
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_open_angle_cuts_v);
+		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                             h_pfp_shower_open_angle_nue_cc_qe,
+		                                                             h_pfp_shower_open_angle_nue_cc_out_fv,
+		                                                             h_pfp_shower_open_angle_nue_cc_res,
+		                                                             h_pfp_shower_open_angle_nue_cc_dis,
+		                                                             h_pfp_shower_open_angle_nue_cc_coh,
+		                                                             h_pfp_shower_open_angle_nue_cc_mec,
+		                                                             h_pfp_shower_open_angle_nc,
+		                                                             h_pfp_shower_open_angle_numu_cc_qe,
+		                                                             h_pfp_shower_open_angle_numu_cc_res,
+		                                                             h_pfp_shower_open_angle_numu_cc_dis,
+		                                                             h_pfp_shower_open_angle_numu_cc_coh,
+		                                                             h_pfp_shower_open_angle_numu_cc_mec,
+		                                                             h_pfp_shower_open_angle_nc_pi0,
+		                                                             h_pfp_shower_open_angle_nue_cc_mixed,
+		                                                             h_pfp_shower_open_angle_numu_cc_mixed,
+		                                                             h_pfp_shower_open_angle_cosmic,
+		                                                             h_pfp_shower_open_angle_other_mixed,
+		                                                             h_pfp_shower_open_angle_unmatched
+		                                                             );
 		_functions_instance.selection_functions::PostCutOpenAngle(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                          h_leading_shower_open_angle_nue_cc, h_leading_shower_open_angle_nue_cc_mixed,
@@ -422,6 +447,20 @@ int selection( const char * _file1){
 		                                                          h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nc_pi0,
 		                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
 		                                                          h_leading_shower_open_angle_unmatched);
+		_functions_instance.selection_functions::PostCutOpenAngle1Shower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                                 _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                 h_leading_shower_open_angle_1_nue_cc, h_leading_shower_open_angle_1_nue_cc_mixed,
+		                                                                 h_leading_shower_open_angle_1_numu_cc, h_leading_shower_open_angle_1_nc,
+		                                                                 h_leading_shower_open_angle_1_cosmic, h_leading_shower_open_angle_1_nc_pi0,
+		                                                                 h_leading_shower_open_angle_1_numu_cc_mixed, h_leading_shower_open_angle_1_other_mixed,
+		                                                                 h_leading_shower_open_angle_1_unmatched);
+		_functions_instance.selection_functions::PostCutOpenAngle2PlusShower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                     h_leading_shower_open_angle_2plus_nue_cc, h_leading_shower_open_angle_2plus_nue_cc_mixed,
+		                                                                     h_leading_shower_open_angle_2plus_numu_cc, h_leading_shower_open_angle_2plus_nc,
+		                                                                     h_leading_shower_open_angle_2plus_cosmic, h_leading_shower_open_angle_2plus_nc_pi0,
+		                                                                     h_leading_shower_open_angle_2plus_numu_cc_mixed, h_leading_shower_open_angle_2plus_other_mixed,
+		                                                                     h_leading_shower_open_angle_2plus_unmatched);
 		_cuts_instance.selection_cuts::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
@@ -430,6 +469,28 @@ int selection( const char * _file1){
 		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_open_angle, h_selected_ele_energy_open_angle);
+
+		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                             h_pfp_shower_dedx_nue_cc_qe,
+		                                                             h_pfp_shower_dedx_nue_cc_out_fv,
+		                                                             h_pfp_shower_dedx_nue_cc_res,
+		                                                             h_pfp_shower_dedx_nue_cc_dis,
+		                                                             h_pfp_shower_dedx_nue_cc_coh,
+		                                                             h_pfp_shower_dedx_nue_cc_mec,
+		                                                             h_pfp_shower_dedx_nc,
+		                                                             h_pfp_shower_dedx_numu_cc_qe,
+		                                                             h_pfp_shower_dedx_numu_cc_res,
+		                                                             h_pfp_shower_dedx_numu_cc_dis,
+		                                                             h_pfp_shower_dedx_numu_cc_coh,
+		                                                             h_pfp_shower_dedx_numu_cc_mec,
+		                                                             h_pfp_shower_dedx_nc_pi0,
+		                                                             h_pfp_shower_dedx_nue_cc_mixed,
+		                                                             h_pfp_shower_dedx_numu_cc_mixed,
+		                                                             h_pfp_shower_dedx_cosmic,
+		                                                             h_pfp_shower_dedx_other_mixed,
+		                                                             h_pfp_shower_dedx_unmatched
+		                                                             );
 
 		//*****************************************************
 		//*********** dEdx cut for the leading shower *********
@@ -579,8 +640,7 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
 
-
-		_functions_instance.selection_functions::TrackLength(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
+		_functions_instance.selection_functions::TrackLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                     h_trk_length_nue_cc,
 		                                                     h_trk_length_nue_cc_out_fv,
@@ -592,6 +652,80 @@ int selection( const char * _file1){
 		                                                     h_trk_length_cosmic,
 		                                                     h_trk_length_other_mixed,
 		                                                     h_trk_length_unmatched);
+		_functions_instance.selection_functions::LongestTrackLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                            _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                            h_longest_trk_length_nue_cc,
+		                                                            h_longest_trk_length_nue_cc_out_fv,
+		                                                            h_longest_trk_length_nue_cc_mixed,
+		                                                            h_longest_trk_length_numu_cc,
+		                                                            h_longest_trk_length_numu_cc_mixed,
+		                                                            h_longest_trk_length_nc,
+		                                                            h_longest_trk_length_nc_pi0,
+		                                                            h_longest_trk_length_cosmic,
+		                                                            h_longest_trk_length_other_mixed,
+		                                                            h_longest_trk_length_unmatched);
+
+		_functions_instance.selection_functions::ShowerLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                      h_shwr_length_nue_cc,
+		                                                      h_shwr_length_nue_cc_out_fv,
+		                                                      h_shwr_length_nue_cc_mixed,
+		                                                      h_shwr_length_numu_cc,
+		                                                      h_shwr_length_numu_cc_mixed,
+		                                                      h_shwr_length_nc,
+		                                                      h_shwr_length_nc_pi0,
+		                                                      h_shwr_length_cosmic,
+		                                                      h_shwr_length_other_mixed,
+		                                                      h_shwr_length_unmatched);
+		_functions_instance.selection_functions::LongestShowerLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                             h_longest_shwr_length_nue_cc,
+		                                                             h_longest_shwr_length_nue_cc_out_fv,
+		                                                             h_longest_shwr_length_nue_cc_mixed,
+		                                                             h_longest_shwr_length_numu_cc,
+		                                                             h_longest_shwr_length_numu_cc_mixed,
+		                                                             h_longest_shwr_length_nc,
+		                                                             h_longest_shwr_length_nc_pi0,
+		                                                             h_longest_shwr_length_cosmic,
+		                                                             h_longest_shwr_length_other_mixed,
+		                                                             h_longest_shwr_length_unmatched);
+		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                             h_leading_shwr_length_nue_cc,
+		                                                             h_leading_shwr_length_nue_cc_out_fv,
+		                                                             h_leading_shwr_length_nue_cc_mixed,
+		                                                             h_leading_shwr_length_numu_cc,
+		                                                             h_leading_shwr_length_numu_cc_mixed,
+		                                                             h_leading_shwr_length_nc,
+		                                                             h_leading_shwr_length_nc_pi0,
+		                                                             h_leading_shwr_length_cosmic,
+		                                                             h_leading_shwr_length_other_mixed,
+		                                                             h_leading_shwr_length_unmatched);
+		_functions_instance.selection_functions::LeadingShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                   h_leading_shwr_trk_length_nue_cc,
+		                                                                   h_leading_shwr_trk_length_nue_cc_out_fv,
+		                                                                   h_leading_shwr_trk_length_nue_cc_mixed,
+		                                                                   h_leading_shwr_trk_length_numu_cc,
+		                                                                   h_leading_shwr_trk_length_numu_cc_mixed,
+		                                                                   h_leading_shwr_trk_length_nc,
+		                                                                   h_leading_shwr_trk_length_nc_pi0,
+		                                                                   h_leading_shwr_trk_length_cosmic,
+		                                                                   h_leading_shwr_trk_length_other_mixed,
+		                                                                   h_leading_shwr_trk_length_unmatched);
+
+		_functions_instance.selection_functions::LongestShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                   h_longest_shwr_trk_length_nue_cc,
+		                                                                   h_longest_shwr_trk_length_nue_cc_out_fv,
+		                                                                   h_longest_shwr_trk_length_nue_cc_mixed,
+		                                                                   h_longest_shwr_trk_length_numu_cc,
+		                                                                   h_longest_shwr_trk_length_numu_cc_mixed,
+		                                                                   h_longest_shwr_trk_length_nc,
+		                                                                   h_longest_shwr_trk_length_nc_pi0,
+		                                                                   h_longest_shwr_trk_length_cosmic,
+		                                                                   h_longest_shwr_trk_length_other_mixed,
+		                                                                   h_longest_shwr_trk_length_unmatched);
 
 	}//end event loop
 
@@ -669,6 +803,8 @@ int selection( const char * _file1){
 	        " Integrated Xsec:    " << genie_xsec << std::endl;
 
 	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v, _post_cuts_verbose); }
+	_functions_instance.selection_functions::PostCutVectorPlots(post_cuts_v, _post_cuts_verbose, h_post_cuts_num_showers_purity);
+	_functions_instance.selection_functions::PostCutVectorPlots(post_open_angle_cuts_v, _post_cuts_verbose, h_post_open_angle_cuts_num_showers_purity);
 
 //********************//
 //**** Histograms ****//
@@ -735,6 +871,20 @@ int selection( const char * _file1){
 	                                      h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
 	                                      h_leading_shower_open_angle_unmatched, "",
 	                                      "Shower Opening Angle [Degrees]", "", "post_cuts_leading_shower_open_angle.pdf");
+
+	histogram_functions::PlotSimpleStack (h_leading_shower_open_angle_1_nue_cc,  h_leading_shower_open_angle_1_nue_cc_mixed,
+	                                      h_leading_shower_open_angle_1_numu_cc, h_leading_shower_open_angle_1_numu_cc_mixed,
+	                                      h_leading_shower_open_angle_1_cosmic,  h_leading_shower_open_angle_1_nc,
+	                                      h_leading_shower_open_angle_1_nc_pi0,  h_leading_shower_open_angle_1_other_mixed,
+	                                      h_leading_shower_open_angle_1_unmatched, "",
+	                                      "Shower Opening Angle [Degrees]", "", "post_cuts_leading_shower_open_angle_1_shower.pdf");
+
+	histogram_functions::PlotSimpleStack (h_leading_shower_open_angle_2plus_nue_cc,  h_leading_shower_open_angle_2plus_nue_cc_mixed,
+	                                      h_leading_shower_open_angle_2plus_numu_cc, h_leading_shower_open_angle_2plus_numu_cc_mixed,
+	                                      h_leading_shower_open_angle_2plus_cosmic,  h_leading_shower_open_angle_2plus_nc,
+	                                      h_leading_shower_open_angle_2plus_nc_pi0,  h_leading_shower_open_angle_2plus_other_mixed,
+	                                      h_leading_shower_open_angle_2plus_unmatched, "",
+	                                      "Shower Opening Angle [Degrees]", "", "post_cuts_leading_shower_open_angle_2plus_showers.pdf");
 
 	histogram_functions::PlotSimpleStack (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
 	                                      h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
@@ -804,6 +954,46 @@ int selection( const char * _file1){
 	                                     h_pfp_shower_unmatched,
 	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_stack.pdf");
 
+	histogram_functions::PlotDetailStack(h_pfp_shower_open_angle_nue_cc_qe,
+	                                     h_pfp_shower_open_angle_nue_cc_out_fv,
+	                                     h_pfp_shower_open_angle_nue_cc_res,
+	                                     h_pfp_shower_open_angle_nue_cc_dis,
+	                                     h_pfp_shower_open_angle_nue_cc_coh,
+	                                     h_pfp_shower_open_angle_nue_cc_mec,
+	                                     h_pfp_shower_open_angle_nue_cc_mixed,
+	                                     h_pfp_shower_open_angle_numu_cc_qe,
+	                                     h_pfp_shower_open_angle_numu_cc_res,
+	                                     h_pfp_shower_open_angle_numu_cc_dis,
+	                                     h_pfp_shower_open_angle_numu_cc_coh,
+	                                     h_pfp_shower_open_angle_numu_cc_mec,
+	                                     h_pfp_shower_open_angle_numu_cc_mixed,
+	                                     h_pfp_shower_open_angle_cosmic,
+	                                     h_pfp_shower_open_angle_nc,
+	                                     h_pfp_shower_open_angle_nc_pi0,
+	                                     h_pfp_shower_open_angle_other_mixed,
+	                                     h_pfp_shower_open_angle_unmatched,
+	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_open_angle_stack.pdf");
+
+	histogram_functions::PlotDetailStack(h_pfp_shower_dedx_nue_cc_qe,
+	                                     h_pfp_shower_dedx_nue_cc_out_fv,
+	                                     h_pfp_shower_dedx_nue_cc_res,
+	                                     h_pfp_shower_dedx_nue_cc_dis,
+	                                     h_pfp_shower_dedx_nue_cc_coh,
+	                                     h_pfp_shower_dedx_nue_cc_mec,
+	                                     h_pfp_shower_dedx_nue_cc_mixed,
+	                                     h_pfp_shower_dedx_numu_cc_qe,
+	                                     h_pfp_shower_dedx_numu_cc_res,
+	                                     h_pfp_shower_dedx_numu_cc_dis,
+	                                     h_pfp_shower_dedx_numu_cc_coh,
+	                                     h_pfp_shower_dedx_numu_cc_mec,
+	                                     h_pfp_shower_dedx_numu_cc_mixed,
+	                                     h_pfp_shower_dedx_cosmic,
+	                                     h_pfp_shower_dedx_nc,
+	                                     h_pfp_shower_dedx_nc_pi0,
+	                                     h_pfp_shower_dedx_other_mixed,
+	                                     h_pfp_shower_dedx_unmatched,
+	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_dedx_stack.pdf");
+
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_qe, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_qe.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_out_fv, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_out_fv.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_res, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_res.pdf");
@@ -842,7 +1032,7 @@ int selection( const char * _file1){
 	                                     h_pfp_track_nc_pi0_last,
 	                                     h_pfp_track_other_mixed_last,
 	                                     h_pfp_track_unmatched_last,
-	                                     "Reconstructed Tracks in Candidate Neutrino Object", "", "selected_pfp_track_stack.pdf");
+	                                     "Reconstructed Tracks in Candidate Neutrino Object", "", "selected_pfp_track_stack_last.pdf");
 
 	histogram_functions::PlotDetailStack(h_pfp_shower_nue_cc_qe_last,
 	                                     h_pfp_shower_nue_cc_out_fv_last,
@@ -862,7 +1052,7 @@ int selection( const char * _file1){
 	                                     h_pfp_shower_nc_pi0_last,
 	                                     h_pfp_shower_other_mixed_last,
 	                                     h_pfp_shower_unmatched_last,
-	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_stack.pdf");
+	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_stack_last.pdf");
 
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_qe_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_qe_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_out_fv_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_out_fv_last.pdf");
@@ -1090,8 +1280,49 @@ int selection( const char * _file1){
 	                                      h_trk_length_nc_pi0,  h_trk_length_other_mixed,
 	                                      h_trk_length_unmatched, "",
 	                                      "All Track Lengths [cm]", "", "post_all_track_lengths.pdf");
+	histogram_functions::PlotSimpleStack (h_longest_trk_length_nue_cc,  h_longest_trk_length_nue_cc_mixed,
+	                                      h_longest_trk_length_numu_cc, h_longest_trk_length_numu_cc_mixed,
+	                                      h_longest_trk_length_cosmic,  h_longest_trk_length_nc,
+	                                      h_longest_trk_length_nc_pi0,  h_longest_trk_length_other_mixed,
+	                                      h_longest_trk_length_unmatched, "",
+	                                      "Longest Track Lengths [cm]", "", "post_longest_track_lengths.pdf");
 
+	histogram_functions::PlotSimpleStack (h_shwr_length_nue_cc,  h_shwr_length_nue_cc_mixed,
+	                                      h_shwr_length_numu_cc, h_shwr_length_numu_cc_mixed,
+	                                      h_shwr_length_cosmic,  h_shwr_length_nc,
+	                                      h_shwr_length_nc_pi0,  h_shwr_length_other_mixed,
+	                                      h_shwr_length_unmatched, "",
+	                                      "All Shower Lengths [cm]", "", "post_all_shower_lengths.pdf");
+	histogram_functions::PlotSimpleStack (h_longest_shwr_length_nue_cc,  h_longest_shwr_length_nue_cc_mixed,
+	                                      h_longest_shwr_length_numu_cc, h_longest_shwr_length_numu_cc_mixed,
+	                                      h_longest_shwr_length_cosmic,  h_longest_shwr_length_nc,
+	                                      h_longest_shwr_length_nc_pi0,  h_longest_shwr_length_other_mixed,
+	                                      h_longest_shwr_length_unmatched, "",
+	                                      "Longest Shower Lengths [cm]", "", "post_longest_shower_lengths.pdf");
+	histogram_functions::PlotSimpleStack (h_leading_shwr_length_nue_cc,  h_leading_shwr_length_nue_cc_mixed,
+	                                      h_leading_shwr_length_numu_cc, h_leading_shwr_length_numu_cc_mixed,
+	                                      h_leading_shwr_length_cosmic,  h_leading_shwr_length_nc,
+	                                      h_leading_shwr_length_nc_pi0,  h_leading_shwr_length_other_mixed,
+	                                      h_leading_shwr_length_unmatched, "",
+	                                      "Leading Shower Lengths [cm]", "", "post_leading_shower_lengths.pdf");
 
+	histogram_functions::PlotSimpleStack (h_leading_shwr_trk_length_nue_cc,  h_leading_shwr_trk_length_nue_cc_mixed,
+	                                      h_leading_shwr_trk_length_numu_cc, h_leading_shwr_trk_length_numu_cc_mixed,
+	                                      h_leading_shwr_trk_length_cosmic,  h_leading_shwr_trk_length_nc,
+	                                      h_leading_shwr_trk_length_nc_pi0,  h_leading_shwr_trk_length_other_mixed,
+	                                      h_leading_shwr_trk_length_unmatched, "",
+	                                      "Longest Track / Leading Shower Lengths", "", "post_leading_shower_trk_lengths.pdf");
+
+	histogram_functions::PlotSimpleStack (h_longest_shwr_trk_length_nue_cc,  h_longest_shwr_trk_length_nue_cc_mixed,
+	                                      h_longest_shwr_trk_length_numu_cc, h_longest_shwr_trk_length_numu_cc_mixed,
+	                                      h_longest_shwr_trk_length_cosmic,  h_longest_shwr_trk_length_nc,
+	                                      h_longest_shwr_trk_length_nc_pi0,  h_longest_shwr_trk_length_other_mixed,
+	                                      h_longest_shwr_trk_length_unmatched, "",
+	                                      "Longest Track / Longest Shower Lengths", "", "post_longest_shower_trk_lengths.pdf");
+
+	histogram_functions::Plot1DHistogram (h_post_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO", "post_cuts_num_showers_purity.pdf");
+	histogram_functions::Plot1DHistogram (h_post_open_angle_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO",
+	                                      "post_open_angle_cuts_num_showers_purity.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
