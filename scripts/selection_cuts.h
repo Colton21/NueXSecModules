@@ -76,6 +76,13 @@ void HitLengthRatioCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                        const double pfp_hits_length_tolerance);
 //***************************************************************************
+void HitThresholdCollection(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                            double threshold, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
+//***************************************************************************
+void LongestTrackLeadingShowerCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  const double ratio_tolerance);
+
 
 
 };

@@ -456,6 +456,43 @@ void selection_cuts::HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc
 	}//end tpc object loop
 }
 //***************************************************************************
+void selection_cuts::HitThresholdCollection(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            double threshold, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		bool over_threshold = false;
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			//check if at least one shower is within the tolerance to tpco vtx
+			//if no shower within tolerance, discard tpco (i.e. it's not a cc nue)
+			if(pfp_pdg == 11)        //if it's a shower
+			{
+				const int n_pfp_hits_w = part.NumPFPHitsW();
+				if(n_pfp_hits_w >= threshold) {over_threshold = true; }
+				if(over_threshold == true)
+				{
+					if(_verbose) std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
+					passed_tpco->at(i).first = 1;
+					break;
+				}
+			}
+		} //end loop pfps
+		if(over_threshold == 0)//false
+		{
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "HitThresholdW";
+		}
+	}//end tpc object loop
+}
+//***************************************************************************
 void selection_cuts::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                             std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
@@ -565,6 +602,8 @@ void selection_cuts::SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectConta
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		if(n_pfp_showers <= 3) {continue; }
+		//This cut does not target events with fewer than 4 showers
 		const double tpco_vtx_x = tpc_obj.pfpVtxX();
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
@@ -581,31 +620,28 @@ void selection_cuts::SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectConta
 				leading_index = j;
 			}
 		}//end loop pfparticles
-		if(n_pfp_showers > 3)
+		for(int j = 0; j < n_pfp; j++)
 		{
-			for(int j = 0; j < n_pfp; j++)
+			if(j == leading_index) {continue; }        //we assume leading shower == electron shower
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const double pfp_vtx_x = part.pfpVtxX();
+			const double pfp_vtx_y = part.pfpVtxY();
+			const double pfp_vtx_z = part.pfpVtxZ();
+			const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
+			                             pow((pfp_vtx_y - tpco_vtx_y),2) +
+			                             pow((pfp_vtx_z - tpco_vtx_z),2));
+			if(pfp_pdg == 11)        //22 cm is ~ 2 radiation lengths
 			{
-				if(j == leading_index) {continue; }//we assume leading shower == electron shower
-				auto const part = tpc_obj.GetParticle(j);
-				const int pfp_pdg = part.PFParticlePdgCode();
-				const double pfp_vtx_x = part.pfpVtxX();
-				const double pfp_vtx_y = part.pfpVtxY();
-				const double pfp_vtx_z = part.pfpVtxZ();
-				const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
-				                             pow((pfp_vtx_y - tpco_vtx_y),2) +
-				                             pow((pfp_vtx_z - tpco_vtx_z),2));
-				if(pfp_pdg == 11)//22 cm is ~ 2 radiation lengths
+				if(distance > dist_tolerance)
 				{
-					if(distance > dist_tolerance)
-					{
-						passed_tpco->at(i).first = 0;
-						passed_tpco->at(i).second = "SecondaryDist";
-						if(_verbose) {std::cout << "[SecondaryDist] TPC Object Failed!" << std::endl; }
-						break;
-					}
+					passed_tpco->at(i).first = 0;
+					passed_tpco->at(i).second = "SecondaryDist";
+					if(_verbose) {std::cout << "[SecondaryDist] TPC Object Failed!" << std::endl; }
+					break;
 				}
-			}//end loop pfp
-		}
+			}
+		}        //end loop pfp
 	}
 }
 //***************************************************************************
@@ -647,6 +683,54 @@ void selection_cuts::HitLengthRatioCut(std::vector<xsecAna::TPCObjectContainer> 
 				passed_tpco->at(i).second = "HitLengthRatio";
 				if(_verbose) {std::cout << "[HitLengthRatio] TPC Object Failed!" << std::endl; }
 			}
+		}
+	}
+}
+//***************************************************************************
+void selection_cuts::LongestTrackLeadingShowerCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                  const double ratio_tolerance)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		int leading_index = 0;
+		int leading_hits  = 0;
+		double longest_track = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			const int n_pfp_hits = pfp.NumPFPHits();
+			if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+			{
+				leading_hits = n_pfp_hits;
+				leading_index = j;
+			}
+			if(pfp_pdg == 13)
+			{
+				const double trk_length = pfp.pfpLength();
+				if(trk_length > longest_track)
+				{
+					longest_track = trk_length;
+				}
+			}
+		}//end loop pfparticles
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shower_length = leading_shower.pfpLength();
+		const double longest_track_leading_shower_ratio = longest_track / leading_shower_length;
+
+		//if the ratio is too large:
+		if(longest_track_leading_shower_ratio > ratio_tolerance)
+		{
+			passed_tpco->at(i).first = 0;
+			passed_tpco->at(i).second = "TrkShwrLenRatio";
+			if(_verbose) {std::cout << "[TrkShwrLenhRatio] TPC Object Failed!" << std::endl; }
 		}
 	}
 }

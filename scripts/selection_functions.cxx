@@ -231,10 +231,15 @@ void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, do
 	double purity_2 = double(signal_events_2) / (double(signal_events_2) + double(bkg_events_2));
 	double purity_3 = double(signal_events_3) / (double(signal_events_3) + double(bkg_events_3));
 	double purity_4 = double(signal_events_4) / (double(signal_events_4) + double(bkg_events_4));
-	post_cuts_num_showers_purity->Fill(1, purity_1);
-	post_cuts_num_showers_purity->Fill(2, purity_2);
-	post_cuts_num_showers_purity->Fill(3, purity_3);
-	post_cuts_num_showers_purity->Fill(4, purity_4);
+	std::cout << purity_1 << " " << purity_2 << " " << purity_3 << " " << purity_4 << std::endl;
+	// post_cuts_num_showers_purity->Fill(1, purity_1);
+	// post_cuts_num_showers_purity->Fill(2, purity_2);
+	// post_cuts_num_showers_purity->Fill(3, purity_3);
+	// post_cuts_num_showers_purity->Fill(4, purity_4);
+	post_cuts_num_showers_purity->SetBinContent(1, purity_1);
+	post_cuts_num_showers_purity->SetBinContent(2, purity_2);
+	post_cuts_num_showers_purity->SetBinContent(3, purity_3);
+	post_cuts_num_showers_purity->SetBinContent(4, purity_4);
 }
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts
@@ -2047,6 +2052,7 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		if(n_pfp_showers <= 3) {continue; }
 		const double tpco_vtx_x = tpc_obj.pfpVtxX();
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
@@ -2054,96 +2060,93 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 		std::string tpco_id = tpco_class.first;
 		int leading_index = tpco_class.second;
 		//auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		if(n_pfp_showers > 3)
+		for(int j = 0; j < n_pfp; j++)
 		{
-			for(int j = 0; j < n_pfp; j++)
+			if(j == leading_index) {continue; }        //we assume leading shower == electron shower
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const double pfp_vtx_x = part.pfpVtxX();
+			const double pfp_vtx_y = part.pfpVtxY();
+			const double pfp_vtx_z = part.pfpVtxZ();
+			const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
+			                             pow((pfp_vtx_y - tpco_vtx_y),2) +
+			                             pow((pfp_vtx_z - tpco_vtx_z),2));
+			if(pfp_pdg == 11)        //22 cm is ~ 2 radiation lengths
 			{
-				if(j == leading_index) {continue; }//we assume leading shower == electron shower
-				auto const part = tpc_obj.GetParticle(j);
-				const int pfp_pdg = part.PFParticlePdgCode();
-				const double pfp_vtx_x = part.pfpVtxX();
-				const double pfp_vtx_y = part.pfpVtxY();
-				const double pfp_vtx_z = part.pfpVtxZ();
-				const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
-				                             pow((pfp_vtx_y - tpco_vtx_y),2) +
-				                             pow((pfp_vtx_z - tpco_vtx_z),2));
-				if(pfp_pdg == 11)//22 cm is ~ 2 radiation lengths
+				if(tpco_id == "nue_cc_qe")
 				{
-					if(tpco_id == "nue_cc_qe")
-					{
-						h_second_shwr_dist_nue_cc->Fill(distance);
-					}
-					if(tpco_id == "nue_cc_out_fv")
-					{
-						h_second_shwr_dist_nue_cc_out_fv->Fill(distance);
-					}
-					if(tpco_id == "nue_cc_res")
-					{
-						h_second_shwr_dist_nue_cc->Fill(distance);
-					}
-					if(tpco_id == "nue_cc_dis")
-					{
-						h_second_shwr_dist_nue_cc->Fill(distance);
-					}
-					if(tpco_id == "nue_cc_coh")
-					{
-						h_second_shwr_dist_nue_cc->Fill(distance);
-					}
-					if(tpco_id == "nue_cc_mec")
-					{
-						h_second_shwr_dist_nue_cc->Fill(distance);
-					}
-					if(tpco_id == "numu_cc_qe")
-					{
-						h_second_shwr_dist_numu_cc->Fill(distance);
-					}
-					if(tpco_id == "numu_cc_res")
-					{
-						h_second_shwr_dist_numu_cc->Fill(distance);
-					}
-					if(tpco_id == "numu_cc_dis")
-					{
-						h_second_shwr_dist_numu_cc->Fill(distance);
-					}
-					if(tpco_id == "numu_cc_coh")
-					{
-						h_second_shwr_dist_numu_cc->Fill(distance);
-					}
-					if(tpco_id == "numu_cc_mec")
-					{
-						h_second_shwr_dist_numu_cc->Fill(distance);
-					}
-					if(tpco_id == "nc")
-					{
-						h_second_shwr_dist_nc->Fill(distance);
-					}
-					if(tpco_id == "nc_pi0")
-					{
-						h_second_shwr_dist_nc_pi0->Fill(distance);
-					}
-					if(tpco_id == "nue_cc_mixed")
-					{
-						h_second_shwr_dist_nue_cc_mixed->Fill(distance);
-					}
-					if(tpco_id == "numu_cc_mixed")
-					{
-						h_second_shwr_dist_numu_cc_mixed->Fill(distance);
-					}
-					if(tpco_id == "cosmic")
-					{
-						h_second_shwr_dist_cosmic->Fill(distance);
-					}
-					if(tpco_id == "other_mixed")
-					{
-						h_second_shwr_dist_other_mixed->Fill(distance);
-					}
-					if(tpco_id == "unmatched")
-					{
-						h_second_shwr_dist_unmatched->Fill(distance);
-					}
-				}//end if reco shower
-			}//end loop pfp
-		}//end if tpco > 3 reco showers
+					h_second_shwr_dist_nue_cc->Fill(distance);
+				}
+				if(tpco_id == "nue_cc_out_fv")
+				{
+					h_second_shwr_dist_nue_cc_out_fv->Fill(distance);
+				}
+				if(tpco_id == "nue_cc_res")
+				{
+					h_second_shwr_dist_nue_cc->Fill(distance);
+				}
+				if(tpco_id == "nue_cc_dis")
+				{
+					h_second_shwr_dist_nue_cc->Fill(distance);
+				}
+				if(tpco_id == "nue_cc_coh")
+				{
+					h_second_shwr_dist_nue_cc->Fill(distance);
+				}
+				if(tpco_id == "nue_cc_mec")
+				{
+					h_second_shwr_dist_nue_cc->Fill(distance);
+				}
+				if(tpco_id == "numu_cc_qe")
+				{
+					h_second_shwr_dist_numu_cc->Fill(distance);
+				}
+				if(tpco_id == "numu_cc_res")
+				{
+					h_second_shwr_dist_numu_cc->Fill(distance);
+				}
+				if(tpco_id == "numu_cc_dis")
+				{
+					h_second_shwr_dist_numu_cc->Fill(distance);
+				}
+				if(tpco_id == "numu_cc_coh")
+				{
+					h_second_shwr_dist_numu_cc->Fill(distance);
+				}
+				if(tpco_id == "numu_cc_mec")
+				{
+					h_second_shwr_dist_numu_cc->Fill(distance);
+				}
+				if(tpco_id == "nc")
+				{
+					h_second_shwr_dist_nc->Fill(distance);
+				}
+				if(tpco_id == "nc_pi0")
+				{
+					h_second_shwr_dist_nc_pi0->Fill(distance);
+				}
+				if(tpco_id == "nue_cc_mixed")
+				{
+					h_second_shwr_dist_nue_cc_mixed->Fill(distance);
+				}
+				if(tpco_id == "numu_cc_mixed")
+				{
+					h_second_shwr_dist_numu_cc_mixed->Fill(distance);
+				}
+				if(tpco_id == "cosmic")
+				{
+					h_second_shwr_dist_cosmic->Fill(distance);
+				}
+				if(tpco_id == "other_mixed")
+				{
+					h_second_shwr_dist_other_mixed->Fill(distance);
+				}
+				if(tpco_id == "unmatched")
+				{
+					h_second_shwr_dist_unmatched->Fill(distance);
+				}
+			}        //end if reco shower
+		}        //end loop pfp
 	}//end loop tpco
 }//end function
 //***************************************************************************
@@ -2711,6 +2714,345 @@ void selection_functions::LongestShowerTrackLengths(std::vector<xsecAna::TPCObje
 		if(tpco_id == "cosmic")         {h_shwr_trk_length_cosmic->Fill(longest_trk_longest_shwr_ratio); }
 		if(tpco_id == "other_mixed")    {h_shwr_trk_length_other_mixed->Fill(longest_trk_longest_shwr_ratio); }
 		if(tpco_id == "unmatched")      {h_shwr_trk_length_unmatched->Fill(longest_trk_longest_shwr_ratio); }
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PlaneHitsComparisonShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                                    double vtxX, double vtxY, double vtxZ,
+                                                    TH2D * h_collection_total_hits_shower_nue_cc,
+                                                    TH2D * h_collection_total_hits_shower_nue_cc_out_fv,
+                                                    TH2D * h_collection_total_hits_shower_nue_cc_mixed,
+                                                    TH2D * h_collection_total_hits_shower_numu_cc,
+                                                    TH2D * h_collection_total_hits_shower_numu_cc_mixed,
+                                                    TH2D * h_collection_total_hits_shower_nc,
+                                                    TH2D * h_collection_total_hits_shower_nc_pi0,
+                                                    TH2D * h_collection_total_hits_shower_cosmic,
+                                                    TH2D * h_collection_total_hits_shower_other_mixed,
+                                                    TH2D * h_collection_total_hits_shower_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		//const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		//if(n_pfp_tracks == 0) {continue; }
+		int n_pfp_hits_w = 0;
+		int n_pfp_hits = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				n_pfp_hits_w = pfp.NumPFPHitsW();
+				n_pfp_hits = pfp.NumPFPHits();
+			}
+		}
+
+		if(tpco_id == "nue_cc_qe")      {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_out_fv")  {h_collection_total_hits_shower_nue_cc_out_fv->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_res")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_dis")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_coh")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_mec")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_qe")     {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_res")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_dis")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_coh")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mec")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nc")             {h_collection_total_hits_shower_nc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nc_pi0")         {h_collection_total_hits_shower_nc_pi0->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_mixed")   {h_collection_total_hits_shower_nue_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "cosmic")         {h_collection_total_hits_shower_cosmic->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "other_mixed")    {h_collection_total_hits_shower_other_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "unmatched")      {h_collection_total_hits_shower_unmatched->Fill(n_pfp_hits_w, n_pfp_hits); }
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PlaneHitsComparisonLeadingShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                                           double vtxX, double vtxY, double vtxZ,
+                                                           TH2D * h_collection_total_hits_shower_nue_cc,
+                                                           TH2D * h_collection_total_hits_shower_nue_cc_out_fv,
+                                                           TH2D * h_collection_total_hits_shower_nue_cc_mixed,
+                                                           TH2D * h_collection_total_hits_shower_numu_cc,
+                                                           TH2D * h_collection_total_hits_shower_numu_cc_mixed,
+                                                           TH2D * h_collection_total_hits_shower_nc,
+                                                           TH2D * h_collection_total_hits_shower_nc_pi0,
+                                                           TH2D * h_collection_total_hits_shower_cosmic,
+                                                           TH2D * h_collection_total_hits_shower_other_mixed,
+                                                           TH2D * h_collection_total_hits_shower_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		//const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		//if(n_pfp_tracks == 0) {continue; }
+		const int n_pfp_hits_w = leading_shower.NumPFPHitsW();
+		const int n_pfp_hits = leading_shower.NumPFPHits();
+
+		if(tpco_id == "nue_cc_qe")      {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_out_fv")  {h_collection_total_hits_shower_nue_cc_out_fv->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_res")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_dis")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_coh")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_mec")     {h_collection_total_hits_shower_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_qe")     {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_res")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_dis")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_coh")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mec")    {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nc")             {h_collection_total_hits_shower_nc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nc_pi0")         {h_collection_total_hits_shower_nc_pi0->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_mixed")   {h_collection_total_hits_shower_nue_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "cosmic")         {h_collection_total_hits_shower_cosmic->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "other_mixed")    {h_collection_total_hits_shower_other_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "unmatched")      {h_collection_total_hits_shower_unmatched->Fill(n_pfp_hits_w, n_pfp_hits); }
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PlaneHitsComparisonTrack(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                                   double vtxX, double vtxY, double vtxZ,
+                                                   TH2D * h_collection_total_hits_track_nue_cc,
+                                                   TH2D * h_collection_total_hits_track_nue_cc_out_fv,
+                                                   TH2D * h_collection_total_hits_track_nue_cc_mixed,
+                                                   TH2D * h_collection_total_hits_track_numu_cc,
+                                                   TH2D * h_collection_total_hits_track_numu_cc_mixed,
+                                                   TH2D * h_collection_total_hits_track_nc,
+                                                   TH2D * h_collection_total_hits_track_nc_pi0,
+                                                   TH2D * h_collection_total_hits_track_cosmic,
+                                                   TH2D * h_collection_total_hits_track_other_mixed,
+                                                   TH2D * h_collection_total_hits_track_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		int n_pfp_hits_w = 0;
+		int n_pfp_hits = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				n_pfp_hits_w = pfp.NumPFPHitsW();
+				n_pfp_hits = pfp.NumPFPHits();
+			}
+		}
+
+		if(tpco_id == "nue_cc_qe")      {h_collection_total_hits_track_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_out_fv")  {h_collection_total_hits_track_nue_cc_out_fv->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_res")     {h_collection_total_hits_track_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_dis")     {h_collection_total_hits_track_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_coh")     {h_collection_total_hits_track_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_mec")     {h_collection_total_hits_track_nue_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_qe")     {h_collection_total_hits_track_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_res")    {h_collection_total_hits_track_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_dis")    {h_collection_total_hits_track_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_coh")    {h_collection_total_hits_track_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mec")    {h_collection_total_hits_track_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nc")             {h_collection_total_hits_track_nc->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nc_pi0")         {h_collection_total_hits_track_nc_pi0->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "nue_cc_mixed")   {h_collection_total_hits_track_nue_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_track_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "cosmic")         {h_collection_total_hits_track_cosmic->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "other_mixed")    {h_collection_total_hits_track_other_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "unmatched")      {h_collection_total_hits_track_unmatched->Fill(n_pfp_hits_w, n_pfp_hits); }
+	}//end loop tpco
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                      double vtxX, double vtxY, double vtxZ,
+                                      TH1D * h_collection_hits_track_nue_cc,
+                                      TH1D * h_collection_hits_track_nue_cc_out_fv,
+                                      TH1D * h_collection_hits_track_nue_cc_mixed,
+                                      TH1D * h_collection_hits_track_numu_cc,
+                                      TH1D * h_collection_hits_track_numu_cc_mixed,
+                                      TH1D * h_collection_hits_track_nc,
+                                      TH1D * h_collection_hits_track_nc_pi0,
+                                      TH1D * h_collection_hits_track_cosmic,
+                                      TH1D * h_collection_hits_track_other_mixed,
+                                      TH1D * h_collection_hits_track_unmatched,
+                                      TH1D * h_collection_hits_shower_nue_cc,
+                                      TH1D * h_collection_hits_shower_nue_cc_out_fv,
+                                      TH1D * h_collection_hits_shower_nue_cc_mixed,
+                                      TH1D * h_collection_hits_shower_numu_cc,
+                                      TH1D * h_collection_hits_shower_numu_cc_mixed,
+                                      TH1D * h_collection_hits_shower_nc,
+                                      TH1D * h_collection_hits_shower_nc_pi0,
+                                      TH1D * h_collection_hits_shower_cosmic,
+                                      TH1D * h_collection_hits_shower_other_mixed,
+                                      TH1D * h_collection_hits_shower_unmatched,
+                                      TH1D * h_collection_hits_leading_shower_nue_cc,
+                                      TH1D * h_collection_hits_leading_shower_nue_cc_out_fv,
+                                      TH1D * h_collection_hits_leading_shower_nue_cc_mixed,
+                                      TH1D * h_collection_hits_leading_shower_numu_cc,
+                                      TH1D * h_collection_hits_leading_shower_numu_cc_mixed,
+                                      TH1D * h_collection_hits_leading_shower_nc,
+                                      TH1D * h_collection_hits_leading_shower_nc_pi0,
+                                      TH1D * h_collection_hits_leading_shower_cosmic,
+                                      TH1D * h_collection_hits_leading_shower_other_mixed,
+                                      TH1D * h_collection_hits_leading_shower_unmatched,
+                                      TH1D * h_total_hits_leading_shower_nue_cc,
+                                      TH1D * h_total_hits_leading_shower_nue_cc_out_fv,
+                                      TH1D * h_total_hits_leading_shower_nue_cc_mixed,
+                                      TH1D * h_total_hits_leading_shower_numu_cc,
+                                      TH1D * h_total_hits_leading_shower_numu_cc_mixed,
+                                      TH1D * h_total_hits_leading_shower_nc,
+                                      TH1D * h_total_hits_leading_shower_nc_pi0,
+                                      TH1D * h_total_hits_leading_shower_cosmic,
+                                      TH1D * h_total_hits_leading_shower_other_mixed,
+                                      TH1D * h_total_hits_leading_shower_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int n_pfp_hits_w_leading_shower = leading_shower.NumPFPHitsW();
+		const int n_pfp_hits_leading_shower = leading_shower.NumPFPHits();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		std::vector<int> n_pfp_hits_w_track_v;
+		std::vector<int> n_pfp_hits_w_shower_v;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const int n_pfp_hits_w_track = pfp.NumPFPHitsW();
+				n_pfp_hits_w_track_v.push_back(n_pfp_hits_w_track);
+			}
+			if(pfp_pdg == 11)
+			{
+				const int n_pfp_hits_w_shower = pfp.NumPFPHitsW();
+				n_pfp_hits_w_shower_v.push_back(n_pfp_hits_w_shower);
+			}
+		}
+
+		if(n_pfp_tracks != 0) {
+			for(auto const n_pfp_hits_w_track : n_pfp_hits_w_track_v)
+			{
+				if(tpco_id == "nue_cc_qe")      {h_collection_hits_track_nue_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nue_cc_out_fv")  {h_collection_hits_track_nue_cc_out_fv->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nue_cc_res")     {h_collection_hits_track_nue_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nue_cc_dis")     {h_collection_hits_track_nue_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nue_cc_coh")     {h_collection_hits_track_nue_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nue_cc_mec")     {h_collection_hits_track_nue_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "numu_cc_qe")     {h_collection_hits_track_numu_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "numu_cc_res")    {h_collection_hits_track_numu_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "numu_cc_dis")    {h_collection_hits_track_numu_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "numu_cc_coh")    {h_collection_hits_track_numu_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "numu_cc_mec")    {h_collection_hits_track_numu_cc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nc")             {h_collection_hits_track_nc->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nc_pi0")         {h_collection_hits_track_nc_pi0->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "nue_cc_mixed")   {h_collection_hits_track_nue_cc_mixed->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "numu_cc_mixed")  {h_collection_hits_track_numu_cc_mixed->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "cosmic")         {h_collection_hits_track_cosmic->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "other_mixed")    {h_collection_hits_track_other_mixed->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "unmatched")      {h_collection_hits_track_unmatched->Fill(n_pfp_hits_w_track); }
+			}
+		}
+
+		for(auto const n_pfp_hits_w_shower : n_pfp_hits_w_shower_v)
+		{
+			if(tpco_id == "nue_cc_qe")      {h_collection_hits_shower_nue_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nue_cc_out_fv")  {h_collection_hits_shower_nue_cc_out_fv->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nue_cc_res")     {h_collection_hits_shower_nue_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nue_cc_dis")     {h_collection_hits_shower_nue_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nue_cc_coh")     {h_collection_hits_shower_nue_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nue_cc_mec")     {h_collection_hits_shower_nue_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "numu_cc_qe")     {h_collection_hits_shower_numu_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "numu_cc_res")    {h_collection_hits_shower_numu_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "numu_cc_dis")    {h_collection_hits_shower_numu_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "numu_cc_coh")    {h_collection_hits_shower_numu_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "numu_cc_mec")    {h_collection_hits_shower_numu_cc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nc")             {h_collection_hits_shower_nc->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nc_pi0")         {h_collection_hits_shower_nc_pi0->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "nue_cc_mixed")   {h_collection_hits_shower_nue_cc_mixed->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "numu_cc_mixed")  {h_collection_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "cosmic")         {h_collection_hits_shower_cosmic->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "other_mixed")    {h_collection_hits_shower_other_mixed->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "unmatched")      {h_collection_hits_shower_unmatched->Fill(n_pfp_hits_w_shower); }
+		}
+
+		if(tpco_id == "nue_cc_qe")      {h_collection_hits_leading_shower_nue_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nue_cc_out_fv")  {h_collection_hits_leading_shower_nue_cc_out_fv->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nue_cc_res")     {h_collection_hits_leading_shower_nue_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nue_cc_dis")     {h_collection_hits_leading_shower_nue_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nue_cc_coh")     {h_collection_hits_leading_shower_nue_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nue_cc_mec")     {h_collection_hits_leading_shower_nue_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "numu_cc_qe")     {h_collection_hits_leading_shower_numu_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "numu_cc_res")    {h_collection_hits_leading_shower_numu_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "numu_cc_dis")    {h_collection_hits_leading_shower_numu_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "numu_cc_coh")    {h_collection_hits_leading_shower_numu_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "numu_cc_mec")    {h_collection_hits_leading_shower_numu_cc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nc")             {h_collection_hits_leading_shower_nc->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nc_pi0")         {h_collection_hits_leading_shower_nc_pi0->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "nue_cc_mixed")   {h_collection_hits_leading_shower_nue_cc_mixed->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_hits_leading_shower_numu_cc_mixed->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "cosmic")         {h_collection_hits_leading_shower_cosmic->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "other_mixed")    {h_collection_hits_leading_shower_other_mixed->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "unmatched")      {h_collection_hits_leading_shower_unmatched->Fill(n_pfp_hits_w_leading_shower); }
+
+		if(tpco_id == "nue_cc_qe")      {h_total_hits_leading_shower_nue_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nue_cc_out_fv")  {h_total_hits_leading_shower_nue_cc_out_fv->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nue_cc_res")     {h_total_hits_leading_shower_nue_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nue_cc_dis")     {h_total_hits_leading_shower_nue_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nue_cc_coh")     {h_total_hits_leading_shower_nue_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nue_cc_mec")     {h_total_hits_leading_shower_nue_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "numu_cc_qe")     {h_total_hits_leading_shower_numu_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "numu_cc_res")    {h_total_hits_leading_shower_numu_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "numu_cc_dis")    {h_total_hits_leading_shower_numu_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "numu_cc_coh")    {h_total_hits_leading_shower_numu_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "numu_cc_mec")    {h_total_hits_leading_shower_numu_cc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nc")             {h_total_hits_leading_shower_nc->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nc_pi0")         {h_total_hits_leading_shower_nc_pi0->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "nue_cc_mixed")   {h_total_hits_leading_shower_nue_cc_mixed->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "numu_cc_mixed")  {h_total_hits_leading_shower_numu_cc_mixed->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "cosmic")         {h_total_hits_leading_shower_cosmic->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "other_mixed")    {h_total_hits_leading_shower_other_mixed->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "unmatched")      {h_total_hits_leading_shower_unmatched->Fill(n_pfp_hits_leading_shower); }
 	}//end loop tpco
 }//end function
 //***************************************************************************

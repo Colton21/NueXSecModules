@@ -50,9 +50,13 @@ const double tolerance = 80;//cm
 const double shwr_nue_tolerance = 4;//cm
 const double trk_nue_tolerance = 4;//cm
 
-//hit threshold for showers
+//hit threshold for at least one shower
+//standard 100 hits
+const double shwr_hit_threshold = 120;//hits
+
+//hit threshold for at least one shower on collection plane
 //standard 50 hits
-const double shwr_hit_threshold = 100;//hits
+const double shwr_hit_threshold_collection = 50;//hits
 
 //tolerance for leading shower open angle
 //standard 20 degrees
@@ -72,6 +76,9 @@ const double dist_tolerance = 22; //cm
 
 //tolerance for hits/length - these should be a property of a shower if it's true
 const double pfp_hits_length_tolerance = 3; //hits/cm
+
+//tolerance for longest track length / leading shower length
+const double ratio_tolerance = 1;
 
 //********************
 //********************
@@ -516,38 +523,38 @@ TH1D * h_longest_trk_length_cosmic         = new TH1D ("h_longest_trk_length_cos
 TH1D * h_longest_trk_length_other_mixed    = new TH1D ("h_longest_trk_length_other_mixed",    "h_longest_trk_length_other_mixed",    20, 0, 150);
 TH1D * h_longest_trk_length_unmatched      = new TH1D ("h_longest_trk_length_unmatched",      "h_longest_trk_length_unmatched",      20, 0, 150);
 
-TH1D * h_shwr_length_nue_cc         = new TH1D ("h_shwr_length_nue_cc",         "h_shwr_length_nue_cc",         20, 0, 200);
-TH1D * h_shwr_length_nue_cc_out_fv  = new TH1D ("h_shwr_length_nue_cc_out_fv",  "h_shwr_length_nue_cc_out_fv",  20, 0, 200);
-TH1D * h_shwr_length_nue_cc_mixed   = new TH1D ("h_shwr_length_nue_cc_mixed",   "h_shwr_length_nue_cc_mixed",   20, 0, 200);
-TH1D * h_shwr_length_numu_cc        = new TH1D ("h_shwr_length_numu_cc",        "h_shwr_length_numu_cc",        20, 0, 200);
-TH1D * h_shwr_length_numu_cc_mixed  = new TH1D ("h_shwr_length_numu_cc_mixed",  "h_shwr_length_numu_cc_mixed",  20, 0, 200);
-TH1D * h_shwr_length_nc             = new TH1D ("h_shwr_length_nc",             "h_shwr_length_nc",             20, 0, 200);
-TH1D * h_shwr_length_nc_pi0         = new TH1D ("h_shwr_length_nc_pi0",         "h_shwr_length_nc_pi0",         20, 0, 200);
-TH1D * h_shwr_length_cosmic         = new TH1D ("h_shwr_length_cosmic",         "h_shwr_length_cosmic",         20, 0, 200);
-TH1D * h_shwr_length_other_mixed    = new TH1D ("h_shwr_length_other_mixed",    "h_shwr_length_other_mixed",    20, 0, 200);
-TH1D * h_shwr_length_unmatched      = new TH1D ("h_shwr_length_unmatched",      "h_shwr_length_unmatched",      20, 0, 200);
+TH1D * h_shwr_length_nue_cc         = new TH1D ("h_shwr_length_nue_cc",         "h_shwr_length_nue_cc",         30, 0, 300);
+TH1D * h_shwr_length_nue_cc_out_fv  = new TH1D ("h_shwr_length_nue_cc_out_fv",  "h_shwr_length_nue_cc_out_fv",  30, 0, 300);
+TH1D * h_shwr_length_nue_cc_mixed   = new TH1D ("h_shwr_length_nue_cc_mixed",   "h_shwr_length_nue_cc_mixed",   30, 0, 300);
+TH1D * h_shwr_length_numu_cc        = new TH1D ("h_shwr_length_numu_cc",        "h_shwr_length_numu_cc",        30, 0, 300);
+TH1D * h_shwr_length_numu_cc_mixed  = new TH1D ("h_shwr_length_numu_cc_mixed",  "h_shwr_length_numu_cc_mixed",  30, 0, 300);
+TH1D * h_shwr_length_nc             = new TH1D ("h_shwr_length_nc",             "h_shwr_length_nc",             30, 0, 300);
+TH1D * h_shwr_length_nc_pi0         = new TH1D ("h_shwr_length_nc_pi0",         "h_shwr_length_nc_pi0",         30, 0, 300);
+TH1D * h_shwr_length_cosmic         = new TH1D ("h_shwr_length_cosmic",         "h_shwr_length_cosmic",         30, 0, 300);
+TH1D * h_shwr_length_other_mixed    = new TH1D ("h_shwr_length_other_mixed",    "h_shwr_length_other_mixed",    30, 0, 300);
+TH1D * h_shwr_length_unmatched      = new TH1D ("h_shwr_length_unmatched",      "h_shwr_length_unmatched",      30, 0, 300);
 
-TH1D * h_longest_shwr_length_nue_cc         = new TH1D ("h_longest_shwr_length_nue_cc",         "h_longest_shwr_length_nue_cc",         20, 0, 200);
-TH1D * h_longest_shwr_length_nue_cc_out_fv  = new TH1D ("h_longest_shwr_length_nue_cc_out_fv",  "h_longest_shwr_length_nue_cc_out_fv",  20, 0, 200);
-TH1D * h_longest_shwr_length_nue_cc_mixed   = new TH1D ("h_longest_shwr_length_nue_cc_mixed",   "h_longest_shwr_length_nue_cc_mixed",   20, 0, 200);
-TH1D * h_longest_shwr_length_numu_cc        = new TH1D ("h_longest_shwr_length_numu_cc",        "h_longest_shwr_length_numu_cc",        20, 0, 200);
-TH1D * h_longest_shwr_length_numu_cc_mixed  = new TH1D ("h_longest_shwr_length_numu_cc_mixed",  "h_longest_shwr_length_numu_cc_mixed",  20, 0, 200);
-TH1D * h_longest_shwr_length_nc             = new TH1D ("h_longest_shwr_length_nc",             "h_longest_shwr_length_nc",             20, 0, 200);
-TH1D * h_longest_shwr_length_nc_pi0         = new TH1D ("h_longest_shwr_length_nc_pi0",         "h_longest_shwr_length_nc_pi0",         20, 0, 200);
-TH1D * h_longest_shwr_length_cosmic         = new TH1D ("h_longest_shwr_length_cosmic",         "h_longest_shwr_length_cosmic",         20, 0, 200);
-TH1D * h_longest_shwr_length_other_mixed    = new TH1D ("h_longest_shwr_length_other_mixed",    "h_longest_shwr_length_other_mixed",    20, 0, 200);
-TH1D * h_longest_shwr_length_unmatched      = new TH1D ("h_longest_shwr_length_unmatched",      "h_longest_shwr_length_unmatched",      20, 0, 200);
+TH1D * h_longest_shwr_length_nue_cc         = new TH1D ("h_longest_shwr_length_nue_cc",         "h_longest_shwr_length_nue_cc",         30, 0, 300);
+TH1D * h_longest_shwr_length_nue_cc_out_fv  = new TH1D ("h_longest_shwr_length_nue_cc_out_fv",  "h_longest_shwr_length_nue_cc_out_fv",  30, 0, 300);
+TH1D * h_longest_shwr_length_nue_cc_mixed   = new TH1D ("h_longest_shwr_length_nue_cc_mixed",   "h_longest_shwr_length_nue_cc_mixed",   30, 0, 300);
+TH1D * h_longest_shwr_length_numu_cc        = new TH1D ("h_longest_shwr_length_numu_cc",        "h_longest_shwr_length_numu_cc",        30, 0, 300);
+TH1D * h_longest_shwr_length_numu_cc_mixed  = new TH1D ("h_longest_shwr_length_numu_cc_mixed",  "h_longest_shwr_length_numu_cc_mixed",  30, 0, 300);
+TH1D * h_longest_shwr_length_nc             = new TH1D ("h_longest_shwr_length_nc",             "h_longest_shwr_length_nc",             30, 0, 300);
+TH1D * h_longest_shwr_length_nc_pi0         = new TH1D ("h_longest_shwr_length_nc_pi0",         "h_longest_shwr_length_nc_pi0",         30, 0, 300);
+TH1D * h_longest_shwr_length_cosmic         = new TH1D ("h_longest_shwr_length_cosmic",         "h_longest_shwr_length_cosmic",         30, 0, 300);
+TH1D * h_longest_shwr_length_other_mixed    = new TH1D ("h_longest_shwr_length_other_mixed",    "h_longest_shwr_length_other_mixed",    30, 0, 300);
+TH1D * h_longest_shwr_length_unmatched      = new TH1D ("h_longest_shwr_length_unmatched",      "h_longest_shwr_length_unmatched",      30, 0, 300);
 
-TH1D * h_leading_shwr_length_nue_cc         = new TH1D ("h_leading_shwr_length_nue_cc",         "h_leading_shwr_length_nue_cc",         20, 0, 200);
-TH1D * h_leading_shwr_length_nue_cc_out_fv  = new TH1D ("h_leading_shwr_length_nue_cc_out_fv",  "h_leading_shwr_length_nue_cc_out_fv",  20, 0, 200);
-TH1D * h_leading_shwr_length_nue_cc_mixed   = new TH1D ("h_leading_shwr_length_nue_cc_mixed",   "h_leading_shwr_length_nue_cc_mixed",   20, 0, 200);
-TH1D * h_leading_shwr_length_numu_cc        = new TH1D ("h_leading_shwr_length_numu_cc",        "h_leading_shwr_length_numu_cc",        20, 0, 200);
-TH1D * h_leading_shwr_length_numu_cc_mixed  = new TH1D ("h_leading_shwr_length_numu_cc_mixed",  "h_leading_shwr_length_numu_cc_mixed",  20, 0, 200);
-TH1D * h_leading_shwr_length_nc             = new TH1D ("h_leading_shwr_length_nc",             "h_leading_shwr_length_nc",             20, 0, 200);
-TH1D * h_leading_shwr_length_nc_pi0         = new TH1D ("h_leading_shwr_length_nc_pi0",         "h_leading_shwr_length_nc_pi0",         20, 0, 200);
-TH1D * h_leading_shwr_length_cosmic         = new TH1D ("h_leading_shwr_length_cosmic",         "h_leading_shwr_length_cosmic",         20, 0, 200);
-TH1D * h_leading_shwr_length_other_mixed    = new TH1D ("h_leading_shwr_length_other_mixed",    "h_leading_shwr_length_other_mixed",    20, 0, 200);
-TH1D * h_leading_shwr_length_unmatched      = new TH1D ("h_leading_shwr_length_unmatched",      "h_leading_shwr_length_unmatched",      20, 0, 200);
+TH1D * h_leading_shwr_length_nue_cc         = new TH1D ("h_leading_shwr_length_nue_cc",         "h_leading_shwr_length_nue_cc",         30, 0, 300);
+TH1D * h_leading_shwr_length_nue_cc_out_fv  = new TH1D ("h_leading_shwr_length_nue_cc_out_fv",  "h_leading_shwr_length_nue_cc_out_fv",  30, 0, 300);
+TH1D * h_leading_shwr_length_nue_cc_mixed   = new TH1D ("h_leading_shwr_length_nue_cc_mixed",   "h_leading_shwr_length_nue_cc_mixed",   30, 0, 300);
+TH1D * h_leading_shwr_length_numu_cc        = new TH1D ("h_leading_shwr_length_numu_cc",        "h_leading_shwr_length_numu_cc",        30, 0, 300);
+TH1D * h_leading_shwr_length_numu_cc_mixed  = new TH1D ("h_leading_shwr_length_numu_cc_mixed",  "h_leading_shwr_length_numu_cc_mixed",  30, 0, 300);
+TH1D * h_leading_shwr_length_nc             = new TH1D ("h_leading_shwr_length_nc",             "h_leading_shwr_length_nc",             30, 0, 300);
+TH1D * h_leading_shwr_length_nc_pi0         = new TH1D ("h_leading_shwr_length_nc_pi0",         "h_leading_shwr_length_nc_pi0",         30, 0, 300);
+TH1D * h_leading_shwr_length_cosmic         = new TH1D ("h_leading_shwr_length_cosmic",         "h_leading_shwr_length_cosmic",         30, 0, 300);
+TH1D * h_leading_shwr_length_other_mixed    = new TH1D ("h_leading_shwr_length_other_mixed",    "h_leading_shwr_length_other_mixed",    30, 0, 300);
+TH1D * h_leading_shwr_length_unmatched      = new TH1D ("h_leading_shwr_length_unmatched",      "h_leading_shwr_length_unmatched",      30, 0, 300);
 
 TH1D * h_leading_shwr_trk_length_nue_cc         = new TH1D ("h_leading_shwr_trk_length_nue_cc",         "h_leading_shwr_trk_length_nue_cc",         20, 0, 3);
 TH1D * h_leading_shwr_trk_length_nue_cc_out_fv  = new TH1D ("h_leading_shwr_trk_length_nue_cc_out_fv",  "h_leading_shwr_trk_length_nue_cc_out_fv",  20, 0, 3);
@@ -571,6 +578,127 @@ TH1D * h_longest_shwr_trk_length_cosmic         = new TH1D ("h_longest_shwr_trk_
 TH1D * h_longest_shwr_trk_length_other_mixed    = new TH1D ("h_longest_shwr_trk_length_other_mixed",    "h_longest_shwr_trk_length_other_mixed",    20, 0, 3);
 TH1D * h_longest_shwr_trk_length_unmatched      = new TH1D ("h_longest_shwr_trk_length_unmatched",      "h_longest_shwr_trk_length_unmatched",      20, 0, 3);
 
+TH2D * h_collection_total_hits_track_nue_cc         = new TH2D ("h_collection_total_hits_track_nue_cc",         "h_collection_total_hits_track_nue_cc",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_nue_cc_out_fv  = new TH2D ("h_collection_total_hits_track_nue_cc_out_fv",  "h_collection_total_hits_track_nue_cc_out_fv",  20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_nue_cc_mixed   = new TH2D ("h_collection_total_hits_track_nue_cc_mixed",   "h_collection_total_hits_track_nue_cc_mixed",   20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_numu_cc        = new TH2D ("h_collection_total_hits_track_numu_cc",        "h_collection_total_hits_track_numu_cc",        20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_numu_cc_mixed  = new TH2D ("h_collection_total_hits_track_numu_cc_mixed",  "h_collection_total_hits_track_numu_cc_mixed",  20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_nc             = new TH2D ("h_collection_total_hits_track_nc",             "h_collection_total_hits_track_nc",             20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_nc_pi0         = new TH2D ("h_collection_total_hits_track_nc_pi0",         "h_collection_total_hits_track_nc_pi0",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_cosmic         = new TH2D ("h_collection_total_hits_track_cosmic",         "h_collection_total_hits_track_cosmic",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_other_mixed    = new TH2D ("h_collection_total_hits_track_other_mixed",    "h_collection_total_hits_track_other_mixed",    20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_track_unmatched      = new TH2D ("h_collection_total_hits_track_unmatched",      "h_collection_total_hits_track_unmatched",      20, 0, 200, 20, 0, 400);
+
+TH2D * h_collection_total_hits_shower_nue_cc         = new TH2D ("h_collection_total_hits_shower_nue_cc",         "h_collection_total_hits_shower_nue_cc",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_nue_cc_out_fv  = new TH2D ("h_collection_total_hits_shower_nue_cc_out_fv",  "h_collection_total_hits_shower_nue_cc_out_fv",  20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_nue_cc_mixed   = new TH2D ("h_collection_total_hits_shower_nue_cc_mixed",   "h_collection_total_hits_shower_nue_cc_mixed",   20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_numu_cc        = new TH2D ("h_collection_total_hits_shower_numu_cc",        "h_collection_total_hits_shower_numu_cc",        20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_numu_cc_mixed  = new TH2D ("h_collection_total_hits_shower_numu_cc_mixed",  "h_collection_total_hits_shower_numu_cc_mixed",  20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_nc             = new TH2D ("h_collection_total_hits_shower_nc",             "h_collection_total_hits_shower_nc",             20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_nc_pi0         = new TH2D ("h_collection_total_hits_shower_nc_pi0",         "h_collection_total_hits_shower_nc_pi0",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_cosmic         = new TH2D ("h_collection_total_hits_shower_cosmic",         "h_collection_total_hits_shower_cosmic",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_other_mixed    = new TH2D ("h_collection_total_hits_shower_other_mixed",    "h_collection_total_hits_shower_other_mixed",    20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_shower_unmatched      = new TH2D ("h_collection_total_hits_shower_unmatched",      "h_collection_total_hits_shower_unmatched",      20, 0, 200, 20, 0, 400);
+
+TH2D * h_collection_total_hits_leading_shower_nue_cc         = new TH2D ("h_collection_total_hits_leading_shower_nue_cc",         "h_collection_total_hits_leading_shower_nue_cc",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_nue_cc_out_fv  = new TH2D ("h_collection_total_hits_leading_shower_nue_cc_out_fv",  "h_collection_total_hits_leading_shower_nue_cc_out_fv",  20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_nue_cc_mixed   = new TH2D ("h_collection_total_hits_leading_shower_nue_cc_mixed",   "h_collection_total_hits_leading_shower_nue_cc_mixed",   20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_numu_cc        = new TH2D ("h_collection_total_hits_leading_shower_numu_cc",        "h_collection_total_hits_leading_shower_numu_cc",        20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_numu_cc_mixed  = new TH2D ("h_collection_total_hits_leading_shower_numu_cc_mixed",  "h_collection_total_hits_leading_shower_numu_cc_mixed",  20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_nc             = new TH2D ("h_collection_total_hits_leading_shower_nc",             "h_collection_total_hits_leading_shower_nc",             20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_nc_pi0         = new TH2D ("h_collection_total_hits_leading_shower_nc_pi0",         "h_collection_total_hits_leading_shower_nc_pi0",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_cosmic         = new TH2D ("h_collection_total_hits_leading_shower_cosmic",         "h_collection_total_hits_leading_shower_cosmic",         20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_other_mixed    = new TH2D ("h_collection_total_hits_leading_shower_other_mixed",    "h_collection_total_hits_leading_shower_other_mixed",    20, 0, 200, 20, 0, 400);
+TH2D * h_collection_total_hits_leading_shower_unmatched      = new TH2D ("h_collection_total_hits_leading_shower_unmatched",      "h_collection_total_hits_leading_shower_unmatched",      20, 0, 200, 20, 0, 400);
+
+TH1D * h_collection_hits_track_nue_cc         = new TH1D ("h_collection_hits_track_nue_cc",         "h_collection_hits_track_nue_cc",         20, 0, 250);
+TH1D * h_collection_hits_track_nue_cc_out_fv  = new TH1D ("h_collection_hits_track_nue_cc_out_fv",  "h_collection_hits_track_nue_cc_out_fv",  20, 0, 250);
+TH1D * h_collection_hits_track_nue_cc_mixed   = new TH1D ("h_collection_hits_track_nue_cc_mixed",   "h_collection_hits_track_nue_cc_mixed",   20, 0, 250);
+TH1D * h_collection_hits_track_numu_cc        = new TH1D ("h_collection_hits_track_numu_cc",        "h_collection_hits_track_numu_cc",        20, 0, 250);
+TH1D * h_collection_hits_track_numu_cc_mixed  = new TH1D ("h_collection_hits_track_numu_cc_mixed",  "h_collection_hits_track_numu_cc_mixed",  20, 0, 250);
+TH1D * h_collection_hits_track_nc             = new TH1D ("h_collection_hits_track_nc",             "h_collection_hits_track_nc",             20, 0, 250);
+TH1D * h_collection_hits_track_nc_pi0         = new TH1D ("h_collection_hits_track_nc_pi0",         "h_collection_hits_track_nc_pi0",         20, 0, 250);
+TH1D * h_collection_hits_track_cosmic         = new TH1D ("h_collection_hits_track_cosmic",         "h_collection_hits_track_cosmic",         20, 0, 250);
+TH1D * h_collection_hits_track_other_mixed    = new TH1D ("h_collection_hits_track_other_mixed",    "h_collection_hits_track_other_mixed",    20, 0, 250);
+TH1D * h_collection_hits_track_unmatched      = new TH1D ("h_collection_hits_track_unmatched",      "h_collection_hits_track_unmatched",      20, 0, 250);
+
+TH1D * h_collection_hits_shower_nue_cc         = new TH1D ("h_collection_hits_shower_nue_cc",         "h_collection_hits_shower_nue_cc",         20, 0, 250);
+TH1D * h_collection_hits_shower_nue_cc_out_fv  = new TH1D ("h_collection_hits_shower_nue_cc_out_fv",  "h_collection_hits_shower_nue_cc_out_fv",  20, 0, 250);
+TH1D * h_collection_hits_shower_nue_cc_mixed   = new TH1D ("h_collection_hits_shower_nue_cc_mixed",   "h_collection_hits_shower_nue_cc_mixed",   20, 0, 250);
+TH1D * h_collection_hits_shower_numu_cc        = new TH1D ("h_collection_hits_shower_numu_cc",        "h_collection_hits_shower_numu_cc",        20, 0, 250);
+TH1D * h_collection_hits_shower_numu_cc_mixed  = new TH1D ("h_collection_hits_shower_numu_cc_mixed",  "h_collection_hits_shower_numu_cc_mixed",  20, 0, 250);
+TH1D * h_collection_hits_shower_nc             = new TH1D ("h_collection_hits_shower_nc",             "h_collection_hits_shower_nc",             20, 0, 250);
+TH1D * h_collection_hits_shower_nc_pi0         = new TH1D ("h_collection_hits_shower_nc_pi0",         "h_collection_hits_shower_nc_pi0",         20, 0, 250);
+TH1D * h_collection_hits_shower_cosmic         = new TH1D ("h_collection_hits_shower_cosmic",         "h_collection_hits_shower_cosmic",         20, 0, 250);
+TH1D * h_collection_hits_shower_other_mixed    = new TH1D ("h_collection_hits_shower_other_mixed",    "h_collection_hits_shower_other_mixed",    20, 0, 250);
+TH1D * h_collection_hits_shower_unmatched      = new TH1D ("h_collection_hits_shower_unmatched",      "h_collection_hits_shower_unmatched",      20, 0, 250);
+
+TH1D * h_collection_hits_leading_shower_nue_cc         = new TH1D ("h_collection_hits_leading_shower_nue_cc",         "h_collection_hits_leading_shower_nue_cc",         30, 0, 300);
+TH1D * h_collection_hits_leading_shower_nue_cc_out_fv  = new TH1D ("h_collection_hits_leading_shower_nue_cc_out_fv",  "h_collection_hits_leading_shower_nue_cc_out_fv",  30, 0, 300);
+TH1D * h_collection_hits_leading_shower_nue_cc_mixed   = new TH1D ("h_collection_hits_leading_shower_nue_cc_mixed",   "h_collection_hits_leading_shower_nue_cc_mixed",   30, 0, 300);
+TH1D * h_collection_hits_leading_shower_numu_cc        = new TH1D ("h_collection_hits_leading_shower_numu_cc",        "h_collection_hits_leading_shower_numu_cc",        30, 0, 300);
+TH1D * h_collection_hits_leading_shower_numu_cc_mixed  = new TH1D ("h_collection_hits_leading_shower_numu_cc_mixed",  "h_collection_hits_leading_shower_numu_cc_mixed",  30, 0, 300);
+TH1D * h_collection_hits_leading_shower_nc             = new TH1D ("h_collection_hits_leading_shower_nc",             "h_collection_hits_leading_shower_nc",             30, 0, 300);
+TH1D * h_collection_hits_leading_shower_nc_pi0         = new TH1D ("h_collection_hits_leading_shower_nc_pi0",         "h_collection_hits_leading_shower_nc_pi0",         30, 0, 300);
+TH1D * h_collection_hits_leading_shower_cosmic         = new TH1D ("h_collection_hits_leading_shower_cosmic",         "h_collection_hits_leading_shower_cosmic",         30, 0, 300);
+TH1D * h_collection_hits_leading_shower_other_mixed    = new TH1D ("h_collection_hits_leading_shower_other_mixed",    "h_collection_hits_leading_shower_other_mixed",    30, 0, 300);
+TH1D * h_collection_hits_leading_shower_unmatched      = new TH1D ("h_collection_hits_leading_shower_unmatched",      "h_collection_hits_leading_shower_unmatched",      30, 0, 300);
+
+TH1D * h_total_hits_leading_shower_nue_cc         = new TH1D ("h_total_hits_leading_shower_nue_cc",         "h_total_hits_leading_shower_nue_cc",         30, 0, 600);
+TH1D * h_total_hits_leading_shower_nue_cc_out_fv  = new TH1D ("h_total_hits_leading_shower_nue_cc_out_fv",  "h_total_hits_leading_shower_nue_cc_out_fv",  30, 0, 600);
+TH1D * h_total_hits_leading_shower_nue_cc_mixed   = new TH1D ("h_total_hits_leading_shower_nue_cc_mixed",   "h_total_hits_leading_shower_nue_cc_mixed",   30, 0, 600);
+TH1D * h_total_hits_leading_shower_numu_cc        = new TH1D ("h_total_hits_leading_shower_numu_cc",        "h_total_hits_leading_shower_numu_cc",        30, 0, 600);
+TH1D * h_total_hits_leading_shower_numu_cc_mixed  = new TH1D ("h_total_hits_leading_shower_numu_cc_mixed",  "h_total_hits_leading_shower_numu_cc_mixed",  30, 0, 600);
+TH1D * h_total_hits_leading_shower_nc             = new TH1D ("h_total_hits_leading_shower_nc",             "h_total_hits_leading_shower_nc",             30, 0, 600);
+TH1D * h_total_hits_leading_shower_nc_pi0         = new TH1D ("h_total_hits_leading_shower_nc_pi0",         "h_total_hits_leading_shower_nc_pi0",         30, 0, 600);
+TH1D * h_total_hits_leading_shower_cosmic         = new TH1D ("h_total_hits_leading_shower_cosmic",         "h_total_hits_leading_shower_cosmic",         30, 0, 600);
+TH1D * h_total_hits_leading_shower_other_mixed    = new TH1D ("h_total_hits_leading_shower_other_mixed",    "h_total_hits_leading_shower_other_mixed",    30, 0, 600);
+TH1D * h_total_hits_leading_shower_unmatched      = new TH1D ("h_total_hits_leading_shower_unmatched",      "h_total_hits_leading_shower_unmatched",      30, 0, 600);
+
+TH1D * h_pre_cut_collection_hits_track_nue_cc         = new TH1D ("h_pre_cut_collection_hits_track_nue_cc",         "h_pre_cut_collection_hits_track_nue_cc",         20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_nue_cc_out_fv  = new TH1D ("h_pre_cut_collection_hits_track_nue_cc_out_fv",  "h_pre_cut_collection_hits_track_nue_cc_out_fv",  20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_nue_cc_mixed   = new TH1D ("h_pre_cut_collection_hits_track_nue_cc_mixed",   "h_pre_cut_collection_hits_track_nue_cc_mixed",   20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_numu_cc        = new TH1D ("h_pre_cut_collection_hits_track_numu_cc",        "h_pre_cut_collection_hits_track_numu_cc",        20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_numu_cc_mixed  = new TH1D ("h_pre_cut_collection_hits_track_numu_cc_mixed",  "h_pre_cut_collection_hits_track_numu_cc_mixed",  20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_nc             = new TH1D ("h_pre_cut_collection_hits_track_nc",             "h_pre_cut_collection_hits_track_nc",             20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_nc_pi0         = new TH1D ("h_pre_cut_collection_hits_track_nc_pi0",         "h_pre_cut_collection_hits_track_nc_pi0",         20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_cosmic         = new TH1D ("h_pre_cut_collection_hits_track_cosmic",         "h_pre_cut_collection_hits_track_cosmic",         20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_other_mixed    = new TH1D ("h_pre_cut_collection_hits_track_other_mixed",    "h_pre_cut_collection_hits_track_other_mixed",    20, 0, 250);
+TH1D * h_pre_cut_collection_hits_track_unmatched      = new TH1D ("h_pre_cut_collection_hits_track_unmatched",      "h_pre_cut_collection_hits_track_unmatched",      20, 0, 250);
+
+TH1D * h_pre_cut_collection_hits_shower_nue_cc         = new TH1D ("h_pre_cut_collection_hits_shower_nue_cc",         "h_pre_cut_collection_hits_shower_nue_cc",         20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_nue_cc_out_fv  = new TH1D ("h_pre_cut_collection_hits_shower_nue_cc_out_fv",  "h_pre_cut_collection_hits_shower_nue_cc_out_fv",  20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_nue_cc_mixed   = new TH1D ("h_pre_cut_collection_hits_shower_nue_cc_mixed",   "h_pre_cut_collection_hits_shower_nue_cc_mixed",   20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_numu_cc        = new TH1D ("h_pre_cut_collection_hits_shower_numu_cc",        "h_pre_cut_collection_hits_shower_numu_cc",        20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_numu_cc_mixed  = new TH1D ("h_pre_cut_collection_hits_shower_numu_cc_mixed",  "h_pre_cut_collection_hits_shower_numu_cc_mixed",  20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_nc             = new TH1D ("h_pre_cut_collection_hits_shower_nc",             "h_pre_cut_collection_hits_shower_nc",             20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_nc_pi0         = new TH1D ("h_pre_cut_collection_hits_shower_nc_pi0",         "h_pre_cut_collection_hits_shower_nc_pi0",         20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_cosmic         = new TH1D ("h_pre_cut_collection_hits_shower_cosmic",         "h_pre_cut_collection_hits_shower_cosmic",         20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_other_mixed    = new TH1D ("h_pre_cut_collection_hits_shower_other_mixed",    "h_pre_cut_collection_hits_shower_other_mixed",    20, 0, 250);
+TH1D * h_pre_cut_collection_hits_shower_unmatched      = new TH1D ("h_pre_cut_collection_hits_shower_unmatched",      "h_pre_cut_collection_hits_shower_unmatched",      20, 0, 250);
+
+TH1D * h_pre_cut_collection_hits_leading_shower_nue_cc         = new TH1D ("h_pre_cut_collection_hits_leading_shower_nue_cc",         "h_pre_cut_collection_hits_leading_shower_nue_cc",         30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_nue_cc_out_fv  = new TH1D ("h_pre_cut_collection_hits_leading_shower_nue_cc_out_fv",  "h_pre_cut_collection_hits_leading_shower_nue_cc_out_fv",  30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_nue_cc_mixed   = new TH1D ("h_pre_cut_collection_hits_leading_shower_nue_cc_mixed",   "h_pre_cut_collection_hits_leading_shower_nue_cc_mixed",   30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_numu_cc        = new TH1D ("h_pre_cut_collection_hits_leading_shower_numu_cc",        "h_pre_cut_collection_hits_leading_shower_numu_cc",        30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_numu_cc_mixed  = new TH1D ("h_pre_cut_collection_hits_leading_shower_numu_cc_mixed",  "h_pre_cut_collection_hits_leading_shower_numu_cc_mixed",  30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_nc             = new TH1D ("h_pre_cut_collection_hits_leading_shower_nc",             "h_pre_cut_collection_hits_leading_shower_nc",             30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_nc_pi0         = new TH1D ("h_pre_cut_collection_hits_leading_shower_nc_pi0",         "h_pre_cut_collection_hits_leading_shower_nc_pi0",         30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_cosmic         = new TH1D ("h_pre_cut_collection_hits_leading_shower_cosmic",         "h_pre_cut_collection_hits_leading_shower_cosmic",         30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_other_mixed    = new TH1D ("h_pre_cut_collection_hits_leading_shower_other_mixed",    "h_pre_cut_collection_hits_leading_shower_other_mixed",    30, 0, 300);
+TH1D * h_pre_cut_collection_hits_leading_shower_unmatched      = new TH1D ("h_pre_cut_collection_hits_leading_shower_unmatched",      "h_pre_cut_collection_hits_leading_shower_unmatched",      30, 0, 300);
+
+TH1D * h_pre_cut_total_hits_leading_shower_nue_cc         = new TH1D ("h_pre_cut_total_hits_leading_shower_nue_cc",         "h_pre_cut_total_hits_leading_shower_nue_cc",         30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_nue_cc_out_fv  = new TH1D ("h_pre_cut_total_hits_leading_shower_nue_cc_out_fv",  "h_pre_cut_total_hits_leading_shower_nue_cc_out_fv",  30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_nue_cc_mixed   = new TH1D ("h_pre_cut_total_hits_leading_shower_nue_cc_mixed",   "h_pre_cut_total_hits_leading_shower_nue_cc_mixed",   30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_numu_cc        = new TH1D ("h_pre_cut_total_hits_leading_shower_numu_cc",        "h_pre_cut_total_hits_leading_shower_numu_cc",        30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_numu_cc_mixed  = new TH1D ("h_pre_cut_total_hits_leading_shower_numu_cc_mixed",  "h_pre_cut_total_hits_leading_shower_numu_cc_mixed",  30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_nc             = new TH1D ("h_pre_cut_total_hits_leading_shower_nc",             "h_pre_cut_total_hits_leading_shower_nc",             30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_nc_pi0         = new TH1D ("h_pre_cut_total_hits_leading_shower_nc_pi0",         "h_pre_cut_total_hits_leading_shower_nc_pi0",         30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_cosmic         = new TH1D ("h_pre_cut_total_hits_leading_shower_cosmic",         "h_pre_cut_total_hits_leading_shower_cosmic",         30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_other_mixed    = new TH1D ("h_pre_cut_total_hits_leading_shower_other_mixed",    "h_pre_cut_total_hits_leading_shower_other_mixed",    30, 0, 600);
+TH1D * h_pre_cut_total_hits_leading_shower_unmatched      = new TH1D ("h_pre_cut_total_hits_leading_shower_unmatched",      "h_pre_cut_total_hits_leading_shower_unmatched",      30, 0, 600);
+
 TH1D * h_failure_reason_nue_cc         = new TH1D ("h_failure_reason_nue_cc",         "h_failure_reason_nue_cc",         22, 0, 11);
 TH1D * h_failure_reason_nue_cc_out_fv  = new TH1D ("h_failure_reason_nue_cc_out_fv",  "h_failure_reason_nue_cc_out_fv",  22, 0, 11);
 TH1D * h_failure_reason_nue_cc_mixed   = new TH1D ("h_failure_reason_nue_cc_mixed",   "h_failure_reason_nue_cc_mixed",   22, 0, 11);
@@ -582,8 +710,8 @@ TH1D * h_failure_reason_cosmic         = new TH1D ("h_failure_reason_cosmic",   
 TH1D * h_failure_reason_other_mixed    = new TH1D ("h_failure_reason_other_mixed",    "h_failure_reason_other_mixed",    22, 0, 11);
 TH1D * h_failure_reason_unmatched      = new TH1D ("h_failure_reason_unmatched",      "h_failure_reason_unmatched",      22, 0, 11);
 
-TH1D * h_post_cuts_num_showers_purity  = new TH1D("h_post_cuts_num_showers_purity", "h_post_cuts_num_showers_purity", 4, 1, 4);
-TH1D * h_post_open_angle_cuts_num_showers_purity  = new TH1D("h_post_open_angle_cuts_num_showers_purity", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 4);
+TH1D * h_post_cuts_num_showers_purity             = new TH1D("h_post_cuts_num_showers_purity",            "h_post_cuts_num_showers_purity",            4, 1, 5);
+TH1D * h_post_open_angle_cuts_num_showers_purity  = new TH1D("h_post_open_angle_cuts_num_showers_purity", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
 
 
 }//end namespace

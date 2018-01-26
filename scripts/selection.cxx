@@ -90,6 +90,10 @@ int selection( const char * _file1){
 	secondary_shower_counter_v->resize(22, 0);
 	std::vector<int> * hit_lengthRatio_counter_v = new std::vector<int>;
 	hit_lengthRatio_counter_v->resize(22, 0);
+	std::vector<int> * hit_threshold_collection_counter_v = new std::vector<int>;
+	hit_threshold_collection_counter_v->resize(22, 0);
+	std::vector<int> * trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	trk_len_shwr_len_ratio_counter_v->resize(22, 0);
 
 	std::vector<int> * has_track = new std::vector<int>;
 	has_track->resize(2, 0);
@@ -398,6 +402,49 @@ int selection( const char * _file1){
 			                                                             h_shwr_hits_nu_eng_zoom_last, h_shwr_hits_ele_eng_zoom_last);
 		}
 
+		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_pre_cut_collection_hits_track_nue_cc,
+		                                                     h_pre_cut_collection_hits_track_nue_cc_out_fv,
+		                                                     h_pre_cut_collection_hits_track_nue_cc_mixed,
+		                                                     h_pre_cut_collection_hits_track_numu_cc,
+		                                                     h_pre_cut_collection_hits_track_numu_cc_mixed,
+		                                                     h_pre_cut_collection_hits_track_nc,
+		                                                     h_pre_cut_collection_hits_track_nc_pi0,
+		                                                     h_pre_cut_collection_hits_track_cosmic,
+		                                                     h_pre_cut_collection_hits_track_other_mixed,
+		                                                     h_pre_cut_collection_hits_track_unmatched,
+		                                                     h_pre_cut_collection_hits_shower_nue_cc,
+		                                                     h_pre_cut_collection_hits_shower_nue_cc_out_fv,
+		                                                     h_pre_cut_collection_hits_shower_nue_cc_mixed,
+		                                                     h_pre_cut_collection_hits_shower_numu_cc,
+		                                                     h_pre_cut_collection_hits_shower_numu_cc_mixed,
+		                                                     h_pre_cut_collection_hits_shower_nc,
+		                                                     h_pre_cut_collection_hits_shower_nc_pi0,
+		                                                     h_pre_cut_collection_hits_shower_cosmic,
+		                                                     h_pre_cut_collection_hits_shower_other_mixed,
+		                                                     h_pre_cut_collection_hits_shower_unmatched,
+		                                                     h_pre_cut_collection_hits_leading_shower_nue_cc,
+		                                                     h_pre_cut_collection_hits_leading_shower_nue_cc_out_fv,
+		                                                     h_pre_cut_collection_hits_leading_shower_nue_cc_mixed,
+		                                                     h_pre_cut_collection_hits_leading_shower_numu_cc,
+		                                                     h_pre_cut_collection_hits_leading_shower_numu_cc_mixed,
+		                                                     h_pre_cut_collection_hits_leading_shower_nc,
+		                                                     h_pre_cut_collection_hits_leading_shower_nc_pi0,
+		                                                     h_pre_cut_collection_hits_leading_shower_cosmic,
+		                                                     h_pre_cut_collection_hits_leading_shower_other_mixed,
+		                                                     h_pre_cut_collection_hits_leading_shower_unmatched,
+		                                                     h_pre_cut_total_hits_leading_shower_nue_cc,
+		                                                     h_pre_cut_total_hits_leading_shower_nue_cc_out_fv,
+		                                                     h_pre_cut_total_hits_leading_shower_nue_cc_mixed,
+		                                                     h_pre_cut_total_hits_leading_shower_numu_cc,
+		                                                     h_pre_cut_total_hits_leading_shower_numu_cc_mixed,
+		                                                     h_pre_cut_total_hits_leading_shower_nc,
+		                                                     h_pre_cut_total_hits_leading_shower_nc_pi0,
+		                                                     h_pre_cut_total_hits_leading_shower_cosmic,
+		                                                     h_pre_cut_total_hits_leading_shower_other_mixed,
+		                                                     h_pre_cut_total_hits_leading_shower_unmatched);
+
 		_cuts_instance.selection_cuts::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
@@ -459,7 +506,8 @@ int selection( const char * _file1){
 		                                                                     h_leading_shower_open_angle_2plus_nue_cc, h_leading_shower_open_angle_2plus_nue_cc_mixed,
 		                                                                     h_leading_shower_open_angle_2plus_numu_cc, h_leading_shower_open_angle_2plus_nc,
 		                                                                     h_leading_shower_open_angle_2plus_cosmic, h_leading_shower_open_angle_2plus_nc_pi0,
-		                                                                     h_leading_shower_open_angle_2plus_numu_cc_mixed, h_leading_shower_open_angle_2plus_other_mixed,
+		                                                                     h_leading_shower_open_angle_2plus_numu_cc_mixed,
+		                                                                     h_leading_shower_open_angle_2plus_other_mixed,
 		                                                                     h_leading_shower_open_angle_2plus_unmatched);
 		_cuts_instance.selection_cuts::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
@@ -556,6 +604,99 @@ int selection( const char * _file1){
 		                                                       h_failure_reason_numu_cc_mixed, h_failure_reason_nc,
 		                                                       h_failure_reason_nc_pi0, h_failure_reason_cosmic,
 		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
+
+		_functions_instance.selection_functions::PlaneHitsComparisonTrack(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                                  _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                  h_collection_total_hits_track_nue_cc,
+		                                                                  h_collection_total_hits_track_nue_cc_out_fv,
+		                                                                  h_collection_total_hits_track_nue_cc_mixed,
+		                                                                  h_collection_total_hits_track_numu_cc,
+		                                                                  h_collection_total_hits_track_numu_cc_mixed,
+		                                                                  h_collection_total_hits_track_nc,
+		                                                                  h_collection_total_hits_track_nc_pi0,
+		                                                                  h_collection_total_hits_track_cosmic,
+		                                                                  h_collection_total_hits_track_other_mixed,
+		                                                                  h_collection_total_hits_track_unmatched);
+		_functions_instance.selection_functions::PlaneHitsComparisonShower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                   h_collection_total_hits_shower_nue_cc,
+		                                                                   h_collection_total_hits_shower_nue_cc_out_fv,
+		                                                                   h_collection_total_hits_shower_nue_cc_mixed,
+		                                                                   h_collection_total_hits_shower_numu_cc,
+		                                                                   h_collection_total_hits_shower_numu_cc_mixed,
+		                                                                   h_collection_total_hits_shower_nc,
+		                                                                   h_collection_total_hits_shower_nc_pi0,
+		                                                                   h_collection_total_hits_shower_cosmic,
+		                                                                   h_collection_total_hits_shower_other_mixed,
+		                                                                   h_collection_total_hits_shower_unmatched);
+		_functions_instance.selection_functions::PlaneHitsComparisonLeadingShower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                                          h_collection_total_hits_leading_shower_nue_cc,
+		                                                                          h_collection_total_hits_leading_shower_nue_cc_out_fv,
+		                                                                          h_collection_total_hits_leading_shower_nue_cc_mixed,
+		                                                                          h_collection_total_hits_leading_shower_numu_cc,
+		                                                                          h_collection_total_hits_leading_shower_numu_cc_mixed,
+		                                                                          h_collection_total_hits_leading_shower_nc,
+		                                                                          h_collection_total_hits_leading_shower_nc_pi0,
+		                                                                          h_collection_total_hits_leading_shower_cosmic,
+		                                                                          h_collection_total_hits_leading_shower_other_mixed,
+		                                                                          h_collection_total_hits_leading_shower_unmatched);
+
+		//***************************************//
+		//*** Collection Plane Hits Threshold ***//
+		//***************************************//
+		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_collection_hits_track_nue_cc,
+		                                                     h_collection_hits_track_nue_cc_out_fv,
+		                                                     h_collection_hits_track_nue_cc_mixed,
+		                                                     h_collection_hits_track_numu_cc,
+		                                                     h_collection_hits_track_numu_cc_mixed,
+		                                                     h_collection_hits_track_nc,
+		                                                     h_collection_hits_track_nc_pi0,
+		                                                     h_collection_hits_track_cosmic,
+		                                                     h_collection_hits_track_other_mixed,
+		                                                     h_collection_hits_track_unmatched,
+		                                                     h_collection_hits_shower_nue_cc,
+		                                                     h_collection_hits_shower_nue_cc_out_fv,
+		                                                     h_collection_hits_shower_nue_cc_mixed,
+		                                                     h_collection_hits_shower_numu_cc,
+		                                                     h_collection_hits_shower_numu_cc_mixed,
+		                                                     h_collection_hits_shower_nc,
+		                                                     h_collection_hits_shower_nc_pi0,
+		                                                     h_collection_hits_shower_cosmic,
+		                                                     h_collection_hits_shower_other_mixed,
+		                                                     h_collection_hits_shower_unmatched,
+		                                                     h_collection_hits_leading_shower_nue_cc,
+		                                                     h_collection_hits_leading_shower_nue_cc_out_fv,
+		                                                     h_collection_hits_leading_shower_nue_cc_mixed,
+		                                                     h_collection_hits_leading_shower_numu_cc,
+		                                                     h_collection_hits_leading_shower_numu_cc_mixed,
+		                                                     h_collection_hits_leading_shower_nc,
+		                                                     h_collection_hits_leading_shower_nc_pi0,
+		                                                     h_collection_hits_leading_shower_cosmic,
+		                                                     h_collection_hits_leading_shower_other_mixed,
+		                                                     h_collection_hits_leading_shower_unmatched,
+		                                                     h_total_hits_leading_shower_nue_cc,
+		                                                     h_total_hits_leading_shower_nue_cc_out_fv,
+		                                                     h_total_hits_leading_shower_nue_cc_mixed,
+		                                                     h_total_hits_leading_shower_numu_cc,
+		                                                     h_total_hits_leading_shower_numu_cc_mixed,
+		                                                     h_total_hits_leading_shower_nc,
+		                                                     h_total_hits_leading_shower_nc_pi0,
+		                                                     h_total_hits_leading_shower_cosmic,
+		                                                     h_total_hits_leading_shower_other_mixed,
+		                                                     h_total_hits_leading_shower_unmatched);
+
+		_cuts_instance.selection_cuts::HitThresholdCollection(tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v);
+
+		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
 
 		//*************************************
 		// ******** End Selection Cuts! ******
@@ -726,7 +867,6 @@ int selection( const char * _file1){
 		                                                                   h_longest_shwr_trk_length_cosmic,
 		                                                                   h_longest_shwr_trk_length_other_mixed,
 		                                                                   h_longest_shwr_trk_length_unmatched);
-
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -739,18 +879,20 @@ int selection( const char * _file1){
 	//change mc_nue_cc_counter to total_mc_entries_inFV once files are ready!
 
 	//we also want some metrics to print at the end
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v, "In Time");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v, "PE Threshold");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v, "Reco Nue");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v, "In FV");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v, "Vtx-to-Flash");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v, "Shower-to-TPCO");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v, "Track-to-TPCO");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,"Hit Threshold");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v, "Open Angle");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, " dE / dx ");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, ">3 Shower TPCO Dist");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, "Hit Length Ratio");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v,                  "In Time");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v,                       "PE Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v,                 "Reco Nue");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v,                    "In FV");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v,                "Vtx-to-Flash");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v,                "Shower-to-TPCO");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v,                 "Track-to-TPCO");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,            "Hit Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v,               "Open Angle");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v,                     " dE / dx ");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v,         ">3 Shower TPCO Dist");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v,          "Hit Length Ratio");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, "WPlane Hit Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v,   "TrkLen/ShwrLen Ratio");
 
 	std::cout << "---------------------" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
@@ -1321,8 +1463,122 @@ int selection( const char * _file1){
 	                                      "Longest Track / Longest Shower Lengths", "", "post_longest_shower_trk_lengths.pdf");
 
 	histogram_functions::Plot1DHistogram (h_post_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO", "post_cuts_num_showers_purity.pdf");
-	histogram_functions::Plot1DHistogram (h_post_open_angle_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO",
+	histogram_functions::Plot1DHistogram (h_post_open_angle_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO - After Open Angle Cut",
 	                                      "post_open_angle_cuts_num_showers_purity.pdf");
+
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_nue_cc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_nue_cc_out_fv, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_nue_cc_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_numu_cc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_numu_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_numu_cc_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_numu_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_nc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_nc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_nc_pi0, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_cosmic, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_other_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_other_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_unmatched, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_unmatched.pdf");
+
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_nue_cc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_nue_cc_out_fv, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_nue_cc_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_numu_cc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_numu_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_numu_cc_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_numu_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_nc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_nc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_nc_pi0, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_cosmic, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_other_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_other_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_shower_unmatched, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_shower_unmatched.pdf");
+
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_nue_cc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_nue_cc_out_fv, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_nue_cc_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_numu_cc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_numu_cc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_numu_cc_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_numu_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_nc, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_nc.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_nc_pi0, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_cosmic, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_cosmic.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_other_mixed, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_other_mixed.pdf");
+	histogram_functions::Plot2DHistogram (h_collection_total_hits_leading_shower_unmatched, "",
+	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_leading_shower_unmatched.pdf");
+
+	histogram_functions::PlotSimpleStack (h_collection_hits_track_nue_cc,  h_collection_hits_track_nue_cc_mixed,
+	                                      h_collection_hits_track_numu_cc, h_collection_hits_track_numu_cc_mixed,
+	                                      h_collection_hits_track_cosmic,  h_collection_hits_track_nc,
+	                                      h_collection_hits_track_nc_pi0,  h_collection_hits_track_other_mixed,
+	                                      h_collection_hits_track_unmatched, "",
+	                                      "Tracks Hits - Collection Plane", "", "post_cuts_collection_hits_tracks.pdf");
+	histogram_functions::PlotSimpleStack (h_collection_hits_shower_nue_cc,  h_collection_hits_shower_nue_cc_mixed,
+	                                      h_collection_hits_shower_numu_cc, h_collection_hits_shower_numu_cc_mixed,
+	                                      h_collection_hits_shower_cosmic,  h_collection_hits_shower_nc,
+	                                      h_collection_hits_shower_nc_pi0,  h_collection_hits_shower_other_mixed,
+	                                      h_collection_hits_shower_unmatched, "",
+	                                      "Showers Hits - Collection Plane", "", "post_cuts_collection_hits_showers.pdf");
+	histogram_functions::PlotSimpleStack (h_collection_hits_leading_shower_nue_cc,  h_collection_hits_leading_shower_nue_cc_mixed,
+	                                      h_collection_hits_leading_shower_numu_cc, h_collection_hits_leading_shower_numu_cc_mixed,
+	                                      h_collection_hits_leading_shower_cosmic,  h_collection_hits_leading_shower_nc,
+	                                      h_collection_hits_leading_shower_nc_pi0,  h_collection_hits_leading_shower_other_mixed,
+	                                      h_collection_hits_leading_shower_unmatched, "",
+	                                      "Leading Shower Hits - Collection Plane", "", "post_cuts_collection_hits_leading_shower.pdf");
+	histogram_functions::PlotSimpleStack (h_total_hits_leading_shower_nue_cc,  h_total_hits_leading_shower_nue_cc_mixed,
+	                                      h_total_hits_leading_shower_numu_cc, h_total_hits_leading_shower_numu_cc_mixed,
+	                                      h_total_hits_leading_shower_cosmic,  h_total_hits_leading_shower_nc,
+	                                      h_total_hits_leading_shower_nc_pi0,  h_total_hits_leading_shower_other_mixed,
+	                                      h_total_hits_leading_shower_unmatched, "",
+	                                      "Leading Shower Hits - All Planes", "", "post_cuts_total_hits_leading_shower.pdf");
+
+	histogram_functions::PlotSimpleStack (h_pre_cut_collection_hits_track_nue_cc,  h_pre_cut_collection_hits_track_nue_cc_mixed,
+	                                      h_pre_cut_collection_hits_track_numu_cc, h_pre_cut_collection_hits_track_numu_cc_mixed,
+	                                      h_pre_cut_collection_hits_track_cosmic,  h_pre_cut_collection_hits_track_nc,
+	                                      h_pre_cut_collection_hits_track_nc_pi0,  h_pre_cut_collection_hits_track_other_mixed,
+	                                      h_pre_cut_collection_hits_track_unmatched, "",
+	                                      "Tracks Hits - Collection Plane", "", "pre_hit_cut_collection_hits_tracks.pdf");
+	histogram_functions::PlotSimpleStack (h_pre_cut_collection_hits_shower_nue_cc,  h_pre_cut_collection_hits_shower_nue_cc_mixed,
+	                                      h_pre_cut_collection_hits_shower_numu_cc, h_pre_cut_collection_hits_shower_numu_cc_mixed,
+	                                      h_pre_cut_collection_hits_shower_cosmic,  h_pre_cut_collection_hits_shower_nc,
+	                                      h_pre_cut_collection_hits_shower_nc_pi0,  h_pre_cut_collection_hits_shower_other_mixed,
+	                                      h_pre_cut_collection_hits_shower_unmatched, "",
+	                                      "Showers Hits - Collection Plane", "", "pre_hit_cut_collection_hits_showers.pdf");
+	histogram_functions::PlotSimpleStack (h_pre_cut_collection_hits_leading_shower_nue_cc,  h_pre_cut_collection_hits_leading_shower_nue_cc_mixed,
+	                                      h_pre_cut_collection_hits_leading_shower_numu_cc, h_pre_cut_collection_hits_leading_shower_numu_cc_mixed,
+	                                      h_pre_cut_collection_hits_leading_shower_cosmic,  h_pre_cut_collection_hits_leading_shower_nc,
+	                                      h_pre_cut_collection_hits_leading_shower_nc_pi0,  h_pre_cut_collection_hits_leading_shower_other_mixed,
+	                                      h_pre_cut_collection_hits_leading_shower_unmatched, "",
+	                                      "Leading Shower Hits - Collection Plane", "", "pre_hit_cut_collection_hits_leading_shower.pdf");
+	histogram_functions::PlotSimpleStack (h_pre_cut_total_hits_leading_shower_nue_cc,  h_pre_cut_total_hits_leading_shower_nue_cc_mixed,
+	                                      h_pre_cut_total_hits_leading_shower_numu_cc, h_pre_cut_total_hits_leading_shower_numu_cc_mixed,
+	                                      h_pre_cut_total_hits_leading_shower_cosmic,  h_pre_cut_total_hits_leading_shower_nc,
+	                                      h_pre_cut_total_hits_leading_shower_nc_pi0,  h_pre_cut_total_hits_leading_shower_other_mixed,
+	                                      h_pre_cut_total_hits_leading_shower_unmatched, "",
+	                                      "Leading Shower Hits - All Planes", "", "pre_hit_cut_total_hits_leading_shower.pdf");
+
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
