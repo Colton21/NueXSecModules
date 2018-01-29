@@ -183,12 +183,37 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, do
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 }
 void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
-                                             bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity)
+                                             bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
+                                             TH1 * post_cuts_num_showers_purity_res,
+                                             TH1 * post_cuts_num_showers_purity_dis,
+                                             TH1 * post_cuts_num_showers_purity_coh,
+                                             TH1 * post_cuts_num_showers_purity_mec)
 {
-	int signal_events_1 = 0;
-	int signal_events_2 = 0;
-	int signal_events_3 = 0;
-	int signal_events_4 = 0;
+	int signal_events_1_qe = 0;
+	int signal_events_2_qe = 0;
+	int signal_events_3_qe = 0;
+	int signal_events_4_qe = 0;
+
+	int signal_events_1_res = 0;
+	int signal_events_2_res = 0;
+	int signal_events_3_res = 0;
+	int signal_events_4_res = 0;
+
+	int signal_events_1_dis = 0;
+	int signal_events_2_dis = 0;
+	int signal_events_3_dis = 0;
+	int signal_events_4_dis = 0;
+
+	int signal_events_1_coh = 0;
+	int signal_events_2_coh = 0;
+	int signal_events_3_coh = 0;
+	int signal_events_4_coh = 0;
+
+	int signal_events_1_mec = 0;
+	int signal_events_2_mec = 0;
+	int signal_events_3_mec = 0;
+	int signal_events_4_mec = 0;
+
 	int bkg_events_1 = 0;
 	int bkg_events_2 = 0;
 	int bkg_events_3 = 0;
@@ -208,16 +233,45 @@ void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, do
 		const double opening_angle = std::get<9>(my_tuple);
 
 		int signal_bkg = 0;
-		if(event_type == "nue_cc_qe" || event_type == "nue_cc_res" || event_type == "nue_cc_dis" || event_type == "nue_cc_coh" || event_type == "nue_cc_mec")
-		{
-			signal_bkg = 1;
-		}
+		if(event_type == "nue_cc_qe")   {signal_bkg = 1; }
+		if(event_type == "nue_cc_res")  {signal_bkg = 2; }
+		if(event_type == "nue_cc_dis")  {signal_bkg = 3; }
+		if(event_type == "nue_cc_coh")  {signal_bkg = 4; }
+		if(event_type == "nue_cc_mec")  {signal_bkg = 5; }
 		if(signal_bkg == 1)
 		{
-			if(num_showers == 1) {signal_events_1++; }
-			if(num_showers == 2) {signal_events_2++; }
-			if(num_showers == 3) {signal_events_3++; }
-			if(num_showers >= 4) {signal_events_4++; }
+			if(num_showers == 1) {signal_events_1_qe++; }
+			if(num_showers == 2) {signal_events_2_qe++; }
+			if(num_showers == 3) {signal_events_3_qe++; }
+			if(num_showers >= 4) {signal_events_4_qe++; }
+		}
+		if(signal_bkg == 2)
+		{
+			if(num_showers == 1) {signal_events_1_res++; }
+			if(num_showers == 2) {signal_events_2_res++; }
+			if(num_showers == 3) {signal_events_3_res++; }
+			if(num_showers >= 4) {signal_events_4_res++; }
+		}
+		if(signal_bkg == 3)
+		{
+			if(num_showers == 1) {signal_events_1_dis++; }
+			if(num_showers == 2) {signal_events_2_dis++; }
+			if(num_showers == 3) {signal_events_3_dis++; }
+			if(num_showers >= 4) {signal_events_4_dis++; }
+		}
+		if(signal_bkg == 4)
+		{
+			if(num_showers == 1) {signal_events_1_coh++; }
+			if(num_showers == 2) {signal_events_2_coh++; }
+			if(num_showers == 3) {signal_events_3_coh++; }
+			if(num_showers >= 4) {signal_events_4_coh++; }
+		}
+		if(signal_bkg == 5)
+		{
+			if(num_showers == 1) {signal_events_1_mec++; }
+			if(num_showers == 2) {signal_events_2_mec++; }
+			if(num_showers == 3) {signal_events_3_mec++; }
+			if(num_showers >= 4) {signal_events_4_mec++; }
 		}
 		if(signal_bkg == 0)
 		{
@@ -227,19 +281,62 @@ void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, do
 			if(num_showers >= 4) {bkg_events_4++; }
 		}
 	}
-	double purity_1 = double(signal_events_1) / (double(signal_events_1) + double(bkg_events_1));
-	double purity_2 = double(signal_events_2) / (double(signal_events_2) + double(bkg_events_2));
-	double purity_3 = double(signal_events_3) / (double(signal_events_3) + double(bkg_events_3));
-	double purity_4 = double(signal_events_4) / (double(signal_events_4) + double(bkg_events_4));
-	std::cout << purity_1 << " " << purity_2 << " " << purity_3 << " " << purity_4 << std::endl;
-	// post_cuts_num_showers_purity->Fill(1, purity_1);
-	// post_cuts_num_showers_purity->Fill(2, purity_2);
-	// post_cuts_num_showers_purity->Fill(3, purity_3);
-	// post_cuts_num_showers_purity->Fill(4, purity_4);
-	post_cuts_num_showers_purity->SetBinContent(1, purity_1);
-	post_cuts_num_showers_purity->SetBinContent(2, purity_2);
-	post_cuts_num_showers_purity->SetBinContent(3, purity_3);
-	post_cuts_num_showers_purity->SetBinContent(4, purity_4);
+	const double total_events_1 = signal_events_1_qe + signal_events_1_res + signal_events_1_dis + signal_events_1_coh + signal_events_1_mec + bkg_events_1;
+	const double total_events_2 = signal_events_2_qe + signal_events_2_res + signal_events_2_dis + signal_events_2_coh + signal_events_2_mec + bkg_events_2;
+	const double total_events_3 = signal_events_3_qe + signal_events_3_res + signal_events_3_dis + signal_events_3_coh + signal_events_3_mec + bkg_events_3;
+	const double total_events_4 = signal_events_4_qe + signal_events_4_res + signal_events_4_dis + signal_events_4_coh + signal_events_4_mec + bkg_events_4;
+
+	std::cout << "4+ Shower Background Events: " << bkg_events_4 << std::endl;
+
+	double purity_1_qe  = double(signal_events_1_qe)  / total_events_1;
+	double purity_2_qe  = double(signal_events_2_qe)  / total_events_2;
+	double purity_3_qe  = double(signal_events_3_qe)  / total_events_3;
+	double purity_4_qe  = double(signal_events_4_qe)  / total_events_4;
+
+	double purity_1_res = double(signal_events_1_res) / total_events_1;
+	double purity_2_res = double(signal_events_2_res) / total_events_2;
+	double purity_3_res = double(signal_events_3_res) / total_events_3;
+	double purity_4_res = double(signal_events_4_res) / total_events_4;
+
+	double purity_1_dis = double(signal_events_1_dis) / total_events_1;
+	double purity_2_dis = double(signal_events_2_dis) / total_events_2;
+	double purity_3_dis = double(signal_events_3_dis) / total_events_3;
+	double purity_4_dis = double(signal_events_4_dis) / total_events_4;
+
+	double purity_1_coh = double(signal_events_1_coh) / total_events_1;
+	double purity_2_coh = double(signal_events_2_coh) / total_events_2;
+	double purity_3_coh = double(signal_events_3_coh) / total_events_3;
+	double purity_4_coh = double(signal_events_4_coh) / total_events_4;
+
+	double purity_1_mec = double(signal_events_1_mec) / total_events_1;
+	double purity_2_mec = double(signal_events_2_mec) / total_events_2;
+	double purity_3_mec = double(signal_events_3_mec) / total_events_3;
+	double purity_4_mec = double(signal_events_4_mec) / total_events_4;
+
+	post_cuts_num_showers_purity_qe->SetBinContent(1, purity_1_qe);
+	post_cuts_num_showers_purity_qe->SetBinContent(2, purity_2_qe);
+	post_cuts_num_showers_purity_qe->SetBinContent(3, purity_3_qe);
+	post_cuts_num_showers_purity_qe->SetBinContent(4, purity_4_qe);
+
+	post_cuts_num_showers_purity_res->SetBinContent(1, purity_1_res);
+	post_cuts_num_showers_purity_res->SetBinContent(2, purity_2_res);
+	post_cuts_num_showers_purity_res->SetBinContent(3, purity_3_res);
+	post_cuts_num_showers_purity_res->SetBinContent(4, purity_4_res);
+
+	post_cuts_num_showers_purity_dis->SetBinContent(1, purity_1_dis);
+	post_cuts_num_showers_purity_dis->SetBinContent(2, purity_2_dis);
+	post_cuts_num_showers_purity_dis->SetBinContent(3, purity_3_dis);
+	post_cuts_num_showers_purity_dis->SetBinContent(4, purity_4_dis);
+
+	post_cuts_num_showers_purity_coh->SetBinContent(1, purity_1_coh);
+	post_cuts_num_showers_purity_coh->SetBinContent(2, purity_2_coh);
+	post_cuts_num_showers_purity_coh->SetBinContent(3, purity_3_coh);
+	post_cuts_num_showers_purity_coh->SetBinContent(4, purity_4_coh);
+
+	post_cuts_num_showers_purity_mec->SetBinContent(1, purity_1_mec);
+	post_cuts_num_showers_purity_mec->SetBinContent(2, purity_2_mec);
+	post_cuts_num_showers_purity_mec->SetBinContent(3, purity_3_mec);
+	post_cuts_num_showers_purity_mec->SetBinContent(4, purity_4_mec);
 }
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts

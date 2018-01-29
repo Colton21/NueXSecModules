@@ -62,7 +62,11 @@ void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double,
 //***************************************************************************
 //***************************************************************************
 void PostCutVectorPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
-                        bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity);
+                        bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
+                        TH1 * post_cuts_num_showers_purity_res,
+                        TH1 * post_cuts_num_showers_purity_dis,
+                        TH1 * post_cuts_num_showers_purity_coh,
+                        TH1 * post_cuts_num_showers_purity_mec);
 //***************************************************************************
 //***************************************************************************
 //this function just counts if at least 1 tpc object passes the cuts

@@ -710,8 +710,17 @@ TH1D * h_failure_reason_cosmic         = new TH1D ("h_failure_reason_cosmic",   
 TH1D * h_failure_reason_other_mixed    = new TH1D ("h_failure_reason_other_mixed",    "h_failure_reason_other_mixed",    22, 0, 11);
 TH1D * h_failure_reason_unmatched      = new TH1D ("h_failure_reason_unmatched",      "h_failure_reason_unmatched",      22, 0, 11);
 
-TH1D * h_post_cuts_num_showers_purity             = new TH1D("h_post_cuts_num_showers_purity",            "h_post_cuts_num_showers_purity",            4, 1, 5);
-TH1D * h_post_open_angle_cuts_num_showers_purity  = new TH1D("h_post_open_angle_cuts_num_showers_purity", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
+TH1D * h_post_cuts_num_showers_purity_qe     = new TH1D("h_post_cuts_num_showers_purity_qe",             "h_post_cuts_num_showers_purity_qe",           4, 1, 5);
+TH1D * h_post_cuts_num_showers_purity_res    = new TH1D("h_post_cuts_num_showers_purity_res",            "h_post_cuts_num_showers_purity_res",          4, 1, 5);
+TH1D * h_post_cuts_num_showers_purity_dis    = new TH1D("h_post_cuts_num_showers_purity_dis",            "h_post_cuts_num_showers_purity_dis",          4, 1, 5);
+TH1D * h_post_cuts_num_showers_purity_coh    = new TH1D("h_post_cuts_num_showers_purity_coh",            "h_post_cuts_num_showers_purity_coh",          4, 1, 5);
+TH1D * h_post_cuts_num_showers_purity_mec    = new TH1D("h_post_cuts_num_showers_purity_mec",            "h_post_cuts_num_showers_purity_mec",          4, 1, 5);
+
+TH1D * h_post_open_angle_cuts_num_showers_purity_qe   = new TH1D("h_post_open_angle_cuts_num_showers_purity_qe",  "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
+TH1D * h_post_open_angle_cuts_num_showers_purity_res  = new TH1D("h_post_open_angle_cuts_num_showers_purity_res", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
+TH1D * h_post_open_angle_cuts_num_showers_purity_dis  = new TH1D("h_post_open_angle_cuts_num_showers_purity_dis", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
+TH1D * h_post_open_angle_cuts_num_showers_purity_coh  = new TH1D("h_post_open_angle_cuts_num_showers_purity_coh", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
+TH1D * h_post_open_angle_cuts_num_showers_purity_mec  = new TH1D("h_post_open_angle_cuts_num_showers_purity_mec", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
 
 TH2D * h_ele_eng_total_hits       = new TH2D ("h_ele_eng_total_hits",      "h_ele_eng_total_hits",      20, 0, 600, 20, 0, 3);
 TH2D * h_ele_eng_colleciton_hits  = new TH2D ("h_ele_eng_colleciton_hits", "h_ele_eng_colleciton_hits", 20, 0, 300, 20, 0, 3);

@@ -83,6 +83,8 @@ static void PlotDetailDataMCStack(TH1 * h_nue_cc_qe,
                                   TH1 * h_data,
                                   const double data_mc_scale_factor,
                                   const char * x_axis_name, const char * y_axis_name, const char * print_name, const char * data_print_name);
-};
 
+static void PurityStack(TH1 * h_qe, TH1 * h_res, TH1 * h_dis, TH1 * h_coh, TH1 * h_mec, const char * x_axis_name, const char * print_name);
+
+};
 #endif

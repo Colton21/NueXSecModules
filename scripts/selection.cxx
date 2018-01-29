@@ -949,8 +949,18 @@ int selection( const char * _file1){
 	        " Integrated Xsec:    " << genie_xsec << std::endl;
 
 	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v, _post_cuts_verbose); }
-	_functions_instance.selection_functions::PostCutVectorPlots(post_cuts_v, _post_cuts_verbose, h_post_cuts_num_showers_purity);
-	_functions_instance.selection_functions::PostCutVectorPlots(post_open_angle_cuts_v, _post_cuts_verbose, h_post_open_angle_cuts_num_showers_purity);
+	_functions_instance.selection_functions::PostCutVectorPlots(post_cuts_v, _post_cuts_verbose,
+	                                                            h_post_cuts_num_showers_purity_qe,
+	                                                            h_post_cuts_num_showers_purity_res,
+	                                                            h_post_cuts_num_showers_purity_dis,
+	                                                            h_post_cuts_num_showers_purity_coh,
+	                                                            h_post_cuts_num_showers_purity_mec);
+	_functions_instance.selection_functions::PostCutVectorPlots(post_open_angle_cuts_v, _post_cuts_verbose,
+	                                                            h_post_open_angle_cuts_num_showers_purity_qe,
+	                                                            h_post_open_angle_cuts_num_showers_purity_res,
+	                                                            h_post_open_angle_cuts_num_showers_purity_dis,
+	                                                            h_post_open_angle_cuts_num_showers_purity_coh,
+	                                                            h_post_open_angle_cuts_num_showers_purity_mec);
 
 //********************//
 //**** Histograms ****//
@@ -1466,9 +1476,17 @@ int selection( const char * _file1){
 	                                      h_longest_shwr_trk_length_unmatched, "",
 	                                      "Longest Track / Longest Shower Lengths", "", "post_longest_shower_trk_lengths.pdf");
 
-	histogram_functions::Plot1DHistogram (h_post_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO", "post_cuts_num_showers_purity.pdf");
-	histogram_functions::Plot1DHistogram (h_post_open_angle_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO - After Open Angle Cut",
-	                                      "post_open_angle_cuts_num_showers_purity.pdf");
+	// histogram_functions::Plot1DHistogram (h_post_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO", "post_cuts_num_showers_purity.pdf");
+	// histogram_functions::Plot1DHistogram (h_post_open_angle_cuts_num_showers_purity, "Number of Reconstructed Showers per TPCO - After Open Angle Cut",
+	//                                       "post_open_angle_cuts_num_showers_purity.pdf");
+
+	histogram_functions::PurityStack(h_post_cuts_num_showers_purity_qe, h_post_cuts_num_showers_purity_res, h_post_cuts_num_showers_purity_dis,
+	                                 h_post_cuts_num_showers_purity_coh, h_post_cuts_num_showers_purity_mec,
+	                                 "Num Reco Showers per TPCO", "post_cuts_num_showers_purity.pdf");
+	histogram_functions::PurityStack(h_post_open_angle_cuts_num_showers_purity_qe, h_post_open_angle_cuts_num_showers_purity_res,
+	                                 h_post_open_angle_cuts_num_showers_purity_dis, h_post_open_angle_cuts_num_showers_purity_coh,
+	                                 h_post_open_angle_cuts_num_showers_purity_mec,
+	                                 "Num Reco Showers per TPCO - After Open Angle Cut", "post_open_angle_cuts_num_showers_purity.pdf");
 
 	histogram_functions::Plot2DHistogram (h_collection_total_hits_track_nue_cc, "",
 	                                      "Hits - Collection Plane", "Hits - All Planes", "post_cuts_collection_total_hits_track_nue_cc.pdf");

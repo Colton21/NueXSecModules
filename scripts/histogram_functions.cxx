@@ -458,3 +458,37 @@ void histogram_functions::PlotDetailDataMCStack(TH1 * h_nue_cc_qe,
 	h_data->Draw("P E1 same");
 	c1->Print(data_print_name);
 }
+void histogram_functions::PurityStack(TH1 * h_qe, TH1 * h_res, TH1 * h_dis, TH1 * h_coh, TH1 * h_mec, const char * x_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+	h_qe->SetStats(kFALSE);
+	h_res->SetStats(kFALSE);
+	h_dis->SetStats(kFALSE);
+	h_coh->SetStats(kFALSE);
+	h_mec->SetStats(kFALSE);
+	h_qe->SetFillColor(30);
+	h_res->SetFillColor(38);
+	h_dis->SetFillColor(28);
+	h_coh->SetFillColor(1);
+	h_mec->SetFillColor(36);
+	stack->Add(h_qe);
+	stack->Add(h_res);
+	stack->Add(h_dis);
+	stack->Add(h_coh);
+	stack->Add(h_mec);
+	stack->Draw();
+	stack->GetXaxis()->SetTitle(x_axis_name);
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_qe,          "QE", "f");
+	leg_stack->AddEntry(h_res,         "Res", "f");
+	leg_stack->AddEntry(h_dis,         "DIS", "f");
+	leg_stack->AddEntry(h_coh,         "Coh", "f");
+	leg_stack->AddEntry(h_mec,         "MEC", "f");
+	leg_stack->Draw();
+	c1->Print(print_name);
+}
