@@ -187,10 +187,8 @@ void recotruehelper::Configure(art::Event const & e,
 	}
 
 	// Now set the things we need for the future
-	//_hit_to_mcps_map = hit_to_mcps_map;
-	//_pfp_to_hits_map = pfp_to_hits_map;
-	_trueHitsToParticles = trueHitsToParticles;
-	_recoParticlesToHits = recoParticlesToHits;
+	_hit_to_mcps_map = hit_to_mcps_map;
+	_pfp_to_hits_map = pfp_to_hits_map;
 
 	std::cout << "hit_to_mcps_map size " << hit_to_mcps_map.size() << std::endl;
 	//_configured = true;
