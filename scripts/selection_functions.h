@@ -644,6 +644,13 @@ void HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  TH1D * h_total_hits_leading_shower_unmatched);
 //***************************************************************************
 //***************************************************************************
+void EnergyHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
+                double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                double vtxX, double vtxY, double vtxZ, double mc_nu_energy, double mc_ele_energy,
+                TH2D * h_ele_eng_total_hits, TH2D * h_ele_eng_colleciton_hits, TH2D * h_nu_eng_total_hits, TH2D * h_nu_eng_collection_hits);
+//***************************************************************************
+//***************************************************************************
 int MapFailureCutToString(const std::string failure_cut);
 //***************************************************************************
 //***************************************************************************

@@ -727,8 +727,12 @@ int selection( const char * _file1){
 				h_nue_phi_eff_num->Fill(mc_phi);
 				h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
 				h_ele_phi_eff_num->Fill(mc_ele_phi);
+				_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
+				                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+				                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
 			}
 		}
+
 		_functions_instance.selection_functions::TopologyPlots2(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                        h_pfp_track_shower_nue_cc_qe_last, h_pfp_track_shower_nue_cc_out_fv_last,
@@ -1579,6 +1583,12 @@ int selection( const char * _file1){
 	                                      h_pre_cut_total_hits_leading_shower_unmatched, "",
 	                                      "Leading Shower Hits - All Planes", "", "pre_hit_cut_total_hits_leading_shower.pdf");
 
+	histogram_functions::Plot2DHistogram (h_ele_eng_total_hits, "", "Hits - All Planes", "True Electron Energy [GeV]", "post_cuts_ele_eng_total_hits.pdf");
+	histogram_functions::Plot2DHistogram (h_ele_eng_colleciton_hits, "", "Hits - Collection Plane",
+	                                      "True Electron Energy [GeV]", "post_cuts_ele_eng_collection_hits.pdf");
+	histogram_functions::Plot2DHistogram (h_nu_eng_total_hits, "", "Hits - All Planes", "True Neutrino Energy [GeV]", "post_cuts_nu_eng_total_hits.pdf");
+	histogram_functions::Plot2DHistogram (h_nu_eng_collection_hits, "", "Hits - Collection Planes",
+	                                      "True Neutrino Energy [GeV]", "post_cuts_nu_eng_colleciton_hits.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

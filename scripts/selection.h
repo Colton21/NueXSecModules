@@ -713,6 +713,11 @@ TH1D * h_failure_reason_unmatched      = new TH1D ("h_failure_reason_unmatched",
 TH1D * h_post_cuts_num_showers_purity             = new TH1D("h_post_cuts_num_showers_purity",            "h_post_cuts_num_showers_purity",            4, 1, 5);
 TH1D * h_post_open_angle_cuts_num_showers_purity  = new TH1D("h_post_open_angle_cuts_num_showers_purity", "h_post_open_angle_cuts_num_showers_purity", 4, 1, 5);
 
+TH2D * h_ele_eng_total_hits       = new TH2D ("h_ele_eng_total_hits",      "h_ele_eng_total_hits",      20, 0, 600, 20, 0, 3);
+TH2D * h_ele_eng_colleciton_hits  = new TH2D ("h_ele_eng_colleciton_hits", "h_ele_eng_colleciton_hits", 20, 0, 300, 20, 0, 3);
+TH2D * h_nu_eng_total_hits        = new TH2D ("h_nu_eng_total_hits",       "h_nu_eng_total_hits",       20, 0, 600, 20, 0, 3);
+TH2D * h_nu_eng_collection_hits   = new TH2D ("h_nu_eng_collection_hits",  "h_nu_eng_collection_hits",  20, 0, 300, 20, 0, 3);
+
 
 }//end namespace
 

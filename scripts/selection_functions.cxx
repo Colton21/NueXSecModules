@@ -3075,6 +3075,35 @@ int selection_functions::MapFailureCutToString(const std::string failure_cut)
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::EnergyHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
+                                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                     double vtxX, double vtxY, double vtxZ, double mc_nu_energy, double mc_ele_energy,
+                                     TH2D * h_ele_eng_total_hits, TH2D * h_ele_eng_colleciton_hits, TH2D * h_nu_eng_total_hits, TH2D * h_nu_eng_collection_hits)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int n_pfp_hits_w  = leading_shower.NumPFPHitsW();
+		const int n_pfp_hits    = leading_shower.NumPFPHits();
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_mec")
+		{
+			h_ele_eng_total_hits->Fill(n_pfp_hits, mc_ele_energy);
+			h_ele_eng_colleciton_hits->Fill(n_pfp_hits_w, mc_ele_energy);
+			h_nu_eng_total_hits->Fill(n_pfp_hits, mc_nu_energy);
+			h_nu_eng_collection_hits->Fill(n_pfp_hits_w, mc_nu_energy);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
