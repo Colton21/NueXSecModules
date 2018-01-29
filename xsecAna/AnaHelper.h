@@ -36,6 +36,7 @@
 #include "larcoreobj/SimpleTypesAndConstants/RawTypes.h"
 #include "lardata/DetectorInfoServices/DetectorClocksService.h"
 #include "larsim/MCCheater/BackTracker.h"
+#include "lardataobj/AnalysisBase/BackTrackerMatchingData.h"
 
 #include "larpandora/LArPandoraInterface/LArPandoraHelper.h"
 

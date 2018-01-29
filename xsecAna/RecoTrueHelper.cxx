@@ -73,13 +73,13 @@ void recotruehelper::Configure(art::Event const & e,
 	}
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-void McPfpMatch::Configure(art::Event const & e,
-                           std::string _pfp_producer,
-                           std::string _spacepointLabel,
-                           std::string _hitfinderLabel,
-                           std::string _geantModuleLabel,
-                           std::string _hit_mcp_producer,
-                           lar_pandora::LArPandoraHelper::DaughterMode daughterMode) {
+void recotruehelper::Configure(art::Event const & e,
+                               std::string _pfp_producer,
+                               std::string _spacepointLabel,
+                               std::string _hitfinderLabel,
+                               std::string _geantModuleLabel,
+                               std::string _hit_mcp_producer,
+                               lar_pandora::LArPandoraHelper::DaughterMode daughterMode) {
 
 	// Collect hits
 	lar_pandora::HitVector hitVector;
