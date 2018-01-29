@@ -18,8 +18,8 @@ private:
 lar_pandora::HitsToMCParticles _trueHitsToParticles;   ///< A map from recon hits to MCParticles
 lar_pandora::PFParticlesToHits _recoParticlesToHits; ///< A map from PFParticles to recon hits
 
-lar_pandora::PFParticlesToHits _pfp_to_hits_map;
-lar_pandora::HitsToMCParticles _hit_to_mcps_map;
+//lar_pandora::HitsToMCParticles _hit_to_mcps_map;
+//lar_pandora::PFParticlesToHits _pfp_to_hits_map;
 
 
 public:

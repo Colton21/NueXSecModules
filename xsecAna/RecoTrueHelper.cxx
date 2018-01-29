@@ -96,7 +96,7 @@ void recotruehelper::Configure(art::Event const & e,
 	// Collect PFParticles and match Reco Particles to Hits
 	lar_pandora::PFParticleVector recoParticleVector;
 	lar_pandora::PFParticleVector recoNeutrinoVector;
-	lar_pandora::PFParticlesToHits pfp_to_hits_map;
+	lar_pandora::PFParticlesToHits recoParticleToHits;
 	lar_pandora::HitsToPFParticles recoHitsToParticles;
 
 	lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
@@ -104,7 +104,7 @@ void recotruehelper::Configure(art::Event const & e,
 	lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e,
 	                                                      _pfp_producer,
 	                                                      _spacepointLabel,
-	                                                      pfp_to_hits_map,
+	                                                      recoParticleToHits,
 	                                                      recoHitsToParticles,
 	                                                      daughterMode,
 	                                                      true); // Use clusters to go from pfp to hits
@@ -119,7 +119,7 @@ void recotruehelper::Configure(art::Event const & e,
 	lar_pandora::MCTruthToMCParticles truthToParticles;
 	lar_pandora::MCParticlesToMCTruth particlesToTruth;
 	lar_pandora::MCParticlesToHits trueParticlesToHits;
-	lar_pandora::HitsToMCParticles hit_to_mcps_map;
+	lar_pandora::HitsToMCParticles trueHitsToParticles;
 
 	if (!e.isRealData()) {
 		lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geantModuleLabel, trueParticleVector);
@@ -173,7 +173,7 @@ void recotruehelper::Configure(art::Event const & e,
 					if (!(lar_pandora::LArPandoraHelper::IsVisible(selectedParticle)))
 						continue;
 
-					hit_to_mcps_map[hit] = selectedParticle;
+					trueHitsToParticles[hit] = selectedParticle;
 
 				} catch (cet::exception &e) {
 				}
@@ -187,10 +187,10 @@ void recotruehelper::Configure(art::Event const & e,
 	}
 
 	// Now set the things we need for the future
-	_hit_to_mcps_map = hit_to_mcps_map;
-	_pfp_to_hits_map = pfp_to_hits_map;
+	_trueHitsToParticles = trueHitsToParticles;
+	_recoParticleToHits = recoParticleToHits;
 
-	std::cout << "hit_to_mcps_map size " << hit_to_mcps_map.size() << std::endl;
+	std::cout << "trueHitsToParticles size " << trueHitsToParticles.size() << std::endl;
 	//_configured = true;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------

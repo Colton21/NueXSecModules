@@ -229,7 +229,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 	run = e.id().run();
 	event = e.id().event();
-	subrun = e.id().subrRun();
+	subrun = e.id().subRun();
 	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
 	if(_cosmic_only == true) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
