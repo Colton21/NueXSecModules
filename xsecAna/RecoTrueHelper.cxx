@@ -96,7 +96,7 @@ void recotruehelper::Configure(art::Event const & e,
 	// Collect PFParticles and match Reco Particles to Hits
 	lar_pandora::PFParticleVector recoParticleVector;
 	lar_pandora::PFParticleVector recoNeutrinoVector;
-	lar_pandora::PFParticlesToHits recoParticleToHits;
+	lar_pandora::PFParticlesToHits recoParticlesToHits;
 	lar_pandora::HitsToPFParticles recoHitsToParticles;
 
 	lar_pandora::LArPandoraHelper::CollectPFParticles(e, _pfp_producer, recoParticleVector);
@@ -104,7 +104,7 @@ void recotruehelper::Configure(art::Event const & e,
 	lar_pandora::LArPandoraHelper::BuildPFParticleHitMaps(e,
 	                                                      _pfp_producer,
 	                                                      _spacepointLabel,
-	                                                      recoParticleToHits,
+	                                                      recoParticlesToHits,
 	                                                      recoHitsToParticles,
 	                                                      daughterMode,
 	                                                      true); // Use clusters to go from pfp to hits
@@ -188,7 +188,7 @@ void recotruehelper::Configure(art::Event const & e,
 
 	// Now set the things we need for the future
 	_trueHitsToParticles = trueHitsToParticles;
-	_recoParticleToHits = recoParticleToHits;
+	_recoParticlesToHits = recoParticlesToHits;
 
 	std::cout << "trueHitsToParticles size " << trueHitsToParticles.size() << std::endl;
 	//_configured = true;
