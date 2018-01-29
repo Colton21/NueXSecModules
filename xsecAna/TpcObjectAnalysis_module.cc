@@ -83,7 +83,7 @@ std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v;
 
 int run;
 int event;
-itn subrun;
+int subrun;
 
 TTree * optical_tree;
 int fEvent;
