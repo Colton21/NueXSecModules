@@ -175,7 +175,7 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, do
 		std::cout << "Pfp Vtx X      : " << pfp_vtx_x << std::endl;
 		std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
 		std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
-		std::cout << "Opening Angle  : " << opening_angle << std::endl;
+		std::cout << "Opening Angle  : " << opening_angle * (180 / 3.1415) << std::endl;
 		std::cout << "TPCO Reason    : " << reason << std::endl;
 		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 	}
