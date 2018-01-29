@@ -71,6 +71,8 @@ std::string _geantModuleLabel;
 bool _is_data;
 bool _debug;
 bool _cosmic_only;
+bool _use_premade_ass;
+std::string _mcpHitAssLabel;
 };
 
 
@@ -85,6 +87,8 @@ xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 
 	_debug                          = p.get<bool>("Debug", true);
 	_cosmic_only                    = p.get<bool>("CosmicOnly", false);
+	_use_premade_ass                = p.get<bool>("UsePremadeAssociation", true);
+	_mcpHitAssLabel                 = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
 
 	produces< std::vector<xsecAna::MCGhost> >();
 	produces< art::Assns<simb::MCParticle, xsecAna::MCGhost> >();
@@ -124,7 +128,9 @@ void xsecAna::RecoTrueMatching::produce(art::Event & e)
 		return;
 	}
 
-	_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+	if(!_use_premade_ass) {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel); }
+	if(_use_premade_ass)  {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel,
+		                                                  _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters); }
 
 	lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles; // This is a map: MCParticle to matched PFParticle
 	lar_pandora::MCParticlesToHits matchedParticleHits;

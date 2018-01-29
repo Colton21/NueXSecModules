@@ -33,8 +33,17 @@ bool _verbose           = false;
 bool _recursiveMatching = false;
 
 /// Configure function parameters
+//this configure is the classic function - expects simchannel info
 void Configure(art::Event const & e, std::string _pfp_producer,
                std::string _spacepointLabel, std::string _hitfinderLabel, std::string _geantModuleLabel);
+
+void Configure(art::Event const & e, std::string _pfp_producer, std::string _spacepoint_producer, std::string _hitfinder_producer,
+               std::string _geant_producer, std::string _hit_mcp_producer, lar_pandora::LArPandoraHelper::DaughterMode daughterMode );
+/**
+ *  @brief Returns matching between true and reconstructed particles
+ *
+ *  @param matchedParticles the output matches between reconstructed and true particles
+ */
 
 
 /**

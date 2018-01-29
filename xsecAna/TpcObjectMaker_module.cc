@@ -79,6 +79,8 @@ bool _verbose;
 bool isMC;
 bool isData;
 bool _cosmic_only;
+bool _use_premade_ass;
+std::string _mcpHitAssLabel;
 
 int run;
 int event;
@@ -119,6 +121,9 @@ xsecAna::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 	_verbose                        = p.get<bool>("Verbose", false);
 
 	_cosmic_only                    = p.get<bool>("CosmicOnly", false);
+	_use_premade_ass                = p.get<bool>("UsePremadeAssociation", true);
+	_mcpHitAssLabel                 = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
+
 
 	if(_verbose) {std::cout << "TpcObjectMaker --- fcl parameters set --- " << std::endl; }
 
@@ -141,7 +146,15 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 	event = e.id().event();
 	bool _is_data = e.isRealData();
 	bool _is_mc = !_is_data;
-	if(_is_mc && !_cosmic_only) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+	if(!_use_premade_ass)
+	{
+		if(_is_mc && !_cosmic_only) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+	}
+	if(_use_premade_ass)
+	{
+		if(_is_mc && !_cosmic_only) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel,
+			                                                       _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters);
+	}
 	if(_verbose && _is_mc)  {std::cout << "[TpcObjectMaker] --- Running with MC --- " << std::endl; }
 	if(_verbose && _is_data) {std::cout << "[TpcObjectMaker] --- Running with Data --- "<< std::endl; }
 

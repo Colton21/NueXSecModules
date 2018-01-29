@@ -32,6 +32,9 @@ physics:
       HitProducer: "pandoraCosmicHitRemoval"
       GeantModule: "largeant"
       SpacePointProducer: "pandoraNu"
+      UsePremadeAssociation: "true"
+      MCPHitAssProducer: "pandoraCosmicHitRemoval"
+      CosmicOnly: "false"
       Debug: "false"
     }
     ProduceTPCO:
@@ -54,6 +57,9 @@ physics:
       MinimumHitRequirement: "3"
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
+      UsePremadeAssociation: "true"
+      MCPHitAssProducer: "pandoraCosmicHitRemoval"
+      CosmicOnly: "false"
       Debug: "false"
       Verbose: "false"
     }
@@ -86,4 +92,3 @@ services.DetectorPropertiesService.ReadOutWindowSize:        6400
 services.DetectorClocksService.InheritClockConfig:           false
 services.DetectorClocksService.TriggerOffsetTPC:             -0.400e3
 services.DetectorClocksService.TrigModuleName:               "daq"
-
