@@ -145,13 +145,13 @@ void ParticleContainer::SetNumPFPHitsV (int _n_pfp_hits_v){
 void ParticleContainer::SetNumPFPHitsW (int _n_pfp_hits_w){
 	n_pfp_hits_w = _n_pfp_hits_w;
 }
-void ParticleContainer::SetpfpEnergyU (int _pfp_energy_u){
+void ParticleContainer::SetpfpEnergyU (double _pfp_energy_u){
 	pfp_energy_u = _pfp_energy_u;
 }
-void ParticleContainer::SetpfpEnergyV (int _pfp_energy_v){
+void ParticleContainer::SetpfpEnergyV (double _pfp_energy_v){
 	pfp_energy_v = _pfp_energy_v;
 }
-void ParticleContainer::SetpfpEnergyW (int _pfp_energy_w){
+void ParticleContainer::SetpfpEnergyW (double _pfp_energy_w){
 	pfp_energy_w = _pfp_energy_w;
 }
 

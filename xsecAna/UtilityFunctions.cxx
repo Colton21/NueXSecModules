@@ -179,7 +179,7 @@ void utility::GetEnergyPerPlane(art::Event const & e,
 	energy_w = 0;
 
 	lar_pandora::TrackVector trackVector;
-	lar_pandora::TrackssToHits tracksToHits;
+	lar_pandora::TracksToHits tracksToHits;
 	//construct a track to hit map
 	lar_pandora::LArPandoraHelper::CollectTracks( e, _particleLabel, trackVector, tracksToHits );
 
@@ -191,7 +191,7 @@ void utility::GetEnergyPerPlane(art::Event const & e,
 	double integral_w = 0;
 
 	// Check where the hit is coming from
-	for (unsigned int h = 0; h < hit_v.size(); h++)
+	for (auto const hit : hit_v)
 	{
 		if (hit->View() == 0) {integral_u += hit->Integral(); }
 		if (hit->View() == 1) {integral_v += hit->Integral(); }
