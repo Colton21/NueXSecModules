@@ -65,11 +65,8 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 		if (hit_v[h]->View() == 2) nhits_w++;
 
 	}
-
 }
-
 //______________________________________________________________________________
-
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
                                       std::string _particleLabel,
                                       lar_pandora::ShowerVector shower_v,
@@ -100,11 +97,8 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 
 		}
 	}
-
 }
-
 //______________________________________________________________________________
-
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
                                       std::string _particleLabel,
                                       art::Ptr<recob::Shower> shower,
@@ -133,7 +127,80 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 	}
 
 }
+//______________________________________________________________________________
+void utility::GetEnergyPerPlane(art::Event const & e,
+                                std::string _particleLabel,
+                                art::Ptr<recob::Shower> shower,
+                                double & calibration_u,
+                                double & calibration_v,
+                                double & calibration_w,
+                                double & energy_u,
+                                double & energy_v,
+                                double & energy_w ) {
+	energy_u = 0;
+	energy_v = 0;
+	energy_w = 0;
 
+	lar_pandora::ShowerVector showerVector;
+	lar_pandora::ShowersToHits showersToHits;
+	//construct a shower to hit map
+	lar_pandora::LArPandoraHelper::CollectShowers( e, _particleLabel, showerVector, showersToHits );
+
+	// Get the hits associated with the shower
+	lar_pandora::HitVector hit_v = showersToHits.at(shower);
+
+	double integral_u = 0;
+	double integral_v = 0;
+	double integral_w = 0;
+
+	// Check where the hit is coming from
+	for (auto const hit : hit_v)
+	{
+		if (hit->View() == 0) {integral_u += hit->Integral(); }
+		if (hit->View() == 1) {integral_v += hit->Integral(); }
+		if (hit->View() == 2) {integral_w += hit->Integral(); }
+	}
+	energy_u = integral_u * calibration_u;
+	energy_v = integral_v * calibration_v;
+	energy_w = integral_w * calibration_w;
+}
+//______________________________________________________________________________
+void utility::GetEnergyPerPlane(art::Event const & e,
+                                std::string _particleLabel,
+                                art::Ptr<recob::Track> track,
+                                double & calibration_u,
+                                double & calibration_v,
+                                double & calibration_w,
+                                double & energy_u,
+                                double & energy_v,
+                                double & energy_w ) {
+	energy_u = 0;
+	energy_v = 0;
+	energy_w = 0;
+
+	lar_pandora::TrackVector trackVector;
+	lar_pandora::TrackssToHits tracksToHits;
+	//construct a track to hit map
+	lar_pandora::LArPandoraHelper::CollectTracks( e, _particleLabel, trackVector, tracksToHits );
+
+	// Get the hits associated with the track
+	lar_pandora::HitVector hit_v = tracksToHits.at(track);
+
+	double integral_u = 0;
+	double integral_v = 0;
+	double integral_w = 0;
+
+	// Check where the hit is coming from
+	for (unsigned int h = 0; h < hit_v.size(); h++)
+	{
+		if (hit->View() == 0) {integral_u += hit->Integral(); }
+		if (hit->View() == 1) {integral_v += hit->Integral(); }
+		if (hit->View() == 2) {integral_w += hit->Integral(); }
+	}
+	energy_u = integral_u * calibration_u;
+	energy_v = integral_v * calibration_v;
+	energy_w = integral_w * calibration_w;
+}
 //___________________________________________________________________________________________________
 void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double & trackPurity, double & trackEfficiency ) {
 
@@ -185,9 +252,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
                                   std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
                                   const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx, bool _verbose)
 {
-
 	double _gain = 0;
-
 	const double _data_gain = 240;
 	const double _mc_gain = 200;
 

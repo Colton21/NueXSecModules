@@ -70,6 +70,10 @@ std::string _pfp_producer;
 std::string _mc_ghost_producer;
 std::string _tpcobject_producer;
 
+double calibration_u;
+double calibration_v;
+double calibration_w;
+
 bool _debug;
 bool _verbose;
 bool _cosmic_only;
@@ -214,6 +218,11 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNumChargedParticles", &fMCNumChargedParticles, "fMCNumChargedParticles/I");
 	mctruth_counter_tree->Branch("has_pi0", &has_pi0, "has_pi0/O");
 	mctruth_counter_tree->Branch("fMCNuTime", &fMCNuTime, "fMCNuTime/D");
+
+
+	calibration_u                   = p.get<double>("CalibrationU");
+	calibration_v                   = p.get<double>("CalibrationV");
+	calibration_w                   = p.get<double>("CalibrationW");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -545,6 +554,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			int pfp_hits_v = 0;
 			int pfp_hits_w = 0;
 			double pfp_open_angle = 0;
+			double pfp_energy_u = 0;
+			double pfp_energy_v = 0;
+			double pfp_energy_w = 0;
 
 			double mc_vtx_x = -999;
 			double mc_vtx_y = -999;
@@ -740,6 +752,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
+
+					xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_track, calibration_u, calibration_v, calibration_w,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);
+
 					n_pfp_tracks++;
 				}
 			}//end pfp tracks
@@ -780,6 +796,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 0: " << shower_dEdx.at(0) << std::endl; }
 					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
 					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
+
+					xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u, calibration_v, calibration_w,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);
+
 					n_pfp_showers++;
 				}
 			}//end pfp showers
@@ -798,6 +818,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetNumPFPHitsU(pfp_hits_u);
 			particle_container.SetNumPFPHitsV(pfp_hits_v);
 			particle_container.SetNumPFPHitsW(pfp_hits_w);
+			particle_container.SetpfpEnergyU(pfp_energy_u);
+			particle_container.SetpfpEnergyV(pfp_energy_v);
+			particle_container.SetpfpEnergyW(pfp_energy_w);
 			particle_container.SetPfpClusterdQdx(shower_cluster_dqdx);
 			particle_container.SetPfpdEdx(shower_dEdx);
 

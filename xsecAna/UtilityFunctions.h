@@ -64,6 +64,28 @@ static void GetNumberOfHitsPerPlane(art::Event const & e, std::string _particleL
  *  @param trackPurity the output track (PFP, whatever) purity
  *  @param trackEfficiency the output track (PFP, whatever) efficiency
  */
+
+//this uses the calibration constants per plane as inputs and calculates the deposited energy for a track/shower based on the hit total ADCs
+static void GetEnergyPerPlane(art::Event const & e,
+                              std::string _particleLabel,
+                              art::Ptr<recob::Shower> shower,
+                              double & calibration_u,
+                              double & calibration_v,
+                              double & calibration_w,
+                              double & energy_u,
+                              double & energy_v,
+                              double & energy_w );
+
+static void GetEnergyPerPlane(art::Event const & e,
+                              std::string _particleLabel,
+                              art::Ptr<recob::Track> track,
+                              double & calibration_u,
+                              double & calibration_v,
+                              double & calibration_w,
+                              double & energy_u,
+                              double & energy_v,
+                              double & energy_w );
+
 static void GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double & trackPurity, double & trackEfficiency );
 
 

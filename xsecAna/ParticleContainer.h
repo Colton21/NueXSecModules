@@ -64,6 +64,9 @@ int n_pfp_hits;
 int n_pfp_hits_u;
 int n_pfp_hits_v;
 int n_pfp_hits_w;
+double pfp_energy_u;
+double pfp_energy_v;
+double pfp_energy_w;
 
 int n_matched_hits;
 int n_matched_hits_u;
@@ -136,6 +139,9 @@ void SetNumPFPHits  (int);
 void SetNumPFPHitsU (int);
 void SetNumPFPHitsV (int);
 void SetNumPFPHitsW (int);
+void SetpfpEnergyU  (double);
+void SetpfpEnergyV  (double);
+void SetpfpEnergyW  (double);
 
 void SetNumMatchedHits  (int);
 void SetNumMatchedHitsU (int);
@@ -204,6 +210,9 @@ int NumPFPHits  () const;
 int NumPFPHitsU () const;
 int NumPFPHitsV () const;
 int NumPFPHitsW () const;
+double PfpEnergyU () const;
+double PfpEnergyV () const;
+double PfpEnergyW () const;
 
 int NumMatchedHits  () const;
 int NumMatchedHitsU () const;
