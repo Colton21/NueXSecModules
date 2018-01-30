@@ -94,7 +94,7 @@ xsecAna::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 {
 	// Call appropriate produces<>() functions here.
 
-	if(_verbose) {std::cout << "TpcObjectMaker --- start setting fcl parameters --- " << std::endl; }
+	if(_verbose) {std::cout << "[TpcObjectMaker] --- start setting fcl parameters --- " << std::endl; }
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -125,7 +125,7 @@ xsecAna::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 	_mcpHitAssLabel                 = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
 
 
-	if(_verbose) {std::cout << "TpcObjectMaker --- fcl parameters set --- " << std::endl; }
+	if(_verbose) {std::cout << "[TpcObjectMaker] --- fcl parameters set --- " << std::endl; }
 
 	produces< std::vector<xsecAna::TPCObject> >();
 	produces< art::Assns<xsecAna::TPCObject,   recob::Track> >();
@@ -148,12 +148,12 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 	bool _is_mc = !_is_data;
 	if(!_use_premade_ass)
 	{
-		if(_is_mc && !_cosmic_only) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel);
+		if(_is_mc && !_cosmic_only) {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel); }
 	}
 	if(_use_premade_ass)
 	{
-		if(_is_mc && !_cosmic_only) _recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel,
-			                                                       _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters);
+		if(_is_mc && !_cosmic_only) {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel,
+			                                                        _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters); }
 	}
 	if(_verbose && _is_mc)  {std::cout << "[TpcObjectMaker] --- Running with MC --- " << std::endl; }
 	if(_verbose && _is_data) {std::cout << "[TpcObjectMaker] --- Running with Data --- "<< std::endl; }

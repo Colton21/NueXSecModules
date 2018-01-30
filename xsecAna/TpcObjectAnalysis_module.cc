@@ -219,6 +219,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("has_pi0", &has_pi0, "has_pi0/O");
 	mctruth_counter_tree->Branch("fMCNuTime", &fMCNuTime, "fMCNuTime/D");
 
+	std::cout << "[Analyze] Setting fcl Parameters " << std::endl;
 
 	calibration_u                   = p.get<double>("CalibrationU");
 	calibration_v                   = p.get<double>("CalibrationV");
@@ -231,6 +232,8 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	//of the output file.
 	//Instead we just count the most important truth events.
 	_save_truth_info                = p.get<bool>("SaveTruthInfo", false);
+
+	std::cout << "[Analyze] End Setting fcl Parameters " << std::endl;
 
 }
 
@@ -843,13 +846,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	//fill root tree per event
 	std::cout << "[Analyze] Fill Root Tree" << std::endl;
 	myTree->Fill();
-
-
 }
 
-void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
-	//probably want to fill the tree here
-	std::cout << "[Analyze] End Running" << std::endl;
-}
+// void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
+//      //probably want to fill the tree here
+//
+// }
 
 DEFINE_ART_MODULE(xsecAna::TpcObjectAnalysis)

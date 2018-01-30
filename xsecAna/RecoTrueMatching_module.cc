@@ -78,7 +78,7 @@ std::string _mcpHitAssLabel;
 
 xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 
-	std::cout << "We are here!" << std::endl;
+	std::cout << "[RecoTrueMatching] Setting fcl Parameters" << std::endl;
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -93,6 +93,9 @@ xsecAna::RecoTrueMatching::RecoTrueMatching(fhicl::ParameterSet const & p) {
 	produces< std::vector<xsecAna::MCGhost> >();
 	produces< art::Assns<simb::MCParticle, xsecAna::MCGhost> >();
 	produces< art::Assns<recob::PFParticle, xsecAna::MCGhost> >();
+
+	std::cout << "[RecoTrueMatching] End Setting fcl Parameters" << std::endl;
+
 }
 
 void xsecAna::RecoTrueMatching::produce(art::Event & e)
