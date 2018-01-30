@@ -848,9 +848,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	myTree->Fill();
 }
 
-// void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
-//      //probably want to fill the tree here
-//
-// }
+void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
+}
 
 DEFINE_ART_MODULE(xsecAna::TpcObjectAnalysis)
