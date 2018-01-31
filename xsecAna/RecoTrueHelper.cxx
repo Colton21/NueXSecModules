@@ -54,10 +54,11 @@ void recotruehelper::Configure(art::Event const & e,
 
 	if (_debug) { // yes, don't do it
 		std::cout << "[McPfpMatch] This is event " << e.id().run() << std::endl;
-		art::ServiceHandle<cheat::BackTracker> bt;
+		//art::ServiceHandle<cheat::BackTracker> bt;
 		std::cout << "[McPfpMatch] Number of MCParticles matched to hits: " << trueParticlesToHits.size() << std::endl;
 		for (const auto & iter : trueParticlesToHits) {
-			const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth((iter.first)->TrackId());
+			const art::Ptr<simb::MCTruth> mc_truth = TrackIDToMCTruth(e, _geantModuleLabel, (iter.first)->TrackId());
+			//bt->TrackIDToMCTruth((iter.first)->TrackId());
 			std::cout << "[McPfpMatch] MCParticle with pdg " << (iter.first)->PdgCode()
 			          << " and origin " << (mc_truth->Origin() == 1 ? "neutrino" : "cosmic")
 			          << " has " << (iter.second).size() << " hits ass." << std::endl;
@@ -524,7 +525,7 @@ double recotruehelper::GetLength(const art::Ptr<simb::MCParticle> particle, cons
 	return length;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-art::Ptr<simb::MCTruth> recotruehelper::TrackIDToMCTruth(art::Event const & e, std::string _geant_producer, int geant_track_id);
+art::Ptr<simb::MCTruth> recotruehelper::TrackIDToMCTruth(art::Event const & e, std::string _geant_producer, int geant_track_id)
 {
 	lar_pandora::MCTruthToMCParticles truthToParticles;
 	lar_pandora::MCParticlesToMCTruth particlesToTruth;

@@ -25,6 +25,7 @@
 #include "TpcObjectHelper.h"
 #include "TPCObject.h"
 #include "MCGhost.h"
+#include "RecoTrueHelper.h"
 
 namespace xsecAna {
 class TpcObjectMaker;
@@ -215,7 +216,7 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 			art::Ptr<simb::MCParticle>  mc_par = iter1->first;// The MCParticle
 			art::Ptr<recob::PFParticle> pf_par = iter1->second; // The matched PFParticle
 
-			const art::Ptr<simb::MCTruth> mc_truth = recotruehelper::TrackIDToMCTruth(e, _geantModuleLabel, mc_par->TrackId());//bt->TrackIDToMCTruth(mc_par->TrackId());
+			const art::Ptr<simb::MCTruth> mc_truth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, _geantModuleLabel, mc_par->TrackId());//bt->TrackIDToMCTruth(mc_par->TrackId());
 
 			if (!mc_truth) {
 				std::cerr << "[TPCObjectMaker] Problem with MCTruth pointer." << std::endl;
