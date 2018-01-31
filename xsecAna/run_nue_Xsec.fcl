@@ -7,12 +7,14 @@ process_name : NueXsecExtractorProcess
 services:
 {
   TFileService: {fileName: "nue_xsec_extraction.root"}
-  TimeTracker:  @local::microboone_time_tracker
+  TimeTracker:   @local::microboone_time_tracker
   MemoryTracker: @local::microboone_memory_tracker
   @table::microboone_simulation_services
+  message:       @local::microboone_message_services_prod_debug
   #@table::microboone_full_services
-}#end services
-services.BackTracker: @erase
+}
+#end services
+#services.BackTracker: @erase
 
 source:
 {
