@@ -273,7 +273,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	}
 	//there are so may mc particles -- why?
 	//MC Particle Information
-	art::ServiceHandle<cheat::BackTracker> bt;
+	//art::ServiceHandle<cheat::BackTracker> bt;
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
 	if(_is_mc == true)
 	{
@@ -302,7 +302,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
-			const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(mcparticle.TrackId());
+			const art::Ptr<simb::MCTruth> mctruth = recotruehelper::TrackIDToMCTruth(e, _geantModuleLabel, mcparticle.TrackId());
+			//bt->TrackIDToMCTruth(mcparticle.TrackId());
 			if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
 			if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
 			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
@@ -665,7 +666,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				if(_verbose) {std::cout << "[Analyze] One MC Ghost Found!" << std::endl; }
 				mcpart = mcpar_from_mcghost.at(mcghost[0].key());
 				const art::Ptr<simb::MCParticle> the_mcpart = mcpart.at(0);
-				const art::Ptr<simb::MCTruth> mctruth = bt->TrackIDToMCTruth(the_mcpart->TrackId());
+				const art::Ptr<simb::MCTruth> mctruth = recotruehelper::TrackIDToMCTruth(e, _geantModuleLabel, the_mcpart->TrackId());
+				//bt->TrackIDToMCTruth(the_mcpart->TrackId());
 				simb::MCNeutrino mc_nu;
 				if(!mctruth) {std::cout << "[Analyze] MCTruth Pointer Not Valid!" << std::endl; }
 				else

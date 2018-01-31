@@ -194,7 +194,6 @@ void recotruehelper::Configure(art::Event const & e,
 	//_configured = true;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------
-
 void recotruehelper::BuildTrueNeutrinoHitMaps(const lar_pandora::MCTruthToMCParticles &truthToParticles, const lar_pandora::MCParticlesToHits &trueParticlesToHits,
                                               lar_pandora::MCTruthToHits &trueNeutrinosToHits, lar_pandora::HitsToMCTruth &trueHitsToNeutrinos) const
 {
@@ -506,9 +505,7 @@ void recotruehelper::GetStartAndEndPoints(const art::Ptr<simb::MCParticle> parti
 	if (!foundStartPosition)
 		throw cet::exception("LArPandora");
 }
-
 //------------------------------------------------------------------------------------------------------------------------------------------
-
 double recotruehelper::GetLength(const art::Ptr<simb::MCParticle> particle, const int startT, const int endT) const
 {
 	if (endT <= startT)
@@ -526,5 +523,22 @@ double recotruehelper::GetLength(const art::Ptr<simb::MCParticle> particle, cons
 
 	return length;
 }
+//------------------------------------------------------------------------------------------------------------------------------------------
+art::Ptr<simb::MCTruth> recotruehelper::TrackIDToMCTruth(art::Event const & e, std::string _geant_producer, int geant_track_id);
+{
+	lar_pandora::MCTruthToMCParticles truthToParticles;
+	lar_pandora::MCParticlesToMCTruth particlesToTruth;
 
+	lar_pandora::LArPandoraHelper::CollectMCParticles(e, _geant_producer, truthToParticles, particlesToTruth);
+
+	for (auto iter : particlesToTruth) {
+		if (iter.first->TrackId() == geant_track_id) {
+			return iter.second;
+		}
+	}
+
+	art::Ptr<simb::MCTruth> null_ptr;
+	return null_ptr;
+}
+//------------------------------------------------------------------------------------------------------------------------------------------
 }//end namespace lar_pandora

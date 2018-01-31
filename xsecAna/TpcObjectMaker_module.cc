@@ -138,7 +138,7 @@ xsecAna::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 void xsecAna::TpcObjectMaker::produce(art::Event & e)
 {
 	// Implementation of required member function here.
-	art::ServiceHandle<cheat::BackTracker> bt;
+	//art::ServiceHandle<cheat::BackTracker> bt;
 	nue_xsec::recotruehelper _recotruehelper_instance;
 	xsecAna::tpcobjecthelper _tpcobjecthelper_instance;
 
@@ -215,7 +215,7 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 			art::Ptr<simb::MCParticle>  mc_par = iter1->first;// The MCParticle
 			art::Ptr<recob::PFParticle> pf_par = iter1->second; // The matched PFParticle
 
-			const art::Ptr<simb::MCTruth> mc_truth = bt->TrackIDToMCTruth(mc_par->TrackId());
+			const art::Ptr<simb::MCTruth> mc_truth = recotruehelper::TrackIDToMCTruth(e, _geantModuleLabel, mc_par->TrackId());//bt->TrackIDToMCTruth(mc_par->TrackId());
 
 			if (!mc_truth) {
 				std::cerr << "[TPCObjectMaker] Problem with MCTruth pointer." << std::endl;
