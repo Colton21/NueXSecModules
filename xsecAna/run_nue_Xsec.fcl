@@ -36,9 +36,10 @@ physics:
       GeantModule: "largeant"
       SpacePointProducer: "pandoraNu"
       UsePremadeAssociation: "true"
-      MCPHitAssProducer: "pandoraCosmicHitRemoval"
+      #MCPHitAssProducer: "pandoraCosmicHitRemoval"
+      MCPHitAssProducer: "crHitRemovalTruthMatch"
       CosmicOnly: "false"
-      Debug: "false"
+      Debug: "true"
     }
     ProduceTPCO:
     {
@@ -61,10 +62,11 @@ physics:
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
       UsePremadeAssociation: "true"
-      MCPHitAssProducer: "pandoraCosmicHitRemoval"
+      #MCPHitAssProducer: "pandoraCosmicHitRemoval"
+      MCPHitAssProducer: "crHitRemovalTruthMatch"
       CosmicOnly: "false"
-      Debug: "false"
-      Verbose: "false"
+      Debug: "true"
+      Verbose: "true"
     }
   }
   production: [ProduceMCGhost, ProduceTPCO]
@@ -86,8 +88,8 @@ physics:
       CalibrationV: "197.042"
       CalibrationW: "196.979"
 
-      Debug: "false"
-      Verbose: "false"
+      Debug: "true"
+      Verbose: "true"
     }
   }
   analysis: [ AnalyzeTPCO ]
