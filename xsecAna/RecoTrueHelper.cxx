@@ -25,8 +25,8 @@ void recotruehelper::Configure(art::Event const & e,
 	                                                      recoHitsToParticles, lar_pandora::LArPandoraHelper::kAddDaughters);
 
 	if (_verbose) {
-		std::cout << "[McPfpMatch] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
-		std::cout << "[McPfpMatch] RecoParticles: " << recoParticleVector.size() << std::endl;
+		std::cout << "[RecoTrueHelper] [Configure] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
+		std::cout << "[RecoTrueHelper] [Configure] RecoParticles: " << recoParticleVector.size() << std::endl;
 	}
 
 	// Collect MCParticles and match True Particles to Hits
@@ -44,8 +44,8 @@ void recotruehelper::Configure(art::Event const & e,
 	}
 
 	if (_verbose) {
-		std::cout << "[McPfpMatch] TrueParticles: " << particlesToTruth.size() << std::endl;
-		std::cout << "[McPfpMatch] TrueEvents: " << truthToParticles.size() << std::endl;
+		std::cout << "[RecoTrueHelper] [Configure] TrueParticles: " << particlesToTruth.size() << std::endl;
+		std::cout << "[RecoTrueHelper] [Configure] TrueEvents: " << truthToParticles.size() << std::endl;
 	}
 
 	// Now set the things we need for the future
@@ -88,7 +88,7 @@ void recotruehelper::Configure(art::Event const & e,
 	art::Handle<std::vector<recob::Hit> > hit_h;
 	e.getByLabel(_hitfinderLabel, hit_h);
 	if (!hit_h.isValid()) {
-		std::cout << "[McPfpMatch] Hit Handle is not valid." << std::endl;
+		std::cout << "[RecoTrueHelper] [Configure] Hit Handle is not valid." << std::endl;
 		throw std::exception();
 	}
 	art::fill_ptr_vector(hitVector, hit_h);
@@ -111,8 +111,8 @@ void recotruehelper::Configure(art::Event const & e,
 	                                                      true); // Use clusters to go from pfp to hits
 
 	if (_verbose) {
-		std::cout << "[McPfpMatch] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
-		std::cout << "[McPfpMatch] RecoParticles: " << recoParticleVector.size() << std::endl;
+		std::cout << "[RecoTrueHelper] [Configure] RecoNeutrinos: " << recoNeutrinoVector.size() << std::endl;
+		std::cout << "[RecoTrueHelper] [Configure] RecoParticles: " << recoParticleVector.size() << std::endl;
 	}
 
 	// Collect MCParticles and match True Particles to Hits
@@ -191,7 +191,7 @@ void recotruehelper::Configure(art::Event const & e,
 	_trueHitsToParticles = trueHitsToParticles;
 	_recoParticlesToHits = recoParticlesToHits;
 
-	std::cout << "trueHitsToParticles size " << trueHitsToParticles.size() << std::endl;
+	std::cout << "[RecoTrueHelper] [Configure] trueHitsToParticles size: " << trueHitsToParticles.size() << std::endl;
 	//_configured = true;
 }
 //------------------------------------------------------------------------------------------------------------------------------------------

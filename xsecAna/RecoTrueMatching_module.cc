@@ -131,16 +131,26 @@ void xsecAna::RecoTrueMatching::produce(art::Event & e)
 		return;
 	}
 
-	if(!_use_premade_ass) {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel); }
-	if(_use_premade_ass)  {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel,
-		                                                  _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters); }
+	if(!_use_premade_ass) 
+	{	
+		std::cout << "[RecoTrueMatching] Constructing Associations w/ SimChannels for MCParticle<-->Hits " << std::endl;
+		std::cout << "[RecoTrueMatching] Configuring associations " << std::endl;
+		_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel); 
+	}
+	if(_use_premade_ass)  
+	{
+		std::cout << "[RecoTrueMatching] Using Premade Associations for MCParticle<-->Hits " << std::endl;
+		std::cout << "[RecoTrueMatching] Configuring associations " << std::endl;
+		_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel,
+		                                                  _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters); 
+	}
 
 	lar_pandora::MCParticlesToPFParticles matchedMCToPFParticles; // This is a map: MCParticle to matched PFParticle
 	lar_pandora::MCParticlesToHits matchedParticleHits;
 
 	_recotruehelper_instance.GetRecoToTrueMatches(matchedMCToPFParticles, matchedParticleHits);
 
-	std::cout << "[RecoTrueMatching] Generating " << matchedMCToPFParticles.size() << " MCGhosts." << std::endl;
+	std::cout << "[RecoTrueMatching] Generating " << matchedMCToPFParticles.size() << " matched MC to Particle associations." << std::endl;
 
 	for (auto const& iter : matchedMCToPFParticles) {
 

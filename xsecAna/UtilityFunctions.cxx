@@ -276,12 +276,12 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 	const int n_clusters = clusters.size();
 	//shower_cluster_dqdx.resize(n_clusters);
 
-	if(_verbose) {std::cout << "[dQdx] Clusters size: " << n_clusters << std::endl; }
+	if(_verbose) {std::cout << "[Analyze] [Utility] [dQdx] Clusters size: " << n_clusters << std::endl; }
 	int cluster_num = 0;
 	//these are the clusters associated with a given shower
 	for(auto const cluster : clusters)
 	{
-		std::cout << "Cluster Num: " << cluster_num << std::endl;
+		std::cout << "[Analyze] [Utility] [dQdx] Cluster Num: " << cluster_num << std::endl;
 		auto const find_iter = ClusterToHitsMap.find(cluster);
 		if (find_iter == ClusterToHitsMap.end()) {continue; }
 		std::vector<art::Ptr<recob::Hit> > hits_v = find_iter->second;
@@ -296,7 +296,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 
 		const double cluster_length = sqrt(pow((cluster_end_position - cluster_start_position),2) +
 		                                   pow((cluster_end_ns - cluster_start_ns),2));
-		if(cluster_length <= 0) {std::cout << " [dQdx] Cluster Length is Less than 0!" << std::endl; continue; }
+		if(cluster_length <= 0) {std::cout << " [Analyze] [Utility] [dQdx] Cluster Length is Less than 0!" << std::endl; continue; }
 		std::vector<double> cluster_axis = {cos(cluster->StartAngle()), sin(cluster->StartAngle())};
 
 		// Build rectangle 4 x 1 cm around the cluster axis
@@ -360,7 +360,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 
 		cluster_num++;
 	}//end looping clusters
-	std::cout << "[dQdx] Finished Calculating dQdx" << std::endl;
+	std::cout << "[Analyze] [Utility] [dQdx] Finished Calculating dQdx" << std::endl;
 }//end function dqdx
 
 void utility::ConvertdEdX(std::vector< std::vector < double > > & shower_cluster_dqdx, std::vector<double> & shower_dEdx)

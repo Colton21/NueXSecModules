@@ -257,8 +257,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	auto const & beam_opflashes(*beam_opf);
 	std::cout << "[Analyze] [OPTICAL] " << beam_flash_tag << " in this event: " << beam_opflashes.size() << std::endl;
 
-	//if there is no optical activity in this event then I don't care about it
-	if(beam_opflashes.size() == 0) { std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl; return; }
+	//if there is no optical activity in this event then I have to check where the true nu vtx is
+	//if it's a true nue without reco optical event, but interacts in the FV then this is
+	//a loss in efficiency!
+	if(beam_opflashes.size() == 0) 
+	{ 
+		std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl; 
+		return; 
+	}
 
 	for(auto const & opflsh : beam_opflashes)
 	{
@@ -279,7 +285,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(_is_mc == true)
 	{
 		e.getByLabel("largeant", MCParticleHandle);
-		if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] Handle is not valid" << std::endl; exit(1); }
+		if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] MCParticleHandle is not valid" << std::endl; exit(1); }
 	}
 
 	//I need the MC Track for later - getting cosmic info from MCParticle->MCTrack
@@ -303,29 +309,53 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 
 		for(auto const & mcparticle : (*MCParticleHandle) )
 		{
-			const art::Ptr<simb::MCTruth> mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
-			//bt->TrackIDToMCTruth(mcparticle.TrackId());
-			if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
-			if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
-			if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
-			simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
-			bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
-			int fMCNuPdg = mc_nu.Nu().PdgCode();
-			fMCParticleID = mcparticle.TrackId();
 			fMCMother = mcparticle.Mother();
-			fMcparticle_pdg = mcparticle.PdgCode();
-			fStatusCode = mcparticle.StatusCode();
-			fMCVtxX = mcparticle.Vx();
-			fMCVtxY = mcparticle.Vy();
-			fMCVtxZ = mcparticle.Vz();
-			fMCEnergy = mcparticle.E();
-			fMCMass = mcparticle.Mass();
-			fMCPx = mcparticle.Px();
-			fMCPy = mcparticle.Py();
-			fMCPz = mcparticle.Pz();
-			if(_save_truth_info == true) {mcparticle_tree->Fill(); }
-			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && event_neutrino == false)
+			fMCParticleID = mcparticle.TrackId();
+			art::Ptr<simb::MCTruth> mctruth;
+			//we only care about every MC Particle if we're saving all truth info
+			if(_save_truth_info == true)
 			{
+				fMcparticle_pdg = mcparticle.PdgCode();
+				fStatusCode = mcparticle.StatusCode();
+				fMCVtxX = mcparticle.Vx();
+				fMCVtxY = mcparticle.Vy();
+				fMCVtxZ = mcparticle.Vz();
+				fMCEnergy = mcparticle.E();
+				fMCMass = mcparticle.Mass();
+				fMCPx = mcparticle.Px();
+				fMCPy = mcparticle.Py();
+				fMCPz = mcparticle.Pz();
+				mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
+				//bt->TrackIDToMCTruth(mcparticle.TrackId());
+				if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
+				if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
+				if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
+				simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
+				mcparticle_tree->Fill(); 
+			}
+			if(fMCMother == 0)
+			{
+				fMcparticle_pdg = mcparticle.PdgCode();
+				fStatusCode = mcparticle.StatusCode();
+				fMCVtxX = mcparticle.Vx();
+				fMCVtxY = mcparticle.Vy();
+				fMCVtxZ = mcparticle.Vz();
+				fMCEnergy = mcparticle.E();
+				fMCMass = mcparticle.Mass();
+				fMCPx = mcparticle.Px();
+				fMCPy = mcparticle.Py();
+				fMCPz = mcparticle.Pz();
+				mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
+				if(mctruth->Origin() == simb::kBeamNeutrino && event_neutrino == false)
+				{
+				//mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
+				//bt->TrackIDToMCTruth(mcparticle.TrackId());
+				if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
+				if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
+				if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
+				simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
+				bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
+				int fMCNuPdg = mc_nu.Nu().PdgCode();
 				//std::cout << fMCParticleID << '\t';
 				//std::cout << fMCNuPdg << '\t';
 				if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      fMCNuID = 1; }
@@ -354,27 +384,29 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				fMCEleMomentum = mc_nu.Lepton().P();
 				fMCNuTime      = mc_nu.Nu().Trajectory().T(0);
 				event_neutrino = true;
-			}
-			//this should only give the stable final state particles
-			if(fMCMother == 0 && mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
-			{
-				mc_num_particles++;
-				if(_verbose) {std::cout << " [MCTruth] Stable Final State Particles " << fMcparticle_pdg << std::endl; }
-				if(fMcparticle_pdg == 111)
-				{
-					has_pi0 = true;
-					if(_verbose) {std::cout << " [MCTruth] Event has Neutrino Induced Pi0" << std::endl; }
 				}
-				if(fMcparticle_pdg == 11  || fMcparticle_pdg == 13   || fMcparticle_pdg == -11  || fMcparticle_pdg == -13 ||
-				   fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
+			
+				//this should only give the stable final state particles
+				if(mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
 				{
-					mc_num_charged_particles++;
+					mc_num_particles++;
+					if(_verbose) {std::cout << " [Analyze] [MCTruth] Stable Final State Particles " << fMcparticle_pdg << std::endl; }
+					if(fMcparticle_pdg == 111)
+					{
+						has_pi0 = true;
+						if(_verbose) {std::cout << " [Analyze] [MCTruth] Event has Neutrino Induced Pi0" << std::endl; }
+					}
+					if(fMcparticle_pdg == 11  || fMcparticle_pdg == 13   || fMcparticle_pdg == -11  || fMcparticle_pdg == -13 ||
+				   	fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
+					{
+						mc_num_charged_particles++;
+					}
 				}
-			}
+			}//end if fMCMother == 0
 		}//end loop mc particles
 		fMCNumParticles = mc_num_particles;
 		fMCNumChargedParticles = mc_num_charged_particles;
-		std::cout << "MC Num Particles: " << mc_num_particles << std::endl;
+		std::cout << "[Analyze] MC Num Particles: " << mc_num_particles << std::endl;
 		mctruth_counter_tree->Fill();
 	}
 
@@ -537,11 +569,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		//****************************************
 		//loop over pfparticles in the tpc object
 		//****************************************
+		std::cout << "[Analyze] PFParticle Loop: " << std::endl;
 		auto pfps_from_tpcobj = tpcobjToPFPAssns.at(tpc_object_counter);
 		for(auto const pfp : pfps_from_tpcobj)
 		//for(auto const pfp : pfp_v)
 		{
-			std::cout << "[Analyze] PFParticles " << std::endl;
 			xsecAna::ParticleContainer particle_container;
 
 			int mcPdg = 0;
@@ -847,7 +879,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	}//end loop tpc objects
 
 	//fill root tree per event
-	std::cout << "[Analyze] Fill Root Tree" << std::endl;
+	std::cout << "[Analyze] Fill Root Tree - End Event" << std::endl;
 	myTree->Fill();
 }
 

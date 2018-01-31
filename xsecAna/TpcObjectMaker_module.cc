@@ -95,7 +95,7 @@ xsecAna::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 {
 	// Call appropriate produces<>() functions here.
 
-	if(_verbose) {std::cout << "[TpcObjectMaker] --- start setting fcl parameters --- " << std::endl; }
+	if(_verbose) {std::cout << "[TpcObjectMaker] Start setting fcl parameters " << std::endl; }
 
 	_pfp_producer                   = p.get<std::string>("PFParticleProducer");
 	_hitfinderLabel                 = p.get<std::string>("HitProducer");
@@ -126,7 +126,7 @@ xsecAna::TpcObjectMaker::TpcObjectMaker(fhicl::ParameterSet const & p)
 	_mcpHitAssLabel                 = p.get<std::string>("MCPHitAssProducer", "pandoraCosmicHitRemoval");
 
 
-	if(_verbose) {std::cout << "[TpcObjectMaker] --- fcl parameters set --- " << std::endl; }
+	if(_verbose) {std::cout << "[TpcObjectMaker] End setting fcl parameters " << std::endl; }
 
 	produces< std::vector<xsecAna::TPCObject> >();
 	produces< art::Assns<xsecAna::TPCObject,   recob::Track> >();
@@ -149,10 +149,14 @@ void xsecAna::TpcObjectMaker::produce(art::Event & e)
 	bool _is_mc = !_is_data;
 	if(!_use_premade_ass)
 	{
+		std::cout << "[TpcObjectMaker] Generating associations " << std::endl;
+		std::cout << "[TpcObjectMaker] Configuring reco true helper " << std::endl;
 		if(_is_mc && !_cosmic_only) {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel); }
 	}
 	if(_use_premade_ass)
 	{
+		std::cout << "[TpcObjectMaker] Using premade associations " << std::endl;
+		std::cout << "[TpcObjectMaker] Configuring reco true helper " << std::endl;
 		if(_is_mc && !_cosmic_only) {_recotruehelper_instance.Configure(e, _pfp_producer, _spacepointLabel, _hitfinderLabel, _geantModuleLabel,
 			                                                        _mcpHitAssLabel, lar_pandora::LArPandoraHelper::kAddDaughters); }
 	}
