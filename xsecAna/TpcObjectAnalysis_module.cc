@@ -253,6 +253,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	//maybe make them filled at the same place as the other - so it's a per event
 	//this is getting the optical information
 	std::string beam_flash_tag = "simpleFlashBeam";
+	bool no_reco_flash = false;
 	auto const & beam_opf = e.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
 	auto const & beam_opflashes(*beam_opf);
 	std::cout << "[Analyze] [OPTICAL] " << beam_flash_tag << " in this event: " << beam_opflashes.size() << std::endl;
@@ -263,7 +264,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(beam_opflashes.size() == 0) 
 	{ 
 		std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl; 
-		return; 
+		no_reco_flash = true;	 
 	}
 
 	for(auto const & opflsh : beam_opflashes)
@@ -279,6 +280,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		optical_tree->Fill();
 	}
 	//there are so may mc particles -- why?
+	//these are not all final state particles we see
 	//MC Particle Information
 	//art::ServiceHandle<cheat::BackTracker> bt;
 	art::Handle < std::vector < simb::MCParticle > > MCParticleHandle;
@@ -408,6 +410,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fMCNumChargedParticles = mc_num_charged_particles;
 		std::cout << "[Analyze] MC Num Particles: " << mc_num_particles << std::endl;
 		mctruth_counter_tree->Fill();
+	}
+	if(no_reco_flash == true)
+	{
+		std::cout << "[Analyze] *** No Reco Flash - Returning... *** " << std::endl;
+		return;
 	}
 
 	// Implementation of required member function here.
