@@ -174,6 +174,9 @@ void GetStartAndEndPoints(const art::Ptr<simb::MCParticle> trueParticle, int &st
  */
 double GetLength(const art::Ptr<simb::MCParticle> trueParticle, const int startT, const int endT) const;
 
+//this substitues the old functions of the backtracker
+static art::Ptr<simb::MCTruth> TrackIDToMCTruth(art::Event const & e, std::string _geant_producer, int geant_track_id);
+
 };
 
 }//end namespace lar_pandora
