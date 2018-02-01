@@ -14,7 +14,6 @@ services:
   #@table::microboone_full_services
 }
 #end services
-#services.BackTracker: @erase
 
 source:
 {
@@ -36,7 +35,6 @@ physics:
       GeantModule: "largeant"
       SpacePointProducer: "pandoraNu"
       UsePremadeAssociation: "true"
-      #MCPHitAssProducer: "pandoraCosmicHitRemoval"
       MCPHitAssProducer: "crHitRemovalTruthMatch"
       CosmicOnly: "false"
       Debug: "true"
@@ -62,7 +60,6 @@ physics:
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
       UsePremadeAssociation: "true"
-      #MCPHitAssProducer: "pandoraCosmicHitRemoval"
       MCPHitAssProducer: "crHitRemovalTruthMatch"
       CosmicOnly: "false"
       Debug: "true"

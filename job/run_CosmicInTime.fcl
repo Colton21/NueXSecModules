@@ -1,0 +1,102 @@
+#include "services_microboone.fcl"
+#include "messageservice.fcl"
+#include "time_memory_tracker_microboone.fcl"
+
+process_name : NueXsecExtractorProcess
+
+services:
+{
+  TFileService: {fileName: "cosmic_extraction.root"}
+  TimeTracker:   @local::microboone_time_tracker
+  MemoryTracker: @local::microboone_memory_tracker
+  @table::microboone_simulation_services
+  message:       @local::microboone_message_services_prod_debug
+  #@table::microboone_full_services
+}
+#end services
+
+source:
+{
+  module_type: RootInput
+  maxEvents: -1
+  firstRun: 1
+  firstEvent: 1
+}
+
+physics:
+{
+  producers:
+  {
+    ProduceMCGhost:
+    {
+      module_type: "RecoTrueMatching"
+      PFParticleProducer: "pandoraNu"
+      HitProducer: "pandoraCosmicHitRemoval"
+      GeantModule: "largeant"
+      SpacePointProducer: "pandoraNu"
+      UsePremadeAssociation: "true"
+      MCPHitAssProducer: "crHitRemovalTruthMatch"
+      CosmicOnly: "true"
+      Debug: "false"
+    }
+    ProduceTPCO:
+    {
+      module_type: "TpcObjectMaker"
+      PFParticleProducer: "pandoraNu"
+      HitProducer: "pandoraCosmicHitRemoval"
+      GeantModule: "largeant"
+      SpacePointProducer: "pandoraNu"
+      NeutrinoFlashMatchProducer: "NeutrinoFlashMatch"
+      CosmicFlashMatchProducer: "CosmicFlashMatch"
+      OpFlashBeamProducer: "simpleFlashBeam"
+      POTSummaryInstance: ""
+      POTSummaryProducer: "generator"
+      ParticleIDProducer: "pandoraNupid"
+      VertexProducer: "pandoraNu"
+      TrackProducer: "pandoraNu"
+      ShowerProducer: "pandoraNu"
+      UseGENIEInfo: "true"
+      MinimumHitRequirement: "3"
+      BeamSpillStart: "5"
+      BeamSpillEnd: "16"
+      UsePremadeAssociation: "true"
+      MCPHitAssProducer: "crHitRemovalTruthMatch"
+      CosmicOnly: "true"
+      Debug: "false"
+      Verbose: "false"
+    }
+  }
+  production: [ProduceMCGhost, ProduceTPCO]
+  analyzers:
+  {
+    AnalyzeTPCO:
+    {
+      module_type: "TpcObjectAnalysis"
+      PFParticleProducer: "pandoraNu"
+      TPCObjectProducer: "ProduceTPCO"
+      MCGhostProducer: "ProduceMCGhost"
+      SaveTruthInfo: "false"
+
+      BeamSpillStart: "5"
+      BeamSpillEnd: "16"
+
+      #these are given in electrons / ADCs
+      CalibrationU: "192.946"
+      CalibrationV: "197.042"
+      CalibrationW: "196.979"
+
+      Debug: "false"
+      Verbose: "false"
+      CosmicOnly: "true"
+    }
+  }
+  analysis: [ AnalyzeTPCO ]
+  end_paths: [production, analysis]
+}
+
+#we need these services to properly get the hits!
+services.DetectorPropertiesService.NumberTimeSamples:        6400
+services.DetectorPropertiesService.ReadOutWindowSize:        6400
+services.DetectorClocksService.InheritClockConfig:           false
+services.DetectorClocksService.TriggerOffsetTPC:             -0.400e3
+services.DetectorClocksService.TrigModuleName:               "daq"

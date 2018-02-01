@@ -2,16 +2,20 @@
 #include "messageservice.fcl"
 #include "time_memory_tracker_microboone.fcl"
 
+#this fcl is only for MC which still has the SimChannels!
+
 process_name : NueXsecExtractorProcess
 
 services:
 {
-  TFileService: {fileName: "cosmic_extraction.root"}
-  TimeTracker:  @local::microboone_time_tracker
+  TFileService: {fileName: "nue_xsec_extraction.root"}
+  TimeTracker:   @local::microboone_time_tracker
   MemoryTracker: @local::microboone_memory_tracker
-  #@table::microboone_simulation_services
-  @table::microboone_full_services
-}#end services
+  @table::microboone_simulation_services
+  message:       @local::microboone_message_services_prod_debug
+  #@table::microboone_full_services
+}
+#end services
 
 source:
 {
@@ -32,8 +36,10 @@ physics:
       HitProducer: "pandoraCosmicHitRemoval"
       GeantModule: "largeant"
       SpacePointProducer: "pandoraNu"
-      Debug: "true"
-      CosmicOnly: "true"
+      UsePremadeAssociation: "false"
+      MCPHitAssProducer: "crHitRemovalTruthMatch"
+      CosmicOnly: "false"
+      Debug: "false"
     }
     ProduceTPCO:
     {
@@ -55,9 +61,11 @@ physics:
       MinimumHitRequirement: "3"
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
-      Debug: "true"
-      Verbose: "true"
-      CosmicOnly: "true"
+      UsePremadeAssociation: "false"
+      MCPHitAssProducer: "crHitRemovalTruthMatch"
+      CosmicOnly: "false"
+      Debug: "false"
+      Verbose: "false"
     }
   }
   production: [ProduceMCGhost, ProduceTPCO]
@@ -69,13 +77,18 @@ physics:
       PFParticleProducer: "pandoraNu"
       TPCObjectProducer: "ProduceTPCO"
       MCGhostProducer: "ProduceMCGhost"
+      SaveTruthInfo: "false"
 
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
 
-      Debug: "true"
-      Verbose: "true"
-      CosmicOnly: "true"
+      #these are given in electrons / ADCs
+      CalibrationU: "192.946"
+      CalibrationV: "197.042"
+      CalibrationW: "196.979"
+
+      Debug: "false"
+      Verbose: "false"
     }
   }
   analysis: [ AnalyzeTPCO ]
@@ -88,5 +101,3 @@ services.DetectorPropertiesService.ReadOutWindowSize:        6400
 services.DetectorClocksService.InheritClockConfig:           false
 services.DetectorClocksService.TriggerOffsetTPC:             -0.400e3
 services.DetectorClocksService.TrigModuleName:               "daq"
-
-services.DetectorClocksService.InheritClockConfig: false
