@@ -5,7 +5,7 @@ int selection( const char * _file1){
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
-	const bool _post_cuts_verbose = true;
+	const bool _post_cuts_verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
@@ -144,6 +144,14 @@ int selection( const char * _file1){
 	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end);
 	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v->size() << std::endl;
 
+	//need a text file with the run, subrun output
+	std::ofstream run_subrun_file;
+	run_subrun_file.open("run_subrun_list.txt");
+	int data_run = 0;
+	int data_subrun = 0;
+	int last_data_run = 0;
+	int last_data_subrun = 0;
+
 	//**********************************
 	//now let's do the TPCO related cuts
 	//*********************************
@@ -165,6 +173,20 @@ int selection( const char * _file1){
 			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 			continue;
 		}//false
+
+		for(auto const tpc_obj : * tpc_object_container_v)
+		{
+			data_run    = tpc_obj.RunNumber();
+			data_subrun = tpc_obj.SubRunNumber();
+			std::cout << data_run << " " << data_subrun << std::endl;
+			if(data_run != last_data_run && data_subrun != last_data_subrun)
+			{
+				run_subrun_file << data_run << " " << data_subrun << "\n";
+				break;
+			}
+		}
+		last_data_run = data_run;
+		last_data_subrun = data_subrun;
 
 		double mc_cos_theta = -999;
 		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z / mc_nu_momentum; }

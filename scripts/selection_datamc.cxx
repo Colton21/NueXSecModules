@@ -155,6 +155,11 @@ int selection( const char * _file1, const char * _file2){
 	_cuts_instance.selection_cuts::SetXYflashVector(f_data, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end);
 	std::cout << "-Data- Largest Flash Vector Size: " << data_largest_flash_v_v->size() << std::endl;
 
+	int data_run;
+	int data_subrun;
+	int last_data_run = 0;
+	int last_data_subrun = 0;
+
 	//**********************************
 	//now let's do the TPCO related cuts
 	//*********************************
@@ -175,19 +180,26 @@ int selection( const char * _file1, const char * _file2){
 			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 			continue;
 		}//false
-		std::vector<std::string> * tpco_origin_v = new std::vector<std::string>;
-		_cuts_instance.selection_cuts::GetOrigins(data_tpc_object_container_v, tpco_origin_v);
-		//**********************************************************************
-		//Get Run and Subrun*
-		//run and subrun number should be the same for all tpc obj in one event
-		//**********************************************************************
-		//some events have no tpc objects...
-		if(data_tpc_object_container_v->size() != 0)
+		 //std::vector<std::string> * tpco_origin_v = new std::vector<std::string>;
+		 //_cuts_instance.selection_cuts::GetOrigins(data_tpc_object_container_v, tpco_origin_v);
+		 //**********************************************************************
+		 //Get Run and Subrun*
+		 //run and subrun number should be the same for all tpc obj in one event
+		 //**********************************************************************
+		 //some events have no tpc objects...
+		for(auto const tpc_obj : * tpc_object_container_v)
 		{
-			const int data_run    = data_tpc_object_container_v->at(0).RunNumber();
-			const int data_subrun = data_tpc_object_container_v->at(0).SubRunNumber();
-			run_subrun_file << data_run << data_subrun << "\n";
+			data_run    = tpc_obj.RunNumber();
+			data_subrun = tpc_obj.SubRunNumber();
+			std::cout << data_run << " " << data_subrun << std::endl;
+			if(data_run != last_data_run && data_subrun != last_data_subrun)
+			{
+				run_subrun_file << data_run << " " << data_subrun << "\n";
+				break;
+			}
 		}
+		last_data_run = data_run;
+		last_data_subrun = data_subrun;
 		//XY Position of largest flash
 		std::vector < double > largest_flash_v = data_largest_flash_v_v->at(event);
 		//List of TPC Objects which pass the cuts
