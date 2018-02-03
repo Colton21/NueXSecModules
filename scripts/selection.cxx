@@ -178,7 +178,6 @@ int selection( const char * _file1){
 		{
 			data_run    = tpc_obj.RunNumber();
 			data_subrun = tpc_obj.SubRunNumber();
-			std::cout << data_run << " " << data_subrun << std::endl;
 			if(data_run != last_data_run && data_subrun != last_data_subrun)
 			{
 				run_subrun_file << data_run << " " << data_subrun << "\n";
@@ -619,14 +618,6 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
 
-		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, has_pi0, _verbose, _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                       mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
-		                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
-		                                                       h_failure_reason_numu_cc_mixed, h_failure_reason_nc,
-		                                                       h_failure_reason_nc_pi0, h_failure_reason_cosmic,
-		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
-
 		_functions_instance.selection_functions::PlaneHitsComparisonTrack(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                                  _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                                  h_collection_total_hits_track_nue_cc,
@@ -723,6 +714,14 @@ int selection( const char * _file1){
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
+
+		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, has_pi0, _verbose, _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                       mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
+		                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
+		                                                       h_failure_reason_numu_cc_mixed, h_failure_reason_nc,
+		                                                       h_failure_reason_nc_pi0, h_failure_reason_cosmic,
+		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
 
 		//these are for the tefficiency plots, post all cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
@@ -1673,9 +1672,8 @@ int selection( const char * _file1){
 	double bin_content_other_mixed_prev = pe_counter_v->at(6);
 	double bin_content_unmatched_prev = pe_counter_v->at(5);
 
-	for (int i=1; i<= 22; i++)
+	for (int i=1; i<= 24; i++)
 	{
-
 		double bin_content_nue_cc                   = h_failure_reason_nue_cc->GetBinContent(i);
 		double bin_content_nue_cc_mixed             = h_failure_reason_nue_cc_mixed->GetBinContent(i);
 		double bin_content_numu_cc                  = h_failure_reason_numu_cc->GetBinContent(i);
@@ -1743,9 +1741,9 @@ int selection( const char * _file1){
 	h_failure_reason_stack->Draw();
 	h_failure_reason_stack->GetXaxis()->SetTitle("Failure Reason");
 	h_failure_reason_stack->GetYaxis()->SetTitle("Rejected / (Rejected + Selected)");
-	const char * str_cut[22] = {"HasNue", " ", "InFV", " ", "FlshDist", " ", "ShwrVtx", " ", "TrkVtx", " ", "Hits", " ",
-		                    "OpenAngle", " ", "dEdx", " ", "2ndDist", " ", "HitLength", " ", "Passed", " "};
-	for (int i=1; i<= 22; i++)
+	const char * str_cut[24] = {"HasNue", " ", "InFV", " ", "FlshDist", " ", "ShwrVtx", " ", "TrkVtx", " ", "Hits", " ",
+		                    "OpenAngle", " ", "dEdx", " ", "2ndDist", " ", "HitLength", " ", "YHits", " ", "T/S-Ratio", " "};
+	for (int i=1; i<= 24; i++)
 	{
 		h_failure_reason_stack->GetXaxis()->SetBinLabel(i,str_cut[(i-1)]);
 	}

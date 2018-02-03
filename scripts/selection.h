@@ -701,16 +701,16 @@ TH1D * h_pre_cut_total_hits_leading_shower_cosmic         = new TH1D ("h_pre_cut
 TH1D * h_pre_cut_total_hits_leading_shower_other_mixed    = new TH1D ("h_pre_cut_total_hits_leading_shower_other_mixed",    "h_pre_cut_total_hits_leading_shower_other_mixed",    30, 0, 600);
 TH1D * h_pre_cut_total_hits_leading_shower_unmatched      = new TH1D ("h_pre_cut_total_hits_leading_shower_unmatched",      "h_pre_cut_total_hits_leading_shower_unmatched",      30, 0, 600);
 
-TH1D * h_failure_reason_nue_cc         = new TH1D ("h_failure_reason_nue_cc",         "h_failure_reason_nue_cc",         22, 0, 11);
-TH1D * h_failure_reason_nue_cc_out_fv  = new TH1D ("h_failure_reason_nue_cc_out_fv",  "h_failure_reason_nue_cc_out_fv",  22, 0, 11);
-TH1D * h_failure_reason_nue_cc_mixed   = new TH1D ("h_failure_reason_nue_cc_mixed",   "h_failure_reason_nue_cc_mixed",   22, 0, 11);
-TH1D * h_failure_reason_numu_cc        = new TH1D ("h_failure_reason_numu_cc",        "h_failure_reason_numu_cc",        22, 0, 11);
-TH1D * h_failure_reason_numu_cc_mixed  = new TH1D ("h_failure_reason_numu_cc_mixed",  "h_failure_reason_numu_cc_mixed",  22, 0, 11);
-TH1D * h_failure_reason_nc             = new TH1D ("h_failure_reason_nc",             "h_failure_reason_nc",             22, 0, 11);
-TH1D * h_failure_reason_nc_pi0         = new TH1D ("h_failure_reason_nc_pi0",         "h_failure_reason_nc_pi0",         22, 0, 11);
-TH1D * h_failure_reason_cosmic         = new TH1D ("h_failure_reason_cosmic",         "h_failure_reason_cosmic",         22, 0, 11);
-TH1D * h_failure_reason_other_mixed    = new TH1D ("h_failure_reason_other_mixed",    "h_failure_reason_other_mixed",    22, 0, 11);
-TH1D * h_failure_reason_unmatched      = new TH1D ("h_failure_reason_unmatched",      "h_failure_reason_unmatched",      22, 0, 11);
+TH1D * h_failure_reason_nue_cc         = new TH1D ("h_failure_reason_nue_cc",         "h_failure_reason_nue_cc",         24, 0, 12);
+TH1D * h_failure_reason_nue_cc_out_fv  = new TH1D ("h_failure_reason_nue_cc_out_fv",  "h_failure_reason_nue_cc_out_fv",  24, 0, 12);
+TH1D * h_failure_reason_nue_cc_mixed   = new TH1D ("h_failure_reason_nue_cc_mixed",   "h_failure_reason_nue_cc_mixed",   24, 0, 12);
+TH1D * h_failure_reason_numu_cc        = new TH1D ("h_failure_reason_numu_cc",        "h_failure_reason_numu_cc",        24, 0, 12);
+TH1D * h_failure_reason_numu_cc_mixed  = new TH1D ("h_failure_reason_numu_cc_mixed",  "h_failure_reason_numu_cc_mixed",  24, 0, 12);
+TH1D * h_failure_reason_nc             = new TH1D ("h_failure_reason_nc",             "h_failure_reason_nc",             24, 0, 12);
+TH1D * h_failure_reason_nc_pi0         = new TH1D ("h_failure_reason_nc_pi0",         "h_failure_reason_nc_pi0",         24, 0, 12);
+TH1D * h_failure_reason_cosmic         = new TH1D ("h_failure_reason_cosmic",         "h_failure_reason_cosmic",         24, 0, 12);
+TH1D * h_failure_reason_other_mixed    = new TH1D ("h_failure_reason_other_mixed",    "h_failure_reason_other_mixed",    24, 0, 12);
+TH1D * h_failure_reason_unmatched      = new TH1D ("h_failure_reason_unmatched",      "h_failure_reason_unmatched",      24, 0, 12);
 
 TH1D * h_post_cuts_num_showers_purity_qe     = new TH1D("h_post_cuts_num_showers_purity_qe",             "h_post_cuts_num_showers_purity_qe",           4, 1, 5);
 TH1D * h_post_cuts_num_showers_purity_res    = new TH1D("h_post_cuts_num_showers_purity_res",            "h_post_cuts_num_showers_purity_res",          4, 1, 5);

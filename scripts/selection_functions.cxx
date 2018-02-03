@@ -3156,18 +3156,20 @@ void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> *
 //***************************************************************************
 int selection_functions::MapFailureCutToString(const std::string failure_cut)
 {
-	int failure_reason = 10.0;
-	if(failure_cut == "Passed")         {return failure_reason;   }
-	if(failure_cut == "HasNue")         {failure_reason = 0.0;    }
-	if(failure_cut == "InFV")           {failure_reason = 1.0;    }
-	if(failure_cut == "FlashDist")      {failure_reason = 2.0;    }
-	if(failure_cut == "ShwrVtx")        {failure_reason = 3.0;    }
-	if(failure_cut == "TrkVtx")         {failure_reason = 4.0;    }
-	if(failure_cut == "HitThreshold")   {failure_reason = 5.0;    }
-	if(failure_cut == "OpenAngle")      {failure_reason = 6.0;    }
-	if(failure_cut == "dEdX")           {failure_reason = 7.0;    }
-	if(failure_cut == "SecondaryDist")  {failure_reason = 8.0;    }
-	if(failure_cut == "HitLengthRatio") {failure_reason = 9.0;    }
+	int failure_reason = -1;
+	//if(failure_cut == "Passed")          {return failure_reason;   }
+	if(failure_cut == "HasNue")          {failure_reason = 0.0;    }
+	if(failure_cut == "InFV")            {failure_reason = 1.0;    }
+	if(failure_cut == "FlashDist")       {failure_reason = 2.0;    }
+	if(failure_cut == "ShwrVtx")         {failure_reason = 3.0;    }
+	if(failure_cut == "TrkVtx")          {failure_reason = 4.0;    }
+	if(failure_cut == "HitThreshold")    {failure_reason = 5.0;    }
+	if(failure_cut == "OpenAngle")       {failure_reason = 6.0;    }
+	if(failure_cut == "dEdX")            {failure_reason = 7.0;    }
+	if(failure_cut == "SecondaryDist")   {failure_reason = 8.0;    }
+	if(failure_cut == "HitLengthRatio")  {failure_reason = 9.0;    }
+	if(failure_cut == "HitThresholdW")   {failure_reason = 10.0;   }
+	if(failure_cut == "TrkShwrLenRatio") {failure_reason = 11.0;   }
 	return failure_reason;
 }
 //***************************************************************************
