@@ -803,10 +803,10 @@ int selection( const char * _file1, const char * _file2){
 		                                                        h_pfp_shower_numu_cc_mixed_last, h_pfp_shower_cosmic_last,
 		                                                        h_pfp_shower_other_mixed_last, h_pfp_shower_unmatched_last);
 
-		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                            no_track, has_track);
+		// _functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		//                                                             _x1, _x2, _y1, _y2, _z1, _z2,
+		//                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		//                                                             no_track, has_track);
 
 		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2,

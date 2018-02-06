@@ -95,6 +95,14 @@ int selection( const char * _file1){
 	has_track->resize(2, 0);
 	std::vector<int> * no_track = new std::vector<int>;
 	no_track->resize(2, 0);
+	std::vector<int> * _1_shwr = new std::vector<int>;
+	_1_shwr->resize(2, 0);
+	std::vector<int> * _2_shwr = new std::vector<int>;
+	_2_shwr->resize(2, 0);
+	std::vector<int> * _3_shwr = new std::vector<int>;
+	_3_shwr->resize(2, 0);
+	std::vector<int> * _4_shwr = new std::vector<int>;
+	_4_shwr->resize(2, 0);
 
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
@@ -584,7 +592,7 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                            no_track, has_track);
+		                                                            no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 
 		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
@@ -673,6 +681,24 @@ int selection( const char * _file1){
 	std::cout << "1+ Track Signal: " << has_track->at(0) << std::endl;
 	std::cout << "1+ Track Bkg   : " << has_track->at(1) << std::endl;
 	std::cout << "Purity         : " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "1 Shower Signal : " << _1_shwr->at(0) << std::endl;
+	std::cout << "1 Shower Bkg    : " << _1_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_1_shwr->at(0)) / double(_1_shwr->at(0) + _1_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "2 Shower Signal : " << _2_shwr->at(0) << std::endl;
+	std::cout << "2 Shower Bkg    : " << _2_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_2_shwr->at(0)) / double(_2_shwr->at(0) + _2_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "3 Shower Signal : " << _3_shwr->at(0) << std::endl;
+	std::cout << "3 Shower Bkg    : " << _3_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_3_shwr->at(0)) / double(_3_shwr->at(0) + _3_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "4+ Shower Signal: " << _4_shwr->at(0) << std::endl;
+	std::cout << "4+ Shower Bkg   : " << _4_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_4_shwr->at(0)) / double(_4_shwr->at(0) + _4_shwr->at(1)) << std::endl;
+	std::cout << "---------------------" << std::endl;
 	std::cout << "---------------------" << std::endl;
 
 	std::vector<double> * xsec_cc = new std::vector<double>;

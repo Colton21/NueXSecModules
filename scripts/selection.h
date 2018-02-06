@@ -53,8 +53,9 @@ const double shwr_nue_tolerance = 4;//cm
 const double trk_nue_tolerance = 4;//cm
 
 //hit threshold for at least one shower
-//standard 100 hits
-const double shwr_hit_threshold = 120;//hits
+//standard 120 hits
+//higher cuts 200 hits
+const double shwr_hit_threshold = 200;//hits
 
 //hit threshold for at least one shower on collection plane
 //standard 50 hits
@@ -728,6 +729,28 @@ TH2D * h_ele_eng_total_hits       = new TH2D ("h_ele_eng_total_hits",      "h_el
 TH2D * h_ele_eng_colleciton_hits  = new TH2D ("h_ele_eng_colleciton_hits", "h_ele_eng_colleciton_hits", 20, 0, 300, 20, 0, 3);
 TH2D * h_nu_eng_total_hits        = new TH2D ("h_nu_eng_total_hits",       "h_nu_eng_total_hits",       20, 0, 600, 20, 0, 3);
 TH2D * h_nu_eng_collection_hits   = new TH2D ("h_nu_eng_collection_hits",  "h_nu_eng_collection_hits",  20, 0, 300, 20, 0, 3);
+
+TH1D * h_ele_cos_theta_nue_cc         = new TH1D ("h_ele_cos_theta_nue_cc",         "h_ele_cos_theta_nue_cc",         20, -1, 1);
+TH1D * h_ele_cos_theta_nue_cc_out_fv  = new TH1D ("h_ele_cos_theta_nue_cc_out_fv",  "h_ele_cos_theta_nue_cc_out_fv",  20, -1, 1);
+TH1D * h_ele_cos_theta_nue_cc_mixed   = new TH1D ("h_ele_cos_theta_nue_cc_mixed",   "h_ele_cos_theta_nue_cc_mixed",   20, -1, 1);
+TH1D * h_ele_cos_theta_numu_cc        = new TH1D ("h_ele_cos_theta_numu_cc",        "h_ele_cos_theta_numu_cc",        20, -1, 1);
+TH1D * h_ele_cos_theta_numu_cc_mixed  = new TH1D ("h_ele_cos_theta_numu_cc_mixed",  "h_ele_cos_theta_numu_cc_mixed",  20, -1, 1);
+TH1D * h_ele_cos_theta_nc             = new TH1D ("h_ele_cos_theta_nc",             "h_ele_cos_theta_nc",             20, -1, 1);
+TH1D * h_ele_cos_theta_nc_pi0         = new TH1D ("h_ele_cos_theta_nc_pi0",         "h_ele_cos_theta_nc_pi0",         20, -1, 1);
+TH1D * h_ele_cos_theta_cosmic         = new TH1D ("h_ele_cos_theta_cosmic",         "h_ele_cos_theta_cosmic",         20, -1, 1);
+TH1D * h_ele_cos_theta_other_mixed    = new TH1D ("h_ele_cos_theta_other_mixed",    "h_ele_cos_theta_other_mixed",    20, -1, 1);
+TH1D * h_ele_cos_theta_unmatched      = new TH1D ("h_ele_cos_theta_unmatched",      "h_ele_cos_theta_unmatched",      20, -1, 1);
+
+TH1D * h_ele_cos_theta_last_nue_cc         = new TH1D ("h_ele_cos_theta_last_nue_cc",         "h_ele_cos_theta_last_nue_cc",         20, -1, 1);
+TH1D * h_ele_cos_theta_last_nue_cc_out_fv  = new TH1D ("h_ele_cos_theta_last_nue_cc_out_fv",  "h_ele_cos_theta_last_nue_cc_out_fv",  20, -1, 1);
+TH1D * h_ele_cos_theta_last_nue_cc_mixed   = new TH1D ("h_ele_cos_theta_last_nue_cc_mixed",   "h_ele_cos_theta_last_nue_cc_mixed",   20, -1, 1);
+TH1D * h_ele_cos_theta_last_numu_cc        = new TH1D ("h_ele_cos_theta_last_numu_cc",        "h_ele_cos_theta_last_numu_cc",        20, -1, 1);
+TH1D * h_ele_cos_theta_last_numu_cc_mixed  = new TH1D ("h_ele_cos_theta_last_numu_cc_mixed",  "h_ele_cos_theta_last_numu_cc_mixed",  20, -1, 1);
+TH1D * h_ele_cos_theta_last_nc             = new TH1D ("h_ele_cos_theta_last_nc",             "h_ele_cos_theta_last_nc",             20, -1, 1);
+TH1D * h_ele_cos_theta_last_nc_pi0         = new TH1D ("h_ele_cos_theta_last_nc_pi0",         "h_ele_cos_theta_last_nc_pi0",         20, -1, 1);
+TH1D * h_ele_cos_theta_last_cosmic         = new TH1D ("h_ele_cos_theta_last_cosmic",         "h_ele_cos_theta_last_cosmic",         20, -1, 1);
+TH1D * h_ele_cos_theta_last_other_mixed    = new TH1D ("h_ele_cos_theta_last_other_mixed",    "h_ele_cos_theta_last_other_mixed",    20, -1, 1);
+TH1D * h_ele_cos_theta_last_unmatched      = new TH1D ("h_ele_cos_theta_last_unmatched",      "h_ele_cos_theta_last_unmatched",      20, -1, 1);
 
 
 }//end namespace

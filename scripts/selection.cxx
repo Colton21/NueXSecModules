@@ -99,6 +99,14 @@ int selection( const char * _file1){
 	has_track->resize(2, 0);
 	std::vector<int> * no_track = new std::vector<int>;
 	no_track->resize(2, 0);
+	std::vector<int> * _1_shwr = new std::vector<int>;
+	_1_shwr->resize(2, 0);
+	std::vector<int> * _2_shwr = new std::vector<int>;
+	_2_shwr->resize(2, 0);
+	std::vector<int> * _3_shwr = new std::vector<int>;
+	_3_shwr->resize(2, 0);
+	std::vector<int> * _4_shwr = new std::vector<int>;
+	_4_shwr->resize(2, 0);
 
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
@@ -482,6 +490,18 @@ int selection( const char * _file1){
 		                                                         h_dedx_open_angle_numu_cc_mixed, h_dedx_open_angle_nc,
 		                                                         h_dedx_open_angle_nc_pi0, h_dedx_open_angle_cosmic,
 		                                                         h_dedx_open_angle_other_mixed, h_dedx_open_angle_unmatched);
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                         h_ele_cos_theta_nue_cc,
+		                                                         h_ele_cos_theta_nue_cc_out_fv,
+		                                                         h_ele_cos_theta_nue_cc_mixed,
+		                                                         h_ele_cos_theta_numu_cc,
+		                                                         h_ele_cos_theta_numu_cc_mixed,
+		                                                         h_ele_cos_theta_nc,
+		                                                         h_ele_cos_theta_nc_pi0,
+		                                                         h_ele_cos_theta_cosmic,
+		                                                         h_ele_cos_theta_other_mixed,
+		                                                         h_ele_cos_theta_unmatched);
 		//*****************************************************
 		//****** open angle cut for the leading shower ********
 		//******************************************************
@@ -796,7 +816,7 @@ int selection( const char * _file1){
 		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                            no_track, has_track);
+		                                                            no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 
 		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
@@ -892,6 +912,19 @@ int selection( const char * _file1){
 		                                                                   h_longest_shwr_trk_length_cosmic,
 		                                                                   h_longest_shwr_trk_length_other_mixed,
 		                                                                   h_longest_shwr_trk_length_unmatched);
+
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                         h_ele_cos_theta_last_nue_cc,
+		                                                         h_ele_cos_theta_last_nue_cc_out_fv,
+		                                                         h_ele_cos_theta_last_nue_cc_mixed,
+		                                                         h_ele_cos_theta_last_numu_cc,
+		                                                         h_ele_cos_theta_last_numu_cc_mixed,
+		                                                         h_ele_cos_theta_last_nc,
+		                                                         h_ele_cos_theta_last_nc_pi0,
+		                                                         h_ele_cos_theta_last_cosmic,
+		                                                         h_ele_cos_theta_last_other_mixed,
+		                                                         h_ele_cos_theta_last_unmatched);
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -928,6 +961,25 @@ int selection( const char * _file1){
 	std::cout << "1+ Track Bkg   : " << has_track->at(1) << std::endl;
 	std::cout << "Purity         : " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
 	std::cout << "---------------------" << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "1 Shower Signal : " << _1_shwr->at(0) << std::endl;
+	std::cout << "1 Shower Bkg    : " << _1_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_1_shwr->at(0)) / double(_1_shwr->at(0) + _1_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "2 Shower Signal : " << _2_shwr->at(0) << std::endl;
+	std::cout << "2 Shower Bkg    : " << _2_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_2_shwr->at(0)) / double(_2_shwr->at(0) + _2_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "3 Shower Signal : " << _3_shwr->at(0) << std::endl;
+	std::cout << "3 Shower Bkg    : " << _3_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_3_shwr->at(0)) / double(_3_shwr->at(0) + _3_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "4+ Shower Signal: " << _4_shwr->at(0) << std::endl;
+	std::cout << "4+ Shower Bkg   : " << _4_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_4_shwr->at(0)) / double(_4_shwr->at(0) + _4_shwr->at(1)) << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "---------------------" << std::endl;
+
 
 	std::vector<double> * xsec_cc = new std::vector<double>;
 	const double final_counter                = dedx_counter_v->at(7);
@@ -1628,6 +1680,20 @@ int selection( const char * _file1){
 	histogram_functions::Plot2DHistogram (h_nu_eng_total_hits, "", "Hits - All Planes", "True Neutrino Energy [GeV]", "post_cuts_nu_eng_total_hits.pdf");
 	histogram_functions::Plot2DHistogram (h_nu_eng_collection_hits, "", "Hits - Collection Planes",
 	                                      "True Neutrino Energy [GeV]", "post_cuts_nu_eng_colleciton_hits.pdf");
+
+	histogram_functions::PlotSimpleStack (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
+	                                      h_ele_cos_theta_last_numu_cc, h_ele_cos_theta_last_numu_cc_mixed,
+	                                      h_ele_cos_theta_last_cosmic,  h_ele_cos_theta_last_nc,
+	                                      h_ele_cos_theta_last_nc_pi0,  h_ele_cos_theta_last_other_mixed,
+	                                      h_ele_cos_theta_last_unmatched, "",
+	                                      "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_last.pdf");
+	histogram_functions::PlotSimpleStack (h_ele_cos_theta_nue_cc,  h_ele_cos_theta_nue_cc_mixed,
+	                                      h_ele_cos_theta_numu_cc, h_ele_cos_theta_numu_cc_mixed,
+	                                      h_ele_cos_theta_cosmic,  h_ele_cos_theta_nc,
+	                                      h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
+	                                      h_ele_cos_theta_unmatched, "",
+	                                      "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta.pdf");
+
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
