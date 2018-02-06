@@ -1685,13 +1685,13 @@ int selection( const char * _file1){
 	                                      h_ele_cos_theta_last_numu_cc, h_ele_cos_theta_last_numu_cc_mixed,
 	                                      h_ele_cos_theta_last_cosmic,  h_ele_cos_theta_last_nc,
 	                                      h_ele_cos_theta_last_nc_pi0,  h_ele_cos_theta_last_other_mixed,
-	                                      h_ele_cos_theta_last_unmatched, "",
+	                                      h_ele_cos_theta_last_unmatched, 0.15, 0.35, 0.70, 0.95, "",
 	                                      "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_last.pdf");
 	histogram_functions::PlotSimpleStack (h_ele_cos_theta_nue_cc,  h_ele_cos_theta_nue_cc_mixed,
 	                                      h_ele_cos_theta_numu_cc, h_ele_cos_theta_numu_cc_mixed,
 	                                      h_ele_cos_theta_cosmic,  h_ele_cos_theta_nc,
 	                                      h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
-	                                      h_ele_cos_theta_unmatched, "",
+	                                      h_ele_cos_theta_unmatched, 0.15, 0.35, 0.70, 0.95, "",
 	                                      "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta.pdf");
 
 
