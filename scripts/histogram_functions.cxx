@@ -57,6 +57,19 @@ void histogram_functions::PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed,
                                            TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, const char * title,
                                            const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
+	//default legend position
+	//0.75,0.75,0.95,0.95
+	PlotSimpleStack(h_nue_cc, h_nue_cc_mixed, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	                h_nc_pi0, h_other_mixed, h_unmatched,
+	                0.75, 0.95, 0.75, 0.95,
+	                title, x_axis_name, y_axis_name, print_name);
+}
+
+void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                          TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched,
+                                          const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                          const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
 	THStack * stack = new THStack();
@@ -91,7 +104,7 @@ void histogram_functions::PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed,
 	stack->GetXaxis()->SetTitle(x_axis_name);
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
+	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_stack->AddEntry(h_nue_cc,          "Nue CC", "f");
 	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed", "f");
@@ -105,7 +118,6 @@ void histogram_functions::PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed,
 	leg_stack->Draw();
 	c1->Print(print_name);
 }
-
 void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
                                           TH1 * h_nue_cc_out_fv,
                                           TH1 * h_nue_cc_res,
