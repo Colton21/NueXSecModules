@@ -692,6 +692,22 @@ void LeadingCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH1D * h_ele_cos_theta_unmatched);
 //***************************************************************************
 //***************************************************************************
+void LeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                     double vtxX, double vtxY, double vtxZ,
+                     TH1D * h_ele_pfp_momentum_nue_cc,
+                     TH1D * h_ele_pfp_momentum_nue_cc_out_fv,
+                     TH1D * h_ele_pfp_momentum_nue_cc_mixed,
+                     TH1D * h_ele_pfp_momentum_numu_cc,
+                     TH1D * h_ele_pfp_momentum_numu_cc_mixed,
+                     TH1D * h_ele_pfp_momentum_nc,
+                     TH1D * h_ele_pfp_momentum_nc_pi0,
+                     TH1D * h_ele_pfp_momentum_cosmic,
+                     TH1D * h_ele_pfp_momentum_other_mixed,
+                     TH1D * h_ele_pfp_momentum_unmatched);
+//***************************************************************************
+//***************************************************************************
 //***************************************************************************
 //***************************************************************************
 };

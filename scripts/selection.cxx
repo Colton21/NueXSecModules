@@ -925,6 +925,19 @@ int selection( const char * _file1){
 		                                                         h_ele_cos_theta_last_cosmic,
 		                                                         h_ele_cos_theta_last_other_mixed,
 		                                                         h_ele_cos_theta_last_unmatched);
+
+		_functions_instance.selection_functions::LeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                         h_ele_pfp_momentum_nue_cc,
+		                                                         h_ele_pfp_momentum_nue_cc_out_fv,
+		                                                         h_ele_pfp_momentum_nue_cc_mixed,
+		                                                         h_ele_pfp_momentum_numu_cc,
+		                                                         h_ele_pfp_momentum_numu_cc_mixed,
+		                                                         h_ele_pfp_momentum_nc,
+		                                                         h_ele_pfp_momentum_nc_pi0,
+		                                                         h_ele_pfp_momentum_cosmic,
+		                                                         h_ele_pfp_momentum_other_mixed,
+		                                                         h_ele_pfp_momentum_unmatched);
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -1693,6 +1706,13 @@ int selection( const char * _file1){
 	                                      h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
 	                                      h_ele_cos_theta_unmatched, 0.15, 0.35, 0.70, 0.95, "",
 	                                      "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta.pdf");
+
+	histogram_functions::PlotSimpleStack (h_ele_pfp_momentum_nue_cc,  h_ele_pfp_momentum_nue_cc_mixed,
+	                                      h_ele_pfp_momentum_numu_cc, h_ele_pfp_momentum_numu_cc_mixed,
+	                                      h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
+	                                      h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
+	                                      h_ele_pfp_momentum_unmatched, "",
+	                                      "Leading Shower Momentum [GeV]", "", "post_cuts_leading_momentum.pdf");
 
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
