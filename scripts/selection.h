@@ -752,16 +752,16 @@ TH1D * h_ele_cos_theta_last_cosmic         = new TH1D ("h_ele_cos_theta_last_cos
 TH1D * h_ele_cos_theta_last_other_mixed    = new TH1D ("h_ele_cos_theta_last_other_mixed",    "h_ele_cos_theta_last_other_mixed",    20, -1, 1);
 TH1D * h_ele_cos_theta_last_unmatched      = new TH1D ("h_ele_cos_theta_last_unmatched",      "h_ele_cos_theta_last_unmatched",      20, -1, 1);
 
-TH1D * h_ele_pfp_momentum_nue_cc         = new TH1D ("h_ele_pfp_momentum_nue_cc",         "h_ele_pfp_momentum_nue_cc",         20, 0, 3);
-TH1D * h_ele_pfp_momentum_nue_cc_out_fv  = new TH1D ("h_ele_pfp_momentum_nue_cc_out_fv",  "h_ele_pfp_momentum_nue_cc_out_fv",  20, 0, 3);
-TH1D * h_ele_pfp_momentum_nue_cc_mixed   = new TH1D ("h_ele_pfp_momentum_nue_cc_mixed",   "h_ele_pfp_momentum_nue_cc_mixed",   20, 0, 3);
-TH1D * h_ele_pfp_momentum_numu_cc        = new TH1D ("h_ele_pfp_momentum_numu_cc",        "h_ele_pfp_momentum_numu_cc",        20, 0, 3);
-TH1D * h_ele_pfp_momentum_numu_cc_mixed  = new TH1D ("h_ele_pfp_momentum_numu_cc_mixed",  "h_ele_pfp_momentum_numu_cc_mixed",  20, 0, 3);
-TH1D * h_ele_pfp_momentum_nc             = new TH1D ("h_ele_pfp_momentum_nc",             "h_ele_pfp_momentum_nc",             20, 0, 3);
-TH1D * h_ele_pfp_momentum_nc_pi0         = new TH1D ("h_ele_pfp_momentum_nc_pi0",         "h_ele_pfp_momentum_nc_pi0",         20, 0, 3);
-TH1D * h_ele_pfp_momentum_cosmic         = new TH1D ("h_ele_pfp_momentum_cosmic",         "h_ele_pfp_momentum_cosmic",         20, 0, 3);
-TH1D * h_ele_pfp_momentum_other_mixed    = new TH1D ("h_ele_pfp_momentum_other_mixed",    "h_ele_pfp_momentum_other_mixed",    20, 0, 3);
-TH1D * h_ele_pfp_momentum_unmatched      = new TH1D ("h_ele_pfp_momentum_unmatched",      "h_ele_pfp_momentum_unmatched",      20, 0, 3);
+TH1D * h_ele_pfp_momentum_nue_cc         = new TH1D ("h_ele_pfp_momentum_nue_cc",         "h_ele_pfp_momentum_nue_cc",         20, 0, 2);
+TH1D * h_ele_pfp_momentum_nue_cc_out_fv  = new TH1D ("h_ele_pfp_momentum_nue_cc_out_fv",  "h_ele_pfp_momentum_nue_cc_out_fv",  20, 0, 2);
+TH1D * h_ele_pfp_momentum_nue_cc_mixed   = new TH1D ("h_ele_pfp_momentum_nue_cc_mixed",   "h_ele_pfp_momentum_nue_cc_mixed",   20, 0, 2);
+TH1D * h_ele_pfp_momentum_numu_cc        = new TH1D ("h_ele_pfp_momentum_numu_cc",        "h_ele_pfp_momentum_numu_cc",        20, 0, 2);
+TH1D * h_ele_pfp_momentum_numu_cc_mixed  = new TH1D ("h_ele_pfp_momentum_numu_cc_mixed",  "h_ele_pfp_momentum_numu_cc_mixed",  20, 0, 2);
+TH1D * h_ele_pfp_momentum_nc             = new TH1D ("h_ele_pfp_momentum_nc",             "h_ele_pfp_momentum_nc",             20, 0, 2);
+TH1D * h_ele_pfp_momentum_nc_pi0         = new TH1D ("h_ele_pfp_momentum_nc_pi0",         "h_ele_pfp_momentum_nc_pi0",         20, 0, 2);
+TH1D * h_ele_pfp_momentum_cosmic         = new TH1D ("h_ele_pfp_momentum_cosmic",         "h_ele_pfp_momentum_cosmic",         20, 0, 2);
+TH1D * h_ele_pfp_momentum_other_mixed    = new TH1D ("h_ele_pfp_momentum_other_mixed",    "h_ele_pfp_momentum_other_mixed",    20, 0, 2);
+TH1D * h_ele_pfp_momentum_unmatched      = new TH1D ("h_ele_pfp_momentum_unmatched",      "h_ele_pfp_momentum_unmatched",      20, 0, 2);
 
 }//end namespace
 
