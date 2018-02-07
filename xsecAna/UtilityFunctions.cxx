@@ -34,9 +34,7 @@ void utility::GetNumberOfHitsPerPlane(art::Event const & e,
 
 		}
 	}
-
 }
-
 //______________________________________________________________________________
 
 void utility::GetNumberOfHitsPerPlane(art::Event const & e,
