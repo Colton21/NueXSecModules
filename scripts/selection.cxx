@@ -199,7 +199,8 @@ int selection( const char * _file1){
 		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z / mc_nu_momentum; }
 		const double mc_phi       = atan2(mc_nu_dir_y, mc_nu_dir_x);
 		double mc_ele_cos_theta = -999;
-		if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z / mc_ele_momentum; }
+		//if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z / mc_ele_momentum; }
+		if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z; }
 		const double mc_ele_phi       = atan2(mc_ele_dir_y, mc_ele_dir_x);
 		if(mc_nu_id == 1 || mc_nu_id == 5)
 		//if this event is a true nue CC interaction and is inside the FV
@@ -678,6 +679,32 @@ int selection( const char * _file1){
 		//***************************************//
 		//*** Collection Plane Hits Threshold ***//
 		//***************************************//
+		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                    h_ele_pfp_phi_nue_cc,
+		                                                    h_ele_pfp_phi_nue_cc_out_fv,
+		                                                    h_ele_pfp_phi_nue_cc_mixed,
+		                                                    h_ele_pfp_phi_numu_cc,
+		                                                    h_ele_pfp_phi_numu_cc_mixed,
+		                                                    h_ele_pfp_phi_nc,
+		                                                    h_ele_pfp_phi_nc_pi0,
+		                                                    h_ele_pfp_phi_cosmic,
+		                                                    h_ele_pfp_phi_other_mixed,
+		                                                    h_ele_pfp_phi_unmatched);
+
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                      h_ele_pfp_theta_nue_cc,
+		                                                      h_ele_pfp_theta_nue_cc_out_fv,
+		                                                      h_ele_pfp_theta_nue_cc_mixed,
+		                                                      h_ele_pfp_theta_numu_cc,
+		                                                      h_ele_pfp_theta_numu_cc_mixed,
+		                                                      h_ele_pfp_theta_nc,
+		                                                      h_ele_pfp_theta_nc_pi0,
+		                                                      h_ele_pfp_theta_cosmic,
+		                                                      h_ele_pfp_theta_other_mixed,
+		                                                      h_ele_pfp_theta_unmatched);
+
 		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                     h_collection_hits_track_nue_cc,
@@ -726,6 +753,33 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v);
 
+		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                    h_ele_pfp_phi_after_nue_cc,
+		                                                    h_ele_pfp_phi_after_nue_cc_out_fv,
+		                                                    h_ele_pfp_phi_after_nue_cc_mixed,
+		                                                    h_ele_pfp_phi_after_numu_cc,
+		                                                    h_ele_pfp_phi_after_numu_cc_mixed,
+		                                                    h_ele_pfp_phi_after_nc,
+		                                                    h_ele_pfp_phi_after_nc_pi0,
+		                                                    h_ele_pfp_phi_after_cosmic,
+		                                                    h_ele_pfp_phi_after_other_mixed,
+		                                                    h_ele_pfp_phi_after_unmatched);
+
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                      h_ele_pfp_theta_after_nue_cc,
+		                                                      h_ele_pfp_theta_after_nue_cc_out_fv,
+		                                                      h_ele_pfp_theta_after_nue_cc_mixed,
+		                                                      h_ele_pfp_theta_after_numu_cc,
+		                                                      h_ele_pfp_theta_after_numu_cc_mixed,
+		                                                      h_ele_pfp_theta_after_nc,
+		                                                      h_ele_pfp_theta_after_nc_pi0,
+		                                                      h_ele_pfp_theta_after_cosmic,
+		                                                      h_ele_pfp_theta_after_other_mixed,
+		                                                      h_ele_pfp_theta_after_unmatched);
+
+		//*** cut for longest track / leading shower ratio *** //
 		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
@@ -938,6 +992,76 @@ int selection( const char * _file1){
 		                                                         h_ele_pfp_momentum_cosmic,
 		                                                         h_ele_pfp_momentum_other_mixed,
 		                                                         h_ele_pfp_momentum_unmatched);
+
+		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                    h_ele_pfp_phi_last_nue_cc,
+		                                                    h_ele_pfp_phi_last_nue_cc_out_fv,
+		                                                    h_ele_pfp_phi_last_nue_cc_mixed,
+		                                                    h_ele_pfp_phi_last_numu_cc,
+		                                                    h_ele_pfp_phi_last_numu_cc_mixed,
+		                                                    h_ele_pfp_phi_last_nc,
+		                                                    h_ele_pfp_phi_last_nc_pi0,
+		                                                    h_ele_pfp_phi_last_cosmic,
+		                                                    h_ele_pfp_phi_last_other_mixed,
+		                                                    h_ele_pfp_phi_last_unmatched);
+
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                      h_ele_pfp_theta_last_nue_cc,
+		                                                      h_ele_pfp_theta_last_nue_cc_out_fv,
+		                                                      h_ele_pfp_theta_last_nue_cc_mixed,
+		                                                      h_ele_pfp_theta_last_numu_cc,
+		                                                      h_ele_pfp_theta_last_numu_cc_mixed,
+		                                                      h_ele_pfp_theta_last_nc,
+		                                                      h_ele_pfp_theta_last_nc_pi0,
+		                                                      h_ele_pfp_theta_last_cosmic,
+		                                                      h_ele_pfp_theta_last_other_mixed,
+		                                                      h_ele_pfp_theta_last_unmatched);
+
+		_functions_instance.selection_functions::Leading1Shwr2Shwr(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                           h_leading_shwr_length_1shwr_nue_cc,
+		                                                           h_leading_shwr_length_1shwr_nue_cc_out_fv,
+		                                                           h_leading_shwr_length_1shwr_nue_cc_mixed,
+		                                                           h_leading_shwr_length_1shwr_numu_cc,
+		                                                           h_leading_shwr_length_1shwr_numu_cc_mixed,
+		                                                           h_leading_shwr_length_1shwr_nc,
+		                                                           h_leading_shwr_length_1shwr_nc_pi0,
+		                                                           h_leading_shwr_length_1shwr_cosmic,
+		                                                           h_leading_shwr_length_1shwr_other_mixed,
+		                                                           h_leading_shwr_length_1shwr_unmatched,
+		                                                           h_leading_shwr_length_2shwr_nue_cc,
+		                                                           h_leading_shwr_length_2shwr_nue_cc_out_fv,
+		                                                           h_leading_shwr_length_2shwr_nue_cc_mixed,
+		                                                           h_leading_shwr_length_2shwr_numu_cc,
+		                                                           h_leading_shwr_length_2shwr_numu_cc_mixed,
+		                                                           h_leading_shwr_length_2shwr_nc,
+		                                                           h_leading_shwr_length_2shwr_nc_pi0,
+		                                                           h_leading_shwr_length_2shwr_cosmic,
+		                                                           h_leading_shwr_length_2shwr_other_mixed,
+		                                                           h_leading_shwr_length_2shwr_unmatched,
+		                                                           h_leading_shwr_hits_1shwr_nue_cc,
+		                                                           h_leading_shwr_hits_1shwr_nue_cc_out_fv,
+		                                                           h_leading_shwr_hits_1shwr_nue_cc_mixed,
+		                                                           h_leading_shwr_hits_1shwr_numu_cc,
+		                                                           h_leading_shwr_hits_1shwr_numu_cc_mixed,
+		                                                           h_leading_shwr_hits_1shwr_nc,
+		                                                           h_leading_shwr_hits_1shwr_nc_pi0,
+		                                                           h_leading_shwr_hits_1shwr_cosmic,
+		                                                           h_leading_shwr_hits_1shwr_other_mixed,
+		                                                           h_leading_shwr_hits_1shwr_unmatched,
+		                                                           h_leading_shwr_hits_2shwr_nue_cc,
+		                                                           h_leading_shwr_hits_2shwr_nue_cc_out_fv,
+		                                                           h_leading_shwr_hits_2shwr_nue_cc_mixed,
+		                                                           h_leading_shwr_hits_2shwr_numu_cc,
+		                                                           h_leading_shwr_hits_2shwr_numu_cc_mixed,
+		                                                           h_leading_shwr_hits_2shwr_nc,
+		                                                           h_leading_shwr_hits_2shwr_nc_pi0,
+		                                                           h_leading_shwr_hits_2shwr_cosmic,
+		                                                           h_leading_shwr_hits_2shwr_other_mixed,
+		                                                           h_leading_shwr_hits_2shwr_unmatched);
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -1714,6 +1838,75 @@ int selection( const char * _file1){
 	                                      h_ele_pfp_momentum_unmatched, "",
 	                                      "Leading Shower Momentum [GeV]", "", "post_cuts_leading_momentum.pdf");
 
+	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_nue_cc,  h_ele_pfp_theta_nue_cc_mixed,
+	                                      h_ele_pfp_theta_numu_cc, h_ele_pfp_theta_numu_cc_mixed,
+	                                      h_ele_pfp_theta_cosmic,  h_ele_pfp_theta_nc,
+	                                      h_ele_pfp_theta_nc_pi0,  h_ele_pfp_theta_other_mixed,
+	                                      h_ele_pfp_theta_unmatched, "",
+	                                      "Leading Shower Theta [Degrees]", "", "pre_collection_cut_leading_theta.pdf");
+
+	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_after_nue_cc,  h_ele_pfp_theta_after_nue_cc_mixed,
+	                                      h_ele_pfp_theta_after_numu_cc, h_ele_pfp_theta_after_numu_cc_mixed,
+	                                      h_ele_pfp_theta_after_cosmic,  h_ele_pfp_theta_after_nc,
+	                                      h_ele_pfp_theta_after_nc_pi0,  h_ele_pfp_theta_after_other_mixed,
+	                                      h_ele_pfp_theta_after_unmatched, "",
+	                                      "Leading Shower Theta [Degrees]", "", "post_collection_cut_leading_theta.pdf");
+
+	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_last_nue_cc,  h_ele_pfp_theta_last_nue_cc_mixed,
+	                                      h_ele_pfp_theta_last_numu_cc, h_ele_pfp_theta_last_numu_cc_mixed,
+	                                      h_ele_pfp_theta_last_cosmic,  h_ele_pfp_theta_last_nc,
+	                                      h_ele_pfp_theta_last_nc_pi0,  h_ele_pfp_theta_last_other_mixed,
+	                                      h_ele_pfp_theta_last_unmatched, "",
+	                                      "Leading Shower Theta [Degrees]", "", "post_cuts_leading_theta.pdf");
+
+	histogram_functions::PlotSimpleStack (h_ele_pfp_phi_nue_cc,  h_ele_pfp_phi_nue_cc_mixed,
+	                                      h_ele_pfp_phi_numu_cc, h_ele_pfp_phi_numu_cc_mixed,
+	                                      h_ele_pfp_phi_cosmic,  h_ele_pfp_phi_nc,
+	                                      h_ele_pfp_phi_nc_pi0,  h_ele_pfp_phi_other_mixed,
+	                                      h_ele_pfp_phi_unmatched, "",
+	                                      "Leading Shower Phi [Degrees]", "", "pre_collection_cut_leading_phi.pdf");
+
+	histogram_functions::PlotSimpleStack (h_ele_pfp_phi_after_nue_cc,  h_ele_pfp_phi_after_nue_cc_mixed,
+	                                      h_ele_pfp_phi_after_numu_cc, h_ele_pfp_phi_after_numu_cc_mixed,
+	                                      h_ele_pfp_phi_after_cosmic,  h_ele_pfp_phi_after_nc,
+	                                      h_ele_pfp_phi_after_nc_pi0,  h_ele_pfp_phi_after_other_mixed,
+	                                      h_ele_pfp_phi_after_unmatched, "",
+	                                      "Leading Shower Phi [Degrees]", "", "post_collection_cut_leading_phi.pdf");
+
+	histogram_functions::PlotSimpleStack (h_ele_pfp_phi_last_nue_cc,  h_ele_pfp_phi_last_nue_cc_mixed,
+	                                      h_ele_pfp_phi_last_numu_cc, h_ele_pfp_phi_last_numu_cc_mixed,
+	                                      h_ele_pfp_phi_last_cosmic,  h_ele_pfp_phi_last_nc,
+	                                      h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
+	                                      h_ele_pfp_phi_last_unmatched, "",
+	                                      "Leading Shower Phi [Degrees]", "", "post_cuts_leading_phi.pdf");
+
+	histogram_functions::PlotSimpleStack (h_leading_shwr_length_1shwr_nue_cc,  h_leading_shwr_length_1shwr_nue_cc_mixed,
+	                                      h_leading_shwr_length_1shwr_numu_cc, h_leading_shwr_length_1shwr_numu_cc_mixed,
+	                                      h_leading_shwr_length_1shwr_cosmic,  h_leading_shwr_length_1shwr_nc,
+	                                      h_leading_shwr_length_1shwr_nc_pi0,  h_leading_shwr_length_1shwr_other_mixed,
+	                                      h_leading_shwr_length_1shwr_unmatched, "",
+	                                      "Leading Shower Length (1 Shower Events) [cm]", "", "post_cuts_leading_length_1shwr.pdf");
+
+	histogram_functions::PlotSimpleStack (h_leading_shwr_length_2shwr_nue_cc,  h_leading_shwr_length_2shwr_nue_cc_mixed,
+	                                      h_leading_shwr_length_2shwr_numu_cc, h_leading_shwr_length_2shwr_numu_cc_mixed,
+	                                      h_leading_shwr_length_2shwr_cosmic,  h_leading_shwr_length_2shwr_nc,
+	                                      h_leading_shwr_length_2shwr_nc_pi0,  h_leading_shwr_length_2shwr_other_mixed,
+	                                      h_leading_shwr_length_2shwr_unmatched, "",
+	                                      "Leading Shower Length (2+ Shower Events) [cm]", "", "post_cuts_leading_length_2shwr.pdf");
+
+	histogram_functions::PlotSimpleStack (h_leading_shwr_hits_1shwr_nue_cc,  h_leading_shwr_hits_1shwr_nue_cc_mixed,
+	                                      h_leading_shwr_hits_1shwr_numu_cc, h_leading_shwr_hits_1shwr_numu_cc_mixed,
+	                                      h_leading_shwr_hits_1shwr_cosmic,  h_leading_shwr_hits_1shwr_nc,
+	                                      h_leading_shwr_hits_1shwr_nc_pi0,  h_leading_shwr_hits_1shwr_other_mixed,
+	                                      h_leading_shwr_hits_1shwr_unmatched, "",
+	                                      "Leading Shower Hits (1 Shower Events)", "", "post_cuts_leading_hits_1shwr.pdf");
+
+	histogram_functions::PlotSimpleStack (h_leading_shwr_hits_2shwr_nue_cc,  h_leading_shwr_hits_2shwr_nue_cc_mixed,
+	                                      h_leading_shwr_hits_2shwr_numu_cc, h_leading_shwr_hits_2shwr_numu_cc_mixed,
+	                                      h_leading_shwr_hits_2shwr_cosmic,  h_leading_shwr_hits_2shwr_nc,
+	                                      h_leading_shwr_hits_2shwr_nc_pi0,  h_leading_shwr_hits_2shwr_other_mixed,
+	                                      h_leading_shwr_hits_2shwr_unmatched, "",
+	                                      "Leading Shower Hits (2+ Shower Events)", "", "post_cuts_leading_hits_2shwr.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
