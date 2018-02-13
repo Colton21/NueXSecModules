@@ -51,7 +51,11 @@ const double trk_nue_tolerance = 4;//cm
 
 //hit threshold for showers
 //standard 50 hits
-const double shwr_hit_threshold = 100;//hits
+const double shwr_hit_threshold = 200;//hits
+
+//hit threshold for at least one shower on collection plane
+//standard 50 hits
+const double shwr_hit_threshold_collection = 80;//hits
 
 //tolerance for leading shower open angle
 //standard 20 degrees
@@ -71,6 +75,9 @@ const double dist_tolerance = 22; //cm
 
 //tolerance for hits/length - these should be a property of a shower if it's true
 const double pfp_hits_length_tolerance = 3; //hits/cm
+
+//tolerance for longest track length / leading shower length
+const double ratio_tolerance = 1;
 
 //********************
 //********************

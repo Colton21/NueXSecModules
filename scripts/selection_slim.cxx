@@ -90,6 +90,10 @@ int selection( const char * _file1){
 	secondary_shower_counter_v->resize(22, 0);
 	std::vector<int> * hit_lengthRatio_counter_v = new std::vector<int>;
 	hit_lengthRatio_counter_v->resize(22, 0);
+	std::vector<int> * hit_threshold_collection_counter_v = new std::vector<int>;
+	hit_threshold_collection_counter_v->resize(22, 0);
+	std::vector<int> * trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	trk_len_shwr_len_ratio_counter_v->resize(22, 0);
 
 	std::vector<int> * has_track = new std::vector<int>;
 	has_track->resize(2, 0);
@@ -289,6 +293,17 @@ int selection( const char * _file1){
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
 
+		_cuts_instance.selection_cuts::HitThresholdCollection(tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v);
+
+		//*** cut for longest track / leading shower ratio *** //
+		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
+
 
 	}//end event loop
 
@@ -314,6 +329,8 @@ int selection( const char * _file1){
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, " dE / dx ");
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, ">3 Shower TPCO Dist");
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, "Hit Length Ratio");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, "WPlane Hit Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v,   "TrkLen/ShwrLen Ratio");
 
 	std::cout << "---------------------" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
