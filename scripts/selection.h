@@ -873,6 +873,13 @@ TH1D * h_leading_shwr_hits_2shwr_cosmic         = new TH1D ("h_leading_shwr_hits
 TH1D * h_leading_shwr_hits_2shwr_other_mixed    = new TH1D ("h_leading_shwr_hits_2shwr_other_mixed",    "h_leading_shwr_hits_2shwr_other_mixed",    20, 0, 1500);
 TH1D * h_leading_shwr_hits_2shwr_unmatched      = new TH1D ("h_leading_shwr_hits_2shwr_unmatched",      "h_leading_shwr_hits_2shwr_unmatched",      20, 0, 1500);
 
+TH2D * h_post_cuts_num_tracks_showers_purity_qe     = new TH2D ("h_post_cuts_num_tracks_showers_purity_qe",    "h_post_cuts_num_tracks_showers_purity_qe",    3, 1, 4, 2, 0, 2);
+TH2D * h_post_cuts_num_tracks_showers_purity_res    = new TH2D ("h_post_cuts_num_tracks_showers_purity_res",   "h_post_cuts_num_tracks_showers_purity_res",   3, 1, 4, 2, 0, 2);
+TH2D * h_post_cuts_num_tracks_showers_purity_dis    = new TH2D ("h_post_cuts_num_tracks_showers_purity_dis",   "h_post_cuts_num_tracks_showers_purity_dis",   3, 1, 4, 2, 0, 2);
+TH2D * h_post_cuts_num_tracks_showers_purity_coh    = new TH2D ("h_post_cuts_num_tracks_showers_purity_coh",   "h_post_cuts_num_tracks_showers_purity_coh",   3, 1, 4, 2, 0, 2);
+TH2D * h_post_cuts_num_tracks_showers_purity_mec    = new TH2D ("h_post_cuts_num_tracks_showers_purity_mec",   "h_post_cuts_num_tracks_showers_purity_mec",   3, 1, 4, 2, 0, 2);
+TH2D * h_post_cuts_num_tracks_showers_purity_total  = new TH2D ("h_post_cuts_num_tracks_showers_purity_total", "h_post_cuts_num_tracks_showers_purity_total", 3, 1, 4, 2, 0, 2);
+
 }//end namespace
 
 #endif

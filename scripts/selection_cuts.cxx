@@ -602,7 +602,7 @@ void selection_cuts::SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectConta
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		if(n_pfp_showers <= 3) {continue; }
+		if(n_pfp_showers <= 1) {continue; }
 		//This cut does not target events with fewer than 4 showers
 		const double tpco_vtx_x = tpc_obj.pfpVtxX();
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();

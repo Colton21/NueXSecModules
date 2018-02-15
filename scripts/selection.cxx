@@ -1172,6 +1172,14 @@ int selection( const char * _file1){
 	                                                            h_post_open_angle_cuts_num_showers_purity_coh,
 	                                                            h_post_open_angle_cuts_num_showers_purity_mec);
 
+	_functions_instance.selection_functions::PostCutVector2DPlots(post_cuts_v, _post_cuts_verbose,
+	                                                              h_post_cuts_num_tracks_showers_purity_qe,
+	                                                              h_post_cuts_num_tracks_showers_purity_res,
+	                                                              h_post_cuts_num_tracks_showers_purity_dis,
+	                                                              h_post_cuts_num_tracks_showers_purity_coh,
+	                                                              h_post_cuts_num_tracks_showers_purity_mec,
+	                                                              h_post_cuts_num_tracks_showers_purity_total);
+
 //********************//
 //**** Histograms ****//
 //*******************//
@@ -1907,6 +1915,19 @@ int selection( const char * _file1){
 	                                      h_leading_shwr_hits_2shwr_nc_pi0,  h_leading_shwr_hits_2shwr_other_mixed,
 	                                      h_leading_shwr_hits_2shwr_unmatched, "",
 	                                      "Leading Shower Hits (2+ Shower Events)", "", "post_cuts_leading_hits_2shwr.pdf");
+
+	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_qe, "Post Cuts - Showers/Tracks Purity - QE",
+	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_qe.pdf", "colz text", 3, 2);
+	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_res, "Post Cuts - Showers/Tracks Purity - Res",
+	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_res.pdf", "colz text", 3, 2);
+	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_dis, "Post Cuts - Showers/Tracks Purity - DIS",
+	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_dis.pdf", "colz text", 3, 2);
+	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_coh, "Post Cuts - Showers/Tracks Purity - Coh",
+	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_coh.pdf", "colz text", 3, 2);
+	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_mec, "Post Cuts - Showers/Tracks Purity - MEC",
+	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_mec.pdf", "colz text", 3, 2);
+	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_total, "Post Cuts - Showers/Tracks Purity - Total",
+	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_total.pdf", "colz text", 3, 2);
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

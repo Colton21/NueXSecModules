@@ -286,7 +286,7 @@ void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, do
 	const double total_events_3 = signal_events_3_qe + signal_events_3_res + signal_events_3_dis + signal_events_3_coh + signal_events_3_mec + bkg_events_3;
 	const double total_events_4 = signal_events_4_qe + signal_events_4_res + signal_events_4_dis + signal_events_4_coh + signal_events_4_mec + bkg_events_4;
 
-	std::cout << "4+ Shower Background Events: " << bkg_events_4 << std::endl;
+	//std::cout << "4+ Shower Background Events: " << bkg_events_4 << std::endl;
 
 	double purity_1_qe  = double(signal_events_1_qe)  / total_events_1;
 	double purity_2_qe  = double(signal_events_2_qe)  / total_events_2;
@@ -2231,7 +2231,7 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		if(n_pfp_showers <= 3) {continue; }
+		if(n_pfp_showers <= 1) {continue; }
 		const double tpco_vtx_x = tpc_obj.pfpVtxX();
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
@@ -4046,6 +4046,355 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 	}//end pfp loop
 }
 //leading shower phi
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
+                                               bool _post_cuts_verbose,
+                                               TH2 * post_cuts_num_tracks_showers_purity_qe,
+                                               TH2 * post_cuts_num_tracks_showers_purity_res,
+                                               TH2 * post_cuts_num_tracks_showers_purity_dis,
+                                               TH2 * post_cuts_num_tracks_showers_purity_coh,
+                                               TH2 * post_cuts_num_tracks_showers_purity_mec,
+                                               TH2 * post_cuts_num_tracks_showers_purity_total)
+{
+	int signal_events_1_1_qe = 0;
+	int signal_events_2_1_qe = 0;
+	int signal_events_3_1_qe = 0;
+	int signal_events_4_1_qe = 0;
+
+	int signal_events_1_1_res = 0;
+	int signal_events_2_1_res = 0;
+	int signal_events_3_1_res = 0;
+	int signal_events_4_1_res = 0;
+
+	int signal_events_1_1_dis = 0;
+	int signal_events_2_1_dis = 0;
+	int signal_events_3_1_dis = 0;
+	int signal_events_4_1_dis = 0;
+
+	int signal_events_1_1_coh = 0;
+	int signal_events_2_1_coh = 0;
+	int signal_events_3_1_coh = 0;
+	int signal_events_4_1_coh = 0;
+
+	int signal_events_1_1_mec = 0;
+	int signal_events_2_1_mec = 0;
+	int signal_events_3_1_mec = 0;
+	int signal_events_4_1_mec = 0;
+
+	int signal_events_1_1_total = 0;
+	int signal_events_2_1_total = 0;
+	int signal_events_3_1_total = 0;
+	int signal_events_4_1_total = 0;
+
+	int bkg_events_1_1 = 0;
+	int bkg_events_2_1 = 0;
+	int bkg_events_3_1 = 0;
+	int bkg_events_4_1 = 0;
+
+	int signal_events_1_0_qe = 0;
+	int signal_events_2_0_qe = 0;
+	int signal_events_3_0_qe = 0;
+	int signal_events_4_0_qe = 0;
+
+	int signal_events_1_0_res = 0;
+	int signal_events_2_0_res = 0;
+	int signal_events_3_0_res = 0;
+	int signal_events_4_0_res = 0;
+
+	int signal_events_1_0_dis = 0;
+	int signal_events_2_0_dis = 0;
+	int signal_events_3_0_dis = 0;
+	int signal_events_4_0_dis = 0;
+
+	int signal_events_1_0_coh = 0;
+	int signal_events_2_0_coh = 0;
+	int signal_events_3_0_coh = 0;
+	int signal_events_4_0_coh = 0;
+
+	int signal_events_1_0_mec = 0;
+	int signal_events_2_0_mec = 0;
+	int signal_events_3_0_mec = 0;
+	int signal_events_4_0_mec = 0;
+
+	int signal_events_1_0_total = 0;
+	int signal_events_2_0_total = 0;
+	int signal_events_3_0_total = 0;
+	int signal_events_4_0_total = 0;
+
+	int bkg_events_1_0 = 0;
+	int bkg_events_2_0 = 0;
+	int bkg_events_3_0 = 0;
+	int bkg_events_4_0 = 0;
+	//this loops through all events which passed the selection cuts
+	for(auto const my_tuple : * post_cuts_v)
+	{
+		const int event_num = std::get<0>(my_tuple);
+		const int run_num = std::get<1>(my_tuple);
+		const double pfp_vtx_x = std::get<2>(my_tuple);
+		const double pfp_vtx_y = std::get<3>(my_tuple);
+		const double pfp_vtx_z = std::get<4>(my_tuple);
+		const std::string reason = std::get<5>(my_tuple);
+		const std::string event_type = std::get<6>(my_tuple);
+		const int num_tracks = std::get<7>(my_tuple);
+		const int num_showers = std::get<8>(my_tuple);
+		const double opening_angle = std::get<9>(my_tuple);
+
+		int signal_bkg = 0;
+		if(event_type == "nue_cc_qe")   {signal_bkg = 1; }
+		if(event_type == "nue_cc_res")  {signal_bkg = 2; }
+		if(event_type == "nue_cc_dis")  {signal_bkg = 3; }
+		if(event_type == "nue_cc_coh")  {signal_bkg = 4; }
+		if(event_type == "nue_cc_mec")  {signal_bkg = 5; }
+		//if(signal_bkg == 1)
+		if(event_type == "nue_cc_qe")
+		{
+			if(num_tracks == 0)
+			{
+				if(num_showers == 1) {signal_events_1_0_qe++; }
+				if(num_showers == 2) {signal_events_2_0_qe++; }
+				if(num_showers == 3) {signal_events_3_0_qe++; }
+				if(num_showers >= 4) {signal_events_4_0_qe++; }
+			}
+			if(num_tracks >= 1)
+			{
+				if(num_showers == 1) {signal_events_1_1_qe++; }
+				if(num_showers == 2) {signal_events_2_1_qe++; }
+				if(num_showers == 3) {signal_events_3_1_qe++; }
+				if(num_showers >= 4) {signal_events_4_1_qe++; }
+			}
+		}
+		//if(signal_bkg == 2)
+		if(event_type == "nue_cc_res")
+		{
+			if(num_tracks == 0)
+			{
+				if(num_showers == 1) {signal_events_1_0_res++; }
+				if(num_showers == 2) {signal_events_2_0_res++; }
+				if(num_showers == 3) {signal_events_3_0_res++; }
+				if(num_showers >= 4) {signal_events_4_0_res++; }
+			}
+			if(num_tracks >= 1)
+			{
+				if(num_showers == 1) {signal_events_1_1_res++; }
+				if(num_showers == 2) {signal_events_2_1_res++; }
+				if(num_showers == 3) {signal_events_3_1_res++; }
+				if(num_showers >= 4) {signal_events_4_1_res++; }
+			}
+		}
+		//if(signal_bkg == 3)
+		if(event_type == "nue_cc_dis")
+		{
+			if(num_tracks == 0)
+			{
+				if(num_showers == 1) {signal_events_1_0_dis++; }
+				if(num_showers == 2) {signal_events_2_0_dis++; }
+				if(num_showers == 3) {signal_events_3_0_dis++; }
+				if(num_showers >= 4) {signal_events_4_0_dis++; }
+			}
+			if(num_tracks >= 1)
+			{
+				if(num_showers == 1) {signal_events_1_1_dis++; }
+				if(num_showers == 2) {signal_events_2_1_dis++; }
+				if(num_showers == 3) {signal_events_3_1_dis++; }
+				if(num_showers >= 4) {signal_events_4_1_dis++; }
+			}
+		}
+		//if(signal_bkg == 4)
+		if(event_type == "nue_cc_coh")
+		{
+			std::cout << "I AM A COH SIGNAL EVENT!" << std::endl;
+			if(num_tracks == 0)
+			{
+				if(num_showers == 1) {signal_events_1_0_coh++; }
+				if(num_showers == 2) {signal_events_2_0_coh++; }
+				if(num_showers == 3) {signal_events_3_0_coh++; }
+				if(num_showers >= 4) {signal_events_4_0_coh++; }
+			}
+			if(num_tracks >= 1)
+			{
+				if(num_showers == 1) {signal_events_1_1_coh++; }
+				if(num_showers == 2) {signal_events_2_1_coh++; }
+				if(num_showers == 3) {signal_events_3_1_coh++; }
+				if(num_showers >= 4) {signal_events_4_1_coh++; }
+			}
+		}
+		//if(signal_bkg == 5)
+		if(event_type == "nue_cc_mec")
+		{
+			if(num_tracks == 0)
+			{
+				if(num_showers == 1) {signal_events_1_0_mec++; }
+				if(num_showers == 2) {signal_events_2_0_mec++; }
+				if(num_showers == 3) {signal_events_3_0_mec++; }
+				if(num_showers >= 4) {signal_events_4_0_mec++; }
+			}
+			if(num_tracks >= 1)
+			{
+				if(num_showers == 1) {signal_events_1_1_mec++; }
+				if(num_showers == 2) {signal_events_2_1_mec++; }
+				if(num_showers == 3) {signal_events_3_1_mec++; }
+				if(num_showers >= 4) {signal_events_4_1_mec++; }
+			}
+		}
+		if(signal_bkg == 0)
+		{
+			if(num_tracks == 0)
+			{
+				if(num_showers == 1) {bkg_events_1_0++; }
+				if(num_showers == 2) {bkg_events_2_0++; }
+				if(num_showers == 3) {bkg_events_3_0++; }
+				if(num_showers >= 4) {bkg_events_4_0++; }
+			}
+			if(num_tracks >= 1)
+			{
+				if(num_showers == 1) {bkg_events_1_1++; }
+				if(num_showers == 2) {bkg_events_2_1++; }
+				if(num_showers == 3) {bkg_events_3_1++; }
+				if(num_showers >= 4) {bkg_events_4_1++; }
+			}
+		}
+	}
+	const double total_events_1_0 = signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec + bkg_events_1_0;
+	const double total_events_2_0 = signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec + bkg_events_2_0;
+	const double total_events_3_0 = signal_events_3_0_qe + signal_events_3_0_res + signal_events_3_0_dis + signal_events_3_0_coh + signal_events_3_0_mec + bkg_events_3_0;
+	const double total_events_4_0 = signal_events_4_0_qe + signal_events_4_0_res + signal_events_4_0_dis + signal_events_4_0_coh + signal_events_4_0_mec + bkg_events_4_0;
+
+	const double total_signal_events_1_0 = signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec;
+	const double total_signal_events_2_0 = signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec;
+	const double total_signal_events_3_0 = signal_events_3_0_qe + signal_events_3_0_res + signal_events_3_0_dis + signal_events_3_0_coh + signal_events_3_0_mec;
+	const double total_signal_events_4_0 = signal_events_4_0_qe + signal_events_4_0_res + signal_events_4_0_dis + signal_events_4_0_coh + signal_events_4_0_mec;
+
+	const double total_events_1_1 = signal_events_1_1_qe + signal_events_1_1_res + signal_events_1_1_dis + signal_events_1_1_coh + signal_events_1_1_mec + bkg_events_1_1;
+	const double total_events_2_1 = signal_events_2_1_qe + signal_events_2_1_res + signal_events_2_1_dis + signal_events_2_1_coh + signal_events_2_1_mec + bkg_events_2_1;
+	const double total_events_3_1 = signal_events_3_1_qe + signal_events_3_1_res + signal_events_3_1_dis + signal_events_3_1_coh + signal_events_3_1_mec + bkg_events_3_1;
+	const double total_events_4_1 = signal_events_4_1_qe + signal_events_4_1_res + signal_events_4_1_dis + signal_events_4_1_coh + signal_events_4_1_mec + bkg_events_4_1;
+
+	const double total_signal_events_1_1 = signal_events_1_1_qe + signal_events_1_1_res + signal_events_1_1_dis + signal_events_1_1_coh + signal_events_1_1_mec;
+	const double total_signal_events_2_1 = signal_events_2_1_qe + signal_events_2_1_res + signal_events_2_1_dis + signal_events_2_1_coh + signal_events_2_1_mec;
+	const double total_signal_events_3_1 = signal_events_3_1_qe + signal_events_3_1_res + signal_events_3_1_dis + signal_events_3_1_coh + signal_events_3_1_mec;
+	const double total_signal_events_4_1 = signal_events_4_1_qe + signal_events_4_1_res + signal_events_4_1_dis + signal_events_4_1_coh + signal_events_4_1_mec;
+
+	std::cout << " ======================== " << std::endl;
+	std::cout << "Total Purities: " << std::endl;
+	std::cout << "1 Shower 0 Track: " << total_signal_events_1_0 << " , stat err: " << 1/sqrt(total_signal_events_1_0) << std::endl;
+	std::cout << "2 Shower 0 Track: " << total_signal_events_2_0 << " , stat err: " << 1/sqrt(total_signal_events_2_0) << std::endl;
+	std::cout << "3 Shower 0 Track: " << total_signal_events_3_0 << " , stat err: " << 1/sqrt(total_signal_events_3_0) << std::endl;
+	std::cout << "4 Shower 0 Track: " << total_signal_events_4_0 << " , stat err: " << 1/sqrt(total_signal_events_4_0) << std::endl;
+	std::cout << "1 Shower 1 Track: " << total_signal_events_1_1 << " , stat err: " << 1/sqrt(total_signal_events_1_1) << std::endl;
+	std::cout << "2 Shower 1 Track: " << total_signal_events_2_1 << " , stat err: " << 1/sqrt(total_signal_events_2_1) << std::endl;
+	std::cout << "3 Shower 1 Track: " << total_signal_events_3_1 << " , stat err: " << 1/sqrt(total_signal_events_3_1) << std::endl;
+	std::cout << "4 Shower 1 Track: " << total_signal_events_4_1 << " , stat err: " << 1/sqrt(total_signal_events_4_1) << std::endl;
+	std::cout << " ======================== " << std::endl;
+
+	double purity_1_0_qe  = double(signal_events_1_0_qe)  / total_events_1_0;
+	double purity_2_0_qe  = double(signal_events_2_0_qe)  / total_events_2_0;
+	double purity_3_0_qe  = double(signal_events_3_0_qe)  / total_events_3_0;
+	double purity_4_0_qe  = double(signal_events_4_0_qe)  / total_events_4_0;
+	double purity_1_1_qe  = double(signal_events_1_1_qe)  / total_events_1_1;
+	double purity_2_1_qe  = double(signal_events_2_1_qe)  / total_events_2_1;
+	double purity_3_1_qe  = double(signal_events_3_1_qe)  / total_events_3_1;
+	double purity_4_1_qe  = double(signal_events_4_1_qe)  / total_events_4_1;
+
+	double purity_1_0_res = double(signal_events_1_0_res) / total_events_1_0;
+	double purity_2_0_res = double(signal_events_2_0_res) / total_events_2_0;
+	double purity_3_0_res = double(signal_events_3_0_res) / total_events_3_0;
+	double purity_4_0_res = double(signal_events_4_0_res) / total_events_4_0;
+	double purity_1_1_res = double(signal_events_1_1_res) / total_events_1_1;
+	double purity_2_1_res = double(signal_events_2_1_res) / total_events_2_1;
+	double purity_3_1_res = double(signal_events_3_1_res) / total_events_3_1;
+	double purity_4_1_res = double(signal_events_4_1_res) / total_events_4_1;
+
+	double purity_1_0_dis = double(signal_events_1_0_dis) / total_events_1_0;
+	double purity_2_0_dis = double(signal_events_2_0_dis) / total_events_2_0;
+	double purity_3_0_dis = double(signal_events_3_0_dis) / total_events_3_0;
+	double purity_4_0_dis = double(signal_events_4_0_dis) / total_events_4_0;
+	double purity_1_1_dis = double(signal_events_1_1_dis) / total_events_1_1;
+	double purity_2_1_dis = double(signal_events_2_1_dis) / total_events_2_1;
+	double purity_3_1_dis = double(signal_events_3_1_dis) / total_events_3_1;
+	double purity_4_1_dis = double(signal_events_4_1_dis) / total_events_4_1;
+
+	double purity_1_0_coh = double(signal_events_1_0_coh) / total_events_1_0;
+	double purity_2_0_coh = double(signal_events_2_0_coh) / total_events_2_0;
+	double purity_3_0_coh = double(signal_events_3_0_coh) / total_events_3_0;
+	double purity_4_0_coh = double(signal_events_4_0_coh) / total_events_4_0;
+	double purity_1_1_coh = double(signal_events_1_1_coh) / total_events_1_1;
+	double purity_2_1_coh = double(signal_events_2_1_coh) / total_events_2_1;
+	double purity_3_1_coh = double(signal_events_3_1_coh) / total_events_3_1;
+	double purity_4_1_coh = double(signal_events_4_1_coh) / total_events_4_1;
+
+	double purity_1_0_mec = double(signal_events_1_0_mec) / total_events_1_0;
+	double purity_2_0_mec = double(signal_events_2_0_mec) / total_events_2_0;
+	double purity_3_0_mec = double(signal_events_3_0_mec) / total_events_3_0;
+	double purity_4_0_mec = double(signal_events_4_0_mec) / total_events_4_0;
+	double purity_1_1_mec = double(signal_events_1_1_mec) / total_events_1_1;
+	double purity_2_1_mec = double(signal_events_2_1_mec) / total_events_2_1;
+	double purity_3_1_mec = double(signal_events_3_1_mec) / total_events_3_1;
+	double purity_4_1_mec = double(signal_events_4_1_mec) / total_events_4_1;
+
+	double purity_1_0_total = purity_1_0_qe + purity_1_0_res + purity_1_0_dis + purity_1_0_coh + purity_1_0_mec;
+	double purity_2_0_total = purity_2_0_qe + purity_2_0_res + purity_2_0_dis + purity_2_0_coh + purity_2_0_mec;
+	double purity_3_0_total = purity_3_0_qe + purity_3_0_res + purity_3_0_dis + purity_3_0_coh + purity_3_0_mec;
+	double purity_4_0_total = purity_4_0_qe + purity_4_0_res + purity_4_0_dis + purity_4_0_coh + purity_4_0_mec;
+	double purity_1_1_total = purity_1_1_qe + purity_1_1_res + purity_1_1_dis + purity_1_1_coh + purity_1_1_mec;
+	double purity_2_1_total = purity_2_1_qe + purity_2_1_res + purity_2_1_dis + purity_2_1_coh + purity_2_1_mec;
+	double purity_3_1_total = purity_3_1_qe + purity_3_1_res + purity_3_1_dis + purity_3_1_coh + purity_3_1_mec;
+	double purity_4_1_total = purity_4_1_qe + purity_4_1_res + purity_4_1_dis + purity_4_1_coh + purity_4_1_mec;
+
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(1, 1, purity_1_0_qe);
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(2, 1, purity_2_0_qe);
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(3, 1, purity_3_0_qe);
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(4, 1, purity_4_0_qe);
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(1, 2, purity_1_1_qe);
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(2, 2, purity_2_1_qe);
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(3, 2, purity_3_1_qe);
+	post_cuts_num_tracks_showers_purity_qe->SetBinContent(4, 2, purity_4_1_qe);
+
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(1, 1, purity_1_0_res);
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(2, 1, purity_2_0_res);
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(3, 1, purity_3_0_res);
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(4, 1, purity_4_0_res);
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(1, 2, purity_1_1_res);
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(2, 2, purity_2_1_res);
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(3, 2, purity_3_1_res);
+	post_cuts_num_tracks_showers_purity_res->SetBinContent(4, 2, purity_4_1_res);
+
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(1, 1, purity_1_0_dis);
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(2, 1, purity_2_0_dis);
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(3, 1, purity_3_0_dis);
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(4, 1, purity_4_0_dis);
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(1, 2, purity_1_1_dis);
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(2, 2, purity_2_1_dis);
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(3, 2, purity_3_1_dis);
+	post_cuts_num_tracks_showers_purity_dis->SetBinContent(4, 2, purity_4_1_dis);
+
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(1, 1, purity_1_0_coh);
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(2, 1, purity_2_0_coh);
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(3, 1, purity_3_0_coh);
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(4, 1, purity_4_0_coh);
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(1, 2, purity_1_1_coh);
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(2, 2, purity_2_1_coh);
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(3, 2, purity_3_1_coh);
+	post_cuts_num_tracks_showers_purity_coh->SetBinContent(4, 2, purity_4_1_coh);
+
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(1, 1, purity_1_0_mec);
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(2, 1, purity_2_0_mec);
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(3, 1, purity_3_0_mec);
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(4, 1, purity_4_0_mec);
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(1, 2, purity_1_1_mec);
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(2, 2, purity_2_1_mec);
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(3, 2, purity_3_1_mec);
+	post_cuts_num_tracks_showers_purity_mec->SetBinContent(4, 2, purity_4_1_mec);
+
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(1, 1, purity_1_0_total);
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(2, 1, purity_2_0_total);
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(3, 1, purity_3_0_total);
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(4, 1, purity_4_0_total);
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(1, 2, purity_1_1_total);
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(2, 2, purity_2_1_total);
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(3, 2, purity_3_1_total);
+	post_cuts_num_tracks_showers_purity_total->SetBinContent(4, 2, purity_4_1_total);
+}
 //***************************************************************************
 //***************************************************************************
 

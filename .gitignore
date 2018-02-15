@@ -51,3 +51,4 @@ potFinder/time.db
 scripts/run_subrun_list.txt
 *_dict.cxx
 *.rootmap
+scripts/post_cut_v_dump.txt

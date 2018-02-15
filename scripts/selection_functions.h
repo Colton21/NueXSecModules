@@ -786,5 +786,15 @@ void Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        TH1D * h_leading_shwr_hits_2shwr_unmatched);
 //***************************************************************************
 //***************************************************************************
+void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
+                          bool _post_cuts_verbose,
+                          TH2 * post_cuts_num_tracks_showers_purity_qe,
+                          TH2 * post_cuts_num_tracks_showers_purity_res,
+                          TH2 * post_cuts_num_tracks_showers_purity_dis,
+                          TH2 * post_cuts_num_tracks_showers_purity_coh,
+                          TH2 * post_cuts_num_tracks_showers_purity_mec,
+                          TH2 * post_cuts_num_tracks_showers_purity_total);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

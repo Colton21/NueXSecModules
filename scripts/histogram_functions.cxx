@@ -39,6 +39,33 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->Draw("colz");
 	c1->Print(print_name);
 }
+void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
+                                           const char * draw_option)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetYaxis()->SetTitle(y_axis_name);
+	histogram->SetTitle(title);
+	histogram->SetStats(kFALSE);
+	histogram->Draw(draw_option);
+	c1->Print(print_name);
+}
+void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
+                                           const char * draw_option, const int x_divisions, const int y_divisions)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetXaxis()->SetNdivisions(x_divisions);
+	histogram->GetYaxis()->SetTitle(y_axis_name);
+	histogram->GetYaxis()->SetNdivisions(y_divisions);
+	histogram->SetTitle(title);
+	histogram->SetStats(kFALSE);
+	histogram->Draw(draw_option);
+	c1->Print(print_name);
+}
+
 void histogram_functions::Plot2DHistogramOffSet (TH2 * histogram, const double label_offset, const double title_offset, const char * title,
                                                  const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
