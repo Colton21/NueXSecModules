@@ -1062,6 +1062,19 @@ int selection( const char * _file1){
 		                                                           h_leading_shwr_hits_2shwr_other_mixed,
 		                                                           h_leading_shwr_hits_2shwr_unmatched);
 
+		_functions_instance.selection_functions::LeadingThetaPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                         h_ele_theta_phi_nue_cc,
+		                                                         h_ele_theta_phi_nue_cc_out_fv,
+		                                                         h_ele_theta_phi_nue_cc_mixed,
+		                                                         h_ele_theta_phi_numu_cc,
+		                                                         h_ele_theta_phi_numu_cc_mixed,
+		                                                         h_ele_theta_phi_nc,
+		                                                         h_ele_theta_phi_nc_pi0,
+		                                                         h_ele_theta_phi_cosmic,
+		                                                         h_ele_theta_phi_other_mixed,
+		                                                         h_ele_theta_phi_unmatched);
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -1928,6 +1941,11 @@ int selection( const char * _file1){
 	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_mec.pdf", "colz text", 3, 2);
 	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_total, "Post Cuts - Showers/Tracks Purity - Total",
 	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_total.pdf", "colz text", 3, 2);
+
+	histogram_functions::OverlayScatter(h_ele_theta_phi_nue_cc, h_ele_theta_phi_nue_cc_mixed, h_ele_theta_phi_numu_cc,
+	                                    h_ele_theta_phi_numu_cc_mixed, h_ele_theta_phi_cosmic, h_ele_theta_phi_nc,
+	                                    h_ele_theta_phi_nc_pi0, h_ele_theta_phi_other_mixed, h_ele_theta_phi_unmatched,
+	                                    0.15, 0.35, 0.65, 0.90, "", "Phi [Degrees]", "Theta [Degrees]", "post_cuts_theta_phi_scatter.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

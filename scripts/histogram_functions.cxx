@@ -531,3 +531,73 @@ void histogram_functions::PurityStack(TH1 * h_qe, TH1 * h_res, TH1 * h_dis, TH1 
 	leg_stack->Draw();
 	c1->Print(print_name);
 }
+void histogram_functions::OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_numu_cc, TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
+                                         TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched,
+                                         const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                         const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	h_nue_cc->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_numu_cc_mixed->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	// h_nue_cc->SetFillColor(30);
+	// h_nue_cc_mixed->SetFillColor(38);
+	// h_numu_cc->SetFillColor(28);
+	// h_nc_pi0->SetFillColor(36);
+	// h_cosmic->SetFillColor(1);
+	// h_nc->SetFillColor(46);
+	// h_numu_cc_mixed->SetFillColor(20);
+	// h_other_mixed->SetFillColor(42);
+	// h_unmatched->SetFillColor(12);
+	h_nue_cc->SetMarkerColor(30);
+	h_nue_cc_mixed->SetMarkerColor(38);
+	h_numu_cc->SetMarkerColor(28);
+	h_nc_pi0->SetMarkerColor(36);
+	h_cosmic->SetMarkerColor(1);
+	h_nc->SetMarkerColor(46);
+	h_numu_cc_mixed->SetMarkerColor(20);
+	h_other_mixed->SetMarkerColor(42);
+	h_unmatched->SetMarkerColor(12);
+	h_nue_cc->SetMarkerStyle(8);
+	h_nue_cc_mixed->SetMarkerStyle(8);
+	h_numu_cc->SetMarkerStyle(8);
+	h_nc_pi0->SetMarkerStyle(8);
+	h_cosmic->SetMarkerStyle(8);
+	h_nc->SetMarkerStyle(8);
+	h_numu_cc_mixed->SetMarkerStyle(8);
+	h_other_mixed->SetMarkerStyle(8);
+	h_unmatched->SetMarkerStyle(8);
+	h_nue_cc->Draw();
+	h_nue_cc->GetXaxis()->SetTitle(x_axis_name);
+	h_nue_cc->GetYaxis()->SetTitle(y_axis_name);
+	h_nue_cc_mixed->Draw("SAME");
+	h_cosmic->Draw("SAME");
+	h_numu_cc->Draw("SAME");
+	h_numu_cc_mixed->Draw("SAME");
+	h_nc->Draw("SAME");
+	h_nc_pi0->Draw("SAME");
+	h_other_mixed->Draw("SAME");
+	h_unmatched->Draw("SAME");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "p");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "p");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "p");
+	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "p");
+	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "p");
+	leg_stack->AddEntry(h_nc,              "NC",            "p");
+	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "p");
+	leg_stack->AddEntry(h_other_mixed,     "Other Mixed",   "p");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "p");
+	leg_stack->Draw();
+	c1->Print(print_name);
+}

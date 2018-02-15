@@ -4397,5 +4397,107 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                          double vtxX, double vtxY, double vtxZ,
+                                          TH2D * h_ele_theta_phi_nue_cc,
+                                          TH2D * h_ele_theta_phi_nue_cc_out_fv,
+                                          TH2D * h_ele_theta_phi_nue_cc_mixed,
+                                          TH2D * h_ele_theta_phi_numu_cc,
+                                          TH2D * h_ele_theta_phi_numu_cc_mixed,
+                                          TH2D * h_ele_theta_phi_nc,
+                                          TH2D * h_ele_theta_phi_nc_pi0,
+                                          TH2D * h_ele_theta_phi_cosmic,
+                                          TH2D * h_ele_theta_phi_other_mixed,
+                                          TH2D * h_ele_theta_phi_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_ele_theta_phi_nue_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_ele_theta_phi_nue_cc_out_fv->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_ele_theta_phi_nue_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_ele_theta_phi_nue_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_ele_theta_phi_nue_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_ele_theta_phi_nue_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_ele_theta_phi_numu_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_ele_theta_phi_numu_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_ele_theta_phi_numu_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_ele_theta_phi_numu_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_ele_theta_phi_numu_cc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nc")
+		{
+			h_ele_theta_phi_nc->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_ele_theta_phi_nc_pi0->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_ele_theta_phi_nue_cc_mixed->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_ele_theta_phi_numu_cc_mixed->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_ele_theta_phi_cosmic->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_ele_theta_phi_other_mixed->Fill(leading_shower_phi, leading_shower_theta);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_ele_theta_phi_unmatched->Fill(leading_shower_phi, leading_shower_theta);
+		}
+	}//end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
 
 //end functions

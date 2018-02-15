@@ -796,5 +796,21 @@ void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, doubl
                           TH2 * post_cuts_num_tracks_showers_purity_total);
 //***************************************************************************
 //***************************************************************************
+void LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                     double vtxX, double vtxY, double vtxZ,
+                     TH2D * h_ele_theta_phi_nue_cc,
+                     TH2D * h_ele_theta_phi_nue_cc_out_fv,
+                     TH2D * h_ele_theta_phi_nue_cc_mixed,
+                     TH2D * h_ele_theta_phi_numu_cc,
+                     TH2D * h_ele_theta_phi_numu_cc_mixed,
+                     TH2D * h_ele_theta_phi_nc,
+                     TH2D * h_ele_theta_phi_nc_pi0,
+                     TH2D * h_ele_theta_phi_cosmic,
+                     TH2D * h_ele_theta_phi_other_mixed,
+                     TH2D * h_ele_theta_phi_unmatched);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

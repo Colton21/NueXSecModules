@@ -880,6 +880,17 @@ TH2D * h_post_cuts_num_tracks_showers_purity_coh    = new TH2D ("h_post_cuts_num
 TH2D * h_post_cuts_num_tracks_showers_purity_mec    = new TH2D ("h_post_cuts_num_tracks_showers_purity_mec",   "h_post_cuts_num_tracks_showers_purity_mec",   3, 1, 4, 2, 0, 2);
 TH2D * h_post_cuts_num_tracks_showers_purity_total  = new TH2D ("h_post_cuts_num_tracks_showers_purity_total", "h_post_cuts_num_tracks_showers_purity_total", 3, 1, 4, 2, 0, 2);
 
+TH2D * h_ele_theta_phi_nue_cc         = new TH2D ("h_ele_theta_phi_nue_cc",         "h_ele_theta_phi_nue_cc",         14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_nue_cc_out_fv  = new TH2D ("h_ele_theta_phi_nue_cc_out_fv",  "h_ele_theta_phi_nue_cc_out_fv",  14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_nue_cc_mixed   = new TH2D ("h_ele_theta_phi_nue_cc_mixed",   "h_ele_theta_phi_nue_cc_mixed",   14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_numu_cc        = new TH2D ("h_ele_theta_phi_numu_cc",        "h_ele_theta_phi_numu_cc",        14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_numu_cc_mixed  = new TH2D ("h_ele_theta_phi_numu_cc_mixed",  "h_ele_theta_phi_numu_cc_mixed",  14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_nc             = new TH2D ("h_ele_theta_phi_nc",             "h_ele_theta_phi_nc",             14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_nc_pi0         = new TH2D ("h_ele_theta_phi_nc_pi0",         "h_ele_theta_phi_nc_pi0",         14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_cosmic         = new TH2D ("h_ele_theta_phi_cosmic",         "h_ele_theta_phi_cosmic",         14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_other_mixed    = new TH2D ("h_ele_theta_phi_other_mixed",    "h_ele_theta_phi_other_mixed",    14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_unmatched      = new TH2D ("h_ele_theta_phi_unmatched",      "h_ele_theta_phi_unmatched",      14, -180, 180, 14, 0, 180);
+
 }//end namespace
 
 #endif
