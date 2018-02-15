@@ -91,7 +91,9 @@ void PostCutsShwrVtxData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
 //***************************************************************************
 void TopologyEfficiencyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                            std::vector<int> * no_track_data, std::vector<int> * has_track_data);
+                            std::vector<int> * no_track, std::vector<int> * has_track,
+                            std::vector<int> * _1_shwr, std::vector<int> * _2_shwr,
+                            std::vector<int> * _3_shwr, std::vector<int> * _4_shwr);
 //***************************************************************************
 //***************************************************************************
 void dEdxVsOpenAngleData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

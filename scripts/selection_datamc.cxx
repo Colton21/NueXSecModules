@@ -110,11 +110,23 @@ int selection( const char * _file1, const char * _file2){
 	data_secondary_shower_counter_v->resize(22, 0);
 	std::vector<int> * data_hit_lengthRatio_counter_v  = new std::vector<int>;
 	data_hit_lengthRatio_counter_v->resize(22, 0);
+	std::vector<int> * data_hit_threshold_collection_counter_v = new std::vector<int>;
+	data_hit_threshold_collection_counter_v->resize(22,0);
+	std::vector<int> * data_trk_len_shwr_len_ratio_counter_v   = new std::vector<int>;
+	data_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
 
 	std::vector<int> * data_has_track = new std::vector<int>;
 	data_has_track->resize(2, 0);
 	std::vector<int> * data_no_track = new std::vector<int>;
 	data_no_track->resize(2, 0);
+	std::vector<int> * _data_1_shwr = new std::vector<int>;
+	_data_1_shwr->resize(2, 0);
+	std::vector<int> * _data_2_shwr = new std::vector<int>;
+	_data_2_shwr->resize(2, 0);
+	std::vector<int> * _data_3_shwr = new std::vector<int>;
+	_data_3_shwr->resize(2, 0);
+	std::vector<int> * _data_4_shwr = new std::vector<int>;
+	_data_4_shwr->resize(2, 0);
 
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * data_post_cuts_v
@@ -296,6 +308,37 @@ int selection( const char * _file1, const char * _file2){
 		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_dedx_counter_v);
 
+		//*****************************************************
+		//*********** Seconday Shower Dist Cut *********
+		//******************************************************
+		_cuts_instance.selection_cuts::SecondaryShowersDistCut(data_tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_secondary_shower_counter_v);
+
+		//*****************************************************
+		//*********** Hit Length Ratio Cut *********
+		//******************************************************
+		_cuts_instance.selection_cuts::HitLengthRatioCut(data_tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_hit_lengthRatio_counter_v);
+
+
+		//***********************************************************************
+		//*********** Collection Plane Hit Threshold for leading shower *********
+		//***********************************************************************
+		_cuts_instance.selection_cuts::HitThresholdCollection(data_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
+		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_hit_threshold_collection_counter_v);
+
+		//*******************************************************
+		//*** cut for longest track / leading shower ratio *** //
+		//*******************************************************
+		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(data_tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
+		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_trk_len_shwr_len_ratio_counter_v);
+
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
@@ -305,22 +348,14 @@ int selection( const char * _file1, const char * _file2){
 		                                                                      h_pfp_shower_data_last);
 
 		_data_functions_instance.selection_functions_data::TopologyEfficiencyData(data_tpc_object_container_v, passed_tpco, _verbose,
-		                                                                          data_no_track, data_has_track);
+		                                                                          data_no_track, data_has_track,
+		                                                                          _data_1_shwr, _data_2_shwr, _data_3_shwr, _data_4_shwr);
 
 		_data_functions_instance.selection_functions_data::FillPostCutVectorData(data_tpc_object_container_v, passed_tpco, data_post_cuts_v);
 		_data_functions_instance.selection_functions_data::SecondaryShowersDistData(data_tpc_object_container_v, passed_tpco, _verbose, h_second_shwr_dist_data);
 		_data_functions_instance.selection_functions_data::HitLengthRatioData(data_tpc_object_container_v, passed_tpco, _verbose, h_hit_length_ratio_data);
 
 //***************************************************************************
-		_cuts_instance.selection_cuts::SecondaryShowersDistCut(data_tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
-		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_secondary_shower_counter_v);
-
-		_cuts_instance.selection_cuts::HitLengthRatioCut(data_tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = _data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco);
-		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, data_hit_lengthRatio_counter_v);
 
 		_data_functions_instance.selection_functions_data::FailureReasonData(data_tpc_object_container_v, passed_tpco, h_failure_reason_data);
 
@@ -340,6 +375,8 @@ int selection( const char * _file1, const char * _file2){
 	_data_functions_instance.selection_functions_data::PrintInfoData( data_dedx_counter_v, " dE / dx ");
 	_data_functions_instance.selection_functions_data::PrintInfoData( data_secondary_shower_counter_v, ">3 Shower TPCO Dist");
 	_data_functions_instance.selection_functions_data::PrintInfoData( data_hit_lengthRatio_counter_v, "Hit Length Ratio");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_hit_threshold_collection_counter_v, "WPlane Hit Threshold");
+	_data_functions_instance.selection_functions_data::PrintInfoData( data_trk_len_shwr_len_ratio_counter_v,   "TrkLen/ShwrLen Ratio");
 
 	if(data_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(data_post_cuts_v, data_post_cuts_verbose); }
 
@@ -372,11 +409,23 @@ int selection( const char * _file1, const char * _file2){
 	secondary_shower_counter_v->resize(22, 0);
 	std::vector<int> * hit_lengthRatio_counter_v = new std::vector<int>;
 	hit_lengthRatio_counter_v->resize(22, 0);
+	std::vector<int> * hit_threshold_collection_counter_v = new std::vector<int>;
+	hit_threshold_collection_counter_v->resize(22,0);
+	std::vector<int> * trk_len_shwr_len_ratio_counter_v   = new std::vector<int>;
+	trk_len_shwr_len_ratio_counter_v->resize(22, 0);
 
 	std::vector<int> * has_track = new std::vector<int>;
 	has_track->resize(2, 0);
 	std::vector<int> * no_track = new std::vector<int>;
 	no_track->resize(2, 0);
+	std::vector<int> * _1_shwr = new std::vector<int>;
+	_1_shwr->resize(2, 0);
+	std::vector<int> * _2_shwr = new std::vector<int>;
+	_2_shwr->resize(2, 0);
+	std::vector<int> * _3_shwr = new std::vector<int>;
+	_3_shwr->resize(2, 0);
+	std::vector<int> * _4_shwr = new std::vector<int>;
+	_4_shwr->resize(2, 0);
 
 	const int total_entries = mytree->GetEntries();
 	std::cout << "Total Events: " << total_entries << std::endl;
@@ -729,13 +778,38 @@ int selection( const char * _file1, const char * _file2){
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
+
+		_cuts_instance.selection_cuts::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
+
+		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
+
+		_cuts_instance.selection_cuts::HitThresholdCollection(tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v);
+
+		//*** cut for longest track / leading shower ratio *** //
+		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
+		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
+		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
+
+		//*************************************
+		// ******** End Selection Cuts! ******
+		//*************************************
+
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_dedx, h_selected_ele_energy_dedx);
-		//*************************************
-		// ******** End Selection Cuts! ******
-		//*************************************
 
 		//these are for the tefficiency plots, post all cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
@@ -803,15 +877,15 @@ int selection( const char * _file1, const char * _file2){
 		                                                        h_pfp_shower_numu_cc_mixed_last, h_pfp_shower_cosmic_last,
 		                                                        h_pfp_shower_other_mixed_last, h_pfp_shower_unmatched_last);
 
-		// _functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		//                                                             _x1, _x2, _y1, _y2, _z1, _z2,
-		//                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		//                                                             no_track, has_track);
-
 		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                     h_charge_share_nue_cc_mixed);
+
+		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                            no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 
 		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
@@ -839,20 +913,6 @@ int selection( const char * _file1, const char * _file2){
 		                                                        h_hit_length_ratio_unmatched);
 
 //***************************************************************************
-		_cuts_instance.selection_cuts::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
-
-
-
-
-		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
-		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
 
 		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, has_pi0, _verbose, _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                       mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -886,6 +946,8 @@ int selection( const char * _file1, const char * _file2){
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, " dE / dx ");
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, ">3 Shower TPCO Dist");
 	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, "Hit Length Ratio");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, "WPlane Hit Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v,   "TrkLen/ShwrLen Ratio");
 
 	std::cout << "---------------------" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
@@ -896,6 +958,24 @@ int selection( const char * _file1, const char * _file2){
 	std::cout << "1+ Track Bkg   : " << has_track->at(1) << std::endl;
 	std::cout << "Purity         : " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
 	std::cout << "---------------------" << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "1 Shower Signal : " << _1_shwr->at(0) << std::endl;
+	std::cout << "1 Shower Bkg    : " << _1_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_1_shwr->at(0)) / double(_1_shwr->at(0) + _1_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "2 Shower Signal : " << _2_shwr->at(0) << std::endl;
+	std::cout << "2 Shower Bkg    : " << _2_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_2_shwr->at(0)) / double(_2_shwr->at(0) + _2_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "3 Shower Signal : " << _3_shwr->at(0) << std::endl;
+	std::cout << "3 Shower Bkg    : " << _3_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_3_shwr->at(0)) / double(_3_shwr->at(0) + _3_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "4+ Shower Signal: " << _4_shwr->at(0) << std::endl;
+	std::cout << "4+ Shower Bkg   : " << _4_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_4_shwr->at(0)) / double(_4_shwr->at(0) + _4_shwr->at(1)) << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "---------------------" << std::endl;
 
 	std::vector<double> * xsec_cc = new std::vector<double>;
 	const double final_counter                = dedx_counter_v->at(7);
@@ -903,10 +983,10 @@ int selection( const char * _file1, const char * _file2){
 	const double final_counter_nue_cc_mixed   = dedx_counter_v->at(1);
 	const double final_counter_nue_cc_out_fv  = dedx_counter_v->at(9);
 	const double final_counter_cosmic         = dedx_counter_v->at(2);
-	const double final_counter_nc         = dedx_counter_v->at(3);
+	const double final_counter_nc             = dedx_counter_v->at(3);
 	const double final_counter_numu_cc        = dedx_counter_v->at(4);
 	const double final_counter_numu_cc_mixed  = dedx_counter_v->at(11);
-	const double final_counter_nc_pi0        = dedx_counter_v->at(10);
+	const double final_counter_nc_pi0         = dedx_counter_v->at(10);
 	const double final_counter_unmatched      = dedx_counter_v->at(5);
 	const double final_counter_other_mixed    = dedx_counter_v->at(6);
 	const int n_total = final_counter;
@@ -1508,7 +1588,7 @@ int selection( const char * _file1, const char * _file2){
 	leg_stack_failure_reason->AddEntry(h_failure_reason_other_mixed,     "Other Mixed", "f");
 	leg_stack_failure_reason->AddEntry(h_failure_reason_unmatched,       "Unmatched", "f");
 	leg_stack_failure_reason->Draw();
-	failure_reason_stack_c1->Print("failure_reason_stack.pdf");
+	failure_reason_stack_c1->Print("datamc_failure_reason_stack.pdf");
 
 
 	std::cout << " --- End Cross Section Calculation --- " << std::endl;

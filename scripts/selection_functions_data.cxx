@@ -302,24 +302,43 @@ void selection_functions_data::PostCutsShwrVtxData(std::vector<xsecAna::TPCObjec
 //***************************************************************************
 void selection_functions_data::TopologyEfficiencyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                                                      std::vector<int> * no_track_data, std::vector<int> * has_track_data)
+                                                      std::vector<int> * no_track, std::vector<int> * has_track,
+                                                      std::vector<int> * _1_shwr, std::vector<int> * _2_shwr,
+                                                      std::vector<int> * _3_shwr, std::vector<int> * _4_shwr)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-
-		if(n_pfp_showers == 0)
-		{
-			std::cout << "Event with No Shower! WTF! " << std::endl;
-			continue;
-		}
 		//signal
-		if(n_pfp_tracks == 0) {no_track_data->at(0) += 1; }
-		if(n_pfp_tracks >= 1) {has_track_data->at(0) += 1; }
+		if(n_pfp_showers == 1)
+		{
+			_1_shwr->at(1) += 1;
+		}
+		if(n_pfp_showers == 2)
+		{
+			_2_shwr->at(1) += 1;
+		}
+		if(n_pfp_showers == 3)
+		{
+			_3_shwr->at(1) += 1;
+		}
+		if(n_pfp_showers >= 4)
+		{
+			_4_shwr->at(1) += 1;
+		}
+		if(n_pfp_tracks == 0)
+		{
+			no_track->at(1) += 1;
+		}
+		if(n_pfp_tracks >= 1)
+		{
+			has_track->at(1) += 1;
+		}
 	}//end loop tpc objects
 }
 //***************************************************************************
