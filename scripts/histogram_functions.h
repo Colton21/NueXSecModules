@@ -35,10 +35,17 @@ static void Plot2DHistogramOffSet (TH2 * histogram, const double label_offset, c
 static void PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                              TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, const char * title,
                              const char * x_axis_name, const char * y_axis_name, const char * print_name);
+static void PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                   TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                   const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                             TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched,
                             const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                             const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
+static void PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                  TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                  const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                  const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 
 static void PlotDetailStack(TH1 * h_nue_cc_qe,
                             TH1 * h_nue_cc_out_fv,

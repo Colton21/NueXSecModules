@@ -58,6 +58,9 @@ void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                        double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
                        std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
+void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco,
+                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
 //***************************************************************************
 //***************************************************************************
 void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double,
@@ -76,14 +79,15 @@ void PostCutVectorPlots(std::vector<std::tuple<int, int, double, double, double,
 bool ValidTPCObjects(std::vector<std::pair<int, std::string> > * passed_tpco);
 //***************************************************************************
 //***************************************************************************
-std::vector<int> * TabulateOriginsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco);
-//***************************************************************************
-//***************************************************************************
-std::vector<int> * TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                                   bool has_pi0, double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
+void TabulateOriginsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
+                           std::vector<int> * tabulated_origins_intime);
+void TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
+                     std::vector<int> * tabulated_origins,
+                     bool has_pi0, double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
 //***************************************************************************
 //***************************************************************************
 void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins);
+void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins);
 //***************************************************************************
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
@@ -761,6 +765,8 @@ void LeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH1D * h_ele_pfp_momentum_cosmic,
                      TH1D * h_ele_pfp_momentum_other_mixed,
                      TH1D * h_ele_pfp_momentum_unmatched);
+void LeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_intime);
 //***************************************************************************
 //***************************************************************************
 void LeadingPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -848,7 +854,7 @@ void Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
 //***************************************************************************
 //***************************************************************************
 void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
-                          bool _post_cuts_verbose,
+                          bool _post_cuts_verbose, const double intime_scale_factor,
                           TH2 * post_cuts_num_tracks_showers_purity_qe,
                           TH2 * post_cuts_num_tracks_showers_purity_res,
                           TH2 * post_cuts_num_tracks_showers_purity_dis,

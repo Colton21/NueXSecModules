@@ -11,7 +11,6 @@ void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_
 	c1->Print(print_name);
 }
 
-
 void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name)
 {
 
@@ -91,6 +90,17 @@ void histogram_functions::PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed,
 	                0.75, 0.95, 0.75, 0.95,
 	                title, x_axis_name, y_axis_name, print_name);
 }
+void histogram_functions::PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                                 TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                                 const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	//default legend position
+	//0.75,0.75,0.95,0.95
+	PlotSimpleStackInTime(h_nue_cc, h_nue_cc_mixed, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	                      h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
+	                      0.75, 0.95, 0.75, 0.95,
+	                      title, x_axis_name, y_axis_name, print_name);
+}
 
 void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                           TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched,
@@ -142,6 +152,66 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0", "f");
 	leg_stack->AddEntry(h_other_mixed,     "Other Mixed", "f");
 	leg_stack->AddEntry(h_unmatched,       "Unmatched", "f");
+	leg_stack->Draw();
+	c1->Print(print_name);
+}
+void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                                const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                                const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+	h_nue_cc->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_numu_cc_mixed->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_intime->SetStats(kFALSE);
+	h_nue_cc->SetFillColor(30);
+	h_nue_cc_mixed->SetFillColor(38);
+	h_numu_cc->SetFillColor(28);
+	h_nc_pi0->SetFillColor(36);
+	h_cosmic->SetFillColor(1);
+	h_nc->SetFillColor(46);
+	h_numu_cc_mixed->SetFillColor(20);
+	h_other_mixed->SetFillColor(42);
+	h_unmatched->SetFillColor(12);
+	h_intime->SetFillColor(41);
+	h_intime->SetFillStyle(3345);
+	//h_intime->SetFillSytle(3354);
+	h_intime->Scale(intime_scale_factor);
+	stack->Add(h_nue_cc);
+	stack->Add(h_nue_cc_mixed);
+	stack->Add(h_cosmic);
+	stack->Add(h_numu_cc);
+	stack->Add(h_numu_cc_mixed);
+	stack->Add(h_nc);
+	stack->Add(h_nc_pi0);
+	stack->Add(h_other_mixed);
+	stack->Add(h_unmatched);
+	stack->Add(h_intime);
+	stack->Draw("hist");
+	stack->GetXaxis()->SetTitle(x_axis_name);
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
+	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
+	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
+	leg_stack->AddEntry(h_nc,              "NC",            "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
+	leg_stack->AddEntry(h_other_mixed,     "Other Mixed",   "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "f");
+	leg_stack->AddEntry(h_intime,          "InTime",        "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
 }

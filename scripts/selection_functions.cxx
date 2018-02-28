@@ -174,6 +174,43 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		post_cuts_v->push_back(my_tuple);
 	}
 }
+void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco,
+                                            std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		const std::string reason = passed_tpco->at(i).second; //this should always return passed
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double pfp_vtx_x = tpc_obj.pfpVtxX();
+		const double pfp_vtx_y = tpc_obj.pfpVtxY();
+		const double pfp_vtx_z = tpc_obj.pfpVtxZ();
+		const int run_num = tpc_obj.RunNumber();
+		const int event_num = tpc_obj.EventNumber();
+		const int num_tracks = tpc_obj.NPfpTracks();
+		const int num_showers = tpc_obj.NPfpShowers();
+
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		std::string tpco_id = "InTime";
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double opening_angle = leading_shower.pfpOpenAngle();
+
+		std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> my_tuple =
+		        std::make_tuple(event_num, run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers, opening_angle);
+		post_cuts_v->push_back(my_tuple);
+	}
+}
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
@@ -383,27 +420,26 @@ bool selection_functions::ValidTPCObjects(std::vector<std::pair<int, std::string
 }
 //***************************************************************************
 //***************************************************************************
-std::vector<int> * selection_functions::TabulateOriginsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                              std::vector<std::pair<int, std::string> > * passed_tpco)
+void selection_functions::TabulateOriginsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                std::vector<int> * tabulated_origins_intime)
 {
-	int intime_cosmics = 0;
-	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
+	int num_intime_cosmics = 0;
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
-		intime_cosmics++;
+		num_intime_cosmics++;
 	}
-	tabulated_origins_intime->resize(22, 0);
-	tabulated_origins_intime->at(0) = intime_cosmics;
-	return tabulated_origins_intime;
+	tabulated_origins_intime->at(0) = num_intime_cosmics;
 }
 //***************************************************************************
 //***************************************************************************
-std::vector<int> * selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
-                                                        double _x1, double _x2, double _y1, double _y2,
-                                                        double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
+void selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco,
+                                          std::vector<int> * tabulated_origins,
+                                          bool has_pi0, double _x1, double _x2, double _y1, double _y2,
+                                          double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
 {
 	int nue_cc        = 0;
 	int nue_cc_qe     = 0;
@@ -427,8 +463,6 @@ std::vector<int> * selection_functions::TabulateOrigins(std::vector<xsecAna::TPC
 	int other_mixed   = 0;
 	int total         = 0;
 	int signal_tpco_num = -1;
-	std::vector<int> * tabulated_origins = new std::vector<int>;
-	tabulated_origins->resize(22);
 
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -486,7 +520,6 @@ std::vector<int> * selection_functions::TabulateOrigins(std::vector<xsecAna::TPC
 	tabulated_origins->at(19) = numu_cc_dis;
 	tabulated_origins->at(20) = numu_cc_coh;
 	tabulated_origins->at(21) = numu_cc_mec;
-	return tabulated_origins;
 }
 //***************************************************************************
 //***************************************************************************
@@ -513,6 +546,10 @@ void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std
 	total_cut_origins->at(19) += tabulated_origins->at(19);
 	total_cut_origins->at(20) += tabulated_origins->at(20);
 	total_cut_origins->at(21) += tabulated_origins->at(21);
+}
+void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins)
+{
+	total_cut_origins->at(0)  += tabulated_origins->at(0);
 }
 //***************************************************************************
 //***************************************************************************
@@ -4120,6 +4157,33 @@ void selection_functions::LeadingMomentum(std::vector<xsecAna::TPCObjectContaine
 //leading shower cos theta
 //***************************************************************************
 //***************************************************************************
+void selection_functions::LeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		int most_hits = 0;
+		int leading_index = 0;
+		const int n_pfp = tpc_obj.NumPFParticles();
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		//const double leading_shower_cos_theta = leading_shower.pfpDirZ() / leading_shower.pfpMomentum();
+		const double leading_shower_momentum = leading_shower.pfpMomentum();
+		//std::cout << leading_shower.pfpDirZ() << " , " << leading_shower.pfpMomentum() << ", " << leading_shower_cos_theta << std::endl;
+		h_ele_pfp_momentum_intime->Fill(leading_shower_momentum);
+	}//end pfp loop
+}
+//leading shower cos theta
+//***************************************************************************
+//***************************************************************************
 void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
@@ -4626,7 +4690,7 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
-                                               bool _post_cuts_verbose,
+                                               bool _post_cuts_verbose, const double intime_scale_factor,
                                                TH2 * post_cuts_num_tracks_showers_purity_qe,
                                                TH2 * post_cuts_num_tracks_showers_purity_res,
                                                TH2 * post_cuts_num_tracks_showers_purity_dis,
@@ -4671,6 +4735,11 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 	int bkg_events_3_1 = 0;
 	int bkg_events_4_1 = 0;
 
+	int intime_events_1_1 = 0;
+	int intime_events_2_1 = 0;
+	int intime_events_3_1 = 0;
+	int intime_events_4_1 = 0;
+
 	int signal_events_1_0_qe = 0;
 	int signal_events_2_0_qe = 0;
 	int signal_events_3_0_qe = 0;
@@ -4705,6 +4774,11 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 	int bkg_events_2_0 = 0;
 	int bkg_events_3_0 = 0;
 	int bkg_events_4_0 = 0;
+
+	int intime_events_1_0 = 0;
+	int intime_events_2_0 = 0;
+	int intime_events_3_0 = 0;
+	int intime_events_4_0 = 0;
 	//this loops through all events which passed the selection cuts
 	for(auto const my_tuple : * post_cuts_v)
 	{
@@ -4725,6 +4799,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 		if(event_type == "nue_cc_dis")  {signal_bkg = 3; }
 		if(event_type == "nue_cc_coh")  {signal_bkg = 4; }
 		if(event_type == "nue_cc_mec")  {signal_bkg = 5; }
+		if(event_type == "InTime")      {signal_bkg = 6; }
 		//if(signal_bkg == 1)
 		if(event_type == "nue_cc_qe")
 		{
@@ -4833,21 +4908,39 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 				if(num_showers >= 4) {bkg_events_4_1++; }
 			}
 		}
+		//for in-time, needs unique scaling
+		if(signal_bkg == 6)
+		{
+			if(num_tracks == 0)
+			{
+				if(num_showers == 1) {intime_events_1_0++; }
+				if(num_showers == 2) {intime_events_2_0++; }
+				if(num_showers == 3) {intime_events_3_0++; }
+				if(num_showers >= 4) {intime_events_4_0++; }
+			}
+			if(num_tracks >= 1)
+			{
+				if(num_showers == 1) {intime_events_1_1++; }
+				if(num_showers == 2) {intime_events_2_1++; }
+				if(num_showers == 3) {intime_events_3_1++; }
+				if(num_showers >= 4) {intime_events_4_1++; }
+			}
+		}
 	}
-	const double total_events_1_0 = signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec + bkg_events_1_0;
-	const double total_events_2_0 = signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec + bkg_events_2_0;
-	const double total_events_3_0 = signal_events_3_0_qe + signal_events_3_0_res + signal_events_3_0_dis + signal_events_3_0_coh + signal_events_3_0_mec + bkg_events_3_0;
-	const double total_events_4_0 = signal_events_4_0_qe + signal_events_4_0_res + signal_events_4_0_dis + signal_events_4_0_coh + signal_events_4_0_mec + bkg_events_4_0;
+	const double total_events_1_0 = signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec + bkg_events_1_0 + (intime_events_1_0 * intime_scale_factor);
+	const double total_events_2_0 = signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec + bkg_events_2_0 + (intime_events_2_0 * intime_scale_factor);
+	const double total_events_3_0 = signal_events_3_0_qe + signal_events_3_0_res + signal_events_3_0_dis + signal_events_3_0_coh + signal_events_3_0_mec + bkg_events_3_0 + (intime_events_3_0 * intime_scale_factor);
+	const double total_events_4_0 = signal_events_4_0_qe + signal_events_4_0_res + signal_events_4_0_dis + signal_events_4_0_coh + signal_events_4_0_mec + bkg_events_4_0 + (intime_events_4_0 * intime_scale_factor);
 
 	const double total_signal_events_1_0 = signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec;
 	const double total_signal_events_2_0 = signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec;
 	const double total_signal_events_3_0 = signal_events_3_0_qe + signal_events_3_0_res + signal_events_3_0_dis + signal_events_3_0_coh + signal_events_3_0_mec;
 	const double total_signal_events_4_0 = signal_events_4_0_qe + signal_events_4_0_res + signal_events_4_0_dis + signal_events_4_0_coh + signal_events_4_0_mec;
 
-	const double total_events_1_1 = signal_events_1_1_qe + signal_events_1_1_res + signal_events_1_1_dis + signal_events_1_1_coh + signal_events_1_1_mec + bkg_events_1_1;
-	const double total_events_2_1 = signal_events_2_1_qe + signal_events_2_1_res + signal_events_2_1_dis + signal_events_2_1_coh + signal_events_2_1_mec + bkg_events_2_1;
-	const double total_events_3_1 = signal_events_3_1_qe + signal_events_3_1_res + signal_events_3_1_dis + signal_events_3_1_coh + signal_events_3_1_mec + bkg_events_3_1;
-	const double total_events_4_1 = signal_events_4_1_qe + signal_events_4_1_res + signal_events_4_1_dis + signal_events_4_1_coh + signal_events_4_1_mec + bkg_events_4_1;
+	const double total_events_1_1 = signal_events_1_1_qe + signal_events_1_1_res + signal_events_1_1_dis + signal_events_1_1_coh + signal_events_1_1_mec + bkg_events_1_1 + (intime_events_1_1 * intime_scale_factor);
+	const double total_events_2_1 = signal_events_2_1_qe + signal_events_2_1_res + signal_events_2_1_dis + signal_events_2_1_coh + signal_events_2_1_mec + bkg_events_2_1 + (intime_events_2_1 * intime_scale_factor);
+	const double total_events_3_1 = signal_events_3_1_qe + signal_events_3_1_res + signal_events_3_1_dis + signal_events_3_1_coh + signal_events_3_1_mec + bkg_events_3_1 + (intime_events_3_1 * intime_scale_factor);
+	const double total_events_4_1 = signal_events_4_1_qe + signal_events_4_1_res + signal_events_4_1_dis + signal_events_4_1_coh + signal_events_4_1_mec + bkg_events_4_1 + (intime_events_4_1 * intime_scale_factor);
 
 	const double total_signal_events_1_1 = signal_events_1_1_qe + signal_events_1_1_res + signal_events_1_1_dis + signal_events_1_1_coh + signal_events_1_1_mec;
 	const double total_signal_events_2_1 = signal_events_2_1_qe + signal_events_2_1_res + signal_events_2_1_dis + signal_events_2_1_coh + signal_events_2_1_mec;
