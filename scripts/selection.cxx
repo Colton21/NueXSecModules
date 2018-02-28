@@ -1,7 +1,7 @@
 #include "selection.h"
 
 namespace xsecSelection {
-int selection( const char * _file1){
+int selection( const char * _file1, const char * _file2){
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
@@ -66,6 +66,268 @@ int selection( const char * _file1){
 	std::cout << "MC Numu CC Counter Bar : " << mc_numu_cc_counter_bar << std::endl;
 	std::cout << "MC Numu NC Counter Bar : " << mc_numu_nc_counter_bar << std::endl;
 
+	//***********************************
+	//*** In-time Cosmics Calculation ***
+	//***********************************
+
+	std::vector<int> * intime_in_time_counter_v = new std::vector<int>;
+	intime_in_time_counter_v->resize(22, 0);
+	std::vector<int> * intime_pe_counter_v = new std::vector<int>;
+	intime_pe_counter_v->resize(22, 0);
+	std::vector<int> * intime_reco_nue_counter_v = new std::vector<int>;
+	intime_reco_nue_counter_v->resize(22, 0);
+	std::vector<int> * intime_in_fv_counter_v = new std::vector<int>;
+	intime_in_fv_counter_v->resize(22, 0);
+	std::vector<int> * intime_vtx_flash_counter_v = new std::vector<int>;
+	intime_vtx_flash_counter_v->resize(22, 0);
+	std::vector<int> * intime_shwr_tpco_counter_v = new std::vector<int>;
+	intime_shwr_tpco_counter_v->resize(22, 0);
+	std::vector<int> * intime_trk_tpco_counter_v = new std::vector<int>;
+	intime_trk_tpco_counter_v->resize(22, 0);
+	std::vector<int> * intime_hit_threshold_counter_v = new std::vector<int>;
+	intime_hit_threshold_counter_v->resize(22, 0);
+	std::vector<int> * intime_open_angle_counter_v = new std::vector<int>;
+	intime_open_angle_counter_v->resize(22, 0);
+	std::vector<int> * intime_dedx_counter_v = new std::vector<int>;
+	intime_dedx_counter_v->resize(22, 0);
+	std::vector<int> * intime_secondary_shower_counter_v = new std::vector<int>;
+	intime_secondary_shower_counter_v->resize(22, 0);
+	std::vector<int> * intime_hit_lengthRatio_counter_v = new std::vector<int>;
+	intime_hit_lengthRatio_counter_v->resize(22, 0);
+	std::vector<int> * intime_hit_threshold_collection_counter_v = new std::vector<int>;
+	intime_hit_threshold_collection_counter_v->resize(22, 0);
+	std::vector<int> * intime_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	intime_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+
+	std::vector<int> * tabulated_origins = new std::vector<int>;
+	tabulated_origins->resize(22, 0);
+	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
+	tabulated_origins_intime->resize(22, 0);
+
+	if(strcmp(_file2, "empty") != 0)
+	{
+		std::cout << "File Path: " << _file2 << std::endl;
+		TFile * intime_f = new TFile(_file2);
+		if(!intime_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
+		TTree * intime_tree   = (TTree*)intime_f->Get("AnalyzeTPCO/tree");
+		TTree * intime_optree = (TTree*)intime_f->Get("AnalyzeTPCO/optical_tree");
+
+		std::vector<xsecAna::TPCObjectContainer> * intime_tpc_object_container_v = nullptr;
+		mytree->SetBranchAddress("TpcObjectContainerV", &intime_tpc_object_container_v);
+
+		std::cout << "=====================" << std::endl;
+		std::cout << "== In-Time Cosmics ==" << std::endl;
+		std::cout << "=====================" << std::endl;
+
+		const int in_time_total_entries = intime_tree->GetEntries();
+		std::cout << "Total Events: " << in_time_total_entries << std::endl;
+
+		std::vector<int> * intime_passed_runs = new std::vector<int>;
+		//passed runs is filled with 0, 1, or 2
+		//0 = not in time
+		//1 = passed - in time and PE threshold
+		// 2 = in-time, but not enough PE -- this counts against my efficiency
+		intime_passed_runs->resize(in_time_total_entries);
+
+		_cuts_instance.selection_cuts::loop_flashes(intime_f, intime_optree, flash_pe_threshold, flash_time_start, flash_time_end, intime_passed_runs);
+		for(auto const run : * intime_passed_runs)
+		{
+			if(run == 1) {run_sum++; }
+			if(run == 0) {out_of_time_sum++; }
+			if(run == 2) {low_pe_sum++; }
+		}
+		std::cout << " -------------------------------------- " << std::endl;
+		std::cout << "Passed Runs Vector Size: " << intime_passed_runs->size() << std::endl;
+		std::cout << "Number Events In-Time & > 50 PE: " << run_sum << std::endl;
+		std::cout << "Number Events Not In-Time      : " << out_of_time_sum << std::endl;
+		std::cout << "Number Events In-Time & < 50 PE: " << low_pe_sum << std::endl;
+		std::cout << " -------------------------------------- " << std::endl;
+
+		//get vector with largest flashes y,z positions
+		std::vector< std::vector< double> > * intime_largest_flash_v_v = new std::vector < std::vector < double > >;
+		_cuts_instance.selection_cuts::SetXYflashVector(intime_f, intime_optree, intime_largest_flash_v_v, flash_time_start, flash_time_end);
+		std::cout << "Largest Flash Vector Size: " << intime_largest_flash_v_v->size() << std::endl;
+
+		for(int event = 0; event < in_time_total_entries; event++)
+		{
+			if(_verbose)
+			{
+				std::cout << "----------------------" << std::endl;
+				std::cout << "[EVENT NUMBER] \t " << event << std::endl;
+				std::cout << "----------------------" << std::endl;
+			}
+			intime_tree->GetEntry(event);
+			//***********************************************************
+			//this is where the in-time optical cut actually takes effect
+			//***********************************************************
+			if(intime_passed_runs->at(event) == 0)
+			{
+				if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
+				continue;
+			}//false
+
+			//XY Position of largest flash
+			std::vector < double > largest_flash_v = intime_largest_flash_v_v->at(event);
+
+			//List of TPC Objects which pass the cuts
+			std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
+			passed_tpco->resize(tpc_object_container_v->size());
+
+			for(int i = 0; i < passed_tpco->size(); i++)
+			{
+				passed_tpco->at(i).first = 1;
+				passed_tpco->at(i).second = "Passed";
+			}
+			//***********************************************************
+			//this is where the in-time optical cut again takes effect
+			//***********************************************************
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_in_time_counter_v);
+
+			//PE threshold cut
+			if(intime_passed_runs->at(event) == 2)
+			{
+				if(_verbose) std::cout << "[Passed In-Time Cut] [Failed PE Threshold] " << std::endl;
+				continue;
+			}
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_pe_counter_v);
+
+			//****************************
+			// ****** reco nue cut *******
+			//****************************
+			_cuts_instance.selection_cuts::HasNue(intime_tpc_object_container_v, passed_tpco, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_reco_nue_counter_v);
+
+			//** Testing leading shower length vs hits **//
+			_functions_instance.selection_functions::ShowerLengthvsHitsInTime(tpc_object_container_v, passed_tpco, _verbose, h_shwr_len_hits_intime);
+
+			//************************
+			//******** in fv cut *****
+			//************************
+			_cuts_instance.selection_cuts::fiducial_volume_cut(intime_tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_in_fv_counter_v);
+
+			//*****************************
+			//**** vertex to flash cut ****
+			//*****************************
+			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco, _verbose, h_vtx_flash_intime);
+
+			_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, intime_tpc_object_container_v, tolerance, passed_tpco, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_vtx_flash_counter_v);
+
+			//******************************************************
+			//*** distance between pfp shower and nue object cut ***
+			//******************************************************
+			_functions_instance.selection_functions::PostCutsShwrVtxInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_shwr_vtx_dist_intime);
+
+			_cuts_instance.selection_cuts::VtxNuDistance(intime_tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_shwr_tpco_counter_v);
+
+			//******************************************************
+			// **** distance between pfp track and nue object cut **
+			//******************************************************
+			_functions_instance.selection_functions::PostCutTrkVtxInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_trk_vtx_dist_intime);
+			_cuts_instance.selection_cuts::VtxTrackNuDistance(intime_tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_trk_tpco_counter_v);
+
+			//****************************************************
+			// ******** hit threshold for showers cut *************
+			//******************************************************
+			_functions_instance.selection_functions::HitsPlots1DInTime(intime_tpc_object_container_v, passed_tpco, _verbose,
+			                                                           h_pre_cut_collection_hits_track_intime,
+			                                                           h_pre_cut_collection_hits_shower_intime,
+			                                                           h_pre_cut_collection_hits_leading_shower_intime,
+			                                                           h_pre_cut_total_hits_leading_shower_intime);
+
+			_cuts_instance.selection_cuts::HitThreshold(intime_tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_hit_threshold_counter_v);
+
+			_functions_instance.selection_functions::dEdxVsOpenAngleInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_dedx_open_angle_intime);
+			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_ele_cos_theta_intime);
+			//*****************************************************
+			//****** open angle cut for the leading shower ********
+			//******************************************************
+			_functions_instance.selection_functions::NumShowersOpenAngleInTime(intime_tpc_object_container_v, passed_tpco, h_pfp_shower_open_angle_intime);
+			_functions_instance.selection_functions::PostCutOpenAngleInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_leading_shower_open_angle_intime);
+			_functions_instance.selection_functions::PostCutOpenAngle1ShowerInTime(tpc_object_container_v, passed_tpco, _verbose, h_leading_shower_open_angle_1_intime);
+			_functions_instance.selection_functions::PostCutOpenAngle2PlusShowerInTime(intime_tpc_object_container_v, passed_tpco,
+			                                                                           _verbose, h_leading_shower_open_angle_2plus_intime);
+			_cuts_instance.selection_cuts::OpenAngleCut(intime_tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_open_angle_counter_v);
+
+			_functions_instance.selection_functions::NumShowersOpenAngleInTime(intime_tpc_object_container_v, passed_tpco, h_pfp_shower_dedx_intime);
+			//*****************************************************
+			//*********** dEdx cut for the leading shower *********
+			//******************************************************
+			_functions_instance.selection_functions::PostCutsdEdxInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_dedx_cuts_intime);
+
+			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_dedx_counter_v);
+
+			//***************************************************************************
+			_functions_instance.selection_functions::SecondaryShowersDistInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_second_shwr_dist_intime);
+			_cuts_instance.selection_cuts::SecondaryShowersDistCut(intime_tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_secondary_shower_counter_v);
+
+			//******************************************************************************
+			_functions_instance.selection_functions::HitLengthRatioInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_hit_length_ratio_intime);
+			_cuts_instance.selection_cuts::HitLengthRatioCut(intime_tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_hit_lengthRatio_counter_v);
+
+			_functions_instance.selection_functions::PlaneHitsComparisonTrackInTime(intime_tpc_object_container_v, passed_tpco,
+			                                                                        _verbose, h_collection_total_hits_track_intime);
+			_functions_instance.selection_functions::PlaneHitsComparisonShowerInTime(intime_tpc_object_container_v, passed_tpco,
+			                                                                         _verbose, h_collection_total_hits_shower_intime);
+			_functions_instance.selection_functions::PlaneHitsComparisonLeadingShowerInTime(intime_tpc_object_container_v, passed_tpco,
+			                                                                                _verbose, h_collection_total_hits_leading_shower_intime);
+
+			//***************************************//
+			//*** Collection Plane Hits Threshold ***//
+			//***************************************//
+			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco, _verbose,
+			                                                          h_ele_pfp_phi_intime);
+
+			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco, _verbose,
+			                                                            h_ele_pfp_theta_intime);
+
+			_functions_instance.selection_functions::HitsPlots1DInTime(intime_tpc_object_container_v, passed_tpco, _verbose,
+			                                                           h_collection_hits_track_intime,
+			                                                           h_collection_hits_shower_intime,
+			                                                           h_collection_hits_leading_shower_intime,
+			                                                           h_total_hits_leading_shower_intime);
+
+			_cuts_instance.selection_cuts::HitThresholdCollection(intime_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_hit_threshold_collection_counter_v);
+
+			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_ele_pfp_phi_after_intime);
+
+			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco, _verbose, h_ele_pfp_theta_after_intime);
+
+			//*** cut for longest track / leading shower ratio *** //
+			_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(intime_tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
+			tabulated_origins_intime = _functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_intime, intime_trk_len_shwr_len_ratio_counter_v);
+
+			//*********** In-time Cosmics *********
+			//*************************************
+			// ******** End Selection Cuts! *******
+			//*************************************
+		}
+	}//end in-time cosmic running
+//*********************************************************
+//*********************************************************
 	std::vector<int> * in_time_counter_v = new std::vector<int>;
 	in_time_counter_v->resize(22, 0);
 	std::vector<int> * pe_counter_v = new std::vector<int>;
@@ -134,6 +396,9 @@ int selection( const char * _file1){
 	std::cout << "=====================" << std::endl;
 
 	_cuts_instance.selection_cuts::loop_flashes(f, optree, flash_pe_threshold, flash_time_start, flash_time_end, passed_runs);
+	run_sum = 0;
+	out_of_time_sum = 0;
+	low_pe_sum = 0;
 	for(auto const run : * passed_runs)
 	{
 		if(run == 1) {run_sum++; }
@@ -196,7 +461,7 @@ int selection( const char * _file1){
 		last_data_subrun = data_subrun;
 
 		double mc_cos_theta = -999;
-		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z / mc_nu_momentum; }
+		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z; }
 		const double mc_phi       = atan2(mc_nu_dir_y, mc_nu_dir_x);
 		double mc_ele_cos_theta = -999;
 		//if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z / mc_ele_momentum; }
@@ -225,7 +490,9 @@ int selection( const char * _file1){
 				h_nue_phi_eff_den->Fill(mc_phi * (180 / 3.1415));
 				h_ele_cos_theta_eff_den->Fill(mc_ele_cos_theta);
 				h_ele_phi_eff_den->Fill(mc_ele_phi * (180 / 3.1415));
-				//std::cout << "MC Phi: " << mc_phi * (180 / 3.1415) << std::endl;
+				h_nue_true_theta->Fill( acos(mc_cos_theta) * (180 / 3.1415));
+				h_nue_true_phi->Fill(mc_phi * (180 / 3.1415));
+				h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
 				total_mc_entries_inFV++;
 			}
 		}
@@ -287,13 +554,15 @@ int selection( const char * _file1){
 		                                                            h_shwr_len_hits_other_mixed, h_shwr_len_hits_unmatched);
 
 		//pre most cuts hits
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
 		{
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
+			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
 			                                                             h_shwr_hits_nu_eng, h_shwr_hits_ele_eng);
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
+			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
 			                                                             h_shwr_hits_nu_eng_zoom, h_shwr_hits_ele_eng_zoom);
 		}
 		_functions_instance.selection_functions::TopologyPlots1(tpc_object_container_v, passed_tpco, has_pi0,
@@ -422,13 +691,15 @@ int selection( const char * _file1){
 		//****************************************************
 		// ******** hit threshold for showers cut *************
 		//******************************************************
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
 		{
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
+			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
 			                                                             h_shwr_hits_nu_eng_last, h_shwr_hits_ele_eng_last);
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
+			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
 			                                                             h_shwr_hits_nu_eng_zoom_last, h_shwr_hits_ele_eng_zoom_last);
 		}
 
@@ -784,7 +1055,6 @@ int selection( const char * _file1){
 		tabulated_origins = _functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
-
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
@@ -798,7 +1068,7 @@ int selection( const char * _file1){
 		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
 
 		//these are for the tefficiency plots, post all cuts
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins.at(0) == 1)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
 		{
 			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 			                                        _x1, _x2, _y1,
@@ -1087,20 +1357,20 @@ int selection( const char * _file1){
 	//change mc_nue_cc_counter to total_mc_entries_inFV once files are ready!
 
 	//we also want some metrics to print at the end
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v,                  "In Time");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v,                       "PE Threshold");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v,                 "Reco Nue");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v,                    "In FV");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v,                "Vtx-to-Flash");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v,                "Shower-to-TPCO");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v,                 "Track-to-TPCO");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,            "Hit Threshold");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v,               "Open Angle");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v,                     " dE / dx ");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v,         ">3 Shower TPCO Dist");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v,          "Hit Length Ratio");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, "WPlane Hit Threshold");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v,   "TrkLen/ShwrLen Ratio");
+	selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v,                 intime_in_time_counter_v->at(0),                 "In Time");
+	selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v,                      intime_pe_counter_v->at(0),                      "PE Threshold");
+	selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v,                intime_reco_nue_counter_v->at(0),                "Reco Nue");
+	selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v,                   intime_in_fv_counter_v->at(0),                   "In FV");
+	selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v,               intime_vtx_flash_counter_v->at(0),               "Vtx-to-Flash");
+	selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v,               intime_shwr_tpco_counter_v->at(0),               "Shower-to-TPCO");
+	selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v,                intime_trk_tpco_counter_v->at(0),                "Track-to-TPCO");
+	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,           intime_hit_threshold_counter_v->at(0),           "Hit Threshold");
+	selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v,              intime_open_angle_counter_v->at(0),              "Open Angle");
+	selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v,                    intime_dedx_counter_v->at(0),                    " dE / dx ");
+	selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v,        intime_secondary_shower_counter_v->at(0),        ">1 Shower TPCO Dist");
+	selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v,         intime_hit_lengthRatio_counter_v->at(0),         "Hit Length Ratio");
+	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v,intime_hit_threshold_collection_counter_v->at(0),"WPlane Hit Threshold");
+	selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v,  intime_trk_len_shwr_len_ratio_counter_v->at(0),  "TrkLen/ShwrLen Ratio");
 
 	std::cout << "---------------------" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
@@ -1191,7 +1461,9 @@ int selection( const char * _file1){
 	                                                              h_post_cuts_num_tracks_showers_purity_dis,
 	                                                              h_post_cuts_num_tracks_showers_purity_coh,
 	                                                              h_post_cuts_num_tracks_showers_purity_mec,
-	                                                              h_post_cuts_num_tracks_showers_purity_total);
+	                                                              h_post_cuts_num_tracks_showers_purity_total,
+	                                                              h_post_cuts_num_tracks_showers_signal_total,
+	                                                              h_post_cuts_num_tracks_showers_bkg_total);
 
 //********************//
 //**** Histograms ****//
@@ -1206,6 +1478,9 @@ int selection( const char * _file1){
 	histogram_functions::Plot1DHistogram (h_nue_num_chrg_part_eff_den, "True Charged Particle Multiplicity", "all_true_neutrino_num_charged_particles.pdf");
 	histogram_functions::Plot1DHistogram (h_nue_num_chrg_part_eff_num, "Selected Charged True Particle Multiplicity",
 	                                      "selected_true_neutrino_num_charged_particles.pdf");
+	histogram_functions::Plot1DHistogram(h_nue_true_theta, "True Neutrino Theta [Degrees]", "true_nue_theta.pdf");
+	histogram_functions::Plot1DHistogram(h_nue_true_phi,   "True Neutrino Phi [Degrees]",   "true_nue_phi.pdf");
+	histogram_functions::Plot2DHistogram(h_nue_true_theta_phi, "True Nue CC", "Phi [Degrees]", "Theta [Degrees]", "true_nue_theta_phi.pdf");
 
 	histogram_functions::PlotTEfficiency (h_nue_eng_eff_num, h_nue_eng_eff_den,
 	                                      ";True Neutrino Energy [GeV];Efficiency", "signal_selection_nu_energy_efficiency.pdf");
@@ -1237,7 +1512,11 @@ int selection( const char * _file1){
 	                                      ";True Nue Electron Dir Y;Efficiency", "signal_selection_ele_dir_y_efficiency.pdf");
 	histogram_functions::PlotTEfficiency (h_ele_dir_z_eff_num, h_ele_dir_z_eff_den,
 	                                      ";True Nue Electron Dir Z;Efficiency", "signal_selection_ele_dir_z_efficiency.pdf");
-	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, ";True Nue Electron Energy;Efficiency", "signal_selection_ele_energy_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, ";True Nue Electron Energy;Efficiency",
+	                                      "signal_selection_ele_energy_efficiency.pdf");
+
+	histogram_functions::PlotTEfficiency (h_post_cuts_num_tracks_showers_signal_total, h_post_cuts_num_tracks_showers_bkg_total,
+	                                      ";Num Reco Showers; Num Reco Tracks", "post_cuts_num_tracks_showers_eff_purity_total.pdf");
 
 	double all_energy = 0;
 	for(auto const energy : selected_energy_vector) {all_energy += energy; }
@@ -2097,11 +2376,17 @@ int selection( const char * _file1){
 #ifndef __ROOTCLING__
 
 int main(int argc, char *argv[]){
-	if(argc != 2 ) { std::cout << "Please inclue the input file path" << std::endl; exit(1); }
+
 	const char * file1 = argv[1];
+	const char * file2 = argv[2];
 
-
-	return xsecSelection::selection(file1);
+	if(argc != 3 )
+	{
+		std::cout << "Running without in-time cosmics " << std::endl;
+		return xsecSelection::selection(file1, "empty");
+	}
+	if(argc < 2 )  { std::cout << "Please inclue the input file path" << std::endl; exit(1); }
+	return xsecSelection::selection(file1, file2);
 }
 
 #endif

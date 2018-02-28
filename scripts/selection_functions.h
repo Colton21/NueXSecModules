@@ -49,6 +49,9 @@ void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
                   TH1D * h_dedx_cuts_numu_cc_mixed,
                   TH1D * h_dedx_cuts_other_mixed,
                   TH1D * h_dedx_cuts_unmatched     );
+void PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        TH1D * h_dedx_cuts_intime);
 //***************************************************************************
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
@@ -73,18 +76,19 @@ void PostCutVectorPlots(std::vector<std::tuple<int, int, double, double, double,
 bool ValidTPCObjects(std::vector<std::pair<int, std::string> > * passed_tpco);
 //***************************************************************************
 //***************************************************************************
-std::vector<int> TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                                 bool has_pi0, double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
+std::vector<int> * TabulateOriginsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco);
 //***************************************************************************
 //***************************************************************************
-void TotalOrigins(std::vector<int> tabulated_origins, std::vector<int> * total_cut_origins);
+std::vector<int> * TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
+                                   bool has_pi0, double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
+//***************************************************************************
+//***************************************************************************
+void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins);
 //***************************************************************************
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-void PrintInfo(int mc_nue_cc_counter,
-               std::vector<int> * counter_v,
-               std::string cut_name);
+static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int intime_counter, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
 std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0,
@@ -111,6 +115,9 @@ void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_cont
                       TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                       TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
                       TH1D * h_leading_shower_open_angle_unmatched);
+void PostCutOpenAngleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                            TH1D * h_leading_shower_open_angle_intime);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -121,6 +128,9 @@ void PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
                              TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                              TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
                              TH1D * h_leading_shower_open_angle_unmatched);
+void PostCutOpenAngle1ShowerInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_leading_shower_open_angle_intime);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -131,6 +141,9 @@ void PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCObjectContainer> * tpc_
                                  TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                                  TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
                                  TH1D * h_leading_shower_open_angle_unmatched);
+void PostCutOpenAngle2PlusShowerInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                       TH1D * h_leading_shower_open_angle_intime);
 //***************************************************************************
 //***************************************************************************
 void PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
@@ -141,6 +154,10 @@ void PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
                    TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nc_pi0,
                    TH1D * h_trk_vtx_dist_numu_cc_mixed, TH1D * h_trk_vtx_dist_other_mixed,
                    TH1D * h_trk_vtx_dist_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutTrkVtxInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_trk_vtx_dist_intime);
 //***************************************************************************
 //***************************************************************************
 void TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -243,6 +260,8 @@ void NumShowersOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          TH1D * h_pfp_shower_open_angle_other_mixed,
                          TH1D * h_pfp_shower_open_angle_unmatched
                          );
+void NumShowersOpenAngleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                               std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_pfp_shower_open_angle_intime);
 //***************************************************************************
 //***************************************************************************
 void TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -332,6 +351,10 @@ void PostCutsVtxFlash(std::vector< double > largest_flash_v, std::vector<xsecAna
                       TH1D * h_vtx_flash_unmatched);
 //***************************************************************************
 //***************************************************************************
+void PostCutsVtxFlashInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime);
+//***************************************************************************
+//***************************************************************************
 void PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
@@ -344,6 +367,10 @@ void PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH1D * h_shwr_vtx_dist_numu_cc_mixed,
                      TH1D * h_shwr_vtx_dist_other_mixed,
                      TH1D * h_shwr_vtx_dist_unmatched     );
+//***************************************************************************
+//***************************************************************************
+void PostCutsShwrVtxInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_shwr_vtx_dist_intime);
 //***************************************************************************
 //***************************************************************************
 void PostCutHitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -365,7 +392,7 @@ void TopologyEfficiency(std::vector<xsecAna::TPCObjectContainer> * tpc_object_co
 //***************************************************************************
 void SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
                                double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                               std::vector<int> tabulated_origins, double mc_nu_energy,
+                               std::vector<int> * tabulated_origins, double mc_nu_energy,
                                double mc_ele_energy, TH1D * h_selected_nu_energy, TH1D * h_selected_ele_energy);
 //***************************************************************************
 //***************************************************************************
@@ -375,7 +402,7 @@ void ChargeShare(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  double vtxX, double vtxY, double vtxZ, TH1D * h_charge_share_nue_cc_mixed);
 //***************************************************************************
 //***************************************************************************
-void FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> tabulated_origins,
+void FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> * tabulated_origins,
                double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                double vtxX, double vtxY, double vtxZ, TH1D * h_flash_t0_diff);
 //***************************************************************************
@@ -394,6 +421,8 @@ void dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH2D * h_dedx_open_angle_cosmic,
                      TH2D * h_dedx_open_angle_other_mixed,
                      TH2D * h_dedx_open_angle_unmatched);
+void dEdxVsOpenAngleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH2D * h_dedx_open_angle_intime);
 //***************************************************************************
 //***************************************************************************
 void ShowerLengthvsHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -410,6 +439,9 @@ void ShowerLengthvsHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_co
                         TH2D * h_shwr_len_hits_cosmic,
                         TH2D * h_shwr_len_hits_other_mixed,
                         TH2D * h_shwr_len_hits_unmatched);
+void ShowerLengthvsHitsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              TH2D * h_shwr_len_hits_intime);
 //***************************************************************************
 //***************************************************************************
 void SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -426,6 +458,9 @@ void SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_
                           TH1D * h_second_shwr_dist_cosmic,
                           TH1D * h_second_shwr_dist_other_mixed,
                           TH1D * h_second_shwr_dist_unmatched);
+void SecondaryShowersDistInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                TH1D * h_second_shwr_dist_intime);
 //***************************************************************************
 //***************************************************************************
 void HitLengthRatio(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -442,6 +477,9 @@ void HitLengthRatio(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     TH1D * h_hit_length_ratio_cosmic,
                     TH1D * h_hit_length_ratio_other_mixed,
                     TH1D * h_hit_length_ratio_unmatched);
+void HitLengthRatioInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                          TH1D * h_hit_length_ratio_intime);
 //***************************************************************************
 //***************************************************************************
 void TrackLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -570,6 +608,9 @@ void PlaneHitsComparisonShower(std::vector<xsecAna::TPCObjectContainer> * tpc_ob
                                TH2D * h_collection_total_hits_shower_cosmic,
                                TH2D * h_collection_total_hits_shower_other_mixed,
                                TH2D * h_collection_total_hits_shower_unmatched);
+void PlaneHitsComparisonShowerInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                     TH2D * h_collection_total_hits_shower_intime);
 //***************************************************************************
 //***************************************************************************
 void PlaneHitsComparisonLeadingShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -586,6 +627,9 @@ void PlaneHitsComparisonLeadingShower(std::vector<xsecAna::TPCObjectContainer> *
                                       TH2D * h_collection_total_hits_shower_cosmic,
                                       TH2D * h_collection_total_hits_shower_other_mixed,
                                       TH2D * h_collection_total_hits_shower_unmatched);
+void PlaneHitsComparisonLeadingShowerInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                            TH2D * h_collection_total_hits_shower_intime);
 //***************************************************************************
 //***************************************************************************
 void PlaneHitsComparisonTrack(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -602,6 +646,9 @@ void PlaneHitsComparisonTrack(std::vector<xsecAna::TPCObjectContainer> * tpc_obj
                               TH2D * h_collection_total_hits_track_cosmic,
                               TH2D * h_collection_total_hits_track_other_mixed,
                               TH2D * h_collection_total_hits_track_unmatched);
+void PlaneHitsComparisonTrackInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                    TH2D * h_collection_total_hits_track_intime);
 //***************************************************************************
 //***************************************************************************
 void HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -648,6 +695,12 @@ void HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  TH1D * h_total_hits_leading_shower_cosmic,
                  TH1D * h_total_hits_leading_shower_other_mixed,
                  TH1D * h_total_hits_leading_shower_unmatched);
+void HitsPlots1DInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                       TH1D * h_collection_hits_track_intime,
+                       TH1D * h_collection_hits_shower_intime,
+                       TH1D * h_collection_hits_leading_shower_intime,
+                       TH1D * h_total_hits_leading_shower_intime);
 //***************************************************************************
 //***************************************************************************
 void EnergyHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -690,6 +743,8 @@ void LeadingCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH1D * h_ele_cos_theta_cosmic,
                      TH1D * h_ele_cos_theta_other_mixed,
                      TH1D * h_ele_cos_theta_unmatched);
+void LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_cos_theta_intime);
 //***************************************************************************
 //***************************************************************************
 void LeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -722,6 +777,9 @@ void LeadingPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_
                 TH1D * h_ele_pfp_phi_cosmic,
                 TH1D * h_ele_pfp_phi_other_mixed,
                 TH1D * h_ele_pfp_phi_unmatched);
+void LeadingPhiInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                      TH1D * h_ele_pfp_phi_intime);
 //***************************************************************************
 //***************************************************************************
 void LeadingTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -738,6 +796,9 @@ void LeadingTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
                   TH1D * h_ele_pfp_theta_cosmic,
                   TH1D * h_ele_pfp_theta_other_mixed,
                   TH1D * h_ele_pfp_theta_unmatched);
+void LeadingThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        TH1D * h_ele_pfp_theta_intime);
 //***************************************************************************
 //***************************************************************************
 void Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -793,7 +854,9 @@ void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, doubl
                           TH2 * post_cuts_num_tracks_showers_purity_dis,
                           TH2 * post_cuts_num_tracks_showers_purity_coh,
                           TH2 * post_cuts_num_tracks_showers_purity_mec,
-                          TH2 * post_cuts_num_tracks_showers_purity_total);
+                          TH2 * post_cuts_num_tracks_showers_purity_total,
+                          TH2 * post_cuts_num_tracks_showers_signal_total,
+                          TH2 * post_cuts_num_tracks_showers_bkg_total);
 //***************************************************************************
 //***************************************************************************
 void LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

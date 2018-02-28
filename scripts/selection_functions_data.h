@@ -43,7 +43,7 @@ std::vector<int> TabulateOriginsData(std::vector<xsecAna::TPCObjectContainer> * 
                                      std::vector<std::pair<int, std::string> > * passed_tpco);
 //***************************************************************************
 //***************************************************************************
-void PrintInfoData(std::vector<int> * counter_v, std::string cut_name);
+static void PrintInfoData(std::vector<int> * counter_v, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
 std::pair<std::string, int> TPCO_Classifier_Data(xsecAna::TPCObjectContainer tpc_obj);

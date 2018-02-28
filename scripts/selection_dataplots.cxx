@@ -660,18 +660,18 @@ int selection( const char * _file1){
 	//change mc_nue_cc_counter to total_mc_entries_inFV once files are ready!
 
 	//we also want some metrics to print at the end
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v, "In Time");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v, "PE Threshold");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v, "Reco Nue");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v, "In FV");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v, "Vtx-to-Flash");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v, "Shower-to-TPCO");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v, "Track-to-TPCO");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,"Hit Threshold");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v, "Open Angle");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, " dE / dx ");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, ">3 Shower TPCO Dist");
-	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, "Hit Length Ratio");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v,          0, "In Time");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v,               0, "PE Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v,         0, "Reco Nue");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v,            0, "In FV");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v,        0, "Vtx-to-Flash");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v,        0, "Shower-to-TPCO");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v,         0, "Track-to-TPCO");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,    0, "Hit Threshold");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v,       0, "Open Angle");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v,             0, " dE / dx ");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, 0, ">3 Shower TPCO Dist");
+	_functions_instance.selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v,  0, "Hit Length Ratio");
 
 	std::cout << "---------------------" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
