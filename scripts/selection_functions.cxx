@@ -387,7 +387,7 @@ std::vector<int> * selection_functions::TabulateOriginsInTime(std::vector<xsecAn
                                                               std::vector<std::pair<int, std::string> > * passed_tpco)
 {
 	int intime_cosmics = 0;
-	std::vector<int> * tabulated_origins_intime;
+	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
@@ -427,7 +427,7 @@ std::vector<int> * selection_functions::TabulateOrigins(std::vector<xsecAna::TPC
 	int other_mixed   = 0;
 	int total         = 0;
 	int signal_tpco_num = -1;
-	std::vector<int> * tabulated_origins;
+	std::vector<int> * tabulated_origins = new std::vector<int>;
 	tabulated_origins->resize(22);
 
 	int n_tpc_obj = tpc_object_container_v->size();
