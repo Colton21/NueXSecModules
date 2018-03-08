@@ -613,6 +613,38 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 	std::cout << "------------------------" << std::endl;
 	std::cout << "------------------------" << std::endl;
 }
+
+void selection_functions::PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * has_track,
+                                              std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr)
+{
+	std::cout << "---------------------" << std::endl;
+	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
+	std::cout << "No Track Bkg   : " << no_track->at(1) << std::endl;
+	std::cout << "Purity         : " << double(no_track->at(0)) / double(no_track->at(0) + no_track->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "1+ Track Signal: " << has_track->at(0) << std::endl;
+	std::cout << "1+ Track Bkg   : " << has_track->at(1) << std::endl;
+	std::cout << "Purity         : " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "1 Shower Signal : " << _1_shwr->at(0) << std::endl;
+	std::cout << "1 Shower Bkg    : " << _1_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_1_shwr->at(0)) / double(_1_shwr->at(0) + _1_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "2 Shower Signal : " << _2_shwr->at(0) << std::endl;
+	std::cout << "2 Shower Bkg    : " << _2_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_2_shwr->at(0)) / double(_2_shwr->at(0) + _2_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "3 Shower Signal : " << _3_shwr->at(0) << std::endl;
+	std::cout << "3 Shower Bkg    : " << _3_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_3_shwr->at(0)) / double(_3_shwr->at(0) + _3_shwr->at(1)) << std::endl;
+	std::cout << " ******************* " << std::endl;
+	std::cout << "4+ Shower Signal: " << _4_shwr->at(0) << std::endl;
+	std::cout << "4+ Shower Bkg   : " << _4_shwr->at(1) << std::endl;
+	std::cout << "Purity          : " << double(_4_shwr->at(0)) / double(_4_shwr->at(0) + _4_shwr->at(1)) << std::endl;
+	std::cout << "---------------------" << std::endl;
+	std::cout << "---------------------" << std::endl;
+}
 //***************************************************************************
 //***************************************************************************
 std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0,
@@ -717,8 +749,8 @@ void selection_functions::calcXSec(double _x1, double _x2, double _y1,
 	const int n_events = n_total - n_bkg;
 	//scale_factor = 2.4 * math.pow(10, 17)  # POT / nue
 	//calculate the number of nucleons based on the fiducial volume
-	const double n_target = calcNumNucleons(_x1, _x2, _y1,
-	                                        _y2, _z1, _z2);
+	const double n_target = selection_functions::calcNumNucleons(_x1, _x2, _y1,
+	                                                             _y2, _z1, _z2);
 
 	std::cout << "-------------------" << std::endl;
 	std::cout << "N_total    :  " << n_total << std::endl;
@@ -732,6 +764,89 @@ void selection_functions::calcXSec(double _x1, double _x2, double _y1,
 	xsec_cc->push_back((n_error) /  (flux * n_target * efficiency));
 	const double sys_error = xsec_cc->at(0) * 0.30; //beam sys error of 30%
 	xsec_cc->push_back(sys_error);
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_cc_mixed,
+                                   double final_counter_nue_cc_out_fv, double final_counter_cosmic, double final_counter_nc, double final_counter_numu_cc,
+                                   double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
+                                   double final_counter_other_mixed, double final_counter_intime,
+                                   double intime_scale_factor, double final_counter_data, double data_scale_factor,
+                                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double flux,
+                                   std::vector<double> selected_energy_vector, double genie_xsec, const int total_mc_entries_inFV)
+{
+	std::vector<double> * xsec_cc = new std::vector<double>;
+	const int n_bkg_mc = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nc
+	                      + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_nc_pi0 +
+	                      final_counter_unmatched + final_counter_other_mixed) / intime_scale_factor;
+	const int n_bkg_intime = final_counter_intime;
+	const int n_bkg = n_bkg_mc + n_bkg_intime;
+
+	const double efficiency = final_counter_nue_cc / double(total_mc_entries_inFV);
+	const double efficiency_stat_err = (1 / sqrt(total_mc_entries_inFV)) * sqrt(efficiency * (1 - efficiency));
+
+	//******************************
+	//******** Data ****************
+	//******************************
+	const int n_total_data = final_counter_data;
+	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	                              n_total_data, n_bkg / data_scale_factor, flux,
+	                              efficiency, xsec_cc);
+	double xsec_cc_data = xsec_cc->at(0);
+	double xsec_cc_stat_data = xsec_cc->at(0) * (pow((sqrt(n_total_data) / n_total_data), 2) + pow((efficiency_stat_err / efficiency), 2));
+
+	std::cout << "--- Cross Section Calculations ---" << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Cross Section Results (Data):  " << std::endl;
+	std::cout << " " << xsec_cc_data << " +/- (stats) "
+	          << xsec_cc_stat_data << " +/- (sys) "
+	          << xsec_cc->at(2) << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	xsec_cc->clear();
+
+	//************************************
+	//******** Monte Carlo ***************
+	//************************************
+	const int n_total_mc = final_counter;
+	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	                              n_total_mc, n_bkg, flux,
+	                              efficiency, xsec_cc);
+
+	double xsec_cc_stat_mc = xsec_cc->at(0) * (pow((sqrt(n_total_mc) / n_total_mc), 2) + pow((efficiency_stat_err / efficiency), 2));
+
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Cross Section Results (MC):  " << std::endl;
+	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
+	          << xsec_cc_stat_mc << " +/- (sys) "
+	          << xsec_cc->at(2) << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	xsec_cc->clear();
+
+	//************************************
+	//******** True Level ****************
+	//************************************
+	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	                              total_mc_entries_inFV, 0, flux,
+	                              1, xsec_cc);
+	double xsec_cc_stat_truth = xsec_cc->at(1);
+
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Cross Section Results (Truth):  " << std::endl;
+	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
+	          << xsec_cc_stat_truth << " +/- (sys) "
+	          << xsec_cc->at(2) << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Genie value of Flux " << '\n' <<
+	        " Integrated Xsec:    " << genie_xsec << std::endl;
+	xsec_cc->clear();
+
+	double all_energy = 0;
+	for(auto const energy : selected_energy_vector) {all_energy += energy; }
+	const double average_true_energy = all_energy / selected_energy_vector.size();
+	bool _verbose = false;
+	selection_functions::xsec_plot(_verbose, genie_xsec, xsec_cc_data, average_true_energy, xsec_cc_stat_data);
+
 }
 //***************************************************************************
 //***************************************************************************
@@ -4698,7 +4813,8 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
                                                TH2 * post_cuts_num_tracks_showers_purity_mec,
                                                TH2 * post_cuts_num_tracks_showers_purity_total,
                                                TH2 * post_cuts_num_tracks_showers_signal_total,
-                                               TH2 * post_cuts_num_tracks_showers_bkg_total)
+                                               TH2 * post_cuts_num_tracks_showers_bkg_total,
+                                               TH2 * post_cuts_num_tracks_showers_total_total)
 {
 	int signal_events_1_1_qe = 0;
 	int signal_events_2_1_qe = 0;
@@ -4977,6 +5093,27 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 	post_cuts_num_tracks_showers_bkg_total->SetBinContent(3, 2, bkg_events_3_1);
 	post_cuts_num_tracks_showers_bkg_total->SetBinContent(4, 2, bkg_events_4_1);
 
+	post_cuts_num_tracks_showers_total_total->SetBinContent(1, 1, total_events_1_0);
+	post_cuts_num_tracks_showers_total_total->SetBinContent(2, 1, total_events_2_0);
+	post_cuts_num_tracks_showers_total_total->SetBinContent(3, 1, total_events_3_0);
+	post_cuts_num_tracks_showers_total_total->SetBinContent(4, 1, total_events_4_0);
+	post_cuts_num_tracks_showers_total_total->SetBinContent(1, 2, total_events_1_1);
+	post_cuts_num_tracks_showers_total_total->SetBinContent(2, 2, total_events_2_1);
+	post_cuts_num_tracks_showers_total_total->SetBinContent(3, 2, total_events_3_1);
+	post_cuts_num_tracks_showers_total_total->SetBinContent(4, 2, total_events_4_1);
+
+	TCanvas * efficiency_c1 = new TCanvas();
+	efficiency_c1->cd();
+
+	TEfficiency * teff = new TEfficiency(*post_cuts_num_tracks_showers_signal_total, *post_cuts_num_tracks_showers_total_total);
+	teff->SetTitle("Topology Purity");
+	//teff->SetLineColor(kGreen+3);
+	//teff->SetMarkerColor(kGreen+3);
+	//teff->SetMarkerStyle(20);
+	//teff->SetMarkerSize(0.5);
+	teff->Draw("lego4 e");
+	//teff->Draw("lego");
+	efficiency_c1->Print("post_cuts_num_tracks_showers_purity_teff.pdf");
 
 
 	double purity_1_0_qe  = double(signal_events_1_0_qe)  / total_events_1_0;
@@ -5191,5 +5328,310 @@ void selection_functions::LeadingThetaPhi(std::vector<xsecAna::TPCObjectContaine
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                      double vtxX, double vtxY, double vtxZ,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		// auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		// const double pfp_x = leading_shower.pfpVtxX();
+		// const double pfp_y = leading_shower.pfpVtxY();
+		// const double pfp_z = leading_shower.pfpVtxZ();
 
+		//naming should be tpco_vtx_x
+		//but this is okay...
+		const double pfp_x = tpc_obj.pfpVtxX();
+		const double pfp_y = tpc_obj.pfpVtxY();
+		const double pfp_z = tpc_obj.pfpVtxZ();
+
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_ele_pfp_xyz_nue_cc_out_fv->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nc")
+		{
+			h_ele_pfp_xyz_nc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nc->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_ele_pfp_xyz_nc_pi0->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nc_pi0->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nc_pi0->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_ele_pfp_xyz_nue_cc_mixed->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_nue_cc_mixed->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_nue_cc_mixed->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_ele_pfp_xyz_numu_cc_mixed->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_numu_cc_mixed->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_numu_cc_mixed->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_ele_pfp_xyz_cosmic->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_cosmic->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_cosmic->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_ele_pfp_xyz_other_mixed->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_other_mixed->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_other_mixed->at(2)->Fill(pfp_z);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_ele_pfp_xyz_unmatched->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_unmatched->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_unmatched->at(2)->Fill(pfp_z);
+		}
+	}//end pfp loop
+}
+void selection_functions::XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                            std::vector<TH1 *> * h_ele_pfp_xyz_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		// const int n_pfp = tpc_obj.NumPFParticles();
+		// int most_hits = 0;
+		// int leading_index = 0;
+		// for(int j = 0; j < n_pfp; j++)
+		// {
+		//      auto const part = tpc_obj.GetParticle(j);
+		//      const int n_pfp_hits = part.NumPFPHits();
+		//      if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		// }
+		// auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		// const double pfp_x = leading_shower.pfpVtxX();
+		// const double pfp_y = leading_shower.pfpVtxY();
+		// const double pfp_z = leading_shower.pfpVtxZ();
+		// h_ele_pfp_xyz_intime->at(0)->Fill(pfp_x);
+		// h_ele_pfp_xyz_intime->at(1)->Fill(pfp_y);
+		// h_ele_pfp_xyz_intime->at(2)->Fill(pfp_z);
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		h_ele_pfp_xyz_intime->at(0)->Fill(tpc_vtx_x);
+		h_ele_pfp_xyz_intime->at(1)->Fill(tpc_vtx_y);
+		h_ele_pfp_xyz_intime->at(2)->Fill(tpc_vtx_z);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::EnergyCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                         double vtxX, double vtxY, double vtxZ,
+                                         TH2 * h_ele_eng_costheta_nue_cc,
+                                         TH2 * h_ele_eng_costheta_nue_cc_out_fv,
+                                         TH2 * h_ele_eng_costheta_nue_cc_mixed,
+                                         TH2 * h_ele_eng_costheta_numu_cc,
+                                         TH2 * h_ele_eng_costheta_numu_cc_mixed,
+                                         TH2 * h_ele_eng_costheta_nc,
+                                         TH2 * h_ele_eng_costheta_nc_pi0,
+                                         TH2 * h_ele_eng_costheta_cosmic,
+                                         TH2 * h_ele_eng_costheta_other_mixed,
+                                         TH2 * h_ele_eng_costheta_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double momentum = leading_shower.pfpMomentum();
+		const double costheta = leading_shower.pfpDirZ();
+
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_ele_eng_costheta_nue_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_ele_eng_costheta_nue_cc_out_fv->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_ele_eng_costheta_nue_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_ele_eng_costheta_nue_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_ele_eng_costheta_nue_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_ele_eng_costheta_nue_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_ele_eng_costheta_numu_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_ele_eng_costheta_numu_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_ele_eng_costheta_numu_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_ele_eng_costheta_numu_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_ele_eng_costheta_numu_cc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nc")
+		{
+			h_ele_eng_costheta_nc->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_ele_eng_costheta_nc_pi0->Fill(momentum, costheta);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_ele_eng_costheta_nue_cc_mixed->Fill(momentum, costheta);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			h_ele_eng_costheta_numu_cc_mixed->Fill(momentum, costheta);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_ele_eng_costheta_cosmic->Fill(momentum, costheta);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_ele_eng_costheta_other_mixed->Fill(momentum, costheta);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_ele_eng_costheta_unmatched->Fill(momentum, costheta);
+		}
+	}//end pfp loop
+}
+void selection_functions::EnergyCosThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               TH2 * h_ele_eng_costheta_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double momentum = leading_shower.pfpMomentum();
+		const double costheta = leading_shower.pfpDirZ();
+		h_ele_eng_costheta_intime->Fill(momentum, costheta);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

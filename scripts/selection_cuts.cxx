@@ -138,11 +138,11 @@ bool selection_cuts::in_fv(double x, double y, double z,
 	// (7263-4800) * 0.3 = 738.9 cm end
 	// const double dead_z_start = 700.8;
 	// const double dead_z_end = 738.9;
-	// const double dead_tolerance = 10; //cm
+	// const double dead_tolerance = 25; //cm
 	// if( z >= dead_z_start - dead_tolerance && z <= dead_z_end + dead_tolerance) {return false; }
 	//did not have a positive effect ...
 
-	else{return true; }
+	return true;
 }
 //***************************************************************************
 void selection_cuts::fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

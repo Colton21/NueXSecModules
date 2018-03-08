@@ -127,37 +127,68 @@ void FailureReasonData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
 //***************************************************************************
 void LeadingCosThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_cos_theta_data);
+//***************************************************************************
+//***************************************************************************
 void HitsPlots1DData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                      TH1D * h_collection_hits_track_data,
                      TH1D * h_collection_hits_shower_data,
                      TH1D * h_collection_hits_leading_shower_data,
                      TH1D * h_total_hits_leading_shower_data);
+//***************************************************************************
+//***************************************************************************
 void NumShowersOpenAngleData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                              std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_pfp_shower_open_angle_data);
+//***************************************************************************
+//***************************************************************************
 void PostCutOpenAngle1ShowerData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                  TH1D * h_leading_shower_open_angle_data);
+//***************************************************************************
+//***************************************************************************
 void PostCutOpenAngle2PlusShowerData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                      TH1D * h_leading_shower_open_angle_data);
+//***************************************************************************
+//***************************************************************************
 void PlaneHitsComparisonTrackData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                   TH2D * h_collection_total_hits_track_data);
+//***************************************************************************
+//***************************************************************************
 void PlaneHitsComparisonShowerData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                    TH2D * h_collection_total_hits_shower_data);
+//***************************************************************************
+//***************************************************************************
 void PlaneHitsComparisonLeadingShowerData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                           TH2D * h_collection_total_hits_shower_data);
+//***************************************************************************
+//***************************************************************************
 void LeadingPhiData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                     TH1D * h_ele_pfp_phi_data);
+//***************************************************************************
+//***************************************************************************
 void LeadingThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                       TH1D * h_ele_pfp_theta_data);
+//***************************************************************************
+//***************************************************************************
 void LeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_data);
+//***************************************************************************
+//***************************************************************************
+void XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, std::vector<TH1 * > * h_ele_pfp_xyz_data);
+//***************************************************************************
+//***************************************************************************
+void EnergyCosThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        TH2 * h_ele_eng_costheta_data);
+//***************************************************************************
+//***************************************************************************
 
 };
 

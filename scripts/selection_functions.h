@@ -95,20 +95,33 @@ void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> *
 static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int intime_counter, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
+static void PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * has_track,
+                                std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr);
+//***************************************************************************
+//***************************************************************************
 std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0,
                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ);
 //***************************************************************************
 //***************************************************************************
-double calcNumNucleons(double _x1, double _x2, double _y1,
-                       double _y2, double _z1, double _z2);
+static double calcNumNucleons(double _x1, double _x2, double _y1,
+                              double _y2, double _z1, double _z2);
 //***************************************************************************
 //***************************************************************************
-void calcXSec(double _x1, double _x2, double _y1,
-              double _y2, double _z1, double _z2,
-              int n_total, int n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
+static void calcXSec(double _x1, double _x2, double _y1,
+                     double _y2, double _z1, double _z2,
+                     int n_total, int n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************
 //***************************************************************************
-void xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_energy, double stat_error);
+static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_cc_mixed,
+                     double final_counter_nue_cc_out_fv, double final_counter_cosmic, double final_counter_nc, double final_counter_numu_cc,
+                     double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
+                     double final_counter_other_mixed, double final_counter_intime,
+                     double intime_scale_factor, double final_counter_data, double data_scale_factor,
+                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double flux,
+                     std::vector<double> selected_energy_vector, double genie_xsec, const int total_mc_entries_inFV);
+//***************************************************************************
+//***************************************************************************
+static void xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_energy, double stat_error);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -862,7 +875,8 @@ void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, doubl
                           TH2 * post_cuts_num_tracks_showers_purity_mec,
                           TH2 * post_cuts_num_tracks_showers_purity_total,
                           TH2 * post_cuts_num_tracks_showers_signal_total,
-                          TH2 * post_cuts_num_tracks_showers_bkg_total);
+                          TH2 * post_cuts_num_tracks_showers_bkg_total,
+                          TH2 * post_cuts_num_tracks_showers_total_total);
 //***************************************************************************
 //***************************************************************************
 void LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -879,6 +893,44 @@ void LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH2D * h_ele_theta_phi_cosmic,
                      TH2D * h_ele_theta_phi_other_mixed,
                      TH2D * h_ele_theta_phi_unmatched);
+//***************************************************************************
+//***************************************************************************
+void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                 double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                 double vtxX, double vtxY, double vtxZ,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_unmatched);
+void XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                       std::vector<TH1 *> * h_ele_pfp_xyz_intime);
+//***************************************************************************
+//***************************************************************************
+void EnergyCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                    double vtxX, double vtxY, double vtxZ,
+                    TH2 * h_ele_eng_costheta_nue_cc,
+                    TH2 * h_ele_eng_costheta_nue_cc_out_fv,
+                    TH2 * h_ele_eng_costheta_nue_cc_mixed,
+                    TH2 * h_ele_eng_costheta_numu_cc,
+                    TH2 * h_ele_eng_costheta_numu_cc_mixed,
+                    TH2 * h_ele_eng_costheta_nc,
+                    TH2 * h_ele_eng_costheta_nc_pi0,
+                    TH2 * h_ele_eng_costheta_cosmic,
+                    TH2 * h_ele_eng_costheta_other_mixed,
+                    TH2 * h_ele_eng_costheta_unmatched);
+void EnergyCosThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                          TH2 * h_ele_eng_costheta_intime);
 //***************************************************************************
 //***************************************************************************
 };

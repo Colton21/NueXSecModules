@@ -798,5 +798,50 @@ void selection_functions_data::FailureReasonData(std::vector<xsecAna::TPCObjectC
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               std::vector<TH1 * > * h_ele_pfp_xyz_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		h_ele_pfp_xyz_data->at(0)->Fill(tpc_vtx_x);
+		h_ele_pfp_xyz_data->at(1)->Fill(tpc_vtx_y);
+		h_ele_pfp_xyz_data->at(2)->Fill(tpc_vtx_z);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::EnergyCosThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                  TH2 * h_ele_eng_costheta_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double momentum = leading_shower.pfpMomentum();
+		const double costheta = leading_shower.pfpDirZ();
+		h_ele_eng_costheta_data->Fill(momentum, costheta);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 
 //end functions

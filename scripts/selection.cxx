@@ -100,6 +100,11 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	std::vector<int> * data_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
 	data_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
 
+	std::vector<TH1 * > * h_ele_pfp_xyz_data = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_data->push_back(h_ele_pfp_x_data);
+	h_ele_pfp_xyz_data->push_back(h_ele_pfp_y_data);
+	h_ele_pfp_xyz_data->push_back(h_ele_pfp_z_data);
+
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(22, 0);
 
@@ -116,6 +121,14 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 		std::vector<xsecAna::TPCObjectContainer> * data_tpc_object_container_v = nullptr;
 		data_tree->SetBranchAddress("TpcObjectContainerV", &data_tpc_object_container_v);
+
+		//need a text file with the run, subrun output
+		std::ofstream run_subrun_file;
+		run_subrun_file.open("run_subrun_list.txt");
+		int data_run = 0;
+		int data_subrun = 0;
+		int last_data_run = 0;
+		int last_data_subrun = 0;
 
 		std::cout << "=====================" << std::endl;
 		std::cout << "======== Data =======" << std::endl;
@@ -167,6 +180,19 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 				if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 				continue;
 			}        //false
+
+			for(auto const tpc_obj : * data_tpc_object_container_v)
+			{
+				data_run    = tpc_obj.RunNumber();
+				data_subrun = tpc_obj.SubRunNumber();
+				if(data_run != last_data_run && data_subrun != last_data_subrun)
+				{
+					run_subrun_file << data_run << " " << data_subrun << "\n";
+					break;
+				}
+			}
+			last_data_run = data_run;
+			last_data_subrun = data_subrun;
 
 			//XY Position of largest flash
 			std::vector < double > largest_flash_v = data_largest_flash_v_v->at(event);
@@ -281,8 +307,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//****** open angle cut for the leading shower ********
 			//******************************************************
 			_data_functions_instance.selection_functions_data::NumShowersOpenAngleData(data_tpc_object_container_v, passed_tpco_data, h_pfp_shower_open_angle_data);
-			_data_functions_instance.selection_functions_data::PostCutOpenAngleData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_leading_shower_open_angle_data);
-			_data_functions_instance.selection_functions_data::PostCutOpenAngle1ShowerData(tpc_object_container_v, passed_tpco_data, _verbose, h_leading_shower_open_angle_1_data);
+			_data_functions_instance.selection_functions_data::PostCutOpenAngleData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                        _verbose, h_leading_shower_open_angle_data);
+			_data_functions_instance.selection_functions_data::PostCutOpenAngle1ShowerData(tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_leading_shower_open_angle_1_data);
 			_data_functions_instance.selection_functions_data::PostCutOpenAngle2PlusShowerData(data_tpc_object_container_v, passed_tpco_data,
 			                                                                                   _verbose, h_leading_shower_open_angle_2plus_data);
 			_cuts_instance.selection_cuts::OpenAngleCut(data_tpc_object_container_v, passed_tpco_data, tolerance_open_angle, _verbose);
@@ -300,7 +328,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
 
 			//***************************************************************************
-			_data_functions_instance.selection_functions_data::SecondaryShowersDistData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_second_shwr_dist_data);
+			_data_functions_instance.selection_functions_data::SecondaryShowersDistData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                            _verbose, h_second_shwr_dist_data);
 			_cuts_instance.selection_cuts::SecondaryShowersDistCut(data_tpc_object_container_v, passed_tpco_data, _verbose, dist_tolerance);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_secondary_shower_counter_v);
@@ -332,6 +361,9 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_data_functions_instance.selection_functions_data::LeadingPhiData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_phi_last_data);
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_last_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_cos_theta_last_data);
+			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_xyz_data);
+			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
+
 
 			//delete at the very end!
 			delete passed_tpco_data;
@@ -373,6 +405,11 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	intime_hit_threshold_collection_counter_v->resize(22, 0);
 	std::vector<int> * intime_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
 	intime_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+
+	std::vector<TH1 * > * h_ele_pfp_xyz_intime = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_x_intime);
+	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_y_intime);
+	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_z_intime);
 
 	std::vector<int> * tabulated_origins = new std::vector<int>;
 	tabulated_origins->resize(22, 0);
@@ -492,7 +529,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//*****************************
 			//**** vertex to flash cut ****
 			//*****************************
-			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_vtx_flash_intime);
+			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                _verbose, h_vtx_flash_intime);
 
 			_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, intime_tpc_object_container_v, tolerance, passed_tpco_intime, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
@@ -558,8 +596,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//****** open angle cut for the leading shower ********
 			//******************************************************
 			_functions_instance.selection_functions::NumShowersOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime, h_pfp_shower_open_angle_intime);
-			_functions_instance.selection_functions::PostCutOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_leading_shower_open_angle_intime);
-			_functions_instance.selection_functions::PostCutOpenAngle1ShowerInTime(tpc_object_container_v, passed_tpco_intime, _verbose, h_leading_shower_open_angle_1_intime);
+			_functions_instance.selection_functions::PostCutOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                _verbose, h_leading_shower_open_angle_intime);
+			_functions_instance.selection_functions::PostCutOpenAngle1ShowerInTime(tpc_object_container_v, passed_tpco_intime,
+			                                                                       _verbose, h_leading_shower_open_angle_1_intime);
 			_functions_instance.selection_functions::PostCutOpenAngle2PlusShowerInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                           _verbose, h_leading_shower_open_angle_2plus_intime);
 			_cuts_instance.selection_cuts::OpenAngleCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_open_angle, _verbose);
@@ -577,7 +617,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
 
 			//***************************************************************************
-			_functions_instance.selection_functions::SecondaryShowersDistInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_second_shwr_dist_intime);
+			_functions_instance.selection_functions::SecondaryShowersDistInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                    _verbose, h_second_shwr_dist_intime);
 			_cuts_instance.selection_cuts::SecondaryShowersDistCut(intime_tpc_object_container_v, passed_tpco_intime, _verbose, dist_tolerance);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_secondary_shower_counter_v);
@@ -609,6 +650,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_phi_last_intime);
 			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_theta_last_intime);
 			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_cos_theta_last_intime);
+			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_xyz_intime);
+			_functions_instance.selection_functions::EnergyCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_eng_costheta_intime);
 
 			//delete at the very end!
 			delete passed_tpco_intime;
@@ -658,6 +701,47 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	std::vector<int> * _4_shwr = new std::vector<int>;
 	_4_shwr->resize(2, 0);
 
+	std::vector<TH1 * > * h_ele_pfp_xyz_nue_cc         = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_nue_cc->push_back(h_ele_pfp_x_nue_cc);
+	h_ele_pfp_xyz_nue_cc->push_back(h_ele_pfp_y_nue_cc);
+	h_ele_pfp_xyz_nue_cc->push_back(h_ele_pfp_z_nue_cc);
+	std::vector<TH1 * > * h_ele_pfp_xyz_nue_cc_out_fv  = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_nue_cc_out_fv->push_back(h_ele_pfp_x_nue_cc_out_fv);
+	h_ele_pfp_xyz_nue_cc_out_fv->push_back(h_ele_pfp_y_nue_cc_out_fv);
+	h_ele_pfp_xyz_nue_cc_out_fv->push_back(h_ele_pfp_z_nue_cc_out_fv);
+	std::vector<TH1 * > * h_ele_pfp_xyz_nue_cc_mixed   = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_nue_cc_mixed->push_back(h_ele_pfp_x_nue_cc_mixed);
+	h_ele_pfp_xyz_nue_cc_mixed->push_back(h_ele_pfp_y_nue_cc_mixed);
+	h_ele_pfp_xyz_nue_cc_mixed->push_back(h_ele_pfp_z_nue_cc_mixed);
+	std::vector<TH1 * > * h_ele_pfp_xyz_numu_cc        = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_numu_cc->push_back(h_ele_pfp_x_numu_cc);
+	h_ele_pfp_xyz_numu_cc->push_back(h_ele_pfp_y_numu_cc);
+	h_ele_pfp_xyz_numu_cc->push_back(h_ele_pfp_z_numu_cc);
+	std::vector<TH1 * > * h_ele_pfp_xyz_numu_cc_mixed  = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_numu_cc_mixed->push_back(h_ele_pfp_x_numu_cc_mixed);
+	h_ele_pfp_xyz_numu_cc_mixed->push_back(h_ele_pfp_y_numu_cc_mixed);
+	h_ele_pfp_xyz_numu_cc_mixed->push_back(h_ele_pfp_z_numu_cc_mixed);
+	std::vector<TH1 * > * h_ele_pfp_xyz_nc             = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_nc->push_back(h_ele_pfp_x_nc);
+	h_ele_pfp_xyz_nc->push_back(h_ele_pfp_y_nc);
+	h_ele_pfp_xyz_nc->push_back(h_ele_pfp_z_nc);
+	std::vector<TH1 * > * h_ele_pfp_xyz_nc_pi0         = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_nc_pi0->push_back(h_ele_pfp_x_nc_pi0);
+	h_ele_pfp_xyz_nc_pi0->push_back(h_ele_pfp_y_nc_pi0);
+	h_ele_pfp_xyz_nc_pi0->push_back(h_ele_pfp_z_nc_pi0);
+	std::vector<TH1 * > * h_ele_pfp_xyz_cosmic         = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_cosmic->push_back(h_ele_pfp_x_cosmic);
+	h_ele_pfp_xyz_cosmic->push_back(h_ele_pfp_y_cosmic);
+	h_ele_pfp_xyz_cosmic->push_back(h_ele_pfp_z_cosmic);
+	std::vector<TH1 * > * h_ele_pfp_xyz_other_mixed    = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_other_mixed->push_back(h_ele_pfp_x_other_mixed);
+	h_ele_pfp_xyz_other_mixed->push_back(h_ele_pfp_y_other_mixed);
+	h_ele_pfp_xyz_other_mixed->push_back(h_ele_pfp_z_other_mixed);
+	std::vector<TH1 * > * h_ele_pfp_xyz_unmatched      = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_unmatched->push_back(h_ele_pfp_x_unmatched);
+	h_ele_pfp_xyz_unmatched->push_back(h_ele_pfp_y_unmatched);
+	h_ele_pfp_xyz_unmatched->push_back(h_ele_pfp_z_unmatched);
+
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	// std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
 	//         = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
@@ -705,14 +789,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end);
 	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v->size() << std::endl;
 
-	//need a text file with the run, subrun output
-	std::ofstream run_subrun_file;
-	run_subrun_file.open("run_subrun_list.txt");
-	int data_run = 0;
-	int data_subrun = 0;
-	int last_data_run = 0;
-	int last_data_subrun = 0;
-
 	//**********************************
 	//now let's do the TPCO related cuts
 	//*********************************
@@ -734,19 +810,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 			continue;
 		}//false
-
-		for(auto const tpc_obj : * tpc_object_container_v)
-		{
-			data_run    = tpc_obj.RunNumber();
-			data_subrun = tpc_obj.SubRunNumber();
-			if(data_run != last_data_run && data_subrun != last_data_subrun)
-			{
-				run_subrun_file << data_run << " " << data_subrun << "\n";
-				break;
-			}
-		}
-		last_data_run = data_run;
-		last_data_subrun = data_subrun;
 
 		double mc_cos_theta = -999;
 		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z; }
@@ -892,14 +955,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                        h_pfp_shower_numu_cc_mixed, h_pfp_shower_cosmic,
 		                                                        h_pfp_shower_other_mixed, h_pfp_shower_unmatched);
 
-		// _functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		//                                                               _x1, _x2, _y1, _y2, _z1, _z2,
-		//                                                               mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		//                                                               h_second_shwr_dist_nue_cc, h_second_shwr_dist_nue_cc_out_fv,
-		//                                                               h_second_shwr_dist_nue_cc_mixed, h_second_shwr_dist_numu_cc,
-		//                                                               h_second_shwr_dist_numu_cc_mixed, h_second_shwr_dist_nc,
-		//                                                               h_second_shwr_dist_nc_pi0, h_second_shwr_dist_cosmic,
-		//                                                               h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
 		//************************
 		//******** in fv cut *****
 		//************************
@@ -1219,7 +1274,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                 h_leading_shower_open_angle_1_unmatched);
 		_functions_instance.selection_functions::PostCutOpenAngle2PlusShower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                     h_leading_shower_open_angle_2plus_nue_cc, h_leading_shower_open_angle_2plus_nue_cc_mixed,
+		                                                                     h_leading_shower_open_angle_2plus_nue_cc,
+		                                                                     h_leading_shower_open_angle_2plus_nue_cc_mixed,
 		                                                                     h_leading_shower_open_angle_2plus_numu_cc, h_leading_shower_open_angle_2plus_nc,
 		                                                                     h_leading_shower_open_angle_2plus_cosmic, h_leading_shower_open_angle_2plus_nc_pi0,
 		                                                                     h_leading_shower_open_angle_2plus_numu_cc_mixed,
@@ -1539,6 +1595,19 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_cos_theta_last_other_mixed,
 		                                                         h_ele_cos_theta_last_unmatched);
 
+		_functions_instance.selection_functions::XYZPosition(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_ele_pfp_xyz_nue_cc,
+		                                                     h_ele_pfp_xyz_nue_cc_out_fv,
+		                                                     h_ele_pfp_xyz_nue_cc_mixed,
+		                                                     h_ele_pfp_xyz_numu_cc,
+		                                                     h_ele_pfp_xyz_numu_cc_mixed,
+		                                                     h_ele_pfp_xyz_nc,
+		                                                     h_ele_pfp_xyz_nc_pi0,
+		                                                     h_ele_pfp_xyz_cosmic,
+		                                                     h_ele_pfp_xyz_other_mixed,
+		                                                     h_ele_pfp_xyz_unmatched);
+
 		_functions_instance.selection_functions::LeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                         h_ele_pfp_momentum_nue_cc,
@@ -1634,6 +1703,19 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_theta_phi_other_mixed,
 		                                                         h_ele_theta_phi_unmatched);
 
+		_functions_instance.selection_functions::EnergyCosTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                        h_ele_eng_costheta_nue_cc,
+		                                                        h_ele_eng_costheta_nue_cc_out_fv,
+		                                                        h_ele_eng_costheta_nue_cc_mixed,
+		                                                        h_ele_eng_costheta_numu_cc,
+		                                                        h_ele_eng_costheta_numu_cc_mixed,
+		                                                        h_ele_eng_costheta_nc,
+		                                                        h_ele_eng_costheta_nc_pi0,
+		                                                        h_ele_eng_costheta_cosmic,
+		                                                        h_ele_eng_costheta_other_mixed,
+		                                                        h_ele_eng_costheta_unmatched);
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -1643,106 +1725,64 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	std::cout << "  End Selection    " << std::endl;
 	std::cout << "------------------ " << std::endl;
 
-	//change mc_nue_cc_counter to total_mc_entries_inFV once files are ready!
-
 	//we also want some metrics to print at the end
-	selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v,                  intime_scale_factor * intime_in_time_counter_v->at(0),                 "In Time");
+	//*************************************************************************************************************************
+	//*************************************************************************************************************************
+	selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v,
+	                                intime_scale_factor * intime_in_time_counter_v->at(0),                 "In Time");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_in_time_counter_v->at(0), "In Time");
-	selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v,                       intime_scale_factor * intime_pe_counter_v->at(0),                      "PE Threshold");
+	selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v,
+	                                intime_scale_factor * intime_pe_counter_v->at(0),                      "PE Threshold");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_pe_counter_v->at(0), "PE Threshold");
-	selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v,                 intime_scale_factor * intime_reco_nue_counter_v->at(0),                "Reco Nue");
+	selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v,
+	                                intime_scale_factor * intime_reco_nue_counter_v->at(0),                "Reco Nue");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_reco_nue_counter_v->at(0), "Reco Nue");
-	selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v,                    intime_scale_factor * intime_in_fv_counter_v->at(0),                   "In FV");
+	selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v,
+	                                intime_scale_factor * intime_in_fv_counter_v->at(0),                   "In FV");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_in_fv_counter_v->at(0), "In FV");
-	selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v,                intime_scale_factor * intime_vtx_flash_counter_v->at(0),               "Vtx-to-Flash");
+	selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v,
+	                                intime_scale_factor * intime_vtx_flash_counter_v->at(0),               "Vtx-to-Flash");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_vtx_flash_counter_v->at(0), "Vtx-to-Flash");
-	selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v,                intime_scale_factor * intime_shwr_tpco_counter_v->at(0),               "Shower-to-TPCO");
+	selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v,
+	                                intime_scale_factor * intime_shwr_tpco_counter_v->at(0),               "Shower-to-TPCO");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_shwr_tpco_counter_v->at(0), "Shower-to-TPCO");
-	selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v,                 intime_scale_factor * intime_trk_tpco_counter_v->at(0),                "Track-to-TPCO");
+	selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v,
+	                                intime_scale_factor * intime_trk_tpco_counter_v->at(0),                "Track-to-TPCO");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_trk_tpco_counter_v->at(0), "Track-to-TPCO");
-	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,            intime_scale_factor * intime_hit_threshold_counter_v->at(0),           "Hit Threshold");
+	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v,
+	                                intime_scale_factor * intime_hit_threshold_counter_v->at(0),           "Hit Threshold");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_hit_threshold_counter_v->at(0), "Hit Threshold");
-	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, intime_scale_factor * intime_hit_threshold_collection_counter_v->at(0),"WPlane Hit Threshold");
+	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v,
+	                                intime_scale_factor * intime_hit_threshold_collection_counter_v->at(0),"WPlane Hit Threshold");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_hit_threshold_collection_counter_v->at(0), "WPlane hit Threshold");
-	selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v,               intime_scale_factor * intime_open_angle_counter_v->at(0),              "Open Angle");
+	selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v,
+	                                intime_scale_factor * intime_open_angle_counter_v->at(0),              "Open Angle");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_open_angle_counter_v->at(0), "Open Angle");
-	selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v,                     intime_scale_factor * intime_dedx_counter_v->at(0),                    " dE / dx ");
+	selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v,
+	                                intime_scale_factor * intime_dedx_counter_v->at(0),                    " dE / dx ");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_dedx_counter_v->at(0), " dE / dx ");
-	selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v,         intime_scale_factor * intime_secondary_shower_counter_v->at(0),        ">1 Shower TPCO Dist");
+	selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v,
+	                                intime_scale_factor * intime_secondary_shower_counter_v->at(0),        ">1 Shower TPCO Dist");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_secondary_shower_counter_v->at(0), ">1 Shower TPCO Dist");
-	selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v,          intime_scale_factor * intime_hit_lengthRatio_counter_v->at(0),         "Hit Length Ratio");
+	selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v,
+	                                intime_scale_factor * intime_hit_lengthRatio_counter_v->at(0),         "Hit Length Ratio");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_hit_lengthRatio_counter_v->at(0), "Hit Length Ratio");
-	selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v,   intime_scale_factor * intime_trk_len_shwr_len_ratio_counter_v->at(0),  "TrkLen/ShwrLen Ratio");
+	selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v,
+	                                intime_scale_factor * intime_trk_len_shwr_len_ratio_counter_v->at(0),  "TrkLen/ShwrLen Ratio");
 	selection_functions_data::PrintInfoData(data_scale_factor * data_trk_len_shwr_len_ratio_counter_v->at(0), "TrkLen/ShwrLen Ratio");
 
-	std::cout << "---------------------" << std::endl;
-	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
-	std::cout << "No Track Bkg   : " << no_track->at(1) << std::endl;
-	std::cout << "Purity         : " << double(no_track->at(0)) / double(no_track->at(0) + no_track->at(1)) << std::endl;
-	std::cout << " ******************* " << std::endl;
-	std::cout << "1+ Track Signal: " << has_track->at(0) << std::endl;
-	std::cout << "1+ Track Bkg   : " << has_track->at(1) << std::endl;
-	std::cout << "Purity         : " << double(has_track->at(0)) / double(has_track->at(0) + has_track->at(1)) << std::endl;
-	std::cout << "---------------------" << std::endl;
-	std::cout << "---------------------" << std::endl;
-	std::cout << "1 Shower Signal : " << _1_shwr->at(0) << std::endl;
-	std::cout << "1 Shower Bkg    : " << _1_shwr->at(1) << std::endl;
-	std::cout << "Purity          : " << double(_1_shwr->at(0)) / double(_1_shwr->at(0) + _1_shwr->at(1)) << std::endl;
-	std::cout << " ******************* " << std::endl;
-	std::cout << "2 Shower Signal : " << _2_shwr->at(0) << std::endl;
-	std::cout << "2 Shower Bkg    : " << _2_shwr->at(1) << std::endl;
-	std::cout << "Purity          : " << double(_2_shwr->at(0)) / double(_2_shwr->at(0) + _2_shwr->at(1)) << std::endl;
-	std::cout << " ******************* " << std::endl;
-	std::cout << "3 Shower Signal : " << _3_shwr->at(0) << std::endl;
-	std::cout << "3 Shower Bkg    : " << _3_shwr->at(1) << std::endl;
-	std::cout << "Purity          : " << double(_3_shwr->at(0)) / double(_3_shwr->at(0) + _3_shwr->at(1)) << std::endl;
-	std::cout << " ******************* " << std::endl;
-	std::cout << "4+ Shower Signal: " << _4_shwr->at(0) << std::endl;
-	std::cout << "4+ Shower Bkg   : " << _4_shwr->at(1) << std::endl;
-	std::cout << "Purity          : " << double(_4_shwr->at(0)) / double(_4_shwr->at(0) + _4_shwr->at(1)) << std::endl;
-	std::cout << "---------------------" << std::endl;
-	std::cout << "---------------------" << std::endl;
-
-
-	std::vector<double> * xsec_cc = new std::vector<double>;
-	const double final_counter                = dedx_counter_v->at(7);
-	const double final_counter_nue_cc         = dedx_counter_v->at(0);
-	const double final_counter_nue_cc_mixed   = dedx_counter_v->at(1);
-	const double final_counter_nue_cc_out_fv  = dedx_counter_v->at(9);
-	const double final_counter_cosmic         = dedx_counter_v->at(2);
-	const double final_counter_nc         = dedx_counter_v->at(3);
-	const double final_counter_numu_cc        = dedx_counter_v->at(4);
-	const double final_counter_numu_cc_mixed  = dedx_counter_v->at(11);
-	const double final_counter_nc_pi0        = dedx_counter_v->at(10);
-	const double final_counter_unmatched      = dedx_counter_v->at(5);
-	const double final_counter_other_mixed    = dedx_counter_v->at(6);
-	const int n_total = final_counter;
-	const int n_bkg = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nc
-	                   + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_nc_pi0 + final_counter_unmatched + final_counter_other_mixed);
-	const double efficiency = final_counter_nue_cc / double(total_mc_entries_inFV);
-	_functions_instance.selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
-	                                                  n_total, n_bkg, flux,
-	                                                  efficiency, xsec_cc);
-
-	std::cout << "-------------------------" << std::endl;
-	std::cout << " Cross Section Results:  " << std::endl;
-	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
-	          << xsec_cc->at(1) << " +/- (sys) "
-	          << xsec_cc->at(2) << std::endl;
-	std::cout << "-------------------------" << std::endl;
-	xsec_cc->clear();
-	_functions_instance.selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
-	                                                  total_mc_entries_inFV, 0, flux,
-	                                                  1, xsec_cc);
-	std::cout << "-------------------------" << std::endl;
-	std::cout << " Cross Section Results (Truth):  " << std::endl;
-	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
-	          << xsec_cc->at(1) << " +/- (sys) "
-	          << xsec_cc->at(2) << std::endl;
-	std::cout << "-------------------------" << std::endl;
-	std::cout << "-------------------------" << std::endl;
-	std::cout << " Genie value of Flux " << '\n' <<
-	        " Integrated Xsec:    " << genie_xsec << std::endl;
+	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
+	//*************************************************************************************************************************
+	//*************************************************************************************************************************
+	selection_functions::XSecWork(trk_len_shwr_len_ratio_counter_v->at(7), trk_len_shwr_len_ratio_counter_v->at(0), trk_len_shwr_len_ratio_counter_v->at(1),
+	                              trk_len_shwr_len_ratio_counter_v->at(9), trk_len_shwr_len_ratio_counter_v->at(2),
+	                              trk_len_shwr_len_ratio_counter_v->at(3), trk_len_shwr_len_ratio_counter_v->at(4),
+	                              trk_len_shwr_len_ratio_counter_v->at(11), trk_len_shwr_len_ratio_counter_v->at(10), trk_len_shwr_len_ratio_counter_v->at(5),
+	                              trk_len_shwr_len_ratio_counter_v->at(6), intime_trk_len_shwr_len_ratio_counter_v->at(0),
+	                              intime_scale_factor, data_trk_len_shwr_len_ratio_counter_v->at(0), data_scale_factor,
+	                              _x1, _x2, _y1, _y2, _z1, _z2, flux, selected_energy_vector, genie_xsec, total_mc_entries_inFV);
+	//*************************************************************************************************************************
+	//*************************************************************************************************************************
 
 	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v, _post_cuts_verbose); }
 	_functions_instance.selection_functions::PostCutVectorPlots(post_cuts_v, _post_cuts_verbose,
@@ -1766,7 +1806,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                                              h_post_cuts_num_tracks_showers_purity_mec,
 	                                                              h_post_cuts_num_tracks_showers_purity_total,
 	                                                              h_post_cuts_num_tracks_showers_signal_total,
-	                                                              h_post_cuts_num_tracks_showers_bkg_total);
+	                                                              h_post_cuts_num_tracks_showers_bkg_total,
+	                                                              h_post_cuts_num_tracks_showers_total_total);
 
 //********************//
 //**** Histograms ****//
@@ -1820,12 +1861,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 	histogram_functions::PlotTEfficiency (h_post_cuts_num_tracks_showers_signal_total, h_post_cuts_num_tracks_showers_bkg_total,
 	                                      ";Num Reco Showers; Num Reco Tracks", "post_cuts_num_tracks_showers_eff_purity_total.pdf");
-
-	double all_energy = 0;
-	for(auto const energy : selected_energy_vector) {all_energy += energy; }
-	const double average_true_energy = all_energy / selected_energy_vector.size();
-	_functions_instance.selection_functions::xsec_plot(_verbose, genie_xsec, xsec_cc->at(0), average_true_energy, xsec_cc->at(1));
-
 
 	histogram_functions::Plot2DHistogram (h_tracks_showers, "Post Cuts - Showers/Tracks per Candidate Nue TPC Object",
 	                                      "Reco Tracks", "Reco Showers", "post_cuts_showers_tracks.pdf");
@@ -2121,22 +2156,26 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                     "Reconstructed Showers in Candidate Neutrino Object", "", "selected_pfp_shower_stack_last.pdf");
 
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_qe_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_qe_last.pdf");
-	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_out_fv_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_out_fv_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_out_fv_last, "", "PFP Tracks", "PFP Showers",
+	                                      "selected_pfp_track_shower_nue_cc_out_fv_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_res_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_res_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_dis_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_dis_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_coh_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_coh_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_mec_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_mec_last.pdf");
-	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_mixed_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nue_cc_mixed_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nue_cc_mixed_last, "", "PFP Tracks", "PFP Showers",
+	                                      "selected_pfp_track_shower_nue_cc_mixed_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_qe_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_qe_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_res_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_res_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_dis_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_dis_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_coh_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_coh_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_mec_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_mec_last.pdf");
-	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_mixed_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_numu_cc_mixed_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_numu_cc_mixed_last, "", "PFP Tracks", "PFP Showers",
+	                                      "selected_pfp_track_shower_numu_cc_mixed_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nc_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nc_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_nc_pi0_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_nc_pi0_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_cosmic_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_cosmic_last.pdf");
-	histogram_functions::Plot2DHistogram (h_pfp_track_shower_other_mixed_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_other_mixed_last.pdf");
+	histogram_functions::Plot2DHistogram (h_pfp_track_shower_other_mixed_last, "", "PFP Tracks", "PFP Showers",
+	                                      "selected_pfp_track_shower_other_mixed_last.pdf");
 	histogram_functions::Plot2DHistogram (h_pfp_track_shower_unmatched_last, "", "PFP Tracks", "PFP Showers", "selected_pfp_track_shower_unmatched_last.pdf");
 
 	const char * str_origin[3] = {"kBeamNeutrino", "kCosmicRay", "kUnknown"};
@@ -3030,6 +3069,23 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                          h_leading_shwr_hits_2shwr_data, data_scale_factor,
 	                                          "", "Leading Shower Hits (2+ Shower Events)", "", "post_cuts_leading_hits_2shwr_data.pdf");
 
+	histogram_functions::PlotSimpleStackData(h_ele_pfp_x_nue_cc, h_ele_pfp_x_nue_cc_mixed, h_ele_pfp_x_numu_cc, h_ele_pfp_x_numu_cc_mixed,
+	                                         h_ele_pfp_x_cosmic, h_ele_pfp_x_nc, h_ele_pfp_x_nc_pi0, h_ele_pfp_x_other_mixed,
+	                                         h_ele_pfp_x_unmatched, h_ele_pfp_x_intime, intime_scale_factor,
+	                                         h_ele_pfp_x_data, data_scale_factor,
+	                                         "", "Reco Vertex X [cm]", "", "post_cuts_leading_pfp_x_data.pdf");
+	histogram_functions::PlotSimpleStackData(h_ele_pfp_y_nue_cc, h_ele_pfp_y_nue_cc_mixed, h_ele_pfp_y_numu_cc, h_ele_pfp_y_numu_cc_mixed,
+	                                         h_ele_pfp_y_cosmic, h_ele_pfp_y_nc, h_ele_pfp_y_nc_pi0, h_ele_pfp_y_other_mixed,
+	                                         h_ele_pfp_y_unmatched, h_ele_pfp_y_intime, intime_scale_factor,
+	                                         h_ele_pfp_y_data, data_scale_factor,
+	                                         "", "Reco Vertex Y [cm]", "", "post_cuts_leading_pfp_y_data.pdf");
+	histogram_functions::PlotSimpleStackData(h_ele_pfp_z_nue_cc, h_ele_pfp_z_nue_cc_mixed, h_ele_pfp_z_numu_cc, h_ele_pfp_z_numu_cc_mixed,
+	                                         h_ele_pfp_z_cosmic, h_ele_pfp_z_nc, h_ele_pfp_z_nc_pi0, h_ele_pfp_z_other_mixed,
+	                                         h_ele_pfp_z_unmatched, h_ele_pfp_z_intime, intime_scale_factor,
+	                                         h_ele_pfp_z_data, data_scale_factor,
+	                                         "", "Reco Vertex Z [cm]", "", "post_cuts_leading_pfp_z_data.pdf");
+
+
 	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_qe, "Post Cuts - Showers/Tracks Purity - QE",
 	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_qe.pdf", "colz text", 3, 2);
 	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_res, "Post Cuts - Showers/Tracks Purity - Res",
@@ -3047,6 +3103,15 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                    h_ele_theta_phi_numu_cc_mixed, h_ele_theta_phi_cosmic, h_ele_theta_phi_nc,
 	                                    h_ele_theta_phi_nc_pi0, h_ele_theta_phi_other_mixed, h_ele_theta_phi_unmatched,
 	                                    0.15, 0.35, 0.65, 0.90, "", "Phi [Degrees]", "Theta [Degrees]", "post_cuts_theta_phi_scatter.pdf");
+
+	histogram_functions::Plot2DHistogram(h_ele_eng_costheta_nue_cc, "", "Reco Electron Momentum [GeV]", "Reco Electron Cos(#theta)",
+	                                     "post_cuts_leading_pfp_eng_costheta_nue_cc.pdf");
+	histogram_functions::LegoStackData(h_ele_eng_costheta_nue_cc, h_ele_eng_costheta_nue_cc_mixed, h_ele_eng_costheta_numu_cc, h_ele_eng_costheta_numu_cc_mixed,
+	                                   h_ele_eng_costheta_cosmic, h_ele_eng_costheta_nc, h_ele_eng_costheta_nc_pi0, h_ele_eng_costheta_other_mixed,
+	                                   h_ele_eng_costheta_unmatched, h_ele_eng_costheta_intime, intime_scale_factor,
+	                                   h_ele_eng_costheta_data, data_scale_factor, 0.75, 0.95, 0.70, 0.95,
+	                                   "", "Reco Electron Momentum [GeV]", "Reco Electron Cos(#theta)", "post_cuts_leading_pfp_eng_costheta_data.pdf");
+
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
