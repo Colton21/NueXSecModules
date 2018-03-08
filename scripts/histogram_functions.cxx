@@ -174,42 +174,46 @@ void histogram_functions::Plot2DHistogramOffSet (TH2 * histogram, const double l
 	histogram->SetStats(kFALSE);
 	c1->Print(print_name);
 }
-void histogram_functions::PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+void histogram_functions::PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed,
+                                           TH1 * h_cosmic, TH1 * h_nc,
                                            TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, const char * title,
                                            const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	//default legend position
 	//0.75,0.75,0.95,0.95
-	PlotSimpleStack(h_nue_cc, h_nue_cc_mixed, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	PlotSimpleStack(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                h_nc_pi0, h_other_mixed, h_unmatched,
 	                0.75, 0.95, 0.75, 0.95,
 	                title, x_axis_name, y_axis_name, print_name);
 }
-void histogram_functions::PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+void histogram_functions::PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                                 TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                                  TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                                  const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	//default legend position
 	//0.75,0.75,0.95,0.95
-	PlotSimpleStackInTime(h_nue_cc, h_nue_cc_mixed, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	PlotSimpleStackInTime(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                      h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
 	                      0.75, 0.95, 0.75, 0.95,
 	                      title, x_axis_name, y_axis_name, print_name);
 }
-void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                               TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                                TH1 * h_data, const double data_scale_factor,
                                                const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	//default legend position
 	//0.75,0.75,0.95,0.95
-	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
 	                    h_data, data_scale_factor,
 	                    0.75, 0.95, 0.75, 0.95,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
-void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                          TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                           TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched,
                                           const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                           const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
@@ -226,17 +230,20 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	h_numu_cc_mixed->SetStats(kFALSE);
 	h_other_mixed->SetStats(kFALSE);
 	h_unmatched->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
 	h_nue_cc->SetFillColor(30);
 	h_nue_cc_mixed->SetFillColor(38);
 	h_numu_cc->SetFillColor(28);
 	h_nc_pi0->SetFillColor(36);
 	h_cosmic->SetFillColor(1);
 	h_nc->SetFillColor(46);
-	h_numu_cc_mixed->SetFillColor(20);
+	h_nue_cc_out_fv->SetFillColor(20);
+	h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
 	stack->Add(h_nue_cc);
 	stack->Add(h_nue_cc_mixed);
+	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
 	stack->Add(h_numu_cc);
 	stack->Add(h_numu_cc_mixed);
@@ -252,9 +259,10 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_stack->AddEntry(h_nue_cc,          "Nue CC", "f");
 	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed", "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV", "f");
 	leg_stack->AddEntry(h_cosmic,          "Cosmic", "f");
 	leg_stack->AddEntry(h_numu_cc,         "Numu CC", "f");
-	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
+	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
 	leg_stack->AddEntry(h_nc,              "NC", "f");
 	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0", "f");
 	leg_stack->AddEntry(h_other_mixed,     "Other Mixed", "f");
@@ -262,7 +270,8 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	leg_stack->Draw();
 	c1->Print(print_name);
 }
-void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                                TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                                 TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                                 const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                                 const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
@@ -280,13 +289,15 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	h_other_mixed->SetStats(kFALSE);
 	h_unmatched->SetStats(kFALSE);
 	h_intime->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
 	h_nue_cc->SetFillColor(30);
 	h_nue_cc_mixed->SetFillColor(38);
 	h_numu_cc->SetFillColor(28);
 	h_nc_pi0->SetFillColor(36);
 	h_cosmic->SetFillColor(1);
 	h_nc->SetFillColor(46);
-	h_numu_cc_mixed->SetFillColor(20);
+	h_nue_cc_out_fv->SetFillColor(20);
+	h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
@@ -295,6 +306,7 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	h_intime->Scale(intime_scale_factor);
 	stack->Add(h_nue_cc);
 	stack->Add(h_nue_cc_mixed);
+	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
 	stack->Add(h_numu_cc);
 	stack->Add(h_numu_cc_mixed);
@@ -311,9 +323,10 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
 	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV",  "f");
 	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
 	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
-	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
+	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
 	leg_stack->AddEntry(h_nc,              "NC",            "f");
 	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
 	leg_stack->AddEntry(h_other_mixed,     "Other Mixed",   "f");
@@ -322,7 +335,8 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	leg_stack->Draw();
 	c1->Print(print_name);
 }
-void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                              TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                               TH1 * h_data, const double data_scale_factor,
                                               const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
@@ -342,13 +356,15 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_unmatched->SetStats(kFALSE);
 	h_intime->SetStats(kFALSE);
 	h_data->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
 	h_nue_cc->SetFillColor(30);
 	h_nue_cc_mixed->SetFillColor(38);
 	h_numu_cc->SetFillColor(28);
 	h_nc_pi0->SetFillColor(36);
 	h_cosmic->SetFillColor(1);
 	h_nc->SetFillColor(46);
-	h_numu_cc_mixed->SetFillColor(20);
+	h_nue_cc_out_fv->SetFillColor(20);
+	h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
@@ -371,7 +387,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	                        h_nc_pi0->Integral() +
 	                        h_other_mixed->Integral() +
 	                        h_unmatched->Integral() +
-	                        h_intime->Integral();
+	                        h_intime->Integral() +
+	                        h_nue_cc_out_fv->Integral();
 
 	h_nue_cc->Scale(1./integral);
 	h_nue_cc_mixed->Scale(1./integral);
@@ -383,8 +400,10 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_other_mixed->Scale(1./integral);
 	h_unmatched->Scale(1./integral);
 	h_intime->Scale(1./integral);
+	h_nue_cc_out_fv->Scale(1./integral);
 	stack->Add(h_nue_cc);
 	stack->Add(h_nue_cc_mixed);
+	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
 	stack->Add(h_numu_cc);
 	stack->Add(h_numu_cc_mixed);
@@ -407,6 +426,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
 	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV",  "f");
 	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
 	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
 	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");

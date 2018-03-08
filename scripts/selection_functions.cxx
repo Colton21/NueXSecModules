@@ -785,6 +785,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	const double efficiency = final_counter_nue_cc / double(total_mc_entries_inFV);
 	const double efficiency_stat_err = (1 / sqrt(total_mc_entries_inFV)) * sqrt(efficiency * (1 - efficiency));
 
+	std::cout << "--- Cross Section Calculations ---" << std::endl;
 	//******************************
 	//******** Data ****************
 	//******************************
@@ -795,7 +796,6 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	double xsec_cc_data = xsec_cc->at(0);
 	double xsec_cc_stat_data = xsec_cc->at(0) * (pow((sqrt(n_total_data) / n_total_data), 2) + pow((efficiency_stat_err / efficiency), 2));
 
-	std::cout << "--- Cross Section Calculations ---" << std::endl;
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Cross Section Results (Data):  " << std::endl;
 	std::cout << " " << xsec_cc_data << " +/- (stats) "

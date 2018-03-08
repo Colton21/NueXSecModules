@@ -29,6 +29,8 @@ const double intime_scale_factor = 1.5946470;
 /*
    scale via POT - 1.23e20 MC / 2.189e19 POT for full april sample
    upscale Data by: 5.62
+   but if MC is downscaled by EXT difference, then we do 5.62 / 1.5946470
+   = 3.52
  */
 
 const double data_scale_factor = 1.0;
