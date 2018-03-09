@@ -182,6 +182,7 @@ TH2I * h_tracks_showers_numu    = new TH2I("h_tracks_showers_numu", "h_tracks_sh
 
 TH1D * h_leading_shower_open_angle_nue_cc        = new TH1D("h_leading_shower_open_angle_nue_cc",        "h_leading_shower_open_angle_nue_cc",        25, 0, 50);
 TH1D * h_leading_shower_open_angle_nue_cc_mixed  = new TH1D("h_leading_shower_open_angle_nue_cc_mixed",  "h_leading_shower_open_angle_nue_cc_mixed",  25, 0, 50);
+TH1D * h_leading_shower_open_angle_nue_cc_out_fv = new TH1D("h_leading_shower_open_angle_nue_cc_out_fv", "h_leading_shower_open_angle_nue_cc_out_fv", 25, 0, 50);
 TH1D * h_leading_shower_open_angle_numu_cc       = new TH1D("h_leading_shower_open_angle_numu_cc",       "h_leading_shower_open_angle_numu_cc",       25, 0, 50);
 TH1D * h_leading_shower_open_angle_nc            = new TH1D("h_leading_shower_open_angle_nc",            "h_leading_shower_open_angle_nc",            25, 0, 50);
 TH1D * h_leading_shower_open_angle_cosmic        = new TH1D("h_leading_shower_open_angle_cosmic",        "h_leading_shower_open_angle_cosmic",        25, 0, 50);
@@ -194,6 +195,7 @@ TH1D * h_leading_shower_open_angle_data          = new TH1D("h_leading_shower_op
 
 TH1D * h_leading_shower_open_angle_1_nue_cc        = new TH1D("h_leading_shower_open_angle_1_nue_cc",        "h_leading_shower_open_angle_1_nue_cc",        25, 0, 50);
 TH1D * h_leading_shower_open_angle_1_nue_cc_mixed  = new TH1D("h_leading_shower_open_angle_1_nue_cc_mixed",  "h_leading_shower_open_angle_1_nue_cc_mixed",  25, 0, 50);
+TH1D * h_leading_shower_open_angle_1_nue_cc_out_fv = new TH1D("h_leading_shower_open_angle_1_nue_cc_out_fv", "h_leading_shower_oepn_angle_1_nue_cc_out_fv", 25, 0, 50);
 TH1D * h_leading_shower_open_angle_1_numu_cc       = new TH1D("h_leading_shower_open_angle_1_numu_cc",       "h_leading_shower_open_angle_1_numu_cc",       25, 0, 50);
 TH1D * h_leading_shower_open_angle_1_nc            = new TH1D("h_leading_shower_open_angle_1_nc",            "h_leading_shower_open_angle_1_nc",            25, 0, 50);
 TH1D * h_leading_shower_open_angle_1_cosmic        = new TH1D("h_leading_shower_open_angle_1_cosmic",        "h_leading_shower_open_angle_1_cosmic",        25, 0, 50);
@@ -206,6 +208,7 @@ TH1D * h_leading_shower_open_angle_1_data          = new TH1D("h_leading_shower_
 
 TH1D * h_leading_shower_open_angle_2plus_nue_cc        = new TH1D("h_leading_shower_open_angle_2plus_nue_cc",        "h_leading_shower_open_angle_2plus_nue_cc",        25, 0, 50);
 TH1D * h_leading_shower_open_angle_2plus_nue_cc_mixed  = new TH1D("h_leading_shower_open_angle_2plus_nue_cc_mixed",  "h_leading_shower_open_angle_2plus_nue_cc_mixed",  25, 0, 50);
+TH1D * h_leading_shower_open_angle_2plus_nue_cc_out_fv = new TH1D("h_leading_shower_open_angle_2plus_nue_cc_out_fv", "h_leading_shower_open_angle_2plus_nue_cc_out_fv", 25, 0, 50);
 TH1D * h_leading_shower_open_angle_2plus_numu_cc       = new TH1D("h_leading_shower_open_angle_2plus_numu_cc",       "h_leading_shower_open_angle_2plus_numu_cc",       25, 0, 50);
 TH1D * h_leading_shower_open_angle_2plus_nc            = new TH1D("h_leading_shower_open_angle_2plus_nc",            "h_leading_shower_open_angle_2plus_nc",            25, 0, 50);
 TH1D * h_leading_shower_open_angle_2plus_cosmic        = new TH1D("h_leading_shower_open_angle_2plus_cosmic",        "h_leading_shower_open_angle_2plus_cosmic",        25, 0, 50);
@@ -218,6 +221,7 @@ TH1D * h_leading_shower_open_angle_2plus_data          = new TH1D("h_leading_sho
 
 TH1D * h_trk_vtx_dist_nue_cc        = new TH1D("h_trk_vtx_dist_nue_cc",        "h_trk_vtx_dist_nue_cc",        25, 0, 20);
 TH1D * h_trk_vtx_dist_nue_cc_mixed  = new TH1D("h_trk_vtx_dist_nue_cc_mixed",  "h_trk_vtx_dist_nue_cc_mixed",  25, 0, 20);
+TH1D * h_trk_vtx_dist_nue_cc_out_fv = new TH1D("h_trk_vtx_dist_nue_cc_out_fv", "h_trk_vtx_dist_nue_cc_out_fv", 25, 0, 20);
 TH1D * h_trk_vtx_dist_numu_cc       = new TH1D("h_trk_vtx_dist_numu_cc",       "h_trk_vtx_dist_numu_cc",       25, 0, 20);
 TH1D * h_trk_vtx_dist_nc            = new TH1D("h_trk_vtx_dist_nc",            "h_trk_vtx_dist_nc",            25, 0, 20);
 TH1D * h_trk_vtx_dist_cosmic        = new TH1D("h_trk_vtx_dist_cosmic",        "h_trk_vtx_dist_cosmic",        25, 0, 20);
@@ -425,6 +429,7 @@ TH1D * h_pfp_shower_unmatched_last     = new TH1D("h_pfp_shower_unmatched_last",
 
 TH1D * h_vtx_flash_nue_cc        = new TH1D("h_vtx_flash_nue_cc",         "h_vtx_flash_nue_cc",        40, 0, 200);
 TH1D * h_vtx_flash_nue_cc_mixed  = new TH1D("h_vtx_flash_nue_cc_mixed",   "h_vtx_flash_nue_cc_mixed",  40, 0, 200);
+TH1D * h_vtx_flash_nue_cc_out_fv = new TH1D("h_vtx_flash_nue_cc_out_fv",  "h_vtx_flash_nue_cc_out_fv", 40, 0, 200);
 TH1D * h_vtx_flash_numu_cc       = new TH1D("h_vtx_flash_numu_cc",        "h_vtx_flash_numu_cc_mixed", 40, 0, 200);
 TH1D * h_vtx_flash_nc_pi0        = new TH1D("h_vtx_flash_nc_pi0",         "h_vtx_flash_nc_pi0",        40, 0, 200);
 TH1D * h_vtx_flash_cosmic        = new TH1D("h_vtx_flash_cosmic",         "h_vtx_flash_cosmic",        40, 0, 200);
@@ -437,6 +442,7 @@ TH1D * h_vtx_flash_data          = new TH1D("h_vtx_flash_data",           "h_vtx
 
 TH1D * h_shwr_vtx_dist_nue_cc        = new TH1D("h_shwr_vtx_dist_nue_cc",         "h_shwr_vtx_dist_nue_cc",        20, 0, 20);
 TH1D * h_shwr_vtx_dist_nue_cc_mixed  = new TH1D("h_shwr_vtx_dist_nue_cc_mixed",   "h_shwr_vtx_dist_nue_cc_mixed",  20, 0, 20);
+TH1D * h_shwr_vtx_dist_nue_cc_out_fv = new TH1D("h_shwr_vtx_dist_nue_cc_out_fv",  "h_shwr_vtx_dist_nue_cc_out_fv", 20, 0, 20);
 TH1D * h_shwr_vtx_dist_numu_cc       = new TH1D("h_shwr_vtx_dist_numu_cc",        "h_shwr_vtx_dist_numu_cc",       20, 0, 20);
 TH1D * h_shwr_vtx_dist_nc_pi0        = new TH1D("h_shwr_vtx_dist_nc_pi0",         "h_shwr_vtx_dist_nc_pi0",        20, 0, 20);
 TH1D * h_shwr_vtx_dist_cosmic        = new TH1D("h_shwr_vtx_dist_cosmic",         "h_shwr_vtx_dist_cosmic",        20, 0, 20);

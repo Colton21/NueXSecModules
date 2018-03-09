@@ -245,8 +245,9 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	stack->Add(h_nue_cc_mixed);
 	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
+	h_numu_cc->Add(h_numu_cc_mixed, 1);
 	stack->Add(h_numu_cc);
-	stack->Add(h_numu_cc_mixed);
+	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc);
 	stack->Add(h_nc_pi0);
 	stack->Add(h_other_mixed);
@@ -308,8 +309,9 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	stack->Add(h_nue_cc_mixed);
 	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
+	h_numu_cc->Add(h_numu_cc_mixed, 1);
 	stack->Add(h_numu_cc);
-	stack->Add(h_numu_cc_mixed);
+	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc);
 	stack->Add(h_nc_pi0);
 	stack->Add(h_other_mixed);
@@ -405,8 +407,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	stack->Add(h_nue_cc_mixed);
 	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
+	h_numu_cc->Add(h_numu_cc_mixed, 1);
 	stack->Add(h_numu_cc);
-	stack->Add(h_numu_cc_mixed);
+	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc);
 	stack->Add(h_nc_pi0);
 	stack->Add(h_other_mixed);
@@ -429,7 +432,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV",  "f");
 	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
 	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
-	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
+	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
 	leg_stack->AddEntry(h_nc,              "NC",            "f");
 	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
 	leg_stack->AddEntry(h_other_mixed,     "Other Mixed",   "f");
