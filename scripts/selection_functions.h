@@ -933,5 +933,12 @@ void EnergyCosThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_
                           TH2 * h_ele_eng_costheta_intime);
 //***************************************************************************
 //***************************************************************************
+void TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
+                 double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                 double vtxX, double vtxY, double vtxZ, double mc_ele_momentum, double mc_ele_cos_theta,
+                 TH2D * h_true_reco_ele_momentum, TH2D * h_true_reco_ele_costheta, TH1D * h_true_num_e);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

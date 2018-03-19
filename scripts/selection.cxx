@@ -811,6 +811,21 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			continue;
 		}//false
 
+		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
+		_cuts_instance.selection_cuts::GetOrigins(tpc_object_container_v, tpco_origin_v);
+
+		//XY Position of largest flash
+		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
+
+		//List of TPC Objects which pass the cuts
+		std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
+		passed_tpco->resize(tpc_object_container_v->size());
+		for(int i = 0; i < passed_tpco->size(); i++)
+		{
+			passed_tpco->at(i).first = 1;
+			passed_tpco->at(i).second = "Passed";
+		}
+
 		double mc_cos_theta = -999;
 		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z; }
 		const double mc_phi       = atan2(mc_nu_dir_y, mc_nu_dir_x);
@@ -846,20 +861,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 				h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
 				total_mc_entries_inFV++;
 			}
-		}
-		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
-		_cuts_instance.selection_cuts::GetOrigins(tpc_object_container_v, tpco_origin_v);
-
-		//XY Position of largest flash
-		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
-
-		//List of TPC Objects which pass the cuts
-		std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
-		passed_tpco->resize(tpc_object_container_v->size());
-		for(int i = 0; i < passed_tpco->size(); i++)
-		{
-			passed_tpco->at(i).first = 1;
-			passed_tpco->at(i).second = "Passed";
 		}
 		//***********************************************************
 		//this is where the in-time optical cut again takes effect
@@ -915,6 +916,13 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
 			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
 			                                                             h_shwr_hits_nu_eng_zoom, h_shwr_hits_ele_eng_zoom);
+			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2) == true)
+			{
+				_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
+				                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				                                                     mc_ele_momentum, mc_ele_cos_theta,
+				                                                     h_true_reco_ele_momentum_pre, h_true_reco_ele_costheta_pre, h_true_num_e_pre);
+			}
 		}
 		_functions_instance.selection_functions::TopologyPlots1(tpc_object_container_v, passed_tpco, has_pi0,
 		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -1440,6 +1448,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 				_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
 				                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
 				                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
+				_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
+				                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				                                                     mc_ele_momentum, mc_ele_cos_theta,
+				                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e);
 			}
 		}
 
@@ -3212,7 +3224,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_total, "Post Cuts - Showers/Tracks Purity - Total",
 	                                      "Reco Showers", "Reco Tracks", "post_cuts_showers_tracks_purity_total.pdf", "colz text", 3, 2);
 
-	histogram_functions::OverlayScatter(h_ele_theta_phi_nue_cc, h_ele_theta_phi_nue_cc_mixed, h_ele_theta_phi_numu_cc,
+	histogram_functions::OverlayScatter(h_ele_theta_phi_nue_cc, h_ele_theta_phi_nue_cc_mixed, h_ele_theta_phi_nue_cc_out_fv, h_ele_theta_phi_numu_cc,
 	                                    h_ele_theta_phi_numu_cc_mixed, h_ele_theta_phi_cosmic, h_ele_theta_phi_nc,
 	                                    h_ele_theta_phi_nc_pi0, h_ele_theta_phi_other_mixed, h_ele_theta_phi_unmatched,
 	                                    0.15, 0.35, 0.65, 0.90, "", "Phi [Degrees]", "Theta [Degrees]", "post_cuts_theta_phi_scatter.pdf");
@@ -3224,6 +3236,20 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                   h_ele_eng_costheta_unmatched, h_ele_eng_costheta_intime, intime_scale_factor,
 	                                   h_ele_eng_costheta_data, data_scale_factor, 0.75, 0.95, 0.70, 0.95,
 	                                   "", "Reco Electron Momentum [GeV]", "Reco Electron Cos(#theta)", "post_cuts_leading_pfp_eng_costheta_data.pdf");
+
+	histogram_functions::Plot2DHistogram(h_true_reco_ele_momentum, "Selected True Electrons", "Reco Electron Momentum [GeV]", "True Electron Momentum [GeV]",
+	                                     "post_cuts_ele_true_reco_momentum.pdf");
+	histogram_functions::Plot2DHistogram(h_true_reco_ele_costheta, "Selected True Electrons", "Reco Electron Cos(#theta) [GeV]", "True Electron Cos(#theta) [GeV]",
+	                                     "post_cuts_ele_true_reco_costheta.pdf");
+	histogram_functions::Plot1DHistogram(h_true_num_e, "Number of Selected True Electrons Per Event", "post_cuts_num_true_ele.pdf");
+
+	histogram_functions::Plot2DHistogram(h_true_reco_ele_momentum_pre, "Pre Selection True Electrons",
+	                                     "Reco Electron Momentum [GeV]", "True Electron Momentum [GeV]",
+	                                     "post_cuts_ele_true_reco_momentum_pre.pdf");
+	histogram_functions::Plot2DHistogram(h_true_reco_ele_costheta_pre, "Pre Selection True Electrons",
+	                                     "Reco Electron Cos(#theta) [GeV]", "True Electron Cos(#theta) [GeV]",
+	                                     "post_cuts_ele_true_reco_costheta_pre.pdf");
+	histogram_functions::Plot1DHistogram(h_true_num_e_pre, "Number of Pre Selection True Electrons Per Event", "post_cuts_num_true_ele_pre.pdf");
 
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();

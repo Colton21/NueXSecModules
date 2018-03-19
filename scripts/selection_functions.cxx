@@ -5634,4 +5634,58 @@ void selection_functions::EnergyCosThetaInTime(std::vector<xsecAna::TPCObjectCon
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
+                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                      double vtxX, double vtxY, double vtxZ, double mc_ele_momentum, double mc_ele_cos_theta,
+                                      TH2D * h_true_reco_ele_momentum, TH2D * h_true_reco_ele_costheta, TH1D * h_true_num_e)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	int this_event_num_e = 0;
+	int mc_pdg_code = 0;
+	double pfp_ele_momentum = 0;
+	double pfp_ele_costheta = 0;
+	//this asks if there is a second true electron in the event with lower energy
+	bool second_lower = false;
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
+		std::string tpco_id = tpco_class.first;
+		//const int leading_index = tpco_class.second;
+
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			mc_pdg_code = part.MCPdgCode();
+			if(mc_pdg_code == 11 || mc_pdg_code == -11)
+			{
+				if(this_event_num_e > 0)
+				{
+					if(part.pfpMomentum() < pfp_ele_momentum) {second_lower = true; }
+					if(part.pfpMomentum() > pfp_ele_momentum) {second_lower = false; }
+				}
+				if(second_lower == false)
+				{
+					pfp_ele_momentum = part.pfpMomentum();
+					pfp_ele_costheta = part.pfpDirZ();
+				}
+				this_event_num_e++;
+			}
+		}//end loop pfps
+		 //check if true nue cc event
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_mec")
+		{
+			//when this_event_num_e == 0, we had a true nue cc interaction, and a shower was reco, but it wasn't the true e
+			if(this_event_num_e != 0) {h_true_reco_ele_momentum->Fill(pfp_ele_momentum, mc_ele_momentum); }
+			if(this_event_num_e != 0) {h_true_reco_ele_costheta->Fill(pfp_ele_costheta, mc_ele_cos_theta); }
+			//this one is the number of reconstructed true electrons
+			h_true_num_e->Fill(this_event_num_e);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

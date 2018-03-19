@@ -115,7 +115,7 @@ static void PlotDetailDataMCStack(TH1 * h_nue_cc_qe,
 
 static void PurityStack(TH1 * h_qe, TH1 * h_res, TH1 * h_dis, TH1 * h_coh, TH1 * h_mec, const char * x_axis_name, const char * print_name);
 
-static void OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_numu_cc, TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
+static void OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc, TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
                            TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched,
                            const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                            const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
