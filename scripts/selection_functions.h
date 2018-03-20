@@ -940,5 +940,46 @@ void TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  TH2D * h_true_reco_ele_momentum, TH2D * h_true_reco_ele_costheta, TH1D * h_true_num_e);
 //***************************************************************************
 //***************************************************************************
+void EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                          double vtxX, double vtxY, double vtxZ,
+                          TH1 * h_ele_eng_for_nue_cc,
+                          TH1 * h_ele_eng_for_nue_cc_out_fv,
+                          TH1 * h_ele_eng_for_nue_cc_mixed,
+                          TH1 * h_ele_eng_for_numu_cc,
+                          TH1 * h_ele_eng_for_numu_cc_mixed,
+                          TH1 * h_ele_eng_for_nc,
+                          TH1 * h_ele_eng_for_nc_pi0,
+                          TH1 * h_ele_eng_for_cosmic,
+                          TH1 * h_ele_eng_for_other_mixed,
+                          TH1 * h_ele_eng_for_unmatched,
+                          TH1 * h_ele_eng_mid_nue_cc,
+                          TH1 * h_ele_eng_mid_nue_cc_out_fv,
+                          TH1 * h_ele_eng_mid_nue_cc_mixed,
+                          TH1 * h_ele_eng_mid_numu_cc,
+                          TH1 * h_ele_eng_mid_numu_cc_mixed,
+                          TH1 * h_ele_eng_mid_nc,
+                          TH1 * h_ele_eng_mid_nc_pi0,
+                          TH1 * h_ele_eng_mid_cosmic,
+                          TH1 * h_ele_eng_mid_other_mixed,
+                          TH1 * h_ele_eng_mid_unmatched,
+                          TH1 * h_ele_eng_back_nue_cc,
+                          TH1 * h_ele_eng_back_nue_cc_out_fv,
+                          TH1 * h_ele_eng_back_nue_cc_mixed,
+                          TH1 * h_ele_eng_back_numu_cc,
+                          TH1 * h_ele_eng_back_numu_cc_mixed,
+                          TH1 * h_ele_eng_back_nc,
+                          TH1 * h_ele_eng_back_nc_pi0,
+                          TH1 * h_ele_eng_back_cosmic,
+                          TH1 * h_ele_eng_back_other_mixed,
+                          TH1 * h_ele_eng_back_unmatched);
+void EnergyCosThetaSlicesInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                TH1 * h_ele_eng_for_intime,
+                                TH1 * h_ele_eng_mid_intime,
+                                TH1 * h_ele_eng_back_intime);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

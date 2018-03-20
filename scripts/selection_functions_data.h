@@ -189,6 +189,13 @@ void EnergyCosThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_co
                         TH2 * h_ele_eng_costheta_data);
 //***************************************************************************
 //***************************************************************************
+void EnergyCosThetaSlicesData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              TH1 * h_ele_eng_for_data,
+                              TH1 * h_ele_eng_mid_data,
+                              TH1 * h_ele_eng_back_data);
+//***************************************************************************
+//***************************************************************************
 
 };
 

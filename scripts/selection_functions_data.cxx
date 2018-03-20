@@ -843,5 +843,35 @@ void selection_functions_data::EnergyCosThetaData(std::vector<xsecAna::TPCObject
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::EnergyCosThetaSlicesData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                        TH1 * h_ele_eng_for_data,
+                                                        TH1 * h_ele_eng_mid_data,
+                                                        TH1 * h_ele_eng_back_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double momentum = leading_shower.pfpMomentum();
+		const double costheta = leading_shower.pfpDirZ();
+		if(costheta >= 0.5) {h_ele_eng_for_data->Fill(momentum); }
+		if(costheta < 0.5 && costheta > -0.5) {h_ele_eng_mid_data->Fill(momentum); }
+		if(costheta <= -0.5) {h_ele_eng_back_data->Fill(momentum); }
+	}
+}
+//***************************************************************************
+//***************************************************************************
 
 //end functions

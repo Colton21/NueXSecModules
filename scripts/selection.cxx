@@ -363,7 +363,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_cos_theta_last_data);
 			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_xyz_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
-
+			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                            h_ele_eng_for_data,
+			                                                                            h_ele_eng_mid_data,
+			                                                                            h_ele_eng_back_data);
 
 			//delete at the very end!
 			delete passed_tpco_data;
@@ -652,6 +655,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_cos_theta_last_intime);
 			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_xyz_intime);
 			_functions_instance.selection_functions::EnergyCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_eng_costheta_intime);
+			_functions_instance.selection_functions::EnergyCosThetaSlicesInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                    h_ele_eng_for_intime,
+			                                                                    h_ele_eng_mid_intime,
+			                                                                    h_ele_eng_back_intime);
 
 			//delete at the very end!
 			delete passed_tpco_intime;
@@ -974,6 +981,18 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_in_fv, h_selected_ele_energy_in_fv);
+
+		//we also want to look at the cos(theta) and energy efficiency before we make selection cuts
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
+		{
+			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+			                                        _x1, _x2, _y1,
+			                                        _y2, _z1, _z2) == true)
+			{
+				h_ele_eng_eff_num_pre_cuts->Fill(mc_ele_energy);
+				h_ele_cos_theta_eff_num_pre_cuts->Fill(mc_ele_cos_theta);
+			}
+		}
 
 		//*****************************
 		//**** vertex to flash cut ****
@@ -1317,8 +1336,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                             h_pfp_shower_dedx_numu_cc_mixed,
 		                                                             h_pfp_shower_dedx_cosmic,
 		                                                             h_pfp_shower_dedx_other_mixed,
-		                                                             h_pfp_shower_dedx_unmatched
-		                                                             );
+		                                                             h_pfp_shower_dedx_unmatched);
 
 		//*****************************************************
 		//*********** dEdx cut for the leading shower *********
@@ -1371,6 +1389,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                        h_hit_length_ratio_other_mixed,
 		                                                        h_hit_length_ratio_unmatched);
 
+		//***************************************************************************
 		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
 		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
@@ -1728,6 +1747,39 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                        h_ele_eng_costheta_other_mixed,
 		                                                        h_ele_eng_costheta_unmatched);
 
+		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		                                                              _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                              h_ele_eng_for_nue_cc,
+		                                                              h_ele_eng_for_nue_cc_out_fv,
+		                                                              h_ele_eng_for_nue_cc_mixed,
+		                                                              h_ele_eng_for_numu_cc,
+		                                                              h_ele_eng_for_numu_cc_mixed,
+		                                                              h_ele_eng_for_nc,
+		                                                              h_ele_eng_for_nc_pi0,
+		                                                              h_ele_eng_for_cosmic,
+		                                                              h_ele_eng_for_other_mixed,
+		                                                              h_ele_eng_for_unmatched,
+		                                                              h_ele_eng_mid_nue_cc,
+		                                                              h_ele_eng_mid_nue_cc_out_fv,
+		                                                              h_ele_eng_mid_nue_cc_mixed,
+		                                                              h_ele_eng_mid_numu_cc,
+		                                                              h_ele_eng_mid_numu_cc_mixed,
+		                                                              h_ele_eng_mid_nc,
+		                                                              h_ele_eng_mid_nc_pi0,
+		                                                              h_ele_eng_mid_cosmic,
+		                                                              h_ele_eng_mid_other_mixed,
+		                                                              h_ele_eng_mid_unmatched,
+		                                                              h_ele_eng_back_nue_cc,
+		                                                              h_ele_eng_back_nue_cc_out_fv,
+		                                                              h_ele_eng_back_nue_cc_mixed,
+		                                                              h_ele_eng_back_numu_cc,
+		                                                              h_ele_eng_back_numu_cc_mixed,
+		                                                              h_ele_eng_back_nc,
+		                                                              h_ele_eng_back_nc_pi0,
+		                                                              h_ele_eng_back_cosmic,
+		                                                              h_ele_eng_back_other_mixed,
+		                                                              h_ele_eng_back_unmatched);
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -1870,9 +1922,12 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                      ";True Nue Electron Dir Z;Efficiency", "signal_selection_ele_dir_z_efficiency.pdf");
 	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, ";True Nue Electron Energy;Efficiency",
 	                                      "signal_selection_ele_energy_efficiency.pdf");
-
 	histogram_functions::PlotTEfficiency (h_post_cuts_num_tracks_showers_signal_total, h_post_cuts_num_tracks_showers_bkg_total,
 	                                      ";Num Reco Showers; Num Reco Tracks", "post_cuts_num_tracks_showers_eff_purity_total.pdf");
+	histogram_functions::PlotTEfficiency(h_ele_cos_theta_eff_num_pre_cuts, h_ele_cos_theta_eff_den,
+	                                     ";True Electron Cos(#theta);Efficiency", "signal_selection_ele_cos_theta_pre_cuts_efficiency.pdf");
+	histogram_functions::PlotTEfficiency(h_ele_eng_eff_num_pre_cuts, h_ele_eng_eff_den,
+	                                     ";True Electron Energy;Efficiency", "signal_selection_ele_eng_pre_cuts_efficiency.pdf");
 
 	histogram_functions::Plot2DHistogram (h_tracks_showers, "Post Cuts - Showers/Tracks per Candidate Nue TPC Object",
 	                                      "Reco Tracks", "Reco Showers", "post_cuts_showers_tracks.pdf");
@@ -3251,6 +3306,27 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                     "post_cuts_ele_true_reco_costheta_pre.pdf");
 	histogram_functions::Plot1DHistogram(h_true_num_e_pre, "Number of Pre Selection True Electrons Per Event", "post_cuts_num_true_ele_pre.pdf");
 
+	histogram_functions::PlotSimpleStackData(h_ele_eng_for_nue_cc,        h_ele_eng_for_nue_cc_mixed,
+	                                         h_ele_eng_for_nue_cc_out_fv, h_ele_eng_for_numu_cc,   h_ele_eng_for_numu_cc_mixed,
+	                                         h_ele_eng_for_cosmic,        h_ele_eng_for_nc,        h_ele_eng_for_nc_pi0,
+	                                         h_ele_eng_for_other_mixed,   h_ele_eng_for_unmatched, h_ele_eng_for_intime,
+	                                         intime_scale_factor,         h_ele_eng_for_data,      data_scale_factor,
+	                                         "", "Reco Electron Energy [GeV] (Cos(#theta) >= 0.5)", "", "post_cuts_leading_eng_for_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_ele_eng_mid_nue_cc,        h_ele_eng_mid_nue_cc_mixed,
+	                                         h_ele_eng_mid_nue_cc_out_fv, h_ele_eng_mid_numu_cc,   h_ele_eng_mid_numu_cc_mixed,
+	                                         h_ele_eng_mid_cosmic,        h_ele_eng_mid_nc,        h_ele_eng_mid_nc_pi0,
+	                                         h_ele_eng_mid_other_mixed,   h_ele_eng_mid_unmatched, h_ele_eng_mid_intime,
+	                                         intime_scale_factor,         h_ele_eng_mid_data,      data_scale_factor,
+	                                         "", "Reco Electron Energy [GeV] (0.5 > Cos(#theta) > -0.5)", "", "post_cuts_leading_eng_mid_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_ele_eng_back_nue_cc,        h_ele_eng_back_nue_cc_mixed,
+	                                         h_ele_eng_back_nue_cc_out_fv, h_ele_eng_back_numu_cc,   h_ele_eng_back_numu_cc_mixed,
+	                                         h_ele_eng_back_cosmic,        h_ele_eng_back_nc,        h_ele_eng_back_nc_pi0,
+	                                         h_ele_eng_back_other_mixed,   h_ele_eng_back_unmatched, h_ele_eng_back_intime,
+	                                         intime_scale_factor,          h_ele_eng_back_data,      data_scale_factor,
+	                                         "", "Reco Electron Energy [GeV] (Cos(#theta) <= -0.5)", "", "post_cuts_leading_eng_back_data.pdf");
+
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
@@ -3409,16 +3485,16 @@ int main(int argc, char *argv[]){
 
 	std::cout << "INPUT FORMAT: MC_FILE INTIME_FILE DATA_FILE" << std::endl;
 
-	if(argc != 4 )
-	{
-		std::cout << "Running without in-time data " << std::endl;
-		return xsecSelection::selection(file1, file2, "empty");
-	}
 	if(argc != 3 && argc != 4)
 	{
 		std::cout << "Running without in-time cosmics " << std::endl;
 		std::cout << "Running without data" << std::endl;
 		return xsecSelection::selection(file1, "empty", "empty");
+	}
+	if(argc != 4 )
+	{
+		std::cout << "Running without in-time data " << std::endl;
+		return xsecSelection::selection(file1, file2, "empty");
 	}
 	if(argc < 2 )  { std::cout << "Please inclue the input file path" << std::endl; exit(1); }
 	return xsecSelection::selection(file1, file2, file3);
