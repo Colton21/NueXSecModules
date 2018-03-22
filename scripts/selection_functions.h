@@ -19,6 +19,7 @@
 #include "TGraphErrors.h"
 #include "TPad.h"
 #include "TMarker.h"
+#include "TVector3.h"
 
 #include <iostream>
 #include <vector>
@@ -747,7 +748,8 @@ void FailureReason(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
 //***************************************************************************
 //***************************************************************************
 void LeadingCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                     std::vector<std::pair<int, std::string> > * passed_tpco,
+                     const double theta_translation, const double phi_translation, bool _verbose, bool has_pi0,
                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                      double vtxX, double vtxY, double vtxZ,
                      TH1D * h_ele_cos_theta_nue_cc,
@@ -761,7 +763,8 @@ void LeadingCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH1D * h_ele_cos_theta_other_mixed,
                      TH1D * h_ele_cos_theta_unmatched);
 void LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_cos_theta_intime);
+                           std::vector<std::pair<int, std::string> > * passed_tpco,
+                           const double theta_translation, const double phi_translation, bool _verbose, TH1D * h_ele_cos_theta_intime);
 //***************************************************************************
 //***************************************************************************
 void LeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -802,7 +805,8 @@ void LeadingPhiInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_cont
 //***************************************************************************
 //***************************************************************************
 void LeadingTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                  std::vector<std::pair<int, std::string> > * passed_tpco,
+                  const double theta_translation, const double phi_translation, bool _verbose, bool has_pi0,
                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                   double vtxX, double vtxY, double vtxZ,
                   TH1D * h_ele_pfp_theta_nue_cc,
@@ -816,7 +820,8 @@ void LeadingTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
                   TH1D * h_ele_pfp_theta_other_mixed,
                   TH1D * h_ele_pfp_theta_unmatched);
 void LeadingThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        std::vector<std::pair<int, std::string> > * passed_tpco,
+                        const double theta_translation, const double phi_translation, bool _verbose,
                         TH1D * h_ele_pfp_theta_intime);
 //***************************************************************************
 //***************************************************************************
@@ -941,7 +946,8 @@ void TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
 //***************************************************************************
 //***************************************************************************
 void EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                          const double theta_translation, const double phi_translation, bool has_pi0,
                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                           double vtxX, double vtxY, double vtxZ,
                           TH1 * h_ele_eng_for_nue_cc,
@@ -976,6 +982,7 @@ void EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_
                           TH1 * h_ele_eng_back_unmatched);
 void EnergyCosThetaSlicesInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                const double theta_translation, const double phi_translation,
                                 TH1 * h_ele_eng_for_intime,
                                 TH1 * h_ele_eng_mid_intime,
                                 TH1 * h_ele_eng_back_intime);

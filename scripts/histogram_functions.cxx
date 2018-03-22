@@ -71,11 +71,12 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
-	h_intime->Scale(intime_scale_factor);
+	TH2 * h_intime_clone = (TH2*)h_intime->Clone("h_intime_clone");
+	h_intime_clone->Scale(intime_scale_factor);
 	h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	h_data->Sumw2();
+	//h_data->Sumw2();
 	h_data->Scale(1./h_data->Integral());
 
 	const double integral = h_nue_cc->Integral() +
@@ -87,7 +88,7 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	                        h_nc_pi0->Integral() +
 	                        h_other_mixed->Integral() +
 	                        h_unmatched->Integral() +
-	                        h_intime->Integral();
+	                        h_intime_clone->Integral();
 
 	h_nue_cc->Scale(1./integral);
 	h_nue_cc_mixed->Scale(1./integral);
@@ -98,17 +99,17 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	h_nc_pi0->Scale(1./integral);
 	h_other_mixed->Scale(1./integral);
 	h_unmatched->Scale(1./integral);
-	h_intime->Scale(1./integral);
+	h_intime_clone->Scale(1./integral);
 	stack->Add(h_nue_cc);
 	stack->Add(h_nue_cc_mixed);
 	stack->Add(h_cosmic);
 	stack->Add(h_numu_cc);
-	stack->Add(h_numu_cc_mixed);
+	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc);
 	stack->Add(h_nc_pi0);
 	stack->Add(h_other_mixed);
 	stack->Add(h_unmatched);
-	stack->Add(h_intime);
+	stack->Add(h_intime_clone);
 
 	// const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
 	// stack->SetMaximum(y_maximum * 1.2);
@@ -238,14 +239,14 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	h_cosmic->SetFillColor(1);
 	h_nc->SetFillColor(46);
 	h_nue_cc_out_fv->SetFillColor(20);
-	h_numu_cc_mixed->SetFillColor(28);
+	//h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
 	stack->Add(h_nue_cc);
 	stack->Add(h_nue_cc_mixed);
 	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
-	h_numu_cc->Add(h_numu_cc_mixed, 1);
+	//h_numu_cc->Add(h_numu_cc_mixed, 1);
 	stack->Add(h_numu_cc);
 	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc);
@@ -298,25 +299,26 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	h_cosmic->SetFillColor(1);
 	h_nc->SetFillColor(46);
 	h_nue_cc_out_fv->SetFillColor(20);
-	h_numu_cc_mixed->SetFillColor(28);
+	//h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
-	h_intime->Scale(intime_scale_factor);
+	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
+	h_intime_clone->Scale(intime_scale_factor);
 	stack->Add(h_nue_cc);
 	stack->Add(h_nue_cc_mixed);
 	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
-	h_numu_cc->Add(h_numu_cc_mixed, 1);
+	//h_numu_cc->Add(h_numu_cc_mixed, 1);
 	stack->Add(h_numu_cc);
 	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc);
 	stack->Add(h_nc_pi0);
 	stack->Add(h_other_mixed);
 	stack->Add(h_unmatched);
-	stack->Add(h_intime);
+	stack->Add(h_intime_clone);
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
 
@@ -366,55 +368,56 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_cosmic->SetFillColor(1);
 	h_nc->SetFillColor(46);
 	h_nue_cc_out_fv->SetFillColor(20);
-	h_numu_cc_mixed->SetFillColor(28);
+	//h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
-	h_intime->Scale(intime_scale_factor);
+	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
+	h_intime_clone->Scale(intime_scale_factor);
 	h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	h_data->Sumw2();
+	//h_data->Sumw2();
 	h_data->Scale(1./h_data->Integral());
 	//h_data->GetXaxis()->SetTitle(x_axis_name);
+	//h_numu_cc->Add(h_numu_cc_mixed, 1);
 
 	const double integral = h_nue_cc->Integral() +
 	                        h_nue_cc_mixed->Integral() +
+	                        h_nue_cc_out_fv->Integral() +
 	                        h_cosmic->Integral() +
 	                        h_numu_cc->Integral() +
-	                        h_numu_cc_mixed->Integral() +
+	                        //h_numu_cc_mixed->Integral() +
 	                        h_nc->Integral() +
 	                        h_nc_pi0->Integral() +
 	                        h_other_mixed->Integral() +
 	                        h_unmatched->Integral() +
-	                        h_intime->Integral() +
-	                        h_nue_cc_out_fv->Integral();
+	                        h_intime_clone->Integral();
 
 	h_nue_cc->Scale(1./integral);
 	h_nue_cc_mixed->Scale(1./integral);
+	h_nue_cc_out_fv->Scale(1./integral);
 	h_cosmic->Scale(1./integral);
 	h_numu_cc->Scale(1./integral);
-	h_numu_cc_mixed->Scale(1./integral);
+	//h_numu_cc_mixed->Scale(1./integral);
 	h_nc->Scale(1./integral);
 	h_nc_pi0->Scale(1./integral);
 	h_other_mixed->Scale(1./integral);
 	h_unmatched->Scale(1./integral);
-	h_intime->Scale(1./integral);
-	h_nue_cc_out_fv->Scale(1./integral);
+	h_intime_clone->Scale(1./integral);
 	stack->Add(h_nue_cc);
 	stack->Add(h_nue_cc_mixed);
 	stack->Add(h_nue_cc_out_fv);
 	stack->Add(h_cosmic);
-	h_numu_cc->Add(h_numu_cc_mixed, 1);
 	stack->Add(h_numu_cc);
 	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc);
 	stack->Add(h_nc_pi0);
 	stack->Add(h_other_mixed);
 	stack->Add(h_unmatched);
-	stack->Add(h_intime);
+	stack->Add(h_intime_clone);
 
 	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
 	stack->SetMaximum(y_maximum * 1.2);

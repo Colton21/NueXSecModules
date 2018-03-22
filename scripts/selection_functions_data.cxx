@@ -556,7 +556,8 @@ void selection_functions_data::SecondaryShowersDistData(std::vector<xsecAna::TPC
 //***************************************************************************
 //***************************************************************************
 void selection_functions_data::LeadingCosThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_cos_theta_data)
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                   const double theta_translation, const double phi_translation, bool _verbose, TH1D * h_ele_cos_theta_data)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -573,7 +574,9 @@ void selection_functions_data::LeadingCosThetaData(std::vector<xsecAna::TPCObjec
 			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_shower_cos_theta = leading_shower.pfpDirZ();
+		double leading_shower_cos_theta = leading_shower.pfpDirZ();
+		double leading_shower_theta = (acos(leading_shower_cos_theta) * (180 / 3.1415)) + theta_translation;
+		leading_shower_cos_theta = cos(leading_shower_theta);
 		h_ele_cos_theta_data->Fill(leading_shower_cos_theta);
 	}//end pfp loop
 }
@@ -845,6 +848,7 @@ void selection_functions_data::EnergyCosThetaData(std::vector<xsecAna::TPCObject
 //***************************************************************************
 void selection_functions_data::EnergyCosThetaSlicesData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                        const double theta_translation, const double phi_translation,
                                                         TH1 * h_ele_eng_for_data,
                                                         TH1 * h_ele_eng_mid_data,
                                                         TH1 * h_ele_eng_back_data)
@@ -865,7 +869,9 @@ void selection_functions_data::EnergyCosThetaSlicesData(std::vector<xsecAna::TPC
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double momentum = leading_shower.pfpMomentum();
-		const double costheta = leading_shower.pfpDirZ();
+		double costheta = leading_shower.pfpDirZ();
+		double theta = (acos(costheta) * (180 / 3.1415)) + theta_translation;
+		costheta = cos(theta);
 		if(costheta >= 0.5) {h_ele_eng_for_data->Fill(momentum); }
 		if(costheta < 0.5 && costheta > -0.5) {h_ele_eng_mid_data->Fill(momentum); }
 		if(costheta <= -0.5) {h_ele_eng_back_data->Fill(momentum); }

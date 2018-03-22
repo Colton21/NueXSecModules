@@ -94,7 +94,8 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_dedx_cuts_numu_cc_mixed->Fill(leading_dedx);
+			//h_dedx_cuts_numu_cc_mixed->Fill(leading_dedx);
+			h_dedx_cuts_numu_cc->Fill(leading_dedx);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -1005,7 +1006,8 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
 		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
-		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		//if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle); }
 		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
 		if(tpco_id == "cosmic")        {h_leading_shower_open_angle_cosmic->Fill(leading_open_angle); }
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec")
@@ -1072,7 +1074,8 @@ void selection_functions::PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObject
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
 		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
-		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		//if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle); }
 		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
 		if(tpco_id == "cosmic")        {h_leading_shower_open_angle_cosmic->Fill(leading_open_angle); }
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec")
@@ -1142,7 +1145,8 @@ void selection_functions::PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCOb
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
 		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
-		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		//if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle); }
 		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
 		if(tpco_id == "cosmic")        {h_leading_shower_open_angle_cosmic->Fill(leading_open_angle); }
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec")
@@ -1245,7 +1249,8 @@ void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer>
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			if(has_track) {h_trk_vtx_dist_numu_cc_mixed->Fill(smallest_trk_vtx_dist); }
+			//if(has_track) {h_trk_vtx_dist_numu_cc_mixed->Fill(smallest_trk_vtx_dist); }
+			if(has_track) {h_trk_vtx_dist_numu_cc->Fill(smallest_trk_vtx_dist); }
 		}
 		if(tpco_id == "other_mixed")
 		{
@@ -1541,6 +1546,10 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 			h_pfp_track_numu_cc_mixed->Fill(n_pfp_tracks);
 			h_pfp_shower_numu_cc_mixed->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_mixed->Fill(leading_origin_int, leading_pdg_int);
+			// h_pfp_track_shower_numu_cc->Fill(n_pfp_tracks, n_pfp_showers);
+			// h_pfp_track_numu_cc->Fill(n_pfp_tracks);
+			// h_pfp_shower_numu_cc->Fill(n_pfp_showers);
+			// h_leading_shower_mc_pdg_numu_cc->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -1615,6 +1624,7 @@ void selection_functions::NumShowersOpenAngle(std::vector<xsecAna::TPCObjectCont
 		if(tpco_id == "nc_pi0")         {h_pfp_shower_open_angle_nc_pi0->Fill(n_pfp_showers); }
 		if(tpco_id == "nue_cc_mixed")   {h_pfp_shower_open_angle_nue_cc_mixed->Fill(n_pfp_showers); }
 		if(tpco_id == "numu_cc_mixed")  {h_pfp_shower_open_angle_numu_cc_mixed->Fill(n_pfp_showers); }
+		//if(tpco_id == "numu_cc_mixed")  {h_pfp_shower_open_angle_numu_cc->Fill(n_pfp_showers); }
 		if(tpco_id == "cosmic")         {h_pfp_shower_open_angle_cosmic->Fill(n_pfp_showers); }
 		if(tpco_id == "other_mixed")    {h_pfp_shower_open_angle_other_mixed->Fill(n_pfp_showers); }
 		if(tpco_id == "unmatched")      {h_pfp_shower_open_angle_unmatched->Fill(n_pfp_showers); }
@@ -1855,6 +1865,10 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 			h_pfp_track_numu_cc_mixed->Fill(n_pfp_tracks);
 			h_pfp_shower_numu_cc_mixed->Fill(n_pfp_showers);
 			h_leading_shower_mc_pdg_numu_cc_mixed->Fill(leading_origin_int, leading_pdg_int);
+			// h_pfp_track_shower_numu_cc->Fill(n_pfp_tracks, n_pfp_showers);
+			// h_pfp_track_numu_cc->Fill(n_pfp_tracks);
+			// h_pfp_shower_numu_cc->Fill(n_pfp_showers);
+			// h_leading_shower_mc_pdg_numu_cc->Fill(leading_origin_int, leading_pdg_int);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -1964,7 +1978,8 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_vtx_flash_numu_cc_mixed->Fill(distance);
+			//h_vtx_flash_numu_cc_mixed->Fill(distance);
+			h_vtx_flash_numu_cc->Fill(distance);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -2093,7 +2108,8 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_shwr_vtx_dist_numu_cc_mixed->Fill(distance);
+			//h_shwr_vtx_dist_numu_cc_mixed->Fill(distance);
+			h_shwr_vtx_dist_numu_cc->Fill(distance);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -2481,7 +2497,8 @@ void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContaine
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_dedx_open_angle_numu_cc_mixed->Fill(leading_dedx, leading_open_angle);
+			//h_dedx_open_angle_numu_cc_mixed->Fill(leading_dedx, leading_open_angle);
+			h_dedx_open_angle_numu_cc->Fill(leading_dedx, leading_open_angle);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -2611,7 +2628,8 @@ void selection_functions::ShowerLengthvsHits(std::vector<xsecAna::TPCObjectConta
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_shwr_len_hits_numu_cc_mixed->Fill(leading_length, leading_hits);
+			//h_shwr_len_hits_numu_cc_mixed->Fill(leading_length, leading_hits);
+			h_shwr_len_hits_numu_cc->Fill(leading_length, leading_hits);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -2757,7 +2775,8 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 				}
 				if(tpco_id == "numu_cc_mixed")
 				{
-					h_second_shwr_dist_numu_cc_mixed->Fill(distance);
+					//h_second_shwr_dist_numu_cc_mixed->Fill(distance);
+					h_second_shwr_dist_numu_cc->Fill(distance);
 				}
 				if(tpco_id == "cosmic")
 				{
@@ -2912,7 +2931,8 @@ void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer
 			}
 			if(tpco_id == "numu_cc_mixed")
 			{
-				h_hit_length_ratio_numu_cc_mixed->Fill(pfp_hits_length_ratio);
+				//h_hit_length_ratio_numu_cc_mixed->Fill(pfp_hits_length_ratio);
+				h_hit_length_ratio_numu_cc->Fill(pfp_hits_length_ratio);
 			}
 			if(tpco_id == "cosmic")
 			{
@@ -3015,7 +3035,8 @@ void selection_functions::TrackLength(std::vector<xsecAna::TPCObjectContainer> *
 			if(tpco_id == "nc")             {h_trk_length_nc->Fill(trk_length); }
 			if(tpco_id == "nc_pi0")         {h_trk_length_nc_pi0->Fill(trk_length); }
 			if(tpco_id == "nue_cc_mixed")   {h_trk_length_nue_cc_mixed->Fill(trk_length); }
-			if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc_mixed->Fill(trk_length); }
+			//if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc_mixed->Fill(trk_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc->Fill(trk_length); }
 			if(tpco_id == "cosmic")         {h_trk_length_cosmic->Fill(trk_length); }
 			if(tpco_id == "other_mixed")    {h_trk_length_other_mixed->Fill(trk_length); }
 			if(tpco_id == "unmatched")      {h_trk_length_unmatched->Fill(trk_length); }
@@ -3083,7 +3104,8 @@ void selection_functions::LongestTrackLength(std::vector<xsecAna::TPCObjectConta
 			if(tpco_id == "nc")             {h_trk_length_nc->Fill(trk_length); }
 			if(tpco_id == "nc_pi0")         {h_trk_length_nc_pi0->Fill(trk_length); }
 			if(tpco_id == "nue_cc_mixed")   {h_trk_length_nue_cc_mixed->Fill(trk_length); }
-			if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc_mixed->Fill(trk_length); }
+			//if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc_mixed->Fill(trk_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_trk_length_numu_cc->Fill(trk_length); }
 			if(tpco_id == "cosmic")         {h_trk_length_cosmic->Fill(trk_length); }
 			if(tpco_id == "other_mixed")    {h_trk_length_other_mixed->Fill(trk_length); }
 			if(tpco_id == "unmatched")      {h_trk_length_unmatched->Fill(trk_length); }
@@ -3144,7 +3166,8 @@ void selection_functions::ShowerLength(std::vector<xsecAna::TPCObjectContainer> 
 			if(tpco_id == "nc")             {h_shwr_length_nc->Fill(shwr_length); }
 			if(tpco_id == "nc_pi0")         {h_shwr_length_nc_pi0->Fill(shwr_length); }
 			if(tpco_id == "nue_cc_mixed")   {h_shwr_length_nue_cc_mixed->Fill(shwr_length); }
-			if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(shwr_length); }
+			//if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc->Fill(shwr_length); }
 			if(tpco_id == "cosmic")         {h_shwr_length_cosmic->Fill(shwr_length); }
 			if(tpco_id == "other_mixed")    {h_shwr_length_other_mixed->Fill(shwr_length); }
 			if(tpco_id == "unmatched")      {h_shwr_length_unmatched->Fill(shwr_length); }
@@ -3211,7 +3234,8 @@ void selection_functions::LongestShowerLength(std::vector<xsecAna::TPCObjectCont
 			if(tpco_id == "nc")             {h_shwr_length_nc->Fill(shwr_length); }
 			if(tpco_id == "nc_pi0")         {h_shwr_length_nc_pi0->Fill(shwr_length); }
 			if(tpco_id == "nue_cc_mixed")   {h_shwr_length_nue_cc_mixed->Fill(shwr_length); }
-			if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(shwr_length); }
+			//if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(shwr_length); }
+			if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc->Fill(shwr_length); }
 			if(tpco_id == "cosmic")         {h_shwr_length_cosmic->Fill(shwr_length); }
 			if(tpco_id == "other_mixed")    {h_shwr_length_other_mixed->Fill(shwr_length); }
 			if(tpco_id == "unmatched")      {h_shwr_length_unmatched->Fill(shwr_length); }
@@ -3262,7 +3286,8 @@ void selection_functions::LeadingShowerLength(std::vector<xsecAna::TPCObjectCont
 		if(tpco_id == "nc")             {h_shwr_length_nc->Fill(leading_shwr_length); }
 		if(tpco_id == "nc_pi0")         {h_shwr_length_nc_pi0->Fill(leading_shwr_length); }
 		if(tpco_id == "nue_cc_mixed")   {h_shwr_length_nue_cc_mixed->Fill(leading_shwr_length); }
-		if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(leading_shwr_length); }
+		//if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc_mixed->Fill(leading_shwr_length); }
+		if(tpco_id == "numu_cc_mixed")  {h_shwr_length_numu_cc->Fill(leading_shwr_length); }
 		if(tpco_id == "cosmic")         {h_shwr_length_cosmic->Fill(leading_shwr_length); }
 		if(tpco_id == "other_mixed")    {h_shwr_length_other_mixed->Fill(leading_shwr_length); }
 		if(tpco_id == "unmatched")      {h_shwr_length_unmatched->Fill(leading_shwr_length); }
@@ -3326,7 +3351,8 @@ void selection_functions::LeadingShowerTrackLengths(std::vector<xsecAna::TPCObje
 		if(tpco_id == "nc")             {h_shwr_trk_length_nc->Fill(longest_trk_leading_shwr_ratio); }
 		if(tpco_id == "nc_pi0")         {h_shwr_trk_length_nc_pi0->Fill(longest_trk_leading_shwr_ratio); }
 		if(tpco_id == "nue_cc_mixed")   {h_shwr_trk_length_nue_cc_mixed->Fill(longest_trk_leading_shwr_ratio); }
-		if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc_mixed->Fill(longest_trk_leading_shwr_ratio); }
+		//if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc_mixed->Fill(longest_trk_leading_shwr_ratio); }
+		if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc->Fill(longest_trk_leading_shwr_ratio); }
 		if(tpco_id == "cosmic")         {h_shwr_trk_length_cosmic->Fill(longest_trk_leading_shwr_ratio); }
 		if(tpco_id == "other_mixed")    {h_shwr_trk_length_other_mixed->Fill(longest_trk_leading_shwr_ratio); }
 		if(tpco_id == "unmatched")      {h_shwr_trk_length_unmatched->Fill(longest_trk_leading_shwr_ratio); }
@@ -3405,7 +3431,8 @@ void selection_functions::LongestShowerTrackLengths(std::vector<xsecAna::TPCObje
 		if(tpco_id == "nc")             {h_shwr_trk_length_nc->Fill(longest_trk_longest_shwr_ratio); }
 		if(tpco_id == "nc_pi0")         {h_shwr_trk_length_nc_pi0->Fill(longest_trk_longest_shwr_ratio); }
 		if(tpco_id == "nue_cc_mixed")   {h_shwr_trk_length_nue_cc_mixed->Fill(longest_trk_longest_shwr_ratio); }
-		if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc_mixed->Fill(longest_trk_longest_shwr_ratio); }
+		//if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc_mixed->Fill(longest_trk_longest_shwr_ratio); }
+		if(tpco_id == "numu_cc_mixed")  {h_shwr_trk_length_numu_cc->Fill(longest_trk_longest_shwr_ratio); }
 		if(tpco_id == "cosmic")         {h_shwr_trk_length_cosmic->Fill(longest_trk_longest_shwr_ratio); }
 		if(tpco_id == "other_mixed")    {h_shwr_trk_length_other_mixed->Fill(longest_trk_longest_shwr_ratio); }
 		if(tpco_id == "unmatched")      {h_shwr_trk_length_unmatched->Fill(longest_trk_longest_shwr_ratio); }
@@ -3466,7 +3493,8 @@ void selection_functions::PlaneHitsComparisonShower(std::vector<xsecAna::TPCObje
 		if(tpco_id == "nc")             {h_collection_total_hits_shower_nc->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "nc_pi0")         {h_collection_total_hits_shower_nc_pi0->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "nue_cc_mixed")   {h_collection_total_hits_shower_nue_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
-		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		//if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "cosmic")         {h_collection_total_hits_shower_cosmic->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "other_mixed")    {h_collection_total_hits_shower_other_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "unmatched")      {h_collection_total_hits_shower_unmatched->Fill(n_pfp_hits_w, n_pfp_hits); }
@@ -3548,7 +3576,8 @@ void selection_functions::PlaneHitsComparisonLeadingShower(std::vector<xsecAna::
 		if(tpco_id == "nc")             {h_collection_total_hits_shower_nc->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "nc_pi0")         {h_collection_total_hits_shower_nc_pi0->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "nue_cc_mixed")   {h_collection_total_hits_shower_nue_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
-		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		//if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_shower_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "cosmic")         {h_collection_total_hits_shower_cosmic->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "other_mixed")    {h_collection_total_hits_shower_other_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "unmatched")      {h_collection_total_hits_shower_unmatched->Fill(n_pfp_hits_w, n_pfp_hits); }
@@ -3636,7 +3665,8 @@ void selection_functions::PlaneHitsComparisonTrack(std::vector<xsecAna::TPCObjec
 		if(tpco_id == "nc")             {h_collection_total_hits_track_nc->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "nc_pi0")         {h_collection_total_hits_track_nc_pi0->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "nue_cc_mixed")   {h_collection_total_hits_track_nue_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
-		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_track_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		//if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_track_numu_cc_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_total_hits_track_numu_cc->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "cosmic")         {h_collection_total_hits_track_cosmic->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "other_mixed")    {h_collection_total_hits_track_other_mixed->Fill(n_pfp_hits_w, n_pfp_hits); }
 		if(tpco_id == "unmatched")      {h_collection_total_hits_track_unmatched->Fill(n_pfp_hits_w, n_pfp_hits); }
@@ -3767,7 +3797,8 @@ void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> *
 				if(tpco_id == "nc")             {h_collection_hits_track_nc->Fill(n_pfp_hits_w_track); }
 				if(tpco_id == "nc_pi0")         {h_collection_hits_track_nc_pi0->Fill(n_pfp_hits_w_track); }
 				if(tpco_id == "nue_cc_mixed")   {h_collection_hits_track_nue_cc_mixed->Fill(n_pfp_hits_w_track); }
-				if(tpco_id == "numu_cc_mixed")  {h_collection_hits_track_numu_cc_mixed->Fill(n_pfp_hits_w_track); }
+				//if(tpco_id == "numu_cc_mixed")  {h_collection_hits_track_numu_cc_mixed->Fill(n_pfp_hits_w_track); }
+				if(tpco_id == "numu_cc_mixed")  {h_collection_hits_track_numu_cc->Fill(n_pfp_hits_w_track); }
 				if(tpco_id == "cosmic")         {h_collection_hits_track_cosmic->Fill(n_pfp_hits_w_track); }
 				if(tpco_id == "other_mixed")    {h_collection_hits_track_other_mixed->Fill(n_pfp_hits_w_track); }
 				if(tpco_id == "unmatched")      {h_collection_hits_track_unmatched->Fill(n_pfp_hits_w_track); }
@@ -3790,7 +3821,8 @@ void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> *
 			if(tpco_id == "nc")             {h_collection_hits_shower_nc->Fill(n_pfp_hits_w_shower); }
 			if(tpco_id == "nc_pi0")         {h_collection_hits_shower_nc_pi0->Fill(n_pfp_hits_w_shower); }
 			if(tpco_id == "nue_cc_mixed")   {h_collection_hits_shower_nue_cc_mixed->Fill(n_pfp_hits_w_shower); }
-			if(tpco_id == "numu_cc_mixed")  {h_collection_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w_shower); }
+			//if(tpco_id == "numu_cc_mixed")  {h_collection_hits_shower_numu_cc_mixed->Fill(n_pfp_hits_w_shower); }
+			if(tpco_id == "numu_cc_mixed")  {h_collection_hits_shower_numu_cc->Fill(n_pfp_hits_w_shower); }
 			if(tpco_id == "cosmic")         {h_collection_hits_shower_cosmic->Fill(n_pfp_hits_w_shower); }
 			if(tpco_id == "other_mixed")    {h_collection_hits_shower_other_mixed->Fill(n_pfp_hits_w_shower); }
 			if(tpco_id == "unmatched")      {h_collection_hits_shower_unmatched->Fill(n_pfp_hits_w_shower); }
@@ -3810,7 +3842,8 @@ void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> *
 		if(tpco_id == "nc")             {h_collection_hits_leading_shower_nc->Fill(n_pfp_hits_w_leading_shower); }
 		if(tpco_id == "nc_pi0")         {h_collection_hits_leading_shower_nc_pi0->Fill(n_pfp_hits_w_leading_shower); }
 		if(tpco_id == "nue_cc_mixed")   {h_collection_hits_leading_shower_nue_cc_mixed->Fill(n_pfp_hits_w_leading_shower); }
-		if(tpco_id == "numu_cc_mixed")  {h_collection_hits_leading_shower_numu_cc_mixed->Fill(n_pfp_hits_w_leading_shower); }
+		//if(tpco_id == "numu_cc_mixed")  {h_collection_hits_leading_shower_numu_cc_mixed->Fill(n_pfp_hits_w_leading_shower); }
+		if(tpco_id == "numu_cc_mixed")  {h_collection_hits_leading_shower_numu_cc->Fill(n_pfp_hits_w_leading_shower); }
 		if(tpco_id == "cosmic")         {h_collection_hits_leading_shower_cosmic->Fill(n_pfp_hits_w_leading_shower); }
 		if(tpco_id == "other_mixed")    {h_collection_hits_leading_shower_other_mixed->Fill(n_pfp_hits_w_leading_shower); }
 		if(tpco_id == "unmatched")      {h_collection_hits_leading_shower_unmatched->Fill(n_pfp_hits_w_leading_shower); }
@@ -3829,7 +3862,8 @@ void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> *
 		if(tpco_id == "nc")             {h_total_hits_leading_shower_nc->Fill(n_pfp_hits_leading_shower); }
 		if(tpco_id == "nc_pi0")         {h_total_hits_leading_shower_nc_pi0->Fill(n_pfp_hits_leading_shower); }
 		if(tpco_id == "nue_cc_mixed")   {h_total_hits_leading_shower_nue_cc_mixed->Fill(n_pfp_hits_leading_shower); }
-		if(tpco_id == "numu_cc_mixed")  {h_total_hits_leading_shower_numu_cc_mixed->Fill(n_pfp_hits_leading_shower); }
+		//if(tpco_id == "numu_cc_mixed")  {h_total_hits_leading_shower_numu_cc_mixed->Fill(n_pfp_hits_leading_shower); }
+		if(tpco_id == "numu_cc_mixed")  {h_total_hits_leading_shower_numu_cc->Fill(n_pfp_hits_leading_shower); }
 		if(tpco_id == "cosmic")         {h_total_hits_leading_shower_cosmic->Fill(n_pfp_hits_leading_shower); }
 		if(tpco_id == "other_mixed")    {h_total_hits_leading_shower_other_mixed->Fill(n_pfp_hits_leading_shower); }
 		if(tpco_id == "unmatched")      {h_total_hits_leading_shower_unmatched->Fill(n_pfp_hits_leading_shower); }
@@ -4021,7 +4055,8 @@ void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer>
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_failure_reason_numu_cc_mixed->Fill(failure_reason);
+			//h_failure_reason_numu_cc_mixed->Fill(failure_reason);
+			h_failure_reason_numu_cc->Fill(failure_reason);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -4041,7 +4076,8 @@ void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer>
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco,
+                                          const double theta_translation, const double phi_translation, bool _verbose, bool has_pi0,
                                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                           double vtxX, double vtxY, double vtxZ,
                                           TH1D * h_ele_cos_theta_nue_cc,
@@ -4065,7 +4101,19 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		//const double leading_shower_cos_theta = leading_shower.pfpDirZ() / leading_shower.pfpMomentum();
-		const double leading_shower_cos_theta = leading_shower.pfpDirZ();
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
+		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
+
+
+		//double leading_shower_cos_theta = leading_shower.pfpDirZ();
+		//double leading_shower_theta = (abs(acos(leading_shower_cos_theta) * (180 / 3.1415))) - theta_translation;
+		//leading_shower_cos_theta = cos(leading_shower_theta);
 		//std::cout << leading_shower.pfpDirZ() << " , " << leading_shower.pfpMomentum() << ", " << leading_shower_cos_theta << std::endl;
 		if(tpco_id == "nue_cc_qe")
 		{
@@ -4125,7 +4173,8 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_ele_cos_theta_numu_cc_mixed->Fill(leading_shower_cos_theta);
+			//h_ele_cos_theta_numu_cc_mixed->Fill(leading_shower_cos_theta);
+			h_ele_cos_theta_numu_cc->Fill(leading_shower_cos_theta);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -4140,11 +4189,22 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 			h_ele_cos_theta_unmatched->Fill(leading_shower_cos_theta);
 		}
 	}//end pfp loop
+	 // std::cout << "Nue CC        : " << h_ele_cos_theta_nue_cc->GetEntries() << std::endl;
+	 // std::cout << "Nue CC Out FV : " << h_ele_cos_theta_nue_cc_out_fv->GetEntries() << std::endl;
+	 // std::cout << "Nue CC Mixed  : " << h_ele_cos_theta_nue_cc_mixed->GetEntries() << std::endl;
+	 // std::cout << "Numu CC       : " << h_ele_cos_theta_numu_cc->GetEntries() << std::endl;
+	 // std::cout << "Numu CC Mixed : " << h_ele_cos_theta_numu_cc_mixed->GetEntries() << std::endl;
+	 // std::cout << "NC            : " << h_ele_cos_theta_nc->GetEntries() << std::endl;
+	 // std::cout << "NC Pi0        : " << h_ele_cos_theta_nc_pi0->GetEntries() << std::endl;
+	 // std::cout << "Cosmic        : " << h_ele_cos_theta_cosmic->GetEntries() << std::endl;
+	 // std::cout << "NC Mixed      : " << h_ele_cos_theta_other_mixed->GetEntries() << std::endl;
+	 // std::cout << "Unmatched     : " << h_ele_cos_theta_unmatched->GetEntries() << std::endl;
 }
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_cos_theta_intime)
+                                                std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                const double theta_translation, const double phi_translation, bool _verbose, TH1D * h_ele_cos_theta_intime)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -4161,7 +4221,15 @@ void selection_functions::LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectCo
 			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_shower_cos_theta = leading_shower.pfpDirZ();
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
+		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
+
 		h_ele_cos_theta_intime->Fill(leading_shower_cos_theta);
 	}//end pfp loop
 }
@@ -4253,7 +4321,8 @@ void selection_functions::LeadingMomentum(std::vector<xsecAna::TPCObjectContaine
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_ele_pfp_momentum_numu_cc_mixed->Fill(leading_shower_momentum);
+			//h_ele_pfp_momentum_numu_cc_mixed->Fill(leading_shower_momentum);
+			h_ele_pfp_momentum_numu_cc->Fill(leading_shower_momentum);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -4300,7 +4369,8 @@ void selection_functions::LeadingMomentumInTime(std::vector<xsecAna::TPCObjectCo
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco,
+                                       const double theta_translation, const double phi_translation, bool _verbose, bool has_pi0,
                                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                        double vtxX, double vtxY, double vtxZ,
                                        TH1D * h_ele_pfp_theta_nue_cc,
@@ -4323,7 +4393,16 @@ void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> 
 		std::string tpco_id = tpco_class.first;
 		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
+		//const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
+
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+
 		if(tpco_id == "nue_cc_qe")
 		{
 			h_ele_pfp_theta_nue_cc->Fill(leading_shower_theta);
@@ -4382,7 +4461,8 @@ void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> 
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_ele_pfp_theta_numu_cc_mixed->Fill(leading_shower_theta);
+			//h_ele_pfp_theta_numu_cc_mixed->Fill(leading_shower_theta);
+			h_ele_pfp_theta_numu_cc->Fill(leading_shower_theta);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -4402,7 +4482,8 @@ void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> 
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco,
+                                             const double theta_translation, const double phi_translation, bool _verbose,
                                              TH1D * h_ele_pfp_theta_intime)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -4420,7 +4501,16 @@ void selection_functions::LeadingThetaInTime(std::vector<xsecAna::TPCObjectConta
 			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
+		//const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
+
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+
 		h_ele_pfp_theta_intime->Fill(leading_shower_theta);
 	}//end pfp loop
 }
@@ -4510,7 +4600,8 @@ void selection_functions::LeadingPhi(std::vector<xsecAna::TPCObjectContainer> * 
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_ele_pfp_phi_numu_cc_mixed->Fill(leading_shower_phi);
+			//h_ele_pfp_phi_numu_cc_mixed->Fill(leading_shower_phi);
+			h_ele_pfp_phi_numu_cc->Fill(leading_shower_phi);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -4687,8 +4778,10 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 			}
 			if(tpco_id == "numu_cc_mixed")
 			{
-				h_leading_shwr_length_1shwr_numu_cc_mixed->Fill(leading_shower_length);
-				h_leading_shwr_hits_1shwr_numu_cc_mixed->Fill(leading_shower_hits);
+				// h_leading_shwr_length_1shwr_numu_cc_mixed->Fill(leading_shower_length);
+				// h_leading_shwr_hits_1shwr_numu_cc_mixed->Fill(leading_shower_hits);
+				h_leading_shwr_length_1shwr_numu_cc->Fill(leading_shower_length);
+				h_leading_shwr_hits_1shwr_numu_cc->Fill(leading_shower_hits);
 			}
 			if(tpco_id == "cosmic")
 			{
@@ -4780,8 +4873,10 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 			}
 			if(tpco_id == "numu_cc_mixed")
 			{
-				h_leading_shwr_length_2shwr_numu_cc_mixed->Fill(leading_shower_length);
-				h_leading_shwr_hits_2shwr_numu_cc_mixed->Fill(leading_shower_hits);
+				// h_leading_shwr_length_2shwr_numu_cc_mixed->Fill(leading_shower_length);
+				// h_leading_shwr_hits_2shwr_numu_cc_mixed->Fill(leading_shower_hits);
+				h_leading_shwr_length_2shwr_numu_cc->Fill(leading_shower_length);
+				h_leading_shwr_hits_2shwr_numu_cc->Fill(leading_shower_hits);
 			}
 			if(tpco_id == "cosmic")
 			{
@@ -5310,7 +5405,8 @@ void selection_functions::LeadingThetaPhi(std::vector<xsecAna::TPCObjectContaine
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_ele_theta_phi_numu_cc_mixed->Fill(leading_shower_phi, leading_shower_theta);
+			//h_ele_theta_phi_numu_cc_mixed->Fill(leading_shower_phi, leading_shower_theta);
+			h_ele_theta_phi_numu_cc->Fill(leading_shower_phi, leading_shower_theta);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -5448,9 +5544,12 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_ele_pfp_xyz_numu_cc_mixed->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_numu_cc_mixed->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_numu_cc_mixed->at(2)->Fill(pfp_z);
+			// h_ele_pfp_xyz_numu_cc_mixed->at(0)->Fill(pfp_x);
+			// h_ele_pfp_xyz_numu_cc_mixed->at(1)->Fill(pfp_y);
+			// h_ele_pfp_xyz_numu_cc_mixed->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -5592,7 +5691,8 @@ void selection_functions::EnergyCosTheta(std::vector<xsecAna::TPCObjectContainer
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			h_ele_eng_costheta_numu_cc_mixed->Fill(momentum, costheta);
+			//h_ele_eng_costheta_numu_cc_mixed->Fill(momentum, costheta);
+			h_ele_eng_costheta_numu_cc->Fill(momentum, costheta);
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -5689,7 +5789,8 @@ void selection_functions::TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> *
 //***************************************************************************
 //***************************************************************************
 void selection_functions::EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               const double theta_translation, const double phi_translation,bool has_pi0,
                                                double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
                                                double vtxX, double vtxY, double vtxZ,
                                                TH1 * h_ele_eng_for_nue_cc,
@@ -5733,7 +5834,13 @@ void selection_functions::EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectCon
 		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double momentum = leading_shower.pfpMomentum();
-		const double costheta = leading_shower.pfpDirZ();
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		const double costheta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
 
 		if(tpco_id == "nue_cc_qe")
 		{
@@ -5821,9 +5928,12 @@ void selection_functions::EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectCon
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			if(costheta >= 0.5) {h_ele_eng_for_numu_cc_mixed->Fill(momentum); }
-			if(costheta < 0.5 && costheta > -0.5) {h_ele_eng_mid_numu_cc_mixed->Fill(momentum); }
-			if(costheta <= -0.5) {h_ele_eng_back_numu_cc_mixed->Fill(momentum); }
+			// if(costheta >= 0.5) {h_ele_eng_for_numu_cc_mixed->Fill(momentum); }
+			// if(costheta < 0.5 && costheta > -0.5) {h_ele_eng_mid_numu_cc_mixed->Fill(momentum); }
+			// if(costheta <= -0.5) {h_ele_eng_back_numu_cc_mixed->Fill(momentum); }
+			if(costheta >= 0.5) {h_ele_eng_for_numu_cc->Fill(momentum); }
+			if(costheta < 0.5 && costheta > -0.5) {h_ele_eng_mid_numu_cc->Fill(momentum); }
+			if(costheta <= -0.5) {h_ele_eng_back_numu_cc->Fill(momentum); }
 		}
 		if(tpco_id == "cosmic")
 		{
@@ -5847,6 +5957,7 @@ void selection_functions::EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectCon
 }
 void selection_functions::EnergyCosThetaSlicesInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                     const double theta_translation, const double phi_translation,
                                                      TH1 * h_ele_eng_for_intime,
                                                      TH1 * h_ele_eng_mid_intime,
                                                      TH1 * h_ele_eng_back_intime)
@@ -5867,7 +5978,13 @@ void selection_functions::EnergyCosThetaSlicesInTime(std::vector<xsecAna::TPCObj
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double momentum = leading_shower.pfpMomentum();
-		const double costheta = leading_shower.pfpDirZ();
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		const double costheta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
 		if(costheta >= 0.5) {h_ele_eng_for_intime->Fill(momentum); }
 		if(costheta < 0.5 && costheta > -0.5) {h_ele_eng_mid_intime->Fill(momentum); }
 		if(costheta <= -0.5) {h_ele_eng_back_intime->Fill(momentum); }

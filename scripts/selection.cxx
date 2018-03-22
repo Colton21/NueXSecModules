@@ -280,7 +280,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_hit_threshold_counter_v);
 
 			_data_functions_instance.selection_functions_data::dEdxVsOpenAngleData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_open_angle_data);
-			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_cos_theta_data);
+			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, 0, 0, _verbose, h_ele_cos_theta_data);
 
 			//***************************************//
 			//*** Collection Plane Hits Threshold ***//
@@ -360,13 +360,22 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_data_functions_instance.selection_functions_data::LeadingMomentumData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_momentum_data);
 			_data_functions_instance.selection_functions_data::LeadingPhiData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_phi_last_data);
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_last_data);
-			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_cos_theta_last_data);
+			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, theta_translation, phi_translation,
+			                                                                       _verbose, h_ele_cos_theta_last_trans_data);
+			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, 0, 0,
+			                                                                       _verbose, h_ele_cos_theta_last_data);
 			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_xyz_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                            0, 0,
 			                                                                            h_ele_eng_for_data,
 			                                                                            h_ele_eng_mid_data,
 			                                                                            h_ele_eng_back_data);
+			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                            theta_translation, phi_translation,
+			                                                                            h_ele_eng_for_trans_data,
+			                                                                            h_ele_eng_mid_trans_data,
+			                                                                            h_ele_eng_back_trans_data);
 
 			//delete at the very end!
 			delete passed_tpco_data;
@@ -570,7 +579,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_hit_threshold_counter_v);
 
 			_functions_instance.selection_functions::dEdxVsOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_dedx_open_angle_intime);
-			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_cos_theta_intime);
+			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0,
+			                                                               _verbose, h_ele_cos_theta_intime);
 
 			//***************************************//
 			//*** Collection Plane Hits Threshold ***//
@@ -578,7 +588,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                          h_ele_pfp_phi_intime);
 
-			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0, _verbose,
 			                                                            h_ele_pfp_theta_intime);
 
 			_functions_instance.selection_functions::HitsPlots1DInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
@@ -593,7 +603,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_phi_after_intime);
 
-			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_theta_after_intime);
+			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0, _verbose, h_ele_pfp_theta_after_intime);
 
 			//*****************************************************
 			//****** open angle cut for the leading shower ********
@@ -651,14 +661,24 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//*************************************
 			_functions_instance.selection_functions::LeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_momentum_intime);
 			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_phi_last_intime);
-			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_theta_last_intime);
-			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_cos_theta_last_intime);
+			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                            theta_translation, phi_translation, _verbose, h_ele_pfp_theta_last_intime);
+			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                               0, 0, _verbose, h_ele_cos_theta_last_intime);
+			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                               theta_translation, phi_translation, _verbose, h_ele_cos_theta_last_trans_intime);
 			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_xyz_intime);
 			_functions_instance.selection_functions::EnergyCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_eng_costheta_intime);
 			_functions_instance.selection_functions::EnergyCosThetaSlicesInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                    0, 0,
 			                                                                    h_ele_eng_for_intime,
 			                                                                    h_ele_eng_mid_intime,
 			                                                                    h_ele_eng_back_intime);
+			_functions_instance.selection_functions::EnergyCosThetaSlicesInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                    theta_translation, phi_translation,
+			                                                                    h_ele_eng_for_trans_intime,
+			                                                                    h_ele_eng_mid_trans_intime,
+			                                                                    h_ele_eng_back_trans_intime);
 
 			//delete at the very end!
 			delete passed_tpco_intime;
@@ -837,8 +857,13 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		if(mc_nu_momentum != 0) {mc_cos_theta = mc_nu_dir_z; }
 		const double mc_phi       = atan2(mc_nu_dir_y, mc_nu_dir_x);
 		double mc_ele_cos_theta = -999;
+		double mc_ele_theta = -999;
 		//if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z / mc_ele_momentum; }
-		if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z; }
+		if(mc_ele_momentum != 0)
+		{
+			mc_ele_cos_theta = mc_ele_dir_z;
+			mc_ele_theta = acos(mc_ele_dir_z) * (180/3.1415);
+		}
 		const double mc_ele_phi       = atan2(mc_ele_dir_y, mc_ele_dir_x);
 		if(mc_nu_id == 1 || mc_nu_id == 5)
 		//if this event is a true nue CC interaction and is inside the FV
@@ -857,6 +882,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 				h_ele_dir_x_eff_den->Fill(mc_ele_dir_x);
 				h_ele_dir_y_eff_den->Fill(mc_ele_dir_y);
 				h_ele_dir_z_eff_den->Fill(mc_ele_dir_z);
+				h_ele_theta_eff_den->Fill(mc_ele_theta);
 				h_nue_num_part_eff_den->Fill(mc_nu_num_particles);
 				h_nue_num_chrg_part_eff_den->Fill(mc_nu_num_charged_particles);
 				h_nue_cos_theta_eff_den->Fill(mc_cos_theta);
@@ -1178,7 +1204,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                    h_ele_pfp_phi_other_mixed,
 		                                                    h_ele_pfp_phi_unmatched);
 
-		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
 		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                      h_ele_pfp_theta_nue_cc,
 		                                                      h_ele_pfp_theta_nue_cc_out_fv,
@@ -1249,7 +1275,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_dedx_open_angle_numu_cc_mixed, h_dedx_open_angle_nc,
 		                                                         h_dedx_open_angle_nc_pi0, h_dedx_open_angle_cosmic,
 		                                                         h_dedx_open_angle_other_mixed, h_dedx_open_angle_unmatched);
-		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
 		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                         h_ele_cos_theta_nue_cc,
 		                                                         h_ele_cos_theta_nue_cc_out_fv,
@@ -1409,7 +1436,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                    h_ele_pfp_phi_after_other_mixed,
 		                                                    h_ele_pfp_phi_after_unmatched);
 
-		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
 		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                      h_ele_pfp_theta_after_nue_cc,
 		                                                      h_ele_pfp_theta_after_nue_cc_out_fv,
@@ -1458,12 +1485,13 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 				h_ele_dir_x_eff_num->Fill(mc_ele_dir_x);
 				h_ele_dir_y_eff_num->Fill(mc_ele_dir_y);
 				h_ele_dir_z_eff_num->Fill(mc_ele_dir_z);
+				h_ele_theta_eff_num->Fill(mc_ele_theta);
 				h_nue_num_part_eff_num->Fill(mc_nu_num_particles);
 				h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles);
 				h_nue_cos_theta_eff_num->Fill(mc_cos_theta);
 				h_nue_phi_eff_num->Fill(mc_phi);
 				h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
-				h_ele_phi_eff_num->Fill(mc_ele_phi);
+				h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415));
 				_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
 				                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
 				                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
@@ -1612,8 +1640,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                   h_longest_shwr_trk_length_cosmic,
 		                                                                   h_longest_shwr_trk_length_other_mixed,
 		                                                                   h_longest_shwr_trk_length_unmatched);
-
-		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
 		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                         h_ele_cos_theta_last_nue_cc,
 		                                                         h_ele_cos_theta_last_nue_cc_out_fv,
@@ -1625,6 +1652,18 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_cos_theta_last_cosmic,
 		                                                         h_ele_cos_theta_last_other_mixed,
 		                                                         h_ele_cos_theta_last_unmatched);
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
+		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                         h_ele_cos_theta_last_trans_nue_cc,
+		                                                         h_ele_cos_theta_last_trans_nue_cc_out_fv,
+		                                                         h_ele_cos_theta_last_trans_nue_cc_mixed,
+		                                                         h_ele_cos_theta_last_trans_numu_cc,
+		                                                         h_ele_cos_theta_last_trans_numu_cc_mixed,
+		                                                         h_ele_cos_theta_last_trans_nc,
+		                                                         h_ele_cos_theta_last_trans_nc_pi0,
+		                                                         h_ele_cos_theta_last_trans_cosmic,
+		                                                         h_ele_cos_theta_last_trans_other_mixed,
+		                                                         h_ele_cos_theta_last_trans_unmatched);
 
 		_functions_instance.selection_functions::XYZPosition(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
 		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -1665,7 +1704,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                    h_ele_pfp_phi_last_other_mixed,
 		                                                    h_ele_pfp_phi_last_unmatched);
 
-		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, theta_translation, phi_translation,
+		                                                      _verbose, has_pi0,
 		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                      h_ele_pfp_theta_last_nue_cc,
 		                                                      h_ele_pfp_theta_last_nue_cc_out_fv,
@@ -1747,7 +1787,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                        h_ele_eng_costheta_other_mixed,
 		                                                        h_ele_eng_costheta_unmatched);
 
-		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
+		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
+		                                                              0, 0, has_pi0,
 		                                                              _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                              h_ele_eng_for_nue_cc,
 		                                                              h_ele_eng_for_nue_cc_out_fv,
@@ -1779,6 +1820,39 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                              h_ele_eng_back_cosmic,
 		                                                              h_ele_eng_back_other_mixed,
 		                                                              h_ele_eng_back_unmatched);
+		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
+		                                                              theta_translation, phi_translation, has_pi0,
+		                                                              _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                              h_ele_eng_for_trans_nue_cc,
+		                                                              h_ele_eng_for_trans_nue_cc_out_fv,
+		                                                              h_ele_eng_for_trans_nue_cc_mixed,
+		                                                              h_ele_eng_for_trans_numu_cc,
+		                                                              h_ele_eng_for_trans_numu_cc_mixed,
+		                                                              h_ele_eng_for_trans_nc,
+		                                                              h_ele_eng_for_trans_nc_pi0,
+		                                                              h_ele_eng_for_trans_cosmic,
+		                                                              h_ele_eng_for_trans_other_mixed,
+		                                                              h_ele_eng_for_trans_unmatched,
+		                                                              h_ele_eng_mid_trans_nue_cc,
+		                                                              h_ele_eng_mid_trans_nue_cc_out_fv,
+		                                                              h_ele_eng_mid_trans_nue_cc_mixed,
+		                                                              h_ele_eng_mid_trans_numu_cc,
+		                                                              h_ele_eng_mid_trans_numu_cc_mixed,
+		                                                              h_ele_eng_mid_trans_nc,
+		                                                              h_ele_eng_mid_trans_nc_pi0,
+		                                                              h_ele_eng_mid_trans_cosmic,
+		                                                              h_ele_eng_mid_trans_other_mixed,
+		                                                              h_ele_eng_mid_trans_unmatched,
+		                                                              h_ele_eng_back_trans_nue_cc,
+		                                                              h_ele_eng_back_trans_nue_cc_out_fv,
+		                                                              h_ele_eng_back_trans_nue_cc_mixed,
+		                                                              h_ele_eng_back_trans_numu_cc,
+		                                                              h_ele_eng_back_trans_numu_cc_mixed,
+		                                                              h_ele_eng_back_trans_nc,
+		                                                              h_ele_eng_back_trans_nc_pi0,
+		                                                              h_ele_eng_back_trans_cosmic,
+		                                                              h_ele_eng_back_trans_other_mixed,
+		                                                              h_ele_eng_back_trans_unmatched);
 
 	}//end event loop
 
@@ -1889,6 +1963,13 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	histogram_functions::Plot1DHistogram(h_nue_true_theta, "True Neutrino Theta [Degrees]", "true_nue_theta.pdf");
 	histogram_functions::Plot1DHistogram(h_nue_true_phi,   "True Neutrino Phi [Degrees]",   "true_nue_phi.pdf");
 	histogram_functions::Plot2DHistogram(h_nue_true_theta_phi, "True Nue CC", "Phi [Degrees]", "Theta [Degrees]", "true_nue_theta_phi.pdf");
+
+	histogram_functions::Plot1DHistogram(h_ele_phi_eff_num, "Selected True Electron Phi [Degrees]", "selected_true_electron_phi.pdf");
+	histogram_functions::Plot1DHistogram(h_ele_phi_eff_den, "True Electron Phi [Degrees]", "true_electron_phi.pdf");
+	histogram_functions::Plot1DHistogram(h_ele_cos_theta_eff_num, "Selected True Electron Cos(#theta)", "selected_true_electron_cos_theta.pdf");
+	histogram_functions::Plot1DHistogram(h_ele_cos_theta_eff_den, "True Electron Cos(#theta)", "true_electron_cos_theta.pdf");
+	histogram_functions::Plot1DHistogram(h_ele_theta_eff_num, "Selected True Electron Theta [Degrees]", "selected_true_electron_theta.pdf");
+	histogram_functions::Plot1DHistogram(h_ele_theta_eff_den, "True Electron Theta [Degrees]", "true_electron_theta.pdf");
 
 	histogram_functions::PlotTEfficiency (h_nue_eng_eff_num, h_nue_eng_eff_den,
 	                                      ";True Neutrino Energy [GeV];Efficiency", "signal_selection_nu_energy_efficiency.pdf");
@@ -2942,6 +3023,18 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	histogram_functions::Plot2DHistogram (h_nu_eng_collection_hits, "", "Hits - Collection Planes",
 	                                      "True Neutrino Energy [GeV]", "post_cuts_nu_eng_colleciton_hits.pdf");
 
+	int total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
+	               h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
+	               h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
+	               h_ele_cos_theta_last_numu_cc->GetEntries() +
+	               h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
+	               h_ele_cos_theta_last_nc->GetEntries() +
+	               h_ele_cos_theta_last_nc_pi0->GetEntries() +
+	               h_ele_cos_theta_last_cosmic->GetEntries() +
+	               h_ele_cos_theta_last_other_mixed->GetEntries() +
+	               h_ele_cos_theta_last_unmatched->GetEntries();
+	std::cout << "total 1 0,0: " << total_h1 << std::endl;
+
 	histogram_functions::PlotSimpleStack (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
 	                                      h_ele_cos_theta_last_nue_cc_out_fv,
 	                                      h_ele_cos_theta_last_numu_cc, h_ele_cos_theta_last_numu_cc_mixed,
@@ -2956,6 +3049,18 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                      h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
 	                                      h_ele_cos_theta_unmatched, 0.15, 0.35, 0.70, 0.95, "",
 	                                      "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta.pdf");
+
+	total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
+	           h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
+	           h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_numu_cc->GetEntries() +
+	           h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_nc->GetEntries() +
+	           h_ele_cos_theta_last_nc_pi0->GetEntries() +
+	           h_ele_cos_theta_last_cosmic->GetEntries() +
+	           h_ele_cos_theta_last_other_mixed->GetEntries() +
+	           h_ele_cos_theta_last_unmatched->GetEntries();
+	std::cout << "total 2 0,0: " << total_h1 << std::endl;
 
 	histogram_functions::PlotSimpleStackInTime (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
 	                                            h_ele_cos_theta_last_nue_cc_out_fv,
@@ -2974,6 +3079,18 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                            0.15, 0.35, 0.70, 0.95, "",
 	                                            "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_intime.pdf");
 
+	total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
+	           h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
+	           h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_numu_cc->GetEntries() +
+	           h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_nc->GetEntries() +
+	           h_ele_cos_theta_last_nc_pi0->GetEntries() +
+	           h_ele_cos_theta_last_cosmic->GetEntries() +
+	           h_ele_cos_theta_last_other_mixed->GetEntries() +
+	           h_ele_cos_theta_last_unmatched->GetEntries();
+	std::cout << "total 3 0,0: " << total_h1 << std::endl;
+
 	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
 	                                          h_ele_cos_theta_last_nue_cc_out_fv,
 	                                          h_ele_cos_theta_last_numu_cc, h_ele_cos_theta_last_numu_cc_mixed,
@@ -2983,6 +3100,51 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                          h_ele_cos_theta_last_data, data_scale_factor,
 	                                          0.15, 0.35, 0.70, 0.95, "",
 	                                          "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_last_data.pdf");
+	total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
+	           h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
+	           h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_numu_cc->GetEntries() +
+	           h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_nc->GetEntries() +
+	           h_ele_cos_theta_last_nc_pi0->GetEntries() +
+	           h_ele_cos_theta_last_cosmic->GetEntries() +
+	           h_ele_cos_theta_last_other_mixed->GetEntries() +
+	           h_ele_cos_theta_last_unmatched->GetEntries();
+	std::cout << "total 4 0,0: " << total_h1 << std::endl;
+
+	int total_h2 = h_ele_cos_theta_last_trans_nue_cc->GetEntries() +
+	               h_ele_cos_theta_last_trans_nue_cc_out_fv->GetEntries() +
+	               h_ele_cos_theta_last_trans_nue_cc_mixed->GetEntries() +
+	               h_ele_cos_theta_last_trans_numu_cc->GetEntries() +
+	               h_ele_cos_theta_last_trans_numu_cc_mixed->GetEntries() +
+	               h_ele_cos_theta_last_trans_nc->GetEntries() +
+	               h_ele_cos_theta_last_trans_nc_pi0->GetEntries() +
+	               h_ele_cos_theta_last_trans_cosmic->GetEntries() +
+	               h_ele_cos_theta_last_trans_other_mixed->GetEntries() +
+	               h_ele_cos_theta_last_trans_unmatched->GetEntries();
+	std::cout << "total before: " << total_h2 << std::endl;
+
+	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_last_trans_nue_cc,    h_ele_cos_theta_last_trans_nue_cc_mixed,
+	                                          h_ele_cos_theta_last_trans_nue_cc_out_fv,
+	                                          h_ele_cos_theta_last_trans_numu_cc,   h_ele_cos_theta_last_trans_numu_cc_mixed,
+	                                          h_ele_cos_theta_last_trans_cosmic,    h_ele_cos_theta_last_trans_nc,
+	                                          h_ele_cos_theta_last_trans_nc_pi0,    h_ele_cos_theta_last_trans_other_mixed,
+	                                          h_ele_cos_theta_last_trans_unmatched, h_ele_cos_theta_last_trans_intime, intime_scale_factor,
+	                                          h_ele_cos_theta_last_trans_data, data_scale_factor,
+	                                          0.15, 0.35, 0.70, 0.95, "",
+	                                          "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_last_trans_data.pdf");
+	total_h2 = h_ele_cos_theta_last_trans_nue_cc->GetEntries() +
+	           h_ele_cos_theta_last_trans_nue_cc_out_fv->GetEntries() +
+	           h_ele_cos_theta_last_trans_nue_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_trans_numu_cc->GetEntries() +
+	           h_ele_cos_theta_last_trans_numu_cc_mixed->GetEntries() +
+	           h_ele_cos_theta_last_trans_nc->GetEntries() +
+	           h_ele_cos_theta_last_trans_nc_pi0->GetEntries() +
+	           h_ele_cos_theta_last_trans_cosmic->GetEntries() +
+	           h_ele_cos_theta_last_trans_other_mixed->GetEntries() +
+	           h_ele_cos_theta_last_trans_unmatched->GetEntries();
+	std::cout << "total after: " << total_h2 << std::endl;
+
 	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_nue_cc,  h_ele_cos_theta_nue_cc_mixed,
 	                                          h_ele_cos_theta_nue_cc_out_fv,
 	                                          h_ele_cos_theta_numu_cc, h_ele_cos_theta_numu_cc_mixed,
@@ -3326,6 +3488,27 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                         h_ele_eng_back_other_mixed,   h_ele_eng_back_unmatched, h_ele_eng_back_intime,
 	                                         intime_scale_factor,          h_ele_eng_back_data,      data_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (Cos(#theta) <= -0.5)", "", "post_cuts_leading_eng_back_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_ele_eng_for_trans_nue_cc,        h_ele_eng_for_trans_nue_cc_mixed,
+	                                         h_ele_eng_for_trans_nue_cc_out_fv, h_ele_eng_for_trans_numu_cc,   h_ele_eng_for_trans_numu_cc_mixed,
+	                                         h_ele_eng_for_trans_cosmic,        h_ele_eng_for_trans_nc,        h_ele_eng_for_trans_nc_pi0,
+	                                         h_ele_eng_for_trans_other_mixed,   h_ele_eng_for_trans_unmatched, h_ele_eng_for_trans_intime,
+	                                         intime_scale_factor,               h_ele_eng_for_trans_data,      data_scale_factor,
+	                                         "", "Reco Electron Energy [GeV] (Cos(#theta_t) >= 0.5)", "", "post_cuts_leading_eng_for_trans_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_ele_eng_mid_trans_nue_cc,        h_ele_eng_mid_trans_nue_cc_mixed,
+	                                         h_ele_eng_mid_trans_nue_cc_out_fv, h_ele_eng_mid_trans_numu_cc,   h_ele_eng_mid_trans_numu_cc_mixed,
+	                                         h_ele_eng_mid_trans_cosmic,        h_ele_eng_mid_trans_nc,        h_ele_eng_mid_trans_nc_pi0,
+	                                         h_ele_eng_mid_trans_other_mixed,   h_ele_eng_mid_trans_unmatched, h_ele_eng_mid_trans_intime,
+	                                         intime_scale_factor,         h_ele_eng_mid_trans_data,      data_scale_factor,
+	                                         "", "Reco Electron Energy [GeV] (0.5 > Cos(#theta_t) > -0.5)", "", "post_cuts_leading_eng_mid_trans_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_ele_eng_back_trans_nue_cc,        h_ele_eng_back_trans_nue_cc_mixed,
+	                                         h_ele_eng_back_trans_nue_cc_out_fv, h_ele_eng_back_trans_numu_cc,   h_ele_eng_back_trans_numu_cc_mixed,
+	                                         h_ele_eng_back_trans_cosmic,        h_ele_eng_back_trans_nc,        h_ele_eng_back_trans_nc_pi0,
+	                                         h_ele_eng_back_trans_other_mixed,   h_ele_eng_back_trans_unmatched, h_ele_eng_back_trans_intime,
+	                                         intime_scale_factor,          h_ele_eng_back_trans_data,      data_scale_factor,
+	                                         "", "Reco Electron Energy [GeV] (Cos(#theta_t) <= -0.5)", "", "post_cuts_leading_eng_back_trans_data.pdf");
 
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();

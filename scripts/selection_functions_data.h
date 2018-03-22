@@ -126,7 +126,8 @@ void FailureReasonData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
 //***************************************************************************
 //***************************************************************************
 void LeadingCosThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_cos_theta_data);
+                         std::vector<std::pair<int, std::string> > * passed_tpco, const double theta_translation, const double phi_translation,
+                         bool _verbose, TH1D * h_ele_cos_theta_data);
 //***************************************************************************
 //***************************************************************************
 void HitsPlots1DData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -191,6 +192,7 @@ void EnergyCosThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_co
 //***************************************************************************
 void EnergyCosThetaSlicesData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              const double theta_translation, const double phi_translation,
                               TH1 * h_ele_eng_for_data,
                               TH1 * h_ele_eng_mid_data,
                               TH1 * h_ele_eng_back_data);
