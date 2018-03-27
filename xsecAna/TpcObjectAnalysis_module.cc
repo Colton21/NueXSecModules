@@ -261,10 +261,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	//if there is no optical activity in this event then I have to check where the true nu vtx is
 	//if it's a true nue without reco optical event, but interacts in the FV then this is
 	//a loss in efficiency!
-	if(beam_opflashes.size() == 0) 
-	{ 
-		std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl; 
-		no_reco_flash = true;	 
+	if(beam_opflashes.size() == 0)
+	{
+		std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl;
+		no_reco_flash = true;
 	}
 
 	for(auto const & opflsh : beam_opflashes)
@@ -333,7 +333,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
 				if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
 				simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
-				mcparticle_tree->Fill(); 
+				mcparticle_tree->Fill();
 			}
 			if(fMCMother == 0)
 			{
@@ -350,44 +350,44 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
 				if(mctruth->Origin() == simb::kBeamNeutrino && event_neutrino == false)
 				{
-				//mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
-				//bt->TrackIDToMCTruth(mcparticle.TrackId());
-				if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
-				if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
-				if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
-				simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
-				bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
-				int fMCNuPdg = mc_nu.Nu().PdgCode();
-				//std::cout << fMCParticleID << '\t';
-				//std::cout << fMCNuPdg << '\t';
-				if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      fMCNuID = 1; }
-				if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     fMCNuID = 2; }
-				if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      fMCNuID = 3; }
-				if(fMCNuPdg == 14  && fCCNC == 1) {mc_numu_nc_counter++;     fMCNuID = 4; }
-				if(fMCNuPdg == -12 && fCCNC == 0) {mc_nue_cc_counter_bar++;  fMCNuID = 5; }
-				if(fMCNuPdg == -14 && fCCNC == 0) {mc_numu_cc_counter_bar++; fMCNuID = 6; }
-				if(fMCNuPdg == -12 && fCCNC == 1) {mc_nue_nc_counter_bar++;  fMCNuID = 7; }
-				if(fMCNuPdg == -14 && fCCNC == 1) {mc_numu_nc_counter_bar++; fMCNuID = 8; }
-				//this loop is only enerted once per event, assuming 1 nu event per event.
-				//this way we get the neutrino vertex and energy per event and can use this
-				//to calculate if it's in the FV in the future, during the selection.
-				fMCNuVtxX     = mc_nu.Nu().Vx();
-				fMCNuVtxY     = mc_nu.Nu().Vy();
-				fMCNuVtxZ     = mc_nu.Nu().Vz();
-				fMCNuEnergy   = mc_nu.Nu().E();
-				fMCNuMomentum = mc_nu.Nu().P();
-				fMCNuDirX     = (mc_nu.Nu().Px() / mc_nu.Nu().P());
-				fMCNuDirY     = (mc_nu.Nu().Py() / mc_nu.Nu().P());
-				fMCNuDirZ     = (mc_nu.Nu().Pz() / mc_nu.Nu().P());
-				fMCEleDirX     = (mc_nu.Lepton().Px() / mc_nu.Lepton().P());
-				fMCEleDirY     = (mc_nu.Lepton().Py() / mc_nu.Lepton().P());
-				fMCEleDirZ     = (mc_nu.Lepton().Pz() / mc_nu.Lepton().P());
-				fMCEleEnergy   = mc_nu.Lepton().E();
-				fMCEleMomentum = mc_nu.Lepton().P();
-				fMCNuTime      = mc_nu.Nu().Trajectory().T(0);
-				event_neutrino = true;
+					//mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
+					//bt->TrackIDToMCTruth(mcparticle.TrackId());
+					if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
+					if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
+					if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
+					simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
+					bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
+					int fMCNuPdg = mc_nu.Nu().PdgCode();
+					//std::cout << fMCParticleID << '\t';
+					//std::cout << fMCNuPdg << '\t';
+					if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      fMCNuID = 1; }
+					if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     fMCNuID = 2; }
+					if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      fMCNuID = 3; }
+					if(fMCNuPdg == 14  && fCCNC == 1) {mc_numu_nc_counter++;     fMCNuID = 4; }
+					if(fMCNuPdg == -12 && fCCNC == 0) {mc_nue_cc_counter_bar++;  fMCNuID = 5; }
+					if(fMCNuPdg == -14 && fCCNC == 0) {mc_numu_cc_counter_bar++; fMCNuID = 6; }
+					if(fMCNuPdg == -12 && fCCNC == 1) {mc_nue_nc_counter_bar++;  fMCNuID = 7; }
+					if(fMCNuPdg == -14 && fCCNC == 1) {mc_numu_nc_counter_bar++; fMCNuID = 8; }
+					//this loop is only enerted once per event, assuming 1 nu event per event.
+					//this way we get the neutrino vertex and energy per event and can use this
+					//to calculate if it's in the FV in the future, during the selection.
+					fMCNuVtxX     = mc_nu.Nu().Vx();
+					fMCNuVtxY     = mc_nu.Nu().Vy();
+					fMCNuVtxZ     = mc_nu.Nu().Vz();
+					fMCNuEnergy   = mc_nu.Nu().E();
+					fMCNuMomentum = mc_nu.Nu().P();
+					fMCNuDirX     = (mc_nu.Nu().Px() / mc_nu.Nu().P());
+					fMCNuDirY     = (mc_nu.Nu().Py() / mc_nu.Nu().P());
+					fMCNuDirZ     = (mc_nu.Nu().Pz() / mc_nu.Nu().P());
+					fMCEleDirX     = (mc_nu.Lepton().Px() / mc_nu.Lepton().P());
+					fMCEleDirY     = (mc_nu.Lepton().Py() / mc_nu.Lepton().P());
+					fMCEleDirZ     = (mc_nu.Lepton().Pz() / mc_nu.Lepton().P());
+					fMCEleEnergy   = mc_nu.Lepton().E();
+					fMCEleMomentum = mc_nu.Lepton().P();
+					fMCNuTime      = mc_nu.Nu().Trajectory().T(0);
+					event_neutrino = true;
 				}
-			
+
 				//this should only give the stable final state particles
 				if(mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
 				{
@@ -399,7 +399,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 						if(_verbose) {std::cout << " [Analyze] [MCTruth] Event has Neutrino Induced Pi0" << std::endl; }
 					}
 					if(fMcparticle_pdg == 11  || fMcparticle_pdg == 13   || fMcparticle_pdg == -11  || fMcparticle_pdg == -13 ||
-				   	fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
+					   fMcparticle_pdg == 211 || fMcparticle_pdg == -211 || fMcparticle_pdg == 2212 || fMcparticle_pdg == 321 || fMcparticle_pdg == -321)
 					{
 						mc_num_charged_particles++;
 					}
@@ -586,34 +586,34 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			int mcPdg = 0;
 			//int mcNuPdg = 0; // not set
 			int mcParentPdg = 0;
-			double pfp_dir_x = 0;
-			double pfp_dir_y = 0;
-			double pfp_dir_z = 0;
-			double pfp_theta = 0;
-			double pfp_phi = 0;
-			double pfp_length = 0;
-			double pfp_momentum = 0;
+			double pfp_dir_x = -999;
+			double pfp_dir_y = -999;
+			double pfp_dir_z = -999;
+			double pfp_theta = -999;
+			double pfp_phi = -999;
+			double pfp_length = -999;
+			double pfp_momentum = -999;
 			int pfp_hits = 0;
 			int pfp_hits_u = 0;
 			int pfp_hits_v = 0;
 			int pfp_hits_w = 0;
-			double pfp_open_angle = 0;
-			double pfp_energy_u = 0;
-			double pfp_energy_v = 0;
-			double pfp_energy_w = 0;
+			double pfp_open_angle = -999;
+			double pfp_energy_u = -999;
+			double pfp_energy_v = -999;
+			double pfp_energy_w = -999;
 
 			double mc_vtx_x = -999;
 			double mc_vtx_y = -999;
 			double mc_vtx_z = -999;
-			double mc_dir_x = 0;
-			double mc_dir_y = 0;
-			double mc_dir_z = 0;
-			double mc_theta = 0;
-			double mc_phi = 0;
-			double mcLength = 0;
-			double mcEnergy = 0;
-			double mcMomentum = 0;
-			double mcNeutrinoEnergy = 0;
+			double mc_dir_x = -999;
+			double mc_dir_y = -999;
+			double mc_dir_z = -999;
+			double mc_theta = -999;
+			double mc_phi = -999;
+			double mcLength = -999;
+			double mcEnergy = -999;
+			double mcMomentum = -999;
+			double mcNeutrinoEnergy = -999;
 			int particle_mode = -1;
 			int particle_is_cc = -1;
 			//double mc_open_angle = 0; //unset

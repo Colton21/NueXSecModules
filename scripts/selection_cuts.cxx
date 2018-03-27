@@ -116,9 +116,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 	}
 }//end optical loop function
 //***************************************************************************
-bool selection_cuts::in_fv(double x, double y, double z,
-                           double x1, double x2, double y1,
-                           double y2, double z1, double z2)
+bool selection_cuts::in_fv(double x, double y, double z, std::vector<double> fv_boundary_v)
 {
 	const double det_x1 = 0;
 	const double det_x2 = 256.35;
@@ -127,9 +125,29 @@ bool selection_cuts::in_fv(double x, double y, double z,
 	const double det_z1 = 0;
 	const double det_z2 = 1036.8;
 
+	const double x1 = fv_boundary_v.at(0);
+	const double x2 = fv_boundary_v.at(1);
+	const double y1 = fv_boundary_v.at(2);
+	const double y2 = fv_boundary_v.at(3);
+	const double z1 = fv_boundary_v.at(4);
+	const double z2 = fv_boundary_v.at(5);
+
 	if(x <= det_x1 + x1 || x >= det_x2 - x2) {return false; }
 	if(y <= det_y1 + y1 || y >= det_y2 - y2) {return false; }
 	if(z <= det_z1 + z1 || z >= det_z2 - z2) {return false; }
+	return true;
+
+	// if(x >= det_x1 + x1 && x <= det_x2 - x2)
+	// {
+	//      if(y >= det_y1 + y1 && y <= det_y2 - y2)
+	//      {
+	//              if(z >= det_z1 + z1 && z <= det_z2 -z2)
+	//              {
+	//                      return true;
+	//              }
+	//      }
+	// }
+	// return false;
 
 
 	//we also want to consider the dead region in the detector
@@ -141,16 +159,13 @@ bool selection_cuts::in_fv(double x, double y, double z,
 	// const double dead_tolerance = 25; //cm
 	// if( z >= dead_z_start - dead_tolerance && z <= dead_z_end + dead_tolerance) {return false; }
 	//did not have a positive effect ...
-
-	return true;
 }
 //***************************************************************************
 void selection_cuts::fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                         std::vector<double> fv_boundary_v,
                                          std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
-	if(passed_tpco->size() != n_tpc_obj) {std::cout << "Passed TPCO Vector Size != nTPCO!" << std::endl; }
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
@@ -159,13 +174,9 @@ void selection_cuts::fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
-		const bool InFV = in_fv(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2);
-		if(InFV == 1)//true
-		{
-			passed_tpco->at(i).first = 1;
-			if(_verbose) {std::cout << " \t " << i << "[Fid Volume Cut] \t Passed" << std::endl; }
-		}
-		if(InFV == 0)//false
+		const bool InFV = in_fv(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z, fv_boundary_v);
+		if(InFV == true) { if(_verbose) { std::cout << " \t " << i << "[Fid Volume Cut] \t Passed" << std::endl; } }
+		if(InFV == false)
 		{
 			passed_tpco->at(i).first = 0;
 			passed_tpco->at(i).second = "InFV";
@@ -308,7 +319,7 @@ void selection_cuts::flashRecoVtxDist(std::vector< double > largest_flash_v, std
 		const bool is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tolerance);
 		if(is_close == 1)//true
 		{
-			passed_tpco->at(i).first = 1;
+			//passed_tpco->at(i).first = 1;
 			if(_verbose) std::cout << " \t " << i << "[Vertex-To-Flash] \t Passed " << std::endl;
 		}
 		if(is_close == 0)//false
@@ -359,7 +370,7 @@ void selection_cuts::VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tp
 				if(close_shower == true)
 				{
 					if(_verbose) std::cout << " \t " << i << "[Shower-To-Nue] \t Passed " << std::endl;
-					passed_tpco->at(i).first = 1;
+					//passed_tpco->at(i).first = 1;
 					break;
 				}
 			}
@@ -405,7 +416,7 @@ void selection_cuts::VtxTrackNuDistance(std::vector<xsecAna::TPCObjectContainer>
 				if(close_track == true)
 				{
 					if(_verbose) std::cout << " \t " << i << "[Track-To-Nue] \t Passed " << std::endl;
-					passed_tpco->at(i).first = 1;
+					//passed_tpco->at(i).first = 1;
 					break;
 				}
 			}
@@ -443,7 +454,7 @@ void selection_cuts::HitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc
 				if(over_threshold == true)
 				{
 					if(_verbose) std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
-					passed_tpco->at(i).first = 1;
+					//passed_tpco->at(i).first = 1;
 					break;
 				}
 			}
@@ -480,7 +491,7 @@ void selection_cuts::HitThresholdCollection(std::vector<xsecAna::TPCObjectContai
 				if(over_threshold == true)
 				{
 					if(_verbose) std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
-					passed_tpco->at(i).first = 1;
+					//passed_tpco->at(i).first = 1;
 					break;
 				}
 			}
@@ -504,27 +515,21 @@ void selection_cuts::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_objec
 		const int n_pfp = tpc_obj.NumPFParticles();
 
 		bool has_nue = false;
+		bool has_valid_shower = false;
 		for(int j = 0; j <n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
 			const int pfp_pdg = part.PFParticlePdgCode();
-			if(pfp_pdg == 12)
-			{
-				has_nue = true;
-				break;
-			}
+			const int pfp_hits = part.NumPFPHits();
+			if(pfp_pdg == 11 && pfp_hits > 0) { has_valid_shower = true; }
+			if(pfp_pdg == 12) { has_nue = true; }
 		}//end loop pfparticles
-		if(has_nue == false)
+		if(has_nue == false || has_valid_shower == false)
 		{
 			passed_tpco->at(i).first = 0;
 			passed_tpco->at(i).second = "HasNue";
 		}
-		if(has_nue == true)
-		{
-			//* this might cause some problems later - is it doing anything??? *//
-			passed_tpco->at(i).first = 1;
-			if(_verbose) std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl;
-		}
+		if(has_nue == true && has_valid_shower == true) { if(_verbose) std::cout << " \t " << i << "[Reco Nue Cut] \t Passed" << std::endl; }
 	}
 }
 //***************************************************************************

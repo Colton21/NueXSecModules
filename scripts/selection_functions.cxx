@@ -4,9 +4,7 @@
 //***************************************************************************
 void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                                       bool has_pi0,
-                                       double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                       double vtxX, double vtxY, double vtxZ,
+                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                        TH1D * h_dedx_cuts_nue_cc,
                                        TH1D * h_dedx_cuts_nue_cc_mixed,
                                        TH1D * h_dedx_cuts_nue_cc_out_fv,
@@ -31,9 +29,8 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		const int n_pfp = tpc_obj.NumPFParticles();
 		//loop over pfparticles in the TPCO
 		int most_hits = 0;
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		if(tpco_id == "nue_cc_qe")
@@ -142,9 +139,8 @@ void selection_functions::PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectConta
 }
 //***************************************************************************
 void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
-                                            double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                            double vtxX, double vtxY, double vtxZ,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco,
+                                            std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                             std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -164,9 +160,8 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		const int tpc_obj_mode = tpc_obj.Mode();
 		const int n_pfp = tpc_obj.NumPFParticles();
 
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double opening_angle = leading_shower.pfpOpenAngle();
 
@@ -439,8 +434,7 @@ void selection_functions::TabulateOriginsInTime(std::vector<xsecAna::TPCObjectCo
 void selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                           std::vector<std::pair<int, std::string> > * passed_tpco,
                                           std::vector<int> * tabulated_origins,
-                                          bool has_pi0, double _x1, double _x2, double _y1, double _y2,
-                                          double _z1, double _z2, double vtxX, double vtxY, double vtxZ)
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v)
 {
 	int nue_cc        = 0;
 	int nue_cc_qe     = 0;
@@ -469,11 +463,9 @@ void selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContaine
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
-		auto const tpc_obj = tpc_object_container_v->at(i);
-		//loop over pfparticles in the TPCO
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		//auto const tpc_obj = tpc_object_container_v->at(i);
+		//int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		if(tpco_id == "nue_cc_qe")     {nue_cc_qe++; }
 		if(tpco_id == "nue_cc_out_fv") {nue_cc_out_fv++; }
@@ -648,9 +640,9 @@ void selection_functions::PrintTopologyPurity(std::vector<int> * no_track, std::
 }
 //***************************************************************************
 //***************************************************************************
-std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0,
-                                                                 double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                                                 double vtxX, double vtxY, double vtxZ)
+//this function performs a classification on a tpc object basis,
+//by looping over each pfparticle contained
+std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0, bool true_in_tpc)
 {
 	int part_nue_cc    = 0;
 	int part_cosmic    = 0;
@@ -658,44 +650,61 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	int part_nc_pi0    = 0;
 	int part_numu_cc   = 0;
 	int part_unmatched = 0;
-	bool true_in_tpc = false;
-	selection_cuts _functions_instance;
 
 	const int tpc_obj_mode = tpc_obj.Mode();
 	const int n_pfp = tpc_obj.NumPFParticles();
+	const int n_pfp_showers = tpc_obj.NPfpShowers();
 	int most_hits = 0;
-	int leading_index = 0;
+	int leading_index = -1;
+	int leading_pdg = 0;
+	int leading_mc_parent_pdg = 0;
+	std::string leading_origin = "kNothing";
 	for(int j = 0; j < n_pfp; j++)
 	{
 		auto const part = tpc_obj.GetParticle(j);
 		const int n_pfp_hits = part.NumPFPHits();
-		if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (part.MCParentPdg() == 12 || part.MCParentPdg() == -12)) { part_nue_cc++; }
-		if(part.Origin() == "kBeamNeutrino" && part.CCNC() == 0 && (part.MCParentPdg() == 14 || part.MCParentPdg() == -14)) { part_numu_cc++; }
+		const int mc_parent_pdg = part.MCParentPdg();
+		const int pfp_pdg = part.PFParticlePdgCode();
+		//std::cout << n_pfp_hits << " (" << pfp_pdg << ") \t";
+		if(pfp_pdg == 11)
+		{
+			if(n_pfp_hits > most_hits)
+			{
+				leading_index = j;
+				most_hits = n_pfp_hits;
+			}
+		}
+		if(n_pfp_showers)
+			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == 12 || mc_parent_pdg == -12)) { part_nue_cc++; }
+		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == 14 || mc_parent_pdg == -14)) { part_numu_cc++; }
 		if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino")
 		{
 			if(has_pi0 == true)  {part_nc_pi0++; }
 			if(has_pi0 == false) {part_nc++; }
 		}
-		if(part.Origin() == "kCosmicRay") { part_cosmic++; }
-		if(part.Origin() == "kUnknown")   { part_unmatched++; }
+		if(part.Origin() == "kCosmicRay") { part_cosmic++;    }
+		if(part.Origin() == "kUnknown"  ) { part_unmatched++; }
 	}
+	//some tpc objects actually have 0 hits - crazy!
+	if(tpc_obj.NumPFPHits() == 0) {return std::make_pair("bad_reco", 0); }
+
+	//currently, any tpc objects which only have a track end up with a leading_index of -1
+	//this index will likely cause code to crash if called before the signal definition cuts
+
+	//also some rare cases where nu_pfp = nue, and shower hits = 0 with track hits > 0 - how does this happen? (NC event?)
 
 	//now to catagorise the tpco
 	if(part_cosmic > 0)
 	{
-		if(part_nue_cc  > 0 )                        { return std::make_pair("nue_cc_mixed", leading_index);  }
+		if(part_nue_cc  > 0 )                        { return std::make_pair("nue_cc_mixed",  leading_index); }
 		if(part_numu_cc > 0 )                        { return std::make_pair("numu_cc_mixed", leading_index); }
-		if(part_nc  > 0 || part_nc_pi0 > 0)          { return std::make_pair("other_mixed", leading_index);   }
+		if(part_nc  > 0 || part_nc_pi0 > 0)          { return std::make_pair("other_mixed",   leading_index); }
 		return std::make_pair("cosmic", leading_index);
 	}
 	//this uses the true neutrino vertex for this specific event
 	//not the true vtx per tpc object - maybe this can be fixed in the future...
 	//but using the true nu vtx only matters for the pure signal events,
 	//where the neutrino vertex IS the true tpc object vertex
-	true_in_tpc = _functions_instance.selection_cuts::in_fv(vtxX, vtxY, vtxZ,
-	                                                        _x1, _x2, _y1,
-	                                                        _y2, _z1, _z2);
 	if(part_cosmic == 0)
 	{
 		if(part_nue_cc    > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
@@ -713,8 +722,23 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		if(part_nc_pi0    > 0                        ) { return std::make_pair("nc_pi0",        leading_index);   }
 		if(part_unmatched > 0                        ) { return std::make_pair("unmatched",     leading_index);   }
 	}
+	//this never happens :)
+	std::cout << "HELP HELP HELP END OF TPCO CLASSIFIER AND NO CLASSIFICATION!" << std::endl;
 	//return the string for the tpco id
 }//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::FillTPCOClassV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, bool true_in_tpc, bool has_pi0,
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v)
+{
+	for(auto const tpc_obj : * tpc_object_container_v)
+	{
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, true_in_tpc);
+		//int leading_index = tpco_class.second;
+		//std::string tpco_id = tpco_class.first;
+		tpco_classifier_v->push_back(tpco_class);
+	}
+}
 //***************************************************************************
 //***************************************************************************
 double selection_functions::calcNumNucleons(double _x1, double _x2, double _y1,
@@ -773,7 +797,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
                                    double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
                                    double final_counter_other_mixed, double final_counter_intime,
                                    double intime_scale_factor, double final_counter_data, double data_scale_factor,
-                                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double flux,
+                                   std::vector<double> fv_boundary_v, double flux,
                                    std::vector<double> selected_energy_vector, double genie_xsec, const int total_mc_entries_inFV)
 {
 	std::vector<double> * xsec_cc = new std::vector<double>;
@@ -790,6 +814,12 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	//******************************
 	//******** Data ****************
 	//******************************
+	const double _x1 = fv_boundary_v.at(0);
+	const double _x2 = fv_boundary_v.at(1);
+	const double _y1 = fv_boundary_v.at(2);
+	const double _y2 = fv_boundary_v.at(3);
+	const double _z1 = fv_boundary_v.at(4);
+	const double _z2 = fv_boundary_v.at(5);
 	const int n_total_data = final_counter_data;
 	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
 	                              n_total_data, n_bkg / data_scale_factor, flux,
@@ -985,8 +1015,8 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                           std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                            TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
                                            TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
                                            TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
@@ -997,11 +1027,9 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
-
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
@@ -1051,8 +1079,8 @@ void selection_functions::PostCutOpenAngleInTime(std::vector<xsecAna::TPCObjectC
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                                  double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                   TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
                                                   TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
                                                   TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
@@ -1067,9 +1095,8 @@ void selection_functions::PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObject
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
 		if(n_pfp_showers != 1) {continue; }
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
@@ -1122,8 +1149,8 @@ void selection_functions::PostCutOpenAngle1ShowerInTime(std::vector<xsecAna::TPC
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                       TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
                                                       TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
                                                       TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
@@ -1138,9 +1165,8 @@ void selection_functions::PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCOb
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
 		if(n_pfp_showers  < 2) {continue; }
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
@@ -1193,8 +1219,8 @@ void selection_functions::PostCutOpenAngle2PlusShowerInTime(std::vector<xsecAna:
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                         TH1D * h_trk_vtx_dist_nue_cc, TH1D * h_trk_vtx_dist_nue_cc_mixed,
                                         TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_nc,
                                         TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nc_pi0,
@@ -1240,9 +1266,7 @@ void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer>
 				//std::cout << trk_length << std::endl;
 			}
 		}//end pfp loop
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		if(tpco_id == "nue_cc_mixed")
 		{
 			if(has_track) {h_trk_vtx_dist_nue_cc_mixed->Fill(smallest_trk_vtx_dist); }
@@ -1330,9 +1354,8 @@ void selection_functions::PostCutTrkVtxInTime(std::vector<xsecAna::TPCObjectCont
 //***************************************************************************
 //***************************************************************************
 void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
-                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                         double vtxX, double vtxY, double vtxZ,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco,
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                          TH2D * h_pfp_track_shower_nue_cc_qe,
                                          TH2D * h_pfp_track_shower_nue_cc_out_fv,
                                          TH2D * h_pfp_track_shower_nue_cc_res,
@@ -1417,9 +1440,8 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks  = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const std::string leading_origin = leading_shower.Origin();
 		double leading_origin_int;
@@ -1578,9 +1600,8 @@ void selection_functions::TopologyPlots1(std::vector<xsecAna::TPCObjectContainer
 //***************************************************************************
 //***************************************************************************
 void selection_functions::NumShowersOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
-                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                              double vtxX, double vtxY, double vtxZ,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco,
+                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                               TH1D * h_pfp_shower_open_angle_nue_cc_qe,
                                               TH1D * h_pfp_shower_open_angle_nue_cc_out_fv,
                                               TH1D * h_pfp_shower_open_angle_nue_cc_res,
@@ -1607,8 +1628,7 @@ void selection_functions::NumShowersOpenAngle(std::vector<xsecAna::TPCObjectCont
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		if(tpco_id == "nue_cc_qe")      {h_pfp_shower_open_angle_nue_cc_qe->Fill(n_pfp_showers); }
 		if(tpco_id == "nue_cc_out_fv")  {h_pfp_shower_open_angle_nue_cc_out_fv->Fill(n_pfp_showers); }
 		if(tpco_id == "nue_cc_res")     {h_pfp_shower_open_angle_nue_cc_res->Fill(n_pfp_showers); }
@@ -1649,9 +1669,8 @@ void selection_functions::NumShowersOpenAngleInTime(std::vector<xsecAna::TPCObje
 //***************************************************************************
 //***************************************************************************
 void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0,
-                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                         double vtxX, double vtxY, double vtxZ,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco,
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                          TH2D * h_pfp_track_shower_nue_cc_qe,
                                          TH2D * h_pfp_track_shower_nue_cc_out_fv,
                                          TH2D * h_pfp_track_shower_nue_cc_res,
@@ -1736,9 +1755,8 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks  = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const std::string leading_origin = leading_shower.Origin();
 		double leading_origin_int;
@@ -1897,8 +1915,8 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                           std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                            TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_mixed, TH1D * h_vtx_flash_nue_cc_out_fv,
                                            TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
                                            TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
@@ -1916,9 +1934,8 @@ void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v
 		const double flash_vtx_z = largest_flash_v.at(1);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		if(tpco_id == "nue_cc_qe")
 		{
@@ -2017,8 +2034,8 @@ void selection_functions::PostCutsVtxFlashInTime(std::vector< double > largest_f
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2, double vtxX, double vtxY, double vtxZ,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                           TH1D * h_shwr_vtx_dist_nue_cc,
                                           TH1D * h_shwr_vtx_dist_nue_cc_mixed,
                                           TH1D * h_shwr_vtx_dist_numu_cc,
@@ -2039,9 +2056,8 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		const int n_pfp = tpc_obj.NumPFParticles();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_vtx_x = leading_shower.pfpVtxX();
 		const double leading_vtx_y = leading_shower.pfpVtxY();
@@ -2162,9 +2178,8 @@ void selection_functions::PostCutsShwrVtxInTime(std::vector<xsecAna::TPCObjectCo
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                              double vtxX, double vtxY, double vtxZ,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                               double mc_nu_energy, double mc_ele_energy,
                                               TH2D * h_shwr_hits_nu_eng, TH2D * h_shwr_hits_ele_eng)
 {
@@ -2174,9 +2189,8 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		int leading_index = tpco_class.second;
-		std::string tpco_id = tpco_class.first;
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		int pfp_shower_hits = 0;
 		if(tpco_id == "nue_cc_qe"  ||
@@ -2199,9 +2213,8 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 //***************************************************************************
 //***************************************************************************
 void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                             double vtxX, double vtxY, double vtxZ,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                              std::vector<int> * no_track, std::vector<int> * has_track,
                                              std::vector<int> * _1_shwr, std::vector<int> * _2_shwr,
                                              std::vector<int> * _3_shwr, std::vector<int> * _4_shwr)
@@ -2214,8 +2227,7 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		//signal
 		if(n_pfp_showers == 1)
 		{
@@ -2342,14 +2354,14 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 //***************************************************************************
 //***************************************************************************
 void selection_functions::SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
-                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                                    std::vector<double> fv_boundary_v,
                                                     std::vector<int> * tabulated_origins, double mc_nu_energy,
                                                     double mc_ele_energy, TH1D * h_selected_nu_energy, TH1D * h_selected_ele_energy)
 {
 	//this checks if there is a true nue/nue-bar CC event and a selected nue_cc signal event, true in FV
 	selection_cuts _functions_instance;
 	if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1) {
-		if(_functions_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2) == true) {
+		if(_functions_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v) == true) {
 			h_selected_nu_energy->Fill(mc_nu_energy);
 			h_selected_ele_energy->Fill(mc_ele_energy);
 		}
@@ -2358,9 +2370,8 @@ void selection_functions::SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_v
 //***************************************************************************
 //***************************************************************************
 void selection_functions::ChargeShare(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                      double vtxX, double vtxY, double vtxZ, TH1D * h_charge_share_nue_cc_mixed)
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v, TH1D * h_charge_share_nue_cc_mixed)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -2370,8 +2381,7 @@ void selection_functions::ChargeShare(std::vector<xsecAna::TPCObjectContainer> *
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		if(tpco_id == "nue_cc_mixed")
 		{
 			int neutrino_charge = 0;
@@ -2391,13 +2401,13 @@ void selection_functions::ChargeShare(std::vector<xsecAna::TPCObjectContainer> *
 //***************************************************************************
 //***************************************************************************
 void selection_functions::FlashTot0(std::vector< double> largest_flash_v, double mc_nu_time, int mc_nu_id, std::vector<int> * tabulated_origins,
-                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                                    std::vector<double> fv_boundary_v,
                                     double vtxX, double vtxY, double vtxZ, TH1D * h_flash_t0_diff)
 {
 	selection_cuts _functions_instance;
 	if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
 	{
-		const bool InFV = _functions_instance.selection_cuts::in_fv(vtxX, vtxY, vtxZ, _x1, _x2, _y1, _y2, _z1, _z2);
+		const bool InFV = _functions_instance.selection_cuts::in_fv(vtxX, vtxY, vtxZ, fv_boundary_v);
 		if(InFV == true)
 		{
 			double largest_op_flash_time = largest_flash_v.at(4);
@@ -2411,9 +2421,8 @@ void selection_functions::FlashTot0(std::vector< double> largest_flash_v, double
 //***************************************************************************
 //***************************************************************************
 void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                          double vtxX, double vtxY, double vtxZ,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                           TH2D * h_dedx_open_angle_nue_cc,
                                           TH2D * h_dedx_open_angle_nue_cc_out_fv,
                                           TH2D * h_dedx_open_angle_nue_cc_mixed,
@@ -2433,9 +2442,8 @@ void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContaine
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		int leading_index   = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
@@ -2545,9 +2553,8 @@ void selection_functions::dEdxVsOpenAngleInTime(std::vector<xsecAna::TPCObjectCo
 //***************************************************************************
 //shower hits vs shower length, to see if we can better use the hit threshold cut to remove less signal?
 void selection_functions::ShowerLengthvsHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                             double vtxX, double vtxY, double vtxZ,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                              TH2D * h_shwr_len_hits_nue_cc,
                                              TH2D * h_shwr_len_hits_nue_cc_out_fv,
                                              TH2D * h_shwr_len_hits_nue_cc_mixed,
@@ -2564,9 +2571,8 @@ void selection_functions::ShowerLengthvsHits(std::vector<xsecAna::TPCObjectConta
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		int leading_index   = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const int leading_hits = leading_shower.NumPFPHits();
 		const double leading_length = leading_shower.pfpLength();
@@ -2674,9 +2680,8 @@ void selection_functions::ShowerLengthvsHitsInTime(std::vector<xsecAna::TPCObjec
 }
 //***************************************************************************
 void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                               double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                               double vtxX, double vtxY, double vtxZ,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                TH1D * h_second_shwr_dist_nue_cc,
                                                TH1D * h_second_shwr_dist_nue_cc_out_fv,
                                                TH1D * h_second_shwr_dist_nue_cc_mixed,
@@ -2700,9 +2705,8 @@ void selection_functions::SecondaryShowersDist(std::vector<xsecAna::TPCObjectCon
 		const double tpco_vtx_x = tpc_obj.pfpVtxX();
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		int leading_index   = tpco_classifier_v->at(i).second;
 		//auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		for(int j = 0; j < n_pfp; j++)
 		{
@@ -2841,9 +2845,8 @@ void selection_functions::SecondaryShowersDistInTime(std::vector<xsecAna::TPCObj
 //***************************************************************************
 //***************************************************************************
 void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                         double vtxX, double vtxY, double vtxZ,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                          TH1D * h_hit_length_ratio_nue_cc,
                                          TH1D * h_hit_length_ratio_nue_cc_out_fv,
                                          TH1D * h_hit_length_ratio_nue_cc_mixed,
@@ -2863,9 +2866,8 @@ void selection_functions::HitLengthRatio(std::vector<xsecAna::TPCObjectContainer
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		int leading_index   = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const int pfp_pdg = leading_shower.PFParticlePdgCode();
 		const double pfp_hits = leading_shower.NumPFPHits();
@@ -2983,9 +2985,8 @@ void selection_functions::HitLengthRatioInTime(std::vector<xsecAna::TPCObjectCon
 //***************************************************************************
 //***************************************************************************
 void selection_functions::TrackLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                      double vtxX, double vtxY, double vtxZ,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                       TH1D * h_trk_length_nue_cc,
                                       TH1D * h_trk_length_nue_cc_out_fv,
                                       TH1D * h_trk_length_nue_cc_mixed,
@@ -3016,8 +3017,7 @@ void selection_functions::TrackLength(std::vector<xsecAna::TPCObjectContainer> *
 				trk_length_v.push_back(trk_length);
 			}
 		}
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		for(const double trk_length : trk_length_v)
 		{
@@ -3046,9 +3046,8 @@ void selection_functions::TrackLength(std::vector<xsecAna::TPCObjectContainer> *
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LongestTrackLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                             double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                             double vtxX, double vtxY, double vtxZ,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                              TH1D * h_trk_length_nue_cc,
                                              TH1D * h_trk_length_nue_cc_out_fv,
                                              TH1D * h_trk_length_nue_cc_mixed,
@@ -3085,8 +3084,7 @@ void selection_functions::LongestTrackLength(std::vector<xsecAna::TPCObjectConta
 				}
 			}
 		}
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		for(const double trk_length : trk_length_v)
 		{
@@ -3115,9 +3113,8 @@ void selection_functions::LongestTrackLength(std::vector<xsecAna::TPCObjectConta
 //***************************************************************************
 //***************************************************************************
 void selection_functions::ShowerLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                       double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                       double vtxX, double vtxY, double vtxZ,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                        TH1D * h_shwr_length_nue_cc,
                                        TH1D * h_shwr_length_nue_cc_out_fv,
                                        TH1D * h_shwr_length_nue_cc_mixed,
@@ -3147,8 +3144,7 @@ void selection_functions::ShowerLength(std::vector<xsecAna::TPCObjectContainer> 
 				shwr_length_v.push_back(shwr_length);
 			}
 		}
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		for(const double shwr_length : shwr_length_v)
 		{
@@ -3177,9 +3173,8 @@ void selection_functions::ShowerLength(std::vector<xsecAna::TPCObjectContainer> 
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LongestShowerLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                              double vtxX, double vtxY, double vtxZ,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                               TH1D * h_shwr_length_nue_cc,
                                               TH1D * h_shwr_length_nue_cc_out_fv,
                                               TH1D * h_shwr_length_nue_cc_mixed,
@@ -3215,8 +3210,7 @@ void selection_functions::LongestShowerLength(std::vector<xsecAna::TPCObjectCont
 				}
 			}
 		}
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		for(const double shwr_length : shwr_length_v)
 		{
@@ -3245,9 +3239,8 @@ void selection_functions::LongestShowerLength(std::vector<xsecAna::TPCObjectCont
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingShowerLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                              double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                              double vtxX, double vtxY, double vtxZ,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                               TH1D * h_shwr_length_nue_cc,
                                               TH1D * h_shwr_length_nue_cc_out_fv,
                                               TH1D * h_shwr_length_nue_cc_mixed,
@@ -3266,9 +3259,8 @@ void selection_functions::LeadingShowerLength(std::vector<xsecAna::TPCObjectCont
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shwr_length = leading_shower.pfpLength();
 
@@ -3296,9 +3288,8 @@ void selection_functions::LeadingShowerLength(std::vector<xsecAna::TPCObjectCont
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                                    double vtxX, double vtxY, double vtxZ,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                    std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                     TH1D * h_shwr_trk_length_nue_cc,
                                                     TH1D * h_shwr_trk_length_nue_cc_out_fv,
                                                     TH1D * h_shwr_trk_length_nue_cc_mixed,
@@ -3317,9 +3308,8 @@ void selection_functions::LeadingShowerTrackLengths(std::vector<xsecAna::TPCObje
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shwr_length = leading_shower.pfpLength();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
@@ -3361,9 +3351,8 @@ void selection_functions::LeadingShowerTrackLengths(std::vector<xsecAna::TPCObje
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LongestShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                                    double vtxX, double vtxY, double vtxZ,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                    std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                     TH1D * h_shwr_trk_length_nue_cc,
                                                     TH1D * h_shwr_trk_length_nue_cc_out_fv,
                                                     TH1D * h_shwr_trk_length_nue_cc_mixed,
@@ -3382,8 +3371,7 @@ void selection_functions::LongestShowerTrackLengths(std::vector<xsecAna::TPCObje
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		if(n_pfp_tracks == 0) {continue; }
 		std::vector< double > trk_length_v;
@@ -3441,9 +3429,8 @@ void selection_functions::LongestShowerTrackLengths(std::vector<xsecAna::TPCObje
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PlaneHitsComparisonShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                                    double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                                    double vtxX, double vtxY, double vtxZ,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                    std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                     TH2D * h_collection_total_hits_shower_nue_cc,
                                                     TH2D * h_collection_total_hits_shower_nue_cc_out_fv,
                                                     TH2D * h_collection_total_hits_shower_nue_cc_mixed,
@@ -3462,8 +3449,7 @@ void selection_functions::PlaneHitsComparisonShower(std::vector<xsecAna::TPCObje
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		//const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		//if(n_pfp_tracks == 0) {continue; }
 		int n_pfp_hits_w = 0;
@@ -3532,9 +3518,8 @@ void selection_functions::PlaneHitsComparisonShowerInTime(std::vector<xsecAna::T
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PlaneHitsComparisonLeadingShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                                           double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                                           double vtxX, double vtxY, double vtxZ,
+                                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                           std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                            TH2D * h_collection_total_hits_shower_nue_cc,
                                                            TH2D * h_collection_total_hits_shower_nue_cc_out_fv,
                                                            TH2D * h_collection_total_hits_shower_nue_cc_mixed,
@@ -3553,9 +3538,8 @@ void selection_functions::PlaneHitsComparisonLeadingShower(std::vector<xsecAna::
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		//const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		//if(n_pfp_tracks == 0) {continue; }
@@ -3613,9 +3597,8 @@ void selection_functions::PlaneHitsComparisonLeadingShowerInTime(std::vector<xse
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PlaneHitsComparisonTrack(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                                   double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                                   double vtxX, double vtxY, double vtxZ,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                    TH2D * h_collection_total_hits_track_nue_cc,
                                                    TH2D * h_collection_total_hits_track_nue_cc_out_fv,
                                                    TH2D * h_collection_total_hits_track_nue_cc_mixed,
@@ -3634,8 +3617,7 @@ void selection_functions::PlaneHitsComparisonTrack(std::vector<xsecAna::TPCObjec
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
 		if(n_pfp_tracks == 0) {continue; }
 		int n_pfp_hits_w = 0;
@@ -3704,9 +3686,8 @@ void selection_functions::PlaneHitsComparisonTrackInTime(std::vector<xsecAna::TP
 //***************************************************************************
 //***************************************************************************
 void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                      double vtxX, double vtxY, double vtxZ,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                       TH1D * h_collection_hits_track_nue_cc,
                                       TH1D * h_collection_hits_track_nue_cc_out_fv,
                                       TH1D * h_collection_hits_track_nue_cc_mixed,
@@ -3755,9 +3736,8 @@ void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> *
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const int n_pfp_hits_w_leading_shower = leading_shower.NumPFPHitsW();
 		const int n_pfp_hits_leading_shower = leading_shower.NumPFPHits();
@@ -3944,9 +3924,8 @@ int selection_functions::MapFailureCutToString(const std::string failure_cut)
 //***************************************************************************
 //***************************************************************************
 void selection_functions::EnergyHits(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
-                                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                     double vtxX, double vtxY, double vtxZ, double mc_nu_energy, double mc_ele_energy,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                     std::vector<std::pair<std::string, int> > * tpco_classifier_v, double mc_nu_energy, double mc_ele_energy,
                                      TH2D * h_ele_eng_total_hits, TH2D * h_ele_eng_colleciton_hits, TH2D * h_nu_eng_total_hits, TH2D * h_nu_eng_collection_hits)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -3955,9 +3934,8 @@ void selection_functions::EnergyHits(std::vector<xsecAna::TPCObjectContainer> * 
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const int n_pfp_hits_w  = leading_shower.NumPFPHitsW();
 		const int n_pfp_hits    = leading_shower.NumPFPHits();
@@ -3973,9 +3951,8 @@ void selection_functions::EnergyHits(std::vector<xsecAna::TPCObjectContainer> * 
 //***************************************************************************
 //***************************************************************************
 void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
-                                        double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                        double vtxX, double vtxY, double vtxZ,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                         TH1D * h_failure_reason_nue_cc,
                                         TH1D * h_failure_reason_nue_cc_out_fv,
                                         TH1D * h_failure_reason_nue_cc_mixed,
@@ -3994,8 +3971,7 @@ void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer>
 		const std::string failure_cut = passed_tpco->at(i).second;
 		const int failure_reason = MapFailureCutToString(failure_cut);
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		if(tpco_id == "nue_cc_qe")
 		{
@@ -4077,9 +4053,8 @@ void selection_functions::FailureReason(std::vector<xsecAna::TPCObjectContainer>
 //***************************************************************************
 void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                           std::vector<std::pair<int, std::string> > * passed_tpco,
-                                          const double theta_translation, const double phi_translation, bool _verbose, bool has_pi0,
-                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                          double vtxX, double vtxY, double vtxZ,
+                                          const double theta_translation, const double phi_translation, bool _verbose,
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                           TH1D * h_ele_cos_theta_nue_cc,
                                           TH1D * h_ele_cos_theta_nue_cc_out_fv,
                                           TH1D * h_ele_cos_theta_nue_cc_mixed,
@@ -4096,9 +4071,8 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		//const double leading_shower_cos_theta = leading_shower.pfpDirZ() / leading_shower.pfpMomentum();
 		const double leading_shower_z = leading_shower.pfpDirZ();
@@ -4237,9 +4211,8 @@ void selection_functions::LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectCo
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                          double vtxX, double vtxY, double vtxZ,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                           TH1D * h_ele_pfp_momentum_nue_cc,
                                           TH1D * h_ele_pfp_momentum_nue_cc_out_fv,
                                           TH1D * h_ele_pfp_momentum_nue_cc_mixed,
@@ -4256,13 +4229,10 @@ void selection_functions::LeadingMomentum(std::vector<xsecAna::TPCObjectContaine
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		//const double leading_shower_cos_theta = leading_shower.pfpDirZ() / leading_shower.pfpMomentum();
 		const double leading_shower_momentum = leading_shower.pfpMomentum();
-		//std::cout << leading_shower.pfpDirZ() << " , " << leading_shower.pfpMomentum() << ", " << leading_shower_cos_theta << std::endl;
 		if(tpco_id == "nue_cc_qe")
 		{
 			h_ele_pfp_momentum_nue_cc->Fill(leading_shower_momentum);
@@ -4370,9 +4340,8 @@ void selection_functions::LeadingMomentumInTime(std::vector<xsecAna::TPCObjectCo
 //***************************************************************************
 void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                        std::vector<std::pair<int, std::string> > * passed_tpco,
-                                       const double theta_translation, const double phi_translation, bool _verbose, bool has_pi0,
-                                       double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                       double vtxX, double vtxY, double vtxZ,
+                                       const double theta_translation, const double phi_translation, bool _verbose,
+                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                        TH1D * h_ele_pfp_theta_nue_cc,
                                        TH1D * h_ele_pfp_theta_nue_cc_out_fv,
                                        TH1D * h_ele_pfp_theta_nue_cc_mixed,
@@ -4389,9 +4358,8 @@ void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> 
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		//const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
 
@@ -4518,9 +4486,8 @@ void selection_functions::LeadingThetaInTime(std::vector<xsecAna::TPCObjectConta
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                     double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                     double vtxX, double vtxY, double vtxZ,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                     std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                      TH1D * h_ele_pfp_phi_nue_cc,
                                      TH1D * h_ele_pfp_phi_nue_cc_out_fv,
                                      TH1D * h_ele_pfp_phi_nue_cc_mixed,
@@ -4537,9 +4504,8 @@ void selection_functions::LeadingPhi(std::vector<xsecAna::TPCObjectContainer> * 
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
 		if(tpco_id == "nue_cc_qe")
@@ -4647,9 +4613,8 @@ void selection_functions::LeadingPhiInTime(std::vector<xsecAna::TPCObjectContain
 //***************************************************************************
 //***************************************************************************
 void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                            double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                            double vtxX, double vtxY, double vtxZ,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                            std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                             TH1D * h_leading_shwr_length_1shwr_nue_cc,
                                             TH1D * h_leading_shwr_length_1shwr_nue_cc_out_fv,
                                             TH1D * h_leading_shwr_length_1shwr_nue_cc_mixed,
@@ -4697,9 +4662,8 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		//const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
 		const double leading_shower_length = leading_shower.pfpLength();
@@ -5322,9 +5286,8 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                          double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                          double vtxX, double vtxY, double vtxZ,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                           TH2D * h_ele_theta_phi_nue_cc,
                                           TH2D * h_ele_theta_phi_nue_cc_out_fv,
                                           TH2D * h_ele_theta_phi_nue_cc_mixed,
@@ -5341,9 +5304,8 @@ void selection_functions::LeadingThetaPhi(std::vector<xsecAna::TPCObjectContaine
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
 		const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
@@ -5425,9 +5387,9 @@ void selection_functions::LeadingThetaPhi(std::vector<xsecAna::TPCObjectContaine
 //***************************************************************************
 //***************************************************************************
 void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                      double vtxX, double vtxY, double vtxZ,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                      const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
@@ -5437,137 +5399,166 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
                                       std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
-                                      std::vector<TH1 *> * h_ele_pfp_xyz_unmatched)
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
+                                      TH2 * h_mc_vtx_xy_nue_cc,
+                                      TH2 * h_mc_vtx_xz_nue_cc,
+                                      TH2 * h_mc_vtx_yz_nue_cc,
+                                      TH2 * h_reco_vtx_xy_nue_cc,
+                                      TH2 * h_reco_vtx_xz_nue_cc,
+                                      TH2 * h_reco_vtx_yz_nue_cc,
+                                      TH2 * h_mc_vtx_xy_nue_cc_out_fv,
+                                      TH2 * h_mc_vtx_xz_nue_cc_out_fv,
+                                      TH2 * h_mc_vtx_yz_nue_cc_out_fv,
+                                      TH2 * h_reco_vtx_xy_nue_cc_out_fv,
+                                      TH2 * h_reco_vtx_xz_nue_cc_out_fv,
+                                      TH2 * h_reco_vtx_yz_nue_cc_out_fv,
+                                      TH2 * h_mc_reco_vtx_x_nue_cc,
+                                      TH2 * h_mc_reco_vtx_y_nue_cc,
+                                      TH2 * h_mc_reco_vtx_z_nue_cc,
+                                      TH2 * h_mc_reco_vtx_x_nue_cc_out_fv,
+                                      TH2 * h_mc_reco_vtx_y_nue_cc_out_fv,
+                                      TH2 * h_mc_reco_vtx_z_nue_cc_out_fv)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
-		// auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		// const double pfp_x = leading_shower.pfpVtxX();
-		// const double pfp_y = leading_shower.pfpVtxY();
-		// const double pfp_z = leading_shower.pfpVtxZ();
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 
-		//naming should be tpco_vtx_x
-		//but this is okay...
-		const double pfp_x = tpc_obj.pfpVtxX();
-		const double pfp_y = tpc_obj.pfpVtxY();
-		const double pfp_z = tpc_obj.pfpVtxZ();
+		const double tpco_vtx_x = tpc_obj.pfpVtxX();
+		const double tpco_vtx_y = tpc_obj.pfpVtxY();
+		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
 
 		if(tpco_id == "nue_cc_qe")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_mc_vtx_xy_nue_cc->Fill(mc_nu_vtx_x, mc_nu_vtx_y);
+			h_mc_vtx_xz_nue_cc->Fill(mc_nu_vtx_x, mc_nu_vtx_z);
+			h_mc_vtx_yz_nue_cc->Fill(mc_nu_vtx_z, mc_nu_vtx_y);
+			h_reco_vtx_xy_nue_cc->Fill(tpco_vtx_x, tpco_vtx_y);
+			h_reco_vtx_xz_nue_cc->Fill(tpco_vtx_x, tpco_vtx_z);
+			h_reco_vtx_yz_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
+			h_mc_reco_vtx_x_nue_cc->Fill(mc_nu_vtx_x, tpco_vtx_x);
+			h_mc_reco_vtx_y_nue_cc->Fill(mc_nu_vtx_y, tpco_vtx_y);
+			h_mc_reco_vtx_z_nue_cc->Fill(mc_nu_vtx_z, tpco_vtx_z);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
-			h_ele_pfp_xyz_nue_cc_out_fv->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nue_cc_out_fv->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nue_cc_out_fv->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(2)->Fill(tpco_vtx_z);
+			h_mc_vtx_xy_nue_cc_out_fv->Fill(mc_nu_vtx_x, mc_nu_vtx_y);
+			h_mc_vtx_xz_nue_cc_out_fv->Fill(mc_nu_vtx_x, mc_nu_vtx_z);
+			h_mc_vtx_yz_nue_cc_out_fv->Fill(mc_nu_vtx_z, mc_nu_vtx_y);
+			h_reco_vtx_xy_nue_cc_out_fv->Fill(tpco_vtx_x, tpco_vtx_y);
+			h_reco_vtx_xz_nue_cc_out_fv->Fill(tpco_vtx_x, tpco_vtx_z);
+			h_reco_vtx_yz_nue_cc_out_fv->Fill(tpco_vtx_z, tpco_vtx_y);
+			h_mc_reco_vtx_x_nue_cc_out_fv->Fill(mc_nu_vtx_x, tpco_vtx_x);
+			h_mc_reco_vtx_y_nue_cc_out_fv->Fill(mc_nu_vtx_y, tpco_vtx_y);
+			h_mc_reco_vtx_z_nue_cc_out_fv->Fill(mc_nu_vtx_z, tpco_vtx_z);
 		}
 		if(tpco_id == "nue_cc_res")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "nue_cc_dis")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "nue_cc_coh")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "nue_cc_mec")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "numu_cc_res")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "numu_cc_dis")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "numu_cc_coh")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "numu_cc_mec")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "nc")
 		{
-			h_ele_pfp_xyz_nc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nc->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "nc_pi0")
 		{
-			h_ele_pfp_xyz_nc_pi0->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nc_pi0->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nc_pi0->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nc_pi0->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nc_pi0->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nc_pi0->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
-			h_ele_pfp_xyz_nue_cc_mixed->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_nue_cc_mixed->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_nue_cc_mixed->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_nue_cc_mixed->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_nue_cc_mixed->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc_mixed->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
-			// h_ele_pfp_xyz_numu_cc_mixed->at(0)->Fill(pfp_x);
-			// h_ele_pfp_xyz_numu_cc_mixed->at(1)->Fill(pfp_y);
-			// h_ele_pfp_xyz_numu_cc_mixed->at(2)->Fill(pfp_z);
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(pfp_z);
+			// h_ele_pfp_xyz_numu_cc_mixed->at(0)->Fill(tpco_vtx_x);
+			// h_ele_pfp_xyz_numu_cc_mixed->at(1)->Fill(tpco_vtx_y);
+			// h_ele_pfp_xyz_numu_cc_mixed->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "cosmic")
 		{
-			h_ele_pfp_xyz_cosmic->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_cosmic->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_cosmic->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_cosmic->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_cosmic->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_cosmic->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "other_mixed")
 		{
-			h_ele_pfp_xyz_other_mixed->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_other_mixed->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_other_mixed->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_other_mixed->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_other_mixed->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_other_mixed->at(2)->Fill(tpco_vtx_z);
 		}
 		if(tpco_id == "unmatched")
 		{
-			h_ele_pfp_xyz_unmatched->at(0)->Fill(pfp_x);
-			h_ele_pfp_xyz_unmatched->at(1)->Fill(pfp_y);
-			h_ele_pfp_xyz_unmatched->at(2)->Fill(pfp_z);
+			h_ele_pfp_xyz_unmatched->at(0)->Fill(tpco_vtx_x);
+			h_ele_pfp_xyz_unmatched->at(1)->Fill(tpco_vtx_y);
+			h_ele_pfp_xyz_unmatched->at(2)->Fill(tpco_vtx_z);
 		}
 	}//end pfp loop
 }
@@ -5607,9 +5598,8 @@ void selection_functions::XYZPositionInTime(std::vector<xsecAna::TPCObjectContai
 //***************************************************************************
 //***************************************************************************
 void selection_functions::EnergyCosTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, bool has_pi0,
-                                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                         double vtxX, double vtxY, double vtxZ,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                          TH2 * h_ele_eng_costheta_nue_cc,
                                          TH2 * h_ele_eng_costheta_nue_cc_out_fv,
                                          TH2 * h_ele_eng_costheta_nue_cc_mixed,
@@ -5626,9 +5616,8 @@ void selection_functions::EnergyCosTheta(std::vector<xsecAna::TPCObjectContainer
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double momentum = leading_shower.pfpMomentum();
 		const double costheta = leading_shower.pfpDirZ();
@@ -5735,9 +5724,8 @@ void selection_functions::EnergyCosThetaInTime(std::vector<xsecAna::TPCObjectCon
 //***************************************************************************
 //***************************************************************************
 void selection_functions::TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool has_pi0, bool _verbose,
-                                      double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                      double vtxX, double vtxY, double vtxZ, double mc_ele_momentum, double mc_ele_cos_theta,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v, double mc_ele_momentum, double mc_ele_cos_theta,
                                       TH2D * h_true_reco_ele_momentum, TH2D * h_true_reco_ele_costheta, TH1D * h_true_num_e)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -5752,9 +5740,7 @@ void selection_functions::TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> *
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		//const int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		for(int j = 0; j < n_pfp; j++)
 		{
@@ -5790,9 +5776,8 @@ void selection_functions::TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> *
 //***************************************************************************
 void selection_functions::EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                                               const double theta_translation, const double phi_translation,bool has_pi0,
-                                               double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
-                                               double vtxX, double vtxY, double vtxZ,
+                                               const double theta_translation, const double phi_translation,
+                                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                TH1 * h_ele_eng_for_nue_cc,
                                                TH1 * h_ele_eng_for_nue_cc_out_fv,
                                                TH1 * h_ele_eng_for_nue_cc_mixed,
@@ -5829,9 +5814,8 @@ void selection_functions::EnergyCosThetaSlices(std::vector<xsecAna::TPCObjectCon
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2, vtxX, vtxY, vtxZ);
-		std::string tpco_id = tpco_class.first;
-		const int leading_index = tpco_class.second;
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double momentum = leading_shower.pfpMomentum();
 		const double leading_shower_z = leading_shower.pfpDirZ();

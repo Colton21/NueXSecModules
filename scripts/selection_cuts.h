@@ -28,12 +28,10 @@ bool flash_pe(int flash_pe, int flash_pe_threshold);
 void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
                   double flash_time_end, std::vector<int> * _passed_runs);
 //***************************************************************************
-bool in_fv(double x, double y, double z,
-           double x1, double x2, double y1,
-           double y2, double z1, double z2);
+bool in_fv(double x, double y, double z, std::vector<double> fv_boundary_v);
 //***************************************************************************
 void fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                         double _x1, double _x2, double _y1, double _y2, double _z1, double _z2,
+                         std::vector<double> fv_boundary_v,
                          std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);
 //***************************************************************************
 bool opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double tolerance);

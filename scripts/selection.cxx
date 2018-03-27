@@ -53,6 +53,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	mctruth_counter_tree->SetBranchAddress("has_pi0", &has_pi0);
 	mctruth_counter_tree->SetBranchAddress("fMCNuTime", &mc_nu_time);
 
+	std::vector<double> fv_boundary_v = {_x1, _x2, _y1, _y2, _z1, _z2};
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entries << std::endl;
@@ -235,7 +236,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//************************
 			//******** in fv cut *****
 			//************************
-			_cuts_instance.selection_cuts::fiducial_volume_cut(data_tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco_data, _verbose);
+			_cuts_instance.selection_cuts::fiducial_volume_cut(data_tpc_object_container_v, fv_boundary_v, passed_tpco_data, _verbose);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_in_fv_counter_v);
 
@@ -534,7 +535,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//************************
 			//******** in fv cut *****
 			//************************
-			_cuts_instance.selection_cuts::fiducial_volume_cut(intime_tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco_intime, _verbose);
+			_cuts_instance.selection_cuts::fiducial_volume_cut(intime_tpc_object_container_v, fv_boundary_v, passed_tpco_intime, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_in_fv_counter_v);
 
@@ -838,8 +839,16 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			continue;
 		}//false
 
-		std::vector<std::string> *tpco_origin_v = new std::vector<std::string>;
-		_cuts_instance.selection_cuts::GetOrigins(tpc_object_container_v, tpco_origin_v);
+		//check if nue interaction has true vtx in TPC
+		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
+		// if(true_in_tpc == true)
+		// {
+		//      std::cout << "XYZ: " << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << " --- " << true_in_tpc << std::endl;
+		// }
+
+		//now we apply the classifier to all TPC Objects in this event
+		std::vector<std::pair<std::string, int> > * tpco_classifier_v = new std::vector<std::pair<std::string, int> >;
+		_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0, tpco_classifier_v);
 
 		//XY Position of largest flash
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
@@ -858,51 +867,44 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		const double mc_phi       = atan2(mc_nu_dir_y, mc_nu_dir_x);
 		double mc_ele_cos_theta = -999;
 		double mc_ele_theta = -999;
-		//if(mc_ele_momentum != 0) {mc_ele_cos_theta = mc_ele_dir_z / mc_ele_momentum; }
 		if(mc_ele_momentum != 0)
 		{
 			mc_ele_cos_theta = mc_ele_dir_z;
 			mc_ele_theta = acos(mc_ele_dir_z) * (180/3.1415);
 		}
 		const double mc_ele_phi       = atan2(mc_ele_dir_y, mc_ele_dir_x);
-		if(mc_nu_id == 1 || mc_nu_id == 5)
-		//if this event is a true nue CC interaction and is inside the FV
-		//also include nue_cc_bar as in the tpco classification I use the nue-bar as well
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true)
 		{
-			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2) == true)
-			{
-				h_nue_eng_eff_den->Fill(mc_nu_energy);
-				h_ele_eng_eff_den->Fill(mc_ele_energy);
-				h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x);
-				h_nue_vtx_y_eff_den->Fill(mc_nu_vtx_y);
-				h_nue_vtx_z_eff_den->Fill(mc_nu_vtx_z);
-				h_nue_dir_x_eff_den->Fill(mc_nu_dir_x);
-				h_nue_dir_y_eff_den->Fill(mc_nu_dir_y);
-				h_nue_dir_z_eff_den->Fill(mc_nu_dir_z);
-				h_ele_dir_x_eff_den->Fill(mc_ele_dir_x);
-				h_ele_dir_y_eff_den->Fill(mc_ele_dir_y);
-				h_ele_dir_z_eff_den->Fill(mc_ele_dir_z);
-				h_ele_theta_eff_den->Fill(mc_ele_theta);
-				h_nue_num_part_eff_den->Fill(mc_nu_num_particles);
-				h_nue_num_chrg_part_eff_den->Fill(mc_nu_num_charged_particles);
-				h_nue_cos_theta_eff_den->Fill(mc_cos_theta);
-				h_nue_phi_eff_den->Fill(mc_phi * (180 / 3.1415));
-				h_ele_cos_theta_eff_den->Fill(mc_ele_cos_theta);
-				h_ele_phi_eff_den->Fill(mc_ele_phi * (180 / 3.1415));
-				h_nue_true_theta->Fill( acos(mc_cos_theta) * (180 / 3.1415));
-				h_nue_true_phi->Fill(mc_phi * (180 / 3.1415));
-				h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
-				total_mc_entries_inFV++;
-			}
+			h_nue_eng_eff_den->Fill(mc_nu_energy);
+			h_ele_eng_eff_den->Fill(mc_ele_energy);
+			h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x);
+			h_nue_vtx_y_eff_den->Fill(mc_nu_vtx_y);
+			h_nue_vtx_z_eff_den->Fill(mc_nu_vtx_z);
+			h_nue_dir_x_eff_den->Fill(mc_nu_dir_x);
+			h_nue_dir_y_eff_den->Fill(mc_nu_dir_y);
+			h_nue_dir_z_eff_den->Fill(mc_nu_dir_z);
+			h_ele_dir_x_eff_den->Fill(mc_ele_dir_x);
+			h_ele_dir_y_eff_den->Fill(mc_ele_dir_y);
+			h_ele_dir_z_eff_den->Fill(mc_ele_dir_z);
+			h_ele_theta_eff_den->Fill(mc_ele_theta);
+			h_nue_num_part_eff_den->Fill(mc_nu_num_particles);
+			h_nue_num_chrg_part_eff_den->Fill(mc_nu_num_charged_particles);
+			h_nue_cos_theta_eff_den->Fill(mc_cos_theta);
+			h_nue_phi_eff_den->Fill(mc_phi * (180 / 3.1415));
+			h_ele_cos_theta_eff_den->Fill(mc_ele_cos_theta);
+			h_ele_phi_eff_den->Fill(mc_ele_phi * (180 / 3.1415));
+			h_nue_true_theta->Fill( acos(mc_cos_theta) * (180 / 3.1415));
+			h_nue_true_phi->Fill(mc_phi * (180 / 3.1415));
+			h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
+			total_mc_entries_inFV++;
 		}
 		//***********************************************************
 		//this is where the in-time optical cut again takes effect
 		//***********************************************************
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut);
 		//PE threshold cut
@@ -911,27 +913,27 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			if(_verbose) std::cout << "[Passed In-Time Cut] [Failed PE Threshold] " << std::endl;
 			continue;
 		}
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v);
 
 		//****************************
 		// ****** reco nue cut *******
 		//****************************
 		_cuts_instance.selection_cuts::HasNue(tpc_object_container_v, passed_tpco, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue);
+
 		//** Testing flash vs neutrino interaction for origin **
 		_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins,
-		                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,h_flash_t0_diff);
+		                                                   fv_boundary_v, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,h_flash_t0_diff);
+
 		//** Testing leading shower length vs hits **//
-		_functions_instance.selection_functions::ShowerLengthvsHits(tpc_object_container_v, passed_tpco, _verbose, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::ShowerLengthvsHits(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                            h_shwr_len_hits_nue_cc, h_shwr_len_hits_nue_cc_out_fv,
 		                                                            h_shwr_len_hits_nue_cc_mixed, h_shwr_len_hits_numu_cc,
 		                                                            h_shwr_len_hits_numu_cc_mixed, h_shwr_len_hits_nc,
@@ -939,26 +941,19 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                            h_shwr_len_hits_other_mixed, h_shwr_len_hits_unmatched);
 
 		//pre most cuts hits
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
 		{
-			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
-			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
-			                                                             h_shwr_hits_nu_eng, h_shwr_hits_ele_eng);
-			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
-			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
-			                                                             h_shwr_hits_nu_eng_zoom, h_shwr_hits_ele_eng_zoom);
-			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, _x1, _x2, _y1, _y2, _z1, _z2) == true)
-			{
-				_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
-				                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-				                                                     mc_ele_momentum, mc_ele_cos_theta,
-				                                                     h_true_reco_ele_momentum_pre, h_true_reco_ele_costheta_pre, h_true_num_e_pre);
-			}
+			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+			                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng, h_shwr_hits_ele_eng);
+			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+			                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng_zoom, h_shwr_hits_ele_eng_zoom);
+
+			_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+			                                                     mc_ele_momentum, mc_ele_cos_theta,
+			                                                     h_true_reco_ele_momentum_pre, h_true_reco_ele_costheta_pre, h_true_num_e_pre);
 		}
-		_functions_instance.selection_functions::TopologyPlots1(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+
+		_functions_instance.selection_functions::TopologyPlots1(tpc_object_container_v, passed_tpco, tpco_classifier_v,
 		                                                        h_pfp_track_shower_nue_cc_qe, h_pfp_track_shower_nue_cc_out_fv,
 		                                                        h_pfp_track_shower_nue_cc_res, h_pfp_track_shower_nue_cc_dis,
 		                                                        h_pfp_track_shower_nue_cc_coh, h_pfp_track_shower_nue_cc_mec,
@@ -996,35 +991,59 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                        h_pfp_shower_numu_cc_mixed, h_pfp_shower_cosmic,
 		                                                        h_pfp_shower_other_mixed, h_pfp_shower_unmatched);
 
+		_functions_instance.selection_functions::XYZPosition(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_ele_pfp_xyz_nue_cc,
+		                                                     h_ele_pfp_xyz_nue_cc_out_fv,
+		                                                     h_ele_pfp_xyz_nue_cc_mixed,
+		                                                     h_ele_pfp_xyz_numu_cc,
+		                                                     h_ele_pfp_xyz_numu_cc_mixed,
+		                                                     h_ele_pfp_xyz_nc,
+		                                                     h_ele_pfp_xyz_nc_pi0,
+		                                                     h_ele_pfp_xyz_cosmic,
+		                                                     h_ele_pfp_xyz_other_mixed,
+		                                                     h_ele_pfp_xyz_unmatched,
+		                                                     h_mc_vtx_xy_nue_cc,
+		                                                     h_mc_vtx_xz_nue_cc,
+		                                                     h_mc_vtx_yz_nue_cc,
+		                                                     h_reco_vtx_xy_nue_cc,
+		                                                     h_reco_vtx_xz_nue_cc,
+		                                                     h_reco_vtx_yz_nue_cc,
+		                                                     h_mc_vtx_xy_nue_cc_out_fv,
+		                                                     h_mc_vtx_xz_nue_cc_out_fv,
+		                                                     h_mc_vtx_yz_nue_cc_out_fv,
+		                                                     h_reco_vtx_xy_nue_cc_out_fv,
+		                                                     h_reco_vtx_xz_nue_cc_out_fv,
+		                                                     h_reco_vtx_yz_nue_cc_out_fv,
+		                                                     h_mc_reco_vtx_x_nue_cc,
+		                                                     h_mc_reco_vtx_y_nue_cc,
+		                                                     h_mc_reco_vtx_z_nue_cc,
+		                                                     h_mc_reco_vtx_x_nue_cc_out_fv,
+		                                                     h_mc_reco_vtx_y_nue_cc_out_fv,
+		                                                     h_mc_reco_vtx_z_nue_cc_out_fv);
+
 		//************************
 		//******** in fv cut *****
 		//************************
-		_cuts_instance.selection_cuts::fiducial_volume_cut(tpc_object_container_v, _x1, _x2, _y1, _y2, _z1, _z2, passed_tpco, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_cuts_instance.selection_cuts::fiducial_volume_cut(tpc_object_container_v, fv_boundary_v, passed_tpco, _verbose);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_in_fv, h_selected_ele_energy_in_fv);
 
 		//we also want to look at the cos(theta) and energy efficiency before we make selection cuts
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
 		{
-			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-			                                        _x1, _x2, _y1,
-			                                        _y2, _z1, _z2) == true)
-			{
-				h_ele_eng_eff_num_pre_cuts->Fill(mc_ele_energy);
-				h_ele_cos_theta_eff_num_pre_cuts->Fill(mc_ele_cos_theta);
-			}
+			h_ele_eng_eff_num_pre_cuts->Fill(mc_ele_energy);
+			h_ele_cos_theta_eff_num_pre_cuts->Fill(mc_ele_cos_theta);
 		}
 
 		//*****************************
 		//**** vertex to flash cut ****
 		//*****************************
-		_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                          h_vtx_flash_nue_cc, h_vtx_flash_nue_cc_mixed, h_vtx_flash_nue_cc_out_fv,
 		                                                          h_vtx_flash_numu_cc, h_vtx_flash_nc,
 		                                                          h_vtx_flash_cosmic, h_vtx_flash_nc_pi0,
@@ -1032,19 +1051,17 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                          h_vtx_flash_unmatched);
 
 		_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_vtx_flash, h_selected_ele_energy_vtx_flash);
 
 		//******************************************************
 		//*** distance between pfp shower and nue object cut ***
 		//******************************************************
-		_functions_instance.selection_functions::PostCutsShwrVtx(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PostCutsShwrVtx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                         h_shwr_vtx_dist_nue_cc,
 		                                                         h_shwr_vtx_dist_nue_cc_mixed,
 		                                                         h_shwr_vtx_dist_numu_cc,
@@ -1056,11 +1073,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_shwr_vtx_dist_unmatched     );
 
 		_cuts_instance.selection_cuts::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins,  mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_shwr_vtx, h_selected_ele_energy_shwr_vtx);
 
@@ -1068,39 +1084,34 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		//******************************************************
 		// **** distance between pfp track and nue object cut **
 		//******************************************************
-		_functions_instance.selection_functions::PostCutTrkVtx(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                       _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PostCutTrkVtx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                       h_trk_vtx_dist_nue_cc, h_trk_vtx_dist_nue_cc_mixed,
 		                                                       h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_nc,
 		                                                       h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nc_pi0,
 		                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
 		                                                       h_trk_vtx_dist_unmatched);
 		_cuts_instance.selection_cuts::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_trk_vtx, h_selected_ele_energy_trk_vtx);
 
 		//****************************************************
 		// ******** hit threshold for showers cut *************
 		//******************************************************
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
 		{
-			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
-			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose,
+			                                                             tpco_classifier_v, mc_nu_energy, mc_ele_energy,
 			                                                             h_shwr_hits_nu_eng_last, h_shwr_hits_ele_eng_last);
-			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-			                                                             _x1, _x2, _y1, _y2, _z1, _z2,
-			                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
+			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose,
+			                                                             tpco_classifier_v, mc_nu_energy, mc_ele_energy,
 			                                                             h_shwr_hits_nu_eng_zoom_last, h_shwr_hits_ele_eng_zoom_last);
 		}
 
-		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_pre_cut_collection_hits_track_nue_cc,
 		                                                     h_pre_cut_collection_hits_track_nue_cc_out_fv,
 		                                                     h_pre_cut_collection_hits_track_nue_cc_mixed,
@@ -1143,16 +1154,14 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                     h_pre_cut_total_hits_leading_shower_unmatched);
 
 		_cuts_instance.selection_cuts::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_hit_threshold, h_selected_ele_energy_hit_threshold);
 
-		_functions_instance.selection_functions::PlaneHitsComparisonTrack(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                                  _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PlaneHitsComparisonTrack(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                  h_collection_total_hits_track_nue_cc,
 		                                                                  h_collection_total_hits_track_nue_cc_out_fv,
 		                                                                  h_collection_total_hits_track_nue_cc_mixed,
@@ -1163,8 +1172,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                  h_collection_total_hits_track_cosmic,
 		                                                                  h_collection_total_hits_track_other_mixed,
 		                                                                  h_collection_total_hits_track_unmatched);
-		_functions_instance.selection_functions::PlaneHitsComparisonShower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PlaneHitsComparisonShower(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                   h_collection_total_hits_shower_nue_cc,
 		                                                                   h_collection_total_hits_shower_nue_cc_out_fv,
 		                                                                   h_collection_total_hits_shower_nue_cc_mixed,
@@ -1175,8 +1183,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                   h_collection_total_hits_shower_cosmic,
 		                                                                   h_collection_total_hits_shower_other_mixed,
 		                                                                   h_collection_total_hits_shower_unmatched);
-		_functions_instance.selection_functions::PlaneHitsComparisonLeadingShower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PlaneHitsComparisonLeadingShower(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                          h_collection_total_hits_leading_shower_nue_cc,
 		                                                                          h_collection_total_hits_leading_shower_nue_cc_out_fv,
 		                                                                          h_collection_total_hits_leading_shower_nue_cc_mixed,
@@ -1191,8 +1198,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		//***************************************//
 		//*** Collection Plane Hits Threshold ***//
 		//***************************************//
-		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                    h_ele_pfp_phi_nue_cc,
 		                                                    h_ele_pfp_phi_nue_cc_out_fv,
 		                                                    h_ele_pfp_phi_nue_cc_mixed,
@@ -1204,8 +1210,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                    h_ele_pfp_phi_other_mixed,
 		                                                    h_ele_pfp_phi_unmatched);
 
-		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
-		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 		                                                      h_ele_pfp_theta_nue_cc,
 		                                                      h_ele_pfp_theta_nue_cc_out_fv,
 		                                                      h_ele_pfp_theta_nue_cc_mixed,
@@ -1217,8 +1222,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                      h_ele_pfp_theta_other_mixed,
 		                                                      h_ele_pfp_theta_unmatched);
 
-		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_collection_hits_track_nue_cc,
 		                                                     h_collection_hits_track_nue_cc_out_fv,
 		                                                     h_collection_hits_track_nue_cc_mixed,
@@ -1261,23 +1265,20 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                     h_total_hits_leading_shower_unmatched);
 
 		_cuts_instance.selection_cuts::HitThresholdCollection(tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v);
 
 		//*****************************************************
 		//****** open angle cut for the leading shower ********
 		//******************************************************
-		_functions_instance.selection_functions::dEdxVsOpenAngle(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::dEdxVsOpenAngle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                         h_dedx_open_angle_nue_cc, h_dedx_open_angle_nue_cc_out_fv,
 		                                                         h_dedx_open_angle_nue_cc_mixed, h_dedx_open_angle_numu_cc,
 		                                                         h_dedx_open_angle_numu_cc_mixed, h_dedx_open_angle_nc,
 		                                                         h_dedx_open_angle_nc_pi0, h_dedx_open_angle_cosmic,
 		                                                         h_dedx_open_angle_other_mixed, h_dedx_open_angle_unmatched);
 
-		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 		                                                         h_ele_cos_theta_nue_cc,
 		                                                         h_ele_cos_theta_nue_cc_out_fv,
 		                                                         h_ele_cos_theta_nue_cc_mixed,
@@ -1289,10 +1290,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_cos_theta_other_mixed,
 		                                                         h_ele_cos_theta_unmatched);
 
-		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_open_angle_cuts_v);
-		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_open_angle_cuts_v);
+		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, tpco_classifier_v,
 		                                                             h_pfp_shower_open_angle_nue_cc_qe,
 		                                                             h_pfp_shower_open_angle_nue_cc_out_fv,
 		                                                             h_pfp_shower_open_angle_nue_cc_res,
@@ -1312,22 +1311,19 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                             h_pfp_shower_open_angle_other_mixed,
 		                                                             h_pfp_shower_open_angle_unmatched
 		                                                             );
-		_functions_instance.selection_functions::PostCutOpenAngle(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                          _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PostCutOpenAngle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                          h_leading_shower_open_angle_nue_cc, h_leading_shower_open_angle_nue_cc_mixed,
 		                                                          h_leading_shower_open_angle_numu_cc, h_leading_shower_open_angle_nc,
 		                                                          h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nc_pi0,
 		                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
 		                                                          h_leading_shower_open_angle_unmatched);
-		_functions_instance.selection_functions::PostCutOpenAngle1Shower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                                 _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PostCutOpenAngle1Shower(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                 h_leading_shower_open_angle_1_nue_cc, h_leading_shower_open_angle_1_nue_cc_mixed,
 		                                                                 h_leading_shower_open_angle_1_numu_cc, h_leading_shower_open_angle_1_nc,
 		                                                                 h_leading_shower_open_angle_1_cosmic, h_leading_shower_open_angle_1_nc_pi0,
 		                                                                 h_leading_shower_open_angle_1_numu_cc_mixed, h_leading_shower_open_angle_1_other_mixed,
 		                                                                 h_leading_shower_open_angle_1_unmatched);
-		_functions_instance.selection_functions::PostCutOpenAngle2PlusShower(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PostCutOpenAngle2PlusShower(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                     h_leading_shower_open_angle_2plus_nue_cc,
 		                                                                     h_leading_shower_open_angle_2plus_nue_cc_mixed,
 		                                                                     h_leading_shower_open_angle_2plus_numu_cc, h_leading_shower_open_angle_2plus_nc,
@@ -1336,16 +1332,14 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                     h_leading_shower_open_angle_2plus_other_mixed,
 		                                                                     h_leading_shower_open_angle_2plus_unmatched);
 		_cuts_instance.selection_cuts::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_open_angle, h_selected_ele_energy_open_angle);
 
-		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, has_pi0, _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                             mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, tpco_classifier_v,
 		                                                             h_pfp_shower_dedx_nue_cc_qe,
 		                                                             h_pfp_shower_dedx_nue_cc_out_fv,
 		                                                             h_pfp_shower_dedx_nue_cc_res,
@@ -1368,8 +1362,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		//*****************************************************
 		//*********** dEdx cut for the leading shower *********
 		//******************************************************
-		_functions_instance.selection_functions::PostCutsdEdx(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::PostCutsdEdx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                      h_dedx_cuts_nue_cc, h_dedx_cuts_nue_cc_mixed,
 		                                                      h_dedx_cuts_nue_cc_out_fv,
 		                                                      h_dedx_cuts_numu_cc, h_dedx_cuts_nc,
@@ -1378,17 +1371,14 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                      h_dedx_cuts_unmatched     );
 
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2,
+		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_dedx, h_selected_ele_energy_dedx);
 
-		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                              _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                              mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                              h_second_shwr_dist_nue_cc, h_second_shwr_dist_nue_cc_out_fv,
 		                                                              h_second_shwr_dist_nue_cc_mixed, h_second_shwr_dist_numu_cc,
 		                                                              h_second_shwr_dist_numu_cc_mixed, h_second_shwr_dist_nc,
@@ -1397,14 +1387,11 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 		//***************************************************************************
 		_cuts_instance.selection_cuts::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
 
 
-		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                        h_hit_length_ratio_nue_cc,
 		                                                        h_hit_length_ratio_nue_cc_out_fv,
 		                                                        h_hit_length_ratio_nue_cc_mixed,
@@ -1418,13 +1405,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 		//***************************************************************************
 		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
-		//if(_functions_instance.selection_functions::ValidTPCObjects(passed_tpco) == false) {continue; }
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
 
-		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                    h_ele_pfp_phi_after_nue_cc,
 		                                                    h_ele_pfp_phi_after_nue_cc_out_fv,
 		                                                    h_ele_pfp_phi_after_nue_cc_mixed,
@@ -1436,8 +1420,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                    h_ele_pfp_phi_after_other_mixed,
 		                                                    h_ele_pfp_phi_after_unmatched);
 
-		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
-		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 		                                                      h_ele_pfp_theta_after_nue_cc,
 		                                                      h_ele_pfp_theta_after_nue_cc_out_fv,
 		                                                      h_ele_pfp_theta_after_nue_cc_mixed,
@@ -1451,15 +1434,13 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 		//*** cut for longest track / leading shower ratio *** //
 		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
-		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
 
-		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, has_pi0, _verbose, _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                       mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
 		                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
 		                                                       h_failure_reason_numu_cc_mixed, h_failure_reason_nc,
@@ -1467,43 +1448,35 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
 
 		//these are for the tefficiency plots, post all cuts
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
 		{
-			if(_cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-			                                        _x1, _x2, _y1,
-			                                        _y2, _z1, _z2) == true)
-			{
-				selected_energy_vector.push_back(mc_nu_energy);
-				h_nue_eng_eff_num->Fill(mc_nu_energy);
-				h_ele_eng_eff_num->Fill(mc_ele_energy);
-				h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
-				h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
-				h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z);
-				h_nue_dir_x_eff_num->Fill(mc_nu_dir_x);
-				h_nue_dir_y_eff_num->Fill(mc_nu_dir_y);
-				h_nue_dir_z_eff_num->Fill(mc_nu_dir_z);
-				h_ele_dir_x_eff_num->Fill(mc_ele_dir_x);
-				h_ele_dir_y_eff_num->Fill(mc_ele_dir_y);
-				h_ele_dir_z_eff_num->Fill(mc_ele_dir_z);
-				h_ele_theta_eff_num->Fill(mc_ele_theta);
-				h_nue_num_part_eff_num->Fill(mc_nu_num_particles);
-				h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles);
-				h_nue_cos_theta_eff_num->Fill(mc_cos_theta);
-				h_nue_phi_eff_num->Fill(mc_phi);
-				h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
-				h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415));
-				_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
-				                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, mc_nu_energy, mc_ele_energy,
-				                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
-				_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, has_pi0, _verbose,
-				                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-				                                                     mc_ele_momentum, mc_ele_cos_theta,
-				                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e);
-			}
+			selected_energy_vector.push_back(mc_nu_energy);
+			h_nue_eng_eff_num->Fill(mc_nu_energy);
+			h_ele_eng_eff_num->Fill(mc_ele_energy);
+			h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
+			h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
+			h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z);
+			h_nue_dir_x_eff_num->Fill(mc_nu_dir_x);
+			h_nue_dir_y_eff_num->Fill(mc_nu_dir_y);
+			h_nue_dir_z_eff_num->Fill(mc_nu_dir_z);
+			h_ele_dir_x_eff_num->Fill(mc_ele_dir_x);
+			h_ele_dir_y_eff_num->Fill(mc_ele_dir_y);
+			h_ele_dir_z_eff_num->Fill(mc_ele_dir_z);
+			h_ele_theta_eff_num->Fill(mc_ele_theta);
+			h_nue_num_part_eff_num->Fill(mc_nu_num_particles);
+			h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles);
+			h_nue_cos_theta_eff_num->Fill(mc_cos_theta);
+			h_nue_phi_eff_num->Fill(mc_phi);
+			h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
+			h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415));
+			_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, _verbose,
+			                                                    tpco_classifier_v, mc_nu_energy, mc_ele_energy,
+			                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
+			_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v, mc_ele_momentum, mc_ele_cos_theta,
+			                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e);
 		}
 
-		_functions_instance.selection_functions::TopologyPlots2(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::TopologyPlots2(tpc_object_container_v, passed_tpco, tpco_classifier_v,
 		                                                        h_pfp_track_shower_nue_cc_qe_last, h_pfp_track_shower_nue_cc_out_fv_last,
 		                                                        h_pfp_track_shower_nue_cc_res_last, h_pfp_track_shower_nue_cc_dis_last,
 		                                                        h_pfp_track_shower_nue_cc_coh_last, h_pfp_track_shower_nue_cc_mec_last,
@@ -1541,21 +1514,15 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                        h_pfp_shower_numu_cc_mixed_last, h_pfp_shower_cosmic_last,
 		                                                        h_pfp_shower_other_mixed_last, h_pfp_shower_unmatched_last);
 
-		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                            _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                            no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 
-		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                     _x1, _x2, _y1, _y2, _z1, _z2,
-		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_charge_share_nue_cc_mixed);
 
-		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, has_pi0,
-		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, post_cuts_v);
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v);
 
-		_functions_instance.selection_functions::TrackLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::TrackLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_trk_length_nue_cc,
 		                                                     h_trk_length_nue_cc_out_fv,
 		                                                     h_trk_length_nue_cc_mixed,
@@ -1566,8 +1533,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                     h_trk_length_cosmic,
 		                                                     h_trk_length_other_mixed,
 		                                                     h_trk_length_unmatched);
-		_functions_instance.selection_functions::LongestTrackLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                            _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LongestTrackLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                            h_longest_trk_length_nue_cc,
 		                                                            h_longest_trk_length_nue_cc_out_fv,
 		                                                            h_longest_trk_length_nue_cc_mixed,
@@ -1579,8 +1545,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                            h_longest_trk_length_other_mixed,
 		                                                            h_longest_trk_length_unmatched);
 
-		_functions_instance.selection_functions::ShowerLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::ShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                      h_shwr_length_nue_cc,
 		                                                      h_shwr_length_nue_cc_out_fv,
 		                                                      h_shwr_length_nue_cc_mixed,
@@ -1591,8 +1556,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                      h_shwr_length_cosmic,
 		                                                      h_shwr_length_other_mixed,
 		                                                      h_shwr_length_unmatched);
-		_functions_instance.selection_functions::LongestShowerLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LongestShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                             h_longest_shwr_length_nue_cc,
 		                                                             h_longest_shwr_length_nue_cc_out_fv,
 		                                                             h_longest_shwr_length_nue_cc_mixed,
@@ -1603,8 +1567,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                             h_longest_shwr_length_cosmic,
 		                                                             h_longest_shwr_length_other_mixed,
 		                                                             h_longest_shwr_length_unmatched);
-		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                             _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                             h_leading_shwr_length_nue_cc,
 		                                                             h_leading_shwr_length_nue_cc_out_fv,
 		                                                             h_leading_shwr_length_nue_cc_mixed,
@@ -1615,8 +1578,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                             h_leading_shwr_length_cosmic,
 		                                                             h_leading_shwr_length_other_mixed,
 		                                                             h_leading_shwr_length_unmatched);
-		_functions_instance.selection_functions::LeadingShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                   h_leading_shwr_trk_length_nue_cc,
 		                                                                   h_leading_shwr_trk_length_nue_cc_out_fv,
 		                                                                   h_leading_shwr_trk_length_nue_cc_mixed,
@@ -1628,8 +1590,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                   h_leading_shwr_trk_length_other_mixed,
 		                                                                   h_leading_shwr_trk_length_unmatched);
 
-		_functions_instance.selection_functions::LongestShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                                   _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LongestShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                   h_longest_shwr_trk_length_nue_cc,
 		                                                                   h_longest_shwr_trk_length_nue_cc_out_fv,
 		                                                                   h_longest_shwr_trk_length_nue_cc_mixed,
@@ -1640,8 +1601,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                   h_longest_shwr_trk_length_cosmic,
 		                                                                   h_longest_shwr_trk_length_other_mixed,
 		                                                                   h_longest_shwr_trk_length_unmatched);
-		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 		                                                         h_ele_cos_theta_last_nue_cc,
 		                                                         h_ele_cos_theta_last_nue_cc_out_fv,
 		                                                         h_ele_cos_theta_last_nue_cc_mixed,
@@ -1652,8 +1612,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_cos_theta_last_cosmic,
 		                                                         h_ele_cos_theta_last_other_mixed,
 		                                                         h_ele_cos_theta_last_unmatched);
-		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 		                                                         h_ele_cos_theta_last_trans_nue_cc,
 		                                                         h_ele_cos_theta_last_trans_nue_cc_out_fv,
 		                                                         h_ele_cos_theta_last_trans_nue_cc_mixed,
@@ -1665,21 +1624,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_cos_theta_last_trans_other_mixed,
 		                                                         h_ele_cos_theta_last_trans_unmatched);
 
-		_functions_instance.selection_functions::XYZPosition(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                     _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
-		                                                     h_ele_pfp_xyz_nue_cc,
-		                                                     h_ele_pfp_xyz_nue_cc_out_fv,
-		                                                     h_ele_pfp_xyz_nue_cc_mixed,
-		                                                     h_ele_pfp_xyz_numu_cc,
-		                                                     h_ele_pfp_xyz_numu_cc_mixed,
-		                                                     h_ele_pfp_xyz_nc,
-		                                                     h_ele_pfp_xyz_nc_pi0,
-		                                                     h_ele_pfp_xyz_cosmic,
-		                                                     h_ele_pfp_xyz_other_mixed,
-		                                                     h_ele_pfp_xyz_unmatched);
-
-		_functions_instance.selection_functions::LeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                         h_ele_pfp_momentum_nue_cc,
 		                                                         h_ele_pfp_momentum_nue_cc_out_fv,
 		                                                         h_ele_pfp_momentum_nue_cc_mixed,
@@ -1691,8 +1636,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_pfp_momentum_other_mixed,
 		                                                         h_ele_pfp_momentum_unmatched);
 
-		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                    _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                    h_ele_pfp_phi_last_nue_cc,
 		                                                    h_ele_pfp_phi_last_nue_cc_out_fv,
 		                                                    h_ele_pfp_phi_last_nue_cc_mixed,
@@ -1705,8 +1649,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                    h_ele_pfp_phi_last_unmatched);
 
 		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, theta_translation, phi_translation,
-		                                                      _verbose, has_pi0,
-		                                                      _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                      _verbose, tpco_classifier_v,
 		                                                      h_ele_pfp_theta_last_nue_cc,
 		                                                      h_ele_pfp_theta_last_nue_cc_out_fv,
 		                                                      h_ele_pfp_theta_last_nue_cc_mixed,
@@ -1718,8 +1661,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                      h_ele_pfp_theta_last_other_mixed,
 		                                                      h_ele_pfp_theta_last_unmatched);
 
-		_functions_instance.selection_functions::Leading1Shwr2Shwr(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                           _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::Leading1Shwr2Shwr(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                           h_leading_shwr_length_1shwr_nue_cc,
 		                                                           h_leading_shwr_length_1shwr_nue_cc_out_fv,
 		                                                           h_leading_shwr_length_1shwr_nue_cc_mixed,
@@ -1761,8 +1703,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                           h_leading_shwr_hits_2shwr_other_mixed,
 		                                                           h_leading_shwr_hits_2shwr_unmatched);
 
-		_functions_instance.selection_functions::LeadingThetaPhi(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                         _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::LeadingThetaPhi(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                         h_ele_theta_phi_nue_cc,
 		                                                         h_ele_theta_phi_nue_cc_out_fv,
 		                                                         h_ele_theta_phi_nue_cc_mixed,
@@ -1774,8 +1715,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_theta_phi_other_mixed,
 		                                                         h_ele_theta_phi_unmatched);
 
-		_functions_instance.selection_functions::EnergyCosTheta(tpc_object_container_v, passed_tpco, _verbose, has_pi0,
-		                                                        _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		_functions_instance.selection_functions::EnergyCosTheta(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                        h_ele_eng_costheta_nue_cc,
 		                                                        h_ele_eng_costheta_nue_cc_out_fv,
 		                                                        h_ele_eng_costheta_nue_cc_mixed,
@@ -1788,8 +1728,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                        h_ele_eng_costheta_unmatched);
 
 		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
-		                                                              0, 0, has_pi0,
-		                                                              _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                              0, 0, tpco_classifier_v,
 		                                                              h_ele_eng_for_nue_cc,
 		                                                              h_ele_eng_for_nue_cc_out_fv,
 		                                                              h_ele_eng_for_nue_cc_mixed,
@@ -1821,8 +1760,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                              h_ele_eng_back_other_mixed,
 		                                                              h_ele_eng_back_unmatched);
 		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
-		                                                              theta_translation, phi_translation, has_pi0,
-		                                                              _x1, _x2, _y1, _y2, _z1, _z2, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                              theta_translation, phi_translation, tpco_classifier_v,
 		                                                              h_ele_eng_for_trans_nue_cc,
 		                                                              h_ele_eng_for_trans_nue_cc_out_fv,
 		                                                              h_ele_eng_for_trans_nue_cc_mixed,
@@ -1918,7 +1856,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                              trk_len_shwr_len_ratio_counter_v->at(11), trk_len_shwr_len_ratio_counter_v->at(10), trk_len_shwr_len_ratio_counter_v->at(5),
 	                              trk_len_shwr_len_ratio_counter_v->at(6), intime_trk_len_shwr_len_ratio_counter_v->at(0),
 	                              intime_scale_factor, data_trk_len_shwr_len_ratio_counter_v->at(0), data_scale_factor,
-	                              _x1, _x2, _y1, _y2, _z1, _z2, flux, selected_energy_vector, genie_xsec, total_mc_entries_inFV);
+	                              fv_boundary_v, flux, selected_energy_vector, genie_xsec, total_mc_entries_inFV);
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 
@@ -3022,19 +2960,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	histogram_functions::Plot2DHistogram (h_nu_eng_total_hits, "", "Hits - All Planes", "True Neutrino Energy [GeV]", "post_cuts_nu_eng_total_hits.pdf");
 	histogram_functions::Plot2DHistogram (h_nu_eng_collection_hits, "", "Hits - Collection Planes",
 	                                      "True Neutrino Energy [GeV]", "post_cuts_nu_eng_colleciton_hits.pdf");
-
-	int total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
-	               h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
-	               h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
-	               h_ele_cos_theta_last_numu_cc->GetEntries() +
-	               h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
-	               h_ele_cos_theta_last_nc->GetEntries() +
-	               h_ele_cos_theta_last_nc_pi0->GetEntries() +
-	               h_ele_cos_theta_last_cosmic->GetEntries() +
-	               h_ele_cos_theta_last_other_mixed->GetEntries() +
-	               h_ele_cos_theta_last_unmatched->GetEntries();
-	std::cout << "total 1 0,0: " << total_h1 << std::endl;
-
 	histogram_functions::PlotSimpleStack (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
 	                                      h_ele_cos_theta_last_nue_cc_out_fv,
 	                                      h_ele_cos_theta_last_numu_cc, h_ele_cos_theta_last_numu_cc_mixed,
@@ -3049,18 +2974,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                      h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
 	                                      h_ele_cos_theta_unmatched, 0.15, 0.35, 0.70, 0.95, "",
 	                                      "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta.pdf");
-
-	total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
-	           h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
-	           h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_numu_cc->GetEntries() +
-	           h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_nc->GetEntries() +
-	           h_ele_cos_theta_last_nc_pi0->GetEntries() +
-	           h_ele_cos_theta_last_cosmic->GetEntries() +
-	           h_ele_cos_theta_last_other_mixed->GetEntries() +
-	           h_ele_cos_theta_last_unmatched->GetEntries();
-	std::cout << "total 2 0,0: " << total_h1 << std::endl;
 
 	histogram_functions::PlotSimpleStackInTime (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
 	                                            h_ele_cos_theta_last_nue_cc_out_fv,
@@ -3079,18 +2992,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                            0.15, 0.35, 0.70, 0.95, "",
 	                                            "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_intime.pdf");
 
-	total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
-	           h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
-	           h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_numu_cc->GetEntries() +
-	           h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_nc->GetEntries() +
-	           h_ele_cos_theta_last_nc_pi0->GetEntries() +
-	           h_ele_cos_theta_last_cosmic->GetEntries() +
-	           h_ele_cos_theta_last_other_mixed->GetEntries() +
-	           h_ele_cos_theta_last_unmatched->GetEntries();
-	std::cout << "total 3 0,0: " << total_h1 << std::endl;
-
 	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
 	                                          h_ele_cos_theta_last_nue_cc_out_fv,
 	                                          h_ele_cos_theta_last_numu_cc, h_ele_cos_theta_last_numu_cc_mixed,
@@ -3100,29 +3001,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                          h_ele_cos_theta_last_data, data_scale_factor,
 	                                          0.15, 0.35, 0.70, 0.95, "",
 	                                          "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_last_data.pdf");
-	total_h1 = h_ele_cos_theta_last_nue_cc->GetEntries() +
-	           h_ele_cos_theta_last_nue_cc_out_fv->GetEntries() +
-	           h_ele_cos_theta_last_nue_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_numu_cc->GetEntries() +
-	           h_ele_cos_theta_last_numu_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_nc->GetEntries() +
-	           h_ele_cos_theta_last_nc_pi0->GetEntries() +
-	           h_ele_cos_theta_last_cosmic->GetEntries() +
-	           h_ele_cos_theta_last_other_mixed->GetEntries() +
-	           h_ele_cos_theta_last_unmatched->GetEntries();
-	std::cout << "total 4 0,0: " << total_h1 << std::endl;
-
-	int total_h2 = h_ele_cos_theta_last_trans_nue_cc->GetEntries() +
-	               h_ele_cos_theta_last_trans_nue_cc_out_fv->GetEntries() +
-	               h_ele_cos_theta_last_trans_nue_cc_mixed->GetEntries() +
-	               h_ele_cos_theta_last_trans_numu_cc->GetEntries() +
-	               h_ele_cos_theta_last_trans_numu_cc_mixed->GetEntries() +
-	               h_ele_cos_theta_last_trans_nc->GetEntries() +
-	               h_ele_cos_theta_last_trans_nc_pi0->GetEntries() +
-	               h_ele_cos_theta_last_trans_cosmic->GetEntries() +
-	               h_ele_cos_theta_last_trans_other_mixed->GetEntries() +
-	               h_ele_cos_theta_last_trans_unmatched->GetEntries();
-	std::cout << "total before: " << total_h2 << std::endl;
 
 	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_last_trans_nue_cc,    h_ele_cos_theta_last_trans_nue_cc_mixed,
 	                                          h_ele_cos_theta_last_trans_nue_cc_out_fv,
@@ -3133,17 +3011,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                          h_ele_cos_theta_last_trans_data, data_scale_factor,
 	                                          0.15, 0.35, 0.70, 0.95, "",
 	                                          "Leading Shower Cos(#theta)", "", "post_cuts_leading_cos_theta_last_trans_data.pdf");
-	total_h2 = h_ele_cos_theta_last_trans_nue_cc->GetEntries() +
-	           h_ele_cos_theta_last_trans_nue_cc_out_fv->GetEntries() +
-	           h_ele_cos_theta_last_trans_nue_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_trans_numu_cc->GetEntries() +
-	           h_ele_cos_theta_last_trans_numu_cc_mixed->GetEntries() +
-	           h_ele_cos_theta_last_trans_nc->GetEntries() +
-	           h_ele_cos_theta_last_trans_nc_pi0->GetEntries() +
-	           h_ele_cos_theta_last_trans_cosmic->GetEntries() +
-	           h_ele_cos_theta_last_trans_other_mixed->GetEntries() +
-	           h_ele_cos_theta_last_trans_unmatched->GetEntries();
-	std::cout << "total after: " << total_h2 << std::endl;
 
 	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_nue_cc,  h_ele_cos_theta_nue_cc_mixed,
 	                                          h_ele_cos_theta_nue_cc_out_fv,
@@ -3509,6 +3376,35 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                         h_ele_eng_back_trans_other_mixed,   h_ele_eng_back_trans_unmatched, h_ele_eng_back_trans_intime,
 	                                         intime_scale_factor,          h_ele_eng_back_trans_data,      data_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (Cos(#theta_t) <= -0.5)", "", "post_cuts_leading_eng_back_trans_data.pdf");
+
+	histogram_functions::Plot2DHistogram(h_mc_vtx_xy_nue_cc,     "", "True Signal Nue Vtx X [cm]", "True Signal Nue Vtx Y [cm]", "true_vtx_xy_nue_cc.pdf"    );
+	histogram_functions::Plot2DHistogram(h_mc_vtx_xz_nue_cc,     "", "True Signal Nue Vtx X [cm]", "True Signal Nue Vtx Z [cm]", "true_vtx_xz_nue_cc.pdf"    );
+	histogram_functions::Plot2DHistogram(h_mc_vtx_yz_nue_cc,     "", "True Signal Nue Vtx Z [cm]", "True Signal Nue Vtx Y [cm]", "true_vtx_yz_nue_cc.pdf"    );
+	histogram_functions::Plot2DHistogram(h_reco_vtx_xy_nue_cc,   "", "Reco Signal Nue Vtx X [cm]", "Reco Signal Nue Vtx Y [cm]", "reco_vtx_xy_nue_cc.pdf"    );
+	histogram_functions::Plot2DHistogram(h_reco_vtx_xz_nue_cc,   "", "Reco Signal Nue Vtx X [cm]", "Reco Signal Nue Vtx Z [cm]", "reco_vtx_xz_nue_cc.pdf"    );
+	histogram_functions::Plot2DHistogram(h_reco_vtx_yz_nue_cc,   "", "Reco Signal Nue Vtx Z [cm]", "Reco Signal Nue Vtx Y [cm]", "reco vtx_yz_nue_cc.pdf"    );
+	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_x_nue_cc, "", "True Signal Nue Vtx X [cm]", "Reco Signal Nue Vtx X [cm]", "true_reco_vtx_x_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_y_nue_cc, "", "True Signal Nue Vtx Y [cm]", "Reco Signal Nue Vtx Y [cm]", "true_reco_vtx_y_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_z_nue_cc, "", "True Signal Nue Vtx Z [cm]", "Reco Signal Nue Vtx Z [cm]", "true_reco_vtx_z_nue_cc.pdf");
+
+	histogram_functions::Plot2DHistogram(h_mc_vtx_xy_nue_cc_out_fv,
+	                                     "", "True OutFV Nue Vtx X [cm]", "True OutFV Nue Vtx Y [cm]", "true_vtx_xy_nue_cc_out_fv.pdf"    );
+	histogram_functions::Plot2DHistogram(h_mc_vtx_xz_nue_cc_out_fv,
+	                                     "", "True OutFV Nue Vtx X [cm]", "True OutFV Nue Vtx Z [cm]", "true_vtx_xz_nue_cc_out_fv.pdf"    );
+	histogram_functions::Plot2DHistogram(h_mc_vtx_yz_nue_cc_out_fv,
+	                                     "", "True OutFV Nue Vtx Z [cm]", "True OutFV Nue Vtx Y [cm]", "true_vtx_yz_nue_cc_out_fv.pdf"    );
+	histogram_functions::Plot2DHistogram(h_reco_vtx_xy_nue_cc_out_fv,
+	                                     "", "Reco OutFV Nue Vtx X [cm]", "Reco OutFV Nue Vtx Y [cm]", "reco_vtx_xy_nue_cc_out_fv.pdf"    );
+	histogram_functions::Plot2DHistogram(h_reco_vtx_xz_nue_cc_out_fv,
+	                                     "", "Reco OutFV Nue Vtx X [cm]", "Reco OutFV Nue Vtx Z [cm]", "reco_vtx_xz_nue_cc_out_fv.pdf"    );
+	histogram_functions::Plot2DHistogram(h_reco_vtx_yz_nue_cc_out_fv,
+	                                     "", "Reco OutFV Nue Vtx Z [cm]", "Reco OutFV Nue Vtx Y [cm]", "reco vtx_yz_nue_cc_out_fv.pdf"    );
+	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_x_nue_cc_out_fv,
+	                                     "", "True OutFV Nue Vtx X [cm]", "Reco OutFV Nue Vtx X [cm]", "true_reco_vtx_x_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_y_nue_cc_out_fv,
+	                                     "", "True OutFV Nue Vtx Y [cm]", "Reco OutFV Nue Vtx Y [cm]", "true_reco_vtx_y_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_z_nue_cc_out_fv,
+	                                     "", "True OutFV Nue Vtx Z [cm]", "Reco OutFV Nue Vtx Z [cm]", "true_reco_vtx_z_nue_cc_out_fv.pdf");
 
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();

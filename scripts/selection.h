@@ -45,19 +45,19 @@ const double phi_translation = 0.0;
 //*******************
 
 //fiducial volume
-const double _x1 = 20;
-const double _x2 = 20;
-const double _y1 = 20;
-const double _y2 = 30;
-const double _z1 = 20;
-const double _z2 = 20;
+// const double _x1 = 20;
+// const double _x2 = 20;
+// const double _y1 = 20;
+// const double _y2 = 30;
+// const double _z1 = 20;
+// const double _z2 = 20;
 
-// const double _x1 = 0;
-// const double _x2 = 0;
-// const double _y1 = 0;
-// const double _y2 = 0;
-// const double _z1 = 0;
-// const double _z2 = 0;
+const double _x1 = 40;
+const double _x2 = 40;
+const double _y1 = 40;
+const double _y2 = 40;
+const double _z1 = 40;
+const double _z2 = 40;
 
 //in time flash
 const int flash_pe_threshold = 50;
@@ -1032,18 +1032,18 @@ TH1D * h_ele_pfp_y_unmatched      = new TH1D ("h_ele_pfp_y_unmatched",      "h_e
 TH1D * h_ele_pfp_y_intime         = new TH1D ("h_ele_pfp_y_intime",         "h_ele_pfp_y_intime",         20, -120, 120);
 TH1D * h_ele_pfp_y_data           = new TH1D ("h_ele_pfp_y_data",           "h_ele_pfp_y_data",           20, -120, 120);
 
-TH1D * h_ele_pfp_z_nue_cc         = new TH1D ("h_ele_pfp_z_nue_cc",         "h_ele_pfp_z_nue_cc",         20, 0, 1050);
-TH1D * h_ele_pfp_z_nue_cc_out_fv  = new TH1D ("h_ele_pfp_z_nue_cc_out_fv",  "h_ele_pfp_z_nue_cc_out_fv",  20, 0, 1050);
-TH1D * h_ele_pfp_z_nue_cc_mixed   = new TH1D ("h_ele_pfp_z_nue_cc_mixed",   "h_ele_pfp_z_nue_cc_mixed",   20, 0, 1050);
-TH1D * h_ele_pfp_z_numu_cc        = new TH1D ("h_ele_pfp_z_numu_cc",        "h_ele_pfp_z_numu_cc",        20, 0, 1050);
-TH1D * h_ele_pfp_z_numu_cc_mixed  = new TH1D ("h_ele_pfp_z_numu_cc_mixed",  "h_ele_pfp_z_numu_cc_mixed",  20, 0, 1050);
-TH1D * h_ele_pfp_z_nc             = new TH1D ("h_ele_pfp_z_nc",             "h_ele_pfp_z_nc",             20, 0, 1050);
-TH1D * h_ele_pfp_z_nc_pi0         = new TH1D ("h_ele_pfp_z_nc_pi0",         "h_ele_pfp_z_nc_pi0",         20, 0, 1050);
-TH1D * h_ele_pfp_z_cosmic         = new TH1D ("h_ele_pfp_z_cosmic",         "h_ele_pfp_z_cosmic",         20, 0, 1050);
-TH1D * h_ele_pfp_z_other_mixed    = new TH1D ("h_ele_pfp_z_other_mixed",    "h_ele_pfp_z_other_mixed",    20, 0, 1050);
-TH1D * h_ele_pfp_z_unmatched      = new TH1D ("h_ele_pfp_z_unmatched",      "h_ele_pfp_z_unmatched",      20, 0, 1050);
-TH1D * h_ele_pfp_z_intime         = new TH1D ("h_ele_pfp_z_intime",         "h_ele_pfp_z_intime",         20, 0, 1050);
-TH1D * h_ele_pfp_z_data           = new TH1D ("h_ele_pfp_z_data",           "h_ele_pfp_z_data",           20, 0, 1050);
+TH1D * h_ele_pfp_z_nue_cc         = new TH1D ("h_ele_pfp_z_nue_cc",         "h_ele_pfp_z_nue_cc",         40, -40, 1050);
+TH1D * h_ele_pfp_z_nue_cc_out_fv  = new TH1D ("h_ele_pfp_z_nue_cc_out_fv",  "h_ele_pfp_z_nue_cc_out_fv",  40, -40, 1050);
+TH1D * h_ele_pfp_z_nue_cc_mixed   = new TH1D ("h_ele_pfp_z_nue_cc_mixed",   "h_ele_pfp_z_nue_cc_mixed",   40, -40, 1050);
+TH1D * h_ele_pfp_z_numu_cc        = new TH1D ("h_ele_pfp_z_numu_cc",        "h_ele_pfp_z_numu_cc",        40, -40, 1050);
+TH1D * h_ele_pfp_z_numu_cc_mixed  = new TH1D ("h_ele_pfp_z_numu_cc_mixed",  "h_ele_pfp_z_numu_cc_mixed",  40, -40, 1050);
+TH1D * h_ele_pfp_z_nc             = new TH1D ("h_ele_pfp_z_nc",             "h_ele_pfp_z_nc",             40, -40, 1050);
+TH1D * h_ele_pfp_z_nc_pi0         = new TH1D ("h_ele_pfp_z_nc_pi0",         "h_ele_pfp_z_nc_pi0",         40, -40, 1050);
+TH1D * h_ele_pfp_z_cosmic         = new TH1D ("h_ele_pfp_z_cosmic",         "h_ele_pfp_z_cosmic",         40, -40, 1050);
+TH1D * h_ele_pfp_z_other_mixed    = new TH1D ("h_ele_pfp_z_other_mixed",    "h_ele_pfp_z_other_mixed",    40, -40, 1050);
+TH1D * h_ele_pfp_z_unmatched      = new TH1D ("h_ele_pfp_z_unmatched",      "h_ele_pfp_z_unmatched",      40, -40, 1050);
+TH1D * h_ele_pfp_z_intime         = new TH1D ("h_ele_pfp_z_intime",         "h_ele_pfp_z_intime",         40, -40, 1050);
+TH1D * h_ele_pfp_z_data           = new TH1D ("h_ele_pfp_z_data",           "h_ele_pfp_z_data",           40, -40, 1050);
 
 TH2D * h_post_cuts_num_tracks_showers_purity_qe     = new TH2D ("h_post_cuts_num_tracks_showers_purity_qe",    "h_post_cuts_num_tracks_showers_purity_qe",    3, 1, 4, 2, 0, 2);
 TH2D * h_post_cuts_num_tracks_showers_purity_res    = new TH2D ("h_post_cuts_num_tracks_showers_purity_res",   "h_post_cuts_num_tracks_showers_purity_res",   3, 1, 4, 2, 0, 2);
@@ -1162,6 +1162,25 @@ TH1D * h_ele_eng_back_trans_other_mixed    = new TH1D ("h_ele_eng_back_trans_oth
 TH1D * h_ele_eng_back_trans_unmatched      = new TH1D ("h_ele_eng_back_trans_unmatched",      "h_ele_eng_back_trans_unmatched",      10, 0, 2);
 TH1D * h_ele_eng_back_trans_intime         = new TH1D ("h_ele_eng_back_trans_intime",         "h_ele_eng_back_trans_intime",         10, 0, 2);
 TH1D * h_ele_eng_back_trans_data           = new TH1D ("h_ele_eng_back_trans_data",           "h_ele_eng_back_trans_data",           10, 0, 2);
+
+TH2D * h_mc_vtx_xy_nue_cc     = new TH2D ("h_mc_vtx_xy_nue_cc",     "h_mc_vtx_xy_nue_cc",     20,    0,  260, 20, -120, 120 );
+TH2D * h_mc_vtx_xz_nue_cc     = new TH2D ("h_mc_vtx_xz_nue_cc",     "h_mc_vtx_xz_nue_cc",     20,    0,  260, 20,    0, 1060);
+TH2D * h_mc_vtx_yz_nue_cc     = new TH2D ("h_mc_vtx_yz_nue_cc",     "h_mc_vtx_yz_nue_cc",     20,    0, 1060, 20, -120, 120 );
+TH2D * h_reco_vtx_xy_nue_cc   = new TH2D ("h_reco_vtx_xy_nue_cc",   "h_reco_vtx_xy_nue_cc",   20,    0,  260, 20, -120, 120 );
+TH2D * h_reco_vtx_xz_nue_cc   = new TH2D ("h_reco_vtx_xz_nue_cc",   "h_reco_vtx_xz_nue_cc",   20,    0,  260, 20,    0, 1060);
+TH2D * h_reco_vtx_yz_nue_cc   = new TH2D ("h_reco_vtx_yz_nue_cc",   "h_reco_vtx_yz_nue_cc",   20,    0, 1060, 20, -120, 120 );
+TH2D * h_mc_reco_vtx_x_nue_cc = new TH2D ("h_mc_reco_vtx_x_nue_cc", "h_mc_reco_vtx_x_nue_cc", 20,    0,  260, 20,    0, 260 );
+TH2D * h_mc_reco_vtx_y_nue_cc = new TH2D ("h_mc_reco_vtx_y_nue_cc", "h_mc_reco_vtx_y_nue_cc", 20, -120,  120, 20, -120, 120 );
+TH2D * h_mc_reco_vtx_z_nue_cc = new TH2D ("h_mc_reco_vtx_z_nue_cc", "h_mc_reco_vtx_z_nue_cc", 20,    0, 1060, 20,    0, 1060);
+TH2D * h_mc_vtx_xy_nue_cc_out_fv     = new TH2D ("h_mc_vtx_xy_nue_cc_out_fv",     "h_mc_vtx_xy_nue_cc_out_fv",     20,    0,  260, 20, -120, 120 );
+TH2D * h_mc_vtx_xz_nue_cc_out_fv     = new TH2D ("h_mc_vtx_xz_nue_cc_out_fv",     "h_mc_vtx_xz_nue_cc_out_fv",     20,    0,  260, 20,    0, 1060);
+TH2D * h_mc_vtx_yz_nue_cc_out_fv     = new TH2D ("h_mc_vtx_yz_nue_cc_out_fv",     "h_mc_vtx_yz_nue_cc_out_fv",     20,    0, 1060, 20, -120, 120 );
+TH2D * h_reco_vtx_xy_nue_cc_out_fv   = new TH2D ("h_reco_vtx_xy_nue_cc_out_fv",   "h_reco_vtx_xy_nue_cc_out_fv",   20,    0,  260, 20, -120, 120 );
+TH2D * h_reco_vtx_xz_nue_cc_out_fv   = new TH2D ("h_reco_vtx_xz_nue_cc_out_fv",   "h_reco_vtx_xz_nue_cc_out_fv",   20,    0,  260, 20,    0, 1060);
+TH2D * h_reco_vtx_yz_nue_cc_out_fv   = new TH2D ("h_reco_vtx_yz_nue_cc_out_fv",   "h_reco_vtx_yz_nue_cc_out_fv",   20,    0, 1060, 20, -120, 120 );
+TH2D * h_mc_reco_vtx_x_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_x_nue_cc_out_fv", "h_mc_reco_vtx_x_nue_cc_out_fv", 20,    0,  260, 20,    0, 260 );
+TH2D * h_mc_reco_vtx_y_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_y_nue_cc_out_fv", "h_mc_reco_vtx_y_nue_cc_out_fv", 20, -120,  120, 20, -120, 120 );
+TH2D * h_mc_reco_vtx_z_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_z_nue_cc_out_fv", "h_mc_reco_vtx_z_nue_cc_out_fv", 20,    0, 1060, 20,    0, 1060);
 
 TH2D * h_post_cuts_num_tracks_showers_signal_total  = new TH2D ("h_post_cuts_num_tracks_showers_signal_total", "h_post_cuts_num_tracks_showers_signal_total", 3, 1, 4, 2, 0, 2);
 TH2D * h_post_cuts_num_tracks_showers_bkg_total     = new TH2D ("h_post_cuts_num_tracks_showers_bkg_total",    "h_post_cuts_num_tracks_showers_bkg_total",    3, 1, 4, 2, 0, 2);
