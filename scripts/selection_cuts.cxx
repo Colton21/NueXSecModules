@@ -137,19 +137,6 @@ bool selection_cuts::in_fv(double x, double y, double z, std::vector<double> fv_
 	if(z <= det_z1 + z1 || z >= det_z2 - z2) {return false; }
 	return true;
 
-	// if(x >= det_x1 + x1 && x <= det_x2 - x2)
-	// {
-	//      if(y >= det_y1 + y1 && y <= det_y2 - y2)
-	//      {
-	//              if(z >= det_z1 + z1 && z <= det_z2 -z2)
-	//              {
-	//                      return true;
-	//              }
-	//      }
-	// }
-	// return false;
-
-
 	//we also want to consider the dead region in the detector
 	//let's expand our FV to exclude the region of wires 7136-7263
 	//Since it's collection plane --> (7136-4800) * 0.3 = 700.8 cm start

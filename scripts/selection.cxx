@@ -60,15 +60,42 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 	int _mc_nue_cc_counter = 0;
 	int _mc_nue_cc_counter_bar = 0;
+	int _mc_numu_cc_counter = 0;
+	int _mc_numu_cc_counter_bar = 0;
+	int _mc_nue_nc_counter = 0;
+	int _mc_nue_nc_counter_bar = 0;
+	int _mc_numu_nc_counter = 0;
+	int _mc_numu_nc_counter_bar = 0;
+	std::vector<bool> true_in_tpc_v;
+	true_in_tpc_v.resize(total_mc_entries, false);
+	int total_mc_entries_inFV = 0;
 	for(int i = 0; i < total_mc_entries; i++)
 	{
 		mctruth_counter_tree->GetEntry(i);
 		if(mc_nu_id == 1) {_mc_nue_cc_counter++; }
+		if(mc_nu_id == 2) {_mc_numu_cc_counter++; }
+		if(mc_nu_id == 3) {_mc_nue_nc_counter++; }
+		if(mc_nu_id == 4) {_mc_numu_nc_counter++; }
 		if(mc_nu_id == 5) {_mc_nue_cc_counter_bar++; }
-	}
-	std::cout << "MC Nue CC Counter - " << _mc_nue_cc_counter << std::endl;
-	std::cout << "MC Nue CC Counter - " << _mc_nue_cc_counter_bar << std::endl;
+		if(mc_nu_id == 6) {_mc_numu_cc_counter_bar++; }
+		if(mc_nu_id == 7) {_mc_nue_nc_counter_bar++; }
+		if(mc_nu_id == 8) {_mc_numu_nc_counter_bar++; }
+		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
+		true_in_tpc_v.at(i) = true_in_tpc;
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)) {total_mc_entries_inFV++; }
 
+	}
+	std::cout << "MC Nue CC Counter      --- " << _mc_nue_cc_counter << std::endl;
+	std::cout << "MC Nue NC Counter      --- " << _mc_nue_nc_counter << std::endl;
+	std::cout << "MC Numu CC Counter     --- " << _mc_numu_cc_counter << std::endl;
+	std::cout << "MC Numu NC Counter     --- " << _mc_numu_nc_counter << std::endl;
+	std::cout << "MC Nue CC Counter Bar  --- " << _mc_nue_cc_counter_bar << std::endl;
+	std::cout << "MC Nue NC Counter Bar  --- " << _mc_nue_nc_counter_bar << std::endl;
+	std::cout << "MC Numu CC Counter Bar --- " << _mc_numu_cc_counter_bar << std::endl;
+	std::cout << "MC Numu NC Counter Bar --- " << _mc_numu_nc_counter_bar << std::endl;
+
+
+	//this is the old method - can be used as a cross check now
 	mctruth_counter_tree->GetEntry(total_mc_entries-1);
 
 	std::cout << "MC Nue CC Counter      : " << mc_nue_cc_counter << std::endl;
@@ -793,7 +820,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	std::cout << "=====================" << std::endl;
 
 	const int total_entries = mytree->GetEntries();
-	std::cout << "Total Events: " << total_entries << std::endl;
+	std::cout << "Total Events     : " << total_entries << std::endl;
 	std::cout << "Total Events (MC): " << mctruth_counter_tree->GetEntries() << std::endl;
 
 	std::vector<int> * passed_runs = new std::vector<int>;
@@ -852,11 +879,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		}//false
 
 		//check if nue interaction has true vtx in TPC
-		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
-		// if(true_in_tpc == true)
-		// {
-		//      std::cout << "XYZ: " << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << " --- " << true_in_tpc << std::endl;
-		// }
+		//const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
+		const bool true_in_tpc = true_in_tpc_v.at(event);
 
 		//now we apply the classifier to all TPC Objects in this event
 		std::vector<std::pair<std::string, int> > * tpco_classifier_v = new std::vector<std::pair<std::string, int> >;
@@ -908,7 +932,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			h_nue_true_theta->Fill( acos(mc_cos_theta) * (180 / 3.1415));
 			h_nue_true_phi->Fill(mc_phi * (180 / 3.1415));
 			h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
-			total_mc_entries_inFV++;
 		}
 		//***********************************************************
 		//this is where the in-time optical cut again takes effect
@@ -1460,32 +1483,37 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
 
 		//these are for the tefficiency plots, post all cuts
-		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true)
 		{
-			selected_energy_vector.push_back(mc_nu_energy);
-			h_nue_eng_eff_num->Fill(mc_nu_energy);
-			h_ele_eng_eff_num->Fill(mc_ele_energy);
-			h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
-			h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
-			h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z);
-			h_nue_dir_x_eff_num->Fill(mc_nu_dir_x);
-			h_nue_dir_y_eff_num->Fill(mc_nu_dir_y);
-			h_nue_dir_z_eff_num->Fill(mc_nu_dir_z);
-			h_ele_dir_x_eff_num->Fill(mc_ele_dir_x);
-			h_ele_dir_y_eff_num->Fill(mc_ele_dir_y);
-			h_ele_dir_z_eff_num->Fill(mc_ele_dir_z);
-			h_ele_theta_eff_num->Fill(mc_ele_theta);
-			h_nue_num_part_eff_num->Fill(mc_nu_num_particles);
-			h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles);
-			h_nue_cos_theta_eff_num->Fill(mc_cos_theta);
-			h_nue_phi_eff_num->Fill(mc_phi);
-			h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
-			h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415));
-			_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, _verbose,
-			                                                    tpco_classifier_v, mc_nu_energy, mc_ele_energy,
-			                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
-			_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v, mc_ele_momentum, mc_ele_cos_theta,
-			                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e);
+			int pass = 0;
+			for(auto const passed_tpco_pair : * passed_tpco) {pass += passed_tpco_pair.first; }
+			if(pass > 0)
+			{
+				selected_energy_vector.push_back(mc_nu_energy);
+				h_nue_eng_eff_num->Fill(mc_nu_energy);
+				h_ele_eng_eff_num->Fill(mc_ele_energy);
+				h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
+				h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
+				h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z);
+				h_nue_dir_x_eff_num->Fill(mc_nu_dir_x);
+				h_nue_dir_y_eff_num->Fill(mc_nu_dir_y);
+				h_nue_dir_z_eff_num->Fill(mc_nu_dir_z);
+				h_ele_dir_x_eff_num->Fill(mc_ele_dir_x);
+				h_ele_dir_y_eff_num->Fill(mc_ele_dir_y);
+				h_ele_dir_z_eff_num->Fill(mc_ele_dir_z);
+				h_ele_theta_eff_num->Fill(mc_ele_theta);
+				h_nue_num_part_eff_num->Fill(mc_nu_num_particles);
+				h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles);
+				h_nue_cos_theta_eff_num->Fill(mc_cos_theta);
+				h_nue_phi_eff_num->Fill(mc_phi);
+				h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
+				h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415));
+				_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, _verbose,
+				                                                    tpco_classifier_v, mc_nu_energy, mc_ele_energy,
+				                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
+				_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v, mc_ele_momentum, mc_ele_cos_theta,
+				                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e);
+			}
 		}
 
 		_functions_instance.selection_functions::TopologyPlots2(tpc_object_container_v, passed_tpco, tpco_classifier_v,

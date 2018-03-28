@@ -45,12 +45,12 @@ const double phi_translation = 0.0;
 //*******************
 
 //fiducial volume
-// const double _x1 = 20;
-// const double _x2 = 20;
-// const double _y1 = 20;
-// const double _y2 = 30;
-// const double _z1 = 20;
-// const double _z2 = 20;
+// const double _x1 = 0;
+// const double _x2 = 0;
+// const double _y1 = 0;
+// const double _y2 = 0;
+// const double _z1 = 0;
+// const double _z2 = 0;
 
 const double _x1 = 40;
 const double _x2 = 40;

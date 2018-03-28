@@ -5032,7 +5032,6 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 		//if(signal_bkg == 4)
 		if(event_type == "nue_cc_coh")
 		{
-			std::cout << "I AM A COH SIGNAL EVENT!" << std::endl;
 			if(num_tracks == 0)
 			{
 				if(num_showers == 1) {signal_events_1_0_coh++; }
