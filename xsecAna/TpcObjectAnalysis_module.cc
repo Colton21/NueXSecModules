@@ -571,6 +571,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		int tpco_mc_pdg  = -1;
 		int tpco_pfp_pdg = -1;
 		bool is_neutrino = false;
+		double mc_nu_vtx_x = -999;
+		double mc_nu_vtx_y = -999;
+		double mc_nu_vtx_z = -999;
 		//bool is_primary = false; // not set
 
 		//****************************************
@@ -721,6 +724,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					ccnc = mc_nu.CCNC();
 					mcParentPdg = mc_nu.Nu().PdgCode();
 					mcNeutrinoEnergy = mc_nu.Nu().E();
+					mc_nu_vtx_x = mc_nu.Nu().Vx();
+					mc_nu_vtx_y = mc_nu.Nu().Vy();
+					mc_nu_vtx_z = mc_nu.Nu().Vz();
 					mc_vtx_x = the_mcpart->Vx();
 					mc_vtx_y = the_mcpart->Vy();
 					mc_vtx_z = the_mcpart->Vz();
@@ -753,7 +759,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				mcEnergy = the_mcpart->E();
 
 
-			}//end mcghost == 1
+			} //end mcghost == 1
 			particle_container.SetmcPdgCode(mcPdg);
 			//convert simb::Origin_t to std::string
 			std::string str_mcorigin;
@@ -879,6 +885,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetpfpPdgCode(tpco_pfp_pdg);
 		tpc_object_container.SetNPfpTracks(n_pfp_tracks);
 		tpc_object_container.SetNPfpShowers(n_pfp_showers);
+		tpc_object_container.SetmcVtxX(mc_nu_vtx_x);
+		tpc_object_container.SetmcVtxY(mc_nu_vtx_y);
+		tpc_object_container.SetmcVtxZ(mc_nu_vtx_z);
 		//tpc_object_container.SetmcPdgCode();
 
 		tpc_object_container_v.push_back(tpc_object_container);
