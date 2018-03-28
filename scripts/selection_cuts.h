@@ -39,7 +39,7 @@ bool opt_vtx_distance(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, do
 bool opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, double flash_vtx_y, double flash_vtx_z, double flash_width_z, double tolerance);
 //***************************************************************************
 void SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector< double> > * largest_flash_v_v,
-                      double flash_time_start, double flash_time_end);
+                      double flash_time_start, double flash_time_end, double flash_pe_threshold);
 //***************************************************************************
 void flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                       double tolerance, std::vector<std::pair<int, std::string> > * passed_tpco, const bool _verbose);

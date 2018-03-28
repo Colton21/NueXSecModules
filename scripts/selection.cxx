@@ -57,6 +57,18 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
 	std::cout << "Total MC Entries: " << total_mc_entries << std::endl;
+
+	int _mc_nue_cc_counter = 0;
+	int _mc_nue_cc_counter_bar = 0;
+	for(int i = 0; i < total_mc_entries; i++)
+	{
+		mctruth_counter_tree->GetEntry(i);
+		if(mc_nu_id == 1) {_mc_nue_cc_counter++; }
+		if(mc_nu_id == 5) {_mc_nue_cc_counter_bar++; }
+	}
+	std::cout << "MC Nue CC Counter - " << _mc_nue_cc_counter << std::endl;
+	std::cout << "MC Nue CC Counter - " << _mc_nue_cc_counter_bar << std::endl;
+
 	mctruth_counter_tree->GetEntry(total_mc_entries-1);
 
 	std::cout << "MC Nue CC Counter      : " << mc_nue_cc_counter << std::endl;
@@ -161,7 +173,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * data_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(data_f, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end);
+		_cuts_instance.selection_cuts::SetXYflashVector(data_f, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
 		std::cout << "Largest Flash Vector Size: " << data_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < data_total_entries; event++)
@@ -473,7 +485,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * intime_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(intime_f, intime_optree, intime_largest_flash_v_v, flash_time_start, flash_time_end);
+		_cuts_instance.selection_cuts::SetXYflashVector(intime_f, intime_optree, intime_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
 		std::cout << "Largest Flash Vector Size: " << intime_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < in_time_total_entries; event++)
@@ -782,6 +794,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 	const int total_entries = mytree->GetEntries();
 	std::cout << "Total Events: " << total_entries << std::endl;
+	std::cout << "Total Events (MC): " << mctruth_counter_tree->GetEntries() << std::endl;
 
 	std::vector<int> * passed_runs = new std::vector<int>;
 	//passed runs is filled with 0, 1, or 2
@@ -807,15 +820,14 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	}
 	std::cout << " -------------------------------------- " << std::endl;
 	std::cout << "Passed Runs Vector Size: " << passed_runs->size() << std::endl;
-	std::cout << "Number Events In-Time & > 50 PE: " << run_sum << std::endl;
-	std::cout << "Number Events Not In-Time      : " << out_of_time_sum << std::endl;
-	std::cout << "Number Events In-Time & < 50 PE: " << low_pe_sum << std::endl;
+	std::cout << "Number Events In-Time & >= 50 PE: " << run_sum << std::endl;
+	std::cout << "Number Events Not In-Time       : " << out_of_time_sum << std::endl;
+	std::cout << "Number Events In-Time & <= 50 PE: " << low_pe_sum << std::endl;
 	std::cout << " -------------------------------------- " << std::endl;
 
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
-	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end);
-	std::cout << "Largest Flash Vector Size: " << largest_flash_v_v->size() << std::endl;
+	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
 
 	//**********************************
 	//now let's do the TPCO related cuts

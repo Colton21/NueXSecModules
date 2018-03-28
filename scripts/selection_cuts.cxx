@@ -201,7 +201,7 @@ bool selection_cuts::opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, 
 }
 //***************************************************************************
 void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector< double> > * largest_flash_v_v,
-                                      double flash_time_start, double flash_time_end)
+                                      double flash_time_start, double flash_time_end, double flash_pe_threshold)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 	int fRun = 0;
@@ -216,7 +216,7 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 	optical_tree->SetBranchAddress("Run",              &fRun           );
 	optical_tree->SetBranchAddress("Event",            &fEvent         );
 	optical_tree->SetBranchAddress("OpFlashPE",        &fOpFlashPE     );
-	optical_tree->SetBranchAddress("OpFlashTime",     &fOpFlashTime   );
+	optical_tree->SetBranchAddress("OpFlashTime",      &fOpFlashTime   );
 	optical_tree->SetBranchAddress("OpFlashWidhtY",    &fOpFlashWidthY );
 	optical_tree->SetBranchAddress("OpFlashWidthZ",    &fOpFlashWidthZ );
 	optical_tree->SetBranchAddress("OpFlashCenterY",   &fOpFlashCenterY);
@@ -232,77 +232,197 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 	int current_run = 0;
 	int last_event = 0;
 	int last_run = 0;
-	int largest_flash = 0;
 
 	//contains the entry number for a given OpFlash per event
-	std::vector<int> largest_flash_list;
-	std::vector<double> largest_flash_v;
-	largest_flash_v.resize(6);
+	std::vector<int> optical_list_pe;
+	std::vector<std::vector<int> > optical_list_pe_v;
+	std::vector<double> optical_list_time;
+	std::vector<std::vector<double> > optical_list_time_v;
+	std::vector<double> optical_list_flash_center_y;
+	std::vector<std::vector<double> > optical_list_flash_center_y_v;
+	std::vector<double> optical_list_flash_center_z;
+	std::vector<std::vector<double> > optical_list_flash_center_z_v;
+	std::vector<double> optical_list_currentevent;
+	std::vector<std::vector<double> > optical_list_currentevent_v;
+	// largest_flash_v.at(3) = fOpFlashWidthZ;
+	// largest_flash_v.at(4) = fOpFlashTime;
+	// largest_flash_v.at(5) = largest_flash;
+
+	std::cout << "Optical Entries: " << optical_entries << std::endl;
 
 	for(int i = 0; i < optical_entries; i++)
 	{
 		optical_tree->GetEntry(i);
-		bool in_time = false;
-		if(fOpFlashTime >= flash_time_start && fOpFlashTime <= flash_time_end) {in_time = true; }
 
 		//this function here is meant to construct a vector mapping to which
 		//events successfully pass this cut
 		current_run = fRun;
 		current_event = fEvent;
 
-		if(in_time == false)
-		{
-			largest_flash = 0;
-			largest_flash_v.at(0) = fOpFlashCenterY;
-			largest_flash_v.at(1) = fOpFlashCenterZ;
-			largest_flash_v.at(2) = current_event;
-			largest_flash_v.at(3) = fOpFlashWidthZ;
-			largest_flash_v.at(4) = fOpFlashTime;
-			largest_flash_v.at(5) = largest_flash;
-			if(current_event != last_event) {largest_flash_v_v->push_back(largest_flash_v); }
-		}
-
 		//new event
-		if(current_event != last_event && in_time == true)
+		if(current_event != last_event)
 		{
-			largest_flash = fOpFlashPE;
-			largest_flash_list.push_back(largest_flash);
-			largest_flash_v.at(0) = fOpFlashCenterY;
-			largest_flash_v.at(1) = fOpFlashCenterZ;
-			largest_flash_v.at(2) = current_event;
-			largest_flash_v.at(3) = fOpFlashWidthZ;
-			largest_flash_v.at(4) = fOpFlashTime;
-			largest_flash_v.at(5) = largest_flash;
-			largest_flash_v_v->push_back(largest_flash_v);
+			optical_list_pe.clear();
+			optical_list_time.clear();
+			optical_list_flash_center_y.clear();
+			optical_list_flash_center_z.clear();
+			optical_list_currentevent.clear();
+			optical_list_pe.push_back(fOpFlashPE);
+			optical_list_time.push_back(fOpFlashTime);
+			optical_list_flash_center_y.push_back(fOpFlashCenterY);
+			optical_list_flash_center_z.push_back(fOpFlashCenterZ);
+			optical_list_currentevent.push_back(fEvent);
 		}
 		//same event
 		if(current_event == last_event && current_run == last_run)
 		{
-			if(fOpFlashPE > largest_flash && in_time == true)
-			{
-				largest_flash = fOpFlashPE;
-				largest_flash_list.pop_back();
-				largest_flash_v_v->pop_back();
-				largest_flash_list.push_back(largest_flash);
-				largest_flash_v.at(0) = fOpFlashCenterY;
-				largest_flash_v.at(1) = fOpFlashCenterZ;
-				largest_flash_v.at(2) = current_event;
-				largest_flash_v.at(3) = fOpFlashWidthZ;
-				largest_flash_v.at(4) = fOpFlashTime;
-				largest_flash_v.at(5) = largest_flash;
-				largest_flash_v_v->push_back(largest_flash_v);
-			}
+			optical_list_pe_v.pop_back();
+			optical_list_time_v.pop_back();
+			optical_list_flash_center_y_v.pop_back();
+			optical_list_flash_center_z_v.pop_back();
+			optical_list_currentevent_v.pop_back();
+			optical_list_pe.push_back(fOpFlashPE);
+			optical_list_time.push_back(fOpFlashTime);
+			optical_list_flash_center_y.push_back(fOpFlashCenterY);
+			optical_list_flash_center_z.push_back(fOpFlashCenterZ);
+			optical_list_currentevent.push_back(fEvent);
 		}
 		last_event = current_event;
 		last_run = current_run;
-	}//end loop optical entries
+		optical_list_pe_v.push_back(optical_list_pe);
+		optical_list_time_v.push_back(optical_list_time);
+		optical_list_flash_center_y_v.push_back(optical_list_flash_center_y);
+		optical_list_flash_center_z_v.push_back(optical_list_flash_center_z);
+		optical_list_currentevent_v.push_back(optical_list_currentevent);
+	}
+	std::cout << "Optical List Vector Size: " << optical_list_pe_v.size() << std::endl;
+
+	std::vector<int> optical_pass_list_v;
+	int opt_list_counter = 0;
+	std::vector<double> largest_flash_v;
+	largest_flash_v.resize(7, 0);
+	//loop through all events
+	for(int i = 0; i < optical_list_pe_v.size(); i++)
+	{
+		bool in_time = false;
+		bool got_in_time = false;
+		bool sufficient_flash = false;
+		bool got_sufficient_flash = false;
+		auto const opt_time_v = optical_list_time_v.at(i);
+		auto const opt_pe_v = optical_list_pe_v.at(i);
+		//loop through all flashes in event
+		double largest_flash = 0.;
+		double largest_center_y = 0;
+		double largest_center_z = 0;
+
+		for(int j = 0; j < optical_list_pe_v.at(i).size(); j++)
+		{
+			auto const opt_time = opt_time_v.at(j);
+			auto const opt_pe = opt_pe_v.at(j);
+			const double opt_center_y = optical_list_flash_center_y_v.at(i).at(j);
+			const double opt_center_z = optical_list_flash_center_z_v.at(i).at(j);
+			in_time = flash_in_time(opt_time, flash_time_start, flash_time_end);
+			if(in_time == true) {got_in_time = true; }
+			sufficient_flash = flash_pe(opt_pe, flash_pe_threshold);//update to flash_pe_threshold
+			if(sufficient_flash == true) {got_sufficient_flash = true; }
+			//flash is both in time and over PE threshold
+			if(in_time == true && sufficient_flash == true)
+			{
+				//let's find the largest flash in this event
+				if(opt_pe > largest_flash)
+				{
+					largest_flash = opt_pe;
+					largest_center_y = opt_center_y;
+					largest_center_z = opt_center_z;
+				}
+			}
+		}
+		largest_flash_v.at(0) = largest_center_y;
+		largest_flash_v.at(1) = largest_center_z;
+		// largest_flash_v.at(2) = current_event;
+		// largest_flash_v.at(3) = fOpFlashWidthZ;
+		// largest_flash_v.at(4) = fOpFlashTime;
+		largest_flash_v.at(5) = largest_flash;
+		largest_flash_v_v->push_back(largest_flash_v);
+	}
+
+	//
+	// //contains the entry number for a given OpFlash per event
+	// std::vector<int> largest_flash_list;
+	//
+	//
+	// for(int i = 0; i < optical_entries; i++)
+	// {
+	//      optical_tree->GetEntry(i);
+	//      bool in_time = false;
+	//      if(fOpFlashTime >= flash_time_start && fOpFlashTime <= flash_time_end) {in_time = true; }
+	//
+	//      //this function here is meant to construct a vector mapping to which
+	//      //events successfully pass this cut
+	//      current_run = fRun;
+	//      current_event = fEvent;
+	//
+	//      if(in_time == false)
+	//      {
+	//              largest_flash = 0;
+	//              largest_flash_v.at(0) = fOpFlashCenterY;
+	//              largest_flash_v.at(1) = fOpFlashCenterZ;
+	//              largest_flash_v.at(2) = current_event;
+	//              largest_flash_v.at(3) = fOpFlashWidthZ;
+	//              largest_flash_v.at(4) = fOpFlashTime;
+	//              largest_flash_v.at(5) = largest_flash;
+	//              largest_flash_v.at(6) = 0; //not in time
+	//              if(current_event != last_event) {largest_flash_v_v->push_back(largest_flash_v); }
+	//      }
+	//
+	//      //new event
+	//      if(current_event != last_event && in_time == true)
+	//      {
+	//              largest_flash = fOpFlashPE;
+	//              largest_flash_list.push_back(largest_flash);
+	//              largest_flash_v.at(0) = fOpFlashCenterY;
+	//              largest_flash_v.at(1) = fOpFlashCenterZ;
+	//              largest_flash_v.at(2) = current_event;
+	//              largest_flash_v.at(3) = fOpFlashWidthZ;
+	//              largest_flash_v.at(4) = fOpFlashTime;
+	//              largest_flash_v.at(5) = largest_flash;
+	//              largest_flash_v.at(6) = 1;
+	//              largest_flash_v_v->push_back(largest_flash_v);
+	//      }
+	//      //same event
+	//      if(current_event == last_event && current_run == last_run)
+	//      {
+	//              if(fOpFlashPE > largest_flash && in_time == true)
+	//              {
+	//                      largest_flash = fOpFlashPE;
+	//                      largest_flash_list.pop_back();
+	//                      largest_flash_v_v->pop_back();
+	//                      largest_flash_list.push_back(largest_flash);
+	//                      largest_flash_v.at(0) = fOpFlashCenterY;
+	//                      largest_flash_v.at(1) = fOpFlashCenterZ;
+	//                      largest_flash_v.at(2) = current_event;
+	//                      largest_flash_v.at(3) = fOpFlashWidthZ;
+	//                      largest_flash_v.at(4) = fOpFlashTime;
+	//                      largest_flash_v.at(5) = largest_flash;
+	//                      largest_flash_v.at(6) = 1;
+	//                      largest_flash_v_v->push_back(largest_flash_v);
+	//              }
+	//      }
+	//      last_event = current_event;
+	//      last_run = current_run;
+	// }//end loop optical entries
 	int flash_counter = 0;
+	int too_small_flash_counter = 0;
+	int out_time_counter = 0;
 	for(auto const flash_v : * largest_flash_v_v)
 	{
 		//std::cout << "Largest Flash in this event: " << flash_v.at(5) << std::endl;
 		if(flash_v.at(5) >= 50) {flash_counter++; }
+		if(flash_v.at(5) == 0) {out_time_counter++; }
 	}
-	std::cout << "Non-zero Largest Flashes: " << flash_counter << std::endl;
+	std::cout << "Largest Flashes >= 50 PE              : " << flash_counter << std::endl;
+	std::cout << "Largest Flashes Out-Time or Too Small : " << out_time_counter << std::endl;
+	std::cout << "Largest Flash Vector Size             : " << largest_flash_v_v->size() << std::endl;
 }
 //***************************************************************************
 void selection_cuts::flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
