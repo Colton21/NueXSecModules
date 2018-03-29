@@ -198,6 +198,16 @@ void EnergyCosThetaSlicesData(std::vector<xsecAna::TPCObjectContainer> * tpc_obj
                               TH1 * h_ele_eng_back_data);
 //***************************************************************************
 //***************************************************************************
+void LeadingShowerLengthData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             TH1D * h_shwr_length_data);
+//***************************************************************************
+//***************************************************************************
+void LeadingShowerTrackLengthsData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_shwr_trk_length_data);
+//***************************************************************************
+//***************************************************************************
 
 };
 

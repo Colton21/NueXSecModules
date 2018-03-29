@@ -413,10 +413,19 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//******************************************************************************
 			//*** cut for longest track / leading shower ratio *** //
 			//******************************************************************************
+			_data_functions_instance.selection_functions_data::LeadingShowerLengthData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                           _verbose, h_leading_shwr_length_data);
+			_data_functions_instance.selection_functions_data::LeadingShowerTrackLengthsData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                                 h_leading_shwr_trk_length_data);
+
 			_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(data_tpc_object_container_v, passed_tpco_data, _verbose, ratio_tolerance);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_trk_len_shwr_len_ratio_counter_v);
 
+			_data_functions_instance.selection_functions_data::LeadingShowerLengthData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                           _verbose, h_leading_shwr_length_data_after);
+			_data_functions_instance.selection_functions_data::LeadingShowerTrackLengthsData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                                 h_leading_shwr_trk_length_data);
 			//*********** Data *********
 			_functions_instance.selection_functions::FillPostCutVector(data_tpc_object_container_v, passed_tpco_data, post_cuts_v_data);
 			//*************************************
@@ -740,10 +749,21 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//******************************************************************************
 			//*** cut for longest track / leading shower ratio *** //
 			//******************************************************************************
+			_functions_instance.selection_functions::LeadingShowerLengthInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                   _verbose, h_leading_shwr_length_intime);
+
+			_functions_instance.selection_functions::LeadingShowerTrackLengthsInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                         h_leading_shwr_trk_length_intime);
+
 			_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(intime_tpc_object_container_v, passed_tpco_intime, _verbose, ratio_tolerance);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_trk_len_shwr_len_ratio_counter_v);
 
+			_functions_instance.selection_functions::LeadingShowerLengthInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                   _verbose, h_leading_shwr_length_intime_after);
+
+			_functions_instance.selection_functions::LeadingShowerTrackLengthsInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                         h_leading_shwr_trk_length_intime_after);
 			//*********** In-time Cosmics *********
 			_functions_instance.selection_functions::FillPostCutVector(intime_tpc_object_container_v, passed_tpco_intime, post_cuts_v);
 			//*************************************
@@ -1604,10 +1624,57 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		//******************************************************************************
 		//*** cut for longest track / leading shower ratio *** //
 		//******************************************************************************
+		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                             h_leading_shwr_length_nue_cc,
+		                                                             h_leading_shwr_length_nue_cc_out_fv,
+		                                                             h_leading_shwr_length_nue_cc_mixed,
+		                                                             h_leading_shwr_length_numu_cc,
+		                                                             h_leading_shwr_length_numu_cc_mixed,
+		                                                             h_leading_shwr_length_nc,
+		                                                             h_leading_shwr_length_nc_pi0,
+		                                                             h_leading_shwr_length_cosmic,
+		                                                             h_leading_shwr_length_other_mixed,
+		                                                             h_leading_shwr_length_unmatched);
+
+		_functions_instance.selection_functions::LeadingShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                   h_leading_shwr_trk_length_nue_cc,
+		                                                                   h_leading_shwr_trk_length_nue_cc_out_fv,
+		                                                                   h_leading_shwr_trk_length_nue_cc_mixed,
+		                                                                   h_leading_shwr_trk_length_numu_cc,
+		                                                                   h_leading_shwr_trk_length_numu_cc_mixed,
+		                                                                   h_leading_shwr_trk_length_nc,
+		                                                                   h_leading_shwr_trk_length_nc_pi0,
+		                                                                   h_leading_shwr_trk_length_cosmic,
+		                                                                   h_leading_shwr_trk_length_other_mixed,
+		                                                                   h_leading_shwr_trk_length_unmatched);
+
 		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
 
+		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                             h_leading_shwr_length_nue_cc_after,
+		                                                             h_leading_shwr_length_nue_cc_out_fv_after,
+		                                                             h_leading_shwr_length_nue_cc_mixed_after,
+		                                                             h_leading_shwr_length_numu_cc_after,
+		                                                             h_leading_shwr_length_numu_cc_mixed_after,
+		                                                             h_leading_shwr_length_nc_after,
+		                                                             h_leading_shwr_length_nc_pi0_after,
+		                                                             h_leading_shwr_length_cosmic_after,
+		                                                             h_leading_shwr_length_other_mixed_after,
+		                                                             h_leading_shwr_length_unmatched_after);
+
+		_functions_instance.selection_functions::LeadingShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                   h_leading_shwr_trk_length_nue_cc_after,
+		                                                                   h_leading_shwr_trk_length_nue_cc_out_fv_after,
+		                                                                   h_leading_shwr_trk_length_nue_cc_mixed_after,
+		                                                                   h_leading_shwr_trk_length_numu_cc_after,
+		                                                                   h_leading_shwr_trk_length_numu_cc_mixed_after,
+		                                                                   h_leading_shwr_trk_length_nc_after,
+		                                                                   h_leading_shwr_trk_length_nc_pi0_after,
+		                                                                   h_leading_shwr_trk_length_cosmic_after,
+		                                                                   h_leading_shwr_trk_length_other_mixed_after,
+		                                                                   h_leading_shwr_trk_length_unmatched_after);
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
@@ -1767,28 +1834,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                             h_longest_shwr_length_cosmic,
 		                                                             h_longest_shwr_length_other_mixed,
 		                                                             h_longest_shwr_length_unmatched);
-		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                             h_leading_shwr_length_nue_cc,
-		                                                             h_leading_shwr_length_nue_cc_out_fv,
-		                                                             h_leading_shwr_length_nue_cc_mixed,
-		                                                             h_leading_shwr_length_numu_cc,
-		                                                             h_leading_shwr_length_numu_cc_mixed,
-		                                                             h_leading_shwr_length_nc,
-		                                                             h_leading_shwr_length_nc_pi0,
-		                                                             h_leading_shwr_length_cosmic,
-		                                                             h_leading_shwr_length_other_mixed,
-		                                                             h_leading_shwr_length_unmatched);
-		_functions_instance.selection_functions::LeadingShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                   h_leading_shwr_trk_length_nue_cc,
-		                                                                   h_leading_shwr_trk_length_nue_cc_out_fv,
-		                                                                   h_leading_shwr_trk_length_nue_cc_mixed,
-		                                                                   h_leading_shwr_trk_length_numu_cc,
-		                                                                   h_leading_shwr_trk_length_numu_cc_mixed,
-		                                                                   h_leading_shwr_trk_length_nc,
-		                                                                   h_leading_shwr_trk_length_nc_pi0,
-		                                                                   h_leading_shwr_trk_length_cosmic,
-		                                                                   h_leading_shwr_trk_length_other_mixed,
-		                                                                   h_leading_shwr_trk_length_unmatched);
 
 		_functions_instance.selection_functions::LongestShowerTrackLengths(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                   h_longest_shwr_trk_length_nue_cc,
@@ -2719,7 +2764,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                      h_second_shwr_dist_cosmic,  h_second_shwr_dist_nc,
 	                                      h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
 	                                      h_second_shwr_dist_unmatched, "",
-	                                      "(TPCO > 3 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "", "post_second_shwr_dist.pdf");
+	                                      "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "", "post_second_shwr_dist.pdf");
 
 	histogram_functions::PlotSimpleStackInTime (h_second_shwr_dist_nue_cc,  h_second_shwr_dist_nue_cc_mixed,
 	                                            h_second_shwr_dist_nue_cc_out_fv,
@@ -2727,7 +2772,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                            h_second_shwr_dist_cosmic,  h_second_shwr_dist_nc,
 	                                            h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
 	                                            h_second_shwr_dist_unmatched, h_second_shwr_dist_intime, intime_scale_factor, "",
-	                                            "(TPCO > 3 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "", "post_second_shwr_dist_intime.pdf");
+	                                            "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "", "post_second_shwr_dist_intime.pdf");
 
 	histogram_functions::PlotSimpleStackData (h_second_shwr_dist_nue_cc,  h_second_shwr_dist_nue_cc_mixed,
 	                                          h_second_shwr_dist_nue_cc_out_fv,
@@ -2736,7 +2781,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                          h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
 	                                          h_second_shwr_dist_unmatched, h_second_shwr_dist_intime, intime_scale_factor,
 	                                          h_second_shwr_dist_data, data_scale_factor, "",
-	                                          "(TPCO > 3 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "", "post_second_shwr_dist_data.pdf");
+	                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "", "post_second_shwr_dist_data.pdf");
 
 	histogram_functions::PlotSimpleStackData (h_second_shwr_dist_nue_cc_after,  h_second_shwr_dist_nue_cc_mixed_after,
 	                                          h_second_shwr_dist_nue_cc_out_fv_after,
@@ -2924,6 +2969,15 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                          h_leading_shwr_trk_length_unmatched, h_leading_shwr_trk_length_intime, intime_scale_factor,
 	                                          h_leading_shwr_trk_length_data, data_scale_factor, "",
 	                                          "Longest Track / Leading Shower Lengths", "", "post_leading_shower_trk_lengths_data.pdf");
+
+	histogram_functions::PlotSimpleStackData (h_leading_shwr_trk_length_nue_cc_after,  h_leading_shwr_trk_length_nue_cc_mixed_after,
+	                                          h_leading_shwr_trk_length_nue_cc_out_fv_after,
+	                                          h_leading_shwr_trk_length_numu_cc_after, h_leading_shwr_trk_length_numu_cc_mixed_after,
+	                                          h_leading_shwr_trk_length_cosmic_after,  h_leading_shwr_trk_length_nc_after,
+	                                          h_leading_shwr_trk_length_nc_pi0_after,  h_leading_shwr_trk_length_other_mixed_after,
+	                                          h_leading_shwr_trk_length_unmatched_after, h_leading_shwr_trk_length_intime_after, intime_scale_factor,
+	                                          h_leading_shwr_trk_length_data_after, data_scale_factor, "",
+	                                          "Longest Track / Leading Shower Lengths", "", "post_leading_shower_trk_lengths_data_after.pdf");
 
 	histogram_functions::PlotSimpleStack (h_longest_shwr_trk_length_nue_cc,  h_longest_shwr_trk_length_nue_cc_mixed,
 	                                      h_longest_shwr_trk_length_nue_cc_out_fv,

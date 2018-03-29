@@ -129,6 +129,8 @@ void selection_functions::PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectConta
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg != 11) {continue; }
 			const int n_pfp_hits = part.NumPFPHits();
 			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 		}
@@ -1070,6 +1072,8 @@ void selection_functions::PostCutOpenAngleInTime(std::vector<xsecAna::TPCObjectC
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg != 11) {continue; }
 			const int n_pfp_hits = part.NumPFPHits();
 			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
 		}
@@ -2065,88 +2069,105 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		const int n_pfp = tpc_obj.NumPFParticles();
-		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
-		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_vtx_x = leading_shower.pfpVtxX();
-		const double leading_vtx_y = leading_shower.pfpVtxY();
-		const double leading_vtx_z = leading_shower.pfpVtxZ();
-		const double distance = sqrt(pow((tpc_vtx_x - leading_vtx_x), 2) +
-		                             pow((tpc_vtx_y - leading_vtx_y), 2) +
-		                             pow((tpc_vtx_z - leading_vtx_z), 2));
+
+		// int leading_index   = tpco_classifier_v->at(i).second;
+		// auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		// const double leading_vtx_x = leading_shower.pfpVtxX();
+		// const double leading_vtx_y = leading_shower.pfpVtxY();
+		// const double leading_vtx_z = leading_shower.pfpVtxZ();
+
+		//let's plot the smallest distance in the case of multiple showers
+		//that way we can see if the cut works properly - i.e. if there's a
+		//smallest distance greater than cut value, can see it's not working
+		double min_distance = 10000;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg != 11) {continue; }
+			const double pfp_vtx_x = pfp.pfpVtxX();
+			const double pfp_vtx_y = pfp.pfpVtxY();
+			const double pfp_vtx_z = pfp.pfpVtxZ();
+
+			const double distance = sqrt(pow((tpc_vtx_x - pfp_vtx_x), 2) +
+			                             pow((tpc_vtx_y - pfp_vtx_y), 2) +
+			                             pow((tpc_vtx_z - pfp_vtx_z), 2));
+			if(distance < min_distance) {min_distance = distance; }
+		}
 
 		if(tpco_id == "nue_cc_qe")
 		{
-			h_shwr_vtx_dist_nue_cc->Fill(distance);
+			h_shwr_vtx_dist_nue_cc->Fill(min_distance);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
-			h_shwr_vtx_dist_nue_cc_out_fv->Fill(distance);
+			h_shwr_vtx_dist_nue_cc_out_fv->Fill(min_distance);
 		}
 		if(tpco_id == "nue_cc_res")
 		{
-			h_shwr_vtx_dist_nue_cc->Fill(distance);
+			h_shwr_vtx_dist_nue_cc->Fill(min_distance);
 		}
 		if(tpco_id == "nue_cc_dis")
 		{
-			h_shwr_vtx_dist_nue_cc->Fill(distance);
+			h_shwr_vtx_dist_nue_cc->Fill(min_distance);
 		}
 		if(tpco_id == "nue_cc_coh")
 		{
-			h_shwr_vtx_dist_nue_cc->Fill(distance);
+			h_shwr_vtx_dist_nue_cc->Fill(min_distance);
 		}
 		if(tpco_id == "nue_cc_mec")
 		{
-			h_shwr_vtx_dist_nue_cc->Fill(distance);
+			h_shwr_vtx_dist_nue_cc->Fill(min_distance);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
-			h_shwr_vtx_dist_numu_cc->Fill(distance);
+			h_shwr_vtx_dist_numu_cc->Fill(min_distance);
 		}
 		if(tpco_id == "numu_cc_res")
 		{
-			h_shwr_vtx_dist_numu_cc->Fill(distance);
+			h_shwr_vtx_dist_numu_cc->Fill(min_distance);
 		}
 		if(tpco_id == "numu_cc_dis")
 		{
-			h_shwr_vtx_dist_numu_cc->Fill(distance);
+			h_shwr_vtx_dist_numu_cc->Fill(min_distance);
 		}
 		if(tpco_id == "numu_cc_coh")
 		{
-			h_shwr_vtx_dist_numu_cc->Fill(distance);
+			h_shwr_vtx_dist_numu_cc->Fill(min_distance);
 		}
 		if(tpco_id == "numu_cc_mec")
 		{
-			h_shwr_vtx_dist_numu_cc->Fill(distance);
+			h_shwr_vtx_dist_numu_cc->Fill(min_distance);
 		}
 		if(tpco_id == "nc")
 		{
-			h_shwr_vtx_dist_nc->Fill(distance);
+			h_shwr_vtx_dist_nc->Fill(min_distance);
 		}
 		if(tpco_id == "nc_pi0")
 		{
-			h_shwr_vtx_dist_nc_pi0->Fill(distance);
+			h_shwr_vtx_dist_nc_pi0->Fill(min_distance);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
-			h_shwr_vtx_dist_nue_cc_mixed->Fill(distance);
+			h_shwr_vtx_dist_nue_cc_mixed->Fill(min_distance);
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
 			//h_shwr_vtx_dist_numu_cc_mixed->Fill(distance);
-			h_shwr_vtx_dist_numu_cc->Fill(distance);
+			h_shwr_vtx_dist_numu_cc->Fill(min_distance);
 		}
 		if(tpco_id == "cosmic")
 		{
-			h_shwr_vtx_dist_cosmic->Fill(distance);
+			h_shwr_vtx_dist_cosmic->Fill(min_distance);
 		}
 		if(tpco_id == "other_mixed")
 		{
-			h_shwr_vtx_dist_other_mixed->Fill(distance);
+			h_shwr_vtx_dist_other_mixed->Fill(min_distance);
 		}
 		if(tpco_id == "unmatched")
 		{
-			h_shwr_vtx_dist_unmatched->Fill(distance);
+			h_shwr_vtx_dist_unmatched->Fill(min_distance);
 		}
 	}        //end loop tpc objects
 }
@@ -2165,23 +2186,23 @@ void selection_functions::PostCutsShwrVtxInTime(std::vector<xsecAna::TPCObjectCo
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		const int n_pfp = tpc_obj.NumPFParticles();
-		int most_hits = 0;
-		int leading_index = 0;
+
+		double min_distance = 10000;
 		for(int j = 0; j < n_pfp; j++)
 		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
-		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_vtx_x = leading_shower.pfpVtxX();
-		const double leading_vtx_y = leading_shower.pfpVtxY();
-		const double leading_vtx_z = leading_shower.pfpVtxZ();
-		const double distance = sqrt(pow((tpc_vtx_x - leading_vtx_x), 2) +
-		                             pow((tpc_vtx_y - leading_vtx_y), 2) +
-		                             pow((tpc_vtx_z - leading_vtx_z), 2));
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg != 11) {continue; }
+			const double pfp_vtx_x = pfp.pfpVtxX();
+			const double pfp_vtx_y = pfp.pfpVtxY();
+			const double pfp_vtx_z = pfp.pfpVtxZ();
 
-		h_shwr_vtx_dist_intime->Fill(distance);
+			const double distance = sqrt(pow((tpc_vtx_x - pfp_vtx_x), 2) +
+			                             pow((tpc_vtx_y - pfp_vtx_y), 2) +
+			                             pow((tpc_vtx_z - pfp_vtx_z), 2));
+			if(distance < min_distance) {min_distance = distance; }
+		}
+		h_shwr_vtx_dist_intime->Fill(min_distance);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -3294,6 +3315,30 @@ void selection_functions::LeadingShowerLength(std::vector<xsecAna::TPCObjectCont
 		if(tpco_id == "unmatched")      {h_shwr_length_unmatched->Fill(leading_shwr_length); }
 	}//end loop tpco
 }//end function
+void selection_functions::LeadingShowerLengthInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                    TH1D * h_shwr_length_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shwr_length = leading_shower.pfpLength();
+		h_shwr_length_intime->Fill(leading_shwr_length);
+	}
+}
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -3357,6 +3402,44 @@ void selection_functions::LeadingShowerTrackLengths(std::vector<xsecAna::TPCObje
 		if(tpco_id == "unmatched")      {h_shwr_trk_length_unmatched->Fill(longest_trk_leading_shwr_ratio); }
 	}//end loop tpco
 }//end function
+void selection_functions::LeadingShowerTrackLengthsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                          TH1D * h_shwr_trk_length_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shwr_length = leading_shower.pfpLength();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		double longest_track = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			const double trk_length = pfp.pfpLength();
+			if(pfp_pdg == 13 && trk_length > longest_track)
+			{
+				longest_track = trk_length;
+			}
+		}
+		const double longest_trk_leading_shwr_ratio = longest_track / leading_shwr_length;
+		h_shwr_trk_length_intime->Fill(longest_trk_leading_shwr_ratio);
+	}
+}
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LongestShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

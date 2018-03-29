@@ -581,34 +581,58 @@ void selection_cuts::HitThresholdCollection(std::vector<xsecAna::TPCObjectContai
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
-		bool over_threshold = false;
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
-		//loop over pfparticles in the TPCO
+		int leading_index = 0;
+		int leading_hits  = 0;
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
 			const int pfp_pdg = part.PFParticlePdgCode();
-			//check if at least one shower is within the tolerance to tpco vtx
-			//if no shower within tolerance, discard tpco (i.e. it's not a cc nue)
-			if(pfp_pdg == 11)        //if it's a shower
+			const int n_pfp_hits = part.NumPFPHits();
+			if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
 			{
-				const int n_pfp_hits_w = part.NumPFPHitsW();
-				if(n_pfp_hits_w >= threshold) {over_threshold = true; }
-				if(over_threshold == true)
-				{
-					if(_verbose) std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
-					//passed_tpco->at(i).first = 1;
-					break;
-				}
+				leading_hits = n_pfp_hits;
+				leading_index = j;
 			}
-		} //end loop pfps
-		if(over_threshold == 0)//false
+		}//end loop pfparticles
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int n_pfp_hits_w = leading_shower.NumPFPHitsW();
+		if(n_pfp_hits_w < threshold)
 		{
 			passed_tpco->at(i).first = 0;
 			passed_tpco->at(i).second = "HitThresholdW";
 		}
-	}//end tpc object loop
+	}
+
+	//      bool over_threshold = false;
+	//      auto const tpc_obj = tpc_object_container_v->at(i);
+	//      const int n_pfp = tpc_obj.NumPFParticles();
+	//      //loop over pfparticles in the TPCO
+	//      for(int j = 0; j < n_pfp; j++)
+	//      {
+	//              auto const part = tpc_obj.GetParticle(j);
+	//              const int pfp_pdg = part.PFParticlePdgCode();
+	//              //check if at least one shower is within the tolerance to tpco vtx
+	//              //if no shower within tolerance, discard tpco (i.e. it's not a cc nue)
+	//              if(pfp_pdg == 11)        //if it's a shower
+	//              {
+	//                      const int n_pfp_hits_w = part.NumPFPHitsW();
+	//                      if(n_pfp_hits_w >= threshold) {over_threshold = true; }
+	//                      if(over_threshold == true)
+	//                      {
+	//                              if(_verbose) std::cout << " \t " << i << "[Hit Threshold] \t Passed " << std::endl;
+	//                              //passed_tpco->at(i).first = 1;
+	//                              break;
+	//                      }
+	//              }
+	//      } //end loop pfps
+	//      if(over_threshold == false)//false
+	//      {
+	//              passed_tpco->at(i).first = 0;
+	//              passed_tpco->at(i).second = "HitThresholdW";
+	//      }
+	// }//end tpc object loop
 }
 //***************************************************************************
 void selection_cuts::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

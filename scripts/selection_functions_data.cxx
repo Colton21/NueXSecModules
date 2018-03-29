@@ -879,5 +879,70 @@ void selection_functions_data::EnergyCosThetaSlicesData(std::vector<xsecAna::TPC
 }
 //***************************************************************************
 //***************************************************************************
-
+void selection_functions_data::LeadingShowerLengthData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                       TH1D * h_shwr_length_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shwr_length = leading_shower.pfpLength();
+		h_shwr_length_data->Fill(leading_shwr_length);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::LeadingShowerTrackLengthsData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                             TH1D * h_shwr_trk_length_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shwr_length = leading_shower.pfpLength();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		double longest_track = 0;
+		for(int i = 0; i < n_pfp; i++)
+		{
+			auto const pfp = tpc_obj.GetParticle(i);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			const double trk_length = pfp.pfpLength();
+			if(pfp_pdg == 13 && trk_length > longest_track)
+			{
+				longest_track = trk_length;
+			}
+		}
+		const double longest_trk_leading_shwr_ratio = longest_track / leading_shwr_length;
+		h_shwr_trk_length_data->Fill(longest_trk_leading_shwr_ratio);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

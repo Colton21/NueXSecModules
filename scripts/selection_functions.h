@@ -569,6 +569,9 @@ void LeadingShowerLength(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          TH1D * h_shwr_length_cosmic,
                          TH1D * h_shwr_length_other_mixed,
                          TH1D * h_shwr_length_unmatched);
+void LeadingShowerLengthInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                               TH1D * h_shwr_length_intime);
 //***************************************************************************
 //***************************************************************************
 void LeadingShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -584,6 +587,9 @@ void LeadingShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_ob
                                TH1D * h_shwr_trk_length_cosmic,
                                TH1D * h_shwr_trk_length_other_mixed,
                                TH1D * h_shwr_trk_length_unmatched);
+void LeadingShowerTrackLengthsInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                     TH1D * h_shwr_trk_length_intime);
 //***************************************************************************
 //***************************************************************************
 void LongestShowerTrackLengths(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
