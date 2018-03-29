@@ -1017,7 +1017,8 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                            std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                                           TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
+                                           TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_out_fv,
+                                           TH1D * h_leading_shower_open_angle_nue_cc_mixed,
                                            TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
                                            TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                                            TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
@@ -1034,6 +1035,7 @@ void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContain
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
 		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "nue_cc_out_fv") {h_leading_shower_open_angle_nue_cc_out_fv->Fill(leading_open_angle); }
 		//if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
 		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle); }
 		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
@@ -1081,7 +1083,8 @@ void selection_functions::PostCutOpenAngleInTime(std::vector<xsecAna::TPCObjectC
 void selection_functions::PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                                                  TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
+                                                  TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_out_fv,
+                                                  TH1D * h_leading_shower_open_angle_nue_cc_mixed,
                                                   TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
                                                   TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                                                   TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
@@ -1101,6 +1104,7 @@ void selection_functions::PostCutOpenAngle1Shower(std::vector<xsecAna::TPCObject
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
 		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "nue_cc_out_fv") {h_leading_shower_open_angle_nue_cc_out_fv->Fill(leading_open_angle); }
 		//if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
 		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle); }
 		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
@@ -1151,7 +1155,8 @@ void selection_functions::PostCutOpenAngle1ShowerInTime(std::vector<xsecAna::TPC
 void selection_functions::PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                                                      TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_mixed,
+                                                      TH1D * h_leading_shower_open_angle_nue_cc, TH1D * h_leading_shower_open_angle_nue_cc_out_fv,
+                                                      TH1D * h_leading_shower_open_angle_nue_cc_mixed,
                                                       TH1D * h_leading_shower_open_angle_numu_cc, TH1D * h_leading_shower_open_angle_nc,
                                                       TH1D * h_leading_shower_open_angle_cosmic, TH1D * h_leading_shower_open_angle_nc_pi0,
                                                       TH1D * h_leading_shower_open_angle_numu_cc_mixed, TH1D * h_leading_shower_open_angle_other_mixed,
@@ -1171,6 +1176,7 @@ void selection_functions::PostCutOpenAngle2PlusShower(std::vector<xsecAna::TPCOb
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 
 		if(tpco_id == "nue_cc_mixed")  {h_leading_shower_open_angle_nue_cc_mixed->Fill(leading_open_angle); }
+		if(tpco_id == "nue_cc_out_fv") {h_leading_shower_open_angle_nue_cc_out_fv->Fill(leading_open_angle); }
 		//if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc_mixed->Fill(leading_open_angle); }
 		if(tpco_id == "numu_cc_mixed") {h_leading_shower_open_angle_numu_cc->Fill(leading_open_angle); }
 		if(tpco_id == "other_mixed")   {h_leading_shower_open_angle_other_mixed->Fill(leading_open_angle); }
@@ -1221,7 +1227,8 @@ void selection_functions::PostCutOpenAngle2PlusShowerInTime(std::vector<xsecAna:
 void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                                        TH1D * h_trk_vtx_dist_nue_cc, TH1D * h_trk_vtx_dist_nue_cc_mixed,
+                                        TH1D * h_trk_vtx_dist_nue_cc, TH1D * h_trk_vtx_dist_nue_cc_out_fv,
+                                        TH1D * h_trk_vtx_dist_nue_cc_mixed,
                                         TH1D * h_trk_vtx_dist_numu_cc, TH1D * h_trk_vtx_dist_nc,
                                         TH1D * h_trk_vtx_dist_cosmic, TH1D * h_trk_vtx_dist_nc_pi0,
                                         TH1D * h_trk_vtx_dist_numu_cc_mixed, TH1D * h_trk_vtx_dist_other_mixed,
@@ -1271,6 +1278,7 @@ void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer>
 		{
 			if(has_track) {h_trk_vtx_dist_nue_cc_mixed->Fill(smallest_trk_vtx_dist); }
 		}
+		if(tpco_id == "nue_cc_out_fv") {if(has_track) {h_trk_vtx_dist_nue_cc_out_fv->Fill(smallest_trk_vtx_dist); }}
 		if(tpco_id == "numu_cc_mixed")
 		{
 			//if(has_track) {h_trk_vtx_dist_numu_cc_mixed->Fill(smallest_trk_vtx_dist); }
@@ -1917,7 +1925,7 @@ void selection_functions::TopologyPlots2(std::vector<xsecAna::TPCObjectContainer
 void selection_functions::PostCutsVtxFlash(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                            std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                                           TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_mixed, TH1D * h_vtx_flash_nue_cc_out_fv,
+                                           TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_out_fv, TH1D * h_vtx_flash_nue_cc_mixed,
                                            TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
                                            TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
                                            TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
@@ -2037,6 +2045,7 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                           std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                           TH1D * h_shwr_vtx_dist_nue_cc,
+                                          TH1D * h_shwr_vtx_dist_nue_cc_out_fv,
                                           TH1D * h_shwr_vtx_dist_nue_cc_mixed,
                                           TH1D * h_shwr_vtx_dist_numu_cc,
                                           TH1D * h_shwr_vtx_dist_nc,
@@ -2070,10 +2079,10 @@ void selection_functions::PostCutsShwrVtx(std::vector<xsecAna::TPCObjectContaine
 		{
 			h_shwr_vtx_dist_nue_cc->Fill(distance);
 		}
-		//if(tpco_id == "nue_cc_out_fv")
-		//{
-		//	h_vtx_flash_nue_cc_out_fv->Fill(distance);
-		//}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_shwr_vtx_dist_nue_cc_out_fv->Fill(distance);
+		}
 		if(tpco_id == "nue_cc_res")
 		{
 			h_shwr_vtx_dist_nue_cc->Fill(distance);
