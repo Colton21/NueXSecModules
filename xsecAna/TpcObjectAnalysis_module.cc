@@ -93,12 +93,14 @@ int subrun;
 TTree * optical_tree;
 int fEvent;
 int fRun;
+int fSubRun;
 int fOpFlashPE;
 double fOpFlashTime;
 double fOpFlashWidthY;
 double fOpFlashWidthZ;
 double fOpFlashCenterY;
 double fOpFlashCenterZ;
+int fHasRecoFlash;
 
 TTree * mcparticle_tree;
 int fMcparticle_pdg = 0;
@@ -732,9 +734,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					ccnc = mc_nu.CCNC();
 					mcParentPdg = mc_nu.Nu().PdgCode();
 					mcNeutrinoEnergy = mc_nu.Nu().E();
-					mc_nu_vtx_x = mc_nu.Nu().Position().Vx();
-					mc_nu_vtx_y = mc_nu.Nu().Position().Vy();
-					mc_nu_vtx_z = mc_nu.Nu().Position().Vz();
+					mc_nu_vtx_x = mc_nu.Nu().Position().X();
+					mc_nu_vtx_y = mc_nu.Nu().Position().Y();
+					mc_nu_vtx_z = mc_nu.Nu().Position().Z();
 					//test cout
 					std::cout << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << std::endl;
 					mc_vtx_x = the_mcpart->Vx();
