@@ -531,6 +531,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetIsData(_is_data);
 		tpc_object_container.SetSubRunNumber(subrun);
 		tpc_object_container.SetEventNumber(event);
+		tpc_object_container.SetHasMCPi0(has_pi0);
 		tpc_object_container.SetIndex(tpc_object_counter);
 		//convert simb::Origin_t object to std::string
 		std::string str_origin = "kUnset";

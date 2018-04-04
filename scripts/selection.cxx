@@ -83,8 +83,8 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
 		true_in_tpc_v.at(i) = true_in_tpc;
 		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)) {total_mc_entries_inFV++; }
-
 	}
+
 	std::cout << "MC Nue CC Counter      --- " << _mc_nue_cc_counter << std::endl;
 	std::cout << "MC Nue NC Counter      --- " << _mc_nue_nc_counter << std::endl;
 	std::cout << "MC Numu CC Counter     --- " << _mc_numu_cc_counter << std::endl;

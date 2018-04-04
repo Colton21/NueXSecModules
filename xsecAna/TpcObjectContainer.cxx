@@ -46,6 +46,9 @@ void TPCObjectContainer::SetOrigin (std::string _origin){
 void TPCObjectContainer::SetCCNC (int _is_cc){
 	is_cc = _is_cc;
 }
+void TPCObjectContainer::SetHasMCPi0 ( int _has_mc_pi0){
+	has_mc_pi0 = _has_mc_pi0;
+}
 
 void TPCObjectContainer::SetNPfpTracks  (int _n_pfp_tracks){
 	n_pfp_tracks = _n_pfp_tracks;
@@ -176,6 +179,10 @@ std::string TPCObjectContainer::Origin () const {
 int TPCObjectContainer::CCNC () const {
 	return is_cc;
 }
+int TPCObjectContainer::HasMCPi0 () const {
+	return has_mc_pi0;
+}
+
 int TPCObjectContainer::MCParticlePdgCode() const {
 	return mc_pdg_code;
 }

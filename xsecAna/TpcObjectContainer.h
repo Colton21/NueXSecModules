@@ -30,6 +30,7 @@ std::string origin;
 int is_cc;
 int mc_pdg_code;
 int pfp_pdg_code;
+int has_mc_pi0;
 
 int n_pfp_tracks;
 int n_pfp_showers;
@@ -88,6 +89,7 @@ void SetpfpPdgCode(int);
 //3 = Coherent Scattering
 void SetOrigin (std::string);//this is the origin coming from the tpcobject
 void SetCCNC (int); //true = CC, false = NC
+void SetHasMCPi0 (int); //based on MC particle loop - independent of matching!, 0 == false, 1 == true
 
 void SetNPfpTracks  (int);
 void SetNPfpShowers (int);
@@ -136,6 +138,7 @@ int NumPFPNeutrinos () const;
 int Mode            () const;
 std::string Origin  () const;
 int CCNC            () const;
+int HasMCPi0        () const;
 
 int PFParticlePdgCode () const;
 int MCParticlePdgCode () const;
