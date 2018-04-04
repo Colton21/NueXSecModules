@@ -1857,7 +1857,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                         h_ele_cos_theta_last_cosmic,
 		                                                         h_ele_cos_theta_last_other_mixed,
 		                                                         h_ele_cos_theta_last_unmatched);
-		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
+		_functions_instance.selection_functions::LeadingCosTheta(tpc_object_container_v, passed_tpco, theta_translation, phi_translation, _verbose, tpco_classifier_v,
 		                                                         h_ele_cos_theta_last_trans_nue_cc,
 		                                                         h_ele_cos_theta_last_trans_nue_cc_out_fv,
 		                                                         h_ele_cos_theta_last_trans_nue_cc_mixed,
@@ -3669,17 +3669,17 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                   h_ele_eng_costheta_data, data_scale_factor, 0.75, 0.95, 0.70, 0.95,
 	                                   "", "Reco Electron Momentum [GeV]", "Reco Electron Cos(#theta)", "post_cuts_leading_pfp_eng_costheta_data.pdf");
 
-	histogram_functions::Plot2DHistogram(h_true_reco_ele_momentum, "Selected True Electrons", "Reco Electron Momentum [GeV]", "True Electron Momentum [GeV]",
+	histogram_functions::Plot2DHistogram(h_true_reco_ele_momentum, "Selected True Electrons", "True Electron Momentum [GeV]", "Reco Electron Momentum [GeV]",
 	                                     "post_cuts_ele_true_reco_momentum.pdf");
-	histogram_functions::Plot2DHistogram(h_true_reco_ele_costheta, "Selected True Electrons", "Reco Electron Cos(#theta) [GeV]", "True Electron Cos(#theta) [GeV]",
+	histogram_functions::Plot2DHistogram(h_true_reco_ele_costheta, "Selected True Electrons", "True Electron Cos(#theta) [GeV]", "Reco Electron Cos(#theta) [GeV]",
 	                                     "post_cuts_ele_true_reco_costheta.pdf");
 	histogram_functions::Plot1DHistogram(h_true_num_e, "Number of Selected True Electrons Per Event", "post_cuts_num_true_ele.pdf");
 
 	histogram_functions::Plot2DHistogram(h_true_reco_ele_momentum_pre, "Pre Selection True Electrons",
-	                                     "Reco Electron Momentum [GeV]", "True Electron Momentum [GeV]",
+	                                     "True Electron Momentum [GeV]", "Reco Electron Momentum [GeV]",
 	                                     "post_cuts_ele_true_reco_momentum_pre.pdf");
 	histogram_functions::Plot2DHistogram(h_true_reco_ele_costheta_pre, "Pre Selection True Electrons",
-	                                     "Reco Electron Cos(#theta) [GeV]", "True Electron Cos(#theta) [GeV]",
+	                                     "True Electron Cos(#theta) [GeV]", "Reco Electron Cos(#theta) [GeV]",
 	                                     "post_cuts_ele_true_reco_costheta_pre.pdf");
 	histogram_functions::Plot1DHistogram(h_true_num_e_pre, "Number of Pre Selection True Electrons Per Event", "post_cuts_num_true_ele_pre.pdf");
 

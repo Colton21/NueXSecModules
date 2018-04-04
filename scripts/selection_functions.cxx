@@ -5856,8 +5856,8 @@ void selection_functions::TrueRecoEle(std::vector<xsecAna::TPCObjectContainer> *
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_mec")
 		{
 			//when this_event_num_e == 0, we had a true nue cc interaction, and a shower was reco, but it wasn't the true e
-			if(this_event_num_e != 0) {h_true_reco_ele_momentum->Fill(pfp_ele_momentum, mc_ele_momentum); }
-			if(this_event_num_e != 0) {h_true_reco_ele_costheta->Fill(pfp_ele_costheta, mc_ele_cos_theta); }
+			if(this_event_num_e != 0) {h_true_reco_ele_momentum->Fill(mc_ele_momentum, pfp_ele_momentum); }
+			if(this_event_num_e != 0) {h_true_reco_ele_costheta->Fill(mc_ele_cos_theta, pfp_ele_costheta); }
 			//this one is the number of reconstructed true electrons
 			h_true_num_e->Fill(this_event_num_e);
 		}

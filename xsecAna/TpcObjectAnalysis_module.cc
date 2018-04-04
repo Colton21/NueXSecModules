@@ -164,41 +164,43 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
 
 	optical_tree = fs->make<TTree>("optical_tree", "optical_objects");
-	optical_tree->Branch("Event",           &fEvent,                "fEvent/I");
-	optical_tree->Branch("Run",             &fRun,                  "fRun/I");
-	optical_tree->Branch("OpFlashPE",        &fOpFlashPE,           "fOpFlashPE/I");
-	optical_tree->Branch("OpFlashTime",      &fOpFlashTime,         "fOpFlashTime/D");
-	optical_tree->Branch("OpFlashWidhtY",    &fOpFlashWidthY,       "fOpFlashWidthY/D");
-	optical_tree->Branch("OpFlashWidthZ",    &fOpFlashWidthZ,       "fOpFlashWidthZ/D");
+	optical_tree->Branch("Event",            &fEvent,               "fEvent/I"         );
+	optical_tree->Branch("Run",              &fRun,                 "fRun/I"           );
+	optical_tree->Branch("SubRun",           &fSubRun,              "fSubRun/I"        );
+	optical_tree->Branch("OpFlashPE",        &fOpFlashPE,           "fOpFlashPE/I"     );
+	optical_tree->Branch("OpFlashTime",      &fOpFlashTime,         "fOpFlashTime/D"   );
+	optical_tree->Branch("OpFlashWidhtY",    &fOpFlashWidthY,       "fOpFlashWidthY/D" );
+	optical_tree->Branch("OpFlashWidthZ",    &fOpFlashWidthZ,       "fOpFlashWidthZ/D" );
 	optical_tree->Branch("OpFlashCenterY",   &fOpFlashCenterY,      "fOpFlashCenterY/D");
 	optical_tree->Branch("OpFlashCenterZ",   &fOpFlashCenterZ,      "fOpFlashCenterZ/D");
+	optical_tree->Branch("HasRecoFlash",     &fHasRecoFlash,        "fHasRecoFlash/I"  );
 
 	mcparticle_tree = fs->make<TTree>("mcparticle_tree", "mcparticle_objects");
-	mcparticle_tree->Branch("event", &event, "event/I");
-	mcparticle_tree->Branch("run", &run, "run/I");
-	mcparticle_tree->Branch("MC_ID", &fMCParticleID, "fMCParticleID/I");
-	mcparticle_tree->Branch("MC_Mother", &fMCMother, "fMCMother/I");
-	mcparticle_tree->Branch("MC_Origin", &fMCOrigin, "fMCOrigin/I");
+	mcparticle_tree->Branch("event",      &event, "event/I");
+	mcparticle_tree->Branch("run",        &run, "run/I");
+	mcparticle_tree->Branch("MC_ID",      &fMCParticleID, "fMCParticleID/I");
+	mcparticle_tree->Branch("MC_Mother",  &fMCMother, "fMCMother/I");
+	mcparticle_tree->Branch("MC_Origin",  &fMCOrigin, "fMCOrigin/I");
 	mcparticle_tree->Branch("StatusCode", &fStatusCode, "fStatusCode/I");
-	mcparticle_tree->Branch("MC_PDG", &fMcparticle_pdg, "fMcparticle_pdg/I");
-	mcparticle_tree->Branch("MCVtxX", &fMCVtxX, "fMCVtxX/D");
-	mcparticle_tree->Branch("MCVtxY", &fMCVtxY, "fMCVtxY/D");
-	mcparticle_tree->Branch("MCVtxZ", &fMCVtxZ, "fMCVtxZ/D");
-	mcparticle_tree->Branch("MCEnergy", &fMCEnergy, "fMCEnergy/D");
-	mcparticle_tree->Branch("MCMass", &fMCMass, "MCMass/D");
-	mcparticle_tree->Branch("MCPx", &fMCPx, "MCPx/D");
-	mcparticle_tree->Branch("MCPy", &fMCPy, "MCPy/D");
-	mcparticle_tree->Branch("MCPz", &fMCPz, "MCPz/D");
+	mcparticle_tree->Branch("MC_PDG",     &fMcparticle_pdg, "fMcparticle_pdg/I");
+	mcparticle_tree->Branch("MCVtxX",     &fMCVtxX, "fMCVtxX/D");
+	mcparticle_tree->Branch("MCVtxY",     &fMCVtxY, "fMCVtxY/D");
+	mcparticle_tree->Branch("MCVtxZ",     &fMCVtxZ, "fMCVtxZ/D");
+	mcparticle_tree->Branch("MCEnergy",   &fMCEnergy, "fMCEnergy/D");
+	mcparticle_tree->Branch("MCMass",     &fMCMass, "MCMass/D");
+	mcparticle_tree->Branch("MCPx",       &fMCPx, "MCPx/D");
+	mcparticle_tree->Branch("MCPy",       &fMCPy, "MCPy/D");
+	mcparticle_tree->Branch("MCPz",       &fMCPz, "MCPz/D");
 
 	mctruth_counter_tree = fs->make<TTree>("mctruth_counter_tree", "mctruth_counter");
-	mctruth_counter_tree->Branch("mc_nue_cc_counter", &mc_nue_cc_counter, "mc_nue_cc_counter/I");
+	mctruth_counter_tree->Branch("mc_nue_cc_counter",  &mc_nue_cc_counter,  "mc_nue_cc_counter/I");
 	mctruth_counter_tree->Branch("mc_numu_cc_counter", &mc_numu_cc_counter, "mc_numu_cc_counter/I");
-	mctruth_counter_tree->Branch("mc_nue_nc_counter", &mc_nue_nc_counter, "mc_nue_nc_counter/I");
+	mctruth_counter_tree->Branch("mc_nue_nc_counter",  &mc_nue_nc_counter,  "mc_nue_nc_counter/I");
 	mctruth_counter_tree->Branch("mc_numu_nc_counter", &mc_numu_nc_counter, "mc_numu_nc_counter/I");
 
-	mctruth_counter_tree->Branch("mc_nue_cc_counter_bar", &mc_nue_cc_counter_bar, "mc_nue_cc_counter/I");
+	mctruth_counter_tree->Branch("mc_nue_cc_counter_bar",  &mc_nue_cc_counter_bar,  "mc_nue_cc_counter/I");
 	mctruth_counter_tree->Branch("mc_numu_cc_counter_bar", &mc_numu_cc_counter_bar, "mc_numu_cc_counter/I");
-	mctruth_counter_tree->Branch("mc_nue_nc_counter_bar", &mc_nue_nc_counter_bar, "mc_nue_nc_counter_bar/I");
+	mctruth_counter_tree->Branch("mc_nue_nc_counter_bar",  &mc_nue_nc_counter_bar,  "mc_nue_nc_counter_bar/I");
 	mctruth_counter_tree->Branch("mc_numu_nc_counter_bar", &mc_numu_nc_counter_bar, "mc_numu_cc_counter/I");
 
 	mctruth_counter_tree->Branch("fMCNuVtxX", &fMCNuVtxX, "fMCNuVtxX/D");
@@ -219,6 +221,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNumChargedParticles", &fMCNumChargedParticles, "fMCNumChargedParticles/I");
 	mctruth_counter_tree->Branch("has_pi0", &has_pi0, "has_pi0/O");
 	mctruth_counter_tree->Branch("fMCNuTime", &fMCNuTime, "fMCNuTime/D");
+	mctruth_counter_tree->Branch("fMCOrigin", &fMCOrigin, "fMCOrigin/I");
 
 	std::cout << "[Analyze] Setting fcl Parameters " << std::endl;
 
@@ -250,35 +253,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(_is_mc == true)       {std::cout << "[Analyze] Running with Monte Carlo " << std::endl; }
 	if(_is_data == true)     {std::cout << "[Analyze] Running with Data " << std::endl; }
 
-	//maybe make them filled at the same place as the other - so it's a per event
-	//this is getting the optical information
-	std::string beam_flash_tag = "simpleFlashBeam";
-	bool no_reco_flash = false;
-	auto const & beam_opf = e.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
-	auto const & beam_opflashes(*beam_opf);
-	std::cout << "[Analyze] [OPTICAL] " << beam_flash_tag << " in this event: " << beam_opflashes.size() << std::endl;
-
-	//if there is no optical activity in this event then I have to check where the true nu vtx is
-	//if it's a true nue without reco optical event, but interacts in the FV then this is
-	//a loss in efficiency!
-	if(beam_opflashes.size() == 0)
-	{
-		std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl;
-		no_reco_flash = true;
-	}
-
-	for(auto const & opflsh : beam_opflashes)
-	{
-		fEvent = event;
-		fRun = run;
-		fOpFlashPE   = opflsh.TotalPE();
-		fOpFlashTime = opflsh.Time();
-		fOpFlashWidthY  = opflsh.YWidth();
-		fOpFlashWidthZ  = opflsh.ZWidth();
-		fOpFlashCenterY = opflsh.YCenter();
-		fOpFlashCenterZ =opflsh.ZCenter();
-		optical_tree->Fill();
-	}
 	//there are so may mc particles -- why?
 	//these are not all final state particles we see
 	//MC Particle Information
@@ -289,6 +263,48 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		e.getByLabel("largeant", MCParticleHandle);
 		if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] MCParticleHandle is not valid" << std::endl; exit(1); }
 	}
+
+	//maybe make them filled at the same place as the other - so it's a per event
+	//this is getting the optical information
+	std::string beam_flash_tag = "simpleFlashBeam";
+	auto const & beam_opf = e.getValidHandle<std::vector < recob::OpFlash> >(beam_flash_tag);
+	auto const & beam_opflashes(*beam_opf);
+	std::cout << "[Analyze] [OPTICAL] " << beam_flash_tag << " in this event: " << beam_opflashes.size() << std::endl;
+
+	//if there is no optical activity in this event then I have to check where the true nu vtx is
+	//if it's a true nue without reco optical event, but interacts in the FV then this is
+	//a loss in efficiency!
+	if(beam_opflashes.size() == 0)
+	{
+		std::cout << "[Analyze] [Optical] No Optical Activity in this Event!" << std::endl;
+		fHasRecoFlash   = 0;
+		fEvent          = event;
+		fRun            = run;
+		fSubRun         = subrun;
+		fOpFlashPE      = -999;
+		fOpFlashTime    = -999;
+		fOpFlashWidthY  = -999;
+		fOpFlashWidthZ  = -999;
+		fOpFlashCenterY = -999;
+		fOpFlashCenterZ = -999;
+		optical_tree->Fill();
+	}
+
+	for(auto const & opflsh : beam_opflashes)
+	{
+		fHasRecoFlash   = 1;
+		fEvent          = event;
+		fRun            = run;
+		fSubRun         = subrun;
+		fOpFlashPE      = opflsh.TotalPE();
+		fOpFlashTime    = opflsh.Time();
+		fOpFlashWidthY  = opflsh.YWidth();
+		fOpFlashWidthZ  = opflsh.ZWidth();
+		fOpFlashCenterY = opflsh.YCenter();
+		fOpFlashCenterZ = opflsh.ZCenter();
+		optical_tree->Fill();
+	}
+
 
 	//I need the MC Track for later - getting cosmic info from MCParticle->MCTrack
 	//std::string mc_track_tag = "mcreco";
@@ -353,13 +369,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					//mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
 					//bt->TrackIDToMCTruth(mcparticle.TrackId());
 					if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
-					if(mctruth->Origin() == simb::kCosmicRay) {fMCOrigin = 1; }
-					if(mctruth->Origin() == simb::kUnknown) {fMCOrigin = 2; }
+					if(mctruth->Origin() == simb::kCosmicRay)    {fMCOrigin = 1; }
+					if(mctruth->Origin() == simb::kUnknown)      {fMCOrigin = 2; }
 					simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
 					bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
 					int fMCNuPdg = mc_nu.Nu().PdgCode();
-					//std::cout << fMCParticleID << '\t';
-					//std::cout << fMCNuPdg << '\t';
 					if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      fMCNuID = 1; }
 					if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     fMCNuID = 2; }
 					if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      fMCNuID = 3; }
@@ -410,11 +424,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fMCNumChargedParticles = mc_num_charged_particles;
 		std::cout << "[Analyze] MC Num Particles: " << mc_num_particles << std::endl;
 		mctruth_counter_tree->Fill();
-	}
-	if(no_reco_flash == true)
-	{
-		std::cout << "[Analyze] *** No Reco Flash - Returning... *** " << std::endl;
-		return;
 	}
 
 	// Implementation of required member function here.
@@ -523,9 +532,9 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		tpc_object_container.SetIndex(tpc_object_counter);
 		//convert simb::Origin_t object to std::string
 		std::string str_origin = "kUnset";
-		if(tpcobj_origin == simb::kUnknown) {str_origin = "kUnknown"; }
+		if(tpcobj_origin == simb::kUnknown)      {str_origin = "kUnknown"; }
 		if(tpcobj_origin == simb::kBeamNeutrino) {str_origin = "kBeamNeutrino"; }
-		if(tpcobj_origin == simb::kCosmicRay) {str_origin = "kCosmicRay"; }
+		if(tpcobj_origin == simb::kCosmicRay)    {str_origin = "kCosmicRay"; }
 		tpc_object_container.SetOrigin(str_origin);
 
 		if(_verbose) {std::cout << "[Analyze] Number of PFP in this TPC Object: " << npfparticles << std::endl; }
@@ -582,7 +591,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		std::cout << "[Analyze] PFParticle Loop: " << std::endl;
 		auto pfps_from_tpcobj = tpcobjToPFPAssns.at(tpc_object_counter);
 		for(auto const pfp : pfps_from_tpcobj)
-		//for(auto const pfp : pfp_v)
 		{
 			xsecAna::ParticleContainer particle_container;
 
@@ -724,9 +732,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					ccnc = mc_nu.CCNC();
 					mcParentPdg = mc_nu.Nu().PdgCode();
 					mcNeutrinoEnergy = mc_nu.Nu().E();
-					mc_nu_vtx_x = mc_nu.Nu().Vx();
-					mc_nu_vtx_y = mc_nu.Nu().Vy();
-					mc_nu_vtx_z = mc_nu.Nu().Vz();
+					mc_nu_vtx_x = mc_nu.Nu().Position().Vx();
+					mc_nu_vtx_y = mc_nu.Nu().Position().Vy();
+					mc_nu_vtx_z = mc_nu.Nu().Position().Vz();
+					//test cout
+					std::cout << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << std::endl;
 					mc_vtx_x = the_mcpart->Vx();
 					mc_vtx_y = the_mcpart->Vy();
 					mc_vtx_z = the_mcpart->Vz();
@@ -837,16 +847,16 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					                                      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
 					//then dEdx!
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
-					for(auto const cluster_dqdx : shower_cluster_dqdx)
-					{
-						//cluster dqdx is size 3 - one for each plane
-						if(_verbose) {std::cout << "[Analyze] [dQdx] Plane 0: " << cluster_dqdx.at(0) << std::endl; }
-						if(_verbose) {std::cout << "[Analyze] [dQdx] Plane 1: " << cluster_dqdx.at(1) << std::endl; }
-						if(_verbose) {std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl; }
-					}
-					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 0: " << shower_dEdx.at(0) << std::endl; }
-					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
-					if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
+					// for(auto const cluster_dqdx : shower_cluster_dqdx)
+					// {
+					//      //cluster dqdx is size 3 - one for each plane
+					//      if(_verbose) {std::cout << "[Analyze] [dQdx] Plane 0: " << cluster_dqdx.at(0) << std::endl; }
+					//      if(_verbose) {std::cout << "[Analyze] [dQdx] Plane 1: " << cluster_dqdx.at(1) << std::endl; }
+					//      if(_verbose) {std::cout << "[Analyze] [dQdx] Collection Plane: " << cluster_dqdx.at(2) << std::endl; }
+					// }
+					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 0: " << shower_dEdx.at(0) << std::endl; }
+					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
+					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
 
 					xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u, calibration_v, calibration_w,
 					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);

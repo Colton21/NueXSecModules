@@ -35,10 +35,10 @@ const double intime_scale_factor = 1.5946470;
 
 const double data_scale_factor = 1.0;
 
-//const double theta_translation = 29.36 * (3.1415/180);
-//const double phi_translation = 8.121 * (3.1415/180);
-const double theta_translation = 0.0;
-const double phi_translation = 0.0;
+const double theta_translation = 29.36 * (3.1415/180);
+const double phi_translation = 8.121 * (3.1415/180);
+// const double theta_translation = 0.0;
+// const double phi_translation = 0.0;
 
 //*******************
 // Cut Values
