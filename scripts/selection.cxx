@@ -949,8 +949,12 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		}//false
 
 		//check if nue interaction has true vtx in TPC
-		//const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
-		const bool true_in_tpc = true_in_tpc_v.at(event);
+		auto const tpc_object_container = tpc_object_container_v->at(0);
+		const double _mc_nu_vtx_x = tpc_object_container.mcVtxX();
+		const double _mc_nu_vtx_y = tpc_object_container.mcVtxY();
+		const double _mc_nu_vtx_z = tpc_object_container.mcVtxZ();
+		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(_mc_nu_vtx_x, _mc_nu_vtx_y, _mc_nu_vtx_z, fv_boundary_v);
+		//const bool true_in_tpc = true_in_tpc_v.at(event);
 
 		//now we apply the classifier to all TPC Objects in this event
 		std::vector<std::pair<std::string, int> > * tpco_classifier_v = new std::vector<std::pair<std::string, int> >;
