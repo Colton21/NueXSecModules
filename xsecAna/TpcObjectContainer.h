@@ -35,13 +35,13 @@ int has_mc_pi0;
 int n_pfp_tracks;
 int n_pfp_showers;
 
-int mc_vtx;
-int mc_vtx_x;
-int mc_vtx_y;
-int mc_vtx_z;
-int pfp_vtx_x;
-int pfp_vtx_y;
-int pfp_vtx_z;
+double mc_vtx;
+double mc_vtx_x;
+double mc_vtx_y;
+double mc_vtx_z;
+double pfp_vtx_x;
+double pfp_vtx_y;
+double pfp_vtx_z;
 
 double completeness;
 double purity;
