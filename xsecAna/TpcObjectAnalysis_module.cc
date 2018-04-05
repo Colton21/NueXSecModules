@@ -164,6 +164,9 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 
 	myTree = fs->make<TTree>("tree","");
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
+	pot_tree = tfs->make<TTree>("pot_tree", "pot_per_subrun");
+
+	pot_tree->Branch("pot", &pot, "pot/D");
 
 	optical_tree = fs->make<TTree>("optical_tree", "optical_objects");
 	optical_tree->Branch("Event",            &fEvent,               "fEvent/I"         );
@@ -913,6 +916,15 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 }
 
 void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
+	auto const & POTSummaryHandle = sr.getValidHandle < sumdata::POTSummary >("generator");
+	auto const & POTSummary(*POTSummaryHandle);
+	const double total_pot = POTSummary.totpot;
+	std::cout << "----------------------------" << std::endl;
+	std::cout << "Total POT / subRun: " << total_pot << std::endl;
+	std::cout << "----------------------------" << std::endl;
+
+	pot = total_pot;
+	pot_tree->Fill();
 }
 
 DEFINE_ART_MODULE(xsecAna::TpcObjectAnalysis)
