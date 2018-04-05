@@ -6,6 +6,7 @@
 // Generated at Wed Sep 13 14:53:48 2017 by Colton Hill using artmod
 // from cetpkgsupport v1_12_02.
 ////////////////////////////////////////////////////////////////////////
+#include "larcoreobj/SummaryData/POTSummary.h"
 
 #include "art/Framework/Core/EDAnalyzer.h"
 #include "art/Framework/Core/ModuleMacros.h"
@@ -18,7 +19,6 @@
 #include "messagefacility/MessageLogger/MessageLogger.h"
 #include "larsim/MCCheater/BackTracker.h"
 #include "lardataobj/RecoBase/OpFlash.h"
-
 
 #include "TpcObjectContainer.h"
 #include "ParticleContainer.h"
@@ -59,6 +59,10 @@ void endSubRun(art::SubRun const &sr) override;
 private:
 
 // Declare member data here.
+TTree * pot_tree;
+double pot = 0.0;
+
+bool run_pot_counting = false;
 
 //these are used for the dQdx calculations
 xsecAna::GeometryHelper geoHelper;
@@ -164,7 +168,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 
 	myTree = fs->make<TTree>("tree","");
 	myTree->Branch("TpcObjectContainerV", &tpc_object_container_v);
-	pot_tree = tfs->make<TTree>("pot_tree", "pot_per_subrun");
+	pot_tree = fs->make<TTree>("pot_tree", "pot_per_subrun");
 
 	pot_tree->Branch("pot", &pot, "pot/D");
 
@@ -257,6 +261,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(_cosmic_only == true) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
 	if(_is_mc == true)       {std::cout << "[Analyze] Running with Monte Carlo " << std::endl; }
 	if(_is_data == true)     {std::cout << "[Analyze] Running with Data " << std::endl; }
+	if(_is_data == true)     {run_pot_counting = false; std::cout << "[Analyze] Do Not Count MC POT" << std::endl;}
+	if(_is_mc == true)       {run_pot_counting = true;  std::cout << "[Analyze] Count MC POT" << std::endl;}
 
 	//there are so may mc particles -- why?
 	//these are not all final state particles we see
@@ -916,15 +922,19 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 }
 
 void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
-	auto const & POTSummaryHandle = sr.getValidHandle < sumdata::POTSummary >("generator");
-	auto const & POTSummary(*POTSummaryHandle);
-	const double total_pot = POTSummary.totpot;
-	std::cout << "----------------------------" << std::endl;
-	std::cout << "Total POT / subRun: " << total_pot << std::endl;
-	std::cout << "----------------------------" << std::endl;
 
-	pot = total_pot;
-	pot_tree->Fill();
+	if(run_pot_counting == true)
+        {
+	  auto const & POTSummaryHandle = sr.getValidHandle < sumdata::POTSummary >("generator");
+	  auto const & POTSummary(*POTSummaryHandle);
+	  const double total_pot = POTSummary.totpot;
+	  std::cout << "----------------------------" << std::endl;
+	  std::cout << "Total POT / subRun: " << total_pot << std::endl;
+	  std::cout << "----------------------------" << std::endl;
+
+	  pot = total_pot;
+	  pot_tree->Fill();
+	}
 }
 
 DEFINE_ART_MODULE(xsecAna::TpcObjectAnalysis)
