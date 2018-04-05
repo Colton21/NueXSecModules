@@ -949,11 +949,28 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		}//false
 
 		//check if nue interaction has true vtx in TPC
-		auto const tpc_object_container = tpc_object_container_v->at(0);
-		const double _mc_nu_vtx_x = tpc_object_container.mcVtxX();
-		const double _mc_nu_vtx_y = tpc_object_container.mcVtxY();
-		const double _mc_nu_vtx_z = tpc_object_container.mcVtxZ();
-		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(_mc_nu_vtx_x, _mc_nu_vtx_y, _mc_nu_vtx_z, fv_boundary_v);
+		//std::cout << tpc_object_container_v->size() << std::endl;
+		bool true_in_tpc = false;
+		for (int i = 0; i < tpc_object_container_v->size(); i++)
+		{
+			auto const tpc_object_container = tpc_object_container_v->at(i);
+			double _mc_nu_vtx_x = 0.;
+			double _mc_nu_vtx_y = 0.;
+			double _mc_nu_vtx_z = 0.;
+			_mc_nu_vtx_x = tpc_object_container.mcVtxX();
+			_mc_nu_vtx_y = tpc_object_container.mcVtxY();
+			_mc_nu_vtx_z = tpc_object_container.mcVtxZ();
+			if(_mc_nu_vtx_x != int(mc_nu_vtx_x) ||
+			   _mc_nu_vtx_y != int(mc_nu_vtx_y) ||
+			   _mc_nu_vtx_z != int(mc_nu_vtx_z))
+			{
+				std::cout << event << std::endl;
+				std::cout << _mc_nu_vtx_x << ", " << _mc_nu_vtx_y << ", " << _mc_nu_vtx_z << std::endl;
+				std::cout << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << std::endl;
+			}
+			true_in_tpc = _cuts_instance.selection_cuts::in_fv(_mc_nu_vtx_x, _mc_nu_vtx_y, _mc_nu_vtx_z, fv_boundary_v);
+			if(true_in_tpc == true) {break; }
+		}
 		//const bool true_in_tpc = true_in_tpc_v.at(event);
 
 		//now we apply the classifier to all TPC Objects in this event
