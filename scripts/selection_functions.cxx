@@ -840,7 +840,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	//************************************
 	//******** Monte Carlo ***************
 	//************************************
-	const int n_total_mc = final_counter;
+	const int n_total_mc = final_counter / intime_scale_factor;
 	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
 	                              n_total_mc, n_bkg, flux,
 	                              efficiency, xsec_cc);

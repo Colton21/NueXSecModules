@@ -960,14 +960,14 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_mc_nu_vtx_x = tpc_object_container.mcVtxX();
 			_mc_nu_vtx_y = tpc_object_container.mcVtxY();
 			_mc_nu_vtx_z = tpc_object_container.mcVtxZ();
-			if(_mc_nu_vtx_x != int(mc_nu_vtx_x) ||
-			   _mc_nu_vtx_y != int(mc_nu_vtx_y) ||
-			   _mc_nu_vtx_z != int(mc_nu_vtx_z))
-			{
-				std::cout << event << std::endl;
-				std::cout << _mc_nu_vtx_x << ", " << _mc_nu_vtx_y << ", " << _mc_nu_vtx_z << std::endl;
-				std::cout << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << std::endl;
-			}
+			// if(_mc_nu_vtx_x != int(mc_nu_vtx_x) ||
+			//    _mc_nu_vtx_y != int(mc_nu_vtx_y) ||
+			//    _mc_nu_vtx_z != int(mc_nu_vtx_z))
+			// {
+			//      std::cout << event << std::endl;
+			//      std::cout << _mc_nu_vtx_x << ", " << _mc_nu_vtx_y << ", " << _mc_nu_vtx_z << std::endl;
+			//      std::cout << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << std::endl;
+			// }
 			true_in_tpc = _cuts_instance.selection_cuts::in_fv(_mc_nu_vtx_x, _mc_nu_vtx_y, _mc_nu_vtx_z, fv_boundary_v);
 			if(true_in_tpc == true) {break; }
 		}

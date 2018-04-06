@@ -13,8 +13,11 @@
 namespace xsecSelection {
 
 
+//estimate at POT of sample for 20k nues - 1.5e23 POT
+const double POT = 1.5e+23;
+
 //const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
-const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
+//const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
 //const double POT = 2.90469e+21;    //POT - nue + cosmics
 const double scaling = 1.52938e-11;  //nues / POT / cm^2
 const double genie_xsec = 5.05191e-39; //cm^2
