@@ -74,6 +74,8 @@ const double _dQdxRectangleWidth = 1; //cm
 std::string _pfp_producer;
 std::string _mc_ghost_producer;
 std::string _tpcobject_producer;
+std::string _potsum_producer;
+std::string _potsum_instance;
 
 double calibration_u;
 double calibration_v;
@@ -152,6 +154,13 @@ int fMCNumParticles = 0;
 int fMCNumChargedParticles = 0;
 bool has_pi0 = false;
 double fMCNuTime = -1;
+
+
+TTree* _sr_tree;
+int _sr_run, _sr_subrun;
+double _sr_begintime, _sr_endtime;
+double _sr_pot;
+std::ofstream _run_subrun_list_file;
 
 };
 
@@ -232,6 +241,18 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNuTime", &fMCNuTime, "fMCNuTime/D");
 	mctruth_counter_tree->Branch("fMCOrigin", &fMCOrigin, "fMCOrigin/I");
 
+	_sr_tree = fs->make<TTree>("pottree","");
+	_sr_tree->Branch("run",                &_sr_run,                "run/I");
+	_sr_tree->Branch("subrun",             &_sr_subrun,             "subrun/I");
+	_sr_tree->Branch("begintime",          &_sr_begintime,          "begintime/D");
+	_sr_tree->Branch("endtime",            &_sr_endtime,            "endtime/D");
+	_sr_tree->Branch("pot",                &_sr_pot,                "pot/D");
+	_run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
+
+	_potsum_producer                = p.get<std::string>("POTSummaryProducer");
+	_potsum_instance                = p.get<std::string>("POTSummaryInstance");
+
+
 	std::cout << "[Analyze] Setting fcl Parameters " << std::endl;
 
 	calibration_u                   = p.get<double>("CalibrationU");
@@ -261,8 +282,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(_cosmic_only == true) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
 	if(_is_mc == true)       {std::cout << "[Analyze] Running with Monte Carlo " << std::endl; }
 	if(_is_data == true)     {std::cout << "[Analyze] Running with Data " << std::endl; }
-	if(_is_data == true)     {run_pot_counting = false; std::cout << "[Analyze] Do Not Count MC POT" << std::endl;}
-	if(_is_mc == true)       {run_pot_counting = true;  std::cout << "[Analyze] Count MC POT" << std::endl;}
+	if(_is_data == true)     {run_pot_counting = false; std::cout << "[Analyze] Do Not Count MC POT" << std::endl; }
+	if(_is_mc == true)       {run_pot_counting = true;  std::cout << "[Analyze] Count MC POT" << std::endl; }
 
 	//there are so may mc particles -- why?
 	//these are not all final state particles we see
@@ -924,17 +945,54 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
 
 	if(run_pot_counting == true)
-        {
-	  auto const & POTSummaryHandle = sr.getValidHandle < sumdata::POTSummary >("generator");
-	  auto const & POTSummary(*POTSummaryHandle);
-	  const double total_pot = POTSummary.totpot;
-	  std::cout << "----------------------------" << std::endl;
-	  std::cout << "Total POT / subRun: " << total_pot << std::endl;
-	  std::cout << "----------------------------" << std::endl;
+	{
+		auto const & POTSummaryHandle = sr.getValidHandle < sumdata::POTSummary >("generator");
+		auto const & POTSummary(*POTSummaryHandle);
+		const double total_pot = POTSummary.totpot;
+		std::cout << "----------------------------" << std::endl;
+		std::cout << "Total POT / subRun: " << total_pot << std::endl;
+		std::cout << "----------------------------" << std::endl;
 
-	  pot = total_pot;
-	  pot_tree->Fill();
+		pot = total_pot;
+		pot_tree->Fill();
 	}
+	if (_debug) std::cout << "[Analysis::endSubRun] Starts" << std::endl;
+
+	// Saving run and subrun number on file so that we can run Zarko's script easily
+	_run_subrun_list_file << sr.run() << " " << sr.subRun() << std::endl;
+
+	_sr_run       = sr.run();
+	_sr_subrun    = sr.subRun();
+	_sr_begintime = sr.beginTime().value();
+	_sr_endtime   = sr.endTime().value();
+
+	art::Handle<sumdata::POTSummary> potsum_h;
+
+	// MC
+	if (_is_mc) {
+		if (_debug) std::cout << "[UBXSec::endSubRun] Getting POT for MC" << std::endl;
+		if(sr.getByLabel(_potsum_producer, potsum_h)) {
+			if (_debug) std::cout << "[UBXSec::endSubRun] POT are valid" << std::endl;
+			_sr_pot = potsum_h->totpot;
+		}
+		else
+			_sr_pot = 0.;
+	}
+
+	// Data
+	if (_is_data) {
+		if (_debug) std::cout << "[UBXSec::endSubRun] Getting POT for DATA, producer " << _potsum_producer << ", instance " << _potsum_instance << std::endl;
+		if (sr.getByLabel(_potsum_producer, _potsum_instance, potsum_h)) {
+			if (_debug) std::cout << "[UBXSec::endSubRun] POT are valid" << std::endl;
+			_sr_pot = potsum_h->totpot;
+		}
+		else
+			_sr_pot = 0;
+	}
+
+	_sr_tree->Fill();
+
+	if (_debug) std::cout << "[UBXSec::endSubRun] Ends" << std::endl;
 }
 
 DEFINE_ART_MODULE(xsecAna::TpcObjectAnalysis)
