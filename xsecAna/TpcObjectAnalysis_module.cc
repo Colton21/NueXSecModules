@@ -86,8 +86,8 @@ bool _verbose;
 bool _cosmic_only;
 bool _save_truth_info;
 
-bool isMC;
-bool isData;
+bool _is_mc;
+bool _is_data;
 
 TTree * myTree;
 std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v;
@@ -277,8 +277,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	run = e.id().run();
 	event = e.id().event();
 	subrun = e.id().subRun();
-	bool _is_data = e.isRealData();
-	bool _is_mc = !_is_data;
+	_is_data = e.isRealData();
+	_is_mc = !_is_data;
 	if(_cosmic_only == true) {std::cout << "[Analyze] Running in Cosmic Only Configuration! " << std::endl; }
 	if(_is_mc == true)       {std::cout << "[Analyze] Running with Monte Carlo " << std::endl; }
 	if(_is_data == true)     {std::cout << "[Analyze] Running with Data " << std::endl; }
@@ -876,7 +876,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
 					//trying to do dqdx!
-					xsecAna::utility::ConstructShowerdQdX(geoHelper, isData, ClusterToHitsMap, clusters,
+					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters,
 					                                      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
 					//then dEdx!
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
