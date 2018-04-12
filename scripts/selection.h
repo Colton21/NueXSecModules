@@ -13,21 +13,32 @@
 namespace xsecSelection {
 
 
-//estimate at POT of sample for 20k nues - 1.5e23 POT
-const double POT = 1.5e+23;
+const double POT = 1.82027e21;
 
 //const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
 //const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
 //const double POT = 2.90469e+21;    //POT - nue + cosmics
 const double scaling = 1.52938e-11;  //nues / POT / cm^2
-const double genie_xsec = 5.05191e-39; //cm^2
+
+//since I have both nue and nue_bar as signal definition need to adjust for this
+const double genie_xsec_nue = 5.63067e-39; //cm^2
+const double genie_xsec_nue_bar = 2.0893e-39; //cm^2
+const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
 
 /*
-   3e13 POT / spills for NuMI -> 4.1 Million triggers for MC
+   3e13 POT / spills for NuMI -> 6.0675667e7 triggers for MC, or 5.9966667e5 triggers when MC scaled to data POT
    2.571102 Million EXT spills
-   upscale EXT by: 1.5946470
+   scale EXT by: 0.23323333 when MC scaled to data
+   otherwise scale EXT by: intime_scale_factor / data_scale_factor (23.599090)
+
+   For new EXT: EXT 352180
+   But looking just at samdef = 2571102 ??? why ???
+   intime_scale_factor = 0.59966667e6 / 352180
+   intime_scale_factor =
  */
-const double intime_scale_factor = 1.5946470;
+//const double intime_scale_factor = 23.5991 * (0.0098831492);
+//const double intime_scale_factor = 23.5991 * (0.0364451);
+const double intime_scale_factor = 23.5991 * (0.0556456);
 
 /*
    scale via POT - 1.23e20 MC / 2.189e19 POT for full april sample
@@ -36,7 +47,16 @@ const double intime_scale_factor = 1.5946470;
    = 3.52
  */
 
-const double data_scale_factor = 1.0;
+//new data set has : 1.799e19 POT
+//EA9CNT: 472210
+//const double data_scale_factor = 0.0098831492;
+
+//tor101_wcut for whole samdef = 6.634e+19 POT
+//const double data_scale_factor = 0.0364451;
+
+//tor101_wcut for summing 1,2,3,4 samdef manually = 1.0129e20
+const double data_scale_factor = 0.0556456;
+
 
 const double theta_translation = 29.36 * (3.1415/180);
 const double phi_translation = 8.121 * (3.1415/180);
@@ -187,7 +207,13 @@ TH1D * h_ele_phi_eff_den           = new TH1D("h_ele_phi_eff_den", "h_ele_phi_ef
 TH1D * h_ele_phi_eff_num           = new TH1D("h_ele_phi_eff_num", "h_ele_phi_eff_num", 10, -180, 180);
 TH1D * h_ele_theta_eff_num         = new TH1D("h_ele_theta_eff_num", "h_ele_theta_eff_num", 10, 0, 180);
 TH1D * h_ele_theta_eff_den         = new TH1D("h_ele_theta_eff_den", "h_ele_theta_eff_den", 10, 0, 180);
+//
 
+TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        20, 0, 20);
+TH1D * h_flash_time_intime = new TH1D ("h_flash_time_intime", "h_flash_time_intime", 20, 0, 20);
+TH1D * h_flash_time_data   = new TH1D ("h_flash_time_data",   "h_flash_time_data",   20, 0, 20);
+
+//
 TH2I * h_tracks_showers         = new TH2I("h_tracks_showers", "h_tracks_showers", 8, 0, 8, 8, 0, 8);
 TH2I * h_tracks_showers_cosmic  = new TH2I("h_tracks_showers_cosmic", "h_tracks_showers_cosmic", 8, 0, 8, 8, 0, 8);
 TH2I * h_tracks_showers_numu    = new TH2I("h_tracks_showers_numu", "h_tracks_showers_numu", 8, 0, 8, 8, 0, 8);

@@ -550,7 +550,8 @@ void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origin
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics, std::string cut_name)
+void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
+                                    double intime_scale_factor, double data_scale_factor, std::string cut_name)
 {
 	int counter                = counter_v->at(7);
 	int counter_nue_cc         = counter_v->at(0);
@@ -574,22 +575,23 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 	int counter_numu_cc_coh    = counter_v->at(20);
 	int counter_numu_cc_mec    = counter_v->at(21);
 
-	counter = counter + counter_intime_cosmics;
+	counter = counter + (counter_intime_cosmics * (intime_scale_factor / data_scale_factor));
 
 	std::cout << " <" << cut_name << "> " << std::endl;
-	std::cout << " Total Candidate Nue     : " << counter << std::endl;
-	std::cout << " Number of Nue CC        : " << counter_nue_cc << std::endl;
-	std::cout << " Number of Nue CC Mixed  : " << counter_nue_cc_mixed << std::endl;
-	std::cout << " Number of Nue CC out FV : " << counter_nue_cc_out_fv << std::endl;
-	std::cout << " Number of Cosmic        : " << counter_cosmic << std::endl;
-	std::cout << " Number of Numu CC       : " << counter_numu_cc << std::endl;
-	std::cout << " Number of Numu CC Mixed : " << counter_numu_cc_mixed << std::endl;
-	std::cout << " Number of NC            : " << counter_nc << std::endl;
-	std::cout << " Number of NC Pi0        : " << counter_nc_pi0 << std::endl;
-	std::cout << " Number of Unmatched     : " << counter_unmatched << std::endl;
-	std::cout << " Number of Other Mixed   : " << counter_other_mixed << std::endl;
-	std::cout << " Number of InTime Cosmics: " << counter_intime_cosmics << std::endl;
-	std::cout << "---------------------------" << std::endl;
+	std::cout << " Total Candidate Nue     : " << counter                << "\t \t " << double(counter                * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Nue CC        : " << counter_nue_cc         << "\t \t " << double(counter_nue_cc         * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Nue CC Mixed  : " << counter_nue_cc_mixed   << "\t \t " << double(counter_nue_cc_mixed   * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Nue CC out FV : " << counter_nue_cc_out_fv  << "\t \t " << double(counter_nue_cc_out_fv  * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Cosmic        : " << counter_cosmic         << "\t \t " << double(counter_cosmic         * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Numu CC       : " << counter_numu_cc        << "\t \t " << double(counter_numu_cc        * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Numu CC Mixed : " << counter_numu_cc_mixed  << "\t \t " << double(counter_numu_cc_mixed  * data_scale_factor  ) << std::endl;
+	std::cout << " Number of NC            : " << counter_nc             << "\t \t " << double(counter_nc             * data_scale_factor  ) << std::endl;
+	std::cout << " Number of NC Pi0        : " << counter_nc_pi0         << "\t \t " << double(counter_nc_pi0         * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Unmatched     : " << counter_unmatched      << "\t \t " << double(counter_unmatched      * data_scale_factor  ) << std::endl;
+	std::cout << " Number of Other Mixed   : " << counter_other_mixed    << "\t \t " << double(counter_other_mixed    * data_scale_factor  ) << std::endl;
+	std::cout << " Number of InTime Cosmics: " << double(counter_intime_cosmics * (intime_scale_factor / data_scale_factor))
+	          << "\t \t " << double(counter_intime_cosmics * intime_scale_factor) << std::endl;
+	std::cout << "---------Unscaled----------" << std::endl;
 	std::cout << " Nue CC QE               : " << counter_nue_cc_qe   << std::endl;
 	std::cout << " Nue CC Res              : " << counter_nue_cc_res  << std::endl;
 	std::cout << " Nue CC DIS              : " << counter_nue_cc_dis  << std::endl;
@@ -608,7 +610,8 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 	std::cout << "------------------------" << std::endl;
 	std::cout << "------------------------" << std::endl;
 }
-
+//***************************************************************************
+//***************************************************************************
 void selection_functions::PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * has_track,
                                               std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr)
 {
@@ -676,8 +679,8 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 				most_hits = n_pfp_hits;
 			}
 		}
-		if(n_pfp_showers)
-			if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == 12 || mc_parent_pdg == -12)) { part_nue_cc++; }
+		//if(n_pfp_showers)
+		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == 12 || mc_parent_pdg == -12)) { part_nue_cc++; }
 		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == 14 || mc_parent_pdg == -14)) { part_numu_cc++; }
 		if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino")
 		{
@@ -771,7 +774,7 @@ double selection_functions::calcNumNucleons(double _x1, double _x2, double _y1,
 //***************************************************************************
 void selection_functions::calcXSec(double _x1, double _x2, double _y1,
                                    double _y2, double _z1, double _z2,
-                                   int n_total, int n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc)
+                                   double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc)
 {
 	const int n_events = n_total - n_bkg;
 	//scale_factor = 2.4 * math.pow(10, 17)  # POT / nue
@@ -805,9 +808,12 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	std::vector<double> * xsec_cc = new std::vector<double>;
 	const int n_bkg_mc = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nc
 	                      + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_nc_pi0 +
-	                      final_counter_unmatched + final_counter_other_mixed) / intime_scale_factor;
+	                      final_counter_unmatched + final_counter_other_mixed);
 	const int n_bkg_intime = final_counter_intime;
-	const int n_bkg = n_bkg_mc + n_bkg_intime;
+	const double n_bkg = n_bkg_mc + double(n_bkg_intime * (intime_scale_factor / data_scale_factor));
+	const double n_bkg_data = double(n_bkg_mc * data_scale_factor) + double(n_bkg_intime * intime_scale_factor);
+
+	const double flux_data = flux * data_scale_factor;
 
 	const double efficiency = final_counter_nue_cc / double(total_mc_entries_inFV);
 	const double efficiency_stat_err = (1 / sqrt(total_mc_entries_inFV)) * sqrt(efficiency * (1 - efficiency));
@@ -824,7 +830,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	const double _z2 = fv_boundary_v.at(5);
 	const int n_total_data = final_counter_data;
 	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
-	                              n_total_data, n_bkg / data_scale_factor, flux,
+	                              n_total_data, n_bkg_data, flux_data,
 	                              efficiency, xsec_cc);
 	double xsec_cc_data = xsec_cc->at(0);
 	double xsec_cc_stat_data = xsec_cc->at(0) * (pow((sqrt(n_total_data) / n_total_data), 2) + pow((efficiency_stat_err / efficiency), 2));
@@ -840,7 +846,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	//************************************
 	//******** Monte Carlo ***************
 	//************************************
-	const int n_total_mc = final_counter / intime_scale_factor;
+	const int n_total_mc = final_counter_nue_cc + n_bkg_mc + double(n_bkg_intime * (intime_scale_factor / data_scale_factor));
 	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
 	                              n_total_mc, n_bkg, flux,
 	                              efficiency, xsec_cc);
@@ -4166,7 +4172,6 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 		std::string tpco_id     = tpco_classifier_v->at(i).first;
 		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		//const double leading_shower_cos_theta = leading_shower.pfpDirZ() / leading_shower.pfpMomentum();
 		const double leading_shower_z = leading_shower.pfpDirZ();
 		const double leading_shower_y = leading_shower.pfpDirY();
 		const double leading_shower_x = leading_shower.pfpDirX();
@@ -4176,11 +4181,6 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
 		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
 
-
-		//double leading_shower_cos_theta = leading_shower.pfpDirZ();
-		//double leading_shower_theta = (abs(acos(leading_shower_cos_theta) * (180 / 3.1415))) - theta_translation;
-		//leading_shower_cos_theta = cos(leading_shower_theta);
-		//std::cout << leading_shower.pfpDirZ() << " , " << leading_shower.pfpMomentum() << ", " << leading_shower_cos_theta << std::endl;
 		if(tpco_id == "nue_cc_qe")
 		{
 			h_ele_cos_theta_nue_cc->Fill(leading_shower_cos_theta);
@@ -4295,7 +4295,6 @@ void selection_functions::LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectCo
 		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
 		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
 		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
-
 		h_ele_cos_theta_intime->Fill(leading_shower_cos_theta);
 	}//end pfp loop
 }

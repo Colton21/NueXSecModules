@@ -91,7 +91,8 @@ void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> *
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int intime_counter, std::string cut_name);
+static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int intime_counter,
+                      double intime_scale_factor, double data_scale_factor, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
 static void PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * has_track,
@@ -111,7 +112,7 @@ static double calcNumNucleons(double _x1, double _x2, double _y1,
 //***************************************************************************
 static void calcXSec(double _x1, double _x2, double _y1,
                      double _y2, double _z1, double _z2,
-                     int n_total, int n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
+                     double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************
 //***************************************************************************
 static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_cc_mixed,

@@ -20,7 +20,7 @@ bool selection_cuts::flash_pe(int flash_pe, int flash_pe_threshold)
 }
 //***************************************************************************
 void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                                  double flash_time_end, std::vector<int> * _passed_runs)
+                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<double> * flash_time)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 
@@ -60,6 +60,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		//events successfully pass this cut
 		current_run = fRun;
 		current_event = fEvent;
+		flash_time->push_back(fOpFlashTime);
 
 		//new event
 		if(current_event != last_event)
@@ -161,6 +162,7 @@ void selection_cuts::fiducial_volume_cut(std::vector<xsecAna::TPCObjectContainer
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		//std::cout << tpc_vtx_x << ", " << tpc_vtx_y << ", " << tpc_vtx_z << std::endl;
 		const bool InFV = in_fv(tpc_vtx_x, tpc_vtx_y, tpc_vtx_z, fv_boundary_v);
 		if(InFV == true) { if(_verbose) { std::cout << " \t " << i << "[Fid Volume Cut] \t Passed" << std::endl; } }
 		if(InFV == false)
@@ -229,6 +231,8 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 	std::vector<std::vector<double> > optical_list_flash_center_y_v;
 	std::vector<double> optical_list_flash_center_z;
 	std::vector<std::vector<double> > optical_list_flash_center_z_v;
+	std::vector<std::vector<double> > optical_list_flash_time_v;
+	std::vector<double> optical_list_flash_time;
 	std::vector<double> optical_list_currentevent;
 	std::vector<std::vector<double> > optical_list_currentevent_v;
 	// largest_flash_v.at(3) = fOpFlashWidthZ;
@@ -253,11 +257,13 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 			optical_list_time.clear();
 			optical_list_flash_center_y.clear();
 			optical_list_flash_center_z.clear();
+			optical_list_flash_time.clear();
 			optical_list_currentevent.clear();
 			optical_list_pe.push_back(fOpFlashPE);
 			optical_list_time.push_back(fOpFlashTime);
 			optical_list_flash_center_y.push_back(fOpFlashCenterY);
 			optical_list_flash_center_z.push_back(fOpFlashCenterZ);
+			optical_list_flash_time.push_back(fOpFlashTime);
 			optical_list_currentevent.push_back(fEvent);
 		}
 		//same event
@@ -267,11 +273,13 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 			optical_list_time_v.pop_back();
 			optical_list_flash_center_y_v.pop_back();
 			optical_list_flash_center_z_v.pop_back();
+			optical_list_flash_time_v.pop_back();
 			optical_list_currentevent_v.pop_back();
 			optical_list_pe.push_back(fOpFlashPE);
 			optical_list_time.push_back(fOpFlashTime);
 			optical_list_flash_center_y.push_back(fOpFlashCenterY);
 			optical_list_flash_center_z.push_back(fOpFlashCenterZ);
+			optical_list_flash_time.push_back(fOpFlashTime);
 			optical_list_currentevent.push_back(fEvent);
 		}
 		last_event = current_event;
@@ -280,6 +288,7 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 		optical_list_time_v.push_back(optical_list_time);
 		optical_list_flash_center_y_v.push_back(optical_list_flash_center_y);
 		optical_list_flash_center_z_v.push_back(optical_list_flash_center_z);
+		optical_list_flash_time_v.push_back(optical_list_flash_time);
 		optical_list_currentevent_v.push_back(optical_list_currentevent);
 	}
 	std::cout << "Optical List Vector Size: " << optical_list_pe_v.size() << std::endl;
@@ -301,13 +310,15 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 		double largest_flash = 0.;
 		double largest_center_y = 0;
 		double largest_center_z = 0;
+		double largest_flash_time = 0;
 
 		for(int j = 0; j < optical_list_pe_v.at(i).size(); j++)
 		{
-			auto const opt_time = opt_time_v.at(j);
-			auto const opt_pe = opt_pe_v.at(j);
-			const double opt_center_y = optical_list_flash_center_y_v.at(i).at(j);
-			const double opt_center_z = optical_list_flash_center_z_v.at(i).at(j);
+			auto const opt_time         = opt_time_v.at(j);
+			auto const opt_pe           = opt_pe_v.at(j);
+			const double opt_center_y   = optical_list_flash_center_y_v.at(i).at(j);
+			const double opt_center_z   = optical_list_flash_center_z_v.at(i).at(j);
+			const double opt_flash_time = optical_list_flash_time_v.at(i).at(j);
 			in_time = flash_in_time(opt_time, flash_time_start, flash_time_end);
 			if(in_time == true) {got_in_time = true; }
 			sufficient_flash = flash_pe(opt_pe, flash_pe_threshold);//update to flash_pe_threshold
@@ -318,9 +329,10 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 				//let's find the largest flash in this event
 				if(opt_pe > largest_flash)
 				{
-					largest_flash = opt_pe;
-					largest_center_y = opt_center_y;
-					largest_center_z = opt_center_z;
+					largest_flash      = opt_pe;
+					largest_center_y   = opt_center_y;
+					largest_center_z   = opt_center_z;
+					largest_flash_time = opt_flash_time;
 				}
 			}
 		}
@@ -328,7 +340,7 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 		largest_flash_v.at(1) = largest_center_z;
 		// largest_flash_v.at(2) = current_event;
 		// largest_flash_v.at(3) = fOpFlashWidthZ;
-		// largest_flash_v.at(4) = fOpFlashTime;
+		largest_flash_v.at(4) = largest_flash_time;
 		largest_flash_v.at(5) = largest_flash;
 		largest_flash_v_v->push_back(largest_flash_v);
 	}

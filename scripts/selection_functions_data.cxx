@@ -67,7 +67,15 @@ std::pair<std::string, int> selection_functions_data::TPCO_Classifier_Data(xsecA
 	{
 		auto const part = tpc_obj.GetParticle(j);
 		const int n_pfp_hits = part.NumPFPHits();
-		if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+		const int pfp_pdg = part.PFParticlePdgCode();
+		if(pfp_pdg == 11)
+		{
+			if(n_pfp_hits > most_hits)
+			{
+				leading_index = j;
+				most_hits = n_pfp_hits;
+			}
+		}
 	}
 	return std::make_pair("unmatched",     leading_index);
 	//return the string for the tpco id
@@ -95,10 +103,7 @@ void selection_functions_data::PostCutsdEdxData(std::vector<xsecAna::TPCObjectCo
 		std::string tpco_id = tpco_class.first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		if(tpco_id == "unmatched")
-		{
-			h_dedx_cuts_data->Fill(leading_dedx);
-		}
+		h_dedx_cuts_data->Fill(leading_dedx);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -163,7 +168,7 @@ void selection_functions_data::PostCutTrkVtxData(std::vector<xsecAna::TPCObjectC
 				                                 ((tpc_vtx_y - pfp_vtx_y) * (tpc_vtx_y - pfp_vtx_y)) +
 				                                 ((tpc_vtx_z - pfp_vtx_z) * (tpc_vtx_z - pfp_vtx_z)));
 				if(trk_vtx_dist < smallest_trk_vtx_dist) {smallest_trk_vtx_dist = trk_vtx_dist; }
-				const double trk_length = part.pfpLength();
+				//const double trk_length = part.pfpLength();
 				//std::cout << trk_length << std::endl;
 			}
 		}//end pfp loop
@@ -401,19 +406,31 @@ void selection_functions_data::PostCutsShwrVtxData(std::vector<xsecAna::TPCObjec
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const int n_pfp = tpc_obj.NumPFParticles();
 		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
-		int leading_index = tpco_class.second;
 		std::string tpco_id = tpco_class.first;
-		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_vtx_x = leading_shower.pfpVtxX();
-		const double leading_vtx_y = leading_shower.pfpVtxY();
-		const double leading_vtx_z = leading_shower.pfpVtxZ();
-		const double distance = sqrt(pow((tpc_vtx_x - leading_vtx_x), 2) +
-		                             pow((tpc_vtx_y - leading_vtx_y), 2) +
-		                             pow((tpc_vtx_z - leading_vtx_z), 2));
+
+		//let's plot the smallest distance in the case of multiple showers
+		//that way we can see if the cut works properly - i.e. if there's a
+		//smallest distance greater than cut value, can see it's not working
+		double min_distance = 10000;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg != 11) {continue; }
+			const double pfp_vtx_x = pfp.pfpVtxX();
+			const double pfp_vtx_y = pfp.pfpVtxY();
+			const double pfp_vtx_z = pfp.pfpVtxZ();
+
+			const double distance = sqrt(pow((tpc_vtx_x - pfp_vtx_x), 2) +
+			                             pow((tpc_vtx_y - pfp_vtx_y), 2) +
+			                             pow((tpc_vtx_z - pfp_vtx_z), 2));
+			if(distance < min_distance) {min_distance = distance; }
+		}
 		if(tpco_id == "unmatched")
 		{
-			h_shwr_vtx_dist_data->Fill(distance);
+			h_shwr_vtx_dist_data->Fill(min_distance);
 		}
 	}        //end loop tpc objects
 }
@@ -603,7 +620,15 @@ void selection_functions_data::HitsPlots1DData(std::vector<xsecAna::TPCObjectCon
 		{
 			auto const part = tpc_obj.GetParticle(j);
 			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const int n_pfp_hits_w_leading_shower = leading_shower.NumPFPHitsW();

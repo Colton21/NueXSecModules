@@ -49,6 +49,8 @@ scripts/potSum
 potFinder/mem.db
 potFinder/time.db
 scripts/run_subrun_list.txt
+scripts/run_subrun_list_data.txt
+scripts/run_subrun_list_intime.txt
 *_dict.cxx
 *.rootmap
 scripts/post_cut_v_dump.txt
