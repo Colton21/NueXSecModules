@@ -249,14 +249,9 @@ void selection_functions_data::PostCutOpenAngle1ShowerData(std::vector<xsecAna::
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
 		if(n_pfp_showers != 1) {continue; }
 		const int n_pfp = tpc_obj.NumPFParticles();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 		h_leading_shower_open_angle_data->Fill(leading_open_angle);
@@ -277,14 +272,9 @@ void selection_functions_data::PostCutOpenAngle2PlusShowerData(std::vector<xsecA
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
 		if(n_pfp_showers  < 2) {continue; }
 		const int n_pfp = tpc_obj.NumPFParticles();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 		h_leading_shower_open_angle_data->Fill(leading_open_angle);
@@ -301,15 +291,9 @@ void selection_functions_data::LeadingPhiData(std::vector<xsecAna::TPCObjectCont
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		int most_hits = 0;
-		int leading_index = 0;
-		const int n_pfp = tpc_obj.NumPFParticles();
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
 		h_ele_pfp_phi_data->Fill(leading_shower_phi);
@@ -327,15 +311,9 @@ void selection_functions_data::LeadingThetaData(std::vector<xsecAna::TPCObjectCo
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		int most_hits = 0;
-		int leading_index = 0;
-		const int n_pfp = tpc_obj.NumPFParticles();
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
 		h_ele_pfp_theta_data->Fill(leading_shower_theta);
@@ -352,19 +330,11 @@ void selection_functions_data::LeadingMomentumData(std::vector<xsecAna::TPCObjec
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		int most_hits = 0;
-		int leading_index = 0;
-		const int n_pfp = tpc_obj.NumPFParticles();
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		//const double leading_shower_cos_theta = leading_shower.pfpDirZ() / leading_shower.pfpMomentum();
 		const double leading_shower_momentum = leading_shower.pfpMomentum();
-		//std::cout << leading_shower.pfpDirZ() << " , " << leading_shower.pfpMomentum() << ", " << leading_shower_cos_theta << std::endl;
 		h_ele_pfp_momentum_data->Fill(leading_shower_momentum);
 	}//end pfp loop
 }
@@ -546,28 +516,26 @@ void selection_functions_data::SecondaryShowersDistData(std::vector<xsecAna::TPC
 		std::string tpco_id = tpco_class.first;
 		int leading_index = tpco_class.second;
 		//auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		if(n_pfp_showers > 3)
+		if(n_pfp_showers <= 1) {continue; }
+		double max_distance = 0;
+		for(int j = 0; j < n_pfp; j++)
 		{
-			for(int j = 0; j < n_pfp; j++)
-			{
-				if(j == leading_index) {continue; }//we assume leading shower == electron shower
-				auto const part = tpc_obj.GetParticle(j);
-				const int pfp_pdg = part.PFParticlePdgCode();
-				const double pfp_vtx_x = part.pfpVtxX();
-				const double pfp_vtx_y = part.pfpVtxY();
-				const double pfp_vtx_z = part.pfpVtxZ();
-				const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
-				                             pow((pfp_vtx_y - tpco_vtx_y),2) +
-				                             pow((pfp_vtx_z - tpco_vtx_z),2));
-				if(pfp_pdg == 11)//22 cm is ~ 2 radiation lengths
-				{
-					if(tpco_id == "unmatched")
-					{
-						h_second_shwr_dist_data->Fill(distance);
-					}
-				}//end if reco shower
-			}//end loop pfp
-		}//end if tpco > 3 reco showers
+			if(j == leading_index) {continue; }        //we assume leading shower == electron shower
+			auto const part = tpc_obj.GetParticle(j);
+			const int pfp_pdg = part.PFParticlePdgCode();
+			const double pfp_vtx_x = part.pfpVtxX();
+			const double pfp_vtx_y = part.pfpVtxY();
+			const double pfp_vtx_z = part.pfpVtxZ();
+			const double distance = sqrt(pow((pfp_vtx_x - tpco_vtx_x),2) +
+			                             pow((pfp_vtx_y - tpco_vtx_y),2) +
+			                             pow((pfp_vtx_z - tpco_vtx_z),2));
+			if(pfp_pdg == 11 && distance > max_distance)        //22 cm is ~ 2 radiation lengths
+			{max_distance = distance; }
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_second_shwr_dist_data->Fill(max_distance);
+		}
 	}//end loop tpco
 }//end function
 //***************************************************************************
@@ -581,15 +549,9 @@ void selection_functions_data::LeadingCosThetaData(std::vector<xsecAna::TPCObjec
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		int most_hits = 0;
-		int leading_index = 0;
-		const int n_pfp = tpc_obj.NumPFParticles();
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		double leading_shower_cos_theta = leading_shower.pfpDirZ();
 		double leading_shower_theta = (acos(leading_shower_cos_theta) * (180 / 3.1415)) + theta_translation;
@@ -614,22 +576,9 @@ void selection_functions_data::HitsPlots1DData(std::vector<xsecAna::TPCObjectCon
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			const int pfp_pdg = part.PFParticlePdgCode();
-			if(pfp_pdg == 11)
-			{
-				if(n_pfp_hits > most_hits)
-				{
-					leading_index = j;
-					most_hits = n_pfp_hits;
-				}
-			}
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const int n_pfp_hits_w_leading_shower = leading_shower.NumPFPHitsW();
 		const int n_pfp_hits_leading_shower = leading_shower.NumPFPHits();
@@ -769,16 +718,9 @@ void selection_functions_data::PlaneHitsComparisonLeadingShowerData(std::vector<
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		const int n_pfp = tpc_obj.NumPFParticles();
-		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const int n_pfp_hits_w = leading_shower.NumPFPHitsW();
 		const int n_pfp_hits = leading_shower.NumPFPHits();
@@ -854,15 +796,9 @@ void selection_functions_data::EnergyCosThetaData(std::vector<xsecAna::TPCObject
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		const int n_pfp = tpc_obj.NumPFParticles();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double momentum = leading_shower.pfpMomentum();
 		const double costheta = leading_shower.pfpDirZ();
@@ -883,15 +819,9 @@ void selection_functions_data::EnergyCosThetaSlicesData(std::vector<xsecAna::TPC
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		const int n_pfp = tpc_obj.NumPFParticles();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double momentum = leading_shower.pfpMomentum();
 		double costheta = leading_shower.pfpDirZ();
@@ -913,16 +843,9 @@ void selection_functions_data::LeadingShowerLengthData(std::vector<xsecAna::TPCO
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		const int n_pfp = tpc_obj.NumPFParticles();
-		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shwr_length = leading_shower.pfpLength();
 		h_shwr_length_data->Fill(leading_shwr_length);
@@ -940,15 +863,9 @@ void selection_functions_data::LeadingShowerTrackLengthsData(std::vector<xsecAna
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
-		const int n_pfp_showers = tpc_obj.NPfpShowers();
-		int most_hits = 0;
-		int leading_index = 0;
-		for(int j = 0; j < n_pfp; j++)
-		{
-			auto const part = tpc_obj.GetParticle(j);
-			const int n_pfp_hits = part.NumPFPHits();
-			if(n_pfp_hits > most_hits) {leading_index = j; most_hits = n_pfp_hits; }
-		}
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shwr_length = leading_shower.pfpLength();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();

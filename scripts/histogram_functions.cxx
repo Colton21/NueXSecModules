@@ -351,7 +351,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 	TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
 	TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
-	topPad->SetBottomMargin(0.04);
+	topPad->SetBottomMargin(0.08);
 	bottomPad->SetTopMargin(0.0);
 	bottomPad->SetBottomMargin(0.12);
 	bottomPad->SetGridy();

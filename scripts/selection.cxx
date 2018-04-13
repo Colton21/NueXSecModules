@@ -2166,7 +2166,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                                            h_post_open_angle_cuts_num_showers_purity_coh,
 	                                                            h_post_open_angle_cuts_num_showers_purity_mec);
 
-	_functions_instance.selection_functions::PostCutVector2DPlots(post_cuts_v, _post_cuts_verbose, intime_scale_factor,
+	_functions_instance.selection_functions::PostCutVector2DPlots(post_cuts_v, _post_cuts_verbose, intime_scale_factor, data_scale_factor,
 	                                                              h_post_cuts_num_tracks_showers_purity_qe,
 	                                                              h_post_cuts_num_tracks_showers_purity_res,
 	                                                              h_post_cuts_num_tracks_showers_purity_dis,

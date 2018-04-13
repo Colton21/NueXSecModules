@@ -857,7 +857,7 @@ void Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
 //***************************************************************************
 //***************************************************************************
 void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
-                          bool _post_cuts_verbose, const double intime_scale_factor,
+                          bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
                           TH2 * post_cuts_num_tracks_showers_purity_qe,
                           TH2 * post_cuts_num_tracks_showers_purity_res,
                           TH2 * post_cuts_num_tracks_showers_purity_dis,

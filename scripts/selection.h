@@ -18,7 +18,9 @@ const double POT = 1.82027e21;
 //const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
 //const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
 //const double POT = 2.90469e+21;    //POT - nue + cosmics
-const double scaling = 1.52938e-11;  //nues / POT / cm^2
+const double scaling_nue = 1.52938e-11;  //nues / POT / cm^2
+const double scaling_nue_bar = 7.77111e-12; //anues / POT / cm^2
+const double scaling = (scaling_nue + scaling_nue_bar);
 
 //since I have both nue and nue_bar as signal definition need to adjust for this
 const double genie_xsec_nue = 5.63067e-39; //cm^2
@@ -38,7 +40,7 @@ const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
  */
 //const double intime_scale_factor = 23.5991 * (0.0098831492);
 //const double intime_scale_factor = 23.5991 * (0.0364451);
-const double intime_scale_factor = 23.5991 * (0.0556456);
+//const double intime_scale_factor = 23.5991 * (0.0556456);
 
 /*
    scale via POT - 1.23e20 MC / 2.189e19 POT for full april sample
@@ -52,10 +54,12 @@ const double intime_scale_factor = 23.5991 * (0.0556456);
 //const double data_scale_factor = 0.0098831492;
 
 //tor101_wcut for whole samdef = 6.634e+19 POT
-//const double data_scale_factor = 0.0364451;
+//EA9CNT_wcut = 1678059
+const double intime_scale_factor = 0.655210;
+const double data_scale_factor = 0.0364451;
 
 //tor101_wcut for summing 1,2,3,4 samdef manually = 1.0129e20
-const double data_scale_factor = 0.0556456;
+//const double data_scale_factor = 0.0556456;
 
 
 const double theta_translation = 29.36 * (3.1415/180);
