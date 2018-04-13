@@ -3,6 +3,10 @@
 
 # usage: python countPOT.py -f /path/to/ubxsec_output.root
 
+# written by Marco
+# needs to be on the GPVM
+# make sure have the right version of sam_web_client setup too
+
 import argparse
 parser = argparse.ArgumentParser(description='Counts POT.')
 parser.add_argument('-f', action='store', dest='infile',
