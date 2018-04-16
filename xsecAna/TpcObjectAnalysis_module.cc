@@ -74,7 +74,8 @@ const double _dQdxRectangleWidth = 1; //cm
 std::string _pfp_producer;
 std::string _mc_ghost_producer;
 std::string _tpcobject_producer;
-std::string _potsum_producer;
+std::string _potsum_producer_mc;
+std::string _potsum_producer_data
 std::string _potsum_instance;
 
 double calibration_u;
@@ -249,7 +250,8 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	_sr_tree->Branch("pot",                &_sr_pot,                "pot/D");
 	_run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
 
-	_potsum_producer                = p.get<std::string>("POTSummaryProducer");
+	_potsum_producer_mc             = p.get<std::string>("POTSummaryProducerMC");
+	_potsum_producer_data           = p.get<std::string>("POTSummaryProducerData");
 	_potsum_instance                = p.get<std::string>("POTSummaryInstance");
 
 
@@ -971,7 +973,7 @@ void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
 	// MC
 	if (_is_mc) {
 		if (_debug) std::cout << "[UBXSec::endSubRun] Getting POT for MC" << std::endl;
-		if(sr.getByLabel(_potsum_producer, potsum_h)) {
+		if(sr.getByLabel(_potsum_producer_mc, potsum_h)) {
 			if (_debug) std::cout << "[UBXSec::endSubRun] POT are valid" << std::endl;
 			_sr_pot = potsum_h->totpot;
 		}
@@ -981,8 +983,8 @@ void xsecAna::TpcObjectAnalysis::endSubRun(art::SubRun const & sr) {
 
 	// Data
 	if (_is_data) {
-		if (_debug) std::cout << "[UBXSec::endSubRun] Getting POT for DATA, producer " << _potsum_producer << ", instance " << _potsum_instance << std::endl;
-		if (sr.getByLabel(_potsum_producer, _potsum_instance, potsum_h)) {
+		if (_debug) std::cout << "[UBXSec::endSubRun] Getting POT for DATA, producer " << _potsum_producer_data << ", instance " << _potsum_instance << std::endl;
+		if (sr.getByLabel(_potsum_producer_data, _potsum_instance, potsum_h)) {
 			if (_debug) std::cout << "[UBXSec::endSubRun] POT are valid" << std::endl;
 			_sr_pot = potsum_h->totpot;
 		}

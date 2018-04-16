@@ -80,6 +80,10 @@ physics:
       BeamSpillStart: "5"
       BeamSpillEnd: "16"
 
+      POTSummaryProducerMC: "generator"
+      POTSummaryProducerData: "beamdata"
+      POTSummaryInstance: ""
+
       #these are given in electrons / ADCs
       CalibrationU: "192.946"
       CalibrationV: "197.042"
