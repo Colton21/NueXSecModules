@@ -96,16 +96,16 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 
 	//this is the old method - can be used as a cross check now
-	mctruth_counter_tree->GetEntry(total_mc_entries-1);
-
-	std::cout << "MC Nue CC Counter      : " << mc_nue_cc_counter << std::endl;
-	std::cout << "MC Nue NC Counter      : " << mc_nue_nc_counter << std::endl;
-	std::cout << "MC Numu CC Counter     : " << mc_numu_cc_counter << std::endl;
-	std::cout << "MC Numu NC Counter     : " << mc_numu_nc_counter << std::endl;
-	std::cout << "MC Nue CC Counter Bar  : " << mc_nue_cc_counter_bar << std::endl;
-	std::cout << "MC Nue NC Counter Bar  : " << mc_nue_nc_counter_bar << std::endl;
-	std::cout << "MC Numu CC Counter Bar : " << mc_numu_cc_counter_bar << std::endl;
-	std::cout << "MC Numu NC Counter Bar : " << mc_numu_nc_counter_bar << std::endl;
+	// mctruth_counter_tree->GetEntry(total_mc_entries-1);
+	//
+	// std::cout << "MC Nue CC Counter      : " << mc_nue_cc_counter << std::endl;
+	// std::cout << "MC Nue NC Counter      : " << mc_nue_nc_counter << std::endl;
+	// std::cout << "MC Numu CC Counter     : " << mc_numu_cc_counter << std::endl;
+	// std::cout << "MC Numu NC Counter     : " << mc_numu_nc_counter << std::endl;
+	// std::cout << "MC Nue CC Counter Bar  : " << mc_nue_cc_counter_bar << std::endl;
+	// std::cout << "MC Nue NC Counter Bar  : " << mc_nue_nc_counter_bar << std::endl;
+	// std::cout << "MC Numu CC Counter Bar : " << mc_numu_cc_counter_bar << std::endl;
+	// std::cout << "MC Numu NC Counter Bar : " << mc_numu_nc_counter_bar << std::endl;
 
 	//*****************
 	//***** DATA *****
