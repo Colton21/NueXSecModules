@@ -75,7 +75,7 @@ std::string _pfp_producer;
 std::string _mc_ghost_producer;
 std::string _tpcobject_producer;
 std::string _potsum_producer_mc;
-std::string _potsum_producer_data
+std::string _potsum_producer_data;
 std::string _potsum_instance;
 
 double calibration_u;
