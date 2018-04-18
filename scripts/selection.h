@@ -1387,6 +1387,11 @@ TH2D * h_mc_reco_vtx_z_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_z_nue_cc_out_fv"
 TH2D * h_post_cuts_num_tracks_showers_signal_total  = new TH2D ("h_post_cuts_num_tracks_showers_signal_total", "h_post_cuts_num_tracks_showers_signal_total", 3, 1, 4, 2, 0, 2);
 TH2D * h_post_cuts_num_tracks_showers_bkg_total     = new TH2D ("h_post_cuts_num_tracks_showers_bkg_total",    "h_post_cuts_num_tracks_showers_bkg_total",    3, 1, 4, 2, 0, 2);
 
+
+TH1D * h_low_true_momentum = new TH1D  ("h_low_true_momentum",  "h_low_true_momentum",  20, 0, 4);
+TH1D * h_med_true_momentum = new TH1D  ("h_med_true_momentum",  "h_med_true_momentum",  20, 0, 4);
+TH1D * h_high_true_momentum = new TH1D ("h_high_true_momentum", "h_high_true_momentum", 20, 0, 4);
+
 }//end namespace
 
 #endif

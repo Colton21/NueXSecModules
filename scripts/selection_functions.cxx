@@ -6188,4 +6188,36 @@ void selection_functions::EnergyCosThetaSlicesInTime(std::vector<xsecAna::TPCObj
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::DifferentialEnergySlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                   TH1 * h_low_true_momentum, TH1 * h_med_true_momentum, TH1 * h_high_true_momentum)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj      = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec")
+		{
+			for(int j = 0; j < tpc_obj.NumPFParticles(); j++)
+			{
+				auto const pfp = tpc_obj.GetParticle(j);
+				const int mc_pdg = pfp.MCPdgCode();
+				if(mc_pdg == 11)
+				{
+					const double momentum = pfp.pfpMomentum();
+					const double mc_momentum = pfp.mcMomentum();
+					if(momentum <= 0.5) {h_low_true_momentum->Fill(mc_momentum); }
+					if(momentum <= 1.0) {h_med_true_momentum->Fill(mc_momentum); }
+					if(momentum <= 1.5) {h_high_true_momentum->Fill(mc_momentum); }
+				}
+			}
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

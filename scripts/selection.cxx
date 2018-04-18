@@ -2084,6 +2084,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                              h_ele_eng_back_trans_cosmic,
 		                                                              h_ele_eng_back_trans_other_mixed,
 		                                                              h_ele_eng_back_trans_unmatched);
+
+		_functions_instance.selection_functions::DifferentialEnergySlices(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                  h_low_true_momentum, h_med_true_momentum, h_high_true_momentum);
+
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
@@ -3809,6 +3813,10 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	                                     "", "True OutFV Nue Vtx Y [cm]", "Reco OutFV Nue Vtx Y [cm]", "true_reco_vtx_y_nue_cc_out_fv.pdf");
 	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_z_nue_cc_out_fv,
 	                                     "", "True OutFV Nue Vtx Z [cm]", "Reco OutFV Nue Vtx Z [cm]", "true_reco_vtx_z_nue_cc_out_fv.pdf");
+
+	histogram_functions::Plot1DHistogram(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_low.pdf");
+	histogram_functions::Plot1DHistogram(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_med.pdf");
+	histogram_functions::Plot1DHistogram(h_high_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_high.pdf");
 
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();

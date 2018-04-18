@@ -987,5 +987,11 @@ void EnergyCosThetaSlicesInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_o
                                 TH1 * h_ele_eng_back_intime);
 //***************************************************************************
 //***************************************************************************
+void DifferentialEnergySlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                              TH1 * h_low_true_momentum, TH1 * h_med_true_momentum, TH1 * h_high_true_momentum);
+//***************************************************************************
+//***************************************************************************
 };
 #endif
