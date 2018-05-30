@@ -139,6 +139,9 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	data_hit_threshold_collection_counter_v->resize(22, 0);
 	std::vector<int> * data_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
 	data_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+	std::vector<int> * data_track_containment_counter_v = new std::vector<int>;
+	data_track_containment_counter_v->resize(22, 0);
+
 	std::vector<double> * data_flash_time = new std::vector<double>;
 
 	std::vector<TH1 * > * h_ele_pfp_xyz_data = new std::vector<TH1 * >;
@@ -460,9 +463,11 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	 //*** END Data Calculation ***
 	 //****************************
 
+//***********************************
 	//***********************************
 	//*** In-time Cosmics Calculation ***
 	//***********************************
+//***********************************
 
 	std::vector<int> * intime_in_time_counter_v = new std::vector<int>;
 	intime_in_time_counter_v->resize(22, 0);
@@ -492,6 +497,9 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	intime_hit_threshold_collection_counter_v->resize(22, 0);
 	std::vector<int> * intime_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
 	intime_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+	std::vector<int> * intime_track_containment_counter_v = new std::vector<int>;
+	intime_track_containment_counter_v->resize(22, 0);
+
 	std::vector<double> * intime_flash_time = new std::vector<double>;
 
 	std::vector<TH1 * > * h_ele_pfp_xyz_intime = new std::vector<TH1 * >;
@@ -722,7 +730,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::NumShowersOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime, h_pfp_shower_open_angle_intime);
 			_functions_instance.selection_functions::PostCutOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                _verbose, h_leading_shower_open_angle_intime);
-			_functions_instance.selection_functions::PostCutOpenAngle1ShowerInTime(tpc_object_container_v, passed_tpco_intime,
+			_functions_instance.selection_functions::PostCutOpenAngle1ShowerInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                       _verbose, h_leading_shower_open_angle_1_intime);
 			_functions_instance.selection_functions::PostCutOpenAngle2PlusShowerInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                           _verbose, h_leading_shower_open_angle_2plus_intime);
@@ -760,6 +768,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			// ********** Hit Length Ratio Cut *************
 			//******************************************************************************
 			_functions_instance.selection_functions::HitLengthRatioInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_hit_length_ratio_intime);
+
 			_cuts_instance.selection_cuts::HitLengthRatioCut(intime_tpc_object_container_v, passed_tpco_intime, _verbose, pfp_hits_length_tolerance);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_hit_lengthRatio_counter_v);
@@ -791,8 +800,19 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 			_functions_instance.selection_functions::LeadingShowerTrackLengthsInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                         h_leading_shwr_trk_length_intime_after);
+
+
+			//******************************************************************************
+			//*** contained track cut *** //
+			//******************************************************************************
+			_functions_instance.selection_functions::IsContainedPlotInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                               _verbose, fv_boundary_v, h_track_containment_intime);
+
+			_cuts_instance.selection_cuts::ContainedTracksCut(intime_tpc_object_container_v, passed_tpco_intime, _verbose, fv_boundary_v, true);
+			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_track_containment_counter_v);
+
 			//*********** In-time Cosmics *********
-			_functions_instance.selection_functions::FillPostCutVector(intime_tpc_object_container_v, passed_tpco_intime, post_cuts_v);
 			//*************************************
 			// ******** End Selection Cuts! *******
 			//*************************************
@@ -816,6 +836,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			                                                                    h_ele_eng_mid_trans_intime,
 			                                                                    h_ele_eng_back_trans_intime);
 
+			_functions_instance.selection_functions::FillPostCutVector(intime_tpc_object_container_v, passed_tpco_intime, post_cuts_v);
 			//delete at the very end!
 			delete passed_tpco_intime;
 		}
@@ -850,6 +871,9 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	hit_threshold_collection_counter_v->resize(22, 0);
 	std::vector<int> * trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
 	trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+	std::vector<int> * track_containment_counter_v = new std::vector<int>;
+	track_containment_counter_v->resize(22, 0);
+
 	std::vector<double> * flash_time = new std::vector<double>;
 
 	std::vector<int> * has_track = new std::vector<int>;
@@ -1600,6 +1624,14 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
 		                                                      h_dedx_cuts_unmatched);
 
+		_functions_instance.selection_functions::PostCutsdEdxTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                  h_dedx_cuts_electron, h_dedx_cuts_photon, h_dedx_cuts_proton, h_dedx_cuts_pion,
+		                                                                  h_dedx_cuts_muon, h_dedx_cuts_kaon, h_dedx_cuts_neutron, h_dedx_cuts_mc_unmatched);
+		_functions_instance.selection_functions::PostCutsdEdxHitsTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                      h_dedx_cuts_hits_electron, h_dedx_cuts_hits_photon, h_dedx_cuts_hits_proton,
+		                                                                      h_dedx_cuts_hits_pion, h_dedx_cuts_hits_muon, h_dedx_cuts_hits_kaon,
+		                                                                      h_dedx_cuts_hits_neutron, h_dedx_cuts_hits_mc_unmatched);
+
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
@@ -1723,6 +1755,26 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		                                                                   h_leading_shwr_trk_length_cosmic_after,
 		                                                                   h_leading_shwr_trk_length_other_mixed_after,
 		                                                                   h_leading_shwr_trk_length_unmatched_after);
+
+		//******************************************************************************
+		//*** track containment -- all tracks need to be contained *** //
+		//******************************************************************************
+		_functions_instance.selection_functions::IsContainedPlot(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v, fv_boundary_v,
+		                                                         h_track_containment_nue_cc,
+		                                                         h_track_containment_nue_cc_out_fv,
+		                                                         h_track_containment_nue_cc_mixed,
+		                                                         h_track_containment_numu_cc,
+		                                                         h_track_containment_numu_cc_mixed,
+		                                                         h_track_containment_nc,
+		                                                         h_track_containment_nc_pi0,
+		                                                         h_track_containment_cosmic,
+		                                                         h_track_containment_other_mixed,
+		                                                         h_track_containment_unmatched);
+
+		_cuts_instance.selection_cuts::ContainedTracksCut(tpc_object_container_v, passed_tpco, _verbose, fv_boundary_v, true);
+		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
+		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, track_containment_counter_v);
+
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
@@ -2142,6 +2194,9 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
 	                                intime_scale_factor, data_scale_factor,                                     "TrkLen/ShwrLen Ratio");
 	selection_functions_data::PrintInfoData(1 * data_trk_len_shwr_len_ratio_counter_v->at(0),                   "TrkLen/ShwrLen Ratio");
+	selection_functions::PrintInfo( total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
+	                                intime_scale_factor, data_scale_factor,                                     "Track Containment");
+	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                        "Track Containment");
 
 	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 	//*************************************************************************************************************************
@@ -3814,10 +3869,36 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	histogram_functions::Plot2DHistogram(h_mc_reco_vtx_z_nue_cc_out_fv,
 	                                     "", "True OutFV Nue Vtx Z [cm]", "Reco OutFV Nue Vtx Z [cm]", "true_reco_vtx_z_nue_cc_out_fv.pdf");
 
-	histogram_functions::Plot1DHistogram(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_low.pdf");
-	histogram_functions::Plot1DHistogram(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_med.pdf");
-	histogram_functions::Plot1DHistogram(h_high_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_high.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_electron,     "", "Electron - dE/dx [MeV/cm]",   "Total Hits", "post_cuts_dedx_hits_electron.pdf"    );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_proton,       "", "Proton - dE/dx [MeV/cm]",     "Total Hits", "post_cuts_dedx_hits_proton.pdf"      );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_photon,       "", "Photon - dE/dx [MeV/cm]",     "Total Hits", "post_cuts_dedx_hits_photon.pdf"      );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_pion,         "", "Pion - dE/dx [MeV/cm]",       "Total Hits", "post_cuts_dedx_hits_pion.pdf"        );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_kaon,         "", "Kaon - dE/dx [MeV/cm]",       "Total Hits", "post_cuts_dedx_hits_kaon.pdf"        );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_muon,         "", "Muon - dE/dx [MeV/cm]",       "Total Hits", "post_cuts_dedx_hits_muon.pdf"        );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_neutron,      "", "Neutron - dE/dx [MeV/cm]",    "Total Hits", "post_cuts_dedx_hits_neutron.pdf"     );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_mc_unmatched, "", "Unmatched - dE/dx [MeV/cm]",  "Total Hits", "post_cuts_dedx_hits_mc_unmatched.pdf");
+	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_electron, h_dedx_cuts_proton, h_dedx_cuts_photon, h_dedx_cuts_pion,
+	                                             h_dedx_cuts_kaon, h_dedx_cuts_muon, h_dedx_cuts_neutron, h_dedx_cuts_unmatched, 0.75, 0.95, 0.75, 0.95,
+	                                             "True Particle dE/dx", "True Particle dE/dx [MeV/cm]", "", "post_cuts_dedx_true_particle.pdf");
 
+
+
+	histogram_functions::PlotSimpleStackInTime (h_track_containment_nue_cc,
+	                                            h_track_containment_nue_cc_out_fv,
+	                                            h_track_containment_nue_cc_mixed,
+	                                            h_track_containment_numu_cc,
+	                                            h_track_containment_numu_cc_mixed,
+	                                            h_track_containment_nc,
+	                                            h_track_containment_nc_pi0,
+	                                            h_track_containment_cosmic,
+	                                            h_track_containment_other_mixed,
+	                                            h_track_containment_unmatched,
+	                                            h_track_containment_intime, intime_scale_factor / data_scale_factor, "",
+	                                            "Track Containment", "", "track_containment.pdf");
+
+	histogram_functions::Plot1DHistogramGausFit(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_low.pdf");
+	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_med.pdf");
+	histogram_functions::Plot1DHistogramGausFit(h_high_true_momentum, "Selected Electron Momentum (True) [GeV]", "true_electron_momentum_high.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

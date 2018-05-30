@@ -80,6 +80,14 @@ void HitThresholdCollection(std::vector<xsecAna::TPCObjectContainer> * tpc_objec
 void LongestTrackLeadingShowerCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                   const double ratio_tolerance);
+//***************************************************************************
+bool IsContained(std::vector<double> track_start, std::vector<double> track_end, std::vector<double> fv_boundary_v);
+//***************************************************************************
+void ContainedTracksCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        std::vector<double> fv_boundary_v, const bool enabled);
+//***************************************************************************
+
 
 
 

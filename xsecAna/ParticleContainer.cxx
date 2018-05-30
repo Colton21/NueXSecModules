@@ -178,6 +178,12 @@ void ParticleContainer::SetpfpOpenAngle(double _pfp_open_angle){
 void ParticleContainer::SetPfpClusterdQdx(std::vector<std::vector<double> > _pfp_cluster_dqdx){
 	pfp_cluster_dqdx = _pfp_cluster_dqdx;
 }
+void ParticleContainer::SetPfpClusterdQ(std::vector<std::vector<double> > _pfp_cluster_dq){
+	pfp_cluster_dq = _pfp_cluster_dq;
+}
+void ParticleContainer::SetPfpClusterdX(std::vector<std::vector<double> > _pfp_cluster_dx){
+	pfp_cluster_dx = _pfp_cluster_dx;
+}
 
 void ParticleContainer::SetPfpdEdx(std::vector<double> _pfp_dedx){
 	pfp_dedx = _pfp_dedx;
@@ -357,6 +363,12 @@ double ParticleContainer::pfpOpenAngle() const {
 }
 std::vector < std::vector < double > > ParticleContainer::PfpClusterdQdx() const {
 	return pfp_cluster_dqdx;
+}
+std::vector<std::vector<double> > ParticleContainer::PfpClusterdQ() const {
+	return pfp_cluster_dq;
+}
+std::vector<std::vector<double> > ParticleContainer::PfpClusterdX() const {
+	return pfp_cluster_dx;
 }
 
 std::vector<double > ParticleContainer::PfpdEdx() const {

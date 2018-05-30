@@ -666,19 +666,23 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			std::vector<art::Ptr<recob::Cluster> > clusters = clusters_from_pfpart.at(pfp.key());
 			const int num_clusters = clusters.size();
 			std::vector < std::vector< double > > shower_cluster_dqdx;
+			std::vector < std::vector< double > > shower_cluster_dq;
+			std::vector < std::vector< double > > shower_cluster_dx;
+			std::vector<double> shower_dEdx;
+
 			shower_cluster_dqdx.resize(num_clusters);
+			shower_cluster_dq.resize(num_clusters);
+			shower_cluster_dx.resize(num_clusters);
+			shower_dEdx.resize(3, 0);
+
 			for(int clust = 0; clust < num_clusters; clust++)
 			{
-				shower_cluster_dqdx.at(clust).resize(3);
-				shower_cluster_dqdx.at(clust).at(0) = 0;
-				shower_cluster_dqdx.at(clust).at(1) = 0;
-				shower_cluster_dqdx.at(clust).at(2) = 0;
+				shower_cluster_dqdx.at(clust).resize(3, 0);
+				shower_cluster_dq.at(clust).resize(3, 0);
+				shower_cluster_dx.at(clust).resize(3, 0);
 			}
-			std::vector<double> shower_dEdx;
-			shower_dEdx.resize(3);
-			shower_dEdx.at(0) = 0;
-			shower_dEdx.at(1) = 0;
-			shower_dEdx.at(2) = 0;
+
+
 
 			const int pfpPdg = pfp->PdgCode();
 			//if(_verbose) {std::cout << "[Analyze] PFP PDG Code " << pfpPdg << std::endl; }
@@ -878,8 +882,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
 					//trying to do dqdx!
-					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters,
-					                                      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
+					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
+					                                      this_shower, shower_cluster_dqdx, shower_cluster_dq, shower_cluster_dx, _verbose);
 					//then dEdx!
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
 					// for(auto const cluster_dqdx : shower_cluster_dqdx)
@@ -918,6 +922,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetpfpEnergyV(pfp_energy_v);
 			particle_container.SetpfpEnergyW(pfp_energy_w);
 			particle_container.SetPfpClusterdQdx(shower_cluster_dqdx);
+			particle_container.SetPfpClusterdQ(shower_cluster_dq);
+			particle_container.SetPfpClusterdx(shower_cluster_dx);
 			particle_container.SetPfpdEdx(shower_dEdx);
 
 			tpc_object_container.AddParticle(particle_container);

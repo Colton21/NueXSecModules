@@ -91,7 +91,9 @@ static void GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, double
 
 static void ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_data, std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr < recob::Hit> > > ClusterToHitsMap,
                                 std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
-                                const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx, bool _verbose);
+                                const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx,
+                                std::vector< std::vector < double > > & shower_cluster_dq,
+                                std::vector< std::vector < double > > & shower_cluster_dx,  bool _verbose);
 
 static void ConvertdEdX(std::vector< std::vector < double > > & shower_cluster_dqdx, std::vector<double> & shower_dEdx);
 

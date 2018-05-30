@@ -24,6 +24,7 @@ public:
 histogram_functions()=default;
 
 static void Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name);
+static void Plot1DHistogramGausFit (TH1 * histogram, const char * x_axis_name, const char * print_name);
 static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
@@ -32,6 +33,10 @@ static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x
                              const char * draw_option, const int x_divisions, const int y_divisions);
 static void Plot2DHistogramOffSet (TH2 * histogram, const double label_offset, const double title_offset, const char * title,
                                    const char * x_axis_name, const char * y_axis_name, const char * print_name);
+static void PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,
+                                    TH1 * h_kaon, TH1 * h_muon, TH1 * h_neutron, TH1 * h_unmatched,
+                                    const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                    const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                              TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, const char * title,
                              const char * x_axis_name, const char * y_axis_name, const char * print_name);

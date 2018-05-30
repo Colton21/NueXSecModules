@@ -11,6 +11,19 @@ void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_
 	c1->Print(print_name);
 }
 
+void histogram_functions::Plot1DHistogramGausFit (TH1 * histogram, const char * x_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->Draw();
+
+	histogram->Fit("gaus");
+
+	c1->Print(print_name);
+}
+
 void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name)
 {
 
@@ -213,6 +226,56 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 	                    0.75, 0.95, 0.75, 0.95,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
+void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,
+                                                  TH1 * h_kaon, TH1 * h_muon, TH1 * h_neutron, TH1 * h_unmatched,
+                                                  const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                                  const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+	h_electron->SetStats(kFALSE);
+	h_proton->SetStats(kFALSE);
+	h_photon->SetStats(kFALSE);
+	h_pion->SetStats(kFALSE);
+	h_kaon->SetStats(kFALSE);
+	h_muon->SetStats(kFALSE);
+	h_neutron->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_electron->SetFillColor(30);
+	h_proton->SetFillColor(38);
+	h_photon->SetFillColor(28);
+	h_pion->SetFillColor(36);
+	h_kaon->SetFillColor(1);
+	h_muon->SetFillColor(46);
+	h_neutron->SetFillColor(20);
+	h_unmatched->SetFillColor(12);
+	stack->Add(h_electron);
+	stack->Add(h_proton);
+	stack->Add(h_photon);
+	stack->Add(h_pion);
+	stack->Add(h_kaon);
+	stack->Add(h_muon);
+	stack->Add(h_neutron);
+	stack->Add(h_unmatched);
+	stack->Draw();
+	stack->GetXaxis()->SetTitle(x_axis_name);
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_electron,        "Electron",   "f");
+	leg_stack->AddEntry(h_proton,          "Proton",     "f");
+	leg_stack->AddEntry(h_photon,          "Photon",     "f");
+	leg_stack->AddEntry(h_pion,            "Pion",       "f");
+	leg_stack->AddEntry(h_kaon,            "Kaon",       "f");
+	leg_stack->AddEntry(h_muon,            "Muon",       "f");
+	leg_stack->AddEntry(h_neutron,         "Neutron",    "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",  "f");
+	leg_stack->Draw();
+	c1->Print(print_name);
+}
+
 void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                           TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                           TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched,

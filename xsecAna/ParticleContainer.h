@@ -77,6 +77,8 @@ double mc_open_angle;
 double pfp_open_angle;
 
 std::vector < std::vector < double > > pfp_cluster_dqdx;
+std::vector < std::vector < double > > pfp_cluster_dq;
+std::vector < std::vector < double > > pfp_cluster_dx;
 std::vector<double> pfp_dedx;
 
 public:
@@ -152,6 +154,8 @@ void SetmcOpenAngle(double);
 void SetpfpOpenAngle(double);
 
 void SetPfpClusterdQdx(std::vector<std::vector<double> > );
+void SetPfpClusterdQ(std::vector<std::vector<double> >);
+void SetPfpClusterdX(std::vector<std::vector<double> >);
 void SetPfpdEdx(std::vector<double>);
 
 //need to write the getter functions too!
@@ -223,6 +227,8 @@ double mcOpenAngle  () const;
 double pfpOpenAngle () const;
 
 std::vector< std::vector< double > > PfpClusterdQdx () const;
+std::vector<std::vector<double> > PfpClusterdQ () const;
+std::vector<std::vector<double> > PfpClusterdX () const;
 std::vector< double > PfpdEdx () const;
 
 };//end class

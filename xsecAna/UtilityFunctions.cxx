@@ -248,7 +248,9 @@ void utility::GetTrackPurityAndEfficiency( lar_pandora::HitVector recoHits, doub
 
 void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_data, std::map <art::Ptr<recob::Cluster>, std::vector<art::Ptr< recob::Hit> > > ClusterToHitsMap,
                                   std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
-                                  const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx, bool _verbose)
+                                  const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx,
+                                  std::vector< std::vector < double > > & shower_cluster_dq, std::vector< std::vector < double > > & shower_cluster_dx,
+                                  bool _verbose)
 {
 	double _gain = 0;
 	const double _data_gain = 240;
@@ -307,6 +309,15 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 		std::vector<double> dqdx_plane0;
 		std::vector<double> dqdx_plane1;
 		std::vector<double> dqdx_plane2;
+
+		std::vector<double> dq_plane0;
+		std::vector<double> dq_plane1;
+		std::vector<double> dq_plane2;
+
+		std::vector<double> dx_plane0;
+		std::vector<double> dx_plane1;
+		std::vector<double> dx_plane2;
+
 		for(auto const hit : hits_v)
 		{
 			const double hit_position = hit->WireID().Wire * wire_spacing;
@@ -323,18 +334,26 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 				if(cluster->Plane().Plane == 0) {dqdx_plane0.push_back(charge / wire_pitch); }
 				if(cluster->Plane().Plane == 1) {dqdx_plane1.push_back(charge / wire_pitch); }
 				if(cluster->Plane().Plane == 2) {dqdx_plane2.push_back(charge / wire_pitch); }
+
+				if(cluster->Plane().Plane == 0) {dq_plane0.push_back(charge); }
+				if(cluster->Plane().Plane == 1) {dq_plane1.push_back(charge); }
+				if(cluster->Plane().Plane == 2) {dq_plane2.push_back(charge); }
+
+				if(cluster->Plane().Plane == 0) {dx_plane0.push_back(wire_pitch); }
+				if(cluster->Plane().Plane == 1) {dx_plane1.push_back(wire_pitch); }
+				if(cluster->Plane().Plane == 2) {dx_plane2.push_back(wire_pitch); }
 			}
 			if(first_point == true) {first_point = false; }
 		}//end looping hits
 
 		//Now I want to see the total integrated charge for this plane
-		const double total_dqdx_plane0 = std::accumulate(dqdx_plane0.begin(), dqdx_plane0.end(), 0.0) / _dQdxRectangleLength;
-		const double total_dqdx_plane1 = std::accumulate(dqdx_plane1.begin(), dqdx_plane1.end(), 0.0) / _dQdxRectangleLength;
-		const double total_dqdx_plane2 = std::accumulate(dqdx_plane2.begin(), dqdx_plane2.end(), 0.0) / _dQdxRectangleLength;
-
-		shower_cluster_dqdx.at(cluster_num).at(0) = total_dqdx_plane0;
-		shower_cluster_dqdx.at(cluster_num).at(1) = total_dqdx_plane1;
-		shower_cluster_dqdx.at(cluster_num).at(2) = total_dqdx_plane2;
+		// const double total_dqdx_plane0 = std::accumulate(dqdx_plane0.begin(), dqdx_plane0.end(), 0.0) / _dQdxRectangleLength;
+		// const double total_dqdx_plane1 = std::accumulate(dqdx_plane1.begin(), dqdx_plane1.end(), 0.0) / _dQdxRectangleLength;
+		// const double total_dqdx_plane2 = std::accumulate(dqdx_plane2.begin(), dqdx_plane2.end(), 0.0) / _dQdxRectangleLength;
+		//
+		// shower_cluster_dqdx.at(cluster_num).at(0) = total_dqdx_plane0;
+		// shower_cluster_dqdx.at(cluster_num).at(1) = total_dqdx_plane1;
+		// shower_cluster_dqdx.at(cluster_num).at(2) = total_dqdx_plane2;
 
 		// Get the median
 		size_t n_0 = dqdx_plane0.size() / 2;
@@ -344,16 +363,22 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 		{
 			std::nth_element(dqdx_plane0.begin(), dqdx_plane0.begin() + n_0, dqdx_plane0.end());
 			shower_cluster_dqdx.at(cluster_num).at(0) = dqdx_plane0.at(n_0);
+			shower_cluster_dq.at(cluster_num).at(0) = dq_plane0.at(n_0);
+			shower_cluster_dx.at(cluster_num).at(0) = dx_plane0.at(n_0);
 		}
 		if (n_1 > 0)
 		{
 			std::nth_element(dqdx_plane1.begin(), dqdx_plane1.begin() + n_1, dqdx_plane1.end());
 			shower_cluster_dqdx.at(cluster_num).at(1) = dqdx_plane1.at(n_1);
+			shower_cluster_dq.at(cluster_num).at(1) = dq_plane1.at(n_1);
+			shower_cluster_dx.at(cluster_num).at(1) = dx_plane1.at(n_1);
 		}
 		if (n_2 > 0)
 		{
 			std::nth_element(dqdx_plane2.begin(), dqdx_plane2.begin() + n_2, dqdx_plane2.end());
 			shower_cluster_dqdx.at(cluster_num).at(2) = dqdx_plane2.at(n_2);
+			shower_cluster_dq.at(cluster_num).at(2) = dq_plane2.at(n_2);
+			shower_cluster_dx.at(cluster_num).at(2) = dx_plane2.at(n_2);
 		}
 
 		cluster_num++;

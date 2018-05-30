@@ -53,6 +53,29 @@ void PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_co
                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                         TH1D * h_dedx_cuts_intime);
 //***************************************************************************
+void PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                              TH1D * h_dedx_cuts_electron,
+                              TH1D * h_dedx_cuts_photon,
+                              TH1D * h_dedx_cuts_proton,
+                              TH1D * h_dedx_cuts_pion,
+                              TH1D * h_dedx_cuts_muon,
+                              TH1D * h_dedx_cuts_kaon,
+                              TH1D * h_dedx_cuts_neutron,
+                              TH1D * h_dedx_cuts_unmatched);
+void PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                  TH2D * h_dedx_cuts_electron,
+                                  TH2D * h_dedx_cuts_photon,
+                                  TH2D * h_dedx_cuts_proton,
+                                  TH2D * h_dedx_cuts_pion,
+                                  TH2D * h_dedx_cuts_muon,
+                                  TH2D * h_dedx_cuts_kaon,
+                                  TH2D * h_dedx_cuts_neutron,
+                                  TH2D * h_dedx_cuts_unmatched);
+//***************************************************************************
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,
                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -991,6 +1014,25 @@ void DifferentialEnergySlices(std::vector<xsecAna::TPCObjectContainer> * tpc_obj
                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                               TH1 * h_low_true_momentum, TH1 * h_med_true_momentum, TH1 * h_high_true_momentum);
+//***************************************************************************
+//***************************************************************************
+void IsContainedPlot(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                     std::vector<double> fv_boundary_v,
+                     TH1 * h_track_containment_nue_cc,
+                     TH1 * h_track_containment_nue_cc_out_fv,
+                     TH1 * h_track_containment_nue_cc_mixed,
+                     TH1 * h_track_containment_numu_cc,
+                     TH1 * h_track_containment_numu_cc_mixed,
+                     TH1 * h_track_containment_nc,
+                     TH1 * h_track_containment_nc_pi0,
+                     TH1 * h_track_containment_cosmic,
+                     TH1 * h_track_containment_other_mixed,
+                     TH1 * h_track_containment_unmatched);
+void IsContainedPlotInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                           std::vector<double> fv_boundary_v, TH1 * h_track_containment_intime);
 //***************************************************************************
 //***************************************************************************
 };

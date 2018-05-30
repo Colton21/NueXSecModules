@@ -573,6 +573,25 @@ TH1D * h_dedx_cuts_unmatched_after     = new TH1D("h_dedx_cuts_unmatched_after",
 TH1D * h_dedx_cuts_intime_after        = new TH1D("h_dedx_cuts_intime_after",         "h_dedx_cuts_intime_after",        20, 0, 10);
 TH1D * h_dedx_cuts_data_after          = new TH1D("h_dedx_cuts_data_after",           "h_dedx_cuts_data_after",          20, 0, 10);
 
+TH1D * h_dedx_cuts_electron       = new TH1D("h_dedx_cuts_electron",     "h_dedx_cuts_electron",     20, 0, 10);
+TH1D * h_dedx_cuts_photon         = new TH1D("h_dedx_cuts_photon",       "h_dedx_cuts_photon",       20, 0, 10);
+TH1D * h_dedx_cuts_proton         = new TH1D("h_dedx_cuts_proton",       "h_dedx_cuts_proton",       20, 0, 10);
+TH1D * h_dedx_cuts_pion           = new TH1D("h_dedx_cuts_pion",         "h_dedx_cuts_pion",         20, 0, 10);
+TH1D * h_dedx_cuts_muon           = new TH1D("h_dedx_cuts_muon",         "h_dedx_cuts_muon",         20, 0, 10);
+TH1D * h_dedx_cuts_kaon           = new TH1D("h_dedx_cuts_kaon",         "h_dedx_cuts_kaon",         20, 0, 10);
+TH1D * h_dedx_cuts_neutron        = new TH1D("h_dedx_cuts_neutron",      "h_dedx_cuts_neutron",      20, 0, 10);
+TH1D * h_dedx_cuts_mc_unmatched   = new TH1D("h_dedx_cuts_mc_unmatched", "h_dedx_cuts_mc_unmatched", 20, 0, 10);
+
+TH2D * h_dedx_cuts_hits_electron       = new TH2D("h_dedx_cuts_hits_electron",     "h_dedx_cuts_hits_electron",     20, 0, 10, 20, 0, 1600);
+TH2D * h_dedx_cuts_hits_photon         = new TH2D("h_dedx_cuts_hits_photon",       "h_dedx_cuts_hits_photon",       20, 0, 10, 20, 0, 1600);
+TH2D * h_dedx_cuts_hits_proton         = new TH2D("h_dedx_cuts_hits_proton",       "h_dedx_cuts_hits_proton",       20, 0, 10, 20, 0, 1600);
+TH2D * h_dedx_cuts_hits_pion           = new TH2D("h_dedx_cuts_hits_pion",         "h_dedx_cuts_hits_pion",         20, 0, 10, 20, 0, 1600);
+TH2D * h_dedx_cuts_hits_muon           = new TH2D("h_dedx_cuts_hits_muon",         "h_dedx_cuts_hits_muon",         20, 0, 10, 20, 0, 1600);
+TH2D * h_dedx_cuts_hits_kaon           = new TH2D("h_dedx_cuts_hits_kaon",         "h_dedx_cuts_hits_kaon",         20, 0, 10, 20, 0, 1600);
+TH2D * h_dedx_cuts_hits_neutron        = new TH2D("h_dedx_cuts_hits_neutron",      "h_dedx_cuts_hits_neutron",      20, 0, 10, 20, 0, 1600);
+TH2D * h_dedx_cuts_hits_mc_unmatched   = new TH2D("h_dedx_cuts_hits_mc_unmatched", "h_dedx_cuts_hits_mc_unmatched", 20, 0, 10, 20, 0, 1600);
+
+
 TH2D * h_shwr_hits_nu_eng_zoom  = new TH2D ("h_shwr_hits_nu_eng_zoom",  "h_shwr_hits_nu_eng_zoom", 20, 0, 4, 20, 0, 500);
 TH2D * h_shwr_hits_ele_eng_zoom = new TH2D ("h_shwr_hits_ele_eng_zoom", "h_shwr_hits_ele_eng_zoom", 20, 0, 2, 20, 0, 500);
 TH2D * h_shwr_hits_nu_eng       = new TH2D ("h_shwr_hits_nu_eng",       "h_shwr_hits_nu_eng", 20, 0, 4, 20, 0, 5000);
@@ -1387,6 +1406,18 @@ TH2D * h_mc_reco_vtx_z_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_z_nue_cc_out_fv"
 TH2D * h_post_cuts_num_tracks_showers_signal_total  = new TH2D ("h_post_cuts_num_tracks_showers_signal_total", "h_post_cuts_num_tracks_showers_signal_total", 3, 1, 4, 2, 0, 2);
 TH2D * h_post_cuts_num_tracks_showers_bkg_total     = new TH2D ("h_post_cuts_num_tracks_showers_bkg_total",    "h_post_cuts_num_tracks_showers_bkg_total",    3, 1, 4, 2, 0, 2);
 
+TH1D * h_track_containment_nue_cc          = new TH1D ("h_track_containment_nue_cc",        "h_track_containment_nue_cc",        2, 0, 2);
+TH1D * h_track_containment_nue_cc_out_fv   = new TH1D ("h_track_containment_nue_cc_out_fv", "h_track_containment_nue_cc_out_fv", 2, 0, 2);
+TH1D * h_track_containment_nue_cc_mixed    = new TH1D ("h_track_containment_nue_cc_mixed",  "h_track_containment_nue_cc_mixed",  2, 0, 2);
+TH1D * h_track_containment_numu_cc         = new TH1D ("h_track_containment_numu_cc",       "h_track_containment_numu_cc",       2, 0, 2);
+TH1D * h_track_containment_numu_cc_mixed   = new TH1D ("h_track_containment_numu_cc_mixed", "h_track_containment_numu_cc_mixed", 2, 0, 2);
+TH1D * h_track_containment_nc              = new TH1D ("h_track_containment_nc",            "h_track_containment_nc",            2, 0, 2);
+TH1D * h_track_containment_nc_pi0          = new TH1D ("h_track_containment_nc_pi0",        "h_track_containment_nc_pi0",        2, 0, 2);
+TH1D * h_track_containment_cosmic          = new TH1D ("h_track_containment_cosmic",        "h_track_containment_cosmic",        2, 0, 2);
+TH1D * h_track_containment_other_mixed     = new TH1D ("h_track_containment_other_mixed",   "h_track_containment_other_mixed",   2, 0, 2);
+TH1D * h_track_containment_unmatched       = new TH1D ("h_track_containment_unmatched",     "h_track_containment_unmatched",     2, 0, 2);
+TH1D * h_track_containment_intime          = new TH1D ("h_track_containment_intime",        "h_track_containment_intime",        2, 0, 2);
+TH1D * h_track_containment_data            = new TH1D ("h_track_containment_data",          "h_track_containment_data",          2, 0, 2);
 
 TH1D * h_low_true_momentum = new TH1D  ("h_low_true_momentum",  "h_low_true_momentum",  20, 0, 4);
 TH1D * h_med_true_momentum = new TH1D  ("h_med_true_momentum",  "h_med_true_momentum",  20, 0, 4);

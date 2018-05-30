@@ -22,13 +22,9 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		const double tpc_vtx_x = tpc_obj.pfpVtxX();
-		const double tpc_vtx_y = tpc_obj.pfpVtxY();
-		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		const int tpc_obj_mode = tpc_obj.Mode();
 		const int n_pfp = tpc_obj.NumPFParticles();
 		//loop over pfparticles in the TPCO
-		int most_hits = 0;
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
@@ -137,6 +133,81 @@ void selection_functions::PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectConta
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		h_dedx_cuts_intime->Fill(leading_dedx);
+	}        //end loop tpc objects
+}
+//***************************************************************************
+void selection_functions::PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                   TH1D * h_dedx_cuts_electron,
+                                                   TH1D * h_dedx_cuts_photon,
+                                                   TH1D * h_dedx_cuts_proton,
+                                                   TH1D * h_dedx_cuts_pion,
+                                                   TH1D * h_dedx_cuts_muon,
+                                                   TH1D * h_dedx_cuts_kaon,
+                                                   TH1D * h_dedx_cuts_neutron,
+                                                   TH1D * h_dedx_cuts_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_mc_pdg = leading_shower.MCPdgCode();
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11) {h_dedx_cuts_electron->Fill(leading_dedx); }
+		if(leading_mc_pdg == 13 || leading_mc_pdg == -13) {h_dedx_cuts_muon->Fill(leading_dedx); }
+		if(leading_mc_pdg == 22) {h_dedx_cuts_photon->Fill(leading_dedx); }
+		if(leading_mc_pdg == 2212) {h_dedx_cuts_proton->Fill(leading_dedx); }
+		if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_dedx_cuts_pion->Fill(leading_dedx); }
+		if(leading_mc_pdg == 2112) {h_dedx_cuts_neutron->Fill(leading_dedx); }
+		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 || leading_mc_pdg == 311 || leading_mc_pdg == 321 || leading_mc_pdg == -321)
+		{h_dedx_cuts_kaon->Fill(leading_dedx); }
+		if(leading_mc_pdg == 0) {h_dedx_cuts_unmatched->Fill(leading_dedx); }
+	}        //end loop tpc objects
+}
+//***************************************************************************
+void selection_functions::PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                       TH2D * h_dedx_cuts_electron,
+                                                       TH2D * h_dedx_cuts_photon,
+                                                       TH2D * h_dedx_cuts_proton,
+                                                       TH2D * h_dedx_cuts_pion,
+                                                       TH2D * h_dedx_cuts_muon,
+                                                       TH2D * h_dedx_cuts_kaon,
+                                                       TH2D * h_dedx_cuts_neutron,
+                                                       TH2D * h_dedx_cuts_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_mc_pdg = leading_shower.MCPdgCode();
+		const int leading_shower_hits = leading_shower.NumPFPHits();
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11) {h_dedx_cuts_electron->Fill(leading_dedx, leading_shower_hits); }
+		if(leading_mc_pdg == 13 || leading_mc_pdg == -13) {h_dedx_cuts_muon->Fill(leading_dedx, leading_shower_hits); }
+		if(leading_mc_pdg == 22) {h_dedx_cuts_photon->Fill(leading_dedx, leading_shower_hits); }
+		if(leading_mc_pdg == 2212) {h_dedx_cuts_proton->Fill(leading_dedx, leading_shower_hits); }
+		if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_dedx_cuts_pion->Fill(leading_dedx, leading_shower_hits); }
+		if(leading_mc_pdg == 2112) {h_dedx_cuts_neutron->Fill(leading_dedx, leading_shower_hits); }
+		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 || leading_mc_pdg == 311 || leading_mc_pdg == 321 || leading_mc_pdg == -321)
+		{h_dedx_cuts_kaon->Fill(leading_dedx, leading_shower_hits); }
+		if(leading_mc_pdg == 0) {h_dedx_cuts_unmatched->Fill(leading_dedx, leading_shower_hits); }
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -816,7 +887,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	const int n_bkg_mc = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nc
 	                      + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_nc_pi0 +
 	                      final_counter_unmatched + final_counter_other_mixed);
-	const int n_bkg_intime = final_counter_intime;
+	int n_bkg_intime = final_counter_intime;
 	const double n_bkg = n_bkg_mc + double(n_bkg_intime * (intime_scale_factor / data_scale_factor));
 	const double n_bkg_data = double(n_bkg_mc * data_scale_factor) + double(n_bkg_intime * intime_scale_factor);
 
@@ -853,7 +924,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	//************************************
 	//******** Monte Carlo ***************
 	//************************************
-	const int n_total_mc = final_counter_nue_cc + n_bkg_mc + double(n_bkg_intime * (intime_scale_factor / data_scale_factor));
+	const int n_total_mc = final_counter_nue_cc + n_bkg; //+ n_bkg_mc + double(n_bkg_intime * (intime_scale_factor / data_scale_factor));
 	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
 	                              n_total_mc, n_bkg, flux,
 	                              efficiency, xsec_cc);
@@ -1303,7 +1374,6 @@ void selection_functions::PostCutTrkVtx(std::vector<xsecAna::TPCObjectContainer>
 				                                 ((tpc_vtx_z - pfp_vtx_z) * (tpc_vtx_z - pfp_vtx_z)));
 				if(trk_vtx_dist < smallest_trk_vtx_dist) {smallest_trk_vtx_dist = trk_vtx_dist; }
 				const double trk_length = part.pfpLength();
-				//std::cout << trk_length << std::endl;
 			}
 		}//end pfp loop
 		std::string tpco_id = tpco_classifier_v->at(i).first;
@@ -1386,7 +1456,6 @@ void selection_functions::PostCutTrkVtxInTime(std::vector<xsecAna::TPCObjectCont
 				                                 ((tpc_vtx_z - pfp_vtx_z) * (tpc_vtx_z - pfp_vtx_z)));
 				if(trk_vtx_dist < smallest_trk_vtx_dist) {smallest_trk_vtx_dist = trk_vtx_dist; }
 				const double trk_length = part.pfpLength();
-				//std::cout << trk_length << std::endl;
 			}
 		}//end pfp loop
 		if(has_track) {h_trk_vtx_dist_intime->Fill(smallest_trk_vtx_dist); }
@@ -6217,6 +6286,215 @@ void selection_functions::DifferentialEnergySlices(std::vector<xsecAna::TPCObjec
 			}
 		}
 	}
+}
+//***************************************************************************
+void selection_functions::IsContainedPlot(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                          std::vector<double> fv_boundary_v,
+                                          TH1 * h_track_containment_nue_cc,
+                                          TH1 * h_track_containment_nue_cc_out_fv,
+                                          TH1 * h_track_containment_nue_cc_mixed,
+                                          TH1 * h_track_containment_numu_cc,
+                                          TH1 * h_track_containment_numu_cc_mixed,
+                                          TH1 * h_track_containment_nc,
+                                          TH1 * h_track_containment_nc_pi0,
+                                          TH1 * h_track_containment_cosmic,
+                                          TH1 * h_track_containment_other_mixed,
+                                          TH1 * h_track_containment_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+
+	const double det_x1 = 0;
+	const double det_x2 = 256.35;
+	const double det_y1 = -116.5;
+	const double det_y2 = 116.5;
+	const double det_z1 = 0;
+	const double det_z2 = 1036.8;
+
+	const double x1 = fv_boundary_v.at(0);
+	const double x2 = fv_boundary_v.at(1);
+	const double y1 = fv_boundary_v.at(2);
+	const double y2 = fv_boundary_v.at(3);
+	const double z1 = fv_boundary_v.at(4);
+	const double z2 = fv_boundary_v.at(5);
+
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
+
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+
+		int is_contained;
+
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double pfp_vtx_x = pfp.pfpVtxX();
+				const double pfp_vtx_y = pfp.pfpVtxY();
+				const double pfp_vtx_z = pfp.pfpVtxZ();
+				const double pfp_dir_x = pfp.pfpDirX();
+				const double pfp_dir_y = pfp.pfpDirY();
+				const double pfp_dir_z = pfp.pfpDirZ();
+				const double trk_length = pfp.pfpLength();
+				const double pfp_end_x = (pfp.pfpVtxX() + (trk_length * pfp_dir_x));
+				const double pfp_end_y = (pfp.pfpVtxY() + (trk_length * pfp_dir_y));
+				const double pfp_end_z = (pfp.pfpVtxZ() + (trk_length * pfp_dir_z));
+
+				if(pfp_vtx_x <= det_x1 + x1 || pfp_vtx_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_vtx_y <= det_y1 + y1 || pfp_vtx_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_vtx_z <= det_z1 + z1 || pfp_vtx_z >= det_z2 - z2) {is_contained = 0; break; }
+				if(pfp_end_x <= det_x1 + x1 || pfp_end_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_end_y <= det_y1 + y1 || pfp_end_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_end_z <= det_z1 + z1 || pfp_end_z >= det_z2 - z2) {is_contained = 0; break; }
+				is_contained = 1;
+			}
+		}
+
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_track_containment_nue_cc->Fill(is_contained);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_track_containment_nue_cc_out_fv->Fill(is_contained);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_track_containment_nue_cc->Fill(is_contained);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_track_containment_nue_cc->Fill(is_contained);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_track_containment_nue_cc->Fill(is_contained);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_track_containment_nue_cc->Fill(is_contained);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_track_containment_numu_cc->Fill(is_contained);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_track_containment_numu_cc->Fill(is_contained);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_track_containment_numu_cc->Fill(is_contained);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_track_containment_numu_cc->Fill(is_contained);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_track_containment_numu_cc->Fill(is_contained);
+		}
+		if(tpco_id == "nc")
+		{
+			h_track_containment_nc->Fill(is_contained);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_track_containment_nc_pi0->Fill(is_contained);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_track_containment_nue_cc_mixed->Fill(is_contained);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			//h_ele_eng_costheta_numu_cc_mixed->Fill(momentum, costheta);
+			h_track_containment_numu_cc->Fill(is_contained);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_track_containment_cosmic->Fill(is_contained);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_track_containment_other_mixed->Fill(is_contained);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_track_containment_unmatched->Fill(is_contained);
+		}
+	}//end pfp loop
+}
+//***************************************************************************
+void selection_functions::IsContainedPlotInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                std::vector<double> fv_boundary_v, TH1 * h_track_containment_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+
+	const double det_x1 = 0;
+	const double det_x2 = 256.35;
+	const double det_y1 = -116.5;
+	const double det_y2 = 116.5;
+	const double det_z1 = 0;
+	const double det_z2 = 1036.8;
+
+	const double x1 = fv_boundary_v.at(0);
+	const double x2 = fv_boundary_v.at(1);
+	const double y1 = fv_boundary_v.at(2);
+	const double y2 = fv_boundary_v.at(3);
+	const double z1 = fv_boundary_v.at(4);
+	const double z2 = fv_boundary_v.at(5);
+
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+		auto const tpc_obj = tpc_object_container_v->at(i);
+
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+
+		int is_contained;
+
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double pfp_vtx_x = pfp.pfpVtxX();
+				const double pfp_vtx_y = pfp.pfpVtxY();
+				const double pfp_vtx_z = pfp.pfpVtxZ();
+				const double pfp_dir_x = pfp.pfpDirX();
+				const double pfp_dir_y = pfp.pfpDirY();
+				const double pfp_dir_z = pfp.pfpDirZ();
+				const double trk_length = pfp.pfpLength();
+				const double pfp_end_x = (pfp.pfpVtxX() + (trk_length * pfp_dir_x));
+				const double pfp_end_y = (pfp.pfpVtxY() + (trk_length * pfp_dir_y));
+				const double pfp_end_z = (pfp.pfpVtxZ() + (trk_length * pfp_dir_z));
+
+				if(pfp_vtx_x <= det_x1 + x1 || pfp_vtx_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_vtx_y <= det_y1 + y1 || pfp_vtx_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_vtx_z <= det_z1 + z1 || pfp_vtx_z >= det_z2 - z2) {is_contained = 0; break; }
+				if(pfp_end_x <= det_x1 + x1 || pfp_end_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_end_y <= det_y1 + y1 || pfp_end_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_end_z <= det_z1 + z1 || pfp_end_z >= det_z2 - z2) {is_contained = 0; break; }
+				is_contained = 1;
+			}
+		}
+		h_track_containment_intime->Fill(is_contained);
+	}//end pfp loop
 }
 //***************************************************************************
 //***************************************************************************

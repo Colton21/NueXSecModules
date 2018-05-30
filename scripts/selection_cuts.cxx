@@ -683,6 +683,7 @@ void selection_cuts::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
+
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		int leading_index = 0;
@@ -715,6 +716,7 @@ void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
+
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		int leading_index = 0;
@@ -883,6 +885,68 @@ void selection_cuts::LongestTrackLeadingShowerCut(std::vector<xsecAna::TPCObject
 	}
 }
 //***************************************************************************
+bool selection_cuts::IsContained(std::vector<double> track_start, std::vector<double> track_end, std::vector<double> fv_boundary_v)
+{
+	if(in_fv(track_start.at(0), track_start.at(1), track_start.at(2), fv_boundary_v) == true
+	   && in_fv(track_end.at(0), track_end.at(1), track_end.at(2), fv_boundary_v) == true)
+	{
+		return true;
+	}
+	return false;
+}
+//***************************************************************************
+void selection_cuts::ContainedTracksCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        std::vector<double> fv_boundary_v, const bool enabled)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(enabled == false) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+		int leading_index = 0;
+		int leading_hits  = 0;
+
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double pfp_vtx_x = pfp.pfpVtxX();
+				const double pfp_vtx_y = pfp.pfpVtxY();
+				const double pfp_vtx_z = pfp.pfpVtxZ();
+				const double pfp_dir_x = pfp.pfpDirX();
+				const double pfp_dir_y = pfp.pfpDirY();
+				const double pfp_dir_z = pfp.pfpDirZ();
+				const double trk_length = pfp.pfpLength();
+				const double pfp_end_x = (pfp.pfpVtxX() + (trk_length * pfp_dir_x));
+				const double pfp_end_y = (pfp.pfpVtxY() + (trk_length * pfp_dir_y));
+				const double pfp_end_z = (pfp.pfpVtxZ() + (trk_length * pfp_dir_z));
+
+				std::vector<double> pfp_start_vtx {pfp_vtx_x, pfp_vtx_y, pfp_vtx_z};
+				std::vector<double> pfp_end_vtx {pfp_end_x, pfp_end_y, pfp_end_z};
+
+				const bool is_contained = IsContained(pfp_start_vtx, pfp_end_vtx, fv_boundary_v);
+
+				//if not contained
+				if(is_contained == false)
+				{
+					passed_tpco->at(i).first = 0;
+					passed_tpco->at(i).second = "Contained";
+					if(_verbose) {std::cout << "[Containment] TPC Object Failed!" << std::endl; }
+					break;
+				}
+			}//end is track
+		}//end loop pfparticles
+	}//end loop tpc objects
+}
+//***************************************************************************
 //this gives a list of all of the origins of the tpc objects
 void selection_cuts::GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::string> * tpco_origin_v)
 {
@@ -894,3 +958,4 @@ void selection_cuts::GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_o
 		tpco_origin_v->push_back(tpc_obj_origin);
 	}
 }
+//***************************************************************************
