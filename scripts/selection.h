@@ -591,6 +591,15 @@ TH2D * h_dedx_cuts_hits_kaon           = new TH2D("h_dedx_cuts_hits_kaon",      
 TH2D * h_dedx_cuts_hits_neutron        = new TH2D("h_dedx_cuts_hits_neutron",      "h_dedx_cuts_hits_neutron",      20, 0, 10, 20, 0, 1600);
 TH2D * h_dedx_cuts_hits_mc_unmatched   = new TH2D("h_dedx_cuts_hits_mc_unmatched", "h_dedx_cuts_hits_mc_unmatched", 20, 0, 10, 20, 0, 1600);
 
+TH2D * h_dedx_cuts_collection_hits_electron       = new TH2D("h_dedx_cuts_collection_hits_electron",     "h_dedx_cuts_collection_hits_electron",     20, 0, 10, 20, 0, 1000);
+TH2D * h_dedx_cuts_collection_hits_photon         = new TH2D("h_dedx_cuts_collection_hits_photon",       "h_dedx_cuts_collection_hits_photon",       20, 0, 10, 20, 0, 1000);
+TH2D * h_dedx_cuts_collection_hits_proton         = new TH2D("h_dedx_cuts_collection_hits_proton",       "h_dedx_cuts_collection_hits_proton",       20, 0, 10, 20, 0, 1000);
+TH2D * h_dedx_cuts_collection_hits_pion           = new TH2D("h_dedx_cuts_collection_hits_pion",         "h_dedx_cuts_collection_hits_pion",         20, 0, 10, 20, 0, 1000);
+TH2D * h_dedx_cuts_collection_hits_muon           = new TH2D("h_dedx_cuts_collection_hits_muon",         "h_dedx_cuts_collection_hits_muon",         20, 0, 10, 20, 0, 1000);
+TH2D * h_dedx_cuts_collection_hits_kaon           = new TH2D("h_dedx_cuts_collection_hits_kaon",         "h_dedx_cuts_collection_hits_kaon",         20, 0, 10, 20, 0, 1000);
+TH2D * h_dedx_cuts_collection_hits_neutron        = new TH2D("h_dedx_cuts_collection_hits_neutron",      "h_dedx_cuts_collection_hits_neutron",      20, 0, 10, 20, 0, 1000);
+TH2D * h_dedx_cuts_collection_hits_mc_unmatched   = new TH2D("h_dedx_cuts_collection_hits_mc_unmatched", "h_dedx_cuts_collection_hits_mc_unmatched", 20, 0, 10, 20, 0, 1000);
+
 
 TH2D * h_shwr_hits_nu_eng_zoom  = new TH2D ("h_shwr_hits_nu_eng_zoom",  "h_shwr_hits_nu_eng_zoom", 20, 0, 4, 20, 0, 500);
 TH2D * h_shwr_hits_ele_eng_zoom = new TH2D ("h_shwr_hits_ele_eng_zoom", "h_shwr_hits_ele_eng_zoom", 20, 0, 2, 20, 0, 500);

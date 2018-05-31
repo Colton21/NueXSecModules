@@ -4,7 +4,7 @@ namespace xsecSelection {
 int selection( const char * _file1, const char * _file2, const char * _file3){
 
 	std::cout << "File Path: " << _file1 << std::endl;
-	const bool _verbose = false;
+	const bool _verbose = true;
 	const bool _post_cuts_verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
@@ -523,7 +523,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		TTree * intime_tree   = (TTree*)intime_f->Get("AnalyzeTPCO/tree");
 		TTree * intime_optree = (TTree*)intime_f->Get("AnalyzeTPCO/optical_tree");
 
-		std::vector<xsecAna::TPCObjectContainer> * intime_tpc_object_container_v = nullptr;
+		std::vector<xsecAna::TPCObjectContainer> * intime_tpc_object_container_v = new std::vector<xsecAna::TPCObjectContainer>;
 		intime_tree->SetBranchAddress("TpcObjectContainerV", &intime_tpc_object_container_v);
 
 		std::ofstream run_subrun_file;
@@ -572,15 +572,18 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			if(_verbose)
 			{
 				std::cout << "----------------------" << std::endl;
-				std::cout << "[EVENT NUMBER] \t " << event << std::endl;
+				std::cout << "[IN-TIME EVENT NUMBER] \t " << event << std::endl;
 				std::cout << "----------------------" << std::endl;
 			}
 			intime_tree->GetEntry(event);
 
 			//writing the run and subrun values to a text file -
 			//this can be used as a cross-check for POT counting
+			std::cout << "Debug1 - Size: " << intime_tpc_object_container_v->size() << std::endl;
+
 			for(auto const tpc_obj : * intime_tpc_object_container_v)
 			{
+				std::cout << "Debug (sub)" << std::endl;
 				data_run    = tpc_obj.RunNumber();
 				data_subrun = tpc_obj.SubRunNumber();
 				if(data_run != last_data_run && data_subrun != last_data_subrun)
@@ -589,12 +592,15 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 					break;
 				}
 			}
+			std::cout << "Debug2" << std::endl;
+
 			last_data_run = data_run;
 			last_data_subrun = data_subrun;
 
 			//***********************************************************
 			//this is where the in-time optical cut actually takes effect
 			//***********************************************************
+			if(_verbose) {std::cout << "In-Time Optical Cut (1)" << std::endl; }
 			if(intime_passed_runs->at(event) == 0)
 			{
 				if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
@@ -620,6 +626,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_in_time_counter_v);
 
 			//PE threshold cut
+			if(_verbose) {std::cout << "In-Time Optical Cut (2)" << std::endl; }
 			if(intime_passed_runs->at(event) == 2)
 			{
 				if(_verbose) std::cout << "[Passed In-Time Cut] [Failed PE Threshold] " << std::endl;
@@ -632,6 +639,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//****************************
 			// ****** reco nue cut *******
 			//****************************
+			if(_verbose) {std::cout << "In-Time Reco Nue Cut" << std::endl; }
 			_cuts_instance.selection_cuts::HasNue(intime_tpc_object_container_v, passed_tpco_intime, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_reco_nue_counter_v);
@@ -643,6 +651,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//************************
 			//******** in fv cut *****
 			//************************
+			if(_verbose) {std::cout << "In-Time FV Cut" << std::endl; }
 			_cuts_instance.selection_cuts::fiducial_volume_cut(intime_tpc_object_container_v, fv_boundary_v, passed_tpco_intime, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_in_fv_counter_v);
@@ -650,6 +659,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//*****************************
 			//**** vertex to flash cut ****
 			//*****************************
+			if(_verbose) {std::cout << "In-Time Vertex-Flash Cut" << std::endl; }
 			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                _verbose, h_vtx_flash_intime);
 
@@ -662,6 +672,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//******************************************************
 			//*** distance between pfp shower and nue object cut ***
 			//******************************************************
+			if(_verbose) {std::cout << "In-Time Shower-Vtx Cut" << std::endl; }
 			_functions_instance.selection_functions::PostCutsShwrVtxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_shwr_vtx_dist_intime);
 
 			_cuts_instance.selection_cuts::VtxNuDistance(intime_tpc_object_container_v, shwr_nue_tolerance, passed_tpco_intime, _verbose);
@@ -672,6 +683,7 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 			//******************************************************
 			// **** distance between pfp track and nue object cut **
 			//******************************************************
+			if(_verbose) {std::cout << "In-Time Track-Vtx Cut" << std::endl; }
 			_functions_instance.selection_functions::PostCutTrkVtxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_trk_vtx_dist_intime);
 
 			_cuts_instance.selection_cuts::VtxTrackNuDistance(intime_tpc_object_container_v, trk_nue_tolerance, passed_tpco_intime, _verbose);
@@ -1630,7 +1642,11 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 		_functions_instance.selection_functions::PostCutsdEdxHitsTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                      h_dedx_cuts_hits_electron, h_dedx_cuts_hits_photon, h_dedx_cuts_hits_proton,
 		                                                                      h_dedx_cuts_hits_pion, h_dedx_cuts_hits_muon, h_dedx_cuts_hits_kaon,
-		                                                                      h_dedx_cuts_hits_neutron, h_dedx_cuts_hits_mc_unmatched);
+		                                                                      h_dedx_cuts_hits_neutron, h_dedx_cuts_hits_mc_unmatched,
+		                                                                      h_dedx_cuts_collection_hits_electron, h_dedx_cuts_collection_hits_photon,
+		                                                                      h_dedx_cuts_collection_hits_proton, h_dedx_cuts_collection_hits_pion,
+		                                                                      h_dedx_cuts_collection_hits_muon, h_dedx_cuts_collection_hits_kaon,
+		                                                                      h_dedx_cuts_collection_hits_neutron, h_dedx_cuts_collection_hits_mc_unmatched);
 
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
@@ -3877,6 +3893,24 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_muon,         "", "Muon - dE/dx [MeV/cm]",       "Total Hits", "post_cuts_dedx_hits_muon.pdf"        );
 	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_neutron,      "", "Neutron - dE/dx [MeV/cm]",    "Total Hits", "post_cuts_dedx_hits_neutron.pdf"     );
 	histogram_functions::Plot2DHistogram(h_dedx_cuts_hits_mc_unmatched, "", "Unmatched - dE/dx [MeV/cm]",  "Total Hits", "post_cuts_dedx_hits_mc_unmatched.pdf");
+
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_electron,     "", "Electron - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_electron.pdf"    );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_proton,       "", "Proton - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_proton.pdf"      );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_photon,       "", "Photon - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_photon.pdf"      );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_pion,         "", "Pion - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_pion.pdf"        );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_kaon,         "", "Kaon - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_kaon.pdf"        );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_muon,         "", "Muon - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_muon.pdf"        );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_neutron,      "", "Neutron - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_neutron.pdf"     );
+	histogram_functions::Plot2DHistogram(h_dedx_cuts_collection_hits_mc_unmatched, "", "Unmatched - dE/dx [MeV/cm]",
+	                                     "Collection Hits", "post_cuts_dedx_collection_hits_mc_unmatched.pdf");
+
 	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_electron, h_dedx_cuts_proton, h_dedx_cuts_photon, h_dedx_cuts_pion,
 	                                             h_dedx_cuts_kaon, h_dedx_cuts_muon, h_dedx_cuts_neutron, h_dedx_cuts_unmatched, 0.75, 0.95, 0.75, 0.95,
 	                                             "True Particle dE/dx", "True Particle dE/dx [MeV/cm]", "", "post_cuts_dedx_true_particle.pdf");

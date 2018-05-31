@@ -74,7 +74,15 @@ void PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc
                                   TH2D * h_dedx_cuts_muon,
                                   TH2D * h_dedx_cuts_kaon,
                                   TH2D * h_dedx_cuts_neutron,
-                                  TH2D * h_dedx_cuts_unmatched);
+                                  TH2D * h_dedx_cuts_unmatched,
+                                  TH2D * h_dedx_cuts_collection_electron,
+                                  TH2D * h_dedx_cuts_collection_photon,
+                                  TH2D * h_dedx_cuts_collection_proton,
+                                  TH2D * h_dedx_cuts_collection_pion,
+                                  TH2D * h_dedx_cuts_collection_muon,
+                                  TH2D * h_dedx_cuts_collection_kaon,
+                                  TH2D * h_dedx_cuts_collection_neutron,
+                                  TH2D * h_dedx_cuts_collection_unmatched);
 //***************************************************************************
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,

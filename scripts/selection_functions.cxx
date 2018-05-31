@@ -183,7 +183,15 @@ void selection_functions::PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCO
                                                        TH2D * h_dedx_cuts_muon,
                                                        TH2D * h_dedx_cuts_kaon,
                                                        TH2D * h_dedx_cuts_neutron,
-                                                       TH2D * h_dedx_cuts_unmatched)
+                                                       TH2D * h_dedx_cuts_unmatched,
+                                                       TH2D * h_dedx_cuts_collection_electron,
+                                                       TH2D * h_dedx_cuts_collection_photon,
+                                                       TH2D * h_dedx_cuts_collection_proton,
+                                                       TH2D * h_dedx_cuts_collection_pion,
+                                                       TH2D * h_dedx_cuts_collection_muon,
+                                                       TH2D * h_dedx_cuts_collection_kaon,
+                                                       TH2D * h_dedx_cuts_collection_neutron,
+                                                       TH2D * h_dedx_cuts_collection_unmatched)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -199,15 +207,47 @@ void selection_functions::PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCO
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
 		const int leading_shower_hits = leading_shower.NumPFPHits();
-		if(leading_mc_pdg == 11 || leading_mc_pdg == -11) {h_dedx_cuts_electron->Fill(leading_dedx, leading_shower_hits); }
-		if(leading_mc_pdg == 13 || leading_mc_pdg == -13) {h_dedx_cuts_muon->Fill(leading_dedx, leading_shower_hits); }
-		if(leading_mc_pdg == 22) {h_dedx_cuts_photon->Fill(leading_dedx, leading_shower_hits); }
-		if(leading_mc_pdg == 2212) {h_dedx_cuts_proton->Fill(leading_dedx, leading_shower_hits); }
-		if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_dedx_cuts_pion->Fill(leading_dedx, leading_shower_hits); }
-		if(leading_mc_pdg == 2112) {h_dedx_cuts_neutron->Fill(leading_dedx, leading_shower_hits); }
+		const int leading_shower_collection_hits = leading_shower.NumPFPHitsW();
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11)
+		{
+			h_dedx_cuts_electron->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_electron->Fill(leading_dedx, leading_shower_collection_hits);
+		}
+		if(leading_mc_pdg == 13 || leading_mc_pdg == -13)
+		{
+			h_dedx_cuts_muon->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_muon->Fill(leading_dedx, leading_shower_collection_hits);
+		}
+		if(leading_mc_pdg == 22)
+		{
+			h_dedx_cuts_photon->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_photon->Fill(leading_dedx, leading_shower_collection_hits);
+		}
+		if(leading_mc_pdg == 2212)
+		{
+			h_dedx_cuts_proton->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_proton->Fill(leading_dedx, leading_shower_collection_hits);
+		}
+		if(leading_mc_pdg == 211 || leading_mc_pdg == -211)
+		{
+			h_dedx_cuts_pion->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_pion->Fill(leading_dedx, leading_shower_collection_hits);
+		}
+		if(leading_mc_pdg == 2112)
+		{
+			h_dedx_cuts_neutron->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_neutron->Fill(leading_dedx, leading_shower_collection_hits);
+		}
 		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 || leading_mc_pdg == 311 || leading_mc_pdg == 321 || leading_mc_pdg == -321)
-		{h_dedx_cuts_kaon->Fill(leading_dedx, leading_shower_hits); }
-		if(leading_mc_pdg == 0) {h_dedx_cuts_unmatched->Fill(leading_dedx, leading_shower_hits); }
+		{
+			h_dedx_cuts_kaon->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_kaon->Fill(leading_dedx, leading_shower_collection_hits);
+		}
+		if(leading_mc_pdg == 0)
+		{
+			h_dedx_cuts_unmatched->Fill(leading_dedx, leading_shower_hits);
+			h_dedx_cuts_collection_unmatched->Fill(leading_dedx, leading_shower_collection_hits);
+		}
 	}        //end loop tpc objects
 }
 //***************************************************************************
