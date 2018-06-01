@@ -1,7 +1,7 @@
 #include "selection.h"
 
 namespace xsecSelection {
-int selection( const char * _file1, const char * _file2, const char * _file3){
+void selection::make_selection( const char * _file1, const char * _file2, const char * _file3, const std::vector<double> _config){
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
@@ -53,6 +53,31 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	mctruth_counter_tree->SetBranchAddress("has_pi0", &has_pi0);
 	mctruth_counter_tree->SetBranchAddress("fMCNuTime", &mc_nu_time);
 
+	//configure the externally configurable cut parameters
+	_x1 = _config[0];
+	_x2 = _config[1];
+	_y1 = _config[2];
+	_y2 = _config[3];
+	_z1 = _config[4];
+	_z2 = _config[5];
+	flash_pe_threshold = _config[6];
+	flash_time_start = _config[7];
+	flash_time_end = _config[8];
+	tolerance = _config[9];
+	shwr_nue_tolerance = _config[10];
+	trk_nue_tolerance = _config[11];
+	shwr_hit_threshold = _config[12];
+	shwr_hit_threshold_collection = _config[13];
+	tolerance_open_angle_min = _config[14];
+	tolerance_open_angle_max = _config[15];
+	tolerance_dedx_min = _config[16];
+	tolerance_dedx_max = _config[17];
+	dist_tolerance = _config[18];
+	pfp_hits_length_tolerance = _config[19];
+	ratio_tolerance = _config[20];
+	const std::vector<double> tolerance_open_angle {tolerance_open_angle_min, tolerance_open_angle_max};
+
+
 	std::vector<double> fv_boundary_v = {_x1, _x2, _y1, _y2, _z1, _z2};
 
 	const int total_mc_entries = mctruth_counter_tree->GetEntries();
@@ -93,19 +118,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	std::cout << "MC Nue NC Counter Bar  --- " << _mc_nue_nc_counter_bar << std::endl;
 	std::cout << "MC Numu CC Counter Bar --- " << _mc_numu_cc_counter_bar << std::endl;
 	std::cout << "MC Numu NC Counter Bar --- " << _mc_numu_nc_counter_bar << std::endl;
-
-
-	//this is the old method - can be used as a cross check now
-	// mctruth_counter_tree->GetEntry(total_mc_entries-1);
-	//
-	// std::cout << "MC Nue CC Counter      : " << mc_nue_cc_counter << std::endl;
-	// std::cout << "MC Nue NC Counter      : " << mc_nue_nc_counter << std::endl;
-	// std::cout << "MC Numu CC Counter     : " << mc_numu_cc_counter << std::endl;
-	// std::cout << "MC Numu NC Counter     : " << mc_numu_nc_counter << std::endl;
-	// std::cout << "MC Nue CC Counter Bar  : " << mc_nue_cc_counter_bar << std::endl;
-	// std::cout << "MC Nue NC Counter Bar  : " << mc_nue_nc_counter_bar << std::endl;
-	// std::cout << "MC Numu CC Counter Bar : " << mc_numu_cc_counter_bar << std::endl;
-	// std::cout << "MC Numu NC Counter Bar : " << mc_numu_nc_counter_bar << std::endl;
 
 	//*****************
 	//***** DATA *****
@@ -4073,33 +4085,9 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 	//delete h_nue_eng_eff_den;
 	//delete h_nue_eng_eff_num;
 
-	return 0;
 }//end selection
 }//end namespace
 
 #ifndef __ROOTCLING__
-
-int main(int argc, char *argv[]){
-
-	const char * file1 = argv[1];
-	const char * file2 = argv[2];
-	const char * file3 = argv[3];
-
-	std::cout << "INPUT FORMAT: MC_FILE INTIME_FILE DATA_FILE" << std::endl;
-
-	if(argc != 3 && argc != 4)
-	{
-		std::cout << "Running without in-time cosmics " << std::endl;
-		std::cout << "Running without data" << std::endl;
-		return xsecSelection::selection(file1, "empty", "empty");
-	}
-	if(argc != 4 )
-	{
-		std::cout << "Running without in-time data " << std::endl;
-		return xsecSelection::selection(file1, file2, "empty");
-	}
-	if(argc < 2 )  { std::cout << "Please inclue the input file path" << std::endl; exit(1); }
-	return xsecSelection::selection(file1, file2, file3);
-}
 
 #endif

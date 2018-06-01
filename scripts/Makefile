@@ -8,8 +8,8 @@ LDFLAGS=
 DEBUGFLAGS= -O0 -g -D _DEBUG
 
 #TARGETNAMES=out_inspect selection potSum selection_slim selection_dataplots selection_datamc
-TARGETNAMES=out_inspect selection custom_potSum
-FUNCTIONCLASSOBJECT=selection_functions.o selection_functions_data.o selection_cuts.o histogram_functions.o
+TARGETNAMES=out_inspect custom_potSum main
+FUNCTIONCLASSOBJECT=selection_functions.o selection_functions_data.o selection_cuts.o histogram_functions.o utility.o selection.o
 
 TARGETS=$(TARGETNAMES:%=%.exe)
 OBJECTS=$(TARGETNAMES:%=%.o)
