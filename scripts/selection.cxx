@@ -4,7 +4,7 @@ namespace xsecSelection {
 int selection( const char * _file1, const char * _file2, const char * _file3){
 
 	std::cout << "File Path: " << _file1 << std::endl;
-	const bool _verbose = true;
+	const bool _verbose = false;
 	const bool _post_cuts_verbose = false;
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
@@ -579,11 +579,9 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 
 			//writing the run and subrun values to a text file -
 			//this can be used as a cross-check for POT counting
-			std::cout << "Debug1 - Size: " << intime_tpc_object_container_v->size() << std::endl;
 
 			for(auto const tpc_obj : * intime_tpc_object_container_v)
 			{
-				std::cout << "Debug (sub)" << std::endl;
 				data_run    = tpc_obj.RunNumber();
 				data_subrun = tpc_obj.SubRunNumber();
 				if(data_run != last_data_run && data_subrun != last_data_subrun)
@@ -592,8 +590,6 @@ int selection( const char * _file1, const char * _file2, const char * _file3){
 					break;
 				}
 			}
-			std::cout << "Debug2" << std::endl;
-
 			last_data_run = data_run;
 			last_data_subrun = data_subrun;
 
