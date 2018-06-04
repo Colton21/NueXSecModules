@@ -5,6 +5,12 @@
 
 #include "GeometryHelper.h"
 #include "lardata/DetectorInfoServices/DetectorPropertiesService.h"
+
+#include "uboone/Database/TPCEnergyCalib/TPCEnergyCalibProvider.h"
+#include "uboone/Database/TPCEnergyCalib/TPCEnergyCalibService.h"
+
+#include "lardataobj/AnalysisBase/Calorimetry.h"
+
 #include <algorithm>
 
 namespace xsecAna {
