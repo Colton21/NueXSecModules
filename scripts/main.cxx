@@ -90,19 +90,16 @@ int main(int argc, char *argv[]){
 			std::cout << "Running without in-time cosmics " << std::endl;
 			std::cout << "Running without data" << std::endl;
 			_selection_instance.xsecSelection::selection::make_selection(file1, "empty", "empty", config, results_v);
-			return 0;
 		}
 		if(argc == 3)
 		{
 			std::cout << "Running without data " << std::endl;
 			_selection_instance.xsecSelection::selection::make_selection(file1, file2, "empty", config, results_v);
-			return 0;
 		}
 		if(argc == 4)
 		{
 			std::cout << "Running with MC, EXT, and Data" << std::endl;
 			_selection_instance.xsecSelection::selection::make_selection(file1, file2, file3, config, results_v);
-			return 0;
 		}
 	}
 
@@ -114,25 +111,42 @@ int main(int argc, char *argv[]){
 			std::cout << "Running without in-time cosmics " << std::endl;
 			std::cout << "Running without data" << std::endl;
 			_selection_instance.xsecSelection::selection::make_selection(file1, "empty", "empty", config, results_v);
-			return 0;
 		}
 		if(argc == 5)
 		{
 			std::cout << "Running without data " << std::endl;
 			_selection_instance.xsecSelection::selection::make_selection(file1, file2, "empty", config, results_v);
-			return 0;
 		}
 		if(argc == 6)
 		{
 			std::cout << "Running with MC, EXT, and Data" << std::endl;
 			_selection_instance.xsecSelection::selection::make_selection(file1, file2, file3, config, results_v);
-			for(auto const results : * results_v) {std::cout << std::get<0>(results) << ", "
-				                                         << std::get<1>(results) << ", "
-				                                         << std::get<2>(results) << std::endl; }
-			return 0;
 		}
 	}
 
-	std::cout << "Returned without running..." << std::endl;
+	//write results from selection to output file
+	//python script does most of the file managing, since script needs to be contained
+	std::ofstream output_file;
+	const char * output_file_name = "selection_output.txt"; //I'll expand this to also come from the python script
+	output_file.open(output_file_name, std::ios_base::app); //Only append to this file
+	if(!output_file.is_open())
+	{
+		std::cout << "*** \t Output File did not open! \t ***" << std::endl;
+	}
+	if(output_file.is_open())
+	{
+		std::cout << "*** \t Output File Opened \t *** " << std::endl;
+
+		for(auto const results : * results_v)
+		{
+			output_file << std::get<2>(results) << ", "
+			            << std::get<0>(results) << ", "
+			            << std::get<1>(results) << "\n";
+		}
+		input_config_file.close();
+		std::cout << "*** \t Output File Closed \t *** " << std::endl;
+	}
+
+	std::cout << "*** \t Exiting C++ Code... \t *** " << std::endl;
 	return 0;
 }

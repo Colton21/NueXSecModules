@@ -1147,7 +1147,7 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec, double xse
 	h_nue_flux->Draw("Y+");
 
 
-	combined_c1->Print("combined_xsec.pdf");
+	combined_c1->Print("../scripts/plots/combined_xsec.pdf");
 
 
 	if(f->IsOpen()) {f->Close(); }
@@ -5508,7 +5508,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 	//teff->SetMarkerSize(0.5);
 	teff->Draw("lego4 e");
 	//teff->Draw("lego");
-	efficiency_c1->Print("post_cuts_num_tracks_showers_purity_teff.pdf");
+	efficiency_c1->Print("../scripts/plots/post_cuts_num_tracks_showers_purity_teff.pdf");
 
 
 	double purity_1_0_qe  = double(signal_events_1_0_qe)  / total_events_1_0;
