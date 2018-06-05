@@ -96,7 +96,13 @@ public:
 
 selection() = default;
 
-void make_selection( const char * _file1, const char * _file2, const char * _file3, const std::vector<double> _config);
+void make_selection(
+        const char * _file1,
+        const char * _file2,
+        const char * _file3,
+        const std::vector<double> _config,
+        std::vector<std::tuple<double, double, std::string> > * results_v
+        );
 
 //********************
 //********************

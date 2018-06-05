@@ -1,7 +1,13 @@
 #include "selection.h"
 
 namespace xsecSelection {
-void selection::make_selection( const char * _file1, const char * _file2, const char * _file3, const std::vector<double> _config){
+void selection::make_selection( const char * _file1,
+                                const char * _file2,
+                                const char * _file3,
+                                const std::vector<double> _config,
+                                std::vector<std::tuple<double, double, std::string> > * results_v
+                                )
+{
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
@@ -54,6 +60,7 @@ void selection::make_selection( const char * _file1, const char * _file2, const 
 	mctruth_counter_tree->SetBranchAddress("fMCNuTime", &mc_nu_time);
 
 	//configure the externally configurable cut parameters
+	std::cout << "\n --- Configuring Parameters --- \n" << std::endl;
 	_x1 = _config[0];
 	_x2 = _config[1];
 	_y1 = _config[2];
@@ -2221,6 +2228,10 @@ void selection::make_selection( const char * _file1, const char * _file2, const 
 	selection_functions::PrintInfo( total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
 	                                intime_scale_factor, data_scale_factor,                                     "Track Containment");
 	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                        "Track Containment");
+
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "In Time", results_v);
+
 
 	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 	//*************************************************************************************************************************

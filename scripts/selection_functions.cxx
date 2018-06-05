@@ -731,6 +731,22 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
+                                                 double intime_scale_factor, double data_scale_factor, std::string cut_name,
+                                                 std::vector<std::tuple< double, double, std::string> > * results_v)
+{
+	int counter           = counter_v->at(7);
+	int counter_nue_cc    = counter_v->at(0);
+	counter = counter + (counter_intime_cosmics * (intime_scale_factor / data_scale_factor));
+	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
+	const double purity     = double(counter_nue_cc) / double(counter);
+
+	auto result = std::make_tuple(efficiency, purity, cut_name);
+	results_v->push_back(result);
+
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions::PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * has_track,
                                               std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr)
 {

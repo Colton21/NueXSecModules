@@ -50,8 +50,6 @@ std::vector<double> configure_cuts(
 	config[19] = pfp_hits_length_tolerance;
 	config[20] = ratio_tolerance;
 
-
-
 	return config;
 }//end config function
 }//end namespace utlity

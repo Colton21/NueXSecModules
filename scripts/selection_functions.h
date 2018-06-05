@@ -126,6 +126,11 @@ static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int i
                       double intime_scale_factor, double data_scale_factor, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
+static void ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
+                                   double intime_scale_factor, double data_scale_factor, std::string cut_name,
+                                   std::vector<std::tuple< double, double, std::string> > * results_v);
+//***************************************************************************
+//***************************************************************************
 static void PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * has_track,
                                 std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr);
 //***************************************************************************
