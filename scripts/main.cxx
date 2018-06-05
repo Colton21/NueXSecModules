@@ -49,7 +49,7 @@ int main(int argc, char *argv[]){
 	        ratio_tolerance
 	        );
 
-	std::ofstream input_config_file;
+	std::ifstream input_config_file;
 	//check if string for input file is empty -
 	//if not empty try to open file
 	if(using_default_config == false)
@@ -57,7 +57,23 @@ int main(int argc, char *argv[]){
 		input_config_file.open(input_config_file_name);
 		if(!input_config_file.is_open())
 		{
+			std::cout << "*** \t File did not open! \t ***" << std::endl;
 			using_default_config = true;
+		}
+		if(input_config_file.is_open())
+		{
+			std::cout << "*** \t File Opened \t *** " << std::endl;
+			std::string line;
+			while (!input_config_file.eof())
+			{
+				std::getline (input_config_file, line);
+				if(!line.empty())
+				{
+					input_config.push_back(std::stof(line));
+				}
+			}
+			input_config_file.close();
+			std::cout << "*** \t File Closed \t *** " << std::endl;
 		}
 	}
 
@@ -110,6 +126,9 @@ int main(int argc, char *argv[]){
 		{
 			std::cout << "Running with MC, EXT, and Data" << std::endl;
 			_selection_instance.xsecSelection::selection::make_selection(file1, file2, file3, config, results_v);
+			for(auto const results : * results_v) {std::cout << std::get<0>(results) << ", "
+				                                         << std::get<1>(results) << ", "
+				                                         << std::get<2>(results) << std::endl; }
 			return 0;
 		}
 	}

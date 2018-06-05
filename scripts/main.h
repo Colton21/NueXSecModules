@@ -4,6 +4,9 @@
 #include "selection.h"
 #include "utility.h"
 
+#include <iostream>
+#include <fstream>
+
 //These values are the defaults and will run if no parameter list is given
 
 //*******************

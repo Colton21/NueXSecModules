@@ -2229,9 +2229,37 @@ void selection::make_selection( const char * _file1,
 	                                intime_scale_factor, data_scale_factor,                                     "Track Containment");
 	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                        "Track Containment");
 
+	//***********************************************************************************************************************
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
 	                                            intime_scale_factor, data_scale_factor, "In Time", results_v);
-
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "PE Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Reco Nue", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "In FV", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Vtx-to-Flash", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Shwr-to-TPCO", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Trk-to-TPCO", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Hit Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_collection_counter_v, intime_hit_threshold_collection_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "YPlane Hit Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Open Angle", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "dE / dx", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, secondary_shower_counter_v, intime_secondary_shower_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, ">1 Shower TPCO Dist", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_lengthRatio_counter_v, intime_hit_lengthRatio_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Hit Length Ratio", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "TrkLen/ShwrLen Rati", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, "Track Containment", results_v);
 
 	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 	//*************************************************************************************************************************
