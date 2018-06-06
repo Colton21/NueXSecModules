@@ -56,6 +56,7 @@ python/selection_output.txt
 python/run_subrun_list.txt
 python/run_subrun_list_data.txt
 python/run_subrun_list_intime.txt
+python/config.txt
 *_dict.cxx
 *.rootmap
 scripts/post_cut_v_dump.txt
