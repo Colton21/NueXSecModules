@@ -37,6 +37,8 @@ loop_cut = []
 
 for cut in range(num_cuts):
 
+    print "Iteration: ", cut
+
     f = open('config.txt', 'w')
 
     # write the value configurations here
@@ -173,7 +175,7 @@ plt.plot(loop_cut, efficiency_final, 'ko')
 f1_axes = figure_1.add_subplot(111)
 f1_axes.set_title("Efficiency vs Hit Threshold")
 f1_axes.set_autoscaley_on(False)
-f1_axes.set_ylim([0, 20])
+f1_axes.set_ylim([6, 14])
 f1_axes.set_xlabel("Hit Threshold")
 f1_axes.set_xlim([-10, 310])
 f1_axes.set_ylabel("Efficiency")
@@ -184,7 +186,7 @@ plt.plot(loop_cut, purity_final, 'bo')
 f2_axes = figure_2.add_subplot(111)
 f2_axes.set_title("Purity vs Hit Threshold")
 f2_axes.set_autoscaley_on(False)
-f2_axes.set_ylim([40, 60])
+f2_axes.set_ylim([52, 60])
 f2_axes.set_xlabel("Hit Threshold")
 f2_axes.set_xlim([-10, 310])
 f2_axes.set_ylabel("Purity")

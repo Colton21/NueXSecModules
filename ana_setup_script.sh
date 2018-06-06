@@ -14,6 +14,8 @@ MRBSOURCE=$MRB_SOURCE
 MODULETOP=${MRBSOURCE}/uboonecode/uboone/NueXSecModules
 MODULEANA=${MODULETOP}/xsecAna/
 MODULESCRIPT=${MODULETOP}/scripts/
+MODULEPYTHON=${MODULETOP}/python/
+
 #LIBRARYNAME1=libxsecAna.so 
 #LIBRARYNAME2=libxsecAna_dict.so 
 

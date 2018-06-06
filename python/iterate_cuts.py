@@ -8,6 +8,10 @@
 # Including any file is optional
 # ************************************
 
+# This is a template version to iterate over a particular cut
+#(for development purposes we're not adding subsequent loops over all paremters
+# because this would be kind of slow)
+
 # This version of the python script runs the slimmed version of the
 # selection by default --> this means no histograms will be generated
 
