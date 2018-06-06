@@ -8,17 +8,23 @@ int main(int argc, char *argv[]){
 	const char * input_config_file_name;
 
 	bool using_default_config = true;
+	bool using_slim_version = false;
 
 	//start after name of .exe
 	for(int i =1; i < argc; i++)
 	{
 		auto const arg = argv[i];
-		std::cout << arg << std::endl;
+		std::cout << arg << std::endl; //this is for debugging
+		if(strcmp(arg, "--slim") == 0)
+		{
+			using_slim_version = true;
+			std::cout << " *** \t Running with Slimmed Selection \t *** " << std::endl;
+		}
 		if(strcmp(arg, "-c") == 0)
 		{
 			using_default_config = false;
 			input_config_file_name = argv[i+1];
-			break;
+			//break; //is the break necessary?
 		}
 	}
 
@@ -29,6 +35,7 @@ int main(int argc, char *argv[]){
 	std::vector<double> input_config;
 
 	xsecSelection::selection _selection_instance;
+	xsecSelection::selection_slim _selection_slim_instance;
 
 	std::vector<double> default_config = utility::configure_cuts(
 	        _x1, _x2, _y1, _y2, _z1, _z2,
@@ -82,47 +89,30 @@ int main(int argc, char *argv[]){
 
 	std::vector<std::tuple<double, double, std::string> > * results_v = new std::vector<std::tuple<double, double, std::string> >;
 
-	if(using_default_config == true)
+	double _argc = argc;
+	if(using_slim_version == true)    {_argc = _argc - 1; }//this is to account for the "--slim"
+	if(using_default_config == false) {_argc = _argc - 2; }//this is to account for the "-c" and "config_file"
+
+	if(_argc == 2)
 	{
-		std::cout << "\n --- Using Default Configuration --- \n" << std::endl;
-		if(argc == 2)
-		{
-			std::cout << "Running without in-time cosmics " << std::endl;
-			std::cout << "Running without data" << std::endl;
-			_selection_instance.xsecSelection::selection::make_selection(file1, "empty", "empty", config, results_v);
-		}
-		if(argc == 3)
-		{
-			std::cout << "Running without data " << std::endl;
-			_selection_instance.xsecSelection::selection::make_selection(file1, file2, "empty", config, results_v);
-		}
-		if(argc == 4)
-		{
-			std::cout << "Running with MC, EXT, and Data" << std::endl;
-			_selection_instance.xsecSelection::selection::make_selection(file1, file2, file3, config, results_v);
-		}
+		std::cout << "Running without in-time cosmics " << std::endl;
+		std::cout << "Running without data" << std::endl;
+		if(using_slim_version == false) {_selection_instance.xsecSelection::selection::make_selection(file1, "empty", "empty", config, results_v); }
+		if(using_slim_version == true)  {_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(file1, "empty", "empty", config, results_v); }
+	}
+	if(_argc == 3)
+	{
+		std::cout << "Running without data " << std::endl;
+		if(using_slim_version == false) {_selection_instance.xsecSelection::selection::make_selection(file1, file2, "empty", config, results_v); }
+		if(using_slim_version == true)  {_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(file1, file2, "empty", config, results_v); }
+	}
+	if(_argc == 4)
+	{
+		std::cout << "Running with MC, EXT, and Data" << std::endl;
+		if(using_slim_version == false) {_selection_instance.xsecSelection::selection::make_selection(file1, file2, file3, config, results_v); }
+		if(using_slim_version == true)  {_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(file1, file2, file3, config, results_v); }
 	}
 
-	if(using_default_config == false)
-	{
-		std::cout << "\n --- Using Input Configuration --- \n" << std::endl;
-		if(argc == 4)
-		{
-			std::cout << "Running without in-time cosmics " << std::endl;
-			std::cout << "Running without data" << std::endl;
-			_selection_instance.xsecSelection::selection::make_selection(file1, "empty", "empty", config, results_v);
-		}
-		if(argc == 5)
-		{
-			std::cout << "Running without data " << std::endl;
-			_selection_instance.xsecSelection::selection::make_selection(file1, file2, "empty", config, results_v);
-		}
-		if(argc == 6)
-		{
-			std::cout << "Running with MC, EXT, and Data" << std::endl;
-			_selection_instance.xsecSelection::selection::make_selection(file1, file2, file3, config, results_v);
-		}
-	}
 
 	//write results from selection to output file
 	//python script does most of the file managing, since script needs to be contained

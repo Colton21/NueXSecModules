@@ -8,7 +8,32 @@
 #include <iostream>
 #include <fstream>
 
+/*
+
+   This is the main header for the seleciton functions
+
+   details about the ordering of the selection cuts can be most easily found in
+   selection_slim.cxx.
+
+   The slim and non-slim selection simply have the difference of creating plots (histograms)
+
+   The main controls mostly the file i/o and handling inputs from the python scrips
+   which can help with conveniently running the selection.
+
+   To investigate exactly how each cut functions, look at selection_cuts.h/.cxx
+
+   selection_functions / selection_functions_data operate primarily as classes to hold
+   functions used in filling histograms
+
+   You can always run the selection "manually" from the main.exe created in the makefile,
+   just be careful of formatting the arguments (look in main.cxx). The scripts in
+   ../python/ handle some of the arguments for you.
+
+ */
+
+
 //These values are the defaults and will run if no parameter list is given
+//The parameter list is generated when running any of the python scripts
 
 //*******************
 // Cut Values
