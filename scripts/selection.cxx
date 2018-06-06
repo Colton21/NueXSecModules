@@ -450,6 +450,15 @@ void selection::make_selection( const char * _file1,
 			                                                                           _verbose, h_leading_shwr_length_data_after);
 			_data_functions_instance.selection_functions_data::LeadingShowerTrackLengthsData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                                 h_leading_shwr_trk_length_data_after);
+
+			//***************************************************************
+			//*** contained track cut *** //
+			//**************************************************************
+
+			_cuts_instance.selection_cuts::ContainedTracksCut(data_tpc_object_container_v, passed_tpco_data, _verbose, fv_boundary_v, true);
+			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_track_containment_counter_v);
+
 			//*********** Data *********
 			_functions_instance.selection_functions::FillPostCutVector(data_tpc_object_container_v, passed_tpco_data, post_cuts_v_data);
 			//*************************************

@@ -379,6 +379,14 @@ void selection_slim::make_selection_slim( const char * _file1,
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_trk_len_shwr_len_ratio_counter_v);
 
+			//***************************************************************
+			//*** contained track cut *** //
+			//**************************************************************
+
+			_cuts_instance.selection_cuts::ContainedTracksCut(data_tpc_object_container_v, passed_tpco_data, _verbose, fv_boundary_v, true);
+			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
+			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_track_containment_counter_v);
+
 			//*********** Data *********
 			_functions_instance.selection_functions::FillPostCutVector(data_tpc_object_container_v, passed_tpco_data, post_cuts_v_data);
 			//*************************************
