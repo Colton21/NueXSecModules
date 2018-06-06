@@ -2,6 +2,7 @@
 #define MAIN_h
 
 #include "selection.h"
+#include "selection_slim.h"
 #include "utility.h"
 
 #include <iostream>
