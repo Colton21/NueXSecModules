@@ -903,7 +903,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
 					                                      this_shower, shower_cluster_dqdx, shower_cluster_dq, shower_cluster_dx, _verbose);
 					xsecAna::utility::ConstructShowerdQdXAlternative(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
-					                                                 this_shower, shower_cluster_dqdx_alt, shower_cluster_dq_alt, shower_cluster_dx_alt, _verbose);
+					                                                 this_shower, shower_cluster_dqdx_alt, shower_cluster_dq_alt, shower_cluster_dx_alt, dqdx_cali, _verbose);
 					//then dEdx!
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_alt, shower_dEdx_alt);
