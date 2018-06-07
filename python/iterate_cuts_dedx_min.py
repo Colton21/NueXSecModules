@@ -30,7 +30,7 @@ call(["rm", "-rf", "selection_output.txt"])
 # Now for the code which calls the c++ code multiple times with a varied
 # input parameter
 
-num_cuts = 22
+num_cuts = 19
 run = 0
 
 loop_cut = []
@@ -83,12 +83,7 @@ for cut in range(num_cuts):
 
     # leading shower hit thresholds
     shwr_hit_threshold = 200.0
-    #shwr_hit_threshold_collection = 80.0
-
-    #***************************************************
-    # hit threshold is a value we'd like to investigate:
-    shwr_hit_threshold_collection = 0.0 + (run * 5.0)
-    loop_cut.append(shwr_hit_threshold_collection)
+    shwr_hit_threshold_collection = 80.0
 
     write_to_file(f, shwr_hit_threshold)
     write_to_file(f, shwr_hit_threshold_collection)
@@ -101,8 +96,13 @@ for cut in range(num_cuts):
     write_to_file(f, tolerance_open_angle_max)
 
     # leading shower dE/dx
-    tolerance_dedx_min = 1.4
+    #tolerance_dedx_min = 1.4
     tolerance_dedx_max = 3.0
+
+    #***************************************************
+    # dedx min is a value we'd like to investigate:
+    tolerance_dedx_min = 0.0 + (run * 0.1)
+    loop_cut.append(tolerance_dedx_min)
 
     write_to_file(f, tolerance_dedx_min)
     write_to_file(f, tolerance_dedx_max)
@@ -160,7 +160,7 @@ import csv
 with open('selection_output.txt', 'rb') as out_file:
     reader = csv.reader(out_file)
     for row in reader:
-        if(row[0] == "YPlane Hit Threshold"):
+        if(row[0] == " dE / dx "):
             efficiency.append(float(row[1]) * 100.0)
             purity.append(float(row[2]) * 100.0)
         if(row[0] == "Track Containment"):
@@ -171,24 +171,24 @@ with open('selection_output.txt', 'rb') as out_file:
 figure_1 = plt.figure()
 plt.plot(loop_cut, efficiency_final, 'ko')
 f1_axes = figure_1.add_subplot(111)
-f1_axes.set_title("Efficiency vs Hit Threshold")
+f1_axes.set_title("Efficiency vs Min dE/dx")
 f1_axes.set_autoscaley_on(False)
-f1_axes.set_ylim([6, 14])
-f1_axes.set_xlabel("Hit Threshold Collection")
-f1_axes.set_xlim([-10, 120])
+f1_axes.set_ylim([0, 20])
+f1_axes.set_xlabel("Min dE/dx (Collection Plane)")
+f1_axes.set_xlim([-10, 1.8])
 f1_axes.set_ylabel("Efficiency")
-figure_1.savefig("plots/final_efficiency_hits_collection.pdf")
+figure_1.savefig("plots/final_efficiency_dedx_min.pdf")
 
 figure_2 = plt.figure()
 plt.plot(loop_cut, purity_final, 'bo')
 f2_axes = figure_2.add_subplot(111)
-f2_axes.set_title("Purity vs Hit Threshold")
+f2_axes.set_title("Purity vs Min dE/dx")
 f2_axes.set_autoscaley_on(False)
-f2_axes.set_ylim([50, 60])
-f2_axes.set_xlabel("Hit Threshold Collection")
-f2_axes.set_xlim([-10, 120])
+f2_axes.set_ylim([40, 60])
+f2_axes.set_xlabel("Min dE/dx (Collection Plane)")
+f2_axes.set_xlim([-10, 1.8])
 f2_axes.set_ylabel("Purity")
-figure_2.savefig("plots/final_purity_hits_collection.pdf")
+figure_2.savefig("plots/final_purity_dedx_min.pdf")
 
 
 # then delete the file, the c++ code appends values so needs to be fresh
