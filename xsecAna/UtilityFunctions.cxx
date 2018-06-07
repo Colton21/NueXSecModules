@@ -411,6 +411,7 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
                                              std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
                                              const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx,
                                              std::vector< std::vector < double > > & shower_cluster_dq, std::vector< std::vector < double > > & shower_cluster_dx,
+                                             std::vector<double> & dqdx_cali,
                                              bool _verbose)
 {
 	std::vector<double> _gain;
@@ -427,6 +428,8 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 
 	TVector3 shower_dir(shower->Direction().X(), shower->Direction().Y(),
 	                    shower->Direction().Z());
+
+	double start_corr, middle_corr, end_corr;
 
 	const double x_start = shower->ShowerStart().X();
 	const double y_start = shower->ShowerStart().Y();
@@ -497,40 +500,16 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 		if(shower_dir_z >= 0)
 		{
 			//Roberto reverses the hit vector -- no reason to right? (He doesn't use it)
-			_cluster_axis =
-			{
-				cos(cluster->StartAngle()),
-				sin(cluster->StartAngle())
-			};
-			_cluster_start =
-			{
-				cluster->StartWire() * wire_spacing - tolerance * cos(cluster->StartAngle()),
-				start_x - tolerance * sin(cluster->StartAngle())
-			};
-			_cluster_end =
-			{
-				cluster->EndWire() * wire_spacing,
-				end_x
-			};
+			_cluster_axis = { cos(cluster->StartAngle()), sin(cluster->StartAngle()) };
+			_cluster_start = { cluster->StartWire() * wire_spacing - tolerance * cos(cluster->StartAngle()), x_start - tolerance * sin(cluster->StartAngle()) };
+			_cluster_end = { cluster->EndWire() * wire_spacing, x_end };
 		}
 		//I think this is making the assumption that anything with -z is mis-reconstructed as backwards going?
 		if(shower_dir_z < 0)
 		{
-			_cluster_axis =
-			{
-				-1 * cos(cluster->StartAngle()),
-				-1 * sin(cluster->StartAngle())
-			};
-			_cluster_start =
-			{
-				cluster->EndWire() * wire_spacing + tolerance * cos(cluster->StartAngle()),
-				end_x + tolerance * sin(cluster->StartAngle())
-			};
-			_cluster_end =
-			{
-				cluster->StartWire() * wire_spacing,
-				start_x
-			};
+			_cluster_axis = { -1 * cos(cluster->StartAngle()), -1 * sin(cluster->StartAngle()) };
+			_cluster_start = { cluster->EndWire() * wire_spacing + tolerance * cos(cluster->StartAngle()), x_end + tolerance * sin(cluster->StartAngle()) };
+			_cluster_end = { cluster->StartWire() * wire_spacing, x_start };
 		}
 
 		// const int cluster_start_wire = cluster->StartWire();
