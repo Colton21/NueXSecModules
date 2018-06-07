@@ -668,18 +668,34 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			std::vector < std::vector< double > > shower_cluster_dqdx;
 			std::vector < std::vector< double > > shower_cluster_dq;
 			std::vector < std::vector< double > > shower_cluster_dx;
+
+			std::vector < std::vector< double > > shower_cluster_dqdx_alt;
+			std::vector < std::vector< double > > shower_cluster_dq_alt;
+			std::vector < std::vector< double > > shower_cluster_dx_alt;
+
 			std::vector<double> shower_dEdx;
+			std::vector<double> shower_dEdx_alt;
 
 			shower_cluster_dqdx.resize(num_clusters);
 			shower_cluster_dq.resize(num_clusters);
 			shower_cluster_dx.resize(num_clusters);
+
+			shower_cluster_dqdx_alt.resize(num_clusters);
+			shower_cluster_dq_alt.resize(num_clusters);
+			shower_cluster_dx_alt.resize(num_clusters);
+
 			shower_dEdx.resize(3, 0);
+			shower_dEdx_alt.resize(3, 0);
 
 			for(int clust = 0; clust < num_clusters; clust++)
 			{
 				shower_cluster_dqdx.at(clust).resize(3, 0);
 				shower_cluster_dq.at(clust).resize(3, 0);
 				shower_cluster_dx.at(clust).resize(3, 0);
+
+				shower_cluster_dqdx_alt.at(clust).resize(3, 0);
+				shower_cluster_dq_alt.at(clust).resize(3, 0);
+				shower_cluster_dx_alt.at(clust).resize(3, 0);
 			}
 
 
@@ -884,8 +900,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					//trying to do dqdx!
 					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
 					                                      this_shower, shower_cluster_dqdx, shower_cluster_dq, shower_cluster_dx, _verbose);
+					xsecAna::utility::ConstructShowerdQdXAlternative(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
+					                                                 this_shower, shower_cluster_dqdx_alt, shower_cluster_dq_alt, shower_cluster_dx_alt, _verbose);
 					//then dEdx!
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
+					xsecAna::utility::ConvertdEdx(shower_cluster_dqdx_alt, shower_dEdx_alt);
 					// for(auto const cluster_dqdx : shower_cluster_dqdx)
 					// {
 					//      //cluster dqdx is size 3 - one for each plane
@@ -925,6 +944,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetPfpClusterdQ(shower_cluster_dq);
 			particle_container.SetPfpClusterdX(shower_cluster_dx);
 			particle_container.SetPfpdEdx(shower_dEdx);
+
+			particle_container.SetPfpClusterdQdx_alt(shower_cluster_dqdx_alt);
+			particle_container.SetPfpClusterdQ_alt(shower_cluster_dq_alt);
+			particle_container.SetPfpClusterdX_alt(shower_cluster_dx_alt);
+			particle_container.SetPfpdEdx_alt(shower_dEdx_alt);
 
 			tpc_object_container.AddParticle(particle_container);
 
