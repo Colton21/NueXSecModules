@@ -419,9 +419,9 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 		if(flash_v.at(5) >= 50) {flash_counter++; }
 		if(flash_v.at(5) == 0) {out_time_counter++; }
 	}
-	std::cout << "Largest Flashes >= 50 PE              : " << flash_counter << std::endl;
-	std::cout << "Largest Flashes Out-Time or Too Small : " << out_time_counter << std::endl;
-	std::cout << "Largest Flash Vector Size             : " << largest_flash_v_v->size() << std::endl;
+	// std::cout << "Largest Flashes >= 50 PE              : " << flash_counter << std::endl;
+	// std::cout << "Largest Flashes Out-Time or Too Small : " << out_time_counter << std::endl;
+	// std::cout << "Largest Flash Vector Size             : " << largest_flash_v_v->size() << std::endl;
 }
 //***************************************************************************
 void selection_cuts::flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
