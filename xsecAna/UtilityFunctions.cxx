@@ -411,8 +411,7 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
                                              std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
                                              const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx,
                                              std::vector< std::vector < double > > & shower_cluster_dq, std::vector< std::vector < double > > & shower_cluster_dx,
-                                             std::vector<double> & dqdx_cali,
-                                             bool _verbose)
+                                             std::vector<double> & dqdx_cali, bool _verbose)
 {
 	std::vector<double> _gain;
 

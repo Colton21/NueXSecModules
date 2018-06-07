@@ -698,6 +698,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				shower_cluster_dx_alt.at(clust).resize(3, 0);
 			}
 
+			std::vector<double> dqdx_cali;
+			dqdx_cali.resize(3, 0);
 
 
 			const int pfpPdg = pfp->PdgCode();
@@ -904,7 +906,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					                                                 this_shower, shower_cluster_dqdx_alt, shower_cluster_dq_alt, shower_cluster_dx_alt, _verbose);
 					//then dEdx!
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
-					xsecAna::utility::ConvertdEdx(shower_cluster_dqdx_alt, shower_dEdx_alt);
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_alt, shower_dEdx_alt);
 					// for(auto const cluster_dqdx : shower_cluster_dqdx)
 					// {
 					//      //cluster dqdx is size 3 - one for each plane
