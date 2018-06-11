@@ -6554,4 +6554,149 @@ void selection_functions::IsContainedPlotInTime(std::vector<xsecAna::TPCObjectCo
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::dEdxCollectionAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                              TH2D * h_dedx_collection_angle_nue_cc,
+                                              TH2D * h_dedx_collection_angle_nue_cc_mixed,
+                                              TH2D * h_dedx_collection_angle_nue_cc_out_fv,
+                                              TH2D * h_dedx_collection_angle_numu_cc,
+                                              TH2D * h_dedx_collection_angle_nc,
+                                              TH2D * h_dedx_collection_angle_cosmic,
+                                              TH2D * h_dedx_collection_angle_nc_pi0,
+                                              TH2D * h_dedx_collection_angle_numu_cc_mixed,
+                                              TH2D * h_dedx_collection_angle_other_mixed,
+                                              TH2D * h_dedx_collection_angle_unmatched     )
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dir_y = leading_shower.pfpDirY();
+		const double leading_dir_z = leading_shower.pfpDirZ();
+		const double leading_angle_collection = atan2(leading_dir_y, leading_dir_z);
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_dedx_collection_angle_nue_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_dedx_collection_angle_nue_cc_out_fv->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_dedx_collection_angle_nue_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_dedx_collection_angle_nue_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_dedx_collection_angle_nue_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_dedx_collection_angle_nue_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_dedx_collection_angle_numu_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_dedx_collection_angle_numu_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_dedx_collection_angle_numu_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_dedx_collection_angle_numu_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_dedx_collection_angle_numu_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nc")
+		{
+			h_dedx_collection_angle_nc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_dedx_collection_angle_nc_pi0->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_dedx_collection_angle_nue_cc_mixed->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			//h_dedx_cuts_numu_cc_mixed->Fill(leading_dedx);
+			h_dedx_collection_angle_numu_cc->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_dedx_collection_angle_cosmic->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_dedx_collection_angle_other_mixed->Fill(leading_dedx, leading_angle_collection);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_dedx_collection_angle_unmatched->Fill(leading_dedx, leading_angle_collection);
+		}
+	}        //end loop tpc objects
+}
+
+void selection_functions::dEdxCollectionAngleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                    TH2D * h_dedx_collection_angle_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dir_y = leading_shower.pfpDirY();
+		const double leading_dir_z = leading_shower.pfpDirZ();
+		const double leading_angle_collection = atan2(leading_dir_y, leading_dir_z);
+		h_dedx_collection_angle_intime->Fill(leading_dedx, leading_angle_collection);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

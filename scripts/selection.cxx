@@ -782,6 +782,8 @@ void selection::make_selection( const char * _file1,
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
 			_functions_instance.selection_functions::PostCutsdEdxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_dedx_cuts_intime);
+			_functions_instance.selection_functions::dEdxCollectionAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                   _verbose, h_dedx_collection_angle_intime);
 
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
@@ -1653,12 +1655,20 @@ void selection::make_selection( const char * _file1,
 		//*********** dEdx cut for the leading shower *********
 		//******************************************************
 		_functions_instance.selection_functions::PostCutsdEdx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                      h_dedx_cuts_nue_cc, h_dedx_cuts_nue_cc_mixed,
+		                                                      h_dedx_cuts_nue_cc,        h_dedx_cuts_nue_cc_mixed,
 		                                                      h_dedx_cuts_nue_cc_out_fv,
-		                                                      h_dedx_cuts_numu_cc, h_dedx_cuts_nc,
-		                                                      h_dedx_cuts_cosmic, h_dedx_cuts_nc_pi0,
+		                                                      h_dedx_cuts_numu_cc,       h_dedx_cuts_nc,
+		                                                      h_dedx_cuts_cosmic,        h_dedx_cuts_nc_pi0,
 		                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
 		                                                      h_dedx_cuts_unmatched);
+
+		_functions_instance.selection_functions::dEdxCollectionAngle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                             h_dedx_collection_angle_nue_cc,        h_dedx_collection_angle_nue_cc_mixed,
+		                                                             h_dedx_collection_angle_nue_cc_out_fv,
+		                                                             h_dedx_collection_angle_numu_cc,       h_dedx_collection_angle_nc,
+		                                                             h_dedx_collection_angle_cosmic,        h_dedx_collection_angle_nc_pi0,
+		                                                             h_dedx_collection_angle_numu_cc_mixed, h_dedx_collection_angle_other_mixed,
+		                                                             h_dedx_collection_angle_unmatched);
 
 		_functions_instance.selection_functions::PostCutsdEdxTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                  h_dedx_cuts_electron, h_dedx_cuts_photon, h_dedx_cuts_proton, h_dedx_cuts_pion,
@@ -4172,6 +4182,28 @@ void selection::make_selection( const char * _file1,
 	                                            h_track_containment_unmatched,
 	                                            h_track_containment_intime, intime_scale_factor / data_scale_factor, "",
 	                                            "Track Containment", "", "../scripts/plots/track_containment.pdf");
+
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_nue_cc, "", "Nue CC - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_nue_cc_out_fv, "", "Nue CC Out FV - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_nue_cc_out_fv.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_nue_cc_mixed, "", "Nue CC Mixed - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_nue_cc_mixed.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_numu_cc, "", "Numu CC - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_numu_cc.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_nc, "", "NC - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_nc.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_nc_pi0, "", "NC Pi 0 - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_nc_pi0.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_cosmic, "", "Cosmic - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_cosmic.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_other_mixed, "", "NC Mixed - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_nc_mixed.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_unmatched, "", "Unmatched - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_unmatched.pdf");
+	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_intime, "", "EXT In-Time - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
+	                                     "../scripts/plots/dedx_collection_angle_intime.pdf");
+
 
 	histogram_functions::Plot1DHistogramGausFit(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_low.pdf");
 	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_med.pdf");

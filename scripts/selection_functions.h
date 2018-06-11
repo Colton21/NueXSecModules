@@ -1048,5 +1048,23 @@ void IsContainedPlotInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object
                            std::vector<double> fv_boundary_v, TH1 * h_track_containment_intime);
 //***************************************************************************
 //***************************************************************************
+void dEdxCollectionAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                         TH2D * h_dedx_collection_angle_nue_cc,
+                         TH2D * h_dedx_collection_angle_nue_cc_mixed,
+                         TH2D * h_dedx_collection_angle_nue_cc_out_fv,
+                         TH2D * h_dedx_collection_angle_numu_cc,
+                         TH2D * h_dedx_collection_angle_nc,
+                         TH2D * h_dedx_collection_angle_cosmic,
+                         TH2D * h_dedx_collection_angle_nc_pi0,
+                         TH2D * h_dedx_collection_angle_numu_cc_mixed,
+                         TH2D * h_dedx_collection_angle_other_mixed,
+                         TH2D * h_dedx_collection_angle_unmatched     );
+void dEdxCollectionAngleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                               TH2D * h_dedx_collection_angle_intime);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

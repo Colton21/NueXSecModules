@@ -1404,6 +1404,20 @@ TH1D * h_low_true_momentum = new TH1D  ("h_low_true_momentum",  "h_low_true_mome
 TH1D * h_med_true_momentum = new TH1D  ("h_med_true_momentum",  "h_med_true_momentum",  20, 0, 4);
 TH1D * h_high_true_momentum = new TH1D ("h_high_true_momentum", "h_high_true_momentum", 20, 0, 4);
 
+TH2D * h_dedx_collection_angle_nue_cc         = new TH2D ("h_dedx_collection_angle_nue_cc",         "h_dedx_collection_nue_cc",         20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_nue_cc_out_fv  = new TH2D ("h_dedx_collection_angle_nue_cc_out_fv",  "h_dedx_collection_nue_cc_out_fv",  20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_nue_cc_mixed   = new TH2D ("h_dedx_collection_angle_nue_cc_mixed",   "h_dedx_collection_nue_cc_mixed",   20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_numu_cc        = new TH2D ("h_dedx_collection_angle_numu_cc",        "h_dedx_collection_numu_cc",        20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_numu_cc_mixed  = new TH2D ("h_dedx_collection_angle_numu_cc_mixed",  "h_dedx_collection_numu_cc_mixed",  20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_nc             = new TH2D ("h_dedx_collection_angle_nc",             "h_dedx_collection_nc",             20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_nc_pi0         = new TH2D ("h_dedx_collection_angle_nc_pi0",         "h_dedx_collection_nc_pi0",         20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_cosmic         = new TH2D ("h_dedx_collection_angle_cosmic",         "h_dedx_collection_cosmic",         20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_other_mixed    = new TH2D ("h_dedx_collection_angle_other_mixed",    "h_dedx_collection_other_mixed",    20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_unmatched      = new TH2D ("h_dedx_collection_angle_unmatched",      "h_dedx_collection_unmatched",      20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_intime         = new TH2D ("h_dedx_collection_angle_intime",         "h_dedx_collection_intime",         20, 0, 10, 20, -3.5, 3.5);
+TH2D * h_dedx_collection_angle_data           = new TH2D ("h_dedx_collection_angle_data",           "h_dedx_collection_data",           20, 0, 10, 20, -3.5, 3.5);
+
+
 }; //end class
 
 }//end namespace
