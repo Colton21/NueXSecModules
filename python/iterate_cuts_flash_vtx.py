@@ -30,7 +30,7 @@ call(["rm", "-rf", "selection_output.txt"])
 # Now for the code which calls the c++ code multiple times with a varied
 # input parameter
 
-num_cuts = 19
+num_cuts = 21
 run = 0
 
 loop_cut = []
@@ -72,6 +72,12 @@ for cut in range(num_cuts):
     # 2D distance between nu-vtx and largest flash centre
     tolerance = 80.0
 
+    #***************************************************
+    # tolerance is a value we'd like to investigate:
+    tolerance = 60.0 + (run * 2)
+    # threshold - scan between 60.0 - 100.0 PE
+    loop_cut.append(threshold)
+
     write_to_file(f, tolerance)
 
     # reco track/shower to nu-vtx distance
@@ -96,13 +102,8 @@ for cut in range(num_cuts):
     write_to_file(f, tolerance_open_angle_max)
 
     # leading shower dE/dx
-    #tolerance_dedx_min = 1.4
+    tolerance_dedx_min = 1.4
     tolerance_dedx_max = 3.0
-
-    #***************************************************
-    # dedx min is a value we'd like to investigate:
-    tolerance_dedx_min = 0.0 + (run * 0.1)
-    loop_cut.append(tolerance_dedx_min)
 
     write_to_file(f, tolerance_dedx_min)
     write_to_file(f, tolerance_dedx_max)
@@ -160,7 +161,7 @@ import csv
 with open('selection_output.txt', 'rb') as out_file:
     reader = csv.reader(out_file)
     for row in reader:
-        if(row[0] == " dE / dx "):
+        if(row[0] == "Vtx-to-Flash"):
             efficiency.append(float(row[1]) * 100.0)
             purity.append(float(row[2]) * 100.0)
         if(row[0] == "Track Containment"):
@@ -171,24 +172,24 @@ with open('selection_output.txt', 'rb') as out_file:
 figure_1 = plt.figure()
 plt.plot(loop_cut, efficiency_final, 'ko')
 f1_axes = figure_1.add_subplot(111)
-f1_axes.set_title("Efficiency vs Min dE/dx")
+f1_axes.set_title("Efficiency vs Vtx-to-Flash")
 f1_axes.set_autoscaley_on(False)
 f1_axes.set_ylim([8, 14])
-f1_axes.set_xlabel("Min dE/dx (Collection Plane)")
-f1_axes.set_xlim([-0.2, 2.2])
+f1_axes.set_xlabel("Vtx-to-Flash [cm]")
+f1_axes.set_xlim([58, 102])
 f1_axes.set_ylabel("Efficiency")
-figure_1.savefig("plots/final_efficiency_dedx_min.pdf")
+figure_1.savefig("plots/final_efficiency_flash_vtx.pdf")
 
 figure_2 = plt.figure()
 plt.plot(loop_cut, purity_final, 'bo')
 f2_axes = figure_2.add_subplot(111)
-f2_axes.set_title("Purity vs Min dE/dx")
+f2_axes.set_title("Purity vs Vtx-to-Flash")
 f2_axes.set_autoscaley_on(False)
 f2_axes.set_ylim([42, 58])
-f2_axes.set_xlabel("Min dE/dx (Collection Plane)")
-f2_axes.set_xlim([-0.2, 2.2])
+f2_axes.set_xlabel("Vtx-to-Flash [cm]")
+f2_axes.set_xlim([58, 102])
 f2_axes.set_ylabel("Purity")
-figure_2.savefig("plots/final_purity_dedx_min.pdf")
+figure_2.savefig("plots/final_purity_flash_vtx.pdf")
 
 
 # then delete the file, the c++ code appends values so needs to be fresh
