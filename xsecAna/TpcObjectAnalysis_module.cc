@@ -248,7 +248,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	_sr_tree->Branch("begintime",          &_sr_begintime,          "begintime/D");
 	_sr_tree->Branch("endtime",            &_sr_endtime,            "endtime/D");
 	_sr_tree->Branch("pot",                &_sr_pot,                "pot/D");
-	_run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
+	_run_subrun_list_file.open ("run_subrun_list.txt", std::ofstream::out | std::ofstream::trunc);
 
 	_potsum_producer_mc             = p.get<std::string>("POTSummaryProducerMC");
 	_potsum_producer_data           = p.get<std::string>("POTSummaryProducerData");

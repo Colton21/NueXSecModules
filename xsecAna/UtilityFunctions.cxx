@@ -446,35 +446,35 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 
 	shower_dir.SetMag(1.0);  //re-set back to 1cm
 
-	const lariov::TPCEnergyCalibProvider& energyCalibProvider = art::ServiceHandle<lariov::TPCEnergyCalibService>()->GetProvider();
-
-	for (int plane_nr = 0; plane_nr < 3; plane_nr++)
-	{
-		float yzcorrection_start = energyCalibProvider.YZdqdxCorrection(plane_nr, y_start, z_start);
-		float xcorrection_start = energyCalibProvider.XdqdxCorrection(plane_nr, x_start);
-		if (!yzcorrection_start)
-			yzcorrection_start = 1.0;
-		if (!xcorrection_start)
-			xcorrection_start = 1.0;
-		start_corr = yzcorrection_start * xcorrection_start;
-
-		float yzcorrection_middle = energyCalibProvider.YZdqdxCorrection(plane_nr, y_mid, z_mid);
-		float xcorrection_middle = energyCalibProvider.XdqdxCorrection(plane_nr, x_mid);
-		if (!yzcorrection_middle)
-			yzcorrection_middle = 1.0;
-		if (!xcorrection_middle)
-			xcorrection_middle = 1.0;
-		middle_corr = yzcorrection_middle * xcorrection_middle;
-
-		float yzcorrection_end = energyCalibProvider.YZdqdxCorrection(plane_nr, y_end, z_end);
-		float xcorrection_end = energyCalibProvider.XdqdxCorrection(plane_nr, x_end);
-		if (!yzcorrection_end)
-			yzcorrection_end = 1.0;
-		if (!xcorrection_end)
-			xcorrection_end = 1.0;
-		end_corr = yzcorrection_end * xcorrection_end;
-		dqdx_cali[plane_nr] = (start_corr + middle_corr + end_corr) / 3;
-	}
+	// const lariov::TPCEnergyCalibProvider& energyCalibProvider = art::ServiceHandle<lariov::TPCEnergyCalibService>()->GetProvider();
+	//
+	// for (int plane_nr = 0; plane_nr < 3; plane_nr++)
+	// {
+	//      float yzcorrection_start = energyCalibProvider.YZdqdxCorrection(plane_nr, y_start, z_start);
+	//      float xcorrection_start = energyCalibProvider.XdqdxCorrection(plane_nr, x_start);
+	//      if (!yzcorrection_start)
+	//              yzcorrection_start = 1.0;
+	//      if (!xcorrection_start)
+	//              xcorrection_start = 1.0;
+	//      start_corr = yzcorrection_start * xcorrection_start;
+	//
+	//      float yzcorrection_middle = energyCalibProvider.YZdqdxCorrection(plane_nr, y_mid, z_mid);
+	//      float xcorrection_middle = energyCalibProvider.XdqdxCorrection(plane_nr, x_mid);
+	//      if (!yzcorrection_middle)
+	//              yzcorrection_middle = 1.0;
+	//      if (!xcorrection_middle)
+	//              xcorrection_middle = 1.0;
+	//      middle_corr = yzcorrection_middle * xcorrection_middle;
+	//
+	//      float yzcorrection_end = energyCalibProvider.YZdqdxCorrection(plane_nr, y_end, z_end);
+	//      float xcorrection_end = energyCalibProvider.XdqdxCorrection(plane_nr, x_end);
+	//      if (!yzcorrection_end)
+	//              yzcorrection_end = 1.0;
+	//      if (!xcorrection_end)
+	//              xcorrection_end = 1.0;
+	//      end_corr = yzcorrection_end * xcorrection_end;
+	//      dqdx_cali[plane_nr] = (start_corr + middle_corr + end_corr) / 3;
+	// }
 
 	const double fromTickToNs = 4.8 / detprop->ReadOutWindowSize() * 1e6;
 	const double wire_spacing = 0.3;
