@@ -431,14 +431,14 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 	//double start_corr, middle_corr, end_corr;
 
 	const double x_start = shower->ShowerStart().X();
-	const double y_start = shower->ShowerStart().Y();
-	const double z_start = shower->ShowerStart().Z();
+	//const double y_start = shower->ShowerStart().Y();
+	//const double z_start = shower->ShowerStart().Z();
 
 	shower_dir.SetMag(2.0);  //this sets its magnitude to 2cm ** I think...**
 
 	const double x_mid = x_start + shower_dir.X();
-	const double y_mid = y_start + shower_dir.Y();
-	const double z_mid = z_start + shower_dir.Z();
+	//const double y_mid = y_start + shower_dir.Y();
+	//const double z_mid = z_start + shower_dir.Z();
 
 	const double x_end = x_mid + shower_dir.X();
 	//const double y_end = y_mid + shower_dir.Y();
