@@ -435,7 +435,17 @@ void selection_cuts::flashRecoVtxDist(std::vector< double > largest_flash_v, std
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
-		const bool is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tolerance);
+		bool is_close;
+		//flash is upstream
+		if(tpc_vtx_z < largest_flash_v.at(1))
+		{
+			is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tolerance);
+		}
+		//flash is downstream
+		if(tpc_vtx_z >= largest_flash_v.at(1))
+		{
+			is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), (tolerance - 20));
+		}
 		if(is_close == 1)//true
 		{
 			//passed_tpco->at(i).first = 1;
