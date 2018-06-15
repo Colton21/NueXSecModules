@@ -1445,6 +1445,65 @@ TH2D * h_dedx_collection_angle_intime         = new TH2D ("h_dedx_collection_ang
 TH2D * h_dedx_collection_angle_data           = new TH2D ("h_dedx_collection_angle_data",           "h_dedx_collection_data",           20, 0, 10, 20, -3.5, 3.5);
 
 
+TH1D * h_mc_ele_e_1  = new TH1D ("h_mc_ele_e_1",  "h_mc_ele_e_1",  20, 0, 5);
+TH1D * h_mc_ele_e_2  = new TH1D ("h_mc_ele_e_2",  "h_mc_ele_e_2",  20, 0, 5);
+TH1D * h_mc_ele_e_3  = new TH1D ("h_mc_ele_e_3",  "h_mc_ele_e_3",  20, 0, 5);
+TH1D * h_mc_ele_e_4  = new TH1D ("h_mc_ele_e_4",  "h_mc_ele_e_4",  20, 0, 5);
+TH1D * h_mc_ele_e_5  = new TH1D ("h_mc_ele_e_5",  "h_mc_ele_e_5",  20, 0, 5);
+TH1D * h_mc_ele_e_6  = new TH1D ("h_mc_ele_e_6",  "h_mc_ele_e_6",  20, 0, 5);
+TH1D * h_mc_ele_e_7  = new TH1D ("h_mc_ele_e_7",  "h_mc_ele_e_7",  20, 0, 5);
+TH1D * h_mc_ele_e_8  = new TH1D ("h_mc_ele_e_8",  "h_mc_ele_e_8",  20, 0, 5);
+TH1D * h_mc_ele_e_9  = new TH1D ("h_mc_ele_e_9",  "h_mc_ele_e_9",  20, 0, 5);
+TH1D * h_mc_ele_e_10 = new TH1D ("h_mc_ele_e_10", "h_mc_ele_e_10", 20, 0, 5);
+TH1D * h_mc_ele_e_11 = new TH1D ("h_mc_ele_e_11", "h_mc_ele_e_11", 20, 0, 5);
+TH1D * h_mc_ele_e_12 = new TH1D ("h_mc_ele_e_12", "h_mc_ele_e_12", 20, 0, 5);
+TH1D * h_mc_ele_e_13 = new TH1D ("h_mc_ele_e_13", "h_mc_ele_e_13", 20, 0, 5);
+
+TH1D * h_reco_ele_e_1  = new TH1D ("h_reco_ele_e_1",  "h_reco_ele_e_1",  20, 0, 5);
+TH1D * h_reco_ele_e_2  = new TH1D ("h_reco_ele_e_2",  "h_reco_ele_e_2",  20, 0, 5);
+TH1D * h_reco_ele_e_3  = new TH1D ("h_reco_ele_e_3",  "h_reco_ele_e_3",  20, 0, 5);
+TH1D * h_reco_ele_e_4  = new TH1D ("h_reco_ele_e_4",  "h_reco_ele_e_4",  20, 0, 5);
+TH1D * h_reco_ele_e_5  = new TH1D ("h_reco_ele_e_5",  "h_reco_ele_e_5",  20, 0, 5);
+TH1D * h_reco_ele_e_6  = new TH1D ("h_reco_ele_e_6",  "h_reco_ele_e_6",  20, 0, 5);
+TH1D * h_reco_ele_e_7  = new TH1D ("h_reco_ele_e_7",  "h_reco_ele_e_7",  20, 0, 5);
+TH1D * h_reco_ele_e_8  = new TH1D ("h_reco_ele_e_8",  "h_reco_ele_e_8",  20, 0, 5);
+TH1D * h_reco_ele_e_9  = new TH1D ("h_reco_ele_e_9",  "h_reco_ele_e_9",  20, 0, 5);
+TH1D * h_reco_ele_e_10 = new TH1D ("h_reco_ele_e_10", "h_reco_ele_e_10", 20, 0, 5);
+TH1D * h_reco_ele_e_11 = new TH1D ("h_reco_ele_e_11", "h_reco_ele_e_11", 20, 0, 5);
+TH1D * h_reco_ele_e_12 = new TH1D ("h_reco_ele_e_12", "h_reco_ele_e_12", 20, 0, 5);
+TH1D * h_reco_ele_e_13 = new TH1D ("h_reco_ele_e_13", "h_reco_ele_e_13", 20, 0, 5);
+
+TH2D * h_mc_reco_ele_e_1  = new TH2D ("h_mc_reco_ele_e_1",  "h_mc_reco_ele_e_1",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_2  = new TH2D ("h_mc_reco_ele_e_2",  "h_mc_reco_ele_e_2",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_3  = new TH2D ("h_mc_reco_ele_e_3",  "h_mc_reco_ele_e_3",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_4  = new TH2D ("h_mc_reco_ele_e_4",  "h_mc_reco_ele_e_4",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_5  = new TH2D ("h_mc_reco_ele_e_5",  "h_mc_reco_ele_e_5",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_6  = new TH2D ("h_mc_reco_ele_e_6",  "h_mc_reco_ele_e_6",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_7  = new TH2D ("h_mc_reco_ele_e_7",  "h_mc_reco_ele_e_7",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_8  = new TH2D ("h_mc_reco_ele_e_8",  "h_mc_reco_ele_e_8",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_9  = new TH2D ("h_mc_reco_ele_e_9",  "h_mc_reco_ele_e_9",  20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_10 = new TH2D ("h_mc_reco_ele_e_10", "h_mc_reco_ele_e_10", 20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_11 = new TH2D ("h_mc_reco_ele_e_11", "h_mc_reco_ele_e_11", 20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_12 = new TH2D ("h_mc_reco_ele_e_12", "h_mc_reco_ele_e_12", 20, 0, 5, 20, 0, 5);
+TH2D * h_mc_reco_ele_e_13 = new TH2D ("h_mc_reco_ele_e_13", "h_mc_reco_ele_e_13", 20, 0, 5, 20, 0, 5);
+
+//
+/*
+   TH1D * h_mc_ele_e_1  = new TH1D ("h_mc_ele_e_1",  "h_mc_ele_e_1",  20, 0, 5);
+   TH1D * h_mc_ele_e_2  = new TH1D ("h_mc_ele_e_2",  "h_mc_ele_e_2",  20, 0, 5);
+   TH1D * h_mc_ele_e_3  = new TH1D ("h_mc_ele_e_3",  "h_mc_ele_e_3",  20, 0, 5);
+   TH1D * h_mc_ele_e_4  = new TH1D ("h_mc_ele_e_4",  "h_mc_ele_e_4",  20, 0, 5);
+   TH1D * h_mc_ele_e_5  = new TH1D ("h_mc_ele_e_5",  "h_mc_ele_e_5",  20, 0, 5);
+   TH1D * h_mc_ele_e_6  = new TH1D ("h_mc_ele_e_6",  "h_mc_ele_e_6",  20, 0, 5);
+   TH1D * h_mc_ele_e_7  = new TH1D ("h_mc_ele_e_7",  "h_mc_ele_e_7",  20, 0, 5);
+   TH1D * h_mc_ele_e_8  = new TH1D ("h_mc_ele_e_8",  "h_mc_ele_e_8",  20, 0, 5);
+   TH1D * h_mc_ele_e_9  = new TH1D ("h_mc_ele_e_9",  "h_mc_ele_e_9",  20, 0, 5);
+   TH1D * h_mc_ele_e_10 = new TH1D ("h_mc_ele_e_10", "h_mc_ele_e_10", 20, 0, 5);
+   TH1D * h_mc_ele_e_11 = new TH1D ("h_mc_ele_e_11", "h_mc_ele_e_11", 20, 0, 5);
+   TH1D * h_mc_ele_e_12 = new TH1D ("h_mc_ele_e_12", "h_mc_ele_e_12", 20, 0, 5);
+   TH1D * h_mc_ele_e_13 = new TH1D ("h_mc_ele_e_13", "h_mc_ele_e_13", 20, 0, 5);
+ */
+
 }; //end class
 
 }//end namespace

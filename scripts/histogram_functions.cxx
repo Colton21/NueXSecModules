@@ -664,6 +664,100 @@ void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
 
 }
 
+void histogram_functions::EnergyOverlay(TH1 * h_1,
+                                        TH1 * h_2,
+                                        TH1 * h_3,
+                                        TH1 * h_4,
+                                        TH1 * h_5,
+                                        TH1 * h_6,
+                                        TH1 * h_7,
+                                        TH1 * h_8,
+                                        TH1 * h_9,
+                                        TH1 * h_10,
+                                        TH1 * h_11,
+                                        TH1 * h_12,
+                                        TH1 * h_13,
+                                        const char * x_axis_name, const char * y_axis_name, const char * print_name
+                                        )
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	h_1->SetStats(kFALSE);
+	h_1->SetFillColor(29);
+	h_1->GetXaxis()->SetTitle(x_axis_name);
+	const double nu_energy_no_cut_integral = h_1->Integral();
+	h_1->Scale(1./nu_energy_no_cut_integral);
+	h_1->Draw("hist");
+	h_2->SetFillColor(30);
+	h_2->SetStats(kFALSE);
+	h_2->Scale(1./nu_energy_no_cut_integral);
+	h_2->Draw("hist same");
+	h_3->SetFillColor(45);
+	h_3->SetStats(kFALSE);
+	h_3->Scale(1./nu_energy_no_cut_integral);
+	h_3->Draw("hist same");
+	h_4->SetFillColor(28);
+	h_4->SetStats(kFALSE);
+	h_4->Scale(1./nu_energy_no_cut_integral);
+	h_4->Draw("hist same");
+	h_5->SetFillColor(26);
+	h_5->SetStats(kFALSE);
+	h_5->Scale(1./nu_energy_no_cut_integral);
+	h_5->Draw("hist same");
+	h_6->SetFillColor(36);
+	h_6->SetStats(kFALSE);
+	h_6->Scale(1./nu_energy_no_cut_integral);
+	h_6->Draw("hist same");
+	h_7->SetFillColor(39);
+	h_7->SetStats(kFALSE);
+	h_7->Scale(1./nu_energy_no_cut_integral);
+	h_7->Draw("hist same");
+	h_8->SetFillColor(42);
+	h_8->SetStats(kFALSE);
+	h_8->Scale(1./nu_energy_no_cut_integral);
+	h_8->Draw("hist same");
+	h_9->SetFillColor(12);
+	h_9->SetStats(kFALSE);
+	h_9->Scale(1./nu_energy_no_cut_integral);
+	h_9->Draw("hist same");
+	h_10->SetFillColor(1);
+	h_10->SetStats(kFALSE);
+	h_10->Scale(1./nu_energy_no_cut_integral);
+	h_10->Draw("hist same");
+	h_11->SetFillColor(46);
+	h_11->SetStats(kFALSE);
+	h_11->Scale(1./nu_energy_no_cut_integral);
+	h_11->Draw("hist same");
+	h_12->SetFillColor(19);
+	h_12->SetStats(kFALSE);
+	h_12->Scale(1./nu_energy_no_cut_integral);
+	h_12->Draw("hist same");
+	h_13->SetFillColor(41);
+	h_13->SetStats(kFALSE);
+	h_13->Scale(1./nu_energy_no_cut_integral);
+	h_13->Draw("hist same");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_sequential1 = new TLegend(0.65,0.65,0.85,0.85);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_sequential1->AddEntry(h_1,   "Reco Nue",         "f");
+	leg_sequential1->AddEntry(h_2,   "Fiducial Volume",  "f");
+	leg_sequential1->AddEntry(h_3,   "Vtx To Flash",     "f");
+	leg_sequential1->AddEntry(h_4,   "Shower Vtx",       "f");
+	leg_sequential1->AddEntry(h_5,   "Track Vtx",        "f");
+	leg_sequential1->AddEntry(h_6,   "Total Hits",       "f");
+	leg_sequential1->AddEntry(h_7,   "Collection Hits",  "f");
+	leg_sequential1->AddEntry(h_8,   "Open Angle",       "f");
+	leg_sequential1->AddEntry(h_9,   "dE/dx",            "f");
+	leg_sequential1->AddEntry(h_10,  "Secondary Shower", "f");
+	leg_sequential1->AddEntry(h_11,  "Hits/Length",      "f");
+	leg_sequential1->AddEntry(h_12,  "TrkShwr Length",   "f");
+	leg_sequential1->AddEntry(h_13,  "Trk Containment",  "f");
+	leg_sequential1->Draw();
+	c1->Print(print_name);
+}
+
+
 void histogram_functions::PostHistogramOverlay(TH1 * h_no_cut, TH1 * h_reco_nue,
                                                TH1 * h_in_fv, TH1 * h_vtx_flash, TH1 * h_shwr_vtx,
                                                TH1 * h_trk_vtx, TH1 * h_hit_threshold,

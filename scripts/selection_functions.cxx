@@ -6975,6 +6975,158 @@ void selection_functions::PostCutsVtxFlashDownstreamInTime(std::vector< double >
 }//end function
 //***************************************************************************
 //***************************************************************************
-
-
+void selection_functions::FillTrueRecoEnergy(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco,
+                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v, double mc_ele_energy,
+                                             TH1D * h_mc_ele_energy,
+                                             TH1D * h_reco_ele_energy,
+                                             TH2D * h_mc_reco_ele_energy)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double reco_ele_momentum = leading_shower.pfpMomentum();
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_mc_ele_energy->Fill(mc_ele_energy);
+			h_reco_ele_energy->Fill(reco_ele_momentum);
+			h_mc_reco_ele_energy->Fill(mc_ele_energy, reco_ele_momentum);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_mc_ele_energy->Fill(mc_ele_energy);
+			h_reco_ele_energy->Fill(reco_ele_momentum);
+			h_mc_reco_ele_energy->Fill(mc_ele_energy, reco_ele_momentum);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_mc_ele_energy->Fill(mc_ele_energy);
+			h_reco_ele_energy->Fill(reco_ele_momentum);
+			h_mc_reco_ele_energy->Fill(mc_ele_energy, reco_ele_momentum);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_mc_ele_energy->Fill(mc_ele_energy);
+			h_reco_ele_energy->Fill(reco_ele_momentum);
+			h_mc_reco_ele_energy->Fill(mc_ele_energy, reco_ele_momentum);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_mc_ele_energy->Fill(mc_ele_energy);
+			h_reco_ele_energy->Fill(reco_ele_momentum);
+			h_mc_reco_ele_energy->Fill(mc_ele_energy, reco_ele_momentum);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                  TH1D * h_ele_momentum_nue_cc,
+                                                  TH1D * h_ele_momentum_nue_cc_out_fv,
+                                                  TH1D * h_ele_momentum_nue_cc_mixed,
+                                                  TH1D * h_ele_momentum_numu_cc,
+                                                  TH1D * h_ele_momentum_numu_cc_mixed,
+                                                  TH1D * h_ele_momentum_nc,
+                                                  TH1D * h_ele_momentum_nc_pi0,
+                                                  TH1D * h_ele_momentum_cosmic,
+                                                  TH1D * h_ele_momentum_other_mixed,
+                                                  TH1D * h_ele_momentum_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_ele_momentum_nue_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_ele_momentum_nue_cc_out_fv->Fill(leading_momentum);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_ele_momentum_nue_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_ele_momentum_nue_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_ele_momentum_nue_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_ele_momentum_nue_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_ele_momentum_numu_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_ele_momentum_numu_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_ele_momentum_numu_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_ele_momentum_numu_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_ele_momentum_numu_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "nc")
+		{
+			h_ele_momentum_nc->Fill(leading_momentum);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_ele_momentum_nc_pi0->Fill(leading_momentum);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_ele_momentum_nue_cc_mixed->Fill(leading_momentum);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			//h_ele_pfp_phi_numu_cc_mixed->Fill(leading_shower_phi);
+			h_ele_momentum_numu_cc->Fill(leading_momentum);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_ele_momentum_cosmic->Fill(leading_momentum);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_ele_momentum_other_mixed->Fill(leading_momentum);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_ele_momentum_unmatched->Fill(leading_momentum);
+		}
+	}//end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
+//***************************************************************************
+//***************************************************************************
 //end functions

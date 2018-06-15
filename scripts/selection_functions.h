@@ -1097,5 +1097,28 @@ void PostCutsVtxFlashDownstreamInTime(std::vector< double > largest_flash_v, std
 //***************************************************************************
 void PostCutsVtxFlashUpstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime);
+//***************************************************************************
+//***************************************************************************
+void FillTrueRecoEnergy(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco,
+                        std::vector<std::pair<std::string, int> > * tpco_classifier_v, double mc_ele_energy,
+                        TH1D * h_mc_ele_energy,
+                        TH1D * h_reco_ele_energy,
+                        TH2D * h_mc_reco_ele_energy);
+//***************************************************************************
+//***************************************************************************
+void PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                             TH1D * h_ele_momentum_nue_cc,
+                             TH1D * h_ele_momentum_nue_cc_out_fv,
+                             TH1D * h_ele_momentum_nue_cc_mixed,
+                             TH1D * h_ele_momentum_numu_cc,
+                             TH1D * h_ele_momentum_numu_cc_mixed,
+                             TH1D * h_ele_momentum_nc,
+                             TH1D * h_ele_momentum_nc_pi0,
+                             TH1D * h_ele_momentum_cosmic,
+                             TH1D * h_ele_momentum_other_mixed,
+                             TH1D * h_ele_momentum_unmatched);
 };
 #endif
