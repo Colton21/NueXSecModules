@@ -208,6 +208,12 @@ void LeadingShowerTrackLengthsData(std::vector<xsecAna::TPCObjectContainer> * tp
                                    TH1D * h_shwr_trk_length_data);
 //***************************************************************************
 //***************************************************************************
+void PostCutsVtxFlashUpstreamData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashDownstreamData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                    std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data);
 
 };
 

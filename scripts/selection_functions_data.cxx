@@ -887,4 +887,44 @@ void selection_functions_data::LeadingShowerTrackLengthsData(std::vector<xsecAna
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::PostCutsVtxFlashUpstreamData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                            std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z < tpc_vtx_z) {continue; }//skip this event if the flash is downstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		h_vtx_flash_data->Fill(distance);
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::PostCutsVtxFlashDownstreamData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                              std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z >= tpc_vtx_z) {continue; }//skip this event if the flash is upstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		h_vtx_flash_data->Fill(distance);
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
 //end functions

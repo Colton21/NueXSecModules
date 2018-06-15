@@ -311,6 +311,10 @@ void selection::make_selection( const char * _file1,
 			//*****************************
 			_data_functions_instance.selection_functions_data::PostCutsVtxFlashData(largest_flash_v, data_tpc_object_container_v, passed_tpco_data,
 			                                                                        h_vtx_flash_data);
+			_data_functions_instance.selection_functions_data::PostCutsVtxFlashUpstreamData(largest_flash_v, data_tpc_object_container_v, passed_tpco_data,
+			                                                                                h_vtx_flash_upstream_data);
+			_data_functions_instance.selection_functions_data::PostCutsVtxFlashDownstreamData(largest_flash_v, data_tpc_object_container_v, passed_tpco_data,
+			                                                                                  h_vtx_flash_downstream_data);
 
 			_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, data_tpc_object_container_v, tolerance, passed_tpco_data, _verbose);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
@@ -686,6 +690,10 @@ void selection::make_selection( const char * _file1,
 			if(_verbose) {std::cout << "In-Time Vertex-Flash Cut" << std::endl; }
 			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                _verbose, h_vtx_flash_intime);
+			_functions_instance.selection_functions::PostCutsVtxFlashUpstreamInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                        _verbose, h_vtx_flash_upstream_intime);
+			_functions_instance.selection_functions::PostCutsVtxFlashDownstreamInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                          _verbose, h_vtx_flash_downstream_intime);
 
 			_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, intime_tpc_object_container_v, tolerance, passed_tpco_intime, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
@@ -875,6 +883,8 @@ void selection::make_selection( const char * _file1,
 			                                                                    h_ele_eng_back_trans_intime);
 
 			_functions_instance.selection_functions::FillPostCutVector(intime_tpc_object_container_v, passed_tpco_intime, post_cuts_v);
+			_functions_instance.selection_functions::LeadingThetaPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_theta_phi_intime);
+
 			//delete at the very end!
 			delete passed_tpco_intime;
 		}
@@ -1264,6 +1274,20 @@ void selection::make_selection( const char * _file1,
 		                                                          h_vtx_flash_cosmic, h_vtx_flash_nc_pi0,
 		                                                          h_vtx_flash_numu_cc_mixed, h_vtx_flash_other_mixed,
 		                                                          h_vtx_flash_unmatched);
+		_functions_instance.selection_functions::PostCutsVtxFlashUpstream(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                  h_vtx_flash_upstream_nue_cc,        h_vtx_flash_upstream_nue_cc_out_fv,
+		                                                                  h_vtx_flash_upstream_nue_cc_mixed,
+		                                                                  h_vtx_flash_upstream_numu_cc,       h_vtx_flash_upstream_nc,
+		                                                                  h_vtx_flash_upstream_cosmic,        h_vtx_flash_upstream_nc_pi0,
+		                                                                  h_vtx_flash_upstream_numu_cc_mixed, h_vtx_flash_upstream_other_mixed,
+		                                                                  h_vtx_flash_upstream_unmatched);
+		_functions_instance.selection_functions::PostCutsVtxFlashDownstream(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                    h_vtx_flash_downstream_nue_cc,        h_vtx_flash_downstream_nue_cc_out_fv,
+		                                                                    h_vtx_flash_downstream_nue_cc_mixed,
+		                                                                    h_vtx_flash_downstream_numu_cc,       h_vtx_flash_downstream_nc,
+		                                                                    h_vtx_flash_downstream_cosmic,        h_vtx_flash_downstream_nc_pi0,
+		                                                                    h_vtx_flash_downstream_numu_cc_mixed, h_vtx_flash_downstream_other_mixed,
+		                                                                    h_vtx_flash_downstream_unmatched);
 
 		_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
@@ -2536,6 +2560,27 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_data, data_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          "../scripts/plots/post_cuts_vtx_to_flash_distance_data.pdf");
+
+	histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
+	                                          h_vtx_flash_upstream_nue_cc_out_fv,
+	                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
+	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
+	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
+	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, intime_scale_factor,
+	                                          h_vtx_flash_upstream_data, data_scale_factor, "",
+	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+	                                          "../scripts/plots/post_cuts_vtx_to_flash_distance_upstream_data.pdf");
+
+	histogram_functions::PlotSimpleStackData (h_vtx_flash_downstream_nue_cc,  h_vtx_flash_downstream_nue_cc_mixed,
+	                                          h_vtx_flash_downstream_nue_cc_out_fv,
+	                                          h_vtx_flash_downstream_numu_cc, h_vtx_flash_downstream_numu_cc_mixed,
+	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
+	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
+	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, intime_scale_factor,
+	                                          h_vtx_flash_downstream_data, data_scale_factor, "",
+	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+	                                          "../scripts/plots/post_cuts_vtx_to_flash_distance_downstream_data.pdf");
+
 
 	histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc_after,  h_vtx_flash_nue_cc_mixed_after,
 	                                          h_vtx_flash_nue_cc_out_fv_after,
@@ -4012,6 +4057,9 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_total, "Post Cuts - Showers/Tracks Purity - Total",
 	                                      "Reco Showers", "Reco Tracks",
 	                                      "../scripts/plots/post_cuts_showers_tracks_purity_total.pdf", "colz text", 3, 2);
+
+	histogram_functions::Plot2DHistogram (h_ele_theta_phi_intime, "Post Cuts - Theta Phi - In Time",
+	                                      "Phi [Degrees]", "Theta [Degrees]", "../scripts/plots/post_cuts_theta_phi_intime.pdf");
 
 	histogram_functions::OverlayScatter(h_ele_theta_phi_nue_cc, h_ele_theta_phi_nue_cc_mixed, h_ele_theta_phi_nue_cc_out_fv, h_ele_theta_phi_numu_cc,
 	                                    h_ele_theta_phi_numu_cc_mixed, h_ele_theta_phi_cosmic, h_ele_theta_phi_nc,

@@ -480,6 +480,32 @@ TH1D * h_vtx_flash_unmatched     = new TH1D("h_vtx_flash_unmatched",      "h_vtx
 TH1D * h_vtx_flash_intime        = new TH1D("h_vtx_flash_intime",         "h_vtx_flash_intime",        40, 0, 200);
 TH1D * h_vtx_flash_data          = new TH1D("h_vtx_flash_data",           "h_vtx_flash_data",          40, 0, 200);
 
+TH1D * h_vtx_flash_upstream_nue_cc        = new TH1D("h_vtx_flash_upstream_nue_cc",         "h_vtx_flash_upstream_nue_cc",        40, 0, 200);
+TH1D * h_vtx_flash_upstream_nue_cc_mixed  = new TH1D("h_vtx_flash_upstream_nue_cc_mixed",   "h_vtx_flash_upstream_nue_cc_mixed",  40, 0, 200);
+TH1D * h_vtx_flash_upstream_nue_cc_out_fv = new TH1D("h_vtx_flash_upstream_nue_cc_out_fv",  "h_vtx_flash_upstream_nue_cc_out_fv", 40, 0, 200);
+TH1D * h_vtx_flash_upstream_numu_cc       = new TH1D("h_vtx_flash_upstream_numu_cc",        "h_vtx_flash_upstream_numu_cc_mixed", 40, 0, 200);
+TH1D * h_vtx_flash_upstream_nc_pi0        = new TH1D("h_vtx_flash_upstream_nc_pi0",         "h_vtx_flash_upstream_nc_pi0",        40, 0, 200);
+TH1D * h_vtx_flash_upstream_cosmic        = new TH1D("h_vtx_flash_upstream_cosmic",         "h_vtx_flash_upstream_cosmic",        40, 0, 200);
+TH1D * h_vtx_flash_upstream_nc            = new TH1D("h_vtx_flash_upstream_nc",             "h_vtx_flash_upstream_nc",            40, 0, 200);
+TH1D * h_vtx_flash_upstream_numu_cc_mixed = new TH1D("h_vtx_flash_upstream_numu_cc_mixed",  "h_vtx_flash_upstream_numu_cc_mixed", 40, 0, 200);
+TH1D * h_vtx_flash_upstream_other_mixed   = new TH1D("h_vtx_flash_upstream_other_mixed",    "h_vtx_flash_upstream_other_mixed",   40, 0, 200);
+TH1D * h_vtx_flash_upstream_unmatched     = new TH1D("h_vtx_flash_upstream_unmatched",      "h_vtx_flash_upstream_unmatched",     40, 0, 200);
+TH1D * h_vtx_flash_upstream_intime        = new TH1D("h_vtx_flash_upstream_intime",         "h_vtx_flash_upstream_intime",        40, 0, 200);
+TH1D * h_vtx_flash_upstream_data          = new TH1D("h_vtx_flash_upstream_data",           "h_vtx_flash_upstream_data",          40, 0, 200);
+
+TH1D * h_vtx_flash_downstream_nue_cc        = new TH1D("h_vtx_flash_downstream_nue_cc",         "h_vtx_flash_downstream_nue_cc",        40, 0, 200);
+TH1D * h_vtx_flash_downstream_nue_cc_mixed  = new TH1D("h_vtx_flash_downstream_nue_cc_mixed",   "h_vtx_flash_downstream_nue_cc_mixed",  40, 0, 200);
+TH1D * h_vtx_flash_downstream_nue_cc_out_fv = new TH1D("h_vtx_flash_downstream_nue_cc_out_fv",  "h_vtx_flash_downstream_nue_cc_out_fv", 40, 0, 200);
+TH1D * h_vtx_flash_downstream_numu_cc       = new TH1D("h_vtx_flash_downstream_numu_cc",        "h_vtx_flash_downstream_numu_cc_mixed", 40, 0, 200);
+TH1D * h_vtx_flash_downstream_nc_pi0        = new TH1D("h_vtx_flash_downstream_nc_pi0",         "h_vtx_flash_downstream_nc_pi0",        40, 0, 200);
+TH1D * h_vtx_flash_downstream_cosmic        = new TH1D("h_vtx_flash_downstream_cosmic",         "h_vtx_flash_downstream_cosmic",        40, 0, 200);
+TH1D * h_vtx_flash_downstream_nc            = new TH1D("h_vtx_flash_downstream_nc",             "h_vtx_flash_downstream_nc",            40, 0, 200);
+TH1D * h_vtx_flash_downstream_numu_cc_mixed = new TH1D("h_vtx_flash_downstream_numu_cc_mixed",  "h_vtx_flash_downstream_numu_cc_mixed", 40, 0, 200);
+TH1D * h_vtx_flash_downstream_other_mixed   = new TH1D("h_vtx_flash_downstream_other_mixed",    "h_vtx_flash_downstream_other_mixed",   40, 0, 200);
+TH1D * h_vtx_flash_downstream_unmatched     = new TH1D("h_vtx_flash_downstream_unmatched",      "h_vtx_flash_downstream_unmatched",     40, 0, 200);
+TH1D * h_vtx_flash_downstream_intime        = new TH1D("h_vtx_flash_downstream_intime",         "h_vtx_flash_downstream_intime",        40, 0, 200);
+TH1D * h_vtx_flash_downstream_data          = new TH1D("h_vtx_flash_downstream_data",           "h_vtx_flash_downstream_data",          40, 0, 200);
+
 TH1D * h_vtx_flash_nue_cc_after        = new TH1D("h_vtx_flash_nue_cc_after",         "h_vtx_flash_nue_cc_after",        40, 0, 200);
 TH1D * h_vtx_flash_nue_cc_mixed_after  = new TH1D("h_vtx_flash_nue_cc_mixed_after",   "h_vtx_flash_nue_cc_mixed_after",  40, 0, 200);
 TH1D * h_vtx_flash_nue_cc_out_fv_after = new TH1D("h_vtx_flash_nue_cc_out_fv_after",  "h_vtx_flash_nue_cc_out_fv_after", 40, 0, 200);
@@ -1265,6 +1291,7 @@ TH2D * h_ele_theta_phi_nc_pi0         = new TH2D ("h_ele_theta_phi_nc_pi0",     
 TH2D * h_ele_theta_phi_cosmic         = new TH2D ("h_ele_theta_phi_cosmic",         "h_ele_theta_phi_cosmic",         14, -180, 180, 14, 0, 180);
 TH2D * h_ele_theta_phi_other_mixed    = new TH2D ("h_ele_theta_phi_other_mixed",    "h_ele_theta_phi_other_mixed",    14, -180, 180, 14, 0, 180);
 TH2D * h_ele_theta_phi_unmatched      = new TH2D ("h_ele_theta_phi_unmatched",      "h_ele_theta_phi_unmatched",      14, -180, 180, 14, 0, 180);
+TH2D * h_ele_theta_phi_intime         = new TH2D ("h_ele_theta_phi_intime",         "h_ele_theta_phi_intime",         14, -180, 180, 14, 0, 180);
 
 TH2D * h_ele_eng_costheta_nue_cc         = new TH2D ("h_ele_eng_costheta_nue_cc",         "h_ele_eng_costheta_nue_cc",         10, 0, 2, 10, -1, 1);
 TH2D * h_ele_eng_costheta_nue_cc_out_fv  = new TH2D ("h_ele_eng_costheta_nue_cc_out_fv",  "h_ele_eng_costheta_nue_cc_out_fv",  10, 0, 2, 10, -1, 1);

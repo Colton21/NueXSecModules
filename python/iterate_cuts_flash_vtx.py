@@ -76,7 +76,7 @@ for cut in range(num_cuts):
     # tolerance is a value we'd like to investigate:
     tolerance = 60.0 + (run * 2)
     # threshold - scan between 60.0 - 100.0 PE
-    loop_cut.append(threshold)
+    loop_cut.append(tolerance)
 
     write_to_file(f, tolerance)
 
@@ -174,7 +174,7 @@ plt.plot(loop_cut, efficiency_final, 'ko')
 f1_axes = figure_1.add_subplot(111)
 f1_axes.set_title("Efficiency vs Vtx-to-Flash")
 f1_axes.set_autoscaley_on(False)
-f1_axes.set_ylim([8, 14])
+f1_axes.set_ylim([7, 11])
 f1_axes.set_xlabel("Vtx-to-Flash [cm]")
 f1_axes.set_xlim([58, 102])
 f1_axes.set_ylabel("Efficiency")
@@ -185,7 +185,7 @@ plt.plot(loop_cut, purity_final, 'bo')
 f2_axes = figure_2.add_subplot(111)
 f2_axes.set_title("Purity vs Vtx-to-Flash")
 f2_axes.set_autoscaley_on(False)
-f2_axes.set_ylim([42, 58])
+f2_axes.set_ylim([50, 65])
 f2_axes.set_xlabel("Vtx-to-Flash [cm]")
 f2_axes.set_xlim([58, 102])
 f2_axes.set_ylabel("Purity")

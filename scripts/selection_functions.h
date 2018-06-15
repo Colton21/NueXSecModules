@@ -920,6 +920,11 @@ void LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH2D * h_ele_theta_phi_unmatched);
 //***************************************************************************
 //***************************************************************************
+void LeadingThetaPhiInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                           TH2D * h_ele_theta_phi_intime);
+//***************************************************************************
+//***************************************************************************
 void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -1066,5 +1071,31 @@ void dEdxCollectionAngleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_ob
                                TH2D * h_dedx_collection_angle_intime);
 //***************************************************************************
 //***************************************************************************
+void PostCutsVtxFlashDownstream(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_out_fv, TH1D * h_vtx_flash_nue_cc_mixed,
+                                TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                                TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
+                                TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                                TH1D * h_vtx_flash_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashUpstream(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                              TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_out_fv, TH1D * h_vtx_flash_nue_cc_mixed,
+                              TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                              TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
+                              TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                              TH1D * h_vtx_flash_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashDownstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashUpstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime);
 };
 #endif

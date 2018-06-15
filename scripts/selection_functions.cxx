@@ -5722,6 +5722,40 @@ void selection_functions::LeadingThetaPhi(std::vector<xsecAna::TPCObjectContaine
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::LeadingThetaPhiInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                TH2D * h_ele_theta_phi_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		//if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+		h_ele_theta_phi_intime->Fill(leading_shower_phi, leading_shower_theta);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -6699,4 +6733,248 @@ void selection_functions::dEdxCollectionAngleInTime(std::vector<xsecAna::TPCObje
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::PostCutsVtxFlashUpstream(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                   TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_out_fv, TH1D * h_vtx_flash_nue_cc_mixed,
+                                                   TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                                                   TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
+                                                   TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                                                   TH1D * h_vtx_flash_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z < tpc_vtx_z) {continue; }//skip this event if the flash is downstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_vtx_flash_nue_cc_out_fv->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "nc")
+		{
+			h_vtx_flash_nc->Fill(distance);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_vtx_flash_nc_pi0->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_vtx_flash_nue_cc_mixed->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			//h_vtx_flash_numu_cc_mixed->Fill(distance);
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_vtx_flash_cosmic->Fill(distance);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_vtx_flash_other_mixed->Fill(distance);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_vtx_flash_unmatched->Fill(distance);
+		}
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutsVtxFlashUpstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z < tpc_vtx_z) {continue; }//skip this event if the flash is downstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		h_vtx_flash_intime->Fill(distance);
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutsVtxFlashDownstream(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                     std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                     TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_out_fv, TH1D * h_vtx_flash_nue_cc_mixed,
+                                                     TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                                                     TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
+                                                     TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                                                     TH1D * h_vtx_flash_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z >= tpc_vtx_z) {continue; }//skip this event if the flash is upstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+
+		if(tpco_id == "nue_cc_qe")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_vtx_flash_nue_cc_out_fv->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_res")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_dis")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_coh")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mec")
+		{
+			h_vtx_flash_nue_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "nc")
+		{
+			h_vtx_flash_nc->Fill(distance);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_vtx_flash_nc_pi0->Fill(distance);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_vtx_flash_nue_cc_mixed->Fill(distance);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			//h_vtx_flash_numu_cc_mixed->Fill(distance);
+			h_vtx_flash_numu_cc->Fill(distance);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_vtx_flash_cosmic->Fill(distance);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_vtx_flash_other_mixed->Fill(distance);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_vtx_flash_unmatched->Fill(distance);
+		}
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutsVtxFlashDownstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z > tpc_vtx_z) {continue; }//skip this event if the flash is upstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		h_vtx_flash_intime->Fill(distance);
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
+
+
 //end functions
