@@ -428,7 +428,7 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 	TVector3 shower_dir(shower->Direction().X(), shower->Direction().Y(),
 	                    shower->Direction().Z());
 
-	double start_corr, middle_corr, end_corr;
+	//double start_corr, middle_corr, end_corr;
 
 	const double x_start = shower->ShowerStart().X();
 	const double y_start = shower->ShowerStart().Y();
@@ -441,8 +441,8 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 	const double z_mid = z_start + shower_dir.Z();
 
 	const double x_end = x_mid + shower_dir.X();
-	const double y_end = y_mid + shower_dir.Y();
-	const double z_end = z_mid + shower_dir.Z();
+	//const double y_end = y_mid + shower_dir.Y();
+	//const double z_end = z_mid + shower_dir.Z();
 
 	shower_dir.SetMag(1.0);  //re-set back to 1cm
 
