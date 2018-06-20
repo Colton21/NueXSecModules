@@ -214,6 +214,13 @@ void PostCutsVtxFlashUpstreamData(std::vector< double > largest_flash_v, std::ve
 //***************************************************************************
 void PostCutsVtxFlashDownstreamData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                     std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data);
+//***************************************************************************
+//***************************************************************************
+void PostCutsLeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                 TH1D * h_ele_momentum_data);
+//***************************************************************************
+//***************************************************************************
 
 };
 

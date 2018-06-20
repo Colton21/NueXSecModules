@@ -299,12 +299,18 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::ShowerLengthvsHitsData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_shwr_len_hits_data);
 			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_xyz_data);
 
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_nue_cut_data);
+
 			//************************
 			//******** in fv cut *****
 			//************************
 			_cuts_instance.selection_cuts::fiducial_volume_cut(data_tpc_object_container_v, fv_boundary_v, passed_tpco_data, _verbose);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_in_fv_counter_v);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_fv_cut_data);
 
 			//*****************************
 			//**** vertex to flash cut ****
@@ -322,6 +328,10 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::PostCutsVtxFlashData(largest_flash_v, data_tpc_object_container_v, passed_tpco_data,
 			                                                                        h_vtx_flash_data_after);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_flash_vtx_cut_data);
+
 			//******************************************************
 			//*** distance between pfp shower and nue object cut ***
 			//******************************************************
@@ -333,6 +343,9 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::PostCutsShwrVtxData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_shwr_vtx_dist_data_after);
 
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_shwr_vtx_cut_data);
+
 			//******************************************************
 			// **** distance between pfp track and nue object cut **
 			//******************************************************
@@ -341,6 +354,9 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_trk_tpco_counter_v);
 			_data_functions_instance.selection_functions_data::PostCutTrkVtxData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_trk_vtx_dist_data_after);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_trk_vtx_cut_data);
 
 			//****************************************************
 			// ******** hit threshold for showers cut *************
@@ -357,6 +373,9 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::dEdxVsOpenAngleData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_open_angle_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, 0, 0, _verbose, h_ele_cos_theta_data);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_hit_cut_data);
 
 			//***************************************//
 			//*** Collection Plane Hits Threshold ***//
@@ -385,6 +404,9 @@ void selection::make_selection( const char * _file1,
 			                                                                   h_collection_hits_leading_shower_data_after,
 			                                                                   h_total_hits_leading_shower_data_after);
 
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_yhit_cut_data);
+
 			//*****************************************************
 			//****** open angle cut for the leading shower ********
 			//******************************************************
@@ -402,6 +424,9 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::PostCutOpenAngleData(data_tpc_object_container_v, passed_tpco_data,
 			                                                                        _verbose, h_leading_shower_open_angle_data_after);
 			_data_functions_instance.selection_functions_data::NumShowersOpenAngleData(data_tpc_object_container_v, passed_tpco_data, h_pfp_shower_dedx_data);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_open_angle_cut_data);
 			//*****************************************************
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
@@ -412,6 +437,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
 
 			_data_functions_instance.selection_functions_data::PostCutsdEdxData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_cuts_data_after);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_dedx_cut_data);
 			//***************************************************************************
 			// ******* Secondary Showers Distance Cut *****************
 			//***************************************************************************
@@ -422,6 +450,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_secondary_shower_counter_v);
 			_data_functions_instance.selection_functions_data::SecondaryShowersDistData(data_tpc_object_container_v, passed_tpco_data,
 			                                                                            _verbose, h_second_shwr_dist_data_after);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_2shwr_cut_data);
 			//******************************************************************************
 			// ********** Hit Length Ratio Cut *************
 			//******************************************************************************
@@ -438,6 +469,9 @@ void selection::make_selection( const char * _file1,
 			                                                                                 _verbose, h_collection_total_hits_shower_data);
 			_data_functions_instance.selection_functions_data::PlaneHitsComparisonLeadingShowerData(data_tpc_object_container_v, passed_tpco_data,
 			                                                                                        _verbose, h_collection_total_hits_leading_shower_data);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_hit_length_cut_data);
 			//******************************************************************************
 			//*** cut for longest track / leading shower ratio *** //
 			//******************************************************************************
@@ -455,6 +489,9 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::LeadingShowerTrackLengthsData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                                 h_leading_shwr_trk_length_data_after);
 
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_length_ratio_cut_data);
+
 			//***************************************************************
 			//*** contained track cut *** //
 			//**************************************************************
@@ -462,6 +499,9 @@ void selection::make_selection( const char * _file1,
 			_cuts_instance.selection_cuts::ContainedTracksCut(data_tpc_object_container_v, passed_tpco_data, _verbose, fv_boundary_v, true);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_track_containment_counter_v);
+
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_containment_cut_data);
 
 			//*********** Data *********
 			_functions_instance.selection_functions::FillPostCutVector(data_tpc_object_container_v, passed_tpco_data, post_cuts_v_data);
@@ -676,6 +716,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::ShowerLengthvsHitsInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_shwr_len_hits_intime);
 			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_xyz_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_nue_cut_intime);
+
 			//************************
 			//******** in fv cut *****
 			//************************
@@ -683,6 +726,9 @@ void selection::make_selection( const char * _file1,
 			_cuts_instance.selection_cuts::fiducial_volume_cut(intime_tpc_object_container_v, fv_boundary_v, passed_tpco_intime, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_in_fv_counter_v);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_fv_cut_intime);
 
 			//*****************************
 			//**** vertex to flash cut ****
@@ -701,6 +747,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                _verbose, h_vtx_flash_intime_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_flash_vtx_cut_intime);
 			//******************************************************
 			//*** distance between pfp shower and nue object cut ***
 			//******************************************************
@@ -712,6 +761,10 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_shwr_tpco_counter_v);
 
 			_functions_instance.selection_functions::PostCutsShwrVtxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_shwr_vtx_dist_intime_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_shwr_vtx_cut_intime);
+
 			//******************************************************
 			// **** distance between pfp track and nue object cut **
 			//******************************************************
@@ -723,6 +776,10 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_trk_tpco_counter_v);
 
 			_functions_instance.selection_functions::PostCutTrkVtxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_trk_vtx_dist_intime_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_trk_vtx_cut_intime);
+
 			//****************************************************
 			// ******** hit threshold for showers cut *************
 			//******************************************************
@@ -739,6 +796,10 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::dEdxVsOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_dedx_open_angle_intime);
 			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0,
 			                                                               _verbose, h_ele_cos_theta_intime);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_hit_cut_intime);
+
 
 			//***************************************//
 			//*** Collection Plane Hits Threshold ***//
@@ -768,6 +829,10 @@ void selection::make_selection( const char * _file1,
 			                                                           h_collection_hits_shower_intime_after,
 			                                                           h_collection_hits_leading_shower_intime_after,
 			                                                           h_total_hits_leading_shower_intime_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_yhit_cut_intime);
+
 			//*****************************************************
 			//****** open angle cut for the leading shower ********
 			//******************************************************
@@ -786,6 +851,10 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                _verbose, h_leading_shower_open_angle_intime_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_open_angle_cut_intime);
+
 			//*****************************************************
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
@@ -799,6 +868,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsdEdxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_dedx_cuts_intime_after);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_dedx_cut_intime);
+
 			//***************************************************************************
 			// ******* Secondary Showers Distance Cut *****************
 			//***************************************************************************
@@ -810,6 +882,10 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::SecondaryShowersDistInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                    _verbose, h_second_shwr_dist_intime_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_2shwr_cut_intime);
+
 			//******************************************************************************
 			// ********** Hit Length Ratio Cut *************
 			//******************************************************************************
@@ -828,6 +904,10 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::HitLengthRatioInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                              _verbose, h_hit_length_ratio_intime_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_hit_length_cut_intime);
+
 			//******************************************************************************
 			//*** cut for longest track / leading shower ratio *** //
 			//******************************************************************************
@@ -847,6 +927,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::LeadingShowerTrackLengthsInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                         h_leading_shwr_trk_length_intime_after);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_length_ratio_cut_intime);
 
 			//******************************************************************************
 			//*** contained track cut *** //
@@ -857,6 +939,10 @@ void selection::make_selection( const char * _file1,
 			_cuts_instance.selection_cuts::ContainedTracksCut(intime_tpc_object_container_v, passed_tpco_intime, _verbose, fv_boundary_v, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_track_containment_counter_v);
+
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_containment_cut_intime);
 
 			//*********** In-time Cosmics *********
 			//*************************************
@@ -1279,16 +1365,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_2, h_reco_ele_e_2, h_mc_reco_ele_e_2);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_fv_cut_nue_cc,
+		                                                                 h_ele_momentum_fv_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_fv_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_fv_cut_numu_cc,
+		                                                                 h_ele_momentum_fv_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_fv_cut_nc,
+		                                                                 h_ele_momentum_fv_cut_nc_pi0,
+		                                                                 h_ele_momentum_fv_cut_cosmic,
+		                                                                 h_ele_momentum_fv_cut_other_mixed,
+		                                                                 h_ele_momentum_fv_cut_unmatched);
 
 		//we also want to look at the cos(theta) and energy efficiency before we make selection cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
@@ -1334,16 +1420,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_3, h_reco_ele_e_3, h_mc_reco_ele_e_3);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_flash_vtx_cut_nue_cc,
+		                                                                 h_ele_momentum_flash_vtx_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_flash_vtx_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_flash_vtx_cut_numu_cc,
+		                                                                 h_ele_momentum_flash_vtx_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_flash_vtx_cut_nc,
+		                                                                 h_ele_momentum_flash_vtx_cut_nc_pi0,
+		                                                                 h_ele_momentum_flash_vtx_cut_cosmic,
+		                                                                 h_ele_momentum_flash_vtx_cut_other_mixed,
+		                                                                 h_ele_momentum_flash_vtx_cut_unmatched);
 
 		_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                          h_vtx_flash_nue_cc_after, h_vtx_flash_nue_cc_out_fv_after, h_vtx_flash_nue_cc_mixed_after,
@@ -1379,16 +1465,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_4, h_reco_ele_e_4, h_mc_reco_ele_e_4);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_shwr_vtx_cut_nue_cc,
+		                                                                 h_ele_momentum_shwr_vtx_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_shwr_vtx_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_shwr_vtx_cut_numu_cc,
+		                                                                 h_ele_momentum_shwr_vtx_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_shwr_vtx_cut_nc,
+		                                                                 h_ele_momentum_shwr_vtx_cut_nc_pi0,
+		                                                                 h_ele_momentum_shwr_vtx_cut_cosmic,
+		                                                                 h_ele_momentum_shwr_vtx_cut_other_mixed,
+		                                                                 h_ele_momentum_shwr_vtx_cut_unmatched);
 
 		_functions_instance.selection_functions::PostCutsShwrVtx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                         h_shwr_vtx_dist_nue_cc_after,
@@ -1424,16 +1510,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_5, h_reco_ele_e_5, h_mc_reco_ele_e_5);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_trk_vtx_cut_nue_cc,
+		                                                                 h_ele_momentum_trk_vtx_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_trk_vtx_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_trk_vtx_cut_numu_cc,
+		                                                                 h_ele_momentum_trk_vtx_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_trk_vtx_cut_nc,
+		                                                                 h_ele_momentum_trk_vtx_cut_nc_pi0,
+		                                                                 h_ele_momentum_trk_vtx_cut_cosmic,
+		                                                                 h_ele_momentum_trk_vtx_cut_other_mixed,
+		                                                                 h_ele_momentum_trk_vtx_cut_unmatched);
 
 		_functions_instance.selection_functions::PostCutTrkVtx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                       h_trk_vtx_dist_nue_cc_after, h_trk_vtx_dist_nue_cc_out_fv_after,
@@ -1510,16 +1596,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_6, h_reco_ele_e_6, h_mc_reco_ele_e_6);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_hit_cut_nue_cc,
+		                                                                 h_ele_momentum_hit_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_hit_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_hit_cut_numu_cc,
+		                                                                 h_ele_momentum_hit_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_hit_cut_nc,
+		                                                                 h_ele_momentum_hit_cut_nc_pi0,
+		                                                                 h_ele_momentum_hit_cut_cosmic,
+		                                                                 h_ele_momentum_hit_cut_other_mixed,
+		                                                                 h_ele_momentum_hit_cut_unmatched);
 
 		_functions_instance.selection_functions::PlaneHitsComparisonTrack(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                  h_collection_total_hits_track_nue_cc,
@@ -1634,16 +1720,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_7, h_reco_ele_e_7, h_mc_reco_ele_e_7);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_yhit_cut_nue_cc,
+		                                                                 h_ele_momentum_yhit_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_yhit_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_yhit_cut_numu_cc,
+		                                                                 h_ele_momentum_yhit_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_yhit_cut_nc,
+		                                                                 h_ele_momentum_yhit_cut_nc_pi0,
+		                                                                 h_ele_momentum_yhit_cut_cosmic,
+		                                                                 h_ele_momentum_yhit_cut_other_mixed,
+		                                                                 h_ele_momentum_yhit_cut_unmatched);
 
 		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_collection_hits_track_nue_cc_after,
@@ -1766,16 +1852,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_8, h_reco_ele_e_8, h_mc_reco_ele_e_8);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_open_angle_cut_nue_cc,
+		                                                                 h_ele_momentum_open_angle_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_open_angle_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_open_angle_cut_numu_cc,
+		                                                                 h_ele_momentum_open_angle_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_open_angle_cut_nc,
+		                                                                 h_ele_momentum_open_angle_cut_nc_pi0,
+		                                                                 h_ele_momentum_open_angle_cut_cosmic,
+		                                                                 h_ele_momentum_open_angle_cut_other_mixed,
+		                                                                 h_ele_momentum_open_angle_cut_unmatched);
 
 		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, tpco_classifier_v,
 		                                                             h_pfp_shower_dedx_nue_cc_qe,
@@ -1850,16 +1936,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_9, h_reco_ele_e_9, h_mc_reco_ele_e_9);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_dedx_cut_nue_cc,
+		                                                                 h_ele_momentum_dedx_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_dedx_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_dedx_cut_numu_cc,
+		                                                                 h_ele_momentum_dedx_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_dedx_cut_nc,
+		                                                                 h_ele_momentum_dedx_cut_nc_pi0,
+		                                                                 h_ele_momentum_dedx_cut_cosmic,
+		                                                                 h_ele_momentum_dedx_cut_other_mixed,
+		                                                                 h_ele_momentum_dedx_cut_unmatched);
 
 		_functions_instance.selection_functions::PostCutsdEdx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                      h_dedx_cuts_nue_cc_after, h_dedx_cuts_nue_cc_mixed_after,
@@ -1889,16 +1975,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_10, h_reco_ele_e_10, h_mc_reco_ele_e_10);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_2shwr_cut_nue_cc,
+		                                                                 h_ele_momentum_2shwr_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_2shwr_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_2shwr_cut_numu_cc,
+		                                                                 h_ele_momentum_2shwr_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_2shwr_cut_nc,
+		                                                                 h_ele_momentum_2shwr_cut_nc_pi0,
+		                                                                 h_ele_momentum_2shwr_cut_cosmic,
+		                                                                 h_ele_momentum_2shwr_cut_other_mixed,
+		                                                                 h_ele_momentum_2shwr_cut_unmatched);
 
 		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                              h_second_shwr_dist_nue_cc_after, h_second_shwr_dist_nue_cc_out_fv_after,
@@ -1932,16 +2018,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_11, h_reco_ele_e_11, h_mc_reco_ele_e_11);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_hit_length_cut_nue_cc,
+		                                                                 h_ele_momentum_hit_length_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_hit_length_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_hit_length_cut_numu_cc,
+		                                                                 h_ele_momentum_hit_length_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_hit_length_cut_nc,
+		                                                                 h_ele_momentum_hit_length_cut_nc_pi0,
+		                                                                 h_ele_momentum_hit_length_cut_cosmic,
+		                                                                 h_ele_momentum_hit_length_cut_other_mixed,
+		                                                                 h_ele_momentum_hit_length_cut_unmatched);
 
 		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                        h_hit_length_ratio_nue_cc_after,
@@ -1993,16 +2079,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_12, h_reco_ele_e_12, h_mc_reco_ele_e_12);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_length_ratio_cut_nue_cc,
+		                                                                 h_ele_momentum_length_ratio_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_length_ratio_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_length_ratio_cut_numu_cc,
+		                                                                 h_ele_momentum_length_ratio_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_length_ratio_cut_nc,
+		                                                                 h_ele_momentum_length_ratio_cut_nc_pi0,
+		                                                                 h_ele_momentum_length_ratio_cut_cosmic,
+		                                                                 h_ele_momentum_length_ratio_cut_other_mixed,
+		                                                                 h_ele_momentum_length_ratio_cut_unmatched);
 
 		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                             h_leading_shwr_length_nue_cc_after,
@@ -2053,16 +2139,16 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_13, h_reco_ele_e_13, h_mc_reco_ele_e_13);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_nue_cut_nue_cc,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_nue_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_numu_cc,
-		                                                                 h_ele_momentum_nue_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_nue_cut_nc,
-		                                                                 h_ele_momentum_nue_cut_nc_pi0,
-		                                                                 h_ele_momentum_nue_cut_cosmic,
-		                                                                 h_ele_momentum_nue_cut_other_mixed,
-		                                                                 h_ele_momentum_nue_cut_unmatched);
+		                                                                 h_ele_momentum_containment_cut_nue_cc,
+		                                                                 h_ele_momentum_containment_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_containment_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_containment_cut_numu_cc,
+		                                                                 h_ele_momentum_containment_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_containment_cut_nc,
+		                                                                 h_ele_momentum_containment_cut_nc_pi0,
+		                                                                 h_ele_momentum_containment_cut_cosmic,
+		                                                                 h_ele_momentum_containment_cut_other_mixed,
+		                                                                 h_ele_momentum_containment_cut_unmatched);
 
 		//*************************************
 		// ******** End Selection Cuts! ******
@@ -4557,6 +4643,230 @@ void selection::make_selection( const char * _file1,
 	                                   "Reco Selected Leading Shower Momentum [GeV]",
 	                                   "", "../scripts/plots/selected_reco_ele_eng_overlay.pdf"
 	                                   );
+
+
+	histogram_functions::PlotSimpleStackData(h_ele_momentum_nue_cut_nue_cc,        h_ele_momentum_nue_cut_nue_cc_mixed,
+	                                         h_ele_momentum_nue_cut_nue_cc_out_fv, h_ele_momentum_nue_cut_numu_cc,   h_ele_momentum_nue_cut_numu_cc_mixed,
+	                                         h_ele_momentum_nue_cut_cosmic,        h_ele_momentum_nue_cut_nc,        h_ele_momentum_nue_cut_nc_pi0,
+	                                         h_ele_momentum_nue_cut_other_mixed,   h_ele_momentum_nue_cut_unmatched, h_ele_momentum_nue_cut_intime,
+	                                         intime_scale_factor,                  h_ele_momentum_nue_cut_data,      data_scale_factor,
+	                                         "Nue Cut", "Leading Shower Momentum [GeV]", "",
+	                                         "../scripts/plots/post_cuts_ele_momentum_nue_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_ele_momentum_fv_cut_nue_cc,
+	                                         h_ele_momentum_fv_cut_nue_cc_mixed,
+	                                         h_ele_momentum_fv_cut_nue_cc_out_fv,
+	                                         h_ele_momentum_fv_cut_numu_cc,
+	                                         h_ele_momentum_fv_cut_numu_cc_mixed,
+	                                         h_ele_momentum_fv_cut_cosmic,
+	                                         h_ele_momentum_fv_cut_nc,
+	                                         h_ele_momentum_fv_cut_nc_pi0,
+	                                         h_ele_momentum_fv_cut_other_mixed,
+	                                         h_ele_momentum_fv_cut_unmatched,
+	                                         h_ele_momentum_fv_cut_intime,
+	                                         intime_scale_factor,
+	                                         h_ele_momentum_fv_cut_data,
+	                                         data_scale_factor,
+	                                         "Fiducial Volume Cut", "Leading Shower Momentum [GeV]", "",
+	                                         "../scripts/plots/post_cuts_ele_momentum_fv_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_flash_vtx_cut_nue_cc,
+	        h_ele_momentum_flash_vtx_cut_nue_cc_mixed,
+	        h_ele_momentum_flash_vtx_cut_nue_cc_out_fv,
+	        h_ele_momentum_flash_vtx_cut_numu_cc,
+	        h_ele_momentum_flash_vtx_cut_numu_cc_mixed,
+	        h_ele_momentum_flash_vtx_cut_cosmic,
+	        h_ele_momentum_flash_vtx_cut_nc,
+	        h_ele_momentum_flash_vtx_cut_nc_pi0,
+	        h_ele_momentum_flash_vtx_cut_other_mixed,
+	        h_ele_momentum_flash_vtx_cut_unmatched,
+	        h_ele_momentum_flash_vtx_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_flash_vtx_cut_data,
+	        data_scale_factor,
+	        "Flash Vertex Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_flash_vtx_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_shwr_vtx_cut_nue_cc,
+	        h_ele_momentum_shwr_vtx_cut_nue_cc_mixed,
+	        h_ele_momentum_shwr_vtx_cut_nue_cc_out_fv,
+	        h_ele_momentum_shwr_vtx_cut_numu_cc,
+	        h_ele_momentum_shwr_vtx_cut_numu_cc_mixed,
+	        h_ele_momentum_shwr_vtx_cut_cosmic,
+	        h_ele_momentum_shwr_vtx_cut_nc,
+	        h_ele_momentum_shwr_vtx_cut_nc_pi0,
+	        h_ele_momentum_shwr_vtx_cut_other_mixed,
+	        h_ele_momentum_shwr_vtx_cut_unmatched,
+	        h_ele_momentum_shwr_vtx_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_shwr_vtx_cut_data,
+	        data_scale_factor,
+	        "Shower Vertex Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_shwr_vtx_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_trk_vtx_cut_nue_cc,
+	        h_ele_momentum_trk_vtx_cut_nue_cc_mixed,
+	        h_ele_momentum_trk_vtx_cut_nue_cc_out_fv,
+	        h_ele_momentum_trk_vtx_cut_numu_cc,
+	        h_ele_momentum_trk_vtx_cut_numu_cc_mixed,
+	        h_ele_momentum_trk_vtx_cut_cosmic,
+	        h_ele_momentum_trk_vtx_cut_nc,
+	        h_ele_momentum_trk_vtx_cut_nc_pi0,
+	        h_ele_momentum_trk_vtx_cut_other_mixed,
+	        h_ele_momentum_trk_vtx_cut_unmatched,
+	        h_ele_momentum_trk_vtx_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_trk_vtx_cut_data,
+	        data_scale_factor,
+	        "Track Vertex Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_trk_vtx_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_hit_cut_nue_cc,
+	        h_ele_momentum_hit_cut_nue_cc_mixed,
+	        h_ele_momentum_hit_cut_nue_cc_out_fv,
+	        h_ele_momentum_hit_cut_numu_cc,
+	        h_ele_momentum_hit_cut_numu_cc_mixed,
+	        h_ele_momentum_hit_cut_cosmic,
+	        h_ele_momentum_hit_cut_nc,
+	        h_ele_momentum_hit_cut_nc_pi0,
+	        h_ele_momentum_hit_cut_other_mixed,
+	        h_ele_momentum_hit_cut_unmatched,
+	        h_ele_momentum_hit_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_hit_cut_data,
+	        data_scale_factor,
+	        "Total Hit Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_hit_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_yhit_cut_nue_cc,
+	        h_ele_momentum_yhit_cut_nue_cc_mixed,
+	        h_ele_momentum_yhit_cut_nue_cc_out_fv,
+	        h_ele_momentum_yhit_cut_numu_cc,
+	        h_ele_momentum_yhit_cut_numu_cc_mixed,
+	        h_ele_momentum_yhit_cut_cosmic,
+	        h_ele_momentum_yhit_cut_nc,
+	        h_ele_momentum_yhit_cut_nc_pi0,
+	        h_ele_momentum_yhit_cut_other_mixed,
+	        h_ele_momentum_yhit_cut_unmatched,
+	        h_ele_momentum_yhit_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_yhit_cut_data,
+	        data_scale_factor,
+	        "Collection Hit Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_yhit_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_open_angle_cut_nue_cc,
+	        h_ele_momentum_open_angle_cut_nue_cc_mixed,
+	        h_ele_momentum_open_angle_cut_nue_cc_out_fv,
+	        h_ele_momentum_open_angle_cut_numu_cc,
+	        h_ele_momentum_open_angle_cut_numu_cc_mixed,
+	        h_ele_momentum_open_angle_cut_cosmic,
+	        h_ele_momentum_open_angle_cut_nc,
+	        h_ele_momentum_open_angle_cut_nc_pi0,
+	        h_ele_momentum_open_angle_cut_other_mixed,
+	        h_ele_momentum_open_angle_cut_unmatched,
+	        h_ele_momentum_open_angle_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_open_angle_cut_data,
+	        data_scale_factor,
+	        "Open Angle Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_open_angle_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_dedx_cut_nue_cc,
+	        h_ele_momentum_dedx_cut_nue_cc_mixed,
+	        h_ele_momentum_dedx_cut_nue_cc_out_fv,
+	        h_ele_momentum_dedx_cut_numu_cc,
+	        h_ele_momentum_dedx_cut_numu_cc_mixed,
+	        h_ele_momentum_dedx_cut_cosmic,
+	        h_ele_momentum_dedx_cut_nc,
+	        h_ele_momentum_dedx_cut_nc_pi0,
+	        h_ele_momentum_dedx_cut_other_mixed,
+	        h_ele_momentum_dedx_cut_unmatched,
+	        h_ele_momentum_dedx_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_dedx_cut_data,
+	        data_scale_factor,
+	        "dE/dx Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_dedx_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_2shwr_cut_nue_cc,
+	        h_ele_momentum_2shwr_cut_nue_cc_mixed,
+	        h_ele_momentum_2shwr_cut_nue_cc_out_fv,
+	        h_ele_momentum_2shwr_cut_numu_cc,
+	        h_ele_momentum_2shwr_cut_numu_cc_mixed,
+	        h_ele_momentum_2shwr_cut_cosmic,
+	        h_ele_momentum_2shwr_cut_nc,
+	        h_ele_momentum_2shwr_cut_nc_pi0,
+	        h_ele_momentum_2shwr_cut_other_mixed,
+	        h_ele_momentum_2shwr_cut_unmatched,
+	        h_ele_momentum_2shwr_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_2shwr_cut_data,
+	        data_scale_factor,
+	        "Secondary Shower Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_2shwr_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_hit_length_cut_nue_cc,
+	        h_ele_momentum_hit_length_cut_nue_cc_mixed,
+	        h_ele_momentum_hit_length_cut_nue_cc_out_fv,
+	        h_ele_momentum_hit_length_cut_numu_cc,
+	        h_ele_momentum_hit_length_cut_numu_cc_mixed,
+	        h_ele_momentum_hit_length_cut_cosmic,
+	        h_ele_momentum_hit_length_cut_nc,
+	        h_ele_momentum_hit_length_cut_nc_pi0,
+	        h_ele_momentum_hit_length_cut_other_mixed,
+	        h_ele_momentum_hit_length_cut_unmatched,
+	        h_ele_momentum_hit_length_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_hit_length_cut_data,
+	        data_scale_factor,
+	        "Hit/Length Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_hit_length_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_length_ratio_cut_nue_cc,
+	        h_ele_momentum_length_ratio_cut_nue_cc_mixed,
+	        h_ele_momentum_length_ratio_cut_nue_cc_out_fv,
+	        h_ele_momentum_length_ratio_cut_numu_cc,
+	        h_ele_momentum_length_ratio_cut_numu_cc_mixed,
+	        h_ele_momentum_length_ratio_cut_cosmic,
+	        h_ele_momentum_length_ratio_cut_nc,
+	        h_ele_momentum_length_ratio_cut_nc_pi0,
+	        h_ele_momentum_length_ratio_cut_other_mixed,
+	        h_ele_momentum_length_ratio_cut_unmatched,
+	        h_ele_momentum_length_ratio_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_length_ratio_cut_data,
+	        data_scale_factor,
+	        "Trk Length / Shower Length Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_length_ratio_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_containment_cut_nue_cc,
+	        h_ele_momentum_containment_cut_nue_cc_mixed,
+	        h_ele_momentum_containment_cut_nue_cc_out_fv,
+	        h_ele_momentum_containment_cut_numu_cc,
+	        h_ele_momentum_containment_cut_numu_cc_mixed,
+	        h_ele_momentum_containment_cut_cosmic,
+	        h_ele_momentum_containment_cut_nc,
+	        h_ele_momentum_containment_cut_nc_pi0,
+	        h_ele_momentum_containment_cut_other_mixed,
+	        h_ele_momentum_containment_cut_unmatched,
+	        h_ele_momentum_containment_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_containment_cut_data,
+	        data_scale_factor,
+	        "Track Containment Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_containment_cut_data.pdf");
 
 	histogram_functions::Plot1DHistogramGausFit(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_low.pdf");
 	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_med.pdf");

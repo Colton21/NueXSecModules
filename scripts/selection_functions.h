@@ -1120,5 +1120,12 @@ void PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
                              TH1D * h_ele_momentum_cosmic,
                              TH1D * h_ele_momentum_other_mixed,
                              TH1D * h_ele_momentum_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutsLeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_ele_momentum_intime);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

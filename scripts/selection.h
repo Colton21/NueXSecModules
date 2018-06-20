@@ -1504,6 +1504,177 @@ TH2D * h_mc_reco_ele_e_13 = new TH2D ("h_mc_reco_ele_e_13", "h_mc_reco_ele_e_13"
    TH1D * h_mc_ele_e_13 = new TH1D ("h_mc_ele_e_13", "h_mc_ele_e_13", 20, 0, 5);
  */
 
+
+TH1D * h_ele_momentum_nue_cut_nue_cc         = new TH1D ("h_ele_momentum_nue_cut_nue_cc",          "h_ele_momentum_nue_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_nue_cut_nue_cc_out_fv",   "h_ele_momentum_nue_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_nue_cut_nue_cc_mixed",    "h_ele_mometnum_nue_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_numu_cc        = new TH1D ("h_ele_momentum_nue_cut_numu_cc",         "h_ele_momentum_nue_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_nue_cut_numu_cc_mixed",   "h_ele_momentum_nue_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_nc             = new TH1D ("h_ele_momentum_nue_cut_nc",              "h_ele_momentum_nue_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_nc_pi0         = new TH1D ("h_ele_momentum_nue_cut_nc_pi0",          "h_ele_momentum_nue_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_cosmic         = new TH1D ("h_ele_momentum_nue_cut_cosmic",          "h_ele_momentum_nue_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_other_mixed    = new TH1D ("h_ele_momentum_nue_cut_other_mixed",     "h_ele_momentum_nue_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_unmatched      = new TH1D ("h_ele_momentum_nue_cut_unmatched",       "h_ele_momentum_nue_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_intime         = new TH1D ("h_ele_mometnum_nue_cut_intime",          "h_ele_momentum_nue_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_nue_cut_data           = new TH1D ("h_ele_momentum_nue_cut_data",            "h_ele_momentum_nue_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_fv_cut_nue_cc         = new TH1D ("h_ele_momentum_fv_cut_nue_cc",          "h_ele_momentum_fv_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_fv_cut_nue_cc_out_fv",   "h_ele_momentum_fv_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_fv_cut_nue_cc_mixed",    "h_ele_mometnum_fv_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_numu_cc        = new TH1D ("h_ele_momentum_fv_cut_numu_cc",         "h_ele_momentum_fv_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_fv_cut_numu_cc_mixed",   "h_ele_momentum_fv_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_nc             = new TH1D ("h_ele_momentum_fv_cut_nc",              "h_ele_momentum_fv_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_nc_pi0         = new TH1D ("h_ele_momentum_fv_cut_nc_pi0",          "h_ele_momentum_fv_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_cosmic         = new TH1D ("h_ele_momentum_fv_cut_cosmic",          "h_ele_momentum_fv_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_other_mixed    = new TH1D ("h_ele_momentum_fv_cut_other_mixed",     "h_ele_momentum_fv_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_unmatched      = new TH1D ("h_ele_momentum_fv_cut_unmatched",       "h_ele_momentum_fv_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_intime         = new TH1D ("h_ele_mometnum_fv_cut_intime",          "h_ele_momentum_fv_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_fv_cut_data           = new TH1D ("h_ele_momentum_fv_cut_data",            "h_ele_momentum_fv_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_flash_vtx_cut_nue_cc         = new TH1D ("h_ele_momentum_flash_vtx_cut_nue_cc",          "h_ele_momentum_flash_vtx_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_flash_vtx_cut_nue_cc_out_fv",   "h_ele_momentum_flash_vtx_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_flash_vtx_cut_nue_cc_mixed",    "h_ele_mometnum_flash_vtx_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_numu_cc        = new TH1D ("h_ele_momentum_flash_vtx_cut_numu_cc",         "h_ele_momentum_flash_vtx_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_flash_vtx_cut_numu_cc_mixed",   "h_ele_momentum_flash_vtx_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_nc             = new TH1D ("h_ele_momentum_flash_vtx_cut_nc",              "h_ele_momentum_flash_vtx_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_nc_pi0         = new TH1D ("h_ele_momentum_flash_vtx_cut_nc_pi0",          "h_ele_momentum_flash_vtx_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_cosmic         = new TH1D ("h_ele_momentum_flash_vtx_cut_cosmic",          "h_ele_momentum_flash_vtx_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_other_mixed    = new TH1D ("h_ele_momentum_flash_vtx_cut_other_mixed",     "h_ele_momentum_flash_vtx_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_unmatched      = new TH1D ("h_ele_momentum_flash_vtx_cut_unmatched",       "h_ele_momentum_flash_vtx_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_intime         = new TH1D ("h_ele_mometnum_flash_vtx_cut_intime",          "h_ele_momentum_flash_vtx_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_flash_vtx_cut_data           = new TH1D ("h_ele_momentum_flash_vtx_cut_data",            "h_ele_momentum_flash_vtx_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_shwr_vtx_cut_nue_cc         = new TH1D ("h_ele_momentum_shwr_vtx_cut_nue_cc",          "h_ele_momentum_shwr_vtx_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_shwr_vtx_cut_nue_cc_out_fv",   "h_ele_momentum_shwr_vtx_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_shwr_vtx_cut_nue_cc_mixed",    "h_ele_mometnum_shwr_vtx_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_numu_cc        = new TH1D ("h_ele_momentum_shwr_vtx_cut_numu_cc",         "h_ele_momentum_shwr_vtx_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_shwr_vtx_cut_numu_cc_mixed",   "h_ele_momentum_shwr_vtx_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_nc             = new TH1D ("h_ele_momentum_shwr_vtx_cut_nc",              "h_ele_momentum_shwr_vtx_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_nc_pi0         = new TH1D ("h_ele_momentum_shwr_vtx_cut_nc_pi0",          "h_ele_momentum_shwr_vtx_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_cosmic         = new TH1D ("h_ele_momentum_shwr_vtx_cut_cosmic",          "h_ele_momentum_shwr_vtx_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_other_mixed    = new TH1D ("h_ele_momentum_shwr_vtx_cut_other_mixed",     "h_ele_momentum_shwr_vtx_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_unmatched      = new TH1D ("h_ele_momentum_shwr_vtx_cut_unmatched",       "h_ele_momentum_shwr_vtx_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_intime         = new TH1D ("h_ele_mometnum_shwr_vtx_cut_intime",          "h_ele_momentum_shwr_vtx_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_shwr_vtx_cut_data           = new TH1D ("h_ele_momentum_shwr_vtx_cut_data",            "h_ele_momentum_shwr_vtx_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_trk_vtx_cut_nue_cc         = new TH1D ("h_ele_momentum_trk_vtx_cut_nue_cc",          "h_ele_momentum_trk_vtx_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_trk_vtx_cut_nue_cc_out_fv",   "h_ele_momentum_trk_vtx_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_trk_vtx_cut_nue_cc_mixed",    "h_ele_mometnum_trk_vtx_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_numu_cc        = new TH1D ("h_ele_momentum_trk_vtx_cut_numu_cc",         "h_ele_momentum_trk_vtx_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_trk_vtx_cut_numu_cc_mixed",   "h_ele_momentum_trk_vtx_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_nc             = new TH1D ("h_ele_momentum_trk_vtx_cut_nc",              "h_ele_momentum_trk_vtx_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_nc_pi0         = new TH1D ("h_ele_momentum_trk_vtx_cut_nc_pi0",          "h_ele_momentum_trk_vtx_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_cosmic         = new TH1D ("h_ele_momentum_trk_vtx_cut_cosmic",          "h_ele_momentum_trk_vtx_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_other_mixed    = new TH1D ("h_ele_momentum_trk_vtx_cut_other_mixed",     "h_ele_momentum_trk_vtx_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_unmatched      = new TH1D ("h_ele_momentum_trk_vtx_cut_unmatched",       "h_ele_momentum_trk_vtx_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_intime         = new TH1D ("h_ele_mometnum_trk_vtx_cut_intime",          "h_ele_momentum_trk_vtx_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_trk_vtx_cut_data           = new TH1D ("h_ele_momentum_trk_vtx_cut_data",            "h_ele_momentum_trk_vtx_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_hit_cut_nue_cc         = new TH1D ("h_ele_momentum_hit_cut_nue_cc",          "h_ele_momentum_hit_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_hit_cut_nue_cc_out_fv",   "h_ele_momentum_hit_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_hit_cut_nue_cc_mixed",    "h_ele_mometnum_hit_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_numu_cc        = new TH1D ("h_ele_momentum_hit_cut_numu_cc",         "h_ele_momentum_hit_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_hit_cut_numu_cc_mixed",   "h_ele_momentum_hit_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_nc             = new TH1D ("h_ele_momentum_hit_cut_nc",              "h_ele_momentum_hit_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_nc_pi0         = new TH1D ("h_ele_momentum_hit_cut_nc_pi0",          "h_ele_momentum_hit_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_cosmic         = new TH1D ("h_ele_momentum_hit_cut_cosmic",          "h_ele_momentum_hit_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_other_mixed    = new TH1D ("h_ele_momentum_hit_cut_other_mixed",     "h_ele_momentum_hit_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_unmatched      = new TH1D ("h_ele_momentum_hit_cut_unmatched",       "h_ele_momentum_hit_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_intime         = new TH1D ("h_ele_mometnum_hit_cut_intime",          "h_ele_momentum_hit_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_hit_cut_data           = new TH1D ("h_ele_momentum_hit_cut_data",            "h_ele_momentum_hit_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_yhit_cut_nue_cc         = new TH1D ("h_ele_momentum_yhit_cut_nue_cc",          "h_ele_momentum_yhit_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_yhit_cut_nue_cc_out_fv",   "h_ele_momentum_yhit_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_yhit_cut_nue_cc_mixed",    "h_ele_mometnum_yhit_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_numu_cc        = new TH1D ("h_ele_momentum_yhit_cut_numu_cc",         "h_ele_momentum_yhit_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_yhit_cut_numu_cc_mixed",   "h_ele_momentum_yhit_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_nc             = new TH1D ("h_ele_momentum_yhit_cut_nc",              "h_ele_momentum_yhit_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_nc_pi0         = new TH1D ("h_ele_momentum_yhit_cut_nc_pi0",          "h_ele_momentum_yhit_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_cosmic         = new TH1D ("h_ele_momentum_yhit_cut_cosmic",          "h_ele_momentum_yhit_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_other_mixed    = new TH1D ("h_ele_momentum_yhit_cut_other_mixed",     "h_ele_momentum_yhit_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_unmatched      = new TH1D ("h_ele_momentum_yhit_cut_unmatched",       "h_ele_momentum_yhit_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_intime         = new TH1D ("h_ele_mometnum_yhit_cut_intime",          "h_ele_momentum_yhit_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_yhit_cut_data           = new TH1D ("h_ele_momentum_yhit_cut_data",            "h_ele_momentum_yhit_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_open_angle_cut_nue_cc         = new TH1D ("h_ele_momentum_open_angle_cut_nue_cc",          "h_ele_momentum_open_angle_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_open_angle_cut_nue_cc_out_fv",   "h_ele_momentum_open_angle_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_open_angle_cut_nue_cc_mixed",    "h_ele_mometnum_open_angle_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_numu_cc        = new TH1D ("h_ele_momentum_open_angle_cut_numu_cc",         "h_ele_momentum_open_angle_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_open_angle_cut_numu_cc_mixed",   "h_ele_momentum_open_angle_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_nc             = new TH1D ("h_ele_momentum_open_angle_cut_nc",              "h_ele_momentum_open_angle_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_nc_pi0         = new TH1D ("h_ele_momentum_open_angle_cut_nc_pi0",          "h_ele_momentum_open_angle_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_cosmic         = new TH1D ("h_ele_momentum_open_angle_cut_cosmic",          "h_ele_momentum_open_angle_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_other_mixed    = new TH1D ("h_ele_momentum_open_angle_cut_other_mixed",     "h_ele_momentum_open_angle_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_unmatched      = new TH1D ("h_ele_momentum_open_angle_cut_unmatched",       "h_ele_momentum_open_angle_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_intime         = new TH1D ("h_ele_mometnum_open_angle_cut_intime",          "h_ele_momentum_open_angle_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_open_angle_cut_data           = new TH1D ("h_ele_momentum_open_angle_cut_data",            "h_ele_momentum_open_angle_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_dedx_cut_nue_cc         = new TH1D ("h_ele_momentum_dedx_cut_nue_cc",          "h_ele_momentum_dedx_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_dedx_cut_nue_cc_out_fv",   "h_ele_momentum_dedx_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_dedx_cut_nue_cc_mixed",    "h_ele_mometnum_dedx_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_numu_cc        = new TH1D ("h_ele_momentum_dedx_cut_numu_cc",         "h_ele_momentum_dedx_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_dedx_cut_numu_cc_mixed",   "h_ele_momentum_dedx_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_nc             = new TH1D ("h_ele_momentum_dedx_cut_nc",              "h_ele_momentum_dedx_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_nc_pi0         = new TH1D ("h_ele_momentum_dedx_cut_nc_pi0",          "h_ele_momentum_dedx_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_cosmic         = new TH1D ("h_ele_momentum_dedx_cut_cosmic",          "h_ele_momentum_dedx_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_other_mixed    = new TH1D ("h_ele_momentum_dedx_cut_other_mixed",     "h_ele_momentum_dedx_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_unmatched      = new TH1D ("h_ele_momentum_dedx_cut_unmatched",       "h_ele_momentum_dedx_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_intime         = new TH1D ("h_ele_mometnum_dedx_cut_intime",          "h_ele_momentum_dedx_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_dedx_cut_data           = new TH1D ("h_ele_momentum_dedx_cut_data",            "h_ele_momentum_dedx_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_2shwr_cut_nue_cc         = new TH1D ("h_ele_momentum_2shwr_cut_nue_cc",          "h_ele_momentum_2shwr_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_2shwr_cut_nue_cc_out_fv",   "h_ele_momentum_2shwr_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_2shwr_cut_nue_cc_mixed",    "h_ele_mometnum_2shwr_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_numu_cc        = new TH1D ("h_ele_momentum_2shwr_cut_numu_cc",         "h_ele_momentum_2shwr_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_2shwr_cut_numu_cc_mixed",   "h_ele_momentum_2shwr_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_nc             = new TH1D ("h_ele_momentum_2shwr_cut_nc",              "h_ele_momentum_2shwr_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_nc_pi0         = new TH1D ("h_ele_momentum_2shwr_cut_nc_pi0",          "h_ele_momentum_2shwr_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_cosmic         = new TH1D ("h_ele_momentum_2shwr_cut_cosmic",          "h_ele_momentum_2shwr_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_other_mixed    = new TH1D ("h_ele_momentum_2shwr_cut_other_mixed",     "h_ele_momentum_2shwr_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_unmatched      = new TH1D ("h_ele_momentum_2shwr_cut_unmatched",       "h_ele_momentum_2shwr_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_intime         = new TH1D ("h_ele_mometnum_2shwr_cut_intime",          "h_ele_momentum_2shwr_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_2shwr_cut_data           = new TH1D ("h_ele_momentum_2shwr_cut_data",            "h_ele_momentum_2shwr_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_hit_length_cut_nue_cc         = new TH1D ("h_ele_momentum_hit_length_cut_nue_cc",          "h_ele_momentum_hit_length_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_hit_length_cut_nue_cc_out_fv",   "h_ele_momentum_hit_length_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_hit_length_cut_nue_cc_mixed",    "h_ele_mometnum_hit_length_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_numu_cc        = new TH1D ("h_ele_momentum_hit_length_cut_numu_cc",         "h_ele_momentum_hit_length_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_hit_length_cut_numu_cc_mixed",   "h_ele_momentum_hit_length_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_nc             = new TH1D ("h_ele_momentum_hit_length_cut_nc",              "h_ele_momentum_hit_length_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_nc_pi0         = new TH1D ("h_ele_momentum_hit_length_cut_nc_pi0",          "h_ele_momentum_hit_length_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_cosmic         = new TH1D ("h_ele_momentum_hit_length_cut_cosmic",          "h_ele_momentum_hit_length_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_other_mixed    = new TH1D ("h_ele_momentum_hit_length_cut_other_mixed",     "h_ele_momentum_hit_length_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_unmatched      = new TH1D ("h_ele_momentum_hit_length_cut_unmatched",       "h_ele_momentum_hit_length_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_intime         = new TH1D ("h_ele_mometnum_hit_length_cut_intime",          "h_ele_momentum_hit_length_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_hit_length_cut_data           = new TH1D ("h_ele_momentum_hit_length_cut_data",            "h_ele_momentum_hit_length_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_length_ratio_cut_nue_cc         = new TH1D ("h_ele_momentum_length_ratio_cut_nue_cc",          "h_ele_momentum_length_ratio_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_length_ratio_cut_nue_cc_out_fv",   "h_ele_momentum_length_ratio_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_length_ratio_cut_nue_cc_mixed",    "h_ele_mometnum_length_ratio_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_numu_cc        = new TH1D ("h_ele_momentum_length_ratio_cut_numu_cc",         "h_ele_momentum_length_ratio_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_length_ratio_cut_numu_cc_mixed",   "h_ele_momentum_length_ratio_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_nc             = new TH1D ("h_ele_momentum_length_ratio_cut_nc",              "h_ele_momentum_length_ratio_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_nc_pi0         = new TH1D ("h_ele_momentum_length_ratio_cut_nc_pi0",          "h_ele_momentum_length_ratio_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_cosmic         = new TH1D ("h_ele_momentum_length_ratio_cut_cosmic",          "h_ele_momentum_length_ratio_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_other_mixed    = new TH1D ("h_ele_momentum_length_ratio_cut_other_mixed",     "h_ele_momentum_length_ratio_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_unmatched      = new TH1D ("h_ele_momentum_length_ratio_cut_unmatched",       "h_ele_momentum_length_ratio_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_intime         = new TH1D ("h_ele_mometnum_length_ratio_cut_intime",          "h_ele_momentum_length_ratio_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_length_ratio_cut_data           = new TH1D ("h_ele_momentum_length_ratio_cut_data",            "h_ele_momentum_length_ratio_cut_data",          20, 0, 4);
+
+TH1D * h_ele_momentum_containment_cut_nue_cc         = new TH1D ("h_ele_momentum_containment_cut_nue_cc",          "h_ele_momentum_containment_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_containment_cut_nue_cc_out_fv",   "h_ele_momentum_containment_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_containment_cut_nue_cc_mixed",    "h_ele_mometnum_containment_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_numu_cc        = new TH1D ("h_ele_momentum_containment_cut_numu_cc",         "h_ele_momentum_containment_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_containment_cut_numu_cc_mixed",   "h_ele_momentum_containment_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_nc             = new TH1D ("h_ele_momentum_containment_cut_nc",              "h_ele_momentum_containment_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_nc_pi0         = new TH1D ("h_ele_momentum_containment_cut_nc_pi0",          "h_ele_momentum_containment_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_cosmic         = new TH1D ("h_ele_momentum_containment_cut_cosmic",          "h_ele_momentum_containment_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_other_mixed    = new TH1D ("h_ele_momentum_containment_cut_other_mixed",     "h_ele_momentum_containment_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_unmatched      = new TH1D ("h_ele_momentum_containment_cut_unmatched",       "h_ele_momentum_containment_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_intime         = new TH1D ("h_ele_mometnum_containment_cut_intime",          "h_ele_momentum_containment_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_containment_cut_data           = new TH1D ("h_ele_momentum_containment_cut_data",            "h_ele_momentum_containment_cut_data",          20, 0, 4);
+
+
 }; //end class
 
 }//end namespace
