@@ -664,30 +664,36 @@ void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
 
 }
 
-void histogram_functions::EnergyOverlay(TH1 * h_1,
-                                        TH1 * h_2,
-                                        TH1 * h_3,
-                                        TH1 * h_4,
-                                        TH1 * h_5,
-                                        TH1 * h_6,
-                                        TH1 * h_7,
-                                        TH1 * h_8,
-                                        TH1 * h_9,
-                                        TH1 * h_10,
-                                        TH1 * h_11,
-                                        TH1 * h_12,
-                                        TH1 * h_13,
-                                        const char * x_axis_name, const char * y_axis_name, const char * print_name
-                                        )
+void histogram_functions::EnergyOverlay(
+        TH1 * h_0,
+        TH1 * h_1,
+        TH1 * h_2,
+        TH1 * h_3,
+        TH1 * h_4,
+        TH1 * h_5,
+        TH1 * h_6,
+        TH1 * h_7,
+        TH1 * h_8,
+        TH1 * h_9,
+        TH1 * h_10,
+        TH1 * h_11,
+        TH1 * h_12,
+        TH1 * h_13,
+        const char * x_axis_name, const char * y_axis_name, const char * print_name
+        )
 {
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
+	h_0->SetStats(kFALSE);
+	h_0->SetFillColor(1);
+	h_0->GetXaxis()->SetTitle(x_axis_name);
+	const double nu_energy_no_cut_integral = h_0->Integral();
+	h_0->Scale(1./nu_energy_no_cut_integral);
+	h_0->Draw("hist");
 	h_1->SetStats(kFALSE);
 	h_1->SetFillColor(29);
-	h_1->GetXaxis()->SetTitle(x_axis_name);
-	const double nu_energy_no_cut_integral = h_1->Integral();
 	h_1->Scale(1./nu_energy_no_cut_integral);
-	h_1->Draw("hist");
+	h_1->Draw("hist same");
 	h_2->SetFillColor(30);
 	h_2->SetStats(kFALSE);
 	h_2->Scale(1./nu_energy_no_cut_integral);
@@ -740,6 +746,7 @@ void histogram_functions::EnergyOverlay(TH1 * h_1,
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_sequential1 = new TLegend(0.65,0.65,0.85,0.85);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_sequential1->AddEntry(h_0,   "No Cut",           "f");
 	leg_sequential1->AddEntry(h_1,   "Reco Nue",         "f");
 	leg_sequential1->AddEntry(h_2,   "Fiducial Volume",  "f");
 	leg_sequential1->AddEntry(h_3,   "Vtx To Flash",     "f");

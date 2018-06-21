@@ -125,21 +125,23 @@ static void OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_
                            const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                            const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 
-static void EnergyOverlay(TH1 * h_1,
-                          TH1 * h_2,
-                          TH1 * h_3,
-                          TH1 * h_4,
-                          TH1 * h_5,
-                          TH1 * h_6,
-                          TH1 * h_7,
-                          TH1 * h_8,
-                          TH1 * h_9,
-                          TH1 * h_10,
-                          TH1 * h_11,
-                          TH1 * h_12,
-                          TH1 * h_13,
-                          const char * x_axis_name, const char * y_axis_name, const char * print_name
-                          );
+static void EnergyOverlay(
+        TH1 * h_0,
+        TH1 * h_1,
+        TH1 * h_2,
+        TH1 * h_3,
+        TH1 * h_4,
+        TH1 * h_5,
+        TH1 * h_6,
+        TH1 * h_7,
+        TH1 * h_8,
+        TH1 * h_9,
+        TH1 * h_10,
+        TH1 * h_11,
+        TH1 * h_12,
+        TH1 * h_13,
+        const char * x_axis_name, const char * y_axis_name, const char * print_name
+        );
 
 };
 #endif

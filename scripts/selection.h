@@ -1445,6 +1445,7 @@ TH2D * h_dedx_collection_angle_intime         = new TH2D ("h_dedx_collection_ang
 TH2D * h_dedx_collection_angle_data           = new TH2D ("h_dedx_collection_angle_data",           "h_dedx_collection_data",           20, 0, 10, 20, -3.5, 3.5);
 
 
+TH1D * h_mc_ele_e_0  = new TH1D ("h_mc_ele_e_0",  "h_mc_ele_e_0",  20, 0, 5);
 TH1D * h_mc_ele_e_1  = new TH1D ("h_mc_ele_e_1",  "h_mc_ele_e_1",  20, 0, 5);
 TH1D * h_mc_ele_e_2  = new TH1D ("h_mc_ele_e_2",  "h_mc_ele_e_2",  20, 0, 5);
 TH1D * h_mc_ele_e_3  = new TH1D ("h_mc_ele_e_3",  "h_mc_ele_e_3",  20, 0, 5);
@@ -1459,6 +1460,7 @@ TH1D * h_mc_ele_e_11 = new TH1D ("h_mc_ele_e_11", "h_mc_ele_e_11", 20, 0, 5);
 TH1D * h_mc_ele_e_12 = new TH1D ("h_mc_ele_e_12", "h_mc_ele_e_12", 20, 0, 5);
 TH1D * h_mc_ele_e_13 = new TH1D ("h_mc_ele_e_13", "h_mc_ele_e_13", 20, 0, 5);
 
+TH1D * h_reco_ele_e_0  = new TH1D ("h_reco_ele_e_0",  "h_reco_ele_e_0",  20, 0, 5);
 TH1D * h_reco_ele_e_1  = new TH1D ("h_reco_ele_e_1",  "h_reco_ele_e_1",  20, 0, 5);
 TH1D * h_reco_ele_e_2  = new TH1D ("h_reco_ele_e_2",  "h_reco_ele_e_2",  20, 0, 5);
 TH1D * h_reco_ele_e_3  = new TH1D ("h_reco_ele_e_3",  "h_reco_ele_e_3",  20, 0, 5);
@@ -1473,6 +1475,7 @@ TH1D * h_reco_ele_e_11 = new TH1D ("h_reco_ele_e_11", "h_reco_ele_e_11", 20, 0, 
 TH1D * h_reco_ele_e_12 = new TH1D ("h_reco_ele_e_12", "h_reco_ele_e_12", 20, 0, 5);
 TH1D * h_reco_ele_e_13 = new TH1D ("h_reco_ele_e_13", "h_reco_ele_e_13", 20, 0, 5);
 
+TH2D * h_mc_reco_ele_e_0  = new TH2D ("h_mc_reco_ele_e_0",  "h_mc_reco_ele_e_0",  20, 0, 5, 20, 0, 5);
 TH2D * h_mc_reco_ele_e_1  = new TH2D ("h_mc_reco_ele_e_1",  "h_mc_reco_ele_e_1",  20, 0, 5, 20, 0, 5);
 TH2D * h_mc_reco_ele_e_2  = new TH2D ("h_mc_reco_ele_e_2",  "h_mc_reco_ele_e_2",  20, 0, 5, 20, 0, 5);
 TH2D * h_mc_reco_ele_e_3  = new TH2D ("h_mc_reco_ele_e_3",  "h_mc_reco_ele_e_3",  20, 0, 5, 20, 0, 5);
@@ -1503,6 +1506,19 @@ TH2D * h_mc_reco_ele_e_13 = new TH2D ("h_mc_reco_ele_e_13", "h_mc_reco_ele_e_13"
    TH1D * h_mc_ele_e_12 = new TH1D ("h_mc_ele_e_12", "h_mc_ele_e_12", 20, 0, 5);
    TH1D * h_mc_ele_e_13 = new TH1D ("h_mc_ele_e_13", "h_mc_ele_e_13", 20, 0, 5);
  */
+
+TH1D * h_ele_momentum_no_cut_nue_cc         = new TH1D ("h_ele_momentum_no_cut_nue_cc",          "h_ele_momentum_no_cut_nue_cc",        20, 0, 4);
+TH1D * h_ele_momentum_no_cut_nue_cc_out_fv  = new TH1D ("h_ele_momentum_no_cut_nue_cc_out_fv",   "h_ele_momentum_no_cut_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_ele_momentum_no_cut_nue_cc_mixed   = new TH1D ("h_ele_momentum_no_cut_nue_cc_mixed",    "h_ele_mometnum_no_cut_nue_cc_mixed",  20, 0, 4);
+TH1D * h_ele_momentum_no_cut_numu_cc        = new TH1D ("h_ele_momentum_no_cut_numu_cc",         "h_ele_momentum_no_cut_numu_cc",       20, 0, 4);
+TH1D * h_ele_momentum_no_cut_numu_cc_mixed  = new TH1D ("h_ele_momentum_no_cut_numu_cc_mixed",   "h_ele_momentum_no_cut_numu_cc_mixed", 20, 0, 4);
+TH1D * h_ele_momentum_no_cut_nc             = new TH1D ("h_ele_momentum_no_cut_nc",              "h_ele_momentum_no_cut_nc",            20, 0, 4);
+TH1D * h_ele_momentum_no_cut_nc_pi0         = new TH1D ("h_ele_momentum_no_cut_nc_pi0",          "h_ele_momentum_no_cut_nc_pi0",        20, 0, 4);
+TH1D * h_ele_momentum_no_cut_cosmic         = new TH1D ("h_ele_momentum_no_cut_cosmic",          "h_ele_momentum_no_cut_cosmic",        20, 0, 4);
+TH1D * h_ele_momentum_no_cut_other_mixed    = new TH1D ("h_ele_momentum_no_cut_other_mixed",     "h_ele_momentum_no_cut_other_mixed",   20, 0, 4);
+TH1D * h_ele_momentum_no_cut_unmatched      = new TH1D ("h_ele_momentum_no_cut_unmatched",       "h_ele_momentum_no_cut_unmatched",     20, 0, 4);
+TH1D * h_ele_momentum_no_cut_intime         = new TH1D ("h_ele_mometnum_no_cut_intime",          "h_ele_momentum_no_cut_intime",        20, 0, 4);
+TH1D * h_ele_momentum_no_cut_data           = new TH1D ("h_ele_momentum_no_cut_data",            "h_ele_momentum_no_cut_data",          20, 0, 4);
 
 
 TH1D * h_ele_momentum_nue_cut_nue_cc         = new TH1D ("h_ele_momentum_nue_cut_nue_cc",          "h_ele_momentum_nue_cut_nue_cc",        20, 0, 4);

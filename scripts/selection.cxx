@@ -266,11 +266,15 @@ void selection::make_selection( const char * _file1,
 			//List of TPC Objects which pass the cuts
 			std::vector<std::pair<int, std::string> > * passed_tpco_data = new std::vector<std::pair<int, std::string> >;
 			passed_tpco_data->resize(data_tpc_object_container_v->size());
+			std::vector<std::pair<int, std::string> > * dummy_passed_tpco_data = new std::vector<std::pair<int, std::string> >;
+			dummy_passed_tpco_data->resize(data_tpc_object_container_v->size());
 			//set initial state of objects
 			for(int i = 0; i < passed_tpco_data->size(); i++)
 			{
 				passed_tpco_data->at(i).first = 1;
 				passed_tpco_data->at(i).second = "Passed";
+				dummy_passed_tpco_data->at(i).first = 1;
+				dummy_passed_tpco_data->at(i).second = "Passed";
 			}
 			//***********************************************************
 			//this is where the in-time optical cut again takes effect
@@ -301,6 +305,8 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
 			                                                                               _verbose, h_ele_momentum_nue_cut_data);
+			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, dummy_passed_tpco_data,
+			                                                                               _verbose, h_ele_momentum_no_cut_data);
 
 			//************************
 			//******** in fv cut *****
@@ -681,11 +687,15 @@ void selection::make_selection( const char * _file1,
 			//List of TPC Objects which pass the cuts
 			std::vector<std::pair<int, std::string> > * passed_tpco_intime = new std::vector<std::pair<int, std::string> >;
 			passed_tpco_intime->resize(intime_tpc_object_container_v->size());
+			std::vector<std::pair<int, std::string> > * dummy_passed_tpco_intime = new std::vector<std::pair<int, std::string> >;
+			dummy_passed_tpco_intime->resize(intime_tpc_object_container_v->size());
 			//set initial state of objects
 			for(int i = 0; i < passed_tpco_intime->size(); i++)
 			{
 				passed_tpco_intime->at(i).first = 1;
 				passed_tpco_intime->at(i).second = "Passed";
+				dummy_passed_tpco_intime->at(i).first = 1;
+				dummy_passed_tpco_intime->at(i).second = "Passed";
 			}
 			//***********************************************************
 			//this is where the in-time optical cut again takes effect
@@ -718,6 +728,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_nue_cut_intime);
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, dummy_passed_tpco_intime, _verbose,
+			                                                                       h_ele_momentum_no_cut_intime);
+
 
 			//************************
 			//******** in fv cut *****
@@ -1167,11 +1180,15 @@ void selection::make_selection( const char * _file1,
 
 		//List of TPC Objects which pass the cuts
 		std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
+		std::vector<std::pair<int, std::string> > * dummy_passed_tpco = new std::vector<std::pair<int, std::string> >;
 		passed_tpco->resize(tpc_object_container_v->size());
+		dummy_passed_tpco->resize(tpc_object_container_v->size());
 		for(int i = 0; i < passed_tpco->size(); i++)
 		{
 			passed_tpco->at(i).first = 1;
 			passed_tpco->at(i).second = "Passed";
+			dummy_passed_tpco->at(i).first = 1;
+			dummy_passed_tpco->at(i).second = "Passed";
 		}
 
 		double mc_cos_theta = -999;
@@ -1242,6 +1259,8 @@ void selection::make_selection( const char * _file1,
 		{
 			_functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
 			                                                            h_mc_ele_e_1, h_reco_ele_e_1, h_mc_reco_ele_e_1);
+			_functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, dummy_passed_tpco, tpco_classifier_v, mc_ele_energy,
+			                                                            h_mc_ele_e_0, h_reco_ele_e_0, h_mc_reco_ele_e_0);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                 h_ele_momentum_nue_cut_nue_cc,
@@ -1254,6 +1273,18 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_nue_cut_cosmic,
 		                                                                 h_ele_momentum_nue_cut_other_mixed,
 		                                                                 h_ele_momentum_nue_cut_unmatched);
+
+		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, dummy_passed_tpco, _verbose, tpco_classifier_v,
+		                                                                 h_ele_momentum_no_cut_nue_cc,
+		                                                                 h_ele_momentum_no_cut_nue_cc_out_fv,
+		                                                                 h_ele_momentum_no_cut_nue_cc_mixed,
+		                                                                 h_ele_momentum_no_cut_numu_cc,
+		                                                                 h_ele_momentum_no_cut_numu_cc_mixed,
+		                                                                 h_ele_momentum_no_cut_nc,
+		                                                                 h_ele_momentum_no_cut_nc_pi0,
+		                                                                 h_ele_momentum_no_cut_cosmic,
+		                                                                 h_ele_momentum_no_cut_other_mixed,
+		                                                                 h_ele_momentum_no_cut_unmatched);
 
 		//** Testing flash vs neutrino interaction for origin **
 		_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins,
@@ -4610,39 +4641,51 @@ void selection::make_selection( const char * _file1,
 	                                     "../scripts/plots/selected_mc_reco_ele_eng_13.pdf");
 
 
-	histogram_functions::EnergyOverlay(h_mc_ele_e_1,
-	                                   h_mc_ele_e_2,
-	                                   h_mc_ele_e_3,
-	                                   h_mc_ele_e_4,
-	                                   h_mc_ele_e_5,
-	                                   h_mc_ele_e_6,
-	                                   h_mc_ele_e_7,
-	                                   h_mc_ele_e_8,
-	                                   h_mc_ele_e_9,
-	                                   h_mc_ele_e_10,
-	                                   h_mc_ele_e_11,
-	                                   h_mc_ele_e_12,
-	                                   h_mc_ele_e_13,
-	                                   "True Selected Electron Energy [GeV]",
-	                                   "", "../scripts/plots/selected_mc_ele_eng_overlay.pdf"
-	                                   );
+	histogram_functions::EnergyOverlay(
+	        h_mc_ele_e_0,
+	        h_mc_ele_e_1,
+	        h_mc_ele_e_2,
+	        h_mc_ele_e_3,
+	        h_mc_ele_e_4,
+	        h_mc_ele_e_5,
+	        h_mc_ele_e_6,
+	        h_mc_ele_e_7,
+	        h_mc_ele_e_8,
+	        h_mc_ele_e_9,
+	        h_mc_ele_e_10,
+	        h_mc_ele_e_11,
+	        h_mc_ele_e_12,
+	        h_mc_ele_e_13,
+	        "True Selected Electron Energy [GeV]",
+	        "", "../scripts/plots/selected_mc_ele_eng_overlay.pdf"
+	        );
 
-	histogram_functions::EnergyOverlay(h_reco_ele_e_1,
-	                                   h_reco_ele_e_2,
-	                                   h_reco_ele_e_3,
-	                                   h_reco_ele_e_4,
-	                                   h_reco_ele_e_5,
-	                                   h_reco_ele_e_6,
-	                                   h_reco_ele_e_7,
-	                                   h_reco_ele_e_8,
-	                                   h_reco_ele_e_9,
-	                                   h_reco_ele_e_10,
-	                                   h_reco_ele_e_11,
-	                                   h_reco_ele_e_12,
-	                                   h_reco_ele_e_13,
-	                                   "Reco Selected Leading Shower Momentum [GeV]",
-	                                   "", "../scripts/plots/selected_reco_ele_eng_overlay.pdf"
-	                                   );
+	histogram_functions::EnergyOverlay(
+	        h_reco_ele_e_0,
+	        h_reco_ele_e_1,
+	        h_reco_ele_e_2,
+	        h_reco_ele_e_3,
+	        h_reco_ele_e_4,
+	        h_reco_ele_e_5,
+	        h_reco_ele_e_6,
+	        h_reco_ele_e_7,
+	        h_reco_ele_e_8,
+	        h_reco_ele_e_9,
+	        h_reco_ele_e_10,
+	        h_reco_ele_e_11,
+	        h_reco_ele_e_12,
+	        h_reco_ele_e_13,
+	        "Reco Selected Leading Shower Momentum [GeV]",
+	        "", "../scripts/plots/selected_reco_ele_eng_overlay.pdf"
+	        );
+
+	histogram_functions::PlotSimpleStackData(h_ele_momentum_no_cut_nue_cc,        h_ele_momentum_no_cut_nue_cc_mixed,
+	                                         h_ele_momentum_no_cut_nue_cc_out_fv, h_ele_momentum_no_cut_numu_cc,   h_ele_momentum_no_cut_numu_cc_mixed,
+	                                         h_ele_momentum_no_cut_cosmic,        h_ele_momentum_no_cut_nc,        h_ele_momentum_no_cut_nc_pi0,
+	                                         h_ele_momentum_no_cut_other_mixed,   h_ele_momentum_no_cut_unmatched, h_ele_momentum_no_cut_intime,
+	                                         intime_scale_factor,                 h_ele_momentum_no_cut_data,      data_scale_factor,
+	                                         "No Cut", "Leading Shower Momentum [GeV]", "",
+	                                         "../scripts/plots/post_cuts_ele_momentum_no_cut_data.pdf");
 
 
 	histogram_functions::PlotSimpleStackData(h_ele_momentum_nue_cut_nue_cc,        h_ele_momentum_nue_cut_nue_cc_mixed,
