@@ -60,3 +60,4 @@ python/config.txt
 *_dict.cxx
 *.rootmap
 scripts/post_cut_v_dump.txt
+flux_ana/*.root
