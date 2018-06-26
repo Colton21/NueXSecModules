@@ -737,7 +737,7 @@ void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vec
 {
 	int counter           = counter_v->at(7);
 	int counter_nue_cc    = counter_v->at(0);
-	counter = counter + (counter_intime_cosmics * (intime_scale_factor / data_scale_factor));
+	counter = counter + double(counter_intime_cosmics * (intime_scale_factor / data_scale_factor));
 	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
 	const double purity     = double(counter_nue_cc) / double(counter);
 
