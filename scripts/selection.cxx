@@ -1259,8 +1259,8 @@ void selection::make_selection( const char * _file1,
 		{
 			_functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
 			                                                            h_mc_ele_e_1, h_reco_ele_e_1, h_mc_reco_ele_e_1);
-			_functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, dummy_passed_tpco, tpco_classifier_v, mc_ele_energy,
-			                                                            h_mc_ele_e_0, h_reco_ele_e_0, h_mc_reco_ele_e_0);
+			// _functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, dummy_passed_tpco, tpco_classifier_v, mc_ele_energy,
+			//                                                             h_mc_ele_e_0, h_reco_ele_e_0, h_mc_reco_ele_e_0);
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                 h_ele_momentum_nue_cut_nue_cc,
@@ -1274,17 +1274,17 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_nue_cut_other_mixed,
 		                                                                 h_ele_momentum_nue_cut_unmatched);
 
-		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, dummy_passed_tpco, _verbose, tpco_classifier_v,
-		                                                                 h_ele_momentum_no_cut_nue_cc,
-		                                                                 h_ele_momentum_no_cut_nue_cc_out_fv,
-		                                                                 h_ele_momentum_no_cut_nue_cc_mixed,
-		                                                                 h_ele_momentum_no_cut_numu_cc,
-		                                                                 h_ele_momentum_no_cut_numu_cc_mixed,
-		                                                                 h_ele_momentum_no_cut_nc,
-		                                                                 h_ele_momentum_no_cut_nc_pi0,
-		                                                                 h_ele_momentum_no_cut_cosmic,
-		                                                                 h_ele_momentum_no_cut_other_mixed,
-		                                                                 h_ele_momentum_no_cut_unmatched);
+		// _functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, dummy_passed_tpco, _verbose, tpco_classifier_v,
+		//                                                                  h_ele_momentum_no_cut_nue_cc,
+		//                                                                  h_ele_momentum_no_cut_nue_cc_out_fv,
+		//                                                                  h_ele_momentum_no_cut_nue_cc_mixed,
+		//                                                                  h_ele_momentum_no_cut_numu_cc,
+		//                                                                  h_ele_momentum_no_cut_numu_cc_mixed,
+		//                                                                  h_ele_momentum_no_cut_nc,
+		//                                                                  h_ele_momentum_no_cut_nc_pi0,
+		//                                                                  h_ele_momentum_no_cut_cosmic,
+		//                                                                  h_ele_momentum_no_cut_other_mixed,
+		//                                                                  h_ele_momentum_no_cut_unmatched);
 
 		//** Testing flash vs neutrino interaction for origin **
 		_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins,
