@@ -1,11 +1,3 @@
-#include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
-#include_directories( $ENV{PANDORA_INC} )
-#include_directories( $ENV{LARPANDORACONTENT_INC} )
-
-# define ROOTLIB
-#set( ROOTLIB -L$ENV{ROOTSYS}/lib -lCore -lRIO -lNet -lHist -lGraf -lGraf3d -lGpad -lTree -lRint -lPostscript -lMatrix -lPhysics -lMathCore -lThread -pthread -lm -ldl)
-
-#link_libraries( ${LIB_NAME} -L$ENV{BOOST_LIB} -lboost_system ${ROOTLIB} )
 
 art_make(
           MODULE_LIBRARIES
