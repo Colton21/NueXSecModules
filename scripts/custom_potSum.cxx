@@ -26,8 +26,9 @@ int main(int argc, char * argv[])
 		pot_sum = pot_sum + pot;
 	}
 
-	TTree * mytree_2 = (TTree*)f->Get("AnalyzeTPCO/pottree");
 	double pot_sum_2 = 0;
+	/*
+	TTree * mytree_2 = (TTree*)f->Get("AnalyzeTPCO/pottree");
 	double pot_2;
 	mytree_2->SetBranchAddress("pot", &pot_2);
 	for(int i = 0; i < mytree_2->GetEntries(); i++)
@@ -35,7 +36,7 @@ int main(int argc, char * argv[])
 		mytree_2->GetEntry(i);
 		pot_sum_2 = pot_sum_2 + pot_2;
 	}
-
+	*/
 
 	std::cout << "Total POT:     " << pot_sum << std::endl;
 	std::cout << "Alt Total POT: " << pot_sum_2 << std::endl;

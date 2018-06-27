@@ -3,7 +3,7 @@ import ROOT
 from ROOT import TFile, TTree, TH1D, TCanvas, gROOT, TPad, TGaxis, TColor, TLegend
 import matplotlib
 
-file1_path = "../arxiv/NuMIFlux_corrected.root"
+file1_path = "../arxiv/NuMIFlux_update.root"
 file1 = TFile(file1_path, 'READ')
 if(file1.IsOpen()):
     print 'File ', file1_path, ' is open'
@@ -48,10 +48,10 @@ ratio_nuebar = TH1D("ratio_nuebar", "ratio_nuebar", 400, 0, 20)
 ratio_numu = TH1D("ratio_nue", "ratio_nue", 400, 0, 20)
 ratio_numubar = TH1D("ratio_nuebar", "ratio_nuebar", 400, 0, 20)
 
-ratio_nue->Clone(corrected_nue)
-ratio_nuebar->Clone(corrected_nuebar)
-ratio_numu->Clone(corrected_numu)
-ratio_numubar->Clone(corrected_numubar)
+ratio_nue = corrected_nue.Clone()
+ratio_nuebar = corrected_nuebar.Clone()
+ratio_numu = corrected_numu.Clone()
+ratio_numubar = corrected_numubar.Clone()
 
 c4 = TCanvas("c4", "c4", 800, 600)
 c4.cd()
@@ -122,8 +122,8 @@ pad2.Draw()
 pad2.cd()  # pad2 becomes the current pad
 
 ratio_nue.SetLineColor(12)
-ratio_nue.SetMinimum(0.0)  # Define Y ..
-ratio_nue.SetMaximum(3.0)  # .. range
+ratio_nue.SetMinimum(0.5)  # Define Y ..
+ratio_nue.SetMaximum(1.5)  # .. range
 ratio_nue.GetXaxis().SetRangeUser(0, 4)
 ratio_nue.Sumw2()
 ratio_nue.SetStats(0)  # No statistics on lower plot
@@ -198,8 +198,8 @@ pad4.Draw()
 pad4.cd()  # pad2 becomes the current pad
 
 ratio_nuebar.SetLineColor(12)
-ratio_nuebar.SetMinimum(0.0)  # Define Y ..
-ratio_nuebar.SetMaximum(3.0)  # .. range
+ratio_nuebar.SetMinimum(0.5)  # Define Y ..
+ratio_nuebar.SetMaximum(1.5)  # .. range
 ratio_nuebar.GetXaxis().SetRangeUser(0, 4)
 ratio_nuebar.Sumw2()
 ratio_nuebar.SetStats(0)  # No statistics on lower plot
@@ -274,8 +274,8 @@ pad6.Draw()
 pad6.cd()  # pad2 becomes the current pad
 
 ratio_numu.SetLineColor(12)
-ratio_numu.SetMinimum(0.0)  # Define Y ..
-ratio_numu.SetMaximum(3.0)  # .. range
+ratio_numu.SetMinimum(0.5)  # Define Y ..
+ratio_numu.SetMaximum(1.5)  # .. range
 ratio_numu.GetXaxis().SetRangeUser(0, 4)
 ratio_numu.Sumw2()
 ratio_numu.SetStats(0)  # No statistics on lower plot
@@ -351,8 +351,8 @@ pad8.Draw()
 pad8.cd()  # pad2 becomes the current pad
 
 ratio_numubar.SetLineColor(12)
-ratio_numubar.SetMinimum(0.0)  # Define Y ..
-ratio_numubar.SetMaximum(3.0)  # .. range
+ratio_numubar.SetMinimum(0.5)  # Define Y ..
+ratio_numubar.SetMaximum(1.5)  # .. range
 ratio_numubar.GetXaxis().SetRangeUser(0, 4)
 ratio_numubar.Sumw2()
 ratio_numubar.SetStats(0)  # No statistics on lower plot
