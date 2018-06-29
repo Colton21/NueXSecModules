@@ -28,7 +28,10 @@ void selection::make_selection( const char * _file1,
 	selection_cuts _cuts_instance;
 
 	std::cout << "Running With: " << POT << " POT " << std::endl;
-	const double flux = POT * scaling;
+	const double flux_nue = POT * scaling_nue;
+	const double flux_nue_bar = POT * scaling_nue_bar;
+	const double flux = flux_nue + flux_nue_bar;
+
 
 	std::vector<double> selected_energy_vector;
 
@@ -100,7 +103,8 @@ void selection::make_selection( const char * _file1,
 	int _mc_numu_nc_counter_bar = 0;
 	std::vector<bool> true_in_tpc_v;
 	true_in_tpc_v.resize(total_mc_entries, false);
-	int total_mc_entries_inFV = 0;
+	int total_mc_entries_inFV_nue = 0;
+	int total_mc_entries_inFV_nue_bar = 0;
 	for(int i = 0; i < total_mc_entries; i++)
 	{
 		mctruth_counter_tree->GetEntry(i);
@@ -114,8 +118,10 @@ void selection::make_selection( const char * _file1,
 		if(mc_nu_id == 8) {_mc_numu_nc_counter_bar++; }
 		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
 		true_in_tpc_v.at(i) = true_in_tpc;
-		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)) {total_mc_entries_inFV++; }
+		if(true_in_tpc == true && (mc_nu_id == 1)) {total_mc_entries_inFV_nue++; }
+		if(true_in_tpc == true && (mc_nu_id == 5)) {total_mc_entries_inFV_nue_bar++; }
 	}
+	int total_mc_entries_inFV = total_mc_entries_inFV_nue + total_mc_entries_inFV_nue_bar;
 
 	std::cout << "MC Nue CC Counter      --- " << _mc_nue_cc_counter << std::endl;
 	std::cout << "MC Nue NC Counter      --- " << _mc_nue_nc_counter << std::endl;
@@ -131,35 +137,35 @@ void selection::make_selection( const char * _file1,
 	//*****************
 
 	std::vector<int> * data_in_time_counter_v = new std::vector<int>;
-	data_in_time_counter_v->resize(22, 0);
+	data_in_time_counter_v->resize(24, 0);
 	std::vector<int> * data_pe_counter_v = new std::vector<int>;
-	data_pe_counter_v->resize(22, 0);
+	data_pe_counter_v->resize(24, 0);
 	std::vector<int> * data_reco_nue_counter_v = new std::vector<int>;
-	data_reco_nue_counter_v->resize(22, 0);
+	data_reco_nue_counter_v->resize(24, 0);
 	std::vector<int> * data_in_fv_counter_v = new std::vector<int>;
-	data_in_fv_counter_v->resize(22, 0);
+	data_in_fv_counter_v->resize(24, 0);
 	std::vector<int> * data_vtx_flash_counter_v = new std::vector<int>;
-	data_vtx_flash_counter_v->resize(22, 0);
+	data_vtx_flash_counter_v->resize(24, 0);
 	std::vector<int> * data_shwr_tpco_counter_v = new std::vector<int>;
-	data_shwr_tpco_counter_v->resize(22, 0);
+	data_shwr_tpco_counter_v->resize(24, 0);
 	std::vector<int> * data_trk_tpco_counter_v = new std::vector<int>;
-	data_trk_tpco_counter_v->resize(22, 0);
+	data_trk_tpco_counter_v->resize(24, 0);
 	std::vector<int> * data_hit_threshold_counter_v = new std::vector<int>;
-	data_hit_threshold_counter_v->resize(22, 0);
+	data_hit_threshold_counter_v->resize(24, 0);
 	std::vector<int> * data_open_angle_counter_v = new std::vector<int>;
-	data_open_angle_counter_v->resize(22, 0);
+	data_open_angle_counter_v->resize(24, 0);
 	std::vector<int> * data_dedx_counter_v = new std::vector<int>;
-	data_dedx_counter_v->resize(22, 0);
+	data_dedx_counter_v->resize(24, 0);
 	std::vector<int> * data_secondary_shower_counter_v = new std::vector<int>;
-	data_secondary_shower_counter_v->resize(22, 0);
+	data_secondary_shower_counter_v->resize(24, 0);
 	std::vector<int> * data_hit_lengthRatio_counter_v = new std::vector<int>;
-	data_hit_lengthRatio_counter_v->resize(22, 0);
+	data_hit_lengthRatio_counter_v->resize(24, 0);
 	std::vector<int> * data_hit_threshold_collection_counter_v = new std::vector<int>;
-	data_hit_threshold_collection_counter_v->resize(22, 0);
+	data_hit_threshold_collection_counter_v->resize(24, 0);
 	std::vector<int> * data_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
-	data_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+	data_trk_len_shwr_len_ratio_counter_v->resize(24, 0);
 	std::vector<int> * data_track_containment_counter_v = new std::vector<int>;
-	data_track_containment_counter_v->resize(22, 0);
+	data_track_containment_counter_v->resize(24, 0);
 
 	std::vector<double> * data_flash_time = new std::vector<double>;
 
@@ -169,7 +175,7 @@ void selection::make_selection( const char * _file1,
 	h_ele_pfp_xyz_data->push_back(h_ele_pfp_z_data);
 
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
-	tabulated_origins_data->resize(22, 0);
+	tabulated_origins_data->resize(24, 0);
 
 	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v_data
 	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
@@ -548,35 +554,35 @@ void selection::make_selection( const char * _file1,
 //***********************************
 
 	std::vector<int> * intime_in_time_counter_v = new std::vector<int>;
-	intime_in_time_counter_v->resize(22, 0);
+	intime_in_time_counter_v->resize(24, 0);
 	std::vector<int> * intime_pe_counter_v = new std::vector<int>;
-	intime_pe_counter_v->resize(22, 0);
+	intime_pe_counter_v->resize(24, 0);
 	std::vector<int> * intime_reco_nue_counter_v = new std::vector<int>;
-	intime_reco_nue_counter_v->resize(22, 0);
+	intime_reco_nue_counter_v->resize(24, 0);
 	std::vector<int> * intime_in_fv_counter_v = new std::vector<int>;
-	intime_in_fv_counter_v->resize(22, 0);
+	intime_in_fv_counter_v->resize(24, 0);
 	std::vector<int> * intime_vtx_flash_counter_v = new std::vector<int>;
-	intime_vtx_flash_counter_v->resize(22, 0);
+	intime_vtx_flash_counter_v->resize(24, 0);
 	std::vector<int> * intime_shwr_tpco_counter_v = new std::vector<int>;
-	intime_shwr_tpco_counter_v->resize(22, 0);
+	intime_shwr_tpco_counter_v->resize(24, 0);
 	std::vector<int> * intime_trk_tpco_counter_v = new std::vector<int>;
-	intime_trk_tpco_counter_v->resize(22, 0);
+	intime_trk_tpco_counter_v->resize(24, 0);
 	std::vector<int> * intime_hit_threshold_counter_v = new std::vector<int>;
-	intime_hit_threshold_counter_v->resize(22, 0);
+	intime_hit_threshold_counter_v->resize(24, 0);
 	std::vector<int> * intime_open_angle_counter_v = new std::vector<int>;
-	intime_open_angle_counter_v->resize(22, 0);
+	intime_open_angle_counter_v->resize(24, 0);
 	std::vector<int> * intime_dedx_counter_v = new std::vector<int>;
-	intime_dedx_counter_v->resize(22, 0);
+	intime_dedx_counter_v->resize(24, 0);
 	std::vector<int> * intime_secondary_shower_counter_v = new std::vector<int>;
-	intime_secondary_shower_counter_v->resize(22, 0);
+	intime_secondary_shower_counter_v->resize(24, 0);
 	std::vector<int> * intime_hit_lengthRatio_counter_v = new std::vector<int>;
-	intime_hit_lengthRatio_counter_v->resize(22, 0);
+	intime_hit_lengthRatio_counter_v->resize(24, 0);
 	std::vector<int> * intime_hit_threshold_collection_counter_v = new std::vector<int>;
-	intime_hit_threshold_collection_counter_v->resize(22, 0);
+	intime_hit_threshold_collection_counter_v->resize(24, 0);
 	std::vector<int> * intime_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
-	intime_trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+	intime_trk_len_shwr_len_ratio_counter_v->resize(24, 0);
 	std::vector<int> * intime_track_containment_counter_v = new std::vector<int>;
-	intime_track_containment_counter_v->resize(22, 0);
+	intime_track_containment_counter_v->resize(24, 0);
 
 	std::vector<double> * intime_flash_time = new std::vector<double>;
 
@@ -586,9 +592,9 @@ void selection::make_selection( const char * _file1,
 	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_z_intime);
 
 	std::vector<int> * tabulated_origins = new std::vector<int>;
-	tabulated_origins->resize(22, 0);
+	tabulated_origins->resize(24, 0);
 	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
-	tabulated_origins_intime->resize(22, 0);
+	tabulated_origins_intime->resize(24, 0);
 
 	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
 	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
@@ -991,35 +997,35 @@ void selection::make_selection( const char * _file1,
 //*********************************************************
 //*********************************************************
 	std::vector<int> * in_time_counter_v = new std::vector<int>;
-	in_time_counter_v->resize(22, 0);
+	in_time_counter_v->resize(24, 0);
 	std::vector<int> * pe_counter_v = new std::vector<int>;
-	pe_counter_v->resize(22, 0);
+	pe_counter_v->resize(24, 0);
 	std::vector<int> * reco_nue_counter_v = new std::vector<int>;
-	reco_nue_counter_v->resize(22, 0);
+	reco_nue_counter_v->resize(24, 0);
 	std::vector<int> * in_fv_counter_v = new std::vector<int>;
-	in_fv_counter_v->resize(22, 0);
+	in_fv_counter_v->resize(24, 0);
 	std::vector<int> * vtx_flash_counter_v = new std::vector<int>;
-	vtx_flash_counter_v->resize(22, 0);
+	vtx_flash_counter_v->resize(24, 0);
 	std::vector<int> * shwr_tpco_counter_v = new std::vector<int>;
-	shwr_tpco_counter_v->resize(22, 0);
+	shwr_tpco_counter_v->resize(24, 0);
 	std::vector<int> * trk_tpco_counter_v = new std::vector<int>;
-	trk_tpco_counter_v->resize(22, 0);
+	trk_tpco_counter_v->resize(24, 0);
 	std::vector<int> * hit_threshold_counter_v = new std::vector<int>;
-	hit_threshold_counter_v->resize(22, 0);
+	hit_threshold_counter_v->resize(24, 0);
 	std::vector<int> * open_angle_counter_v = new std::vector<int>;
-	open_angle_counter_v->resize(22, 0);
+	open_angle_counter_v->resize(24, 0);
 	std::vector<int> * dedx_counter_v = new std::vector<int>;
-	dedx_counter_v->resize(22, 0);
+	dedx_counter_v->resize(24, 0);
 	std::vector<int> * secondary_shower_counter_v = new std::vector<int>;
-	secondary_shower_counter_v->resize(22, 0);
+	secondary_shower_counter_v->resize(24, 0);
 	std::vector<int> * hit_lengthRatio_counter_v = new std::vector<int>;
-	hit_lengthRatio_counter_v->resize(22, 0);
+	hit_lengthRatio_counter_v->resize(24, 0);
 	std::vector<int> * hit_threshold_collection_counter_v = new std::vector<int>;
-	hit_threshold_collection_counter_v->resize(22, 0);
+	hit_threshold_collection_counter_v->resize(24, 0);
 	std::vector<int> * trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
-	trk_len_shwr_len_ratio_counter_v->resize(22, 0);
+	trk_len_shwr_len_ratio_counter_v->resize(24, 0);
 	std::vector<int> * track_containment_counter_v = new std::vector<int>;
-	track_containment_counter_v->resize(22, 0);
+	track_containment_counter_v->resize(24, 0);
 
 	std::vector<double> * flash_time = new std::vector<double>;
 
@@ -2549,6 +2555,8 @@ void selection::make_selection( const char * _file1,
 	}//end event loop
 
 	std::cout << "------------------ " << std::endl;
+	std::cout << " MC Nue          : " << total_mc_entries_inFV_nue << std::endl;
+	std::cout << " MC NueBar       : " << total_mc_entries_inFV_nue_bar << std::endl;
 	std::cout << " MC Entries in FV: " << total_mc_entries_inFV << std::endl;
 	std::cout << "------------------ " << std::endl;
 	std::cout << "------------------ " << std::endl;
@@ -2639,13 +2647,15 @@ void selection::make_selection( const char * _file1,
 	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
-	selection_functions::XSecWork(trk_len_shwr_len_ratio_counter_v->at(7), trk_len_shwr_len_ratio_counter_v->at(0), trk_len_shwr_len_ratio_counter_v->at(1),
-	                              trk_len_shwr_len_ratio_counter_v->at(9), trk_len_shwr_len_ratio_counter_v->at(2),
-	                              trk_len_shwr_len_ratio_counter_v->at(3), trk_len_shwr_len_ratio_counter_v->at(4),
-	                              trk_len_shwr_len_ratio_counter_v->at(11), trk_len_shwr_len_ratio_counter_v->at(10), trk_len_shwr_len_ratio_counter_v->at(5),
-	                              trk_len_shwr_len_ratio_counter_v->at(6), intime_trk_len_shwr_len_ratio_counter_v->at(0),
-	                              intime_scale_factor, data_trk_len_shwr_len_ratio_counter_v->at(0), data_scale_factor,
-	                              fv_boundary_v, flux, selected_energy_vector, genie_xsec, total_mc_entries_inFV);
+	selection_functions::XSecWork(track_containment_counter_v->at(7),
+	                              track_containment_counter_v->at(22), track_containment_counter_v->at(23), track_containment_counter_v->at(1),
+	                              track_containment_counter_v->at(9), track_containment_counter_v->at(2),
+	                              track_containment_counter_v->at(3), track_containment_counter_v->at(4),
+	                              track_containment_counter_v->at(11), track_containment_counter_v->at(10), track_containment_counter_v->at(5),
+	                              track_containment_counter_v->at(6), intime_track_containment_counter_v->at(0),
+	                              intime_scale_factor, data_track_containment_counter_v->at(0), data_scale_factor,
+	                              fv_boundary_v, flux_nue, flux_nue_bar, selected_energy_vector, genie_xsec_nue, genie_xsec_nue_bar,
+	                              total_mc_entries_inFV_nue, total_mc_entries_inFV_nue_bar);
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 

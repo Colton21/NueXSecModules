@@ -151,16 +151,17 @@ static void calcXSec(double _x1, double _x2, double _y1,
                      double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************
 //***************************************************************************
-static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_cc_mixed,
+static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_bar_cc, double final_counter_nue_cc_mixed,
                      double final_counter_nue_cc_out_fv, double final_counter_cosmic, double final_counter_nc, double final_counter_numu_cc,
                      double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
                      double final_counter_other_mixed, double final_counter_intime,
                      double intime_scale_factor, double final_counter_data, double data_scale_factor,
-                     std::vector<double> fv_boundary_v, double flux,
-                     std::vector<double> selected_energy_vector, double genie_xsec, const int total_mc_entries_inFV);
+                     std::vector<double> fv_boundary_v, double flux_nue, double flux_nue_bar,
+                     std::vector<double> selected_energy_vector, double genie_xsec_nue, double genie_xsec_nue_bar,
+                     const int total_mc_entries_inFV_nue, const int total_mc_entries_inFV_nue_bar);
 //***************************************************************************
 //***************************************************************************
-static void xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_energy, double stat_error);
+static void xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double xsec_nue, double average_energy, double stat_error);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

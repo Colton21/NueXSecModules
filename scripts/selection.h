@@ -33,8 +33,9 @@ private:
 
 const double POT = 1.82027e+21;
 const double data_scale_factor = 1 / 5.648; //ie scale MC down by factor
-const double intime_scale_factor = 0.442416; //ie scale EXT down by factor
-
+//const double intime_scale_factor = 0.442416; //ie scale EXT down by factor
+const double intime_scale_factor = 0.56940408 * 5.7; //for first two datasets,
+//factor 5.7 comes from prescale on EXT data!
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
@@ -43,7 +44,7 @@ const double scaling = scaling_nue + scaling_nue_bar;
 
 const double genie_xsec_nue = 5.63067e-39;   //cm^2
 const double genie_xsec_nue_bar = 2.0893e-39;   //cm^2
-const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
+//const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
 
 
 // older values used
