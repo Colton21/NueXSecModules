@@ -939,6 +939,22 @@ void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
                  std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
                  std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_unmatched);
+//***************************************************************************
+//***************************************************************************
+void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                 std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                 const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
                  std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
                  TH2 * h_mc_vtx_xy_nue_cc,
                  TH2 * h_mc_vtx_xz_nue_cc,
@@ -1126,6 +1142,37 @@ void PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 void PostCutsLeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                    TH1D * h_ele_momentum_intime);
+//***************************************************************************
+//***************************************************************************
+void LeadingMomentumTrackTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc_out_fv,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_numu_cc,
+                                  TH1D * h_ele_pfp_momentum_no_track_numu_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_nc,
+                                  TH1D * h_ele_pfp_momentum_no_track_nc_pi0,
+                                  TH1D * h_ele_pfp_momentum_no_track_cosmic,
+                                  TH1D * h_ele_pfp_momentum_no_track_other_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_unmatched,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc_out_fv,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_numu_cc,
+                                  TH1D * h_ele_pfp_momentum_has_track_numu_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_nc,
+                                  TH1D * h_ele_pfp_momentum_has_track_nc_pi0,
+                                  TH1D * h_ele_pfp_momentum_has_track_cosmic,
+                                  TH1D * h_ele_pfp_momentum_has_track_other_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingMomentumTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        TH1D * h_ele_pfp_momentum_no_track_intime,
+                                        TH1D * h_ele_pfp_momentum_has_track_intime);
 //***************************************************************************
 //***************************************************************************
 };

@@ -174,6 +174,16 @@ void selection::make_selection( const char * _file1,
 	h_ele_pfp_xyz_data->push_back(h_ele_pfp_y_data);
 	h_ele_pfp_xyz_data->push_back(h_ele_pfp_z_data);
 
+	std::vector<TH1 * > * h_any_pfp_xyz_data = new std::vector<TH1 * >;
+	h_any_pfp_xyz_data->push_back(h_any_pfp_x_data);
+	h_any_pfp_xyz_data->push_back(h_any_pfp_y_data);
+	h_any_pfp_xyz_data->push_back(h_any_pfp_z_data);
+
+	std::vector<TH1 * > * h_any_pfp_xyz_last_data = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_data->push_back(h_any_pfp_x_last_data);
+	h_any_pfp_xyz_last_data->push_back(h_any_pfp_y_last_data);
+	h_any_pfp_xyz_last_data->push_back(h_any_pfp_z_last_data);
+
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(24, 0);
 
@@ -287,6 +297,8 @@ void selection::make_selection( const char * _file1,
 			//***********************************************************
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_in_time_counter_v);
+
+			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_any_pfp_xyz_data);
 
 			//PE threshold cut
 			if(data_passed_runs->at(event) == 2)
@@ -521,12 +533,18 @@ void selection::make_selection( const char * _file1,
 			// ******** End Selection Cuts! *******
 			//*************************************
 			_data_functions_instance.selection_functions_data::LeadingMomentumData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_momentum_data);
+			_data_functions_instance.selection_functions_data::LeadingMomentumTrackTopologyData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                                    h_ele_pfp_momentum_no_track_data, h_ele_pfp_momentum_has_track_data);
+
 			_data_functions_instance.selection_functions_data::LeadingPhiData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_phi_last_data);
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_last_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, theta_translation, phi_translation,
 			                                                                       _verbose, h_ele_cos_theta_last_trans_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, 0, 0,
 			                                                                       _verbose, h_ele_cos_theta_last_data);
+
+			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_any_pfp_xyz_last_data);
+
 			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                            0, 0,
@@ -590,6 +608,16 @@ void selection::make_selection( const char * _file1,
 	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_x_intime);
 	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_y_intime);
 	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_z_intime);
+
+	std::vector<TH1 * > * h_any_pfp_xyz_intime = new std::vector<TH1 * >;
+	h_any_pfp_xyz_intime->push_back(h_any_pfp_x_intime);
+	h_any_pfp_xyz_intime->push_back(h_any_pfp_y_intime);
+	h_any_pfp_xyz_intime->push_back(h_any_pfp_z_intime);
+
+	std::vector<TH1 * > * h_any_pfp_xyz_last_intime = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_intime->push_back(h_any_pfp_x_last_intime);
+	h_any_pfp_xyz_last_intime->push_back(h_any_pfp_y_last_intime);
+	h_any_pfp_xyz_last_intime->push_back(h_any_pfp_z_last_intime);
 
 	std::vector<int> * tabulated_origins = new std::vector<int>;
 	tabulated_origins->resize(24, 0);
@@ -708,6 +736,8 @@ void selection::make_selection( const char * _file1,
 			//***********************************************************
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_in_time_counter_v);
+
+			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_any_pfp_xyz_intime);
 
 			//PE threshold cut
 			if(_verbose) {std::cout << "In-Time Optical Cut (2)" << std::endl; }
@@ -968,6 +998,9 @@ void selection::make_selection( const char * _file1,
 			// ******** End Selection Cuts! *******
 			//*************************************
 			_functions_instance.selection_functions::LeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_momentum_intime);
+			_functions_instance.selection_functions::LeadingMomentumTrackTopologyInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                            h_ele_pfp_momentum_no_track_intime, h_ele_pfp_momentum_has_track_intime);
+
 			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_phi_last_intime);
 			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                            theta_translation, phi_translation, _verbose, h_ele_pfp_theta_last_intime);
@@ -986,6 +1019,8 @@ void selection::make_selection( const char * _file1,
 			                                                                    h_ele_eng_for_trans_intime,
 			                                                                    h_ele_eng_mid_trans_intime,
 			                                                                    h_ele_eng_back_trans_intime);
+
+			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_any_pfp_xyz_last_intime);
 
 			_functions_instance.selection_functions::FillPostCutVector(intime_tpc_object_container_v, passed_tpco_intime, post_cuts_v);
 			_functions_instance.selection_functions::LeadingThetaPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_theta_phi_intime);
@@ -1083,6 +1118,88 @@ void selection::make_selection( const char * _file1,
 	h_ele_pfp_xyz_unmatched->push_back(h_ele_pfp_y_unmatched);
 	h_ele_pfp_xyz_unmatched->push_back(h_ele_pfp_z_unmatched);
 
+	std::vector<TH1 * > * h_any_pfp_xyz_nue_cc         = new std::vector<TH1 * >;
+	h_any_pfp_xyz_nue_cc->push_back(h_any_pfp_x_nue_cc);
+	h_any_pfp_xyz_nue_cc->push_back(h_any_pfp_y_nue_cc);
+	h_any_pfp_xyz_nue_cc->push_back(h_any_pfp_z_nue_cc);
+	std::vector<TH1 * > * h_any_pfp_xyz_nue_cc_out_fv  = new std::vector<TH1 * >;
+	h_any_pfp_xyz_nue_cc_out_fv->push_back(h_any_pfp_x_nue_cc_out_fv);
+	h_any_pfp_xyz_nue_cc_out_fv->push_back(h_any_pfp_y_nue_cc_out_fv);
+	h_any_pfp_xyz_nue_cc_out_fv->push_back(h_any_pfp_z_nue_cc_out_fv);
+	std::vector<TH1 * > * h_any_pfp_xyz_nue_cc_mixed   = new std::vector<TH1 * >;
+	h_any_pfp_xyz_nue_cc_mixed->push_back(h_any_pfp_x_nue_cc_mixed);
+	h_any_pfp_xyz_nue_cc_mixed->push_back(h_any_pfp_y_nue_cc_mixed);
+	h_any_pfp_xyz_nue_cc_mixed->push_back(h_any_pfp_z_nue_cc_mixed);
+	std::vector<TH1 * > * h_any_pfp_xyz_numu_cc        = new std::vector<TH1 * >;
+	h_any_pfp_xyz_numu_cc->push_back(h_any_pfp_x_numu_cc);
+	h_any_pfp_xyz_numu_cc->push_back(h_any_pfp_y_numu_cc);
+	h_any_pfp_xyz_numu_cc->push_back(h_any_pfp_z_numu_cc);
+	std::vector<TH1 * > * h_any_pfp_xyz_numu_cc_mixed  = new std::vector<TH1 * >;
+	h_any_pfp_xyz_numu_cc_mixed->push_back(h_any_pfp_x_numu_cc_mixed);
+	h_any_pfp_xyz_numu_cc_mixed->push_back(h_any_pfp_y_numu_cc_mixed);
+	h_any_pfp_xyz_numu_cc_mixed->push_back(h_any_pfp_z_numu_cc_mixed);
+	std::vector<TH1 * > * h_any_pfp_xyz_nc             = new std::vector<TH1 * >;
+	h_any_pfp_xyz_nc->push_back(h_any_pfp_x_nc);
+	h_any_pfp_xyz_nc->push_back(h_any_pfp_y_nc);
+	h_any_pfp_xyz_nc->push_back(h_any_pfp_z_nc);
+	std::vector<TH1 * > * h_any_pfp_xyz_nc_pi0         = new std::vector<TH1 * >;
+	h_any_pfp_xyz_nc_pi0->push_back(h_any_pfp_x_nc_pi0);
+	h_any_pfp_xyz_nc_pi0->push_back(h_any_pfp_y_nc_pi0);
+	h_any_pfp_xyz_nc_pi0->push_back(h_any_pfp_z_nc_pi0);
+	std::vector<TH1 * > * h_any_pfp_xyz_cosmic         = new std::vector<TH1 * >;
+	h_any_pfp_xyz_cosmic->push_back(h_any_pfp_x_cosmic);
+	h_any_pfp_xyz_cosmic->push_back(h_any_pfp_y_cosmic);
+	h_any_pfp_xyz_cosmic->push_back(h_any_pfp_z_cosmic);
+	std::vector<TH1 * > * h_any_pfp_xyz_other_mixed    = new std::vector<TH1 * >;
+	h_any_pfp_xyz_other_mixed->push_back(h_any_pfp_x_other_mixed);
+	h_any_pfp_xyz_other_mixed->push_back(h_any_pfp_y_other_mixed);
+	h_any_pfp_xyz_other_mixed->push_back(h_any_pfp_z_other_mixed);
+	std::vector<TH1 * > * h_any_pfp_xyz_unmatched      = new std::vector<TH1 * >;
+	h_any_pfp_xyz_unmatched->push_back(h_any_pfp_x_unmatched);
+	h_any_pfp_xyz_unmatched->push_back(h_any_pfp_y_unmatched);
+	h_any_pfp_xyz_unmatched->push_back(h_any_pfp_z_unmatched);
+
+	std::vector<TH1 * > * h_any_pfp_xyz_last_nue_cc         = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_nue_cc->push_back(h_any_pfp_x_last_nue_cc);
+	h_any_pfp_xyz_last_nue_cc->push_back(h_any_pfp_y_last_nue_cc);
+	h_any_pfp_xyz_last_nue_cc->push_back(h_any_pfp_z_last_nue_cc);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_nue_cc_out_fv  = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_nue_cc_out_fv->push_back(h_any_pfp_x_last_nue_cc_out_fv);
+	h_any_pfp_xyz_last_nue_cc_out_fv->push_back(h_any_pfp_y_last_nue_cc_out_fv);
+	h_any_pfp_xyz_last_nue_cc_out_fv->push_back(h_any_pfp_z_last_nue_cc_out_fv);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_nue_cc_mixed   = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_nue_cc_mixed->push_back(h_any_pfp_x_last_nue_cc_mixed);
+	h_any_pfp_xyz_last_nue_cc_mixed->push_back(h_any_pfp_y_last_nue_cc_mixed);
+	h_any_pfp_xyz_last_nue_cc_mixed->push_back(h_any_pfp_z_last_nue_cc_mixed);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_numu_cc        = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_numu_cc->push_back(h_any_pfp_x_last_numu_cc);
+	h_any_pfp_xyz_last_numu_cc->push_back(h_any_pfp_y_last_numu_cc);
+	h_any_pfp_xyz_last_numu_cc->push_back(h_any_pfp_z_last_numu_cc);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_numu_cc_mixed  = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_numu_cc_mixed->push_back(h_any_pfp_x_last_numu_cc_mixed);
+	h_any_pfp_xyz_last_numu_cc_mixed->push_back(h_any_pfp_y_last_numu_cc_mixed);
+	h_any_pfp_xyz_last_numu_cc_mixed->push_back(h_any_pfp_z_last_numu_cc_mixed);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_nc             = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_nc->push_back(h_any_pfp_x_last_nc);
+	h_any_pfp_xyz_last_nc->push_back(h_any_pfp_y_last_nc);
+	h_any_pfp_xyz_last_nc->push_back(h_any_pfp_z_last_nc);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_nc_pi0         = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_nc_pi0->push_back(h_any_pfp_x_last_nc_pi0);
+	h_any_pfp_xyz_last_nc_pi0->push_back(h_any_pfp_y_last_nc_pi0);
+	h_any_pfp_xyz_last_nc_pi0->push_back(h_any_pfp_z_last_nc_pi0);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_cosmic         = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_cosmic->push_back(h_any_pfp_x_last_cosmic);
+	h_any_pfp_xyz_last_cosmic->push_back(h_any_pfp_y_last_cosmic);
+	h_any_pfp_xyz_last_cosmic->push_back(h_any_pfp_z_last_cosmic);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_other_mixed    = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_other_mixed->push_back(h_any_pfp_x_last_other_mixed);
+	h_any_pfp_xyz_last_other_mixed->push_back(h_any_pfp_y_last_other_mixed);
+	h_any_pfp_xyz_last_other_mixed->push_back(h_any_pfp_z_last_other_mixed);
+	std::vector<TH1 * > * h_any_pfp_xyz_last_unmatched      = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_unmatched->push_back(h_any_pfp_x_last_unmatched);
+	h_any_pfp_xyz_last_unmatched->push_back(h_any_pfp_y_last_unmatched);
+	h_any_pfp_xyz_last_unmatched->push_back(h_any_pfp_z_last_unmatched);
+
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	// std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
 	//         = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
@@ -1143,6 +1260,11 @@ void selection::make_selection( const char * _file1,
 		}
 		mytree->GetEntry(event);
 		mctruth_counter_tree->GetEntry(event);
+
+		//********************************
+		//before Any cuts!!!
+		//********************************
+
 		//***********************************************************
 		//this is where the in-time optical cut actually takes effect
 		//***********************************************************
@@ -1164,18 +1286,10 @@ void selection::make_selection( const char * _file1,
 			_mc_nu_vtx_x = tpc_object_container.mcVtxX();
 			_mc_nu_vtx_y = tpc_object_container.mcVtxY();
 			_mc_nu_vtx_z = tpc_object_container.mcVtxZ();
-			// if(_mc_nu_vtx_x != int(mc_nu_vtx_x) ||
-			//    _mc_nu_vtx_y != int(mc_nu_vtx_y) ||
-			//    _mc_nu_vtx_z != int(mc_nu_vtx_z))
-			// {
-			//      std::cout << event << std::endl;
-			//      std::cout << _mc_nu_vtx_x << ", " << _mc_nu_vtx_y << ", " << _mc_nu_vtx_z << std::endl;
-			//      std::cout << mc_nu_vtx_x << ", " << mc_nu_vtx_y << ", " << mc_nu_vtx_z << std::endl;
-			// }
+
 			true_in_tpc = _cuts_instance.selection_cuts::in_fv(_mc_nu_vtx_x, _mc_nu_vtx_y, _mc_nu_vtx_z, fv_boundary_v);
 			if(true_in_tpc == true) {break; }
 		}
-		//const bool true_in_tpc = true_in_tpc_v.at(event);
 
 		//now we apply the classifier to all TPC Objects in this event
 		std::vector<std::pair<std::string, int> > * tpco_classifier_v = new std::vector<std::pair<std::string, int> >;
@@ -1241,6 +1355,20 @@ void selection::make_selection( const char * _file1,
 		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut);
+
+		_functions_instance.selection_functions::XYZPosition(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_any_pfp_xyz_nue_cc,
+		                                                     h_any_pfp_xyz_nue_cc_out_fv,
+		                                                     h_any_pfp_xyz_nue_cc_mixed,
+		                                                     h_any_pfp_xyz_numu_cc,
+		                                                     h_any_pfp_xyz_numu_cc_mixed,
+		                                                     h_any_pfp_xyz_nc,
+		                                                     h_any_pfp_xyz_nc_pi0,
+		                                                     h_any_pfp_xyz_cosmic,
+		                                                     h_any_pfp_xyz_other_mixed,
+		                                                     h_any_pfp_xyz_unmatched);
+
 		//PE threshold cut
 		if(passed_runs->at(event) == 2)
 		{
@@ -2214,6 +2342,20 @@ void selection::make_selection( const char * _file1,
 		                                                      h_ele_pfp_theta_after_other_mixed,
 		                                                      h_ele_pfp_theta_after_unmatched);
 
+		_functions_instance.selection_functions::XYZPosition(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+		                                                     h_any_pfp_xyz_last_nue_cc,
+		                                                     h_any_pfp_xyz_last_nue_cc_out_fv,
+		                                                     h_any_pfp_xyz_last_nue_cc_mixed,
+		                                                     h_any_pfp_xyz_last_numu_cc,
+		                                                     h_any_pfp_xyz_last_numu_cc_mixed,
+		                                                     h_any_pfp_xyz_last_nc,
+		                                                     h_any_pfp_xyz_last_nc_pi0,
+		                                                     h_any_pfp_xyz_last_cosmic,
+		                                                     h_any_pfp_xyz_last_other_mixed,
+		                                                     h_any_pfp_xyz_last_unmatched);
+
+
 		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
 		                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
@@ -2392,6 +2534,28 @@ void selection::make_selection( const char * _file1,
 		                                                         h_ele_pfp_momentum_cosmic,
 		                                                         h_ele_pfp_momentum_other_mixed,
 		                                                         h_ele_pfp_momentum_unmatched);
+
+		_functions_instance.selection_functions::LeadingMomentumTrackTopology(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                      h_ele_pfp_momentum_no_track_nue_cc,
+		                                                                      h_ele_pfp_momentum_no_track_nue_cc_out_fv,
+		                                                                      h_ele_pfp_momentum_no_track_nue_cc_mixed,
+		                                                                      h_ele_pfp_momentum_no_track_numu_cc,
+		                                                                      h_ele_pfp_momentum_no_track_numu_cc_mixed,
+		                                                                      h_ele_pfp_momentum_no_track_nc,
+		                                                                      h_ele_pfp_momentum_no_track_nc_pi0,
+		                                                                      h_ele_pfp_momentum_no_track_cosmic,
+		                                                                      h_ele_pfp_momentum_no_track_other_mixed,
+		                                                                      h_ele_pfp_momentum_no_track_unmatched,
+		                                                                      h_ele_pfp_momentum_has_track_nue_cc,
+		                                                                      h_ele_pfp_momentum_has_track_nue_cc_out_fv,
+		                                                                      h_ele_pfp_momentum_has_track_nue_cc_mixed,
+		                                                                      h_ele_pfp_momentum_has_track_numu_cc,
+		                                                                      h_ele_pfp_momentum_has_track_numu_cc_mixed,
+		                                                                      h_ele_pfp_momentum_has_track_nc,
+		                                                                      h_ele_pfp_momentum_has_track_nc_pi0,
+		                                                                      h_ele_pfp_momentum_has_track_cosmic,
+		                                                                      h_ele_pfp_momentum_has_track_other_mixed,
+		                                                                      h_ele_pfp_momentum_has_track_unmatched);
 
 		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                    h_ele_pfp_phi_last_nue_cc,
@@ -4098,6 +4262,26 @@ void selection::make_selection( const char * _file1,
 	                                          "", "Leading Shower Momentum [GeV]", "",
 	                                          "../scripts/plots/post_cuts_leading_momentum_data.pdf");
 
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_momentum_no_track_nue_cc,  h_ele_pfp_momentum_no_track_nue_cc_mixed,
+	                                          h_ele_pfp_momentum_no_track_nue_cc_out_fv,
+	                                          h_ele_pfp_momentum_no_track_numu_cc, h_ele_pfp_momentum_no_track_numu_cc_mixed,
+	                                          h_ele_pfp_momentum_no_track_cosmic,  h_ele_pfp_momentum_no_track_nc,
+	                                          h_ele_pfp_momentum_no_track_nc_pi0,  h_ele_pfp_momentum_no_track_other_mixed,
+	                                          h_ele_pfp_momentum_no_track_unmatched, h_ele_pfp_momentum_no_track_intime, intime_scale_factor,
+	                                          h_ele_pfp_momentum_no_track_data, data_scale_factor,
+	                                          "", "Leading Shower Momentum [GeV]", "",
+	                                          "../scripts/plots/post_cuts_leading_momentum_no_track_data.pdf");
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_momentum_has_track_nue_cc,  h_ele_pfp_momentum_has_track_nue_cc_mixed,
+	                                          h_ele_pfp_momentum_has_track_nue_cc_out_fv,
+	                                          h_ele_pfp_momentum_has_track_numu_cc, h_ele_pfp_momentum_has_track_numu_cc_mixed,
+	                                          h_ele_pfp_momentum_has_track_cosmic,  h_ele_pfp_momentum_has_track_nc,
+	                                          h_ele_pfp_momentum_has_track_nc_pi0,  h_ele_pfp_momentum_has_track_other_mixed,
+	                                          h_ele_pfp_momentum_has_track_unmatched, h_ele_pfp_momentum_has_track_intime, intime_scale_factor,
+	                                          h_ele_pfp_momentum_has_track_data, data_scale_factor,
+	                                          "", "Leading Shower Momentum [GeV]", "",
+	                                          "../scripts/plots/post_cuts_leading_momentum_has_track_data.pdf");
+
 	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_nue_cc,  h_ele_pfp_theta_nue_cc_mixed,
 	                                      h_ele_pfp_theta_nue_cc_out_fv,
 	                                      h_ele_pfp_theta_numu_cc, h_ele_pfp_theta_numu_cc_mixed,
@@ -4379,6 +4563,50 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_pfp_z_data, data_scale_factor,
 	                                         "", "Reco Vertex Z [cm]", "",
 	                                         "../scripts/plots/post_cuts_leading_pfp_z_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_any_pfp_x_nue_cc,        h_any_pfp_x_nue_cc_mixed,
+	                                         h_any_pfp_x_nue_cc_out_fv, h_any_pfp_x_numu_cc,      h_any_pfp_x_numu_cc_mixed,
+	                                         h_any_pfp_x_cosmic,        h_any_pfp_x_nc,           h_any_pfp_x_nc_pi0, h_any_pfp_x_other_mixed,
+	                                         h_any_pfp_x_unmatched,     h_any_pfp_x_intime, intime_scale_factor,
+	                                         h_any_pfp_x_data, data_scale_factor,
+	                                         "", "Reco Vertex X [cm]", "",
+	                                         "../scripts/plots/pre_cuts_leading_pfp_x_data.pdf");
+	histogram_functions::PlotSimpleStackData(h_any_pfp_y_nue_cc,        h_any_pfp_y_nue_cc_mixed,
+	                                         h_any_pfp_y_nue_cc_out_fv, h_any_pfp_y_numu_cc,      h_any_pfp_y_numu_cc_mixed,
+	                                         h_any_pfp_y_cosmic,        h_any_pfp_y_nc,           h_any_pfp_y_nc_pi0, h_any_pfp_y_other_mixed,
+	                                         h_any_pfp_y_unmatched,     h_any_pfp_y_intime, intime_scale_factor,
+	                                         h_any_pfp_y_data, data_scale_factor,
+	                                         "", "Reco Vertex Y [cm]", "",
+	                                         "../scripts/plots/pre_cuts_leading_pfp_y_data.pdf");
+	histogram_functions::PlotSimpleStackData(h_any_pfp_z_nue_cc,        h_any_pfp_z_nue_cc_mixed,
+	                                         h_any_pfp_z_nue_cc_out_fv, h_any_pfp_z_numu_cc,      h_any_pfp_z_numu_cc_mixed,
+	                                         h_any_pfp_z_cosmic,        h_any_pfp_z_nc,           h_any_pfp_z_nc_pi0, h_any_pfp_z_other_mixed,
+	                                         h_any_pfp_z_unmatched,     h_any_pfp_z_intime, intime_scale_factor,
+	                                         h_any_pfp_z_data, data_scale_factor,
+	                                         "", "Reco Vertex Z [cm]", "",
+	                                         "../scripts/plots/pre_cuts_leading_pfp_z_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(h_any_pfp_x_last_nue_cc,        h_any_pfp_x_last_nue_cc_mixed,
+	                                         h_any_pfp_x_last_nue_cc_out_fv, h_any_pfp_x_last_numu_cc,      h_any_pfp_x_last_numu_cc_mixed,
+	                                         h_any_pfp_x_last_cosmic,        h_any_pfp_x_last_nc,           h_any_pfp_x_last_nc_pi0, h_any_pfp_x_last_other_mixed,
+	                                         h_any_pfp_x_last_unmatched,     h_any_pfp_x_last_intime, intime_scale_factor,
+	                                         h_any_pfp_x_last_data, data_scale_factor,
+	                                         "", "Reco Vertex X [cm]", "",
+	                                         "../scripts/plots/post_cuts_leading_pfp_x_last_data.pdf");
+	histogram_functions::PlotSimpleStackData(h_any_pfp_y_last_nue_cc,        h_any_pfp_y_last_nue_cc_mixed,
+	                                         h_any_pfp_y_last_nue_cc_out_fv, h_any_pfp_y_last_numu_cc,      h_any_pfp_y_last_numu_cc_mixed,
+	                                         h_any_pfp_y_last_cosmic,        h_any_pfp_y_last_nc,           h_any_pfp_y_last_nc_pi0, h_any_pfp_y_last_other_mixed,
+	                                         h_any_pfp_y_last_unmatched,     h_any_pfp_y_last_intime, intime_scale_factor,
+	                                         h_any_pfp_y_last_data, data_scale_factor,
+	                                         "", "Reco Vertex Y [cm]", "",
+	                                         "../scripts/plots/pro_cuts_leading_pfp_y_last_data.pdf");
+	histogram_functions::PlotSimpleStackData(h_any_pfp_z_last_nue_cc,        h_any_pfp_z_last_nue_cc_mixed,
+	                                         h_any_pfp_z_last_nue_cc_out_fv, h_any_pfp_z_last_numu_cc,      h_any_pfp_z_last_numu_cc_mixed,
+	                                         h_any_pfp_z_last_cosmic,        h_any_pfp_z_last_nc,           h_any_pfp_z_last_nc_pi0, h_any_pfp_z_last_other_mixed,
+	                                         h_any_pfp_z_last_unmatched,     h_any_pfp_z_last_intime, intime_scale_factor,
+	                                         h_any_pfp_z_last_data, data_scale_factor,
+	                                         "", "Reco Vertex Z [cm]", "",
+	                                         "../scripts/plots/pro_cuts_leading_pfp_z_last_data.pdf");
 
 
 	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_qe, "Post Cuts - Showers/Tracks Purity - QE",

@@ -40,19 +40,19 @@
 //*******************
 
 //fiducial volume
-// const double _x1 = 0;
-// const double _x2 = 0;
-// const double _y1 = 0;
-// const double _y2 = 0;
-// const double _z1 = 0;
-// const double _z2 = 0;
+const double _x1 = 20;
+const double _x2 = 20;
+const double _y1 = 20;
+const double _y2 = 20;
+const double _z1 = 20;
+const double _z2 = 20;
 
-const double _x1 = 40;
-const double _x2 = 40;
-const double _y1 = 40;
-const double _y2 = 40;
-const double _z1 = 40;
-const double _z2 = 40;
+// const double _x1 = 40;
+// const double _x2 = 40;
+// const double _y1 = 40;
+// const double _y2 = 40;
+// const double _z1 = 40;
+// const double _z2 = 40;
 
 //in time flash
 const int flash_pe_threshold = 50;
