@@ -1175,5 +1175,25 @@ void LeadingMomentumTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer>
                                         TH1D * h_ele_pfp_momentum_has_track_intime);
 //***************************************************************************
 //***************************************************************************
+void dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+               TH2D * h_dedx_theta_nue_cc,
+               TH2D * h_dedx_theta_nue_cc_mixed,
+               TH2D * h_dedx_theta_nue_cc_out_fv,
+               TH2D * h_dedx_theta_numu_cc,
+               TH2D * h_dedx_theta_nc,
+               TH2D * h_dedx_theta_cosmic,
+               TH2D * h_dedx_theta_nc_pi0,
+               TH2D * h_dedx_theta_numu_cc_mixed,
+               TH2D * h_dedx_theta_other_mixed,
+               TH2D * h_dedx_theta_unmatched);
+//***************************************************************************
+//***************************************************************************
+void dEdxThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     TH2D * h_dedx_theta_intime);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

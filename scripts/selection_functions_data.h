@@ -227,7 +227,11 @@ void PostCutsLeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_
                                  TH1D * h_ele_momentum_data);
 //***************************************************************************
 //***************************************************************************
-
+void dEdxThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                   TH2D * h_dedx_theta_data);
+//***************************************************************************
+//***************************************************************************
 };
 
 

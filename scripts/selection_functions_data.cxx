@@ -358,7 +358,7 @@ void selection_functions_data::LeadingMomentumTrackTopologyData(std::vector<xsec
 		const double leading_shower_momentum = leading_shower.pfpMomentum();
 		if(n_pfp_tracks == 0)
 		{
-			h_ele_pfp_momentum_has_track_data->Fill(leading_shower_momentum);
+			h_ele_pfp_momentum_no_track_data->Fill(leading_shower_momentum);
 		}
 		if(n_pfp_tracks >= 1)
 		{
@@ -985,6 +985,42 @@ void selection_functions_data::PostCutsLeadingMomentumData(std::vector<xsecAna::
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_momentum = leading_shower.pfpMomentum();
 		h_ele_momentum_data->Fill(leading_momentum);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::dEdxThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             TH2D * h_dedx_theta_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		h_dedx_theta_data->Fill(leading_dedx, leading_shower_theta);
 	}
 }
 //***************************************************************************

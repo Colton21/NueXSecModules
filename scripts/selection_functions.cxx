@@ -7857,4 +7857,145 @@ void selection_functions::PostCutsLeadingMomentumInTime(std::vector<xsecAna::TPC
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                    std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                    TH2D * h_dedx_theta_nue_cc,
+                                    TH2D * h_dedx_theta_nue_cc_mixed,
+                                    TH2D * h_dedx_theta_nue_cc_out_fv,
+                                    TH2D * h_dedx_theta_numu_cc,
+                                    TH2D * h_dedx_theta_nc,
+                                    TH2D * h_dedx_theta_cosmic,
+                                    TH2D * h_dedx_theta_nc_pi0,
+                                    TH2D * h_dedx_theta_numu_cc_mixed,
+                                    TH2D * h_dedx_theta_other_mixed,
+                                    TH2D * h_dedx_theta_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
+		{
+			h_dedx_theta_nue_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			h_dedx_theta_nue_cc_out_fv->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
+		{
+			h_dedx_theta_nue_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
+		{
+			h_dedx_theta_nue_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
+		{
+			h_dedx_theta_nue_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
+		{
+			h_dedx_theta_nue_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			h_dedx_theta_numu_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			h_dedx_theta_numu_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			h_dedx_theta_numu_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			h_dedx_theta_numu_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			h_dedx_theta_numu_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nc")
+		{
+			h_dedx_theta_nc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			h_dedx_theta_nc_pi0->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			h_dedx_theta_nue_cc_mixed->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			//h_dedx_cuts_numu_cc_mixed->Fill(leading_dedx);
+			h_dedx_theta_numu_cc->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "cosmic")
+		{
+			h_dedx_theta_cosmic->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			h_dedx_theta_other_mixed->Fill(leading_dedx, leading_shower_theta);
+		}
+		if(tpco_id == "unmatched")
+		{
+			h_dedx_theta_unmatched->Fill(leading_dedx, leading_shower_theta);
+		}
+	}        //end loop tpc objects
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::dEdxThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          TH2D * h_dedx_theta_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		h_dedx_theta_intime->Fill(leading_dedx, leading_shower_theta);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

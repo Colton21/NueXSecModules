@@ -222,9 +222,9 @@ TH1D * h_ele_theta_eff_num         = new TH1D("h_ele_theta_eff_num", "h_ele_thet
 TH1D * h_ele_theta_eff_den         = new TH1D("h_ele_theta_eff_den", "h_ele_theta_eff_den", 10, 0, 180);
 //
 
-TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        20, 0, 20);
-TH1D * h_flash_time_intime = new TH1D ("h_flash_time_intime", "h_flash_time_intime", 20, 0, 20);
-TH1D * h_flash_time_data   = new TH1D ("h_flash_time_data",   "h_flash_time_data",   20, 0, 20);
+TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        80, 0, 20);
+TH1D * h_flash_time_intime = new TH1D ("h_flash_time_intime", "h_flash_time_intime", 80, 0, 20);
+TH1D * h_flash_time_data   = new TH1D ("h_flash_time_data",   "h_flash_time_data",   160, 0, 20);
 
 //
 TH2I * h_tracks_showers         = new TH2I("h_tracks_showers", "h_tracks_showers", 8, 0, 8, 8, 0, 8);
@@ -1585,6 +1585,18 @@ TH2D * h_dedx_collection_angle_unmatched      = new TH2D ("h_dedx_collection_ang
 TH2D * h_dedx_collection_angle_intime         = new TH2D ("h_dedx_collection_angle_intime",         "h_dedx_collection_intime",         20, 0, 10, 20, -3.5, 3.5);
 TH2D * h_dedx_collection_angle_data           = new TH2D ("h_dedx_collection_angle_data",           "h_dedx_collection_data",           20, 0, 10, 20, -3.5, 3.5);
 
+TH2D * h_dedx_theta_nue_cc         = new TH2D ("h_dedx_theta_nue_cc",         "h_dedx_theta_nue_cc",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nue_cc_out_fv  = new TH2D ("h_dedx_theta_nue_cc_out_fv",  "h_dedx_theta_nue_cc_out_fv",  20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nue_cc_mixed   = new TH2D ("h_dedx_theta_nue_cc_mixed",   "h_dedx_theta_nue_cc_mixed",   20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_numu_cc        = new TH2D ("h_dedx_theta_numu_cc",        "h_dedx_theta_numu_cc",        20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_numu_cc_mixed  = new TH2D ("h_dedx_theta_numu_cc_mixed",  "h_dedx_theta_numu_cc_mixed",  20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nc             = new TH2D ("h_dedx_theta_nc",             "h_dedx_theta_nc",             20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nc_pi0         = new TH2D ("h_dedx_theta_nc_pi0",         "h_dedx_theta_nc_pi0",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_cosmic         = new TH2D ("h_dedx_theta_cosmic",         "h_dedx_theta_cosmic",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_other_mixed    = new TH2D ("h_dedx_theta_other_mixed",    "h_dedx_theta_other_mixed",    20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_unmatched      = new TH2D ("h_dedx_theta_unmatched",      "h_dedx_theta_unmatched",      20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_intime         = new TH2D ("h_dedx_theta_intime",         "h_dedx_theta_intime",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_data           = new TH2D ("h_dedx_theta_data",           "h_dedx_theta_data",           20, 0, 10, 20, -180, 180);
 
 TH1D * h_mc_ele_e_0  = new TH1D ("h_mc_ele_e_0",  "h_mc_ele_e_0",  20, 0, 5);
 TH1D * h_mc_ele_e_1  = new TH1D ("h_mc_ele_e_1",  "h_mc_ele_e_1",  20, 0, 5);

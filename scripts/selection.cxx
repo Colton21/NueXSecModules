@@ -545,6 +545,8 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_any_pfp_xyz_last_data);
 
+			_data_functions_instance.selection_functions_data::dEdxThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_theta_data);
+
 			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                            0, 0,
@@ -1019,6 +1021,9 @@ void selection::make_selection( const char * _file1,
 			                                                                    h_ele_eng_for_trans_intime,
 			                                                                    h_ele_eng_mid_trans_intime,
 			                                                                    h_ele_eng_back_trans_intime);
+
+			_functions_instance.selection_functions::dEdxThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                         _verbose, h_dedx_theta_intime);
 
 			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_any_pfp_xyz_last_intime);
 
@@ -2354,6 +2359,14 @@ void selection::make_selection( const char * _file1,
 		                                                     h_any_pfp_xyz_last_cosmic,
 		                                                     h_any_pfp_xyz_last_other_mixed,
 		                                                     h_any_pfp_xyz_last_unmatched);
+
+		_functions_instance.selection_functions::dEdxTheta(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                   h_dedx_theta_nue_cc,        h_dedx_theta_nue_cc_mixed,
+		                                                   h_dedx_theta_nue_cc_out_fv,
+		                                                   h_dedx_theta_numu_cc,       h_dedx_theta_nc,
+		                                                   h_dedx_theta_cosmic,        h_dedx_theta_nc_pi0,
+		                                                   h_dedx_theta_numu_cc_mixed, h_dedx_theta_other_mixed,
+		                                                   h_dedx_theta_unmatched);
 
 
 		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
