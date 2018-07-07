@@ -561,6 +561,79 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 	c1->Print(print_name);
 }
+void histogram_functions::PlotdEdxTheta(
+        TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc,
+        TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH1 * h_nc,
+        TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
+        TH2 * h_data, const double data_scale_factor,
+        const char * title, const char * x_axis_name, const char * y_axis_name,
+        const char * print_name1, const char * print_name2, const char * print_name3
+        )
+{
+
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+
+	h_nue_cc->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_numu_cc_mixed->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_intime->SetStats(kFALSE);
+	h_data->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
+
+	TH2 * h_nue_cc_clone = (TH2*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH2 * h_nue_cc_mixed_clone = (TH2*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH2 * h_nue_cc_out_fv_clone = (TH2*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	TH2 * h_cosmic_clone = (TH2*)h_cosmic->Clone("h_cosmic_clone");
+	TH2 * h_numu_cc_clone = (TH2*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH2 * h_nc_clone = (TH2*)h_nc->Clone("h_nc_clone");
+	TH2 * h_nc_pi0_clone = (TH2*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH2 * h_other_mixed_clone = (TH2*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH2 * h_unmatched_clone = (TH2*)h_unmatched->Clone("h_unmatched_clone");
+	TH2 * h_intime_clone = (TH2*)h_intime->Clone("h_intime_clone");
+
+	TH2D * h_dummy_mc = new TH2D();
+
+	h_dummy_mc->Add(h_nue_cc_clone,        data_scale_factor);
+	h_dummy_mc->Add(h_nue_cc_mixed_clone,  data_scale_factor);
+	h_dummy_mc->Add(h_nue_cc_out_fv_clone, data_scale_factor);
+	h_dummy_mc->Add(h_cosmic_clone,        data_scale_factor);
+	h_dummy_mc->Add(h_numu_cc_clone,       data_scale_factor);
+	h_dummy_mc->Add(h_nc_clone,            data_scale_factor);
+	h_dummy_mc->Add(h_nc_pi0_clone,        data_scale_factor);
+	h_dummy_mc->Add(h_other_mixed_clone,   data_scale_factor);
+	h_dummy_mc->Add(h_unmatched_clone,     data_scale_factor);
+	h_dummy_mc->Add(h_intime_clone,        intime_scale_factor);
+
+	h_dummy_mc->GetXaxis()->SetTitle("Leading Shower dE/dx [MeV/cm]");
+	h_dummy_mc->GetYaxis()->SetTitle("Leading Shower Theta [Degrees]");
+	h_dummy_mc->Draw("colz");
+	c1->Print(print_name1);
+
+	TCanvas * c2 = new TCanvas();
+	c2->cd();
+	h_data->SetStats(kFALSE);
+	TH2 * h_data_clone = (TH2*)h_data->Clone("h_data_clone");
+	h_data_clone->GetXaxis()->SetTitle("Leading Shower dE/dx [MeV/cm]");
+	h_data_clone->GetYaxis()->SetTitle("Leading Shower Theta [Degrees]");
+	h_data_clone->Draw("colz");
+	c2->Print(print_name2);
+
+	TCanvas * c3 = new TCanvas();
+	c3->cd();
+	TH2 * h_division = (TH2*)h_data_clone->Clone("h_division");
+	h_division->Divide(h_dummy_mc);
+	h_division->Draw("colz");
+	c3->Print(print_name3);
+
+
+}
 void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
                                           TH1 * h_nue_cc_out_fv,
                                           TH1 * h_nue_cc_res,

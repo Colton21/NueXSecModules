@@ -142,6 +142,13 @@ static void EnergyOverlay(
         TH1 * h_13,
         const char * x_axis_name, const char * y_axis_name, const char * print_name
         );
-
+static void PlotdEdxTheta(
+        TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc,
+        TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH1 * h_nc,
+        TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
+        TH2 * h_data, const double data_scale_factor,
+        const char * title, const char * x_axis_name, const char * y_axis_name,
+        const char * print_name1, const char * print_name2, const char * print_name3
+        );
 };
 #endif

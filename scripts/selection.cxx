@@ -5162,6 +5162,28 @@ void selection::make_selection( const char * _file1,
 	        "Track Containment Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_containment_cut_data.pdf");
 
+
+	histogram_functions::PlotdEdxTheta(
+	        h_dedx_theta_nue_cc,
+	        h_dedx_theta_nue_cc_mixed,
+	        h_dedx_theta_nue_cc_out_fv,
+	        h_dedx_theta_numu_cc,
+	        h_dedx_theta_numu_cc_mixed,
+	        h_dedx_theta_cosmic,
+	        h_dedx_theta_nc,
+	        h_dedx_theta_nc_pi0,
+	        h_dedx_theta_other_mixed,
+	        h_dedx_theta_unmatched,
+	        h_dedx_theta_intime,
+	        intime_scale_factor,
+	        h_dedx_theta_data,
+	        data_scale_factor,
+	        "", "Leading Shower dE/dx [MeV/cm]", "Leading Shower Theta [Degrees]",
+	        "../scripts/plots/post_cuts_dEdx_theta_mc_ext.pdf",
+	        "../scripts/plots/post_cuts_dEdx_theta_data.pdf",
+	        "../scripts/plots/post_cuts_dEdx_theta_diff.pdf"
+	        );
+
 	histogram_functions::Plot1DHistogramGausFit(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_low.pdf");
 	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_med.pdf");
 	histogram_functions::Plot1DHistogramGausFit(h_high_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_high.pdf");
