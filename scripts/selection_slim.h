@@ -16,54 +16,19 @@ class selection_slim {
 
 private:
 
-const double POT = 1.82027e21;
+const double POT = 1.82027e+21;
+const double data_scale_factor = 1 / 5.648;   //ie scale MC down by factor
+//const double intime_scale_factor = 0.442416; //ie scale EXT down by factor
+const double intime_scale_factor = 0.56940408;   //for first two datasets
 
-//const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
-//const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
-//const double POT = 2.90469e+21;    //POT - nue + cosmics
-const double scaling_nue = 1.52938e-11;    //nues / POT / cm^2
-const double scaling_nue_bar = 7.77111e-12;   //anues / POT / cm^2
-const double scaling = (scaling_nue + scaling_nue_bar);
+//these are for the flux calculations
+const double scaling_nue = 1.52938e-11;          //nues  / POT / cm^2
+const double scaling_nue_bar = 7.77111e-12;      //anues / POT / cm^2
+const double scaling = scaling_nue + scaling_nue_bar;
 
-//since I have both nue and nue_bar as signal definition need to adjust for this
-const double genie_xsec_nue = 5.63067e-39;   //cm^2
-const double genie_xsec_nue_bar = 2.0893e-39;   //cm^2
-const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
-
-/*
-   3e13 POT / spills for NuMI -> 6.0675667e7 triggers for MC, or 5.9966667e5 triggers when MC scaled to data POT
-   2.571102 Million EXT spills
-   scale EXT by: 0.23323333 when MC scaled to data
-   otherwise scale EXT by: intime_scale_factor / data_scale_factor (23.599090)
-
-   For new EXT: EXT 352180
-   But looking just at samdef = 2571102 ??? why ???
-   intime_scale_factor = 0.59966667e6 / 352180
-   intime_scale_factor =
- */
-//const double intime_scale_factor = 23.5991 * (0.0098831492);
-//const double intime_scale_factor = 23.5991 * (0.0364451);
-//const double intime_scale_factor = 23.5991 * (0.0556456);
-
-/*
-   scale via POT - 1.23e20 MC / 2.189e19 POT for full april sample
-   upscale Data by: 5.62
-   but if MC is downscaled by EXT difference, then we do 5.62 / 1.5946470
-   = 3.52
- */
-
-//new data set has : 1.799e19 POT
-//EA9CNT: 472210
-//const double data_scale_factor = 0.0098831492;
-
-//tor101_wcut for whole samdef = 6.634e+19 POT
-//EA9CNT_wcut = 1678059
-const double intime_scale_factor = 0.655210;
-const double data_scale_factor = 0.0364451;
-
-//tor101_wcut for summing 1,2,3,4 samdef manually = 1.0129e20
-//const double data_scale_factor = 0.0556456;
-
+const double genie_xsec_nue = 5.63067e-39;     //cm^2
+const double genie_xsec_nue_bar = 2.0893e-39;     //cm^2
+//const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
 
 const double theta_translation = 29.36 * (3.1415/180);
 const double phi_translation = 8.121 * (3.1415/180);

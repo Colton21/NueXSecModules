@@ -32,18 +32,24 @@ private:
 // And EXT On-Beam : EXT = 0.442416
 
 const double POT = 1.82027e+21;
-const double data_scale_factor = 1 / 5.648; //ie scale MC down by factor
-const double intime_scale_factor = 0.442416; //ie scale EXT down by factor
-
+const double data_scale_factor = (1 / 5.648) * 1.1; //ie scale MC down by factor
+//const double intime_scale_factor = 0.442416 * 5.7 * 0.9; //ie scale EXT down by factor
+const double intime_scale_factor = 0.56940408 * 5.7 * 1.1; //for first two datasets,
+//factor 5.7 comes from prescale on EXT data!
+//extra factor is a temporary measure for counting triggers and POT in data
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
 const double scaling_nue_bar = 7.77111e-12;    //anues / POT / cm^2
 const double scaling = scaling_nue + scaling_nue_bar;
 
-const double genie_xsec_nue = 5.63067e-39;   //cm^2
-const double genie_xsec_nue_bar = 2.0893e-39;   //cm^2
-const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
+//these values come from GENIE file - no MEC!
+// const double genie_xsec_nue = 5.63067e-39;   //cm^2
+// const double genie_xsec_nue_bar = 2.0893e-39;   //cm^2
+//const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
+//this values come from GENIE file and have MEC!
+const double genie_xsec_nue = 6.34569e-39; //cm2
+const double genie_xsec_nue_bar = 2.24685e-39; //cm2
 
 
 // older values used
@@ -216,9 +222,9 @@ TH1D * h_ele_theta_eff_num         = new TH1D("h_ele_theta_eff_num", "h_ele_thet
 TH1D * h_ele_theta_eff_den         = new TH1D("h_ele_theta_eff_den", "h_ele_theta_eff_den", 10, 0, 180);
 //
 
-TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        20, 0, 20);
-TH1D * h_flash_time_intime = new TH1D ("h_flash_time_intime", "h_flash_time_intime", 20, 0, 20);
-TH1D * h_flash_time_data   = new TH1D ("h_flash_time_data",   "h_flash_time_data",   20, 0, 20);
+TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        80, 0, 20);
+TH1D * h_flash_time_intime = new TH1D ("h_flash_time_intime", "h_flash_time_intime", 80, 0, 20);
+TH1D * h_flash_time_data   = new TH1D ("h_flash_time_data",   "h_flash_time_data",   160, 0, 20);
 
 //
 TH2I * h_tracks_showers         = new TH2I("h_tracks_showers", "h_tracks_showers", 8, 0, 8, 8, 0, 8);
@@ -1135,6 +1141,32 @@ TH1D * h_ele_pfp_momentum_unmatched      = new TH1D ("h_ele_pfp_momentum_unmatch
 TH1D * h_ele_pfp_momentum_intime         = new TH1D ("h_ele_pfp_momentum_intime",         "h_ele_pfp_momentum_intime",         10, 0, 2);
 TH1D * h_ele_pfp_momentum_data           = new TH1D ("h_ele_pfp_momentum_data",           "h_ele_pfp_momentum_data",           10, 0, 2);
 
+TH1D * h_ele_pfp_momentum_no_track_nue_cc         = new TH1D ("h_ele_pfp_momentum_no_track_nue_cc",         "h_ele_pfp_momentum_no_track_nue_cc",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_momentum_no_track_nue_cc_out_fv",  "h_ele_pfp_momentum_no_track_nue_cc_out_fv",  10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_momentum_no_track_nue_cc_mixed",   "h_ele_pfp_momentum_no_track_nue_cc_mixed",   10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_numu_cc        = new TH1D ("h_ele_pfp_momentum_no_track_numu_cc",        "h_ele_pfp_momentum_no_track_numu_cc",        10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_momentum_no_track_numu_cc_mixed",  "h_ele_pfp_momentum_no_track_numu_cc_mixed",  10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_nc             = new TH1D ("h_ele_pfp_momentum_no_track_nc",             "h_ele_pfp_momentum_no_track_nc",             10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_nc_pi0         = new TH1D ("h_ele_pfp_momentum_no_track_nc_pi0",         "h_ele_pfp_momentum_no_track_nc_pi0",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_cosmic         = new TH1D ("h_ele_pfp_momentum_no_track_cosmic",         "h_ele_pfp_momentum_no_track_cosmic",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_other_mixed    = new TH1D ("h_ele_pfp_momentum_no_track_other_mixed",    "h_ele_pfp_momentum_no_track_other_mixed",    10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_unmatched      = new TH1D ("h_ele_pfp_momentum_no_track_unmatched",      "h_ele_pfp_momentum_no_track_unmatched",      10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_intime         = new TH1D ("h_ele_pfp_momentum_no_track_intime",         "h_ele_pfp_momentum_no_track_intime",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_no_track_data           = new TH1D ("h_ele_pfp_momentum_no_track_data",           "h_ele_pfp_momentum_no_track_data",           10, 0, 2);
+
+TH1D * h_ele_pfp_momentum_has_track_nue_cc         = new TH1D ("h_ele_pfp_momentum_has_track_nue_cc",         "h_ele_pfp_momentum_has_track_nue_cc",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_momentum_has_track_nue_cc_out_fv",  "h_ele_pfp_momentum_has_track_nue_cc_out_fv",  10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_momentum_has_track_nue_cc_mixed",   "h_ele_pfp_momentum_has_track_nue_cc_mixed",   10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_numu_cc        = new TH1D ("h_ele_pfp_momentum_has_track_numu_cc",        "h_ele_pfp_momentum_has_track_numu_cc",        10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_momentum_has_track_numu_cc_mixed",  "h_ele_pfp_momentum_has_track_numu_cc_mixed",  10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_nc             = new TH1D ("h_ele_pfp_momentum_has_track_nc",             "h_ele_pfp_momentum_has_track_nc",             10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_nc_pi0         = new TH1D ("h_ele_pfp_momentum_has_track_nc_pi0",         "h_ele_pfp_momentum_has_track_nc_pi0",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_cosmic         = new TH1D ("h_ele_pfp_momentum_has_track_cosmic",         "h_ele_pfp_momentum_has_track_cosmic",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_other_mixed    = new TH1D ("h_ele_pfp_momentum_has_track_other_mixed",    "h_ele_pfp_momentum_has_track_other_mixed",    10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_unmatched      = new TH1D ("h_ele_pfp_momentum_has_track_unmatched",      "h_ele_pfp_momentum_has_track_unmatched",      10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_intime         = new TH1D ("h_ele_pfp_momentum_has_track_intime",         "h_ele_pfp_momentum_has_track_intime",         10, 0, 2);
+TH1D * h_ele_pfp_momentum_has_track_data           = new TH1D ("h_ele_pfp_momentum_has_track_data",           "h_ele_pfp_momentum_has_track_data",           10, 0, 2);
+
 TH1D * h_ele_pfp_theta_nue_cc         = new TH1D ("h_ele_pfp_theta_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
 TH1D * h_ele_pfp_theta_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
 TH1D * h_ele_pfp_theta_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_nue_cc_mixed",   "h_ele_pfp_theta_nue_cc_mixed",   20, 0, 180);
@@ -1303,6 +1335,84 @@ TH1D * h_ele_pfp_z_other_mixed    = new TH1D ("h_ele_pfp_z_other_mixed",    "h_e
 TH1D * h_ele_pfp_z_unmatched      = new TH1D ("h_ele_pfp_z_unmatched",      "h_ele_pfp_z_unmatched",      40, -40, 1050);
 TH1D * h_ele_pfp_z_intime         = new TH1D ("h_ele_pfp_z_intime",         "h_ele_pfp_z_intime",         40, -40, 1050);
 TH1D * h_ele_pfp_z_data           = new TH1D ("h_ele_pfp_z_data",           "h_ele_pfp_z_data",           40, -40, 1050);
+
+TH1D * h_any_pfp_x_nue_cc         = new TH1D ("h_any_pfp_x_nue_cc",         "h_any_pfp_x_nue_cc",         20, -10, 270);
+TH1D * h_any_pfp_x_nue_cc_out_fv  = new TH1D ("h_any_pfp_x_nue_cc_out_fv",  "h_any_pfp_x_nue_cc_out_fv",  20, -10, 270);
+TH1D * h_any_pfp_x_nue_cc_mixed   = new TH1D ("h_any_pfp_x_nue_cc_mixed",   "h_any_pfp_x_nue_cc_mixed",   20, -10, 270);
+TH1D * h_any_pfp_x_numu_cc        = new TH1D ("h_any_pfp_x_numu_cc",        "h_any_pfp_x_numu_cc",        20, -10, 270);
+TH1D * h_any_pfp_x_numu_cc_mixed  = new TH1D ("h_any_pfp_x_numu_cc_mixed",  "h_any_pfp_x_numu_cc_mixed",  20, -10, 270);
+TH1D * h_any_pfp_x_nc             = new TH1D ("h_any_pfp_x_nc",             "h_any_pfp_x_nc",             20, -10, 270);
+TH1D * h_any_pfp_x_nc_pi0         = new TH1D ("h_any_pfp_x_nc_pi0",         "h_any_pfp_x_nc_pi0",         20, -10, 270);
+TH1D * h_any_pfp_x_cosmic         = new TH1D ("h_any_pfp_x_cosmic",         "h_any_pfp_x_cosmic",         20, -10, 270);
+TH1D * h_any_pfp_x_other_mixed    = new TH1D ("h_any_pfp_x_other_mixed",    "h_any_pfp_x_other_mixed",    20, -10, 270);
+TH1D * h_any_pfp_x_unmatched      = new TH1D ("h_any_pfp_x_unmatched",      "h_any_pfp_x_unmatched",      20, -10, 270);
+TH1D * h_any_pfp_x_intime         = new TH1D ("h_any_pfp_x_intime",         "h_any_pfp_x_intime",         20, -10, 270);
+TH1D * h_any_pfp_x_data           = new TH1D ("h_any_pfp_x_data",           "h_any_pfp_x_data",           20, -10, 270);
+
+TH1D * h_any_pfp_y_nue_cc         = new TH1D ("h_any_pfp_y_nue_cc",         "h_any_pfp_y_nue_cc",         20, -120, 120);
+TH1D * h_any_pfp_y_nue_cc_out_fv  = new TH1D ("h_any_pfp_y_nue_cc_out_fv",  "h_any_pfp_y_nue_cc_out_fv",  20, -120, 120);
+TH1D * h_any_pfp_y_nue_cc_mixed   = new TH1D ("h_any_pfp_y_nue_cc_mixed",   "h_any_pfp_y_nue_cc_mixed",   20, -120, 120);
+TH1D * h_any_pfp_y_numu_cc        = new TH1D ("h_any_pfp_y_numu_cc",        "h_any_pfp_y_numu_cc",        20, -120, 120);
+TH1D * h_any_pfp_y_numu_cc_mixed  = new TH1D ("h_any_pfp_y_numu_cc_mixed",  "h_any_pfp_y_numu_cc_mixed",  20, -120, 120);
+TH1D * h_any_pfp_y_nc             = new TH1D ("h_any_pfp_y_nc",             "h_any_pfp_y_nc",             20, -120, 120);
+TH1D * h_any_pfp_y_nc_pi0         = new TH1D ("h_any_pfp_y_nc_pi0",         "h_any_pfp_y_nc_pi0",         20, -120, 120);
+TH1D * h_any_pfp_y_cosmic         = new TH1D ("h_any_pfp_y_cosmic",         "h_any_pfp_y_cosmic",         20, -120, 120);
+TH1D * h_any_pfp_y_other_mixed    = new TH1D ("h_any_pfp_y_other_mixed",    "h_any_pfp_y_other_mixed",    20, -120, 120);
+TH1D * h_any_pfp_y_unmatched      = new TH1D ("h_any_pfp_y_unmatched",      "h_any_pfp_y_unmatched",      20, -120, 120);
+TH1D * h_any_pfp_y_intime         = new TH1D ("h_any_pfp_y_intime",         "h_any_pfp_y_intime",         20, -120, 120);
+TH1D * h_any_pfp_y_data           = new TH1D ("h_any_pfp_y_data",           "h_any_pfp_y_data",           20, -120, 120);
+
+TH1D * h_any_pfp_z_nue_cc         = new TH1D ("h_any_pfp_z_nue_cc",         "h_any_pfp_z_nue_cc",         40, -40, 1050);
+TH1D * h_any_pfp_z_nue_cc_out_fv  = new TH1D ("h_any_pfp_z_nue_cc_out_fv",  "h_any_pfp_z_nue_cc_out_fv",  40, -40, 1050);
+TH1D * h_any_pfp_z_nue_cc_mixed   = new TH1D ("h_any_pfp_z_nue_cc_mixed",   "h_any_pfp_z_nue_cc_mixed",   40, -40, 1050);
+TH1D * h_any_pfp_z_numu_cc        = new TH1D ("h_any_pfp_z_numu_cc",        "h_any_pfp_z_numu_cc",        40, -40, 1050);
+TH1D * h_any_pfp_z_numu_cc_mixed  = new TH1D ("h_any_pfp_z_numu_cc_mixed",  "h_any_pfp_z_numu_cc_mixed",  40, -40, 1050);
+TH1D * h_any_pfp_z_nc             = new TH1D ("h_any_pfp_z_nc",             "h_any_pfp_z_nc",             40, -40, 1050);
+TH1D * h_any_pfp_z_nc_pi0         = new TH1D ("h_any_pfp_z_nc_pi0",         "h_any_pfp_z_nc_pi0",         40, -40, 1050);
+TH1D * h_any_pfp_z_cosmic         = new TH1D ("h_any_pfp_z_cosmic",         "h_any_pfp_z_cosmic",         40, -40, 1050);
+TH1D * h_any_pfp_z_other_mixed    = new TH1D ("h_any_pfp_z_other_mixed",    "h_any_pfp_z_other_mixed",    40, -40, 1050);
+TH1D * h_any_pfp_z_unmatched      = new TH1D ("h_any_pfp_z_unmatched",      "h_any_pfp_z_unmatched",      40, -40, 1050);
+TH1D * h_any_pfp_z_intime         = new TH1D ("h_any_pfp_z_intime",         "h_any_pfp_z_intime",         40, -40, 1050);
+TH1D * h_any_pfp_z_data           = new TH1D ("h_any_pfp_z_data",           "h_any_pfp_z_data",           40, -40, 1050);
+
+TH1D * h_any_pfp_x_last_nue_cc         = new TH1D ("h_any_pfp_x_last_nue_cc",         "h_any_pfp_x_last_nue_cc",         20, -10, 270);
+TH1D * h_any_pfp_x_last_nue_cc_out_fv  = new TH1D ("h_any_pfp_x_last_nue_cc_out_fv",  "h_any_pfp_x_last_nue_cc_out_fv",  20, -10, 270);
+TH1D * h_any_pfp_x_last_nue_cc_mixed   = new TH1D ("h_any_pfp_x_last_nue_cc_mixed",   "h_any_pfp_x_last_nue_cc_mixed",   20, -10, 270);
+TH1D * h_any_pfp_x_last_numu_cc        = new TH1D ("h_any_pfp_x_last_numu_cc",        "h_any_pfp_x_last_numu_cc",        20, -10, 270);
+TH1D * h_any_pfp_x_last_numu_cc_mixed  = new TH1D ("h_any_pfp_x_last_numu_cc_mixed",  "h_any_pfp_x_last_numu_cc_mixed",  20, -10, 270);
+TH1D * h_any_pfp_x_last_nc             = new TH1D ("h_any_pfp_x_last_nc",             "h_any_pfp_x_last_nc",             20, -10, 270);
+TH1D * h_any_pfp_x_last_nc_pi0         = new TH1D ("h_any_pfp_x_last_nc_pi0",         "h_any_pfp_x_last_nc_pi0",         20, -10, 270);
+TH1D * h_any_pfp_x_last_cosmic         = new TH1D ("h_any_pfp_x_last_cosmic",         "h_any_pfp_x_last_cosmic",         20, -10, 270);
+TH1D * h_any_pfp_x_last_other_mixed    = new TH1D ("h_any_pfp_x_last_other_mixed",    "h_any_pfp_x_last_other_mixed",    20, -10, 270);
+TH1D * h_any_pfp_x_last_unmatched      = new TH1D ("h_any_pfp_x_last_unmatched",      "h_any_pfp_x_last_unmatched",      20, -10, 270);
+TH1D * h_any_pfp_x_last_intime         = new TH1D ("h_any_pfp_x_last_intime",         "h_any_pfp_x_last_intime",         20, -10, 270);
+TH1D * h_any_pfp_x_last_data           = new TH1D ("h_any_pfp_x_last_data",           "h_any_pfp_x_last_data",           20, -10, 270);
+
+TH1D * h_any_pfp_y_last_nue_cc         = new TH1D ("h_any_pfp_y_last_nue_cc",         "h_any_pfp_y_last_nue_cc",         20, -120, 120);
+TH1D * h_any_pfp_y_last_nue_cc_out_fv  = new TH1D ("h_any_pfp_y_last_nue_cc_out_fv",  "h_any_pfp_y_last_nue_cc_out_fv",  20, -120, 120);
+TH1D * h_any_pfp_y_last_nue_cc_mixed   = new TH1D ("h_any_pfp_y_last_nue_cc_mixed",   "h_any_pfp_y_last_nue_cc_mixed",   20, -120, 120);
+TH1D * h_any_pfp_y_last_numu_cc        = new TH1D ("h_any_pfp_y_last_numu_cc",        "h_any_pfp_y_last_numu_cc",        20, -120, 120);
+TH1D * h_any_pfp_y_last_numu_cc_mixed  = new TH1D ("h_any_pfp_y_last_numu_cc_mixed",  "h_any_pfp_y_last_numu_cc_mixed",  20, -120, 120);
+TH1D * h_any_pfp_y_last_nc             = new TH1D ("h_any_pfp_y_last_nc",             "h_any_pfp_y_last_nc",             20, -120, 120);
+TH1D * h_any_pfp_y_last_nc_pi0         = new TH1D ("h_any_pfp_y_last_nc_pi0",         "h_any_pfp_y_last_nc_pi0",         20, -120, 120);
+TH1D * h_any_pfp_y_last_cosmic         = new TH1D ("h_any_pfp_y_last_cosmic",         "h_any_pfp_y_last_cosmic",         20, -120, 120);
+TH1D * h_any_pfp_y_last_other_mixed    = new TH1D ("h_any_pfp_y_last_other_mixed",    "h_any_pfp_y_last_other_mixed",    20, -120, 120);
+TH1D * h_any_pfp_y_last_unmatched      = new TH1D ("h_any_pfp_y_last_unmatched",      "h_any_pfp_y_last_unmatched",      20, -120, 120);
+TH1D * h_any_pfp_y_last_intime         = new TH1D ("h_any_pfp_y_last_intime",         "h_any_pfp_y_last_intime",         20, -120, 120);
+TH1D * h_any_pfp_y_last_data           = new TH1D ("h_any_pfp_y_last_data",           "h_any_pfp_y_last_data",           20, -120, 120);
+
+TH1D * h_any_pfp_z_last_nue_cc         = new TH1D ("h_any_pfp_z_last_nue_cc",         "h_any_pfp_z_last_nue_cc",         40, -40, 1050);
+TH1D * h_any_pfp_z_last_nue_cc_out_fv  = new TH1D ("h_any_pfp_z_last_nue_cc_out_fv",  "h_any_pfp_z_last_nue_cc_out_fv",  40, -40, 1050);
+TH1D * h_any_pfp_z_last_nue_cc_mixed   = new TH1D ("h_any_pfp_z_last_nue_cc_mixed",   "h_any_pfp_z_last_nue_cc_mixed",   40, -40, 1050);
+TH1D * h_any_pfp_z_last_numu_cc        = new TH1D ("h_any_pfp_z_last_numu_cc",        "h_any_pfp_z_last_numu_cc",        40, -40, 1050);
+TH1D * h_any_pfp_z_last_numu_cc_mixed  = new TH1D ("h_any_pfp_z_last_numu_cc_mixed",  "h_any_pfp_z_last_numu_cc_mixed",  40, -40, 1050);
+TH1D * h_any_pfp_z_last_nc             = new TH1D ("h_any_pfp_z_last_nc",             "h_any_pfp_z_last_nc",             40, -40, 1050);
+TH1D * h_any_pfp_z_last_nc_pi0         = new TH1D ("h_any_pfp_z_last_nc_pi0",         "h_any_pfp_z_last_nc_pi0",         40, -40, 1050);
+TH1D * h_any_pfp_z_last_cosmic         = new TH1D ("h_any_pfp_z_last_cosmic",         "h_any_pfp_z_last_cosmic",         40, -40, 1050);
+TH1D * h_any_pfp_z_last_other_mixed    = new TH1D ("h_any_pfp_z_last_other_mixed",    "h_any_pfp_z_last_other_mixed",    40, -40, 1050);
+TH1D * h_any_pfp_z_last_unmatched      = new TH1D ("h_any_pfp_z_last_unmatched",      "h_any_pfp_z_last_unmatched",      40, -40, 1050);
+TH1D * h_any_pfp_z_last_intime         = new TH1D ("h_any_pfp_z_last_intime",         "h_any_pfp_z_last_intime",         40, -40, 1050);
+TH1D * h_any_pfp_z_last_data           = new TH1D ("h_any_pfp_z_last_data",           "h_any_pfp_z_last_data",           40, -40, 1050);
 
 TH2D * h_post_cuts_num_tracks_showers_purity_qe     = new TH2D ("h_post_cuts_num_tracks_showers_purity_qe",    "h_post_cuts_num_tracks_showers_purity_qe",    3, 1, 4, 2, 0, 2);
 TH2D * h_post_cuts_num_tracks_showers_purity_res    = new TH2D ("h_post_cuts_num_tracks_showers_purity_res",   "h_post_cuts_num_tracks_showers_purity_res",   3, 1, 4, 2, 0, 2);
@@ -1475,6 +1585,18 @@ TH2D * h_dedx_collection_angle_unmatched      = new TH2D ("h_dedx_collection_ang
 TH2D * h_dedx_collection_angle_intime         = new TH2D ("h_dedx_collection_angle_intime",         "h_dedx_collection_intime",         20, 0, 10, 20, -3.5, 3.5);
 TH2D * h_dedx_collection_angle_data           = new TH2D ("h_dedx_collection_angle_data",           "h_dedx_collection_data",           20, 0, 10, 20, -3.5, 3.5);
 
+TH2D * h_dedx_theta_nue_cc         = new TH2D ("h_dedx_theta_nue_cc",         "h_dedx_theta_nue_cc",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nue_cc_out_fv  = new TH2D ("h_dedx_theta_nue_cc_out_fv",  "h_dedx_theta_nue_cc_out_fv",  20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nue_cc_mixed   = new TH2D ("h_dedx_theta_nue_cc_mixed",   "h_dedx_theta_nue_cc_mixed",   20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_numu_cc        = new TH2D ("h_dedx_theta_numu_cc",        "h_dedx_theta_numu_cc",        20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_numu_cc_mixed  = new TH2D ("h_dedx_theta_numu_cc_mixed",  "h_dedx_theta_numu_cc_mixed",  20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nc             = new TH2D ("h_dedx_theta_nc",             "h_dedx_theta_nc",             20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_nc_pi0         = new TH2D ("h_dedx_theta_nc_pi0",         "h_dedx_theta_nc_pi0",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_cosmic         = new TH2D ("h_dedx_theta_cosmic",         "h_dedx_theta_cosmic",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_other_mixed    = new TH2D ("h_dedx_theta_other_mixed",    "h_dedx_theta_other_mixed",    20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_unmatched      = new TH2D ("h_dedx_theta_unmatched",      "h_dedx_theta_unmatched",      20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_intime         = new TH2D ("h_dedx_theta_intime",         "h_dedx_theta_intime",         20, 0, 10, 20, -180, 180);
+TH2D * h_dedx_theta_data           = new TH2D ("h_dedx_theta_data",           "h_dedx_theta_data",           20, 0, 10, 20, -180, 180);
 
 TH1D * h_mc_ele_e_0  = new TH1D ("h_mc_ele_e_0",  "h_mc_ele_e_0",  20, 0, 5);
 TH1D * h_mc_ele_e_1  = new TH1D ("h_mc_ele_e_1",  "h_mc_ele_e_1",  20, 0, 5);

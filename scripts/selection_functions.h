@@ -151,16 +151,17 @@ static void calcXSec(double _x1, double _x2, double _y1,
                      double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************
 //***************************************************************************
-static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_cc_mixed,
+static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_bar_cc, double final_counter_nue_cc_mixed,
                      double final_counter_nue_cc_out_fv, double final_counter_cosmic, double final_counter_nc, double final_counter_numu_cc,
                      double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
                      double final_counter_other_mixed, double final_counter_intime,
                      double intime_scale_factor, double final_counter_data, double data_scale_factor,
-                     std::vector<double> fv_boundary_v, double flux,
-                     std::vector<double> selected_energy_vector, double genie_xsec, const int total_mc_entries_inFV);
+                     std::vector<double> fv_boundary_v, double flux_nue, double flux_nue_bar,
+                     std::vector<double> selected_energy_vector, double genie_xsec_nue, double genie_xsec_nue_bar,
+                     const int total_mc_entries_inFV_nue, const int total_mc_entries_inFV_nue_bar);
 //***************************************************************************
 //***************************************************************************
-static void xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_energy, double stat_error);
+static void xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double xsec_nue, double average_energy, double stat_error);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -938,6 +939,22 @@ void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
                  std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
                  std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_unmatched);
+//***************************************************************************
+//***************************************************************************
+void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                 std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                 const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
                  std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
                  TH2 * h_mc_vtx_xy_nue_cc,
                  TH2 * h_mc_vtx_xz_nue_cc,
@@ -1125,6 +1142,57 @@ void PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 void PostCutsLeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                    TH1D * h_ele_momentum_intime);
+//***************************************************************************
+//***************************************************************************
+void LeadingMomentumTrackTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc_out_fv,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_numu_cc,
+                                  TH1D * h_ele_pfp_momentum_no_track_numu_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_nc,
+                                  TH1D * h_ele_pfp_momentum_no_track_nc_pi0,
+                                  TH1D * h_ele_pfp_momentum_no_track_cosmic,
+                                  TH1D * h_ele_pfp_momentum_no_track_other_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_unmatched,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc_out_fv,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_numu_cc,
+                                  TH1D * h_ele_pfp_momentum_has_track_numu_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_nc,
+                                  TH1D * h_ele_pfp_momentum_has_track_nc_pi0,
+                                  TH1D * h_ele_pfp_momentum_has_track_cosmic,
+                                  TH1D * h_ele_pfp_momentum_has_track_other_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingMomentumTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        TH1D * h_ele_pfp_momentum_no_track_intime,
+                                        TH1D * h_ele_pfp_momentum_has_track_intime);
+//***************************************************************************
+//***************************************************************************
+void dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+               TH2D * h_dedx_theta_nue_cc,
+               TH2D * h_dedx_theta_nue_cc_mixed,
+               TH2D * h_dedx_theta_nue_cc_out_fv,
+               TH2D * h_dedx_theta_numu_cc,
+               TH2D * h_dedx_theta_nc,
+               TH2D * h_dedx_theta_cosmic,
+               TH2D * h_dedx_theta_nc_pi0,
+               TH2D * h_dedx_theta_numu_cc_mixed,
+               TH2D * h_dedx_theta_other_mixed,
+               TH2D * h_dedx_theta_unmatched);
+//***************************************************************************
+//***************************************************************************
+void dEdxThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     TH2D * h_dedx_theta_intime);
 //***************************************************************************
 //***************************************************************************
 };
