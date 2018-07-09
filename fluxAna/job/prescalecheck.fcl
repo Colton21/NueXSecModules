@@ -1,0 +1,36 @@
+#include "services_microboone.fcl"
+#include "messageservice.fcl"
+#include "time_memory_tracker_microboone.fcl"
+
+process_name : PrescaleCheckProcess
+
+services:
+{
+  TFileService: {fileName: "prescale_numi_ext.root"}
+  TimeTracker:  @local::microboone_time_tracker
+  MemoryTracker: @local::microboone_memory_tracker
+  @table::microboone_simulation_services
+}#end services
+
+source:
+{
+  module_type: RootInput
+  maxEvents: -1
+  firstRun: 1
+  firstEvent: 1
+}
+
+physics:
+{
+  analyzers:
+  {
+    PrescaleCheck:
+    {
+      module_type: "PrescaleCheck"
+    }
+  }
+  analysis: [ PrescaleCheck]
+  end_paths: [analysis]
+}
+
+services.DetectorClocksService.InheritClockConfig: false
