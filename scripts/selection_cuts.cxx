@@ -728,6 +728,7 @@ void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 		if(passed_tpco->at(i).first == 0) {continue; }
 
 		auto const tpc_obj = tpc_object_container_v->at(i);
+		const bool is_data = tpc_obj.IsData();
 		const int n_pfp = tpc_obj.NumPFParticles();
 		int leading_index = 0;
 		int leading_hits  = 0;
@@ -743,7 +744,8 @@ void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 			}
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		if(is_data) {leading_dedx = leading_dedx * (242.72 / 196.979); }
 		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min)
 		{
 			passed_tpco->at(i).first = 0;

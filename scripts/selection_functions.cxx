@@ -132,7 +132,7 @@ void selection_functions::PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectConta
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_intime->Fill(leading_dedx);
+		h_dedx_cuts_intime->Fill(leading_dedx * (242.72 / 196.979));
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -2911,7 +2911,7 @@ void selection_functions::dEdxVsOpenAngleInTime(std::vector<xsecAna::TPCObjectCo
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
-		h_dedx_open_angle_intime->Fill(leading_dedx, leading_open_angle);
+		h_dedx_open_angle_intime->Fill(leading_dedx * (242.72 / 196.979), leading_open_angle);
 	}
 }
 //***************************************************************************
@@ -7993,7 +7993,7 @@ void selection_functions::dEdxThetaInTime(std::vector<xsecAna::TPCObjectContaine
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
-		h_dedx_theta_intime->Fill(leading_dedx, leading_shower_theta);
+		h_dedx_theta_intime->Fill(leading_dedx * (242.72 / 196.979), leading_shower_theta);
 	}
 }
 //***************************************************************************

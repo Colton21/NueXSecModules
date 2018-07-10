@@ -598,9 +598,9 @@ void histogram_functions::PlotdEdxTheta(
 	TH2 * h_unmatched_clone = (TH2*)h_unmatched->Clone("h_unmatched_clone");
 	TH2 * h_intime_clone = (TH2*)h_intime->Clone("h_intime_clone");
 
-	TH2D * h_dummy_mc = new TH2D();
+	TH2 * h_dummy_mc = (TH2*)h_nue_cc_clone->Clone("h_dummy_mc");
 
-	h_dummy_mc->Add(h_nue_cc_clone,        data_scale_factor);
+	//h_dummy_mc->Add(h_nue_cc_clone,        data_scale_factor);
 	h_dummy_mc->Add(h_nue_cc_mixed_clone,  data_scale_factor);
 	h_dummy_mc->Add(h_nue_cc_out_fv_clone, data_scale_factor);
 	h_dummy_mc->Add(h_cosmic_clone,        data_scale_factor);
