@@ -89,6 +89,10 @@ physics:
       CalibrationV: "197.042"
       CalibrationW: "196.979"
 
+      CalibrationDataU: "236.41"
+      CalibrationDataV: "228.83"
+      CalibrationDataW: "242.72"
+
       Debug: "true"
       Verbose: "true"
     }

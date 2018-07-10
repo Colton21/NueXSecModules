@@ -82,6 +82,10 @@ double calibration_u;
 double calibration_v;
 double calibration_w;
 
+double calibration_u_data;
+double calibration_v_data;
+double calibration_w_data;
+
 bool _debug;
 bool _verbose;
 bool _cosmic_only;
@@ -260,6 +264,10 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	calibration_u                   = p.get<double>("CalibrationU");
 	calibration_v                   = p.get<double>("CalibrationV");
 	calibration_w                   = p.get<double>("CalibrationW");
+
+	calibration_u_data		= p.get<double>("CalibrationDataU");
+	calibration_v_data		= p.get<double>("CalibrationDataV");
+	calibration_w_data		= p.get<double>("CalibrationDataW");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -871,8 +879,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
-					xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_track, calibration_u, calibration_v, calibration_w,
-					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);
+					if(!_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_track, calibration_u, calibration_v, calibration_w,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
+
+                                        if(_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_track, calibration_u_data, calibration_v_data, calibration_w_data,
+                                                                            pfp_energy_u, pfp_energy_v, pfp_energy_w);}
 
 					n_pfp_tracks++;
 				}
@@ -918,8 +929,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
 					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
 
-					xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u, calibration_v, calibration_w,
-					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);
+					if(!_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u, calibration_v, calibration_w,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
+
+
+					if(_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u_data, calibration_v_data, calibration_w_data,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
 
 					n_pfp_showers++;
 				}
