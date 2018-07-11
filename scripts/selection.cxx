@@ -167,7 +167,7 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * data_track_containment_counter_v = new std::vector<int>;
 	data_track_containment_counter_v->resize(24, 0);
 
-	std::vector<double> * data_flash_time = new std::vector<double>;
+	std::vector<std::pair<double, int> > * data_flash_time = new std::vector<std::pair<double, int> >;
 
 	std::vector<TH1 * > * h_ele_pfp_xyz_data = new std::vector<TH1 * >;
 	h_ele_pfp_xyz_data->push_back(h_ele_pfp_x_data);
@@ -604,7 +604,7 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * intime_track_containment_counter_v = new std::vector<int>;
 	intime_track_containment_counter_v->resize(24, 0);
 
-	std::vector<double> * intime_flash_time = new std::vector<double>;
+	std::vector<std::pair<double, int> > * intime_flash_time = new std::vector<std::pair<double, int> >;
 
 	std::vector<TH1 * > * h_ele_pfp_xyz_intime = new std::vector<TH1 * >;
 	h_ele_pfp_xyz_intime->push_back(h_ele_pfp_x_intime);
@@ -1067,7 +1067,7 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * track_containment_counter_v = new std::vector<int>;
 	track_containment_counter_v->resize(24, 0);
 
-	std::vector<double> * flash_time = new std::vector<double>;
+	std::vector<std::pair<double, int> > * flash_time = new std::vector<std::pair<double, int> >;
 
 	std::vector<int> * has_track = new std::vector<int>;
 	has_track->resize(2, 0);
@@ -2867,12 +2867,21 @@ void selection::make_selection( const char * _file1,
 
 	gErrorIgnoreLevel = kWarning;
 
-	for(double flash_timing : * flash_time)        {h_flash_time->Fill(flash_timing);        }
-	for(double flash_timing : * data_flash_time)   {h_flash_time_data->Fill(flash_timing);   }
-	for(double flash_timing : * intime_flash_time) {h_flash_time_intime->Fill(flash_timing); }
+	for(auto const flash_timing : * flash_time)        {h_flash_time->Fill(flash_timing.first);        }
+	for(auto const flash_timing : * data_flash_time)   {h_flash_time_data->Fill(flash_timing.first);   }
+	for(auto const flash_timing : * intime_flash_time) {h_flash_time_intime->Fill(flash_timing.first); }
 	histogram_functions::Plot1DHistogram(h_flash_time,        "Flash Time [us]", "../scripts/plots/flash_time.pdf");
 	histogram_functions::Plot1DHistogram(h_flash_time_intime, "Flash Time [us]", "../scripts/plots/flash_time_intime.pdf");
 	histogram_functions::Plot1DHistogram(h_flash_time_data,   "Flash Time [us]", "../scripts/plots/flash_time_data.pdf");
+
+	for(auto const flash_timing : * data_flash_time)
+	{
+		const double run_number = flash_timing.second;
+		if(run_number < 6000) {h_flash_time_data_first_half->Fill(flash_timing.first); }
+		if(run_number > 6000) {h_flash_time_data_second_half->Fill(flash_timing.second); }
+	}
+	histogram_functions::Plot1DHistogram(h_flash_time_data_first_half,   "Flash Time [us]", "../scripts/plots/flash_time_data_first_half.pdf");
+	histogram_functions::Plot1DHistogram(h_flash_time_data_second_half,  "Flash Time [us]", "../scripts/plots/flash_time_data_second_half.pdf");
 
 
 	//histogram_functions::1DHistogram (TH1 histogram, const std::string x_axis_name, const std::string * print_name)

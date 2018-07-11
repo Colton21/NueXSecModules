@@ -166,7 +166,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * data_track_containment_counter_v = new std::vector<int>;
 	data_track_containment_counter_v->resize(24, 0);
 
-	std::vector<double> * data_flash_time = new std::vector<double>;
+	std::vector<std::pair<double, int> > * data_flash_time = new std::vector<std::pair<double, int> >;
 
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(24, 0);
@@ -443,7 +443,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * intime_track_containment_counter_v = new std::vector<int>;
 	intime_track_containment_counter_v->resize(24, 0);
 
-	std::vector<double> * intime_flash_time = new std::vector<double>;
+	std::vector<std::pair<double, int> > * intime_flash_time = new std::vector<std::pair<double, int> >;
 
 	std::vector<int> * tabulated_origins = new std::vector<int>;
 	tabulated_origins->resize(24, 0);
@@ -717,7 +717,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * track_containment_counter_v = new std::vector<int>;
 	track_containment_counter_v->resize(24, 0);
 
-	std::vector<double> * flash_time = new std::vector<double>;
+	std::vector<std::pair<double, int> > * flash_time = new std::vector<std::pair<double, int> >;
 
 	std::vector<int> * has_track = new std::vector<int>;
 	has_track->resize(2, 0);
