@@ -20,7 +20,7 @@ bool selection_cuts::flash_pe(int flash_pe, int flash_pe_threshold)
 }
 //***************************************************************************
 void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<double> * flash_time)
+                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 
@@ -60,7 +60,8 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		//events successfully pass this cut
 		current_run = fRun;
 		current_event = fEvent;
-		flash_time->push_back(fOpFlashTime);
+		auto const pair = std::make_pair(fOpFlashTime, current_run);
+		flash_time->push_back(pair);
 
 		//new event
 		if(current_event != last_event)

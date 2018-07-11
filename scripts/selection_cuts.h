@@ -26,7 +26,7 @@ bool flash_in_time(double flash_time, double flash_start, double flash_end);
 bool flash_pe(int flash_pe, int flash_pe_threshold);
 //***************************************************************************
 void loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<double> * flash_time);
+                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time);
 //***************************************************************************
 bool in_fv(double x, double y, double z, std::vector<double> fv_boundary_v);
 //***************************************************************************

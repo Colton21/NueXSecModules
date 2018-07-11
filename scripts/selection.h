@@ -31,12 +31,25 @@ private:
 //This means that POT Scaling of On-Beam : MC = 5.648
 // And EXT On-Beam : EXT = 0.442416
 
-const double POT = 1.82027e+21;
-const double data_scale_factor = (1 / 5.648) * 1.1; //ie scale MC down by factor
+//const double POT = 1.82027e+21;
+//const double data_scale_factor = (1 / 5.648) * 1.1; //ie scale MC down by factor
 //const double intime_scale_factor = 0.442416 * 5.7 * 0.9; //ie scale EXT down by factor
-const double intime_scale_factor = 0.56940408 * 5.7 * 1.1; //for first two datasets,
+//const double intime_scale_factor = 0.56940408 * 5.7 * 1.1; //for first two datasets,
 //factor 5.7 comes from prescale on EXT data!
 //extra factor is a temporary measure for counting triggers and POT in data
+
+//as of applying DQM and removing aNuMI running
+const double POT = 1.82027e+21;
+//scale MC down by this factor (i.e. should be less than 1)
+// 2.369e+20 / 1.82027e+21 = 0.13
+const double data_scale_factor = 0.13;
+
+//scale EXT down by this factor
+//(26749613 (ext) * 0.2064 (prescale)) = 5521120.1232
+// 6180310 (data) / 5521120.1232
+const double intime_scale_factor = 1.12;
+
+
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
@@ -222,9 +235,11 @@ TH1D * h_ele_theta_eff_num         = new TH1D("h_ele_theta_eff_num", "h_ele_thet
 TH1D * h_ele_theta_eff_den         = new TH1D("h_ele_theta_eff_den", "h_ele_theta_eff_den", 10, 0, 180);
 //
 
-TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        80, 0, 20);
-TH1D * h_flash_time_intime = new TH1D ("h_flash_time_intime", "h_flash_time_intime", 80, 0, 20);
-TH1D * h_flash_time_data   = new TH1D ("h_flash_time_data",   "h_flash_time_data",   160, 0, 20);
+TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        180, 0, 20);
+TH1D * h_flash_time_intime = new TH1D ("h_flash_time_intime", "h_flash_time_intime", 180, 0, 20);
+TH1D * h_flash_time_data   = new TH1D ("h_flash_time_data",   "h_flash_time_data",   180, 0, 20);
+TH1D * h_flash_time_data_first_half   = new TH1D ("h_flash_time_data_first_half",    "h_flash_time_data_first_half",   180, 0, 20);
+TH1D * h_flash_time_data_second_half  = new TH1D ("h_flash_time_data_second_half",   "h_flash_time_data_second_half",  180, 0, 20);
 
 //
 TH2I * h_tracks_showers         = new TH2I("h_tracks_showers", "h_tracks_showers", 8, 0, 8, 8, 0, 8);
