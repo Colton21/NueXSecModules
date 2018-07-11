@@ -47,7 +47,7 @@ for pair in pair_v:
   #print run_number, prescale_factor
 
   if(run_number != prev_run_number):
-    #print run_number, prev_run_number
+    print run_number
     h_prescale.Fill(run_number, prescale_factor * 100.)
     h_prescale_val.Fill(prescale_factor * 100.) 
     h_unique_run.Fill(run_number)

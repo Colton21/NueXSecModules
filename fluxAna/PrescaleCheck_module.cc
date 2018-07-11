@@ -56,6 +56,12 @@ private:
   int fEvent = 0;
   int fSubRun = 0;
   double fPrescaleNuMI = 0;
+  double fPrescaleBNB = 0;
+  double fPrescaleUnbiased = 0;
+
+  bool fPassedNuMI = 0;
+  bool fPassedBNB = 0;
+  bool fPassedUnbiased = 0;
 
   TH1D * h_numi_prescale = new TH1D("numi_prescale", "numi_prescale", 3500, 0, 8000);
 
@@ -71,10 +77,15 @@ prescalecheck::PrescaleCheck::PrescaleCheck(fhicl::ParameterSet const & p) : EDA
   art::ServiceHandle<art::TFileService> fs;
   prescale_tree = fs->make<TTree>("prescale_tree", "");
 
-  prescale_tree->Branch("Run", &fRun, "fRun/I");
-  prescale_tree->Branch("SubRun", &fSubRun, "fSubRun/I");
-  prescale_tree->Branch("Event", &fEvent, "fEvent/I");
-  prescale_tree->Branch("PrescaleNuMI", &fPrescaleNuMI, "fPrescaleNuMI/D");
+  prescale_tree->Branch("Run",              &fRun,              "fRun/I");
+  prescale_tree->Branch("SubRun",           &fSubRun,           "fSubRun/I");
+  prescale_tree->Branch("Event",            &fEvent,            "fEvent/I");
+  prescale_tree->Branch("PrescaleNuMI",     &fPrescaleNuMI,     "fPrescaleNuMI/D");
+  prescale_tree->Branch("PrescaleBNB",      &fPrescaleBNB,      "fPrescaleBNB/D");
+  prescale_tree->Branch("PrescaleUnbiased", &fPrescaleUnbiased, "fPrescaleUnbiased/D");
+  prescale_tree->Branch("PassedNuMI",       &fPassedNuMI,       "fPassedNuMI/O");
+  prescale_tree->Branch("PassedBNB",        &fPassedBNB,        "fPassedBNB/O");
+  prescale_tree->Branch("PassedUnbiased",   &fPassedUnbiased,   "fPassedUnbiased/O");
 }
 
 void prescalecheck::PrescaleCheck::analyze(art::Event const & e) {
@@ -97,12 +108,19 @@ void prescalecheck::PrescaleCheck::analyze(art::Event const & e) {
   const float prescale_numi = SWTriggerHandle->getPrescale("EXT_NUMIwin_FEMBeamTriggerAlgo");
   const float prescale_unbiased = SWTriggerHandle->getPrescale("EXT_unbiased_PrescaleAlgo");
 
+  const bool passed_bnb = SWTriggerHandle->passedAlgo("EXT_BNBwin_FEMBeamTriggerAlgo");
+  const bool passed_numi = SWTriggerHandle->passedAlgo("EXT_NUMIwin_FEMBeamTriggerAlgo");
+  const bool passed_unbiased = SWTriggerHandle->passedAlgo("EXT_unbiased_PrescaleAlgo");
+
+  /*
   std::cout << "-------------" << std::endl;
   std::cout << "EXT BNB  : " << prescale_bnb << std::endl;
   std::cout << "EXT NuMI : " << prescale_numi << std::endl;
   std::cout << "EXT Unbiased Prescale: " << prescale_unbiased << std::endl;
+  std::cout << "Passed Unbiased?: " << passed_unbiased << std::endl;
+  std::cout << "Passed BNB?: " << passed_bnb << std::endl;
   std::cout << "--------------" << std::endl;
-
+  */
   
   h_numi_prescale->Fill(run, 1./prescale_numi);
 
@@ -110,6 +128,11 @@ void prescalecheck::PrescaleCheck::analyze(art::Event const & e) {
   fSubRun = subRun;
   fEvent = event;
   fPrescaleNuMI = 1./prescale_numi;
+  fPrescaleBNB = 1./prescale_bnb;
+  fPrescaleUnbiased = 1./prescale_unbiased;
+  fPassedNuMI = passed_numi;
+  fPassedBNB = passed_bnb;
+  fPassedUnbiased = passed_unbiased;
 
   prescale_tree->Fill();
 
