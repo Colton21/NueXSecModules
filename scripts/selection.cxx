@@ -2877,12 +2877,15 @@ void selection::make_selection( const char * _file1,
 	for(auto const flash_timing : * data_flash_time)
 	{
 		const double run_number = flash_timing.second;
-		if(run_number < 6000) {h_flash_time_data_first_half->Fill(flash_timing.first); }
-		if(run_number > 6000) {h_flash_time_data_second_half->Fill(flash_timing.second); }
+		if(run_number <= 6000) {h_flash_time_data_first_half->Fill(flash_timing.first); }
+		if(run_number > 6000) {h_flash_time_data_second_half->Fill(flash_timing.first); }
 	}
 	histogram_functions::Plot1DHistogram(h_flash_time_data_first_half,   "Flash Time [us]", "../scripts/plots/flash_time_data_first_half.pdf");
 	histogram_functions::Plot1DHistogram(h_flash_time_data_second_half,  "Flash Time [us]", "../scripts/plots/flash_time_data_second_half.pdf");
 
+	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
+	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
+	histogram_functions::Plot1DHistogram(h_flash_time_data_divide,  "Flash Time [us]", "../scripts/plots/flash_time_data_divide.pdf");
 
 	//histogram_functions::1DHistogram (TH1 histogram, const std::string x_axis_name, const std::string * print_name)
 
