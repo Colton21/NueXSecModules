@@ -7723,6 +7723,60 @@ void selection_functions::FillTrueRecoEnergy(std::vector<xsecAna::TPCObjectConta
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::PostCutsLeadingMomentumTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                              TH1D * h_leading_momentum_electron,
+                                                              TH1D * h_leading_momentum_photon,
+                                                              TH1D * h_leading_momentum_proton,
+                                                              TH1D * h_leading_momentum_pion,
+                                                              TH1D * h_leading_momentum_muon,
+                                                              TH1D * h_leading_momentum_kaon,
+                                                              TH1D * h_leading_momentum_neutron,
+                                                              TH1D * h_leading_momentum_mc_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		const int leading_mc_pdg = leading_shower.MCPdgCode();
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11) {h_leading_momentum_electron->Fill(leading_momentum); }
+		if(leading_mc_pdg == 13 || leading_mc_pdg == -13) {h_leading_momentum_muon->Fill(leading_momentum); }
+		if(leading_mc_pdg == 22) {h_leading_momentum_photon->Fill(leading_momentum); }
+		if(leading_mc_pdg == 2212) {h_leading_momentum_proton->Fill(leading_momentum); }
+		if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_momentum_pion->Fill(leading_momentum); }
+		if(leading_mc_pdg == 2112) {h_leading_momentum_neutron->Fill(leading_momentum); }
+		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 || leading_mc_pdg == 311 || leading_mc_pdg == 321 || leading_mc_pdg == -321)
+		{h_leading_momentum_kaon->Fill(leading_momentum); }
+		if(leading_mc_pdg == 0) {h_leading_momentum_mc_unmatched->Fill(leading_momentum); }
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutsLeadingMomentumTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                                    std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                                    TH1D * h_leading_momentum_type_cosmic)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		h_leading_momentum_type_cosmic->Fill(leading_momentum);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions::PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,

@@ -1413,6 +1413,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_nue_cut_other_mixed,
 		                                                                 h_ele_momentum_nue_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_nue_cut_electron,
+		                                                                             h_leading_momentum_nue_cut_photon,
+		                                                                             h_leading_momentum_nue_cut_proton,
+		                                                                             h_leading_momentum_nue_cut_pion,
+		                                                                             h_leading_momentum_nue_cut_muon,
+		                                                                             h_leading_momentum_nue_cut_kaon,
+		                                                                             h_leading_momentum_nue_cut_neutron,
+		                                                                             h_leading_momentum_nue_cut_mc_unmatched);
+
 		// _functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, dummy_passed_tpco, _verbose, tpco_classifier_v,
 		//                                                                  h_ele_momentum_no_cut_nue_cc,
 		//                                                                  h_ele_momentum_no_cut_nue_cc_out_fv,
@@ -1546,6 +1556,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_fv_cut_other_mixed,
 		                                                                 h_ele_momentum_fv_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_fv_cut_electron,
+		                                                                             h_leading_momentum_fv_cut_photon,
+		                                                                             h_leading_momentum_fv_cut_proton,
+		                                                                             h_leading_momentum_fv_cut_pion,
+		                                                                             h_leading_momentum_fv_cut_muon,
+		                                                                             h_leading_momentum_fv_cut_kaon,
+		                                                                             h_leading_momentum_fv_cut_neutron,
+		                                                                             h_leading_momentum_fv_cut_mc_unmatched);
+
 		//we also want to look at the cos(theta) and energy efficiency before we make selection cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
 		{
@@ -1601,6 +1621,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_flash_vtx_cut_other_mixed,
 		                                                                 h_ele_momentum_flash_vtx_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_flash_vtx_electron,
+		                                                                             h_leading_momentum_flash_vtx_photon,
+		                                                                             h_leading_momentum_flash_vtx_proton,
+		                                                                             h_leading_momentum_flash_vtx_pion,
+		                                                                             h_leading_momentum_flash_vtx_muon,
+		                                                                             h_leading_momentum_flash_vtx_kaon,
+		                                                                             h_leading_momentum_flash_vtx_neutron,
+		                                                                             h_leading_momentum_flash_vtx_mc_unmatched);
+
 		_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                          h_vtx_flash_nue_cc_after, h_vtx_flash_nue_cc_out_fv_after, h_vtx_flash_nue_cc_mixed_after,
 		                                                          h_vtx_flash_numu_cc_after, h_vtx_flash_nc_after,
@@ -1646,6 +1676,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_shwr_vtx_cut_other_mixed,
 		                                                                 h_ele_momentum_shwr_vtx_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_shwr_vtx_electron,
+		                                                                             h_leading_momentum_shwr_vtx_photon,
+		                                                                             h_leading_momentum_shwr_vtx_proton,
+		                                                                             h_leading_momentum_shwr_vtx_pion,
+		                                                                             h_leading_momentum_shwr_vtx_muon,
+		                                                                             h_leading_momentum_shwr_vtx_kaon,
+		                                                                             h_leading_momentum_shwr_vtx_neutron,
+		                                                                             h_leading_momentum_shwr_vtx_mc_unmatched);
+
 		_functions_instance.selection_functions::PostCutsShwrVtx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                         h_shwr_vtx_dist_nue_cc_after,
 		                                                         h_shwr_vtx_dist_nue_cc_out_fv_after,
@@ -1690,6 +1730,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_trk_vtx_cut_cosmic,
 		                                                                 h_ele_momentum_trk_vtx_cut_other_mixed,
 		                                                                 h_ele_momentum_trk_vtx_cut_unmatched);
+
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_trk_vtx_electron,
+		                                                                             h_leading_momentum_trk_vtx_photon,
+		                                                                             h_leading_momentum_trk_vtx_proton,
+		                                                                             h_leading_momentum_trk_vtx_pion,
+		                                                                             h_leading_momentum_trk_vtx_muon,
+		                                                                             h_leading_momentum_trk_vtx_kaon,
+		                                                                             h_leading_momentum_trk_vtx_neutron,
+		                                                                             h_leading_momentum_trk_vtx_mc_unmatched);
 
 		_functions_instance.selection_functions::PostCutTrkVtx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                       h_trk_vtx_dist_nue_cc_after, h_trk_vtx_dist_nue_cc_out_fv_after,
@@ -1776,6 +1826,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_hit_cut_cosmic,
 		                                                                 h_ele_momentum_hit_cut_other_mixed,
 		                                                                 h_ele_momentum_hit_cut_unmatched);
+
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_hit_cut_electron,
+		                                                                             h_leading_momentum_hit_cut_photon,
+		                                                                             h_leading_momentum_hit_cut_proton,
+		                                                                             h_leading_momentum_hit_cut_pion,
+		                                                                             h_leading_momentum_hit_cut_muon,
+		                                                                             h_leading_momentum_hit_cut_kaon,
+		                                                                             h_leading_momentum_hit_cut_neutron,
+		                                                                             h_leading_momentum_hit_cut_mc_unmatched);
 
 		_functions_instance.selection_functions::PlaneHitsComparisonTrack(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                  h_collection_total_hits_track_nue_cc,
@@ -1900,6 +1960,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_yhit_cut_cosmic,
 		                                                                 h_ele_momentum_yhit_cut_other_mixed,
 		                                                                 h_ele_momentum_yhit_cut_unmatched);
+
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_yhit_cut_electron,
+		                                                                             h_leading_momentum_yhit_cut_photon,
+		                                                                             h_leading_momentum_yhit_cut_proton,
+		                                                                             h_leading_momentum_yhit_cut_pion,
+		                                                                             h_leading_momentum_yhit_cut_muon,
+		                                                                             h_leading_momentum_yhit_cut_kaon,
+		                                                                             h_leading_momentum_yhit_cut_neutron,
+		                                                                             h_leading_momentum_yhit_cut_mc_unmatched);
 
 		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_collection_hits_track_nue_cc_after,
@@ -2033,6 +2103,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_open_angle_cut_other_mixed,
 		                                                                 h_ele_momentum_open_angle_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_open_angle_cut_electron,
+		                                                                             h_leading_momentum_open_angle_cut_photon,
+		                                                                             h_leading_momentum_open_angle_cut_proton,
+		                                                                             h_leading_momentum_open_angle_cut_pion,
+		                                                                             h_leading_momentum_open_angle_cut_muon,
+		                                                                             h_leading_momentum_open_angle_cut_kaon,
+		                                                                             h_leading_momentum_open_angle_cut_neutron,
+		                                                                             h_leading_momentum_open_angle_cut_mc_unmatched);
+
 		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, tpco_classifier_v,
 		                                                             h_pfp_shower_dedx_nue_cc_qe,
 		                                                             h_pfp_shower_dedx_nue_cc_out_fv,
@@ -2117,6 +2197,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_dedx_cut_other_mixed,
 		                                                                 h_ele_momentum_dedx_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_dedx_cut_electron,
+		                                                                             h_leading_momentum_dedx_cut_photon,
+		                                                                             h_leading_momentum_dedx_cut_proton,
+		                                                                             h_leading_momentum_dedx_cut_pion,
+		                                                                             h_leading_momentum_dedx_cut_muon,
+		                                                                             h_leading_momentum_dedx_cut_kaon,
+		                                                                             h_leading_momentum_dedx_cut_neutron,
+		                                                                             h_leading_momentum_dedx_cut_mc_unmatched);
+
 		_functions_instance.selection_functions::PostCutsdEdx(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                      h_dedx_cuts_nue_cc_after, h_dedx_cuts_nue_cc_mixed_after,
 		                                                      h_dedx_cuts_nue_cc_out_fv_after,
@@ -2155,6 +2245,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_2shwr_cut_cosmic,
 		                                                                 h_ele_momentum_2shwr_cut_other_mixed,
 		                                                                 h_ele_momentum_2shwr_cut_unmatched);
+
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_2shwr_cut_electron,
+		                                                                             h_leading_momentum_2shwr_cut_photon,
+		                                                                             h_leading_momentum_2shwr_cut_proton,
+		                                                                             h_leading_momentum_2shwr_cut_pion,
+		                                                                             h_leading_momentum_2shwr_cut_muon,
+		                                                                             h_leading_momentum_2shwr_cut_kaon,
+		                                                                             h_leading_momentum_2shwr_cut_neutron,
+		                                                                             h_leading_momentum_2shwr_cut_mc_unmatched);
 
 		_functions_instance.selection_functions::SecondaryShowersDist(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                              h_second_shwr_dist_nue_cc_after, h_second_shwr_dist_nue_cc_out_fv_after,
@@ -2198,6 +2298,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_hit_length_cut_cosmic,
 		                                                                 h_ele_momentum_hit_length_cut_other_mixed,
 		                                                                 h_ele_momentum_hit_length_cut_unmatched);
+
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_hit_length_cut_electron,
+		                                                                             h_leading_momentum_hit_length_cut_photon,
+		                                                                             h_leading_momentum_hit_length_cut_proton,
+		                                                                             h_leading_momentum_hit_length_cut_pion,
+		                                                                             h_leading_momentum_hit_length_cut_muon,
+		                                                                             h_leading_momentum_hit_length_cut_kaon,
+		                                                                             h_leading_momentum_hit_length_cut_neutron,
+		                                                                             h_leading_momentum_hit_length_cut_mc_unmatched);
 
 		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                        h_hit_length_ratio_nue_cc_after,
@@ -2260,6 +2370,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_length_ratio_cut_other_mixed,
 		                                                                 h_ele_momentum_length_ratio_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_length_ratio_cut_electron,
+		                                                                             h_leading_momentum_length_ratio_cut_photon,
+		                                                                             h_leading_momentum_length_ratio_cut_proton,
+		                                                                             h_leading_momentum_length_ratio_cut_pion,
+		                                                                             h_leading_momentum_length_ratio_cut_muon,
+		                                                                             h_leading_momentum_length_ratio_cut_kaon,
+		                                                                             h_leading_momentum_length_ratio_cut_neutron,
+		                                                                             h_leading_momentum_length_ratio_cut_mc_unmatched);
+
 		_functions_instance.selection_functions::LeadingShowerLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                             h_leading_shwr_length_nue_cc_after,
 		                                                             h_leading_shwr_length_nue_cc_out_fv_after,
@@ -2320,6 +2440,16 @@ void selection::make_selection( const char * _file1,
 		                                                                 h_ele_momentum_containment_cut_other_mixed,
 		                                                                 h_ele_momentum_containment_cut_unmatched);
 
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                             h_leading_momentum_containment_cut_electron,
+		                                                                             h_leading_momentum_containment_cut_photon,
+		                                                                             h_leading_momentum_containment_cut_proton,
+		                                                                             h_leading_momentum_containment_cut_pion,
+		                                                                             h_leading_momentum_containment_cut_muon,
+		                                                                             h_leading_momentum_containment_cut_kaon,
+		                                                                             h_leading_momentum_containment_cut_neutron,
+		                                                                             h_leading_momentum_containment_cut_mc_unmatched);
+
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
@@ -2367,6 +2497,12 @@ void selection::make_selection( const char * _file1,
 		                                                   h_dedx_theta_cosmic,        h_dedx_theta_nc_pi0,
 		                                                   h_dedx_theta_numu_cc_mixed, h_dedx_theta_other_mixed,
 		                                                   h_dedx_theta_unmatched);
+
+		_functions_instance.selection_functions::PostCutsdEdxTrueParticle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                  h_dedx_cuts_last_electron, h_dedx_cuts_last_photon,
+		                                                                  h_dedx_cuts_last_proton,   h_dedx_cuts_last_pion,
+		                                                                  h_dedx_cuts_last_muon,     h_dedx_cuts_last_kaon,
+		                                                                  h_dedx_cuts_last_neutron,  h_dedx_cuts_last_mc_unmatched);
 
 
 		_functions_instance.selection_functions::FailureReason(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
@@ -2885,7 +3021,11 @@ void selection::make_selection( const char * _file1,
 
 	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
 	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
+	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.5);
 	histogram_functions::Plot1DHistogram(h_flash_time_data_divide,  "Flash Time [us]", "../scripts/plots/flash_time_data_divide.pdf");
+
+	histogram_functions::TimingHistograms(h_flash_time, h_flash_time_intime, h_flash_time_data, data_scale_factor, intime_scale_factor,
+	                                      "Flash Time [#mus]", "../scripts/plots/flash_time_data_subtraction.pdf");
 
 	//histogram_functions::1DHistogram (TH1 histogram, const std::string x_axis_name, const std::string * print_name)
 
@@ -4808,9 +4948,12 @@ void selection::make_selection( const char * _file1,
 	                                     "Collection Hits", "../scripts/plots/post_cuts_dedx_collection_hits_mc_unmatched.pdf");
 
 	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_electron, h_dedx_cuts_proton, h_dedx_cuts_photon, h_dedx_cuts_pion,
-	                                             h_dedx_cuts_kaon, h_dedx_cuts_muon, h_dedx_cuts_neutron, h_dedx_cuts_unmatched, 0.75, 0.95, 0.75, 0.95,
+	                                             h_dedx_cuts_kaon, h_dedx_cuts_muon, h_dedx_cuts_neutron, h_dedx_cuts_mc_unmatched, 0.75, 0.95, 0.75, 0.95,
 	                                             "True Particle dE/dx", "True Particle dE/dx [MeV/cm]", "", "../scripts/plots/post_cuts_dedx_true_particle.pdf");
-
+	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_last_electron, h_dedx_cuts_last_proton, h_dedx_cuts_last_photon, h_dedx_cuts_last_pion,
+	                                             h_dedx_cuts_last_kaon, h_dedx_cuts_last_muon, h_dedx_cuts_last_neutron, h_dedx_cuts_last_mc_unmatched,
+	                                             0.75, 0.95, 0.75, 0.95, "True Particle dE/dx", "True Particle dE/dx [MeV/cm]",
+	                                             "", "../scripts/plots/post_cuts_dedx_true_particle_last.pdf");
 
 
 	histogram_functions::PlotSimpleStackInTime (h_track_containment_nue_cc,
@@ -4951,30 +5094,69 @@ void selection::make_selection( const char * _file1,
 	                                         "../scripts/plots/post_cuts_ele_momentum_no_cut_data.pdf");
 
 
-	histogram_functions::PlotSimpleStackData(h_ele_momentum_nue_cut_nue_cc,        h_ele_momentum_nue_cut_nue_cc_mixed,
-	                                         h_ele_momentum_nue_cut_nue_cc_out_fv, h_ele_momentum_nue_cut_numu_cc,   h_ele_momentum_nue_cut_numu_cc_mixed,
-	                                         h_ele_momentum_nue_cut_cosmic,        h_ele_momentum_nue_cut_nc,        h_ele_momentum_nue_cut_nc_pi0,
-	                                         h_ele_momentum_nue_cut_other_mixed,   h_ele_momentum_nue_cut_unmatched, h_ele_momentum_nue_cut_intime,
-	                                         intime_scale_factor,                  h_ele_momentum_nue_cut_data,      data_scale_factor,
-	                                         "Nue Cut", "Leading Shower Momentum [GeV]", "",
-	                                         "../scripts/plots/post_cuts_ele_momentum_nue_cut_data.pdf");
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_nue_cut_nue_cc,
+	        h_ele_momentum_nue_cut_nue_cc_mixed,
+	        h_ele_momentum_nue_cut_nue_cc_out_fv,
+	        h_ele_momentum_nue_cut_numu_cc,
+	        h_ele_momentum_nue_cut_numu_cc_mixed,
+	        h_ele_momentum_nue_cut_cosmic,
+	        h_ele_momentum_nue_cut_nc,
+	        h_ele_momentum_nue_cut_nc_pi0,
+	        h_ele_momentum_nue_cut_other_mixed,
+	        h_ele_momentum_nue_cut_unmatched,
+	        h_ele_momentum_nue_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_nue_cut_data,
+	        data_scale_factor,
+	        "Nue Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_nue_cut_data.pdf");
 
-	histogram_functions::PlotSimpleStackData(h_ele_momentum_fv_cut_nue_cc,
-	                                         h_ele_momentum_fv_cut_nue_cc_mixed,
-	                                         h_ele_momentum_fv_cut_nue_cc_out_fv,
-	                                         h_ele_momentum_fv_cut_numu_cc,
-	                                         h_ele_momentum_fv_cut_numu_cc_mixed,
-	                                         h_ele_momentum_fv_cut_cosmic,
-	                                         h_ele_momentum_fv_cut_nc,
-	                                         h_ele_momentum_fv_cut_nc_pi0,
-	                                         h_ele_momentum_fv_cut_other_mixed,
-	                                         h_ele_momentum_fv_cut_unmatched,
-	                                         h_ele_momentum_fv_cut_intime,
-	                                         intime_scale_factor,
-	                                         h_ele_momentum_fv_cut_data,
-	                                         data_scale_factor,
-	                                         "Fiducial Volume Cut", "Leading Shower Momentum [GeV]", "",
-	                                         "../scripts/plots/post_cuts_ele_momentum_fv_cut_data.pdf");
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_nue_cut_electron,
+	        h_leading_momentum_nue_cut_photon,
+	        h_leading_momentum_nue_cut_proton,
+	        h_leading_momentum_nue_cut_pion,
+	        h_leading_momentum_nue_cut_muon,
+	        h_leading_momentum_nue_cut_kaon,
+	        h_leading_momentum_nue_cut_neutron,
+	        h_leading_momentum_nue_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_nue_cut.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_fv_cut_nue_cc,
+	        h_ele_momentum_fv_cut_nue_cc_mixed,
+	        h_ele_momentum_fv_cut_nue_cc_out_fv,
+	        h_ele_momentum_fv_cut_numu_cc,
+	        h_ele_momentum_fv_cut_numu_cc_mixed,
+	        h_ele_momentum_fv_cut_cosmic,
+	        h_ele_momentum_fv_cut_nc,
+	        h_ele_momentum_fv_cut_nc_pi0,
+	        h_ele_momentum_fv_cut_other_mixed,
+	        h_ele_momentum_fv_cut_unmatched,
+	        h_ele_momentum_fv_cut_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_fv_cut_data,
+	        data_scale_factor,
+	        "Fiducial Volume Cut", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_fv_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_fv_cut_electron,
+	        h_leading_momentum_fv_cut_photon,
+	        h_leading_momentum_fv_cut_proton,
+	        h_leading_momentum_fv_cut_pion,
+	        h_leading_momentum_fv_cut_muon,
+	        h_leading_momentum_fv_cut_kaon,
+	        h_leading_momentum_fv_cut_neutron,
+	        h_leading_momentum_fv_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_fv_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_flash_vtx_cut_nue_cc,
@@ -4994,6 +5176,20 @@ void selection::make_selection( const char * _file1,
 	        "Flash Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_flash_vtx_cut_data.pdf");
 
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_flash_vtx_electron,
+	        h_leading_momentum_flash_vtx_photon,
+	        h_leading_momentum_flash_vtx_proton,
+	        h_leading_momentum_flash_vtx_pion,
+	        h_leading_momentum_flash_vtx_muon,
+	        h_leading_momentum_flash_vtx_kaon,
+	        h_leading_momentum_flash_vtx_neutron,
+	        h_leading_momentum_flash_vtx_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_flash_vtx.pdf");
+
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_shwr_vtx_cut_nue_cc,
 	        h_ele_momentum_shwr_vtx_cut_nue_cc_mixed,
@@ -5011,6 +5207,20 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Shower Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_shwr_vtx_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_shwr_vtx_electron,
+	        h_leading_momentum_shwr_vtx_photon,
+	        h_leading_momentum_shwr_vtx_proton,
+	        h_leading_momentum_shwr_vtx_pion,
+	        h_leading_momentum_shwr_vtx_muon,
+	        h_leading_momentum_shwr_vtx_kaon,
+	        h_leading_momentum_shwr_vtx_neutron,
+	        h_leading_momentum_shwr_vtx_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_shwr_vtx.pdf");
 
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_trk_vtx_cut_nue_cc,
@@ -5030,6 +5240,20 @@ void selection::make_selection( const char * _file1,
 	        "Track Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_trk_vtx_cut_data.pdf");
 
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_trk_vtx_electron,
+	        h_leading_momentum_trk_vtx_photon,
+	        h_leading_momentum_trk_vtx_proton,
+	        h_leading_momentum_trk_vtx_pion,
+	        h_leading_momentum_trk_vtx_muon,
+	        h_leading_momentum_trk_vtx_kaon,
+	        h_leading_momentum_trk_vtx_neutron,
+	        h_leading_momentum_trk_vtx_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_trk_vtx.pdf");
+
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_hit_cut_nue_cc,
 	        h_ele_momentum_hit_cut_nue_cc_mixed,
@@ -5047,6 +5271,20 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Total Hit Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_hit_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_hit_cut_electron,
+	        h_leading_momentum_hit_cut_photon,
+	        h_leading_momentum_hit_cut_proton,
+	        h_leading_momentum_hit_cut_pion,
+	        h_leading_momentum_hit_cut_muon,
+	        h_leading_momentum_hit_cut_kaon,
+	        h_leading_momentum_hit_cut_neutron,
+	        h_leading_momentum_hit_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_hit_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_yhit_cut_nue_cc,
@@ -5066,6 +5304,20 @@ void selection::make_selection( const char * _file1,
 	        "Collection Hit Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_yhit_cut_data.pdf");
 
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_yhit_cut_electron,
+	        h_leading_momentum_yhit_cut_photon,
+	        h_leading_momentum_yhit_cut_proton,
+	        h_leading_momentum_yhit_cut_pion,
+	        h_leading_momentum_yhit_cut_muon,
+	        h_leading_momentum_yhit_cut_kaon,
+	        h_leading_momentum_yhit_cut_neutron,
+	        h_leading_momentum_yhit_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_yhit_cut.pdf");
+
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_open_angle_cut_nue_cc,
 	        h_ele_momentum_open_angle_cut_nue_cc_mixed,
@@ -5083,6 +5335,20 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Open Angle Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_open_angle_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_open_angle_cut_electron,
+	        h_leading_momentum_open_angle_cut_photon,
+	        h_leading_momentum_open_angle_cut_proton,
+	        h_leading_momentum_open_angle_cut_pion,
+	        h_leading_momentum_open_angle_cut_muon,
+	        h_leading_momentum_open_angle_cut_kaon,
+	        h_leading_momentum_open_angle_cut_neutron,
+	        h_leading_momentum_open_angle_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_open_angle_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_dedx_cut_nue_cc,
@@ -5102,6 +5368,20 @@ void selection::make_selection( const char * _file1,
 	        "dE/dx Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_dedx_cut_data.pdf");
 
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_dedx_cut_electron,
+	        h_leading_momentum_dedx_cut_photon,
+	        h_leading_momentum_dedx_cut_proton,
+	        h_leading_momentum_dedx_cut_pion,
+	        h_leading_momentum_dedx_cut_muon,
+	        h_leading_momentum_dedx_cut_kaon,
+	        h_leading_momentum_dedx_cut_neutron,
+	        h_leading_momentum_dedx_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_dedx_cut.pdf");
+
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_2shwr_cut_nue_cc,
 	        h_ele_momentum_2shwr_cut_nue_cc_mixed,
@@ -5119,6 +5399,20 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Secondary Shower Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_2shwr_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_2shwr_cut_electron,
+	        h_leading_momentum_2shwr_cut_photon,
+	        h_leading_momentum_2shwr_cut_proton,
+	        h_leading_momentum_2shwr_cut_pion,
+	        h_leading_momentum_2shwr_cut_muon,
+	        h_leading_momentum_2shwr_cut_kaon,
+	        h_leading_momentum_2shwr_cut_neutron,
+	        h_leading_momentum_2shwr_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_2shwr_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_hit_length_cut_nue_cc,
@@ -5138,6 +5432,20 @@ void selection::make_selection( const char * _file1,
 	        "Hit/Length Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_hit_length_cut_data.pdf");
 
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_hit_length_cut_electron,
+	        h_leading_momentum_hit_length_cut_photon,
+	        h_leading_momentum_hit_length_cut_proton,
+	        h_leading_momentum_hit_length_cut_pion,
+	        h_leading_momentum_hit_length_cut_muon,
+	        h_leading_momentum_hit_length_cut_kaon,
+	        h_leading_momentum_hit_length_cut_neutron,
+	        h_leading_momentum_hit_length_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_hit_length_cut.pdf");
+
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_length_ratio_cut_nue_cc,
 	        h_ele_momentum_length_ratio_cut_nue_cc_mixed,
@@ -5155,6 +5463,20 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Trk Length / Shower Length Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_length_ratio_cut_data.pdf");
+
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_length_ratio_cut_electron,
+	        h_leading_momentum_length_ratio_cut_photon,
+	        h_leading_momentum_length_ratio_cut_proton,
+	        h_leading_momentum_length_ratio_cut_pion,
+	        h_leading_momentum_length_ratio_cut_muon,
+	        h_leading_momentum_length_ratio_cut_kaon,
+	        h_leading_momentum_length_ratio_cut_neutron,
+	        h_leading_momentum_length_ratio_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_length_ratio_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_containment_cut_nue_cc,
@@ -5174,6 +5496,19 @@ void selection::make_selection( const char * _file1,
 	        "Track Containment Cut", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_containment_cut_data.pdf");
 
+	histogram_functions::PlotSimpleStackParticle(
+	        h_leading_momentum_containment_cut_electron,
+	        h_leading_momentum_containment_cut_photon,
+	        h_leading_momentum_containment_cut_proton,
+	        h_leading_momentum_containment_cut_pion,
+	        h_leading_momentum_containment_cut_muon,
+	        h_leading_momentum_containment_cut_kaon,
+	        h_leading_momentum_containment_cut_neutron,
+	        h_leading_momentum_containment_cut_mc_unmatched,
+	        0.75, 0.95, 0.75, 0.95,
+	        "",
+	        "True Leading Particle Momentum [GeV]",
+	        "", "../scripts/plots/leading_momentum_true_particle_containment_cut.pdf");
 
 	histogram_functions::PlotdEdxTheta(
 	        h_dedx_theta_nue_cc,
