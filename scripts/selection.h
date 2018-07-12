@@ -623,6 +623,123 @@ TH1D * h_dedx_cuts_unmatched_after     = new TH1D("h_dedx_cuts_unmatched_after",
 TH1D * h_dedx_cuts_intime_after        = new TH1D("h_dedx_cuts_intime_after",         "h_dedx_cuts_intime_after",        20, 0, 10);
 TH1D * h_dedx_cuts_data_after          = new TH1D("h_dedx_cuts_data_after",           "h_dedx_cuts_data_after",          20, 0, 10);
 
+TH1D * h_leading_momentum_nue_cut_electron       = new TH1D("h_leading_momentum_nue_cut_electron",     "h_leading_momentum_nue_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_nue_cut_photon         = new TH1D("h_leading_momentum_nue_cut_photon",       "h_leading_momentum_nue_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_nue_cut_proton         = new TH1D("h_leading_momentum_nue_cut_proton",       "h_leading_momentum_nue_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_nue_cut_pion           = new TH1D("h_leading_momentum_nue_cut_pion",         "h_leading_momentum_nue_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_nue_cut_muon           = new TH1D("h_leading_momentum_nue_cut_muon",         "h_leading_momentum_nue_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_nue_cut_kaon           = new TH1D("h_leading_momentum_nue_cut_kaon",         "h_leading_momentum_nue_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_nue_cut_neutron        = new TH1D("h_leading_momentum_nue_cut_neutron",      "h_leading_momentum_nue_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_nue_cut_mc_unmatched   = new TH1D("h_leading_momentum_nue_cut_mc_unmatched", "h_leading_momentum_nue_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_fv_cut_electron       = new TH1D("h_leading_momentum_fv_cut_electron",     "h_leading_momentum_fv_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_fv_cut_photon         = new TH1D("h_leading_momentum_fv_cut_photon",       "h_leading_momentum_fv_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_fv_cut_proton         = new TH1D("h_leading_momentum_fv_cut_proton",       "h_leading_momentum_fv_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_fv_cut_pion           = new TH1D("h_leading_momentum_fv_cut_pion",         "h_leading_momentum_fv_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_fv_cut_muon           = new TH1D("h_leading_momentum_fv_cut_muon",         "h_leading_momentum_fv_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_fv_cut_kaon           = new TH1D("h_leading_momentum_fv_cut_kaon",         "h_leading_momentum_fv_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_fv_cut_neutron        = new TH1D("h_leading_momentum_fv_cut_neutron",      "h_leading_momentum_fv_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_fv_cut_mc_unmatched   = new TH1D("h_leading_momentum_fv_cut_mc_unmatched", "h_leading_momentum_fv_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_flash_vtx_electron       = new TH1D("h_leading_momentum_flash_vtx_electron",     "h_leading_momentum_flash_vtx_electron",     10, 0, 5);
+TH1D * h_leading_momentum_flash_vtx_photon         = new TH1D("h_leading_momentum_flash_vtx_photon",       "h_leading_momentum_flash_vtx_photon",       10, 0, 5);
+TH1D * h_leading_momentum_flash_vtx_proton         = new TH1D("h_leading_momentum_flash_vtx_proton",       "h_leading_momentum_flash_vtx_proton",       10, 0, 5);
+TH1D * h_leading_momentum_flash_vtx_pion           = new TH1D("h_leading_momentum_flash_vtx_pion",         "h_leading_momentum_flash_vtx_pion",         10, 0, 5);
+TH1D * h_leading_momentum_flash_vtx_muon           = new TH1D("h_leading_momentum_flash_vtx_muon",         "h_leading_momentum_flash_vtx_muon",         10, 0, 5);
+TH1D * h_leading_momentum_flash_vtx_kaon           = new TH1D("h_leading_momentum_flash_vtx_kaon",         "h_leading_momentum_flash_vtx_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_flash_vtx_neutron        = new TH1D("h_leading_momentum_flash_vtx_neutron",      "h_leading_momentum_flash_vtx_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_flash_vtx_mc_unmatched   = new TH1D("h_leading_momentum_flash_vtx_mc_unmatched", "h_leading_momentum_flash_vtx_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_shwr_vtx_electron       = new TH1D("h_leading_momentum_shwr_vtx_electron",     "h_leading_momentum_shwr_vtx_electron",     10, 0, 5);
+TH1D * h_leading_momentum_shwr_vtx_photon         = new TH1D("h_leading_momentum_shwr_vtx_photon",       "h_leading_momentum_shwr_vtx_photon",       10, 0, 5);
+TH1D * h_leading_momentum_shwr_vtx_proton         = new TH1D("h_leading_momentum_shwr_vtx_proton",       "h_leading_momentum_shwr_vtx_proton",       10, 0, 5);
+TH1D * h_leading_momentum_shwr_vtx_pion           = new TH1D("h_leading_momentum_shwr_vtx_pion",         "h_leading_momentum_shwr_vtx_pion",         10, 0, 5);
+TH1D * h_leading_momentum_shwr_vtx_muon           = new TH1D("h_leading_momentum_shwr_vtx_muon",         "h_leading_momentum_shwr_vtx_muon",         10, 0, 5);
+TH1D * h_leading_momentum_shwr_vtx_kaon           = new TH1D("h_leading_momentum_shwr_vtx_kaon",         "h_leading_momentum_shwr_vtx_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_shwr_vtx_neutron        = new TH1D("h_leading_momentum_shwr_vtx_neutron",      "h_leading_momentum_shwr_vtx_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_shwr_vtx_mc_unmatched   = new TH1D("h_leading_momentum_shwr_vtx_mc_unmatched", "h_leading_momentum_shwr_vtx_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_trk_vtx_electron       = new TH1D("h_leading_momentum_trk_vtx_electron",     "h_leading_momentum_trk_vtx_electron",     10, 0, 5);
+TH1D * h_leading_momentum_trk_vtx_photon         = new TH1D("h_leading_momentum_trk_vtx_photon",       "h_leading_momentum_trk_vtx_photon",       10, 0, 5);
+TH1D * h_leading_momentum_trk_vtx_proton         = new TH1D("h_leading_momentum_trk_vtx_proton",       "h_leading_momentum_trk_vtx_proton",       10, 0, 5);
+TH1D * h_leading_momentum_trk_vtx_pion           = new TH1D("h_leading_momentum_trk_vtx_pion",         "h_leading_momentum_trk_vtx_pion",         10, 0, 5);
+TH1D * h_leading_momentum_trk_vtx_muon           = new TH1D("h_leading_momentum_trk_vtx_muon",         "h_leading_momentum_trk_vtx_muon",         10, 0, 5);
+TH1D * h_leading_momentum_trk_vtx_kaon           = new TH1D("h_leading_momentum_trk_vtx_kaon",         "h_leading_momentum_trk_vtx_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_trk_vtx_neutron        = new TH1D("h_leading_momentum_trk_vtx_neutron",      "h_leading_momentum_trk_vtx_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_trk_vtx_mc_unmatched   = new TH1D("h_leading_momentum_trk_vtx_mc_unmatched", "h_leading_momentum_trk_vtx_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_hit_cut_electron       = new TH1D("h_leading_momentum_hit_cut_electron",     "h_leading_momentum_hit_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_hit_cut_photon         = new TH1D("h_leading_momentum_hit_cut_photon",       "h_leading_momentum_hit_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_hit_cut_proton         = new TH1D("h_leading_momentum_hit_cut_proton",       "h_leading_momentum_hit_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_hit_cut_pion           = new TH1D("h_leading_momentum_hit_cut_pion",         "h_leading_momentum_hit_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_hit_cut_muon           = new TH1D("h_leading_momentum_hit_cut_muon",         "h_leading_momentum_hit_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_hit_cut_kaon           = new TH1D("h_leading_momentum_hit_cut_kaon",         "h_leading_momentum_hit_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_hit_cut_neutron        = new TH1D("h_leading_momentum_hit_cut_neutron",      "h_leading_momentum_hit_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_hit_cut_mc_unmatched   = new TH1D("h_leading_momentum_hit_cut_mc_unmatched", "h_leading_momentum_hit_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_yhit_cut_electron       = new TH1D("h_leading_momentum_yhit_cut_electron",     "h_leading_momentum_yhit_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_yhit_cut_photon         = new TH1D("h_leading_momentum_yhit_cut_photon",       "h_leading_momentum_yhit_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_yhit_cut_proton         = new TH1D("h_leading_momentum_yhit_cut_proton",       "h_leading_momentum_yhit_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_yhit_cut_pion           = new TH1D("h_leading_momentum_yhit_cut_pion",         "h_leading_momentum_yhit_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_yhit_cut_muon           = new TH1D("h_leading_momentum_yhit_cut_muon",         "h_leading_momentum_yhit_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_yhit_cut_kaon           = new TH1D("h_leading_momentum_yhit_cut_kaon",         "h_leading_momentum_yhit_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_yhit_cut_neutron        = new TH1D("h_leading_momentum_yhit_cut_neutron",      "h_leading_momentum_yhit_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_yhit_cut_mc_unmatched   = new TH1D("h_leading_momentum_yhit_cut_mc_unmatched", "h_leading_momentum_yhit_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_open_angle_cut_electron       = new TH1D("h_leading_momentum_open_angle_cut_electron",     "h_leading_momentum_open_angle_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_open_angle_cut_photon         = new TH1D("h_leading_momentum_open_angle_cut_photon",       "h_leading_momentum_open_angle_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_open_angle_cut_proton         = new TH1D("h_leading_momentum_open_angle_cut_proton",       "h_leading_momentum_open_angle_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_open_angle_cut_pion           = new TH1D("h_leading_momentum_open_angle_cut_pion",         "h_leading_momentum_open_angle_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_open_angle_cut_muon           = new TH1D("h_leading_momentum_open_angle_cut_muon",         "h_leading_momentum_open_angle_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_open_angle_cut_kaon           = new TH1D("h_leading_momentum_open_angle_cut_kaon",         "h_leading_momentum_open_angle_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_open_angle_cut_neutron        = new TH1D("h_leading_momentum_open_angle_cut_neutron",      "h_leading_momentum_open_angle_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_open_angle_cut_mc_unmatched   = new TH1D("h_leading_momentum_open_angle_cut_mc_unmatched", "h_leading_momentum_open_angle_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_dedx_cut_electron       = new TH1D("h_leading_momentum_dedx_cut_electron",     "h_leading_momentum_dedx_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_dedx_cut_photon         = new TH1D("h_leading_momentum_dedx_cut_photon",       "h_leading_momentum_dedx_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_dedx_cut_proton         = new TH1D("h_leading_momentum_dedx_cut_proton",       "h_leading_momentum_dedx_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_dedx_cut_pion           = new TH1D("h_leading_momentum_dedx_cut_pion",         "h_leading_momentum_dedx_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_dedx_cut_muon           = new TH1D("h_leading_momentum_dedx_cut_muon",         "h_leading_momentum_dedx_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_dedx_cut_kaon           = new TH1D("h_leading_momentum_dedx_cut_kaon",         "h_leading_momentum_dedx_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_dedx_cut_neutron        = new TH1D("h_leading_momentum_dedx_cut_neutron",      "h_leading_momentum_dedx_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_dedx_cut_mc_unmatched   = new TH1D("h_leading_momentum_dedx_cut_mc_unmatched", "h_leading_momentum_dedx_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_2shwr_cut_electron       = new TH1D("h_leading_momentum_2shwr_cut_electron",     "h_leading_momentum_2shwr_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_2shwr_cut_photon         = new TH1D("h_leading_momentum_2shwr_cut_photon",       "h_leading_momentum_2shwr_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_2shwr_cut_proton         = new TH1D("h_leading_momentum_2shwr_cut_proton",       "h_leading_momentum_2shwr_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_2shwr_cut_pion           = new TH1D("h_leading_momentum_2shwr_cut_pion",         "h_leading_momentum_2shwr_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_2shwr_cut_muon           = new TH1D("h_leading_momentum_2shwr_cut_muon",         "h_leading_momentum_2shwr_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_2shwr_cut_kaon           = new TH1D("h_leading_momentum_2shwr_cut_kaon",         "h_leading_momentum_2shwr_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_2shwr_cut_neutron        = new TH1D("h_leading_momentum_2shwr_cut_neutron",      "h_leading_momentum_2shwr_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_2shwr_cut_mc_unmatched   = new TH1D("h_leading_momentum_2shwr_cut_mc_unmatched", "h_leading_momentum_2shwr_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_hit_length_cut_electron       = new TH1D("h_leading_momentum_hit_length_cut_electron",     "h_leading_momentum_hit_length_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_hit_length_cut_photon         = new TH1D("h_leading_momentum_hit_length_cut_photon",       "h_leading_momentum_hit_length_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_hit_length_cut_proton         = new TH1D("h_leading_momentum_hit_length_cut_proton",       "h_leading_momentum_hit_length_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_hit_length_cut_pion           = new TH1D("h_leading_momentum_hit_length_cut_pion",         "h_leading_momentum_hit_length_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_hit_length_cut_muon           = new TH1D("h_leading_momentum_hit_length_cut_muon",         "h_leading_momentum_hit_length_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_hit_length_cut_kaon           = new TH1D("h_leading_momentum_hit_length_cut_kaon",         "h_leading_momentum_hit_length_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_hit_length_cut_neutron        = new TH1D("h_leading_momentum_hit_length_cut_neutron",      "h_leading_momentum_hit_length_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_hit_length_cut_mc_unmatched   = new TH1D("h_leading_momentum_hit_length_cut_mc_unmatched", "h_leading_momentum_hit_length_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_length_ratio_cut_electron       = new TH1D("h_leading_momentum_length_ratio_cut_electron",     "h_leading_momentum_length_ratio_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_length_ratio_cut_photon         = new TH1D("h_leading_momentum_length_ratio_cut_photon",       "h_leading_momentum_length_ratio_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_length_ratio_cut_proton         = new TH1D("h_leading_momentum_length_ratio_cut_proton",       "h_leading_momentum_length_ratio_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_length_ratio_cut_pion           = new TH1D("h_leading_momentum_length_ratio_cut_pion",         "h_leading_momentum_length_ratio_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_length_ratio_cut_muon           = new TH1D("h_leading_momentum_length_ratio_cut_muon",         "h_leading_momentum_length_ratio_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_length_ratio_cut_kaon           = new TH1D("h_leading_momentum_length_ratio_cut_kaon",         "h_leading_momentum_length_ratio_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_length_ratio_cut_neutron        = new TH1D("h_leading_momentum_length_ratio_cut_neutron",      "h_leading_momentum_length_ratio_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_length_ratio_cut_mc_unmatched   = new TH1D("h_leading_momentum_length_ratio_cut_mc_unmatched", "h_leading_momentum_length_ratio_cut_mc_unmatched", 10, 0, 5);
+
+TH1D * h_leading_momentum_containment_cut_electron       = new TH1D("h_leading_momentum_containment_cut_electron",     "h_leading_momentum_containment_cut_electron",     10, 0, 5);
+TH1D * h_leading_momentum_containment_cut_photon         = new TH1D("h_leading_momentum_containment_cut_photon",       "h_leading_momentum_containment_cut_photon",       10, 0, 5);
+TH1D * h_leading_momentum_containment_cut_proton         = new TH1D("h_leading_momentum_containment_cut_proton",       "h_leading_momentum_containment_cut_proton",       10, 0, 5);
+TH1D * h_leading_momentum_containment_cut_pion           = new TH1D("h_leading_momentum_containment_cut_pion",         "h_leading_momentum_containment_cut_pion",         10, 0, 5);
+TH1D * h_leading_momentum_containment_cut_muon           = new TH1D("h_leading_momentum_containment_cut_muon",         "h_leading_momentum_containment_cut_muon",         10, 0, 5);
+TH1D * h_leading_momentum_containment_cut_kaon           = new TH1D("h_leading_momentum_containment_cut_kaon",         "h_leading_momentum_containment_cut_kaon",         10, 0, 5);
+TH1D * h_leading_momentum_containment_cut_neutron        = new TH1D("h_leading_momentum_containment_cut_neutron",      "h_leading_momentum_containment_cut_neutron",      10, 0, 5);
+TH1D * h_leading_momentum_containment_cut_mc_unmatched   = new TH1D("h_leading_momentum_containment_cut_mc_unmatched", "h_leading_momentum_containment_cut_mc_unmatched", 10, 0, 5);
+
 TH1D * h_dedx_cuts_electron       = new TH1D("h_dedx_cuts_electron",     "h_dedx_cuts_electron",     20, 0, 10);
 TH1D * h_dedx_cuts_photon         = new TH1D("h_dedx_cuts_photon",       "h_dedx_cuts_photon",       20, 0, 10);
 TH1D * h_dedx_cuts_proton         = new TH1D("h_dedx_cuts_proton",       "h_dedx_cuts_proton",       20, 0, 10);
@@ -631,6 +748,15 @@ TH1D * h_dedx_cuts_muon           = new TH1D("h_dedx_cuts_muon",         "h_dedx
 TH1D * h_dedx_cuts_kaon           = new TH1D("h_dedx_cuts_kaon",         "h_dedx_cuts_kaon",         20, 0, 10);
 TH1D * h_dedx_cuts_neutron        = new TH1D("h_dedx_cuts_neutron",      "h_dedx_cuts_neutron",      20, 0, 10);
 TH1D * h_dedx_cuts_mc_unmatched   = new TH1D("h_dedx_cuts_mc_unmatched", "h_dedx_cuts_mc_unmatched", 20, 0, 10);
+
+TH1D * h_dedx_cuts_last_electron       = new TH1D("h_dedx_cuts_last_electron",     "h_dedx_cuts_last_electron",     20, 0, 10);
+TH1D * h_dedx_cuts_last_photon         = new TH1D("h_dedx_cuts_last_photon",       "h_dedx_cuts_last_photon",       20, 0, 10);
+TH1D * h_dedx_cuts_last_proton         = new TH1D("h_dedx_cuts_last_proton",       "h_dedx_cuts_last_proton",       20, 0, 10);
+TH1D * h_dedx_cuts_last_pion           = new TH1D("h_dedx_cuts_last_pion",         "h_dedx_cuts_last_pion",         20, 0, 10);
+TH1D * h_dedx_cuts_last_muon           = new TH1D("h_dedx_cuts_last_muon",         "h_dedx_cuts_last_muon",         20, 0, 10);
+TH1D * h_dedx_cuts_last_kaon           = new TH1D("h_dedx_cuts_last_kaon",         "h_dedx_cuts_last_kaon",         20, 0, 10);
+TH1D * h_dedx_cuts_last_neutron        = new TH1D("h_dedx_cuts_last_neutron",      "h_dedx_cuts_last_neutron",      20, 0, 10);
+TH1D * h_dedx_cuts_last_mc_unmatched   = new TH1D("h_dedx_cuts_last_mc_unmatched", "h_dedx_cuts_last_mc_unmatched", 20, 0, 10);
 
 TH2D * h_dedx_cuts_hits_electron       = new TH2D("h_dedx_cuts_hits_electron",     "h_dedx_cuts_hits_electron",     20, 0, 10, 20, 0, 1600);
 TH2D * h_dedx_cuts_hits_photon         = new TH2D("h_dedx_cuts_hits_photon",       "h_dedx_cuts_hits_photon",       20, 0, 10, 20, 0, 1600);

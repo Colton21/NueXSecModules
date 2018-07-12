@@ -1124,6 +1124,23 @@ void FillTrueRecoEnergy(std::vector<xsecAna::TPCObjectContainer> * tpc_object_co
                         TH2D * h_mc_reco_ele_energy);
 //***************************************************************************
 //***************************************************************************
+void PostCutsLeadingMomentumTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                         TH1D * h_leading_momentum_electron,
+                                         TH1D * h_leading_momentum_photon,
+                                         TH1D * h_leading_momentum_proton,
+                                         TH1D * h_leading_momentum_pion,
+                                         TH1D * h_leading_momentum_muon,
+                                         TH1D * h_leading_momentum_kaon,
+                                         TH1D * h_leading_momentum_neutron,
+                                         TH1D * h_leading_momentum_mc_unmatched);
+void PostCutsLeadingMomentumTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                               TH1D * h_leading_momentum_type_cosmic);
+//***************************************************************************
+//***************************************************************************
 void PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,

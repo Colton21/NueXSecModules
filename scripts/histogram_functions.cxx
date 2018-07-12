@@ -51,6 +51,32 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->Draw("colz");
 	c1->Print(print_name);
 }
+void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3,
+                                           const double data_scale_factor, const double intime_scale_factor,
+                                           const char * x_axis_name, const char* print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+
+	TH1 * h_1_clone = (TH1*)histogram_1->Clone("h_1_clone");
+	TH1 * h_2_clone = (TH1*)histogram_2->Clone("h_2_clone");
+	TH1 * h_3_clone = (TH1*)histogram_3->Clone("h_3_clone");
+
+	h_1_clone->Scale(data_scale_factor);
+	h_2_clone->Scale(intime_scale_factor);
+	h_3_clone->Add(h_2_clone, -1);
+
+	h_3_clone->GetXaxis()->SetTitle(x_axis_name);
+	h_3_clone->GetYaxis()->SetRangeUser(-3000, 3000);
+
+	h_3_clone->Draw("hist");
+	h_1_clone->SetLineColor(46);
+	h_1_clone->Draw("hist same");
+
+	c1->Print(print_name);
+
+}
+
 void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_numu_cc, TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
                                         TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
                                         TH2 * h_data, const double data_scale_factor,
