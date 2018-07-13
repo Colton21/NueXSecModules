@@ -224,7 +224,8 @@ void selection::make_selection( const char * _file1,
 		// 2 = in-time, but not enough PE -- this counts against my efficiency
 		data_passed_runs->resize(data_total_entries);
 
-		_cuts_instance.selection_cuts::loop_flashes(data_f, data_optree, flash_pe_threshold, flash_time_start, flash_time_end, data_passed_runs, data_flash_time);
+		_cuts_instance.selection_cuts::loop_flashes(data_f, data_optree, flash_pe_threshold, flash_time_start, flash_time_end,
+		                                            data_passed_runs, data_flash_time, false);
 		for(auto const run : * data_passed_runs)
 		{
 			if(run == 1) {run_sum++; }
@@ -663,7 +664,7 @@ void selection::make_selection( const char * _file1,
 		intime_passed_runs->resize(in_time_total_entries);
 
 		_cuts_instance.selection_cuts::loop_flashes(intime_f, intime_optree, flash_pe_threshold,
-		                                            flash_time_start, flash_time_end, intime_passed_runs, intime_flash_time);
+		                                            flash_time_start, flash_time_end, intime_passed_runs, intime_flash_time, true);
 		for(auto const run : * intime_passed_runs)
 		{
 			if(run == 1) {run_sum++; }
@@ -1276,7 +1277,7 @@ void selection::make_selection( const char * _file1,
 	std::cout << "==== In Time Cut ====" << std::endl;
 	std::cout << "=====================" << std::endl;
 
-	_cuts_instance.selection_cuts::loop_flashes(f, optree, flash_pe_threshold, flash_time_start, flash_time_end, passed_runs, flash_time);
+	_cuts_instance.selection_cuts::loop_flashes(f, optree, flash_pe_threshold, flash_time_start, flash_time_end, passed_runs, flash_time, false);
 	run_sum = 0;
 	out_of_time_sum = 0;
 	low_pe_sum = 0;
@@ -5609,7 +5610,7 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_nue_cc, "Signal", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_nue_cc.pdf");
 	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_all, "All", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_all.pdf");
 	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_ext, "EXT", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_ext.pdf");
-	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_data, "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_all.pdf");
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_data, "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_data.pdf");
 
 	histogram_functions::Plot1DHistogramGausFit(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_low.pdf");
 	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_med.pdf");

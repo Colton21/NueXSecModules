@@ -45,7 +45,8 @@ const double POT = 1.82027e+21;
 const double data_scale_factor = 0.13;
 
 //scale EXT down by this factor
-//(26749613 (ext) * 0.2064 (prescale)) = 5521120.1232
+//(26749613 (ext) * 0.2064 (prescale)) = 5521120.1232 - per Run weighted
+// per event weighted prescale is 0.51
 // 6180310 (data) / 5521120.1232
 const double intime_scale_factor = 1.12;
 

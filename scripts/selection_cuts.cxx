@@ -20,7 +20,7 @@ bool selection_cuts::flash_pe(int flash_pe, int flash_pe_threshold)
 }
 //***************************************************************************
 void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time)
+                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time, bool ext)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 
@@ -60,7 +60,13 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		//events successfully pass this cut
 		current_run = fRun;
 		current_event = fEvent;
-		auto const pair = std::make_pair(fOpFlashTime, current_run);
+		double flash_time = fOpFlashTime;
+
+		//Note: EXT and On-Beam triggers are shifted
+		//this shifts the EXT to the On-Beam timing
+		if(ext) {flash_time = flash_time - 0.406; }
+
+		auto const pair = std::make_pair(flash_time, current_run);
 		flash_time->push_back(pair);
 
 		//new event
@@ -69,7 +75,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 			optical_list_pe.clear();
 			optical_list_time.clear();
 			optical_list_pe.push_back(fOpFlashPE);
-			optical_list_time.push_back(fOpFlashTime);
+			optical_list_time.push_back(flash_time);
 		}
 		//same event
 		if(current_event == last_event && current_run == last_run)
@@ -77,7 +83,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 			optical_list_pe_v.pop_back();
 			optical_list_time_v.pop_back();
 			optical_list_pe.push_back(fOpFlashPE);
-			optical_list_time.push_back(fOpFlashTime);
+			optical_list_time.push_back(flash_time);
 		}
 		last_event = current_event;
 		last_run = current_run;
