@@ -254,6 +254,7 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 }
 void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,
                                                   TH1 * h_kaon, TH1 * h_muon, TH1 * h_neutron, TH1 * h_unmatched,
+                                                  TH1 * h_unmatched_ext, const double intime_scale_factor,
                                                   const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                                   const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
@@ -268,6 +269,7 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	h_muon->SetStats(kFALSE);
 	h_neutron->SetStats(kFALSE);
 	h_unmatched->SetStats(kFALSE);
+	h_unmatched_ext->SetStats(kFALSE);
 	h_electron->SetFillColor(30);
 	h_proton->SetFillColor(38);
 	h_photon->SetFillColor(28);
@@ -276,6 +278,12 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	h_muon->SetFillColor(46);
 	h_neutron->SetFillColor(20);
 	h_unmatched->SetFillColor(12);
+
+	h_unmatched_ext->SetFillColor(41);
+	h_unmatched_ext->SetFillStyle(3345);
+	TH1 * h_unmatched_ext_clone = (TH1*)h_unmatched_ext->Clone("h_unmatched_ext_clone");
+	h_unmatched_ext_clone->Scale(intime_scale_factor);
+
 	stack->Add(h_electron);
 	stack->Add(h_proton);
 	stack->Add(h_photon);
@@ -284,6 +292,7 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	stack->Add(h_muon);
 	stack->Add(h_neutron);
 	stack->Add(h_unmatched);
+	stack->Add(h_unmatched_ext_clone);
 	stack->Draw();
 	stack->GetXaxis()->SetTitle(x_axis_name);
 
@@ -298,6 +307,7 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	leg_stack->AddEntry(h_muon,            "Muon",       "f");
 	leg_stack->AddEntry(h_neutron,         "Neutron",    "f");
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",  "f");
+	leg_stack->AddEntry(h_unmatched_ext,   "EXT",        "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
 }

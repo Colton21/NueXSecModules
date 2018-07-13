@@ -798,6 +798,25 @@ void selection_functions_data::FailureReasonData(std::vector<xsecAna::TPCObjectC
 //***************************************************************************
 void selection_functions_data::XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               std::vector<TH1 * > * h_ele_pfp_xyz_data,
+                                               TH2 * h_pfp_zy_vtx_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		h_ele_pfp_xyz_data->at(0)->Fill(tpc_vtx_x);
+		h_ele_pfp_xyz_data->at(1)->Fill(tpc_vtx_y);
+		h_ele_pfp_xyz_data->at(2)->Fill(tpc_vtx_z);
+		h_pfp_zy_vtx_data->Fill(tpc_vtx_z, tpc_vtx_y);
+	}
+}
+void selection_functions_data::XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                std::vector<TH1 * > * h_ele_pfp_xyz_data)
 {
 	int n_tpc_obj = tpc_object_container_v->size();

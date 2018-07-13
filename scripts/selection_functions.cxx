@@ -172,6 +172,38 @@ void selection_functions::PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjec
 		if(leading_mc_pdg == 0) {h_dedx_cuts_unmatched->Fill(leading_dedx); }
 	}        //end loop tpc objects
 }
+void selection_functions::PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                         TH1 * h_dedx_cuts_ext_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		h_dedx_cuts_ext_unmatched->Fill(leading_dedx);
+	}//end loop tpc objects
+}
 //***************************************************************************
 void selection_functions::PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
@@ -6321,6 +6353,43 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
                                       std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_unmatched)
+{
+	TH2D * dummy = new TH2D();
+	XYZPosition(tpc_object_container_v,
+	            passed_tpco, _verbose,
+	            tpco_classifier_v,
+	            mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+	            h_ele_pfp_xyz_nue_cc,
+	            h_ele_pfp_xyz_nue_cc_out_fv,
+	            h_ele_pfp_xyz_nue_cc_mixed,
+	            h_ele_pfp_xyz_numu_cc,
+	            h_ele_pfp_xyz_numu_cc_mixed,
+	            h_ele_pfp_xyz_nc,
+	            h_ele_pfp_xyz_nc_pi0,
+	            h_ele_pfp_xyz_cosmic,
+	            h_ele_pfp_xyz_other_mixed,
+	            h_ele_pfp_xyz_unmatched,
+	            dummy,
+	            dummy);
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                      const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
+                                      TH2 * h_pfp_zy_vtx_nue_cc,
+                                      TH2 * h_pfp_zy_vtx_all)
 
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -6335,11 +6404,14 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
 
+		h_pfp_zy_vtx_all->Fill(tpco_vtx_z, tpco_vtx_y);
+
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
 			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
 			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
 			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
@@ -6352,24 +6424,28 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
 			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
 			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
 		}
 		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
 		{
 			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
 			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
 			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
 		}
 		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
 		{
 			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
 			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
 			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
 		}
 		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
 			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
 			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
 			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
@@ -6625,6 +6701,26 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 			h_ele_pfp_xyz_unmatched->at(2)->Fill(tpco_vtx_z);
 		}
 	}//end pfp loop
+}
+void selection_functions::XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                            std::vector<TH1 *> * h_ele_pfp_xyz_intime,
+                                            TH2 * h_pfp_zy_vtx_ext)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		h_ele_pfp_xyz_intime->at(0)->Fill(tpc_vtx_x);
+		h_ele_pfp_xyz_intime->at(1)->Fill(tpc_vtx_y);
+		h_ele_pfp_xyz_intime->at(2)->Fill(tpc_vtx_z);
+		h_pfp_zy_vtx_ext->Fill(tpc_vtx_z, tpc_vtx_y);
+	}
 }
 void selection_functions::XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
@@ -7760,7 +7856,6 @@ void selection_functions::PostCutsLeadingMomentumTrueParticle(std::vector<xsecAn
 //***************************************************************************
 void selection_functions::PostCutsLeadingMomentumTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                                                                    std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                                     TH1D * h_leading_momentum_type_cosmic)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -7768,8 +7863,24 @@ void selection_functions::PostCutsLeadingMomentumTrueParticleInTime(std::vector<
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
-		std::string tpco_id     = tpco_classifier_v->at(i).first;
-		const int leading_index = tpco_classifier_v->at(i).second;
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_momentum = leading_shower.pfpMomentum();
 		h_leading_momentum_type_cosmic->Fill(leading_momentum);
