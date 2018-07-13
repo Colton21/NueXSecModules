@@ -63,6 +63,23 @@ private:
   bool fPassedBNB = 0;
   bool fPassedUnbiased = 0;
 
+  bool fPassedPrescaleNuMI = 0;
+  bool fPassedPrescaleBNB = 0;
+  bool fPassedPrescaleUnbiased = 0;
+  int fPHMaxNuMI = 0;
+  int fPHMaxBNB = 0;
+  int fPHMaxUnbiased = 0;
+  int fMultiplicityNuMI = 0;
+  int fMultiplicityBNB = 0;
+  int fMultiplicityUnbiased = 0;
+  int fTriggerTickNuMI = 0;
+  int fTriggerTickBNB = 0;
+  int fTriggerTickUnbiased = 0;
+  double fTimeSinceTriggerNuMI = 0;
+  double fTimeSinceTriggerBNB = 0;
+  double fTimeSinceTriggerUnbiased = 0;
+
+
   TH1D * h_numi_prescale = new TH1D("numi_prescale", "numi_prescale", 3500, 0, 8000);
 
 };//end class def
@@ -77,15 +94,33 @@ prescalecheck::PrescaleCheck::PrescaleCheck(fhicl::ParameterSet const & p) : EDA
   art::ServiceHandle<art::TFileService> fs;
   prescale_tree = fs->make<TTree>("prescale_tree", "");
 
-  prescale_tree->Branch("Run",              &fRun,              "fRun/I");
-  prescale_tree->Branch("SubRun",           &fSubRun,           "fSubRun/I");
-  prescale_tree->Branch("Event",            &fEvent,            "fEvent/I");
-  prescale_tree->Branch("PrescaleNuMI",     &fPrescaleNuMI,     "fPrescaleNuMI/D");
-  prescale_tree->Branch("PrescaleBNB",      &fPrescaleBNB,      "fPrescaleBNB/D");
-  prescale_tree->Branch("PrescaleUnbiased", &fPrescaleUnbiased, "fPrescaleUnbiased/D");
-  prescale_tree->Branch("PassedNuMI",       &fPassedNuMI,       "fPassedNuMI/O");
-  prescale_tree->Branch("PassedBNB",        &fPassedBNB,        "fPassedBNB/O");
-  prescale_tree->Branch("PassedUnbiased",   &fPassedUnbiased,   "fPassedUnbiased/O");
+  prescale_tree->Branch("Run",                    &fRun,                    "fRun/I");
+  prescale_tree->Branch("SubRun",                 &fSubRun,                 "fSubRun/I");
+  prescale_tree->Branch("Event",                  &fEvent,                  "fEvent/I");
+  prescale_tree->Branch("PrescaleNuMI",           &fPrescaleNuMI,           "fPrescaleNuMI/D");
+  prescale_tree->Branch("PrescaleBNB",            &fPrescaleBNB,            "fPrescaleBNB/D");
+  prescale_tree->Branch("PrescaleUnbiased",       &fPrescaleUnbiased,       "fPrescaleUnbiased/D");
+  prescale_tree->Branch("PassedNuMI",             &fPassedNuMI,             "fPassedNuMI/O");
+  prescale_tree->Branch("PassedBNB",              &fPassedBNB,              "fPassedBNB/O");
+  prescale_tree->Branch("PassedUnbiased",         &fPassedUnbiased,         "fPassedUnbiased/O");
+
+
+  prescale_tree->Branch("PassedPrescaleNuMI",       &fPassedPrescaleNuMI,       "fPassedPrescaleNuMI/O");
+  prescale_tree->Branch("PassedPrescaleBNB",        &fPassedPrescaleBNB,        "fPassedPrescaleBNB/O");
+  prescale_tree->Branch("PassedPrescaleUnbiased",   &fPassedPrescaleUnbiased,   "fPassedPrescaleUnbiased/O");
+  prescale_tree->Branch("PHMaxNuMI",                &fPHMaxNuMI,                "fPHMaxNuMI/I");
+  prescale_tree->Branch("PHMaxBNB",                 &fPHMaxBNB,                 "fPHMaxBNB/I");
+  prescale_tree->Branch("PHMaxUnbiased",            &fPHMaxUnbiased,            "fPHMaxUnbiased/I");
+  prescale_tree->Branch("MultiplicityNuMI",         &fMultiplicityNuMI,         "fMultiplicityNuMI/I");
+  prescale_tree->Branch("MultiplicityBNB",          &fMultiplicityBNB,          "fMultiplicityBNB/I");
+  prescale_tree->Branch("MultiplicityUnbiased",     &fMultiplicityUnbiased,     "fMultiplicityUnbiased/I");
+  prescale_tree->Branch("TriggerTickNuMI",          &fTriggerTickNuMI,          "fTriggerTickNuMI/I");
+  prescale_tree->Branch("TriggerTickBNB",           &fTriggerTickBNB,           "fTriggerTickBNB/I");
+  prescale_tree->Branch("TriggerTickUnbiased",      &fTriggerTickUnbiased,      "fTriggerTickUnbiased/I");
+  prescale_tree->Branch("TimeSinceTriggerNuMI",     &fTimeSinceTriggerNuMI,     "fTimeSinceTriggerNuMI/D");
+  prescale_tree->Branch("TimeSinceTriggerBNB",      &fTimeSinceTriggerBNB,      "fTimeSinceTriggerBNB/D");
+  prescale_tree->Branch("TimeSinceTriggerUnbiased", &fTimeSinceTriggerUnbiased, "fTimeSinceTriggerUnbiased/D");
+
 }
 
 void prescalecheck::PrescaleCheck::analyze(art::Event const & e) {
@@ -112,15 +147,27 @@ void prescalecheck::PrescaleCheck::analyze(art::Event const & e) {
   const bool passed_numi = SWTriggerHandle->passedAlgo("EXT_NUMIwin_FEMBeamTriggerAlgo");
   const bool passed_unbiased = SWTriggerHandle->passedAlgo("EXT_unbiased_PrescaleAlgo");
 
-  /*
-  std::cout << "-------------" << std::endl;
-  std::cout << "EXT BNB  : " << prescale_bnb << std::endl;
-  std::cout << "EXT NuMI : " << prescale_numi << std::endl;
-  std::cout << "EXT Unbiased Prescale: " << prescale_unbiased << std::endl;
-  std::cout << "Passed Unbiased?: " << passed_unbiased << std::endl;
-  std::cout << "Passed BNB?: " << passed_bnb << std::endl;
-  std::cout << "--------------" << std::endl;
-  */
+
+  const bool passed_prescale_numi = SWTriggerHandle->passedPrescaleAlgo("EXT_NUMIwin_FEMBeamTriggerAlgo");
+  const bool passed_prescale_bnb = SWTriggerHandle->passedPrescaleAlgo("EXT_BNBwin_FEMBeamTriggerAlgo");
+  const bool passed_prescale_unbiased = SWTriggerHandle->passedPrescaleAlgo("EXT_unbiased_PrescaleAlgo");
+
+  const int ph_max_numi = SWTriggerHandle->getPhmax("EXT_NUMIwin_FEMBeamTriggerAlgo"); 
+  const int ph_max_bnb = SWTriggerHandle->getPhmax("EXT_BNBwin_FEMBeamTriggerAlgo"); 
+  const int ph_max_unbiased = SWTriggerHandle->getPhmax("EXT_unbiased_PrescaleAlgo");
+
+  const int mult_numi = SWTriggerHandle->getMultiplicity("EXT_NUMIwin_FEMBeamTriggerAlgo");
+  const int mult_bnb = SWTriggerHandle->getMultiplicity("EXT_BNBwin_FEMBeamTriggerAlgo");
+  const int mult_unbiased = SWTriggerHandle->getMultiplicity("EXT_unbiased_PrescaleAlgo"); 
+
+  const int trigger_tick_numi = SWTriggerHandle->getTriggerTick("EXT_NUMIwin_FEMBeamTriggerAlgo");
+  const int trigger_tick_bnb = SWTriggerHandle->getTriggerTick("EXT_BNBwin_FEMBeamTriggerAlgo");  
+  const int trigger_tick_unbiased = SWTriggerHandle->getTriggerTick("EXT_unbiased_PrescaleAlgo");
+
+  const double delta_trigger_numi = SWTriggerHandle->getTimeSinceTrigger("EXT_NUMIwin_FEMBeamTriggerAlgo");  
+  const double delta_trigger_bnb = SWTriggerHandle->getTimeSinceTrigger("EXT_BNBwin_FEMBeamTriggerAlgo");
+  const double delta_trigger_unbiased = SWTriggerHandle->getTimeSinceTrigger("EXT_unbiased_PrescaleAlgo");
+
   
   h_numi_prescale->Fill(run, 1./prescale_numi);
 
@@ -133,6 +180,22 @@ void prescalecheck::PrescaleCheck::analyze(art::Event const & e) {
   fPassedNuMI = passed_numi;
   fPassedBNB = passed_bnb;
   fPassedUnbiased = passed_unbiased;
+
+  fPassedPrescaleNuMI = passed_prescale_numi;
+  fPassedPrescaleBNB = passed_prescale_bnb;
+  fPassedPrescaleUnbiased = passed_prescale_unbiased;
+  fPHMaxNuMI = ph_max_numi;
+  fPHMaxBNB = ph_max_bnb;
+  fPHMaxUnbiased = ph_max_unbiased;
+  fMultiplicityNuMI = mult_numi;
+  fMultiplicityBNB = mult_bnb;
+  fMultiplicityUnbiased = mult_unbiased;
+  fTriggerTickNuMI = trigger_tick_numi;
+  fTriggerTickBNB = trigger_tick_bnb;
+  fTriggerTickUnbiased = trigger_tick_unbiased;
+  fTimeSinceTriggerNuMI = delta_trigger_numi;
+  fTimeSinceTriggerBNB = delta_trigger_bnb;
+  fTimeSinceTriggerUnbiased = delta_trigger_unbiased;
 
   prescale_tree->Fill();
 
