@@ -298,7 +298,8 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_in_time_counter_v);
 
-			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_any_pfp_xyz_data);
+			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                   h_any_pfp_xyz_data, h_pfp_zy_vtx_data);
 
 			//PE threshold cut
 			if(data_passed_runs->at(event) == 2)
@@ -739,7 +740,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_in_time_counter_v);
 
-			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_any_pfp_xyz_intime);
+			_functions_instance.selection_functions::XYZPositionInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                           h_any_pfp_xyz_intime, h_pfp_zy_vtx_ext);
 
 			//PE threshold cut
 			if(_verbose) {std::cout << "In-Time Optical Cut (2)" << std::endl; }
@@ -769,6 +771,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, dummy_passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_no_cut_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_nue_cut_ext_unmatched);
 
 			//************************
 			//******** in fv cut *****
@@ -780,6 +784,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_fv_cut_intime);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_fv_cut_ext_unmatched);
 
 			//*****************************
 			//**** vertex to flash cut ****
@@ -801,6 +808,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_flash_vtx_cut_intime);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_flash_vtx_ext_unmatched);
 			//******************************************************
 			//*** distance between pfp shower and nue object cut ***
 			//******************************************************
@@ -816,6 +826,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_shwr_vtx_cut_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_shwr_vtx_ext_unmatched);
 			//******************************************************
 			// **** distance between pfp track and nue object cut **
 			//******************************************************
@@ -830,6 +842,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_trk_vtx_cut_intime);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_trk_vtx_ext_unmatched);
 
 			//****************************************************
 			// ******** hit threshold for showers cut *************
@@ -851,6 +866,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_hit_cut_intime);
 
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_hit_cut_ext_unmatched);
 
 			//***************************************//
 			//*** Collection Plane Hits Threshold ***//
@@ -884,6 +902,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_yhit_cut_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_yhit_cut_ext_unmatched);
+
 			//*****************************************************
 			//****** open angle cut for the leading shower ********
 			//******************************************************
@@ -906,12 +927,18 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_open_angle_cut_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_open_angle_cut_ext_unmatched);
+
 			//*****************************************************
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
 			_functions_instance.selection_functions::PostCutsdEdxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_dedx_cuts_intime);
 			_functions_instance.selection_functions::dEdxCollectionAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                   _verbose, h_dedx_collection_angle_intime);
+
+			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                        _verbose, h_dedx_cuts_ext_unmatched);
 
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
@@ -921,6 +948,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_dedx_cut_intime);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_dedx_cut_ext_unmatched);
 
 			//***************************************************************************
 			// ******* Secondary Showers Distance Cut *****************
@@ -936,6 +966,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_2shwr_cut_intime);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_2shwr_cut_ext_unmatched);
 
 			//******************************************************************************
 			// ********** Hit Length Ratio Cut *************
@@ -959,6 +992,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_hit_length_cut_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_hit_length_cut_ext_unmatched);
+
 			//******************************************************************************
 			//*** cut for longest track / leading shower ratio *** //
 			//******************************************************************************
@@ -981,6 +1017,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_length_ratio_cut_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_length_ratio_cut_ext_unmatched);
+
 			//******************************************************************************
 			//*** contained track cut *** //
 			//******************************************************************************
@@ -995,6 +1034,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                       h_ele_momentum_containment_cut_intime);
 
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                   h_leading_momentum_containment_cut_ext_unmatched);
+
 			//*********** In-time Cosmics *********
 			//*************************************
 			// ******** End Selection Cuts! *******
@@ -1002,6 +1044,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::LeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_momentum_intime);
 			_functions_instance.selection_functions::LeadingMomentumTrackTopologyInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                            h_ele_pfp_momentum_no_track_intime, h_ele_pfp_momentum_has_track_intime);
+
+			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                        _verbose, h_dedx_cuts_last_ext_unmatched);
 
 			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_phi_last_intime);
 			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
@@ -1372,7 +1417,9 @@ void selection::make_selection( const char * _file1,
 		                                                     h_any_pfp_xyz_nc_pi0,
 		                                                     h_any_pfp_xyz_cosmic,
 		                                                     h_any_pfp_xyz_other_mixed,
-		                                                     h_any_pfp_xyz_unmatched);
+		                                                     h_any_pfp_xyz_unmatched,
+		                                                     h_pfp_zy_vtx_nue_cc,
+		                                                     h_pfp_zy_vtx_all);
 
 		//PE threshold cut
 		if(passed_runs->at(event) == 2)
@@ -4948,11 +4995,13 @@ void selection::make_selection( const char * _file1,
 	                                     "Collection Hits", "../scripts/plots/post_cuts_dedx_collection_hits_mc_unmatched.pdf");
 
 	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_electron, h_dedx_cuts_proton, h_dedx_cuts_photon, h_dedx_cuts_pion,
-	                                             h_dedx_cuts_kaon, h_dedx_cuts_muon, h_dedx_cuts_neutron, h_dedx_cuts_mc_unmatched, 0.75, 0.95, 0.75, 0.95,
+	                                             h_dedx_cuts_kaon, h_dedx_cuts_muon, h_dedx_cuts_neutron, h_dedx_cuts_mc_unmatched,
+	                                             h_dedx_cuts_ext_unmatched, intime_scale_factor, 0.75, 0.95, 0.75, 0.95,
 	                                             "True Particle dE/dx", "True Particle dE/dx [MeV/cm]", "", "../scripts/plots/post_cuts_dedx_true_particle.pdf");
 	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_last_electron, h_dedx_cuts_last_proton, h_dedx_cuts_last_photon, h_dedx_cuts_last_pion,
 	                                             h_dedx_cuts_last_kaon, h_dedx_cuts_last_muon, h_dedx_cuts_last_neutron, h_dedx_cuts_last_mc_unmatched,
-	                                             0.75, 0.95, 0.75, 0.95, "True Particle dE/dx", "True Particle dE/dx [MeV/cm]",
+	                                             h_dedx_cuts_last_ext_unmatched, intime_scale_factor, 0.75, 0.95, 0.75, 0.95,
+	                                             "True Particle dE/dx", "True Particle dE/dx [MeV/cm]",
 	                                             "", "../scripts/plots/post_cuts_dedx_true_particle_last.pdf");
 
 
@@ -5121,6 +5170,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_nue_cut_kaon,
 	        h_leading_momentum_nue_cut_neutron,
 	        h_leading_momentum_nue_cut_mc_unmatched,
+	        h_leading_momentum_nue_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5153,6 +5204,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_fv_cut_kaon,
 	        h_leading_momentum_fv_cut_neutron,
 	        h_leading_momentum_fv_cut_mc_unmatched,
+	        h_leading_momentum_fv_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5185,6 +5238,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_flash_vtx_kaon,
 	        h_leading_momentum_flash_vtx_neutron,
 	        h_leading_momentum_flash_vtx_mc_unmatched,
+	        h_leading_momentum_flash_vtx_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5217,6 +5272,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_shwr_vtx_kaon,
 	        h_leading_momentum_shwr_vtx_neutron,
 	        h_leading_momentum_shwr_vtx_mc_unmatched,
+	        h_leading_momentum_shwr_vtx_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5249,6 +5306,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_trk_vtx_kaon,
 	        h_leading_momentum_trk_vtx_neutron,
 	        h_leading_momentum_trk_vtx_mc_unmatched,
+	        h_leading_momentum_trk_vtx_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5281,6 +5340,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_hit_cut_kaon,
 	        h_leading_momentum_hit_cut_neutron,
 	        h_leading_momentum_hit_cut_mc_unmatched,
+	        h_leading_momentum_hit_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5313,6 +5374,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_yhit_cut_kaon,
 	        h_leading_momentum_yhit_cut_neutron,
 	        h_leading_momentum_yhit_cut_mc_unmatched,
+	        h_leading_momentum_yhit_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5345,6 +5408,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_open_angle_cut_kaon,
 	        h_leading_momentum_open_angle_cut_neutron,
 	        h_leading_momentum_open_angle_cut_mc_unmatched,
+	        h_leading_momentum_open_angle_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5377,6 +5442,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_dedx_cut_kaon,
 	        h_leading_momentum_dedx_cut_neutron,
 	        h_leading_momentum_dedx_cut_mc_unmatched,
+	        h_leading_momentum_dedx_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5409,6 +5476,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_2shwr_cut_kaon,
 	        h_leading_momentum_2shwr_cut_neutron,
 	        h_leading_momentum_2shwr_cut_mc_unmatched,
+	        h_leading_momentum_2shwr_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5441,6 +5510,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_hit_length_cut_kaon,
 	        h_leading_momentum_hit_length_cut_neutron,
 	        h_leading_momentum_hit_length_cut_mc_unmatched,
+	        h_leading_momentum_hit_length_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5473,6 +5544,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_length_ratio_cut_kaon,
 	        h_leading_momentum_length_ratio_cut_neutron,
 	        h_leading_momentum_length_ratio_cut_mc_unmatched,
+	        h_leading_momentum_length_ratio_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5505,6 +5578,8 @@ void selection::make_selection( const char * _file1,
 	        h_leading_momentum_containment_cut_kaon,
 	        h_leading_momentum_containment_cut_neutron,
 	        h_leading_momentum_containment_cut_mc_unmatched,
+	        h_leading_momentum_containment_cut_ext_unmatched,
+	        intime_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
 	        "True Leading Particle Momentum [GeV]",
@@ -5530,6 +5605,11 @@ void selection::make_selection( const char * _file1,
 	        "../scripts/plots/post_cuts_dEdx_theta_data.pdf",
 	        "../scripts/plots/post_cuts_dEdx_theta_diff.pdf"
 	        );
+
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_nue_cc, "Signal", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_nue_cc.pdf");
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_all, "All", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_all.pdf");
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_ext, "EXT", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_ext.pdf");
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_data, "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_all.pdf");
 
 	histogram_functions::Plot1DHistogramGausFit(h_low_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_low.pdf");
 	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_med.pdf");

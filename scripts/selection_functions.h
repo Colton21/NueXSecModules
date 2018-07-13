@@ -64,6 +64,9 @@ void PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_obj
                               TH1D * h_dedx_cuts_kaon,
                               TH1D * h_dedx_cuts_neutron,
                               TH1D * h_dedx_cuts_unmatched);
+void PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                    TH1 * h_dedx_cuts_ext_unmatched);
 void PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -940,6 +943,22 @@ void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
                  std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
                  std::vector<TH1 *> * h_ele_pfp_xyz_unmatched);
+void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                 std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                 const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
+                 TH2 * h_pfp_zy_vtx_nue_cc,
+                 TH2 * h_pfp_zy_vtx_all);
 //***************************************************************************
 //***************************************************************************
 void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -974,6 +993,10 @@ void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  TH2 * h_mc_reco_vtx_x_nue_cc_out_fv,
                  TH2 * h_mc_reco_vtx_y_nue_cc_out_fv,
                  TH2 * h_mc_reco_vtx_z_nue_cc_out_fv);
+void XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                       std::vector<TH1 *> * h_ele_pfp_xyz_intime,
+                       TH2 * h_pfp_zy_vtx_ext);
 void XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                        std::vector<TH1 *> * h_ele_pfp_xyz_intime);
@@ -1137,7 +1160,6 @@ void PostCutsLeadingMomentumTrueParticle(std::vector<xsecAna::TPCObjectContainer
                                          TH1D * h_leading_momentum_mc_unmatched);
 void PostCutsLeadingMomentumTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
-                                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                                TH1D * h_leading_momentum_type_cosmic);
 //***************************************************************************
 //***************************************************************************

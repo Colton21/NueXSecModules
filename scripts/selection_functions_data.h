@@ -188,6 +188,8 @@ void LeadingMomentumTrackTopologyData(std::vector<xsecAna::TPCObjectContainer> *
 //***************************************************************************
 //***************************************************************************
 void XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, std::vector<TH1 * > * h_ele_pfp_xyz_data, TH2 * h_pfp_zy_vtx_data);
+void XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, std::vector<TH1 * > * h_ele_pfp_xyz_data);
 //***************************************************************************
 //***************************************************************************
