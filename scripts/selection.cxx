@@ -3085,6 +3085,7 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::TimingHistograms(h_flash_time, h_flash_time_intime, h_flash_time_data, data_scale_factor, intime_scale_factor,
 	                                      "Flash Time [#mus]", "../scripts/plots/flash_time_data_subtraction.pdf");
+	histogram_functions::TimingHistogramsOverlay();
 
 	//histogram_functions::1DHistogram (TH1 histogram, const std::string x_axis_name, const std::string * print_name)
 
@@ -4823,14 +4824,14 @@ void selection::make_selection( const char * _file1,
 	                                         h_any_pfp_y_last_unmatched,     h_any_pfp_y_last_intime, intime_scale_factor,
 	                                         h_any_pfp_y_last_data, data_scale_factor,
 	                                         "", "Reco Vertex Y [cm]", "",
-	                                         "../scripts/plots/pro_cuts_leading_pfp_y_last_data.pdf");
+	                                         "../scripts/plots/post_cuts_leading_pfp_y_last_data.pdf");
 	histogram_functions::PlotSimpleStackData(h_any_pfp_z_last_nue_cc,        h_any_pfp_z_last_nue_cc_mixed,
 	                                         h_any_pfp_z_last_nue_cc_out_fv, h_any_pfp_z_last_numu_cc,      h_any_pfp_z_last_numu_cc_mixed,
 	                                         h_any_pfp_z_last_cosmic,        h_any_pfp_z_last_nc,           h_any_pfp_z_last_nc_pi0, h_any_pfp_z_last_other_mixed,
 	                                         h_any_pfp_z_last_unmatched,     h_any_pfp_z_last_intime, intime_scale_factor,
 	                                         h_any_pfp_z_last_data, data_scale_factor,
 	                                         "", "Reco Vertex Z [cm]", "",
-	                                         "../scripts/plots/pro_cuts_leading_pfp_z_last_data.pdf");
+	                                         "../scripts/plots/post_cuts_leading_pfp_z_last_data.pdf");
 
 
 	histogram_functions::Plot2DHistogram (h_post_cuts_num_tracks_showers_purity_qe, "Post Cuts - Showers/Tracks Purity - QE",
