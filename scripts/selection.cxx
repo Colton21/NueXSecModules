@@ -457,6 +457,7 @@ void selection::make_selection( const char * _file1,
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
 			_data_functions_instance.selection_functions_data::PostCutsdEdxData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_cuts_data);
+			_data_functions_instance.selection_functions_data::dEdxThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_theta_pre_cuts_data);
 
 			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
@@ -937,6 +938,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsdEdxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_dedx_cuts_intime);
 			_functions_instance.selection_functions::dEdxCollectionAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                   _verbose, h_dedx_collection_angle_intime);
+			_functions_instance.selection_functions::dEdxThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                         _verbose, h_dedx_theta_pre_cuts_intime);
 
 			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                        _verbose, h_dedx_cuts_ext_unmatched);
@@ -2219,6 +2222,14 @@ void selection::make_selection( const char * _file1,
 		                                                                      h_dedx_cuts_collection_hits_proton, h_dedx_cuts_collection_hits_pion,
 		                                                                      h_dedx_cuts_collection_hits_muon, h_dedx_cuts_collection_hits_kaon,
 		                                                                      h_dedx_cuts_collection_hits_neutron, h_dedx_cuts_collection_hits_mc_unmatched);
+
+		_functions_instance.selection_functions::dEdxTheta(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                   h_dedx_theta_pre_cuts_nue_cc,        h_dedx_theta_pre_cuts_nue_cc_mixed,
+		                                                   h_dedx_theta_pre_cuts_nue_cc_out_fv,
+		                                                   h_dedx_theta_pre_cuts_numu_cc,       h_dedx_theta_pre_cuts_nc,
+		                                                   h_dedx_theta_pre_cuts_cosmic,        h_dedx_theta_pre_cuts_nc_pi0,
+		                                                   h_dedx_theta_pre_cuts_numu_cc_mixed, h_dedx_theta_pre_cuts_other_mixed,
+		                                                   h_dedx_theta_pre_cuts_unmatched);
 
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
@@ -5605,6 +5616,27 @@ void selection::make_selection( const char * _file1,
 	        "../scripts/plots/post_cuts_dEdx_theta_mc_ext.pdf",
 	        "../scripts/plots/post_cuts_dEdx_theta_data.pdf",
 	        "../scripts/plots/post_cuts_dEdx_theta_diff.pdf"
+	        );
+
+	histogram_functions::PlotdEdxTheta(
+	        h_dedx_theta_pre_cuts_nue_cc,
+	        h_dedx_theta_pre_cuts_nue_cc_mixed,
+	        h_dedx_theta_pre_cuts_nue_cc_out_fv,
+	        h_dedx_theta_pre_cuts_numu_cc,
+	        h_dedx_theta_pre_cuts_numu_cc_mixed,
+	        h_dedx_theta_pre_cuts_cosmic,
+	        h_dedx_theta_pre_cuts_nc,
+	        h_dedx_theta_pre_cuts_nc_pi0,
+	        h_dedx_theta_pre_cuts_other_mixed,
+	        h_dedx_theta_pre_cuts_unmatched,
+	        h_dedx_theta_pre_cuts_intime,
+	        intime_scale_factor,
+	        h_dedx_theta_pre_cuts_data,
+	        data_scale_factor,
+	        "", "Leading Shower dE/dx [MeV/cm]", "Leading Shower Theta [Degrees]",
+	        "../scripts/plots/post_cuts_dEdx_theta_pre_cuts_mc_ext.pdf",
+	        "../scripts/plots/post_cuts_dEdx_theta_pre_cuts_data.pdf",
+	        "../scripts/plots/post_cuts_dEdx_theta_pre_cuts_diff.pdf"
 	        );
 
 	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_nue_cc, "Signal", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", "../scripts/plots/pfp_zy_vtx_nue_cc.pdf");

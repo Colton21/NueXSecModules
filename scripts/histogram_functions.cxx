@@ -53,7 +53,7 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 }
 void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3,
                                            const double data_scale_factor, const double intime_scale_factor,
-                                           const char * x_axis_name, const char* print_name)
+                                           const char * x_axis_name, const char * print_name)
 {
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
@@ -72,6 +72,27 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	h_3_clone->Draw("hist");
 	h_1_clone->SetLineColor(46);
 	h_1_clone->Draw("hist same");
+
+	c1->Print(print_name);
+
+}
+
+//used to overlay both the intime and data flash histograms
+void histogram_functions::TimingHistogramsOverlay(TH1 * histogram_1, TH1 * histogram_2,
+                                                  const double intime_scale_factor, const char * x_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+
+	TH1 * h_1_clone = (TH1*)histogram_1->Clone("h_1_clone");
+	TH1 * h_2_clone = (TH1*)histogram_2->Clone("h_2_clone");
+
+	h_1_clone->GetXaxis()->SetTitle(x_axis_name);
+	h_1_clone->SetLineColor(46);
+	h_1_clone->Scale(intime_scale_factor);
+
+	h_1_clone->Draw("hist");
+	h_2_clone->Draw("hist same");
 
 	c1->Print(print_name);
 
@@ -293,7 +314,7 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	stack->Add(h_neutron);
 	stack->Add(h_unmatched);
 	stack->Add(h_unmatched_ext_clone);
-	stack->Draw();
+	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");

@@ -50,6 +50,8 @@ static void PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_n
 static void TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3,
                              const double data_scale_factor, const double intime_scale_factor,
                              const char * x_axis_name, const char* print_name);
+static void TimingHistogramsOverlay(TH1 * histogram_1, TH1 * histogram_2,
+                                    const double intime_scale_factor, const char * x_axis_name, const char * print_name);
 static void LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_numu_cc, TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
                           TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
                           TH2 * h_data, const double data_scale_factor,
