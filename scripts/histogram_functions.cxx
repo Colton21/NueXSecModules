@@ -26,11 +26,24 @@ void histogram_functions::Plot1DHistogramGausFit (TH1 * histogram, const char * 
 
 void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name)
 {
+	PlotTEfficiency(h_num, h_den, false, title, print_name);
+}
 
+void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool rebin, const char * title, const char * print_name)
+{
 	TCanvas * efficiency_c1 = new TCanvas();
 	efficiency_c1->cd();
+	TH1* h_num_clone = (TH1*)h_num->Clone("h_hum_clone");
+	TH1* h_den_clone = (TH1*)h_den->Clone("h_den_clone");
 
-	TEfficiency * teff = new TEfficiency(*h_num, *h_den);
+	if(rebin)
+	{
+		double new_bins [7] = {0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 4.0};
+		h_num_clone->Rebin(6, "h_new1", new_bins);
+		h_den_clone->Rebin(6, "h_new2", new_bins);
+	}
+
+	TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
 	teff->SetTitle(title);
 	teff->SetLineColor(kGreen+3);
 	teff->SetMarkerColor(kGreen+3);

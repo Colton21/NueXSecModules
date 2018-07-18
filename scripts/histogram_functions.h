@@ -26,6 +26,7 @@ histogram_functions()=default;
 static void Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name);
 static void Plot1DHistogramGausFit (TH1 * histogram, const char * x_axis_name, const char * print_name);
 static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name);
+static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool rebin, const char * title, const char * print_name);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
                              const char * draw_option);

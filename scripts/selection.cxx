@@ -3085,7 +3085,8 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::TimingHistograms(h_flash_time, h_flash_time_intime, h_flash_time_data, data_scale_factor, intime_scale_factor,
 	                                      "Flash Time [#mus]", "../scripts/plots/flash_time_data_subtraction.pdf");
-	histogram_functions::TimingHistogramsOverlay();
+	histogram_functions::TimingHistogramsOverlay(h_flash_time_intime, h_flash_time_data, intime_scale_factor, "Flash Time [#mus]",
+	                                             "../scripts/plots/flash_time_data_overlay.pdf");
 
 	//histogram_functions::1DHistogram (TH1 histogram, const std::string x_axis_name, const std::string * print_name)
 
@@ -3141,14 +3142,21 @@ void selection::make_selection( const char * _file1,
 	                                      ";True Nue Electron Dir Y;Efficiency", "../scripts/plots/signal_selection_ele_dir_y_efficiency.pdf");
 	histogram_functions::PlotTEfficiency (h_ele_dir_z_eff_num, h_ele_dir_z_eff_den,
 	                                      ";True Nue Electron Dir Z;Efficiency", "../scripts/plots/signal_selection_ele_dir_z_efficiency.pdf");
-	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, ";True Nue Electron Energy;Efficiency",
-	                                      "../scripts/plots/signal_selection_ele_energy_efficiency.pdf");
 	histogram_functions::PlotTEfficiency (h_post_cuts_num_tracks_showers_signal_total, h_post_cuts_num_tracks_showers_bkg_total,
 	                                      ";Num Reco Showers; Num Reco Tracks", "../scripts/plots/post_cuts_num_tracks_showers_eff_purity_total.pdf");
-	histogram_functions::PlotTEfficiency(h_ele_cos_theta_eff_num_pre_cuts, h_ele_cos_theta_eff_den,
-	                                     ";True Electron Cos(#theta);Efficiency", "../scripts/plots/signal_selection_ele_cos_theta_pre_cuts_efficiency.pdf");
+	histogram_functions::PlotTEfficiency(h_ele_cos_theta_eff_num_pre_cuts, h_ele_cos_theta_eff_den, ";True Electron Cos(#theta) Pre-Cuts;Efficiency",
+	                                     "../scripts/plots/signal_selection_ele_cos_theta_pre_cuts_efficiency.pdf");
+
 	histogram_functions::PlotTEfficiency(h_ele_eng_eff_num_pre_cuts, h_ele_eng_eff_den,
-	                                     ";True Electron Energy;Efficiency", "../scripts/plots/signal_selection_ele_eng_pre_cuts_efficiency.pdf");
+	                                     ";True Electron Energy Pre-Cuts;Efficiency", "../scripts/plots/signal_selection_ele_eng_pre_cuts_efficiency.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, ";True Nue Electron Energy [GeV];Efficiency",
+	                                      "../scripts/plots/signal_selection_ele_energy_efficiency.pdf");
+	//these histograms are the same, but are being rebinned
+	histogram_functions::PlotTEfficiency(h_ele_eng_eff_num_pre_cuts, h_ele_eng_eff_den, true,
+	                                     ";True Electron Energy Pre-Cuts;Efficiency", "../scripts/plots/signal_selection_ele_eng_pre_cuts_efficiency_rebin.pdf");
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, true,
+	                                      ";True Nue Electron Energy [GeV];Efficiency", "../scripts/plots/signal_selection_ele_energy_efficiency_rebin.pdf");
+
 
 	histogram_functions::Plot2DHistogram (h_tracks_showers, "Post Cuts - Showers/Tracks per Candidate Nue TPC Object",
 	                                      "Reco Tracks", "Reco Showers", "../scripts/plots/post_cuts_showers_tracks.pdf");

@@ -1716,10 +1716,10 @@ TH2D * h_mc_reco_vtx_x_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_x_nue_cc_out_fv"
 TH2D * h_mc_reco_vtx_y_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_y_nue_cc_out_fv", "h_mc_reco_vtx_y_nue_cc_out_fv", 20, -120,  120, 20, -120, 120 );
 TH2D * h_mc_reco_vtx_z_nue_cc_out_fv = new TH2D ("h_mc_reco_vtx_z_nue_cc_out_fv", "h_mc_reco_vtx_z_nue_cc_out_fv", 20,    0, 1060, 20,    0, 1060);
 
-TH2 * h_pfp_zy_vtx_nue_cc = new TH2D ("h_pfp_zy_vtx_nue_cc", "h_pfp_zy_vtx_nue_cc", 40, 0, 1060, 40, -120, 120);
-TH2 * h_pfp_zy_vtx_all    = new TH2D ("h_pfp_zy_vtx_all",    "h_pfp_zy_vtx_all",    40, 0, 1060, 40, -120, 120);
-TH2 * h_pfp_zy_vtx_ext    = new TH2D ("h_pfp_zy_vtx_ext",    "h_pfp_zy_vtx_ext",    40, 0, 1060, 40, -120, 120);
-TH2 * h_pfp_zy_vtx_data   = new TH2D ("h_pfp_zy_vtx_data",   "h_pfp_zy_vtx_data",   40, 0, 1060, 40, -120, 120);
+TH2 * h_pfp_zy_vtx_nue_cc = new TH2D ("h_pfp_zy_vtx_nue_cc", "h_pfp_zy_vtx_nue_cc", 40, 0, 1038, 40, -117, 117);
+TH2 * h_pfp_zy_vtx_all    = new TH2D ("h_pfp_zy_vtx_all",    "h_pfp_zy_vtx_all",    40, 0, 1038, 40, -117, 117);
+TH2 * h_pfp_zy_vtx_ext    = new TH2D ("h_pfp_zy_vtx_ext",    "h_pfp_zy_vtx_ext",    40, 0, 1038, 40, -117, 117);
+TH2 * h_pfp_zy_vtx_data   = new TH2D ("h_pfp_zy_vtx_data",   "h_pfp_zy_vtx_data",   40, 0, 1038, 40, -117, 117);
 
 TH2D * h_post_cuts_num_tracks_showers_signal_total  = new TH2D ("h_post_cuts_num_tracks_showers_signal_total", "h_post_cuts_num_tracks_showers_signal_total", 3, 1, 4, 2, 0, 2);
 TH2D * h_post_cuts_num_tracks_showers_bkg_total     = new TH2D ("h_post_cuts_num_tracks_showers_bkg_total",    "h_post_cuts_num_tracks_showers_bkg_total",    3, 1, 4, 2, 0, 2);
