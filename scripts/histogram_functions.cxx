@@ -39,17 +39,27 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 	if(rebin)
 	{
 		double new_bins [7] = {0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 4.0};
-		h_num_clone->Rebin(6, "h_new1", new_bins);
-		h_den_clone->Rebin(6, "h_new2", new_bins);
-	}
+		TH1* h_num_clone_rebin = (TH1*)h_num_clone->Rebin(6, "h_num_clone_rebin", new_bins);
+		TH1* h_den_clone_rebin = (TH1*)h_den_clone->Rebin(6, "h_num_clone_rebin", new_bins);
 
-	TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
-	teff->SetTitle(title);
-	teff->SetLineColor(kGreen+3);
-	teff->SetMarkerColor(kGreen+3);
-	teff->SetMarkerStyle(20);
-	teff->SetMarkerSize(0.5);
-	teff->Draw("AP");
+		TEfficiency * teff = new TEfficiency(*h_num_clone_rebin, *h_den_clone_rebin);
+		teff->SetTitle(title);
+		teff->SetLineColor(kGreen+3);
+		teff->SetMarkerColor(kGreen+3);
+		teff->SetMarkerStyle(20);
+		teff->SetMarkerSize(0.5);
+		teff->Draw("AP");
+	}
+	if(!rebin)
+	{
+		TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
+		teff->SetTitle(title);
+		teff->SetLineColor(kGreen+3);
+		teff->SetMarkerColor(kGreen+3);
+		teff->SetMarkerStyle(20);
+		teff->SetMarkerSize(0.5);
+		teff->Draw("AP");
+	}
 	efficiency_c1->Print(print_name);
 }
 
@@ -91,8 +101,9 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 }
 
 //used to overlay both the intime and data flash histograms
-void histogram_functions::TimingHistogramsOverlay(TH1 * histogram_1, TH1 * histogram_2,
-                                                  const double intime_scale_factor, const char * x_axis_name, const char * print_name)
+void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, int> > * data_flash_time, TH1 * histogram_1, TH1 * histogram_2,
+                                                  const double intime_scale_factor, const char * x_axis_name,
+                                                  const char * print_name1, const char * print_name2)
 {
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
@@ -104,10 +115,95 @@ void histogram_functions::TimingHistogramsOverlay(TH1 * histogram_1, TH1 * histo
 	h_1_clone->SetLineColor(46);
 	h_1_clone->Scale(intime_scale_factor);
 
-	h_1_clone->Draw("hist");
-	h_2_clone->Draw("hist same");
+	h_1_clone->SetStats(kFALSE);
+	h_2_clone->SetStats(kFALSE);
+	h_1_clone->Sumw2();
+	h_2_clone->Sumw2();
+	h_1_clone->SetTitle("");
+	h_1_clone->Draw("e");
+	h_2_clone->Draw("e same");
 
-	c1->Print(print_name);
+	TLegend * leg1 = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg1->AddEntry(h_1_clone,    "NuMI EXT Run 1",      "l");
+	leg1->AddEntry(h_2_clone,    "NuMI On-Beam Run 1",  "l");
+	//leg1->SetTextFont(132);
+	leg1->Draw();
+
+	c1->Print(print_name1);
+
+	TCanvas * c2 = new TCanvas();
+	c2->cd();
+	TH1 * h_3_clone = (TH1*)h_2_clone->Clone("h_3_clone");
+	h_3_clone->Add(h_1_clone, -1);
+	h_3_clone->SetStats(kFALSE);
+	//h_3_clone->SetBins(80, 0, 20);
+	h_3_clone->Sumw2();
+	h_3_clone->SetTitle("");
+	h_3_clone->Draw("e");
+
+	TLegend * leg2 = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg2->AddEntry(h_3_clone,    "NuMI On-Beam - Off-Beam Run 1",  "l");
+	//leg2->SetTextFont(132);
+	leg2->Draw();
+
+	c2->Print(print_name2);
+
+	TH1D * h_flash_time_data_first_half   = new TH1D ("h_flash_time_data_first_half",    "h_flash_time_data_first_half",   80, 0, 20);
+	TH1D * h_flash_time_data_second_half  = new TH1D ("h_flash_time_data_second_half",   "h_flash_time_data_second_half",  80, 0, 20);
+
+	for(auto const flash_timing : * data_flash_time)
+	{
+		const double run_number = flash_timing.second;
+		if(run_number <= 6000) {h_flash_time_data_first_half->Fill(flash_timing.first); }
+		if(run_number > 6000) {h_flash_time_data_second_half->Fill(flash_timing.first); }
+	}
+
+	Plot1DHistogram(h_flash_time_data_first_half,   "Flash Time [#mus]", "../scripts/plots/flash_time_data_first_half.pdf");
+	Plot1DHistogram(h_flash_time_data_second_half,  "Flash Time [#mus]", "../scripts/plots/flash_time_data_second_half.pdf");
+
+	TCanvas * c3a = new TCanvas();
+	c3a->cd();
+	h_flash_time_data_first_half->SetStats(kFALSE);
+	h_flash_time_data_second_half->SetStats(kFALSE);
+	h_flash_time_data_first_half->Sumw2();
+	h_flash_time_data_second_half->Sumw2();
+	h_flash_time_data_first_half->GetXaxis()->SetTitle("Flash Time [#mus]");
+	h_flash_time_data_first_half->SetTitle("");
+	h_flash_time_data_first_half->Draw("e");
+	h_flash_time_data_second_half->SetLineColor(46);
+	h_flash_time_data_second_half->Draw("e same");
+
+	TLegend * leg3a = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg3a->AddEntry(h_flash_time_data_first_half,  "NuMI On-Beam Run 1 (<= 6000)", "l");
+	leg3a->AddEntry(h_flash_time_data_second_half, "NuMI On-Beam Run 1 (> 6000)", "l");
+	//leg3a->SetTextFont(132);
+	leg3a->Draw();
+
+	c3a->Print("../scripts/plots/flash_time_data_first_second_half.pdf");
+
+
+	TCanvas * c3b = new TCanvas();
+	c3b->cd();
+	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
+	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
+	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.5);
+	h_flash_time_data_divide->GetXaxis()->SetTitle("Flash Time [#mus]");
+	h_flash_time_data_divide->GetYaxis()->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
+	h_flash_time_data_divide->SetStats(kFALSE);
+	h_flash_time_data_divide->Sumw2();
+	h_flash_time_data_divide->SetTitle("");
+	h_flash_time_data_divide->Draw("e");
+
+	TLine * line = new TLine(0, 1, 20, 1);
+	line->SetLineColor(46);
+	line->Draw("same");
+
+	TLegend * leg3b = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg3b->AddEntry(h_flash_time_data_divide, "NuMI Run 1 1st-Half / 2nd-Half", "l");
+	//leg3b->SetTextFont(132);
+	leg3b->Draw();
+
+	c3b->Print("../scripts/plots/flash_time_data_divide.pdf");
 
 }
 

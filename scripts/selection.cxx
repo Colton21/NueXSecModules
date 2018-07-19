@@ -3065,30 +3065,18 @@ void selection::make_selection( const char * _file1,
 	for(auto const flash_timing : * flash_time)        {h_flash_time->Fill(flash_timing.first);        }
 	for(auto const flash_timing : * data_flash_time)   {h_flash_time_data->Fill(flash_timing.first);   }
 	for(auto const flash_timing : * intime_flash_time) {h_flash_time_intime->Fill(flash_timing.first); }
-	histogram_functions::Plot1DHistogram(h_flash_time,        "Flash Time [us]", "../scripts/plots/flash_time.pdf");
-	histogram_functions::Plot1DHistogram(h_flash_time_intime, "Flash Time [us]", "../scripts/plots/flash_time_intime.pdf");
-	histogram_functions::Plot1DHistogram(h_flash_time_data,   "Flash Time [us]", "../scripts/plots/flash_time_data.pdf");
+	histogram_functions::Plot1DHistogram(h_flash_time,        "Flash Time [#mus]", "../scripts/plots/flash_time.pdf");
+	histogram_functions::Plot1DHistogram(h_flash_time_intime, "Flash Time [#mus]", "../scripts/plots/flash_time_intime.pdf");
+	histogram_functions::Plot1DHistogram(h_flash_time_data,   "Flash Time [#mus]", "../scripts/plots/flash_time_data.pdf");
 
-	for(auto const flash_timing : * data_flash_time)
-	{
-		const double run_number = flash_timing.second;
-		if(run_number <= 6000) {h_flash_time_data_first_half->Fill(flash_timing.first); }
-		if(run_number > 6000) {h_flash_time_data_second_half->Fill(flash_timing.first); }
-	}
-	histogram_functions::Plot1DHistogram(h_flash_time_data_first_half,   "Flash Time [us]", "../scripts/plots/flash_time_data_first_half.pdf");
-	histogram_functions::Plot1DHistogram(h_flash_time_data_second_half,  "Flash Time [us]", "../scripts/plots/flash_time_data_second_half.pdf");
 
-	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
-	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
-	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.5);
-	histogram_functions::Plot1DHistogram(h_flash_time_data_divide,  "Flash Time [us]", "../scripts/plots/flash_time_data_divide.pdf");
+	//histogram_functions::Plot1DHistogram(h_flash_time_data_divide,  "Flash Time [#mus]", "../scripts/plots/flash_time_data_divide.pdf");
 
 	histogram_functions::TimingHistograms(h_flash_time, h_flash_time_intime, h_flash_time_data, data_scale_factor, intime_scale_factor,
-	                                      "Flash Time [#mus]", "../scripts/plots/flash_time_data_subtraction.pdf");
-	histogram_functions::TimingHistogramsOverlay(h_flash_time_intime, h_flash_time_data, intime_scale_factor, "Flash Time [#mus]",
-	                                             "../scripts/plots/flash_time_data_overlay.pdf");
-
-	//histogram_functions::1DHistogram (TH1 histogram, const std::string x_axis_name, const std::string * print_name)
+	                                      "Flash Time [#mus]", "../scripts/plots/flash_time_data_subtraction_mc.pdf");
+	histogram_functions::TimingHistogramsOverlay(data_flash_time, h_flash_time_intime, h_flash_time_data, intime_scale_factor, "Flash Time [#mus]",
+	                                             "../scripts/plots/flash_time_data_overlay.pdf",
+	                                             "../scripts/plots/flash_time_data_subtraction.pdf");
 
 	histogram_functions::Plot1DHistogram (h_nue_eng_eff_num, "True Neutrino Energy [GeV]", "../scripts/plots/selected_true_neutrino_energy.pdf");
 	histogram_functions::Plot1DHistogram (h_nue_eng_eff_den, "True Neutrino Energy [GeV]", "../scripts/plots/all_true_neutrino_energy.pdf");
@@ -3755,7 +3743,7 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::Plot1DHistogram (h_charge_share_nue_cc_mixed, "Neutrino Charge Fraction - Selected Nue CC Mixed",
 	                                      "../scripts/plots/charge_fraction_nue_cc_mixed.pdf");
-	histogram_functions::Plot1DHistogram (h_flash_t0_diff, "Largest Flash Time - True Neutrino Interaction Time [us]", "../scripts/plots/flash_t0_diff.pdf");
+	histogram_functions::Plot1DHistogram (h_flash_t0_diff, "Largest Flash Time - True Neutrino Interaction Time [#mus]", "../scripts/plots/flash_t0_diff.pdf");
 
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc, "", "Leading Shower dEdx [MeV/cm]",
 	                                      "Leading Shower Open Angle [Degrees]", "../scripts/plots/dedx_open_angle_nue_cc.pdf");

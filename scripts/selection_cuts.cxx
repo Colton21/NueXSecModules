@@ -64,7 +64,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 
 		//Note: EXT and On-Beam triggers are shifted
 		//this shifts the EXT to the On-Beam timing
-		if(ext) {op_flash_time = op_flash_time - 0.406; }
+		if(ext) {op_flash_time = op_flash_time - 0.343; }
 
 		auto const pair = std::make_pair(op_flash_time, current_run);
 		flash_time->push_back(pair);
