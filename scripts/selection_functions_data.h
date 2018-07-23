@@ -179,6 +179,13 @@ void LeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_data);
 //***************************************************************************
 //***************************************************************************
+void LeadingMomentumThetaSliceData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_ele_momentum_1_data,
+                                   TH1D * h_ele_momentum_2_data,
+                                   TH1D * h_ele_momentum_3_data);
+//***************************************************************************
+//***************************************************************************
 void LeadingMomentumTrackTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                       TH1D * h_ele_pfp_momentum_no_track_data,

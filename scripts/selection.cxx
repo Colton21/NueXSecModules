@@ -549,6 +549,10 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::XYZPositionData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_any_pfp_xyz_last_data);
 
 			_data_functions_instance.selection_functions_data::dEdxThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_theta_data);
+			_data_functions_instance.selection_functions_data::LeadingMomentumThetaSliceData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                                 h_ele_momentum_slice_1_data,
+			                                                                                 h_ele_momentum_slice_2_data,
+			                                                                                 h_ele_momentum_slice_3_data);
 
 			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
@@ -1070,6 +1074,11 @@ void selection::make_selection( const char * _file1,
 			                                                                    h_ele_eng_for_trans_intime,
 			                                                                    h_ele_eng_mid_trans_intime,
 			                                                                    h_ele_eng_back_trans_intime);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumThetaSliceInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                                 h_ele_momentum_slice_1_intime,
+			                                                                                 h_ele_momentum_slice_2_intime,
+			                                                                                 h_ele_momentum_slice_3_intime);
 
 			_functions_instance.selection_functions::dEdxThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                         _verbose, h_dedx_theta_intime);
@@ -2863,6 +2872,38 @@ void selection::make_selection( const char * _file1,
 		                                                        h_ele_eng_costheta_cosmic,
 		                                                        h_ele_eng_costheta_other_mixed,
 		                                                        h_ele_eng_costheta_unmatched);
+
+		_functions_instance.selection_functions::PostCutsLeadingMomentumThetaSlice(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                           h_ele_momentum_slice_1_nue_cc,
+		                                                                           h_ele_momentum_slice_1_nue_cc_out_fv,
+		                                                                           h_ele_momentum_slice_1_nue_cc_mixed,
+		                                                                           h_ele_momentum_slice_1_numu_cc,
+		                                                                           h_ele_momentum_slice_1_numu_cc_mixed,
+		                                                                           h_ele_momentum_slice_1_nc,
+		                                                                           h_ele_momentum_slice_1_nc_pi0,
+		                                                                           h_ele_momentum_slice_1_cosmic,
+		                                                                           h_ele_momentum_slice_1_other_mixed,
+		                                                                           h_ele_momentum_slice_1_unmatched,
+		                                                                           h_ele_momentum_slice_2_nue_cc,
+		                                                                           h_ele_momentum_slice_2_nue_cc_out_fv,
+		                                                                           h_ele_momentum_slice_2_nue_cc_mixed,
+		                                                                           h_ele_momentum_slice_2_numu_cc,
+		                                                                           h_ele_momentum_slice_2_numu_cc_mixed,
+		                                                                           h_ele_momentum_slice_2_nc,
+		                                                                           h_ele_momentum_slice_2_nc_pi0,
+		                                                                           h_ele_momentum_slice_2_cosmic,
+		                                                                           h_ele_momentum_slice_2_other_mixed,
+		                                                                           h_ele_momentum_slice_2_unmatched,
+		                                                                           h_ele_momentum_slice_3_nue_cc,
+		                                                                           h_ele_momentum_slice_3_nue_cc_out_fv,
+		                                                                           h_ele_momentum_slice_3_nue_cc_mixed,
+		                                                                           h_ele_momentum_slice_3_numu_cc,
+		                                                                           h_ele_momentum_slice_3_numu_cc_mixed,
+		                                                                           h_ele_momentum_slice_3_nc,
+		                                                                           h_ele_momentum_slice_3_nc_pi0,
+		                                                                           h_ele_momentum_slice_3_cosmic,
+		                                                                           h_ele_momentum_slice_3_other_mixed,
+		                                                                           h_ele_momentum_slice_3_unmatched);
 
 		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
 		                                                              0, 0, tpco_classifier_v,
@@ -5678,6 +5719,58 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_med.pdf");
 	histogram_functions::Plot1DHistogramGausFit(h_high_true_momentum, "Selected Electron Momentum (True) [GeV]", "../scripts/plots/true_electron_momentum_high.pdf");
 
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_slice_1_nue_cc,
+	        h_ele_momentum_slice_1_nue_cc_mixed,
+	        h_ele_momentum_slice_1_nue_cc_out_fv,
+	        h_ele_momentum_slice_1_numu_cc,
+	        h_ele_momentum_slice_1_numu_cc_mixed,
+	        h_ele_momentum_slice_1_cosmic,
+	        h_ele_momentum_slice_1_nc,
+	        h_ele_momentum_slice_1_nc_pi0,
+	        h_ele_momentum_slice_1_other_mixed,
+	        h_ele_momentum_slice_1_unmatched,
+	        h_ele_momentum_slice_1_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_slice_1_data,
+	        data_scale_factor,
+	        "Theta Slice (0 - 40)", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_theta_slice_1_data.pdf");
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_slice_2_nue_cc,
+	        h_ele_momentum_slice_2_nue_cc_mixed,
+	        h_ele_momentum_slice_2_nue_cc_out_fv,
+	        h_ele_momentum_slice_2_numu_cc,
+	        h_ele_momentum_slice_2_numu_cc_mixed,
+	        h_ele_momentum_slice_2_cosmic,
+	        h_ele_momentum_slice_2_nc,
+	        h_ele_momentum_slice_2_nc_pi0,
+	        h_ele_momentum_slice_2_other_mixed,
+	        h_ele_momentum_slice_2_unmatched,
+	        h_ele_momentum_slice_2_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_slice_2_data,
+	        data_scale_factor,
+	        "Theta Slice (40 - 90)", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_theta_slice_2_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_ele_momentum_slice_3_nue_cc,
+	        h_ele_momentum_slice_3_nue_cc_mixed,
+	        h_ele_momentum_slice_3_nue_cc_out_fv,
+	        h_ele_momentum_slice_3_numu_cc,
+	        h_ele_momentum_slice_3_numu_cc_mixed,
+	        h_ele_momentum_slice_3_cosmic,
+	        h_ele_momentum_slice_3_nc,
+	        h_ele_momentum_slice_3_nc_pi0,
+	        h_ele_momentum_slice_3_other_mixed,
+	        h_ele_momentum_slice_3_unmatched,
+	        h_ele_momentum_slice_3_intime,
+	        intime_scale_factor,
+	        h_ele_momentum_slice_3_data,
+	        data_scale_factor,
+	        "Theta Slice (90 - 180)", "Leading Shower Momentum [GeV]", "",
+	        "../scripts/plots/post_cuts_ele_momentum_theta_slice_3_data.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
