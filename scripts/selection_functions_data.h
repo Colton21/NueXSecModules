@@ -26,9 +26,6 @@
 
 #include "../xsecAna/LinkDef.h"
 
-
-
-
 class selection_functions_data {
 
 public:

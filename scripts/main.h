@@ -56,8 +56,8 @@ const double _z2 = 20;
 
 //in time flash
 const int flash_pe_threshold = 50;
-const double flash_time_start = 5;
-const double flash_time_end = 16;
+const double flash_time_start = 5.8;
+const double flash_time_end = 15.5;
 
 //vertex to flash
 //standard 100 cm
