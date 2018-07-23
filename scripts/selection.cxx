@@ -5205,18 +5205,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_nue_cut_electron,
-	        h_leading_momentum_nue_cut_photon,
 	        h_leading_momentum_nue_cut_proton,
+	        h_leading_momentum_nue_cut_photon,
 	        h_leading_momentum_nue_cut_pion,
-	        h_leading_momentum_nue_cut_muon,
 	        h_leading_momentum_nue_cut_kaon,
+	        h_leading_momentum_nue_cut_muon,
 	        h_leading_momentum_nue_cut_neutron,
 	        h_leading_momentum_nue_cut_mc_unmatched,
 	        h_leading_momentum_nue_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_nue_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5239,18 +5239,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_fv_cut_electron,
-	        h_leading_momentum_fv_cut_photon,
 	        h_leading_momentum_fv_cut_proton,
+	        h_leading_momentum_fv_cut_photon,
 	        h_leading_momentum_fv_cut_pion,
-	        h_leading_momentum_fv_cut_muon,
 	        h_leading_momentum_fv_cut_kaon,
+	        h_leading_momentum_fv_cut_muon,
 	        h_leading_momentum_fv_cut_neutron,
 	        h_leading_momentum_fv_cut_mc_unmatched,
 	        h_leading_momentum_fv_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_fv_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5273,18 +5273,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_flash_vtx_electron,
-	        h_leading_momentum_flash_vtx_photon,
 	        h_leading_momentum_flash_vtx_proton,
+	        h_leading_momentum_flash_vtx_photon,
 	        h_leading_momentum_flash_vtx_pion,
-	        h_leading_momentum_flash_vtx_muon,
 	        h_leading_momentum_flash_vtx_kaon,
+	        h_leading_momentum_flash_vtx_muon,
 	        h_leading_momentum_flash_vtx_neutron,
 	        h_leading_momentum_flash_vtx_mc_unmatched,
 	        h_leading_momentum_flash_vtx_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_flash_vtx.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5307,18 +5307,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_shwr_vtx_electron,
-	        h_leading_momentum_shwr_vtx_photon,
 	        h_leading_momentum_shwr_vtx_proton,
+	        h_leading_momentum_shwr_vtx_photon,
 	        h_leading_momentum_shwr_vtx_pion,
-	        h_leading_momentum_shwr_vtx_muon,
 	        h_leading_momentum_shwr_vtx_kaon,
+	        h_leading_momentum_shwr_vtx_muon,
 	        h_leading_momentum_shwr_vtx_neutron,
 	        h_leading_momentum_shwr_vtx_mc_unmatched,
 	        h_leading_momentum_shwr_vtx_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_shwr_vtx.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5341,18 +5341,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_trk_vtx_electron,
-	        h_leading_momentum_trk_vtx_photon,
 	        h_leading_momentum_trk_vtx_proton,
+	        h_leading_momentum_trk_vtx_photon,
 	        h_leading_momentum_trk_vtx_pion,
-	        h_leading_momentum_trk_vtx_muon,
 	        h_leading_momentum_trk_vtx_kaon,
+	        h_leading_momentum_trk_vtx_muon,
 	        h_leading_momentum_trk_vtx_neutron,
 	        h_leading_momentum_trk_vtx_mc_unmatched,
 	        h_leading_momentum_trk_vtx_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_trk_vtx.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5375,18 +5375,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_hit_cut_electron,
-	        h_leading_momentum_hit_cut_photon,
 	        h_leading_momentum_hit_cut_proton,
+	        h_leading_momentum_hit_cut_photon,
 	        h_leading_momentum_hit_cut_pion,
-	        h_leading_momentum_hit_cut_muon,
 	        h_leading_momentum_hit_cut_kaon,
+	        h_leading_momentum_hit_cut_muon,
 	        h_leading_momentum_hit_cut_neutron,
 	        h_leading_momentum_hit_cut_mc_unmatched,
 	        h_leading_momentum_hit_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_hit_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5409,18 +5409,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_yhit_cut_electron,
-	        h_leading_momentum_yhit_cut_photon,
 	        h_leading_momentum_yhit_cut_proton,
+	        h_leading_momentum_yhit_cut_photon,
 	        h_leading_momentum_yhit_cut_pion,
-	        h_leading_momentum_yhit_cut_muon,
 	        h_leading_momentum_yhit_cut_kaon,
+	        h_leading_momentum_yhit_cut_muon,
 	        h_leading_momentum_yhit_cut_neutron,
 	        h_leading_momentum_yhit_cut_mc_unmatched,
 	        h_leading_momentum_yhit_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_yhit_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5443,18 +5443,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_open_angle_cut_electron,
-	        h_leading_momentum_open_angle_cut_photon,
 	        h_leading_momentum_open_angle_cut_proton,
+	        h_leading_momentum_open_angle_cut_photon,
 	        h_leading_momentum_open_angle_cut_pion,
-	        h_leading_momentum_open_angle_cut_muon,
 	        h_leading_momentum_open_angle_cut_kaon,
+	        h_leading_momentum_open_angle_cut_muon,
 	        h_leading_momentum_open_angle_cut_neutron,
 	        h_leading_momentum_open_angle_cut_mc_unmatched,
 	        h_leading_momentum_open_angle_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_open_angle_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5477,18 +5477,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_dedx_cut_electron,
-	        h_leading_momentum_dedx_cut_photon,
 	        h_leading_momentum_dedx_cut_proton,
+	        h_leading_momentum_dedx_cut_photon,
 	        h_leading_momentum_dedx_cut_pion,
-	        h_leading_momentum_dedx_cut_muon,
 	        h_leading_momentum_dedx_cut_kaon,
+	        h_leading_momentum_dedx_cut_muon,
 	        h_leading_momentum_dedx_cut_neutron,
 	        h_leading_momentum_dedx_cut_mc_unmatched,
 	        h_leading_momentum_dedx_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_dedx_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5511,18 +5511,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_2shwr_cut_electron,
-	        h_leading_momentum_2shwr_cut_photon,
 	        h_leading_momentum_2shwr_cut_proton,
+	        h_leading_momentum_2shwr_cut_photon,
 	        h_leading_momentum_2shwr_cut_pion,
-	        h_leading_momentum_2shwr_cut_muon,
 	        h_leading_momentum_2shwr_cut_kaon,
+	        h_leading_momentum_2shwr_cut_muon,
 	        h_leading_momentum_2shwr_cut_neutron,
 	        h_leading_momentum_2shwr_cut_mc_unmatched,
 	        h_leading_momentum_2shwr_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_2shwr_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5545,18 +5545,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_hit_length_cut_electron,
-	        h_leading_momentum_hit_length_cut_photon,
 	        h_leading_momentum_hit_length_cut_proton,
+	        h_leading_momentum_hit_length_cut_photon,
 	        h_leading_momentum_hit_length_cut_pion,
-	        h_leading_momentum_hit_length_cut_muon,
 	        h_leading_momentum_hit_length_cut_kaon,
+	        h_leading_momentum_hit_length_cut_muon,
 	        h_leading_momentum_hit_length_cut_neutron,
 	        h_leading_momentum_hit_length_cut_mc_unmatched,
 	        h_leading_momentum_hit_length_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_hit_length_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5579,18 +5579,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_length_ratio_cut_electron,
-	        h_leading_momentum_length_ratio_cut_photon,
 	        h_leading_momentum_length_ratio_cut_proton,
+	        h_leading_momentum_length_ratio_cut_photon,
 	        h_leading_momentum_length_ratio_cut_pion,
-	        h_leading_momentum_length_ratio_cut_muon,
 	        h_leading_momentum_length_ratio_cut_kaon,
+	        h_leading_momentum_length_ratio_cut_muon,
 	        h_leading_momentum_length_ratio_cut_neutron,
 	        h_leading_momentum_length_ratio_cut_mc_unmatched,
 	        h_leading_momentum_length_ratio_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_length_ratio_cut.pdf");
 
 	histogram_functions::PlotSimpleStackData(
@@ -5613,18 +5613,18 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::PlotSimpleStackParticle(
 	        h_leading_momentum_containment_cut_electron,
-	        h_leading_momentum_containment_cut_photon,
 	        h_leading_momentum_containment_cut_proton,
+	        h_leading_momentum_containment_cut_photon,
 	        h_leading_momentum_containment_cut_pion,
-	        h_leading_momentum_containment_cut_muon,
 	        h_leading_momentum_containment_cut_kaon,
+	        h_leading_momentum_containment_cut_muon,
 	        h_leading_momentum_containment_cut_neutron,
 	        h_leading_momentum_containment_cut_mc_unmatched,
 	        h_leading_momentum_containment_cut_ext_unmatched,
 	        intime_scale_factor, data_scale_factor,
 	        0.75, 0.95, 0.75, 0.95,
 	        "",
-	        "True Leading Particle Momentum [GeV]",
+	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", "../scripts/plots/leading_momentum_true_particle_containment_cut.pdf");
 
 	histogram_functions::PlotdEdxTheta(

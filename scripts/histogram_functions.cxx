@@ -441,6 +441,7 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	TH1 * h_neutron_clone       = (TH1*)h_neutron->Clone("h_neutron_clone");
 	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
 	TH1 * h_unmatched_ext_clone = (TH1*)h_unmatched_ext->Clone("h_unmatched_ext_clone");
+
 	h_electron_clone->Sumw2();
 	h_proton_clone->Sumw2();
 	h_photon_clone->Sumw2();
@@ -449,7 +450,6 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	h_muon_clone->Sumw2();
 	h_neutron_clone->Sumw2();
 	h_unmatched_clone->Sumw2();
-	h_unmatched_ext_clone->Sumw2();
 	h_unmatched_ext_clone->Sumw2();
 
 	h_electron_clone->Scale(data_scale_factor);
@@ -460,7 +460,6 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	h_muon_clone->Scale(data_scale_factor);
 	h_neutron_clone->Scale(data_scale_factor);
 	h_unmatched_clone->Scale(data_scale_factor);
-	h_unmatched_ext_clone->Scale(data_scale_factor);
 	h_unmatched_ext_clone->Scale(intime_scale_factor);
 
 	stack->Add(h_electron_clone);
@@ -767,19 +766,34 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 	bottomPad->cd();
 	TH1 * ratioPlot = (TH1*)h_data->Clone("ratioPlot");
-	ratioPlot->Add(h_nue_cc_clone,        -1);
-	ratioPlot->Add(h_nue_cc_mixed_clone,  -1);
-	ratioPlot->Add(h_nue_cc_out_fv_clone, -1);
-	ratioPlot->Add(h_cosmic_clone,        -1);
-	ratioPlot->Add(h_numu_cc_clone,       -1);
-	ratioPlot->Add(h_nc_clone,            -1);
-	ratioPlot->Add(h_nc_pi0_clone,        -1);
-	ratioPlot->Add(h_other_mixed_clone,   -1);
-	ratioPlot->Add(h_unmatched_clone,     -1);
-	ratioPlot->Add(h_intime_clone,        -1);
+	// ratioPlot->Add(h_nue_cc_clone,        -1);
+	// ratioPlot->Add(h_nue_cc_mixed_clone,  -1);
+	// ratioPlot->Add(h_nue_cc_out_fv_clone, -1);
+	// ratioPlot->Add(h_cosmic_clone,        -1);
+	// ratioPlot->Add(h_numu_cc_clone,       -1);
+	// ratioPlot->Add(h_nc_clone,            -1);
+	// ratioPlot->Add(h_nc_pi0_clone,        -1);
+	// ratioPlot->Add(h_other_mixed_clone,   -1);
+	// ratioPlot->Add(h_unmatched_clone,     -1);
+	// ratioPlot->Add(h_intime_clone,        -1);
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
-	ratioPlot->Divide(h_data);
+	//ratioPlot->Divide(h_data);
+	TH1 * h_mc_ext_sum = (TH1*)h_nue_cc_clone->Clone("h_mc_ext_sum");
+	//h_mc_ext_sum->Add(h_nue_cc_clone,        1);
+	h_mc_ext_sum->Add(h_nue_cc_mixed_clone,  1);
+	h_mc_ext_sum->Add(h_nue_cc_out_fv_clone, 1);
+	h_mc_ext_sum->Add(h_cosmic_clone,        1);
+	h_mc_ext_sum->Add(h_numu_cc_clone,       1);
+	h_mc_ext_sum->Add(h_nc_clone,            1);
+	h_mc_ext_sum->Add(h_nc_pi0_clone,        1);
+	h_mc_ext_sum->Add(h_other_mixed_clone,   1);
+	h_mc_ext_sum->Add(h_unmatched_clone,     1);
+	h_mc_ext_sum->Add(h_intime_clone,        1);
+
+	ratioPlot->Add(h_mc_ext_sum, -1);
+	ratioPlot->Divide(h_mc_ext_sum);
 	ratioPlot->Draw();
+
 
 	c1->Print(print_name);
 }
