@@ -46,7 +46,8 @@ static void PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_c
                              TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, const char * title,
                              const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic,
-                                   TH1 * h_nc, TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                   TH1 * h_nc, TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
+                                   const double intime_scale_factor, const double data_scale_factor,
                                    const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                  TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
@@ -58,7 +59,7 @@ static void TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogr
 static void TimingHistogramsOverlay(std::vector<std::pair<double, int> > * data_flash_time, TH1 * histogram_1, TH1 * histogram_2,
                                     const double intime_scale_factor, const char * x_axis_name,
                                     const char * print_name1, const char * print_name2);
-static void LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_numu_cc, TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
+static void LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2* h_nue_cc_out_fv, TH2 * h_numu_cc, TH2 * h_cosmic, TH2 * h_nc,
                           TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
                           TH2 * h_data, const double data_scale_factor,
                           const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
@@ -69,7 +70,7 @@ static void PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc
                             const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                   TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
-                                  const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                  const double data_scale_factor, const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                   const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                 TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
