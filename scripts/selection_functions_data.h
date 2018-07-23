@@ -19,6 +19,7 @@
 #include "TGraphErrors.h"
 #include "TPad.h"
 #include "TMarker.h"
+#include "TVector3.h"
 
 #include <iostream>
 #include <vector>

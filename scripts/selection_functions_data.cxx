@@ -581,9 +581,14 @@ void selection_functions_data::LeadingCosThetaData(std::vector<xsecAna::TPCObjec
 		std::string tpco_id = tpco_class.first;
 		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		double leading_shower_cos_theta = leading_shower.pfpDirZ();
-		double leading_shower_theta = (acos(leading_shower_cos_theta) * (180 / 3.1415)) + theta_translation;
-		leading_shower_cos_theta = cos(leading_shower_theta);
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
+		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
 		h_ele_cos_theta_data->Fill(leading_shower_cos_theta);
 	}//end pfp loop
 }

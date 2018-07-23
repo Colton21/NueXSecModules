@@ -4724,11 +4724,16 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 		const double leading_shower_z = leading_shower.pfpDirZ();
 		const double leading_shower_y = leading_shower.pfpDirY();
 		const double leading_shower_x = leading_shower.pfpDirX();
+		double leading_shower_cos_theta = -99;
+		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
+
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
 		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
-		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
-		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
+		if(theta_translation != 0 && phi_translation != 0)
+		{
+			leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
+		}
 
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
@@ -4750,7 +4755,7 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 		{
 			h_ele_cos_theta_nue_cc->Fill(leading_shower_cos_theta);
 		}
-		if(tpco_id == "nue_cc_mec")
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
 			h_ele_cos_theta_nue_cc->Fill(leading_shower_cos_theta);
 		}
@@ -4804,16 +4809,6 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 			h_ele_cos_theta_unmatched->Fill(leading_shower_cos_theta);
 		}
 	}//end pfp loop
-	 // std::cout << "Nue CC        : " << h_ele_cos_theta_nue_cc->GetEntries() << std::endl;
-	 // std::cout << "Nue CC Out FV : " << h_ele_cos_theta_nue_cc_out_fv->GetEntries() << std::endl;
-	 // std::cout << "Nue CC Mixed  : " << h_ele_cos_theta_nue_cc_mixed->GetEntries() << std::endl;
-	 // std::cout << "Numu CC       : " << h_ele_cos_theta_numu_cc->GetEntries() << std::endl;
-	 // std::cout << "Numu CC Mixed : " << h_ele_cos_theta_numu_cc_mixed->GetEntries() << std::endl;
-	 // std::cout << "NC            : " << h_ele_cos_theta_nc->GetEntries() << std::endl;
-	 // std::cout << "NC Pi0        : " << h_ele_cos_theta_nc_pi0->GetEntries() << std::endl;
-	 // std::cout << "Cosmic        : " << h_ele_cos_theta_cosmic->GetEntries() << std::endl;
-	 // std::cout << "NC Mixed      : " << h_ele_cos_theta_other_mixed->GetEntries() << std::endl;
-	 // std::cout << "Unmatched     : " << h_ele_cos_theta_unmatched->GetEntries() << std::endl;
 }
 //***************************************************************************
 //***************************************************************************

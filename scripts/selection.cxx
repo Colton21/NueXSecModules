@@ -4421,7 +4421,7 @@ void selection::make_selection( const char * _file1,
 	                                      h_ele_cos_theta_cosmic,  h_ele_cos_theta_nc,
 	                                      h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
 	                                      h_ele_cos_theta_unmatched, 0.15, 0.35, 0.70, 0.95, "",
-	                                      "Leading Shower Cos(#theta)", "",
+	                                      "(Before Open Angle Cut) Leading Shower Cos(#theta)", "",
 	                                      "../scripts/plots/post_cuts_leading_cos_theta.pdf");
 
 	histogram_functions::PlotSimpleStackInTime (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
@@ -4442,7 +4442,7 @@ void selection::make_selection( const char * _file1,
 	                                            h_ele_cos_theta_unmatched, h_ele_cos_theta_intime,
 	                                            intime_scale_factor, data_scale_factor,
 	                                            0.15, 0.35, 0.70, 0.95, "",
-	                                            "Leading Shower Cos(#theta)", "",
+	                                            "(Before Open Angle Cut) Leading Shower Cos(#theta)", "",
 	                                            "../scripts/plots/post_cuts_leading_cos_theta_intime.pdf");
 
 	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_last_nue_cc,  h_ele_cos_theta_last_nue_cc_mixed,
@@ -4464,7 +4464,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_last_trans_unmatched, h_ele_cos_theta_last_trans_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_last_trans_data, data_scale_factor,
 	                                          0.15, 0.35, 0.70, 0.95, "",
-	                                          "Leading Shower Cos(#theta)", "",
+	                                          "(NuMI Transform) Leading Shower Cos(#theta)", "",
 	                                          "../scripts/plots/post_cuts_leading_cos_theta_last_trans_data.pdf");
 
 	histogram_functions::PlotSimpleStackData (h_ele_cos_theta_nue_cc,  h_ele_cos_theta_nue_cc_mixed,
@@ -4475,7 +4475,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_unmatched, h_ele_cos_theta_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_data, data_scale_factor,
 	                                          0.15, 0.35, 0.70, 0.95, "",
-	                                          "Leading Shower Cos(#theta)", "",
+	                                          "(Before Open Angle Cut) Leading Shower Cos(#theta)", "",
 	                                          "../scripts/plots/post_cuts_leading_cos_theta_data.pdf");
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_momentum_nue_cc,  h_ele_pfp_momentum_nue_cc_mixed,
