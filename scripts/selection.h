@@ -45,14 +45,14 @@ const double POT = 1.82027e+21;
 const double data_scale_factor = 0.13;
 
 //scale EXT down by this factor
-//(26749613 (ext) * 0.2064 (prescale)) = 5521120.1232 - per Run weighted
+//(26749613 (ext) * 0.2064 (prescale)) = 5,521,120.1232 - per Run weighted
 // 6180310 (data) / 5521120.1232 = 1.12
 
 // per event weighted prescale is 0.51
 //(26749613 (ext) * 0.51 (prescale)) = 13642302.63
 // 6180310 / 13642302.63 = 0.453
 
-//according to Zarko's new script - 5287179 EXT (prescale folded in already)
+//according to Zarko's new script - 5,287,179 EXT (prescale folded in already)
 // 6180310 / 5287179 = 1.16
 
 const double intime_scale_factor = 1.16;
@@ -1614,6 +1614,8 @@ TH2D * h_ele_eng_costheta_data           = new TH2D ("h_ele_eng_costheta_data", 
 TH1D * h_nue_true_theta  = new TH1D ("h_nue_true_theta", "h_nue_true_theta", 14,    0, 180);
 TH1D * h_nue_true_phi    = new TH1D ("h_nue_true_phi", "h_nue_true_phi",   14, -180, 180);
 TH2D * h_nue_true_theta_phi = new TH2D ("h_nue_true_theta_phi", "h_nue_true_theta_phi", 14, -180, 180, 14, 0, 180);
+TH2D * h_nue_true_energy_theta = new TH2D("h_nue_true_energy_theta", "h_nue_true_energy_theta", 20, 0, 10, 14, 0, 180);
+TH2D * h_all_true_energy_theta = new TH2D("h_all_true_energy_theta", "h_all_true_energy_theta", 20, 0, 10, 14, 0, 180);
 
 TH2D * h_true_reco_ele_momentum = new TH2D ("h_true_reco_ele_momentum", "h_true_reco_ele_momentum", 10, 0, 3, 10, 0, 3);
 TH2D * h_true_reco_ele_costheta = new TH2D ("h_true_reco_ele_costheta", "h_true_reco_ele_costheta", 10, -1, 1, 10, -1, 1);

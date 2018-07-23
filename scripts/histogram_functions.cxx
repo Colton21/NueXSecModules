@@ -49,6 +49,11 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->SetMarkerStyle(20);
 		teff->SetMarkerSize(0.5);
 		teff->Draw("AP");
+		for(int i = 1; i < h_num_clone_rebin->GetNbinsX()+1; i++)
+		{
+			std::cout << "Bin: " << i << " Value: " << h_num_clone_rebin->GetBinContent(i) / h_den_clone_rebin->GetBinContent(i) << std::endl;
+		}
+
 	}
 	if(!rebin)
 	{
@@ -85,6 +90,10 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	TH1 * h_2_clone = (TH1*)histogram_2->Clone("h_2_clone");
 	TH1 * h_3_clone = (TH1*)histogram_3->Clone("h_3_clone");
 
+	h_1_clone->Sumw2();
+	h_2_clone->Sumw2();
+	h_3_clone->Sumw2();
+
 	h_1_clone->Scale(data_scale_factor);
 	h_2_clone->Scale(intime_scale_factor);
 	h_3_clone->Add(h_2_clone, -1);
@@ -113,12 +122,12 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 
 	h_1_clone->GetXaxis()->SetTitle(x_axis_name);
 	h_1_clone->SetLineColor(46);
+	h_1_clone->Sumw2();
+	h_2_clone->Sumw2();
 	h_1_clone->Scale(intime_scale_factor);
 
 	h_1_clone->SetStats(kFALSE);
 	h_2_clone->SetStats(kFALSE);
-	h_1_clone->Sumw2();
-	h_2_clone->Sumw2();
 	h_1_clone->SetTitle("");
 	h_1_clone->Draw("e");
 	h_2_clone->Draw("e same");
@@ -151,11 +160,14 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	TH1D * h_flash_time_data_first_half   = new TH1D ("h_flash_time_data_first_half",    "h_flash_time_data_first_half",   80, 0, 20);
 	TH1D * h_flash_time_data_second_half  = new TH1D ("h_flash_time_data_second_half",   "h_flash_time_data_second_half",  80, 0, 20);
 
+	h_flash_time_data_first_half->Sumw2();
+	h_flash_time_data_second_half->Sumw2();
+
 	for(auto const flash_timing : * data_flash_time)
 	{
 		const double run_number = flash_timing.second;
-		if(run_number <= 6000) {h_flash_time_data_first_half->Fill(flash_timing.first); }
-		if(run_number > 6000) {h_flash_time_data_second_half->Fill(flash_timing.first); }
+		if(run_number <= 6450) {h_flash_time_data_first_half->Fill(flash_timing.first); }
+		if(run_number > 6450) {h_flash_time_data_second_half->Fill(flash_timing.first); }
 	}
 
 	Plot1DHistogram(h_flash_time_data_first_half,   "Flash Time [#mus]", "../scripts/plots/flash_time_data_first_half.pdf");
@@ -163,19 +175,27 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 
 	TCanvas * c3a = new TCanvas();
 	c3a->cd();
-	h_flash_time_data_first_half->SetStats(kFALSE);
-	h_flash_time_data_second_half->SetStats(kFALSE);
+	const double integral_1 = h_flash_time_data_first_half->Integral();
+	const double integral_2 = h_flash_time_data_second_half->Integral();
+	//h_flash_time_data_first_half->Scale(1./integral);
+	h_flash_time_data_second_half->Scale(integral_1 / integral_2);
+	//h_flash_time_data_second_half->Integral();
+
+
 	h_flash_time_data_first_half->Sumw2();
 	h_flash_time_data_second_half->Sumw2();
+	h_flash_time_data_first_half->SetStats(kFALSE);
+	h_flash_time_data_second_half->SetStats(kFALSE);
+
 	h_flash_time_data_first_half->GetXaxis()->SetTitle("Flash Time [#mus]");
 	h_flash_time_data_first_half->SetTitle("");
-	h_flash_time_data_first_half->Draw("e");
+	h_flash_time_data_first_half->Draw("p e");
 	h_flash_time_data_second_half->SetLineColor(46);
-	h_flash_time_data_second_half->Draw("e same");
+	h_flash_time_data_second_half->Draw("p e same");
 
 	TLegend * leg3a = new TLegend(0.7, 0.85, 0.98, 0.98);
-	leg3a->AddEntry(h_flash_time_data_first_half,  "NuMI On-Beam Run 1 (<= 6000)", "l");
-	leg3a->AddEntry(h_flash_time_data_second_half, "NuMI On-Beam Run 1 (> 6000)", "l");
+	leg3a->AddEntry(h_flash_time_data_first_half,  "NuMI On-Beam Run 1 (<= 6450)", "l");
+	leg3a->AddEntry(h_flash_time_data_second_half, "NuMI On-Beam Run 1 (> 6450)", "l");
 	//leg3a->SetTextFont(132);
 	leg3a->Draw();
 
@@ -241,44 +261,52 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
 	TH2 * h_intime_clone = (TH2*)h_intime->Clone("h_intime_clone");
-	h_intime_clone->Scale(intime_scale_factor);
-	h_data->Scale(data_scale_factor);
+	TH1 * h_nue_cc_clone = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH1 * h_nue_cc_mixed_clone = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH1 * h_nue_cc_out_fv_clone = (TH1*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	TH1 * h_cosmic_clone = (TH1*)h_cosmic->Clone("h_cosmic_clone");
+	TH1 * h_numu_cc_clone = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH1 * h_nc_clone = (TH1*)h_nc->Clone("h_nc_clone");
+	TH1 * h_nc_pi0_clone = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH1 * h_other_mixed_clone = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH1 * h_unmatched_clone = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+
+	h_nue_cc_clone->Sumw2();
+	h_nue_cc_mixed_clone->Sumw2();
+	h_cosmic_clone->Sumw2();
+	h_numu_cc_clone->Sumw2();
+	h_numu_cc_mixed_clone->Sumw2();
+	h_nc_clone->Sumw2();
+	h_nc_pi0_clone->Sumw2();
+	h_other_mixed_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_intime_clone->Sumw2();
+
+	h_nue_cc_clone->Scale(data_scale_factor);
+	h_nue_cc_mixed_clone->Scale(data_scale_factor);
+	h_cosmic_clone->Scale(data_scale_factor);
+	h_numu_cc_clone->Scale(data_scale_factor);
+	h_numu_cc_mixed_clone->Scale(data_scale_factor);
+	h_nc_clone->Scale(data_scale_factor);
+	h_nc_pi0_clone->Scale(data_scale_factor);
+	h_other_mixed_clone->Scale(data_scale_factor);
+	h_unmatched_clone->Scale(data_scale_factor);
+	h_intime_clone_clone->Scale(intime_scale_factor);
+
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	//h_data->Sumw2();
-	h_data->Scale(1./h_data->Integral());
+	h_data->Sumw2();
 
-	const double integral = h_nue_cc->Integral() +
-	                        h_nue_cc_mixed->Integral() +
-	                        h_cosmic->Integral() +
-	                        h_numu_cc->Integral() +
-	                        h_numu_cc_mixed->Integral() +
-	                        h_nc->Integral() +
-	                        h_nc_pi0->Integral() +
-	                        h_other_mixed->Integral() +
-	                        h_unmatched->Integral() +
-	                        h_intime_clone->Integral();
+	stack->Add(h_nue_cc_clone);
+	stack->Add(h_nue_cc_mixed_clone);
+	stack->Add(h_cosmic_clone);
+	stack->Add(h_numu_cc_clone);
+	stack->Add(h_nc_clone);
+	stack->Add(h_nc_pi0_clone);
+	stack->Add(h_other_mixed_clone);
+	stack->Add(h_unmatched_clone);
+	stack->Add(h_intime_clone_clone);
 
-	h_nue_cc->Scale(1./integral);
-	h_nue_cc_mixed->Scale(1./integral);
-	h_cosmic->Scale(1./integral);
-	h_numu_cc->Scale(1./integral);
-	h_numu_cc_mixed->Scale(1./integral);
-	h_nc->Scale(1./integral);
-	h_nc_pi0->Scale(1./integral);
-	h_other_mixed->Scale(1./integral);
-	h_unmatched->Scale(1./integral);
-	h_intime_clone->Scale(1./integral);
-	stack->Add(h_nue_cc);
-	stack->Add(h_nue_cc_mixed);
-	stack->Add(h_cosmic);
-	stack->Add(h_numu_cc);
-	//stack->Add(h_numu_cc_mixed);
-	stack->Add(h_nc);
-	stack->Add(h_nc_pi0);
-	stack->Add(h_other_mixed);
-	stack->Add(h_unmatched);
-	stack->Add(h_intime_clone);
 
 	// const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
 	// stack->SetMaximum(y_maximum * 1.2);
@@ -384,7 +412,7 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 }
 void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,
                                                   TH1 * h_kaon, TH1 * h_muon, TH1 * h_neutron, TH1 * h_unmatched,
-                                                  TH1 * h_unmatched_ext, const double intime_scale_factor,
+                                                  TH1 * h_unmatched_ext, const double intime_scale_factor, const double data_scale_factor,
                                                   const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                                   const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
@@ -408,20 +436,48 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	h_muon->SetFillColor(46);
 	h_neutron->SetFillColor(20);
 	h_unmatched->SetFillColor(12);
-
 	h_unmatched_ext->SetFillColor(41);
 	h_unmatched_ext->SetFillStyle(3345);
+
+	TH1 * h_electron_clone      = (TH1*)h_electron->Clone("h_electron_clone");
+	TH1 * h_proton_clone        = (TH1*)h_proton->Clone("h_proton_clone");
+	TH1 * h_photon_clone        = (TH1*)h_photon->Clone("h_photon_clone");
+	TH1 * h_pion_clone          = (TH1*)h_pion->Clone("h_pion_clone");
+	TH1 * h_kaon_clone          = (TH1*)h_kaon->Clone("h_kaon_clone");
+	TH1 * h_muon_clone          = (TH1*)h_muon->Clone("h_muon_clone");
+	TH1 * h_neutron_clone       = (TH1*)h_neutron->Clone("h_neutron_clone");
+	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
 	TH1 * h_unmatched_ext_clone = (TH1*)h_unmatched_ext->Clone("h_unmatched_ext_clone");
+	h_electron_clone->Sumw2();
+	h_proton_clone->Sumw2();
+	h_photon_clone->Sumw2();
+	h_pion_clone->Sumw2();
+	h_kaon_clone->Sumw2();
+	h_muon_clone->Sumw2();
+	h_neutron_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_unmatched_ext_clone->Sumw2();
+	h_unmatched_ext_clone->Sumw2();
+
+	h_electron_clone->Scale(data_scale_factor);
+	h_proton_clone->Scale(data_scale_factor);
+	h_photon_clone->Scale(data_scale_factor);
+	h_pion_clone->Scale(data_scale_factor);
+	h_kaon_clone->Scale(data_scale_factor);
+	h_muon_clone->Scale(data_scale_factor);
+	h_neutron_clone->Scale(data_scale_factor);
+	h_unmatched_clone->Scale(data_scale_factor);
+	h_unmatched_ext_clone->Scale(data_scale_factor);
 	h_unmatched_ext_clone->Scale(intime_scale_factor);
 
-	stack->Add(h_electron);
-	stack->Add(h_proton);
-	stack->Add(h_photon);
-	stack->Add(h_pion);
-	stack->Add(h_kaon);
-	stack->Add(h_muon);
-	stack->Add(h_neutron);
-	stack->Add(h_unmatched);
+	stack->Add(h_electron_clone);
+	stack->Add(h_proton_clone);
+	stack->Add(h_photon_clone);
+	stack->Add(h_pion_clone);
+	stack->Add(h_kaon_clone);
+	stack->Add(h_muon_clone);
+	stack->Add(h_neutron_clone);
+	stack->Add(h_unmatched_clone);
 	stack->Add(h_unmatched_ext_clone);
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
@@ -503,7 +559,8 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 }
 void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                                 TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
-                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
+                                                const double intime_scale_factor, const double data_scale_factor,
                                                 const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                                 const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
@@ -535,19 +592,48 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
 	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
+	TH1 * h_nue_cc_clone = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH1 * h_nue_cc_mixed_clone = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH1 * h_nue_cc_out_fv_clone = (TH1*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	TH1 * h_cosmic_clone = (TH1*)h_cosmic->Clone("h_cosmic_clone");
+	TH1 * h_numu_cc_clone = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH1 * h_nc_clone = (TH1*)h_nc->Clone("h_nc_clone");
+	TH1 * h_nc_pi0_clone = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH1 * h_other_mixed_clone = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH1 * h_unmatched_clone = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+
+	h_nue_cc_clone->Sumw2();
+	h_nue_cc_mixed_clone->Sumw2();
+	h_nue_cc_out_fv_clone->Sumw2();
+	h_cosmic_clone->Sumw2();
+	h_numu_cc_clone->Sumw2();
+	h_nc_clone->Sumw2();
+	h_nc_pi0_clone->Sumw2();
+	h_other_mixed_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_intime_clone->Sumw2();
+
+	h_nue_cc_clone->Scale(data_scale_factor);
+	h_nue_cc_mixed_clone->Scale(data_scale_factor);
+	h_nue_cc_out_fv_clone->Scale(data_scale_factor);
+	h_cosmic_clone->Scale(data_scale_factor);
+	h_numu_cc_clone->Scale(data_scale_factor);
+	h_nc_clone->Scale(data_scale_factor);
+	h_nc_pi0_clone->Scale(data_scale_factor);
+	h_other_mixed_clone->Scale(data_scale_factor);
+	h_unmatched_clone->Scale(data_scale_factor);
 	h_intime_clone->Scale(intime_scale_factor);
-	stack->Add(h_nue_cc);
-	stack->Add(h_nue_cc_mixed);
-	stack->Add(h_nue_cc_out_fv);
-	stack->Add(h_cosmic);
-	//h_numu_cc->Add(h_numu_cc_mixed, 1);
-	stack->Add(h_numu_cc);
-	//stack->Add(h_numu_cc_mixed);
-	stack->Add(h_nc);
-	stack->Add(h_nc_pi0);
-	stack->Add(h_other_mixed);
-	stack->Add(h_unmatched);
-	stack->Add(h_intime_clone);
+
+	stack->Add(h_nue_cc_clone);
+	stack->Add(h_nue_cc_mixed_clone);
+	stack->Add(h_nue_cc_out_fv_clone);
+	stack->Add(h_cosmic_clone);
+	stack->Add(h_numu_cc_clone);
+	stack->Add(h_nc_clone);
+	stack->Add(h_nc_pi0_clone);
+	stack->Add(h_other_mixed_clone);
+	stack->Add(h_unmatched_clone);
+	stack->Add(h_intime_clone_clone);
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
 
@@ -611,17 +697,14 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	//h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
-
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
-	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
-	h_intime_clone->Scale(intime_scale_factor);
 
 	//h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	//h_data->Sumw2();
+	h_data->Sumw2();
 	//h_data->Scale(1./h_data->Integral());
 	//h_data->GetXaxis()->SetTitle(x_axis_name);
 	//h_numu_cc->Add(h_numu_cc_mixed, 1);
@@ -651,15 +734,29 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	// h_unmatched->Scale(1./integral);
 	// h_intime_clone->Scale(1./integral);
 
-	TH1 * h_nue_cc_clone = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
-	TH1 * h_nue_cc_mixed_clone = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH1 * h_nue_cc_clone        = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH1 * h_nue_cc_mixed_clone  = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
 	TH1 * h_nue_cc_out_fv_clone = (TH1*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
-	TH1 * h_cosmic_clone = (TH1*)h_cosmic->Clone("h_cosmic_clone");
-	TH1 * h_numu_cc_clone = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
-	TH1 * h_nc_clone = (TH1*)h_nc->Clone("h_nc_clone");
-	TH1 * h_nc_pi0_clone = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
-	TH1 * h_other_mixed_clone = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
-	TH1 * h_unmatched_clone = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+	TH1 * h_cosmic_clone        = (TH1*)h_cosmic->Clone("h_cosmic_clone");
+	TH1 * h_numu_cc_clone       = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH1 * h_nc_clone            = (TH1*)h_nc->Clone("h_nc_clone");
+	TH1 * h_nc_pi0_clone        = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH1 * h_other_mixed_clone   = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
+
+	h_nue_cc_clone->Sumw2();
+	h_nue_cc_mixed_clone->Sumw2();
+	h_nue_cc_out_fv_clone->Sumw2();
+	h_numu_cc_clone->Sumw2();
+	h_nc_pi0_clone->Sumw2();
+	h_cosmic_clone->Sumw2();
+	h_nc_clone->Sumw2();
+	h_numu_cc_mixed_clone->Sumw2();
+	h_other_mixed_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_intime_clone->Sumw2();
+	h_data->Sumw2();
 
 	h_nue_cc_clone->Scale(data_scale_factor);
 	h_nue_cc_mixed_clone->Scale(data_scale_factor);
@@ -670,6 +767,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_nc_pi0_clone->Scale(data_scale_factor);
 	h_other_mixed_clone->Scale(data_scale_factor);
 	h_unmatched_clone->Scale(data_scale_factor);
+	h_intime_clone->Scale(intime_scale_factor);
+
 
 	stack->Add(h_nue_cc_clone);
 	stack->Add(h_nue_cc_mixed_clone);
@@ -769,7 +868,6 @@ void histogram_functions::PlotdEdxTheta(
 
 	TH2 * h_dummy_mc = (TH2*)h_nue_cc_clone->Clone("h_dummy_mc");
 
-	//h_dummy_mc->Add(h_nue_cc_clone,        data_scale_factor);
 	h_dummy_mc->Add(h_nue_cc_mixed_clone,  data_scale_factor);
 	h_dummy_mc->Add(h_nue_cc_out_fv_clone, data_scale_factor);
 	h_dummy_mc->Add(h_cosmic_clone,        data_scale_factor);
