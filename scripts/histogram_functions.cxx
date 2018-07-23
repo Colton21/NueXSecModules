@@ -776,7 +776,6 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	// ratioPlot->Add(h_other_mixed_clone,   -1);
 	// ratioPlot->Add(h_unmatched_clone,     -1);
 	// ratioPlot->Add(h_intime_clone,        -1);
-	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	//ratioPlot->Divide(h_data);
 	TH1 * h_mc_ext_sum = (TH1*)h_nue_cc_clone->Clone("h_mc_ext_sum");
 	//h_mc_ext_sum->Add(h_nue_cc_clone,        1);
@@ -792,6 +791,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 	ratioPlot->Add(h_mc_ext_sum, -1);
 	ratioPlot->Divide(h_mc_ext_sum);
+	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->Draw();
 
 

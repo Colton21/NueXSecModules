@@ -161,15 +161,46 @@ void selection_functions::PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjec
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
-		if(leading_mc_pdg == 11 || leading_mc_pdg == -11) {h_dedx_cuts_electron->Fill(leading_dedx); }
-		if(leading_mc_pdg == 13 || leading_mc_pdg == -13) {h_dedx_cuts_muon->Fill(leading_dedx); }
-		if(leading_mc_pdg == 22) {h_dedx_cuts_photon->Fill(leading_dedx); }
-		if(leading_mc_pdg == 2212) {h_dedx_cuts_proton->Fill(leading_dedx); }
-		if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_dedx_cuts_pion->Fill(leading_dedx); }
-		if(leading_mc_pdg == 2112) {h_dedx_cuts_neutron->Fill(leading_dedx); }
+		bool good_id = false;
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11)
+		{
+			h_dedx_cuts_electron->Fill(leading_dedx);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 13 || leading_mc_pdg == -13)
+		{
+			h_dedx_cuts_muon->Fill(leading_dedx);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 22)
+		{
+			h_dedx_cuts_photon->Fill(leading_dedx);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 2212)
+		{
+			h_dedx_cuts_proton->Fill(leading_dedx);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 211 || leading_mc_pdg == -211)
+		{
+			h_dedx_cuts_pion->Fill(leading_dedx);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 2112)
+		{
+			h_dedx_cuts_neutron->Fill(leading_dedx);
+			good_id = true;
+		}
 		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 || leading_mc_pdg == 311 || leading_mc_pdg == 321 || leading_mc_pdg == -321)
-		{h_dedx_cuts_kaon->Fill(leading_dedx); }
-		if(leading_mc_pdg == 0) {h_dedx_cuts_unmatched->Fill(leading_dedx); }
+		{
+			h_dedx_cuts_kaon->Fill(leading_dedx);
+			good_id = true;
+		}
+		if(good_id == false )
+		{
+			h_dedx_cuts_unmatched->Fill(leading_dedx);
+		}
 	}        //end loop tpc objects
 }
 void selection_functions::PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -7841,15 +7872,46 @@ void selection_functions::PostCutsLeadingMomentumTrueParticle(std::vector<xsecAn
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_momentum = leading_shower.pfpMomentum();
 		const int leading_mc_pdg = leading_shower.MCPdgCode();
-		if(leading_mc_pdg == 11 || leading_mc_pdg == -11) {h_leading_momentum_electron->Fill(leading_momentum); }
-		if(leading_mc_pdg == 13 || leading_mc_pdg == -13) {h_leading_momentum_muon->Fill(leading_momentum); }
-		if(leading_mc_pdg == 22) {h_leading_momentum_photon->Fill(leading_momentum); }
-		if(leading_mc_pdg == 2212) {h_leading_momentum_proton->Fill(leading_momentum); }
-		if(leading_mc_pdg == 211 || leading_mc_pdg == -211) {h_leading_momentum_pion->Fill(leading_momentum); }
-		if(leading_mc_pdg == 2112) {h_leading_momentum_neutron->Fill(leading_momentum); }
+		bool good_id = false;
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11)
+		{
+			h_leading_momentum_electron->Fill(leading_momentum);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 13 || leading_mc_pdg == -13)
+		{
+			h_leading_momentum_muon->Fill(leading_momentum);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 22)
+		{
+			h_leading_momentum_photon->Fill(leading_momentum);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 2212)
+		{
+			h_leading_momentum_proton->Fill(leading_momentum);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 211 || leading_mc_pdg == -211)
+		{
+			h_leading_momentum_pion->Fill(leading_momentum);
+			good_id = true;
+		}
+		if(leading_mc_pdg == 2112)
+		{
+			h_leading_momentum_neutron->Fill(leading_momentum);
+			good_id = true;
+		}
 		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 || leading_mc_pdg == 311 || leading_mc_pdg == 321 || leading_mc_pdg == -321)
-		{h_leading_momentum_kaon->Fill(leading_momentum); }
-		if(leading_mc_pdg == 0) {h_leading_momentum_mc_unmatched->Fill(leading_momentum); }
+		{
+			h_leading_momentum_kaon->Fill(leading_momentum);
+			good_id = true;
+		}
+		if(good_id == false )
+		{
+			h_leading_momentum_mc_unmatched->Fill(leading_momentum);
+		}
 	}
 }
 //***************************************************************************
