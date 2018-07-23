@@ -20,7 +20,7 @@ bool selection_cuts::flash_pe(int flash_pe, int flash_pe_threshold)
 }
 //***************************************************************************
 void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time, bool ext)
+                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time, const int stream)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 
@@ -62,10 +62,21 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		current_event = fEvent;
 		double op_flash_time = fOpFlashTime;
 
+		//const int stream values:
+		// 0 = data (on-beam)
+		// 1 = ext  (off-beam)
+		// 2 = mc
+
 		//Note: EXT and On-Beam triggers are shifted
 		//this shifts the EXT to the On-Beam timing
-		//if(ext) {op_flash_time = op_flash_time - 0.343; }
-		if(ext) {op_flash_time = op_flash_time - 0.406; }
+		if(stream == 1) {op_flash_time = op_flash_time - 0.343; }
+		//if(ext) {op_flash_time = op_flash_time - 0.406; }
+
+		//in this case the MC is shifted compared to the on-beam data
+		//this is an artefact of the MC simulation - should be corrected eventually
+		//in the future.
+		//based on comparisons, shift is ~1 us
+		if(stream == 2) {op_flash_time = op_flash_time + 1.0; }
 
 		auto const pair = std::make_pair(op_flash_time, current_run);
 		flash_time->push_back(pair);
