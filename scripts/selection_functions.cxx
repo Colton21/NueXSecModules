@@ -232,7 +232,7 @@ void selection_functions::PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TP
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_ext_unmatched->Fill(leading_dedx);
+		h_dedx_cuts_ext_unmatched->Fill(leading_dedx * (242.72 / 196.979));
 	}//end loop tpc objects
 }
 //***************************************************************************
@@ -2557,7 +2557,12 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 		   tpco_id == "nue_cc_res" ||
 		   tpco_id == "nue_cc_dis" ||
 		   tpco_id == "nue_cc_mec" ||
-		   tpco_id == "nue_cc_coh")
+		   tpco_id == "nue_cc_coh" ||
+		   tpco_id == "nue_bar_cc_qe"  ||
+		   tpco_id == "nue_bar_cc_res" ||
+		   tpco_id == "nue_bar_cc_dis" ||
+		   tpco_id == "nue_bar_cc_mec" ||
+		   tpco_id == "nue_bar_cc_coh")
 		{
 			for(int j = 0; j < n_pfp; j++)
 			{
@@ -2610,7 +2615,7 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 			   tpco_id != "nue_cc_dis" &&
 			   tpco_id != "nue_cc_mec" &&
 			   tpco_id != "nue_cc_coh" &&
-			   tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_bar_cc_qe"  &&
 			   tpco_id != "nue_bar_cc_res" &&
 			   tpco_id != "nue_bar_cc_dis" &&
 			   tpco_id != "nue_bar_cc_mec" &&
@@ -2640,11 +2645,11 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 			   tpco_id != "nue_cc_dis" &&
 			   tpco_id != "nue_cc_mec" &&
 			   tpco_id != "nue_cc_coh" &&
-			   tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_bar_cc_qe"  &&
 			   tpco_id != "nue_bar_cc_res" &&
 			   tpco_id != "nue_bar_cc_dis" &&
-			   tpco_id != "nue_bar_cc_mec" &&
-			   tpco_id != "nue_bar_cc_coh" )
+			   tpco_id != "nue_bar_cc_coh" &&
+			   tpco_id != "nue_bar_cc_mec" )
 			{
 				_2_shwr->at(1) += 1;
 			}
@@ -2670,7 +2675,7 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 			   tpco_id != "nue_cc_dis" &&
 			   tpco_id != "nue_cc_mec" &&
 			   tpco_id != "nue_cc_coh" &&
-			   tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_bar_cc_qe"  &&
 			   tpco_id != "nue_bar_cc_res" &&
 			   tpco_id != "nue_bar_cc_dis" &&
 			   tpco_id != "nue_bar_cc_mec" &&
@@ -2700,7 +2705,7 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 			   tpco_id != "nue_cc_dis" &&
 			   tpco_id != "nue_cc_mec" &&
 			   tpco_id != "nue_cc_coh" &&
-			   tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_bar_cc_qe"  &&
 			   tpco_id != "nue_bar_cc_res" &&
 			   tpco_id != "nue_bar_cc_dis" &&
 			   tpco_id != "nue_bar_cc_mec" &&
@@ -2730,7 +2735,7 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 			   tpco_id != "nue_cc_dis" &&
 			   tpco_id != "nue_cc_mec" &&
 			   tpco_id != "nue_cc_coh" &&
-			   tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_bar_cc_qe"  &&
 			   tpco_id != "nue_bar_cc_res" &&
 			   tpco_id != "nue_bar_cc_dis" &&
 			   tpco_id != "nue_bar_cc_mec" &&
@@ -2760,7 +2765,7 @@ void selection_functions::TopologyEfficiency(std::vector<xsecAna::TPCObjectConta
 			   tpco_id != "nue_cc_dis" &&
 			   tpco_id != "nue_cc_mec" &&
 			   tpco_id != "nue_cc_coh" &&
-			   tpco_id != "nue_cc_qe"  &&
+			   tpco_id != "nue_bar_cc_qe"  &&
 			   tpco_id != "nue_bar_cc_res" &&
 			   tpco_id != "nue_bar_cc_dis" &&
 			   tpco_id != "nue_bar_cc_mec" &&
@@ -4896,7 +4901,7 @@ void selection_functions::LeadingMomentum(std::vector<xsecAna::TPCObjectContaine
 		{
 			h_ele_pfp_momentum_nue_cc->Fill(leading_shower_momentum);
 		}
-		if(tpco_id == "nue_cc_mec")
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
 			h_ele_pfp_momentum_nue_cc->Fill(leading_shower_momentum);
 		}
@@ -5076,7 +5081,7 @@ void selection_functions::LeadingMomentumTrackTopology(std::vector<xsecAna::TPCO
 				h_ele_pfp_momentum_has_track_nue_cc->Fill(leading_shower_momentum);
 			}
 		}
-		if(tpco_id == "nue_cc_mec")
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
 			if(n_pfp_tracks == 0)
 			{
@@ -5915,14 +5920,14 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 		const double opening_angle = std::get<9>(my_tuple);
 
 		int signal_bkg = 0;
-		if(event_type == "nue_cc_qe")   {signal_bkg = 1; }
-		if(event_type == "nue_cc_res")  {signal_bkg = 2; }
-		if(event_type == "nue_cc_dis")  {signal_bkg = 3; }
-		if(event_type == "nue_cc_coh")  {signal_bkg = 4; }
-		if(event_type == "nue_cc_mec")  {signal_bkg = 5; }
+		if(event_type == "nue_cc_qe"  || event_type == "nue_bar_cc_qe")   {signal_bkg = 1; }
+		if(event_type == "nue_cc_res" || event_type == "nue_bar_cc_res")  {signal_bkg = 2; }
+		if(event_type == "nue_cc_dis" || event_type == "nue_bar_cc_dis")  {signal_bkg = 3; }
+		if(event_type == "nue_cc_coh" || event_type == "nue_bar_cc_coh")  {signal_bkg = 4; }
+		if(event_type == "nue_cc_mec" || event_type == "nue_bar_cc_mec")  {signal_bkg = 5; }
 		if(event_type == "InTime")      {signal_bkg = 6; }
 		//if(signal_bkg == 1)
-		if(event_type == "nue_cc_qe")
+		if(event_type == "nue_cc_qe" || event_type == "nue_bar_cc_qe")
 		{
 			if(num_tracks == 0)
 			{
@@ -5940,7 +5945,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 			}
 		}
 		//if(signal_bkg == 2)
-		if(event_type == "nue_cc_res")
+		if(event_type == "nue_cc_res" || event_type == "nue_bar_cc_res")
 		{
 			if(num_tracks == 0)
 			{
@@ -5958,7 +5963,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 			}
 		}
 		//if(signal_bkg == 3)
-		if(event_type == "nue_cc_dis")
+		if(event_type == "nue_cc_dis" || event_type == "nue_bar_cc_dis")
 		{
 			if(num_tracks == 0)
 			{
@@ -5976,7 +5981,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 			}
 		}
 		//if(signal_bkg == 4)
-		if(event_type == "nue_cc_coh")
+		if(event_type == "nue_cc_coh" || event_type == "nue_bar_cc_coh")
 		{
 			if(num_tracks == 0)
 			{
@@ -5994,7 +5999,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 			}
 		}
 		//if(signal_bkg == 5)
-		if(event_type == "nue_cc_mec")
+		if(event_type == "nue_cc_mec" || event_type == "nue_bar_cc_mec")
 		{
 			if(num_tracks == 0)
 			{
@@ -7546,7 +7551,7 @@ void selection_functions::dEdxCollectionAngleInTime(std::vector<xsecAna::TPCObje
 		const double leading_dir_y = leading_shower.pfpDirY();
 		const double leading_dir_z = leading_shower.pfpDirZ();
 		const double leading_angle_collection = atan2(leading_dir_y, leading_dir_z);
-		h_dedx_collection_angle_intime->Fill(leading_dedx, leading_angle_collection);
+		h_dedx_collection_angle_intime->Fill(leading_dedx * (242.72 / 196.979), leading_angle_collection);
 	}
 }
 //***************************************************************************
@@ -8490,9 +8495,9 @@ void selection_functions::PostCutsdedxThetaSliceInTime(std::vector<xsecAna::TPCO
 		TVector3 numi_vector;
 		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
-		if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_intime->Fill(leading_dedx); }
-		if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_intime->Fill(leading_dedx); }
-		if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_intime->Fill(leading_dedx); }
+		if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_intime->Fill(leading_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_intime->Fill(leading_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_intime->Fill(leading_dedx * (242.72 / 196.979)); }
 	}
 }
 //***************************************************************************
