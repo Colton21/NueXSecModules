@@ -554,6 +554,11 @@ void selection::make_selection( const char * _file1,
 			                                                                                 h_ele_momentum_slice_2_data,
 			                                                                                 h_ele_momentum_slice_3_data);
 
+			_data_functions_instance.selection_functions_data::dedxThetaSliceData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                      h_dedx_slice_1_data,
+			                                                                      h_dedx_slice_2_data,
+			                                                                      h_dedx_slice_3_data);
+
 			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                            0, 0,
@@ -1079,6 +1084,11 @@ void selection::make_selection( const char * _file1,
 			                                                                                 h_ele_momentum_slice_1_intime,
 			                                                                                 h_ele_momentum_slice_2_intime,
 			                                                                                 h_ele_momentum_slice_3_intime);
+
+			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                      h_dedx_slice_1_intime,
+			                                                                      h_dedx_slice_2_intime,
+			                                                                      h_dedx_slice_3_intime);
 
 			_functions_instance.selection_functions::dEdxThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                         _verbose, h_dedx_theta_intime);
@@ -2904,6 +2914,38 @@ void selection::make_selection( const char * _file1,
 		                                                                           h_ele_momentum_slice_3_cosmic,
 		                                                                           h_ele_momentum_slice_3_other_mixed,
 		                                                                           h_ele_momentum_slice_3_unmatched);
+
+		_functions_instance.selection_functions::PostCutsdedxThetaSlice(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                h_dedx_slice_1_nue_cc,
+		                                                                h_dedx_slice_1_nue_cc_out_fv,
+		                                                                h_dedx_slice_1_nue_cc_mixed,
+		                                                                h_dedx_slice_1_numu_cc,
+		                                                                h_dedx_slice_1_numu_cc_mixed,
+		                                                                h_dedx_slice_1_nc,
+		                                                                h_dedx_slice_1_nc_pi0,
+		                                                                h_dedx_slice_1_cosmic,
+		                                                                h_dedx_slice_1_other_mixed,
+		                                                                h_dedx_slice_1_unmatched,
+		                                                                h_dedx_slice_2_nue_cc,
+		                                                                h_dedx_slice_2_nue_cc_out_fv,
+		                                                                h_dedx_slice_2_nue_cc_mixed,
+		                                                                h_dedx_slice_2_numu_cc,
+		                                                                h_dedx_slice_2_numu_cc_mixed,
+		                                                                h_dedx_slice_2_nc,
+		                                                                h_dedx_slice_2_nc_pi0,
+		                                                                h_dedx_slice_2_cosmic,
+		                                                                h_dedx_slice_2_other_mixed,
+		                                                                h_dedx_slice_2_unmatched,
+		                                                                h_dedx_slice_3_nue_cc,
+		                                                                h_dedx_slice_3_nue_cc_out_fv,
+		                                                                h_dedx_slice_3_nue_cc_mixed,
+		                                                                h_dedx_slice_3_numu_cc,
+		                                                                h_dedx_slice_3_numu_cc_mixed,
+		                                                                h_dedx_slice_3_nc,
+		                                                                h_dedx_slice_3_nc_pi0,
+		                                                                h_dedx_slice_3_cosmic,
+		                                                                h_dedx_slice_3_other_mixed,
+		                                                                h_dedx_slice_3_unmatched);
 
 		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
 		                                                              0, 0, tpco_classifier_v,
@@ -5736,6 +5778,7 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Theta Slice (0 - 40)", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_theta_slice_1_data.pdf");
+
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_momentum_slice_2_nue_cc,
 	        h_ele_momentum_slice_2_nue_cc_mixed,
@@ -5771,6 +5814,60 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Theta Slice (90 - 180)", "Leading Shower Momentum [GeV]", "",
 	        "../scripts/plots/post_cuts_ele_momentum_theta_slice_3_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_slice_1_nue_cc,
+	        h_dedx_slice_1_nue_cc_mixed,
+	        h_dedx_slice_1_nue_cc_out_fv,
+	        h_dedx_slice_1_numu_cc,
+	        h_dedx_slice_1_numu_cc_mixed,
+	        h_dedx_slice_1_cosmic,
+	        h_dedx_slice_1_nc,
+	        h_dedx_slice_1_nc_pi0,
+	        h_dedx_slice_1_other_mixed,
+	        h_dedx_slice_1_unmatched,
+	        h_dedx_slice_1_intime,
+	        intime_scale_factor,
+	        h_dedx_slice_1_data,
+	        data_scale_factor,
+	        "Theta Slice (0 - 40)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "../scripts/plots/post_cuts_dedx_theta_slice_1_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_slice_2_nue_cc,
+	        h_dedx_slice_2_nue_cc_mixed,
+	        h_dedx_slice_2_nue_cc_out_fv,
+	        h_dedx_slice_2_numu_cc,
+	        h_dedx_slice_2_numu_cc_mixed,
+	        h_dedx_slice_2_cosmic,
+	        h_dedx_slice_2_nc,
+	        h_dedx_slice_2_nc_pi0,
+	        h_dedx_slice_2_other_mixed,
+	        h_dedx_slice_2_unmatched,
+	        h_dedx_slice_2_intime,
+	        intime_scale_factor,
+	        h_dedx_slice_2_data,
+	        data_scale_factor,
+	        "Theta Slice (40 - 90)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "../scripts/plots/post_cuts_dedx_theta_slice_2_data.pdf");
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_slice_3_nue_cc,
+	        h_dedx_slice_3_nue_cc_mixed,
+	        h_dedx_slice_3_nue_cc_out_fv,
+	        h_dedx_slice_3_numu_cc,
+	        h_dedx_slice_3_numu_cc_mixed,
+	        h_dedx_slice_3_cosmic,
+	        h_dedx_slice_3_nc,
+	        h_dedx_slice_3_nc_pi0,
+	        h_dedx_slice_3_other_mixed,
+	        h_dedx_slice_3_unmatched,
+	        h_dedx_slice_3_intime,
+	        intime_scale_factor,
+	        h_dedx_slice_3_data,
+	        data_scale_factor,
+	        "Theta Slice (90 - 180)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "../scripts/plots/post_cuts_dedx_theta_slice_3_data.pdf");
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

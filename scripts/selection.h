@@ -2066,6 +2066,45 @@ TH1D * h_ele_momentum_slice_3_unmatched      = new TH1D ("h_ele_momentum_slice_3
 TH1D * h_ele_momentum_slice_3_intime         = new TH1D ("h_ele_mometnum_slice_3_intime",          "h_ele_momentum_slice_3_intime",        20, 0, 4);
 TH1D * h_ele_momentum_slice_3_data           = new TH1D ("h_ele_momentum_slice_3_data",            "h_ele_momentum_slice_3_data",          20, 0, 4);
 
+TH1D * h_dedx_slice_1_nue_cc         = new TH1D ("h_dedx_slice_1_nue_cc",          "h_dedx_slice_1_nue_cc",        20, 0, 4);
+TH1D * h_dedx_slice_1_nue_cc_out_fv  = new TH1D ("h_dedx_slice_1_nue_cc_out_fv",   "h_dedx_slice_1_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_dedx_slice_1_nue_cc_mixed   = new TH1D ("h_dedx_slice_1_nue_cc_mixed",    "h_dedx_slice_1_nue_cc_mixed",  20, 0, 4);
+TH1D * h_dedx_slice_1_numu_cc        = new TH1D ("h_dedx_slice_1_numu_cc",         "h_dedx_slice_1_numu_cc",       20, 0, 4);
+TH1D * h_dedx_slice_1_numu_cc_mixed  = new TH1D ("h_dedx_slice_1_numu_cc_mixed",   "h_dedx_slice_1_numu_cc_mixed", 20, 0, 4);
+TH1D * h_dedx_slice_1_nc             = new TH1D ("h_dedx_slice_1_nc",              "h_dedx_slice_1_nc",            20, 0, 4);
+TH1D * h_dedx_slice_1_nc_pi0         = new TH1D ("h_dedx_slice_1_nc_pi0",          "h_dedx_slice_1_nc_pi0",        20, 0, 4);
+TH1D * h_dedx_slice_1_cosmic         = new TH1D ("h_dedx_slice_1_cosmic",          "h_dedx_slice_1_cosmic",        20, 0, 4);
+TH1D * h_dedx_slice_1_other_mixed    = new TH1D ("h_dedx_slice_1_other_mixed",     "h_dedx_slice_1_other_mixed",   20, 0, 4);
+TH1D * h_dedx_slice_1_unmatched      = new TH1D ("h_dedx_slice_1_unmatched",       "h_dedx_slice_1_unmatched",     20, 0, 4);
+TH1D * h_dedx_slice_1_intime         = new TH1D ("h_dedx_slice_1_intime",          "h_dedx_slice_1_intime",        20, 0, 4);
+TH1D * h_dedx_slice_1_data           = new TH1D ("h_dedx_slice_1_data",            "h_dedx_slice_1_data",          20, 0, 4);
+
+TH1D * h_dedx_slice_2_nue_cc         = new TH1D ("h_dedx_slice_2_nue_cc",          "h_dedx_slice_2_nue_cc",        20, 0, 4);
+TH1D * h_dedx_slice_2_nue_cc_out_fv  = new TH1D ("h_dedx_slice_2_nue_cc_out_fv",   "h_dedx_slice_2_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_dedx_slice_2_nue_cc_mixed   = new TH1D ("h_dedx_slice_2_nue_cc_mixed",    "h_dedx_slice_2_nue_cc_mixed",  20, 0, 4);
+TH1D * h_dedx_slice_2_numu_cc        = new TH1D ("h_dedx_slice_2_numu_cc",         "h_dedx_slice_2_numu_cc",       20, 0, 4);
+TH1D * h_dedx_slice_2_numu_cc_mixed  = new TH1D ("h_dedx_slice_2_numu_cc_mixed",   "h_dedx_slice_2_numu_cc_mixed", 20, 0, 4);
+TH1D * h_dedx_slice_2_nc             = new TH1D ("h_dedx_slice_2_nc",              "h_dedx_slice_2_nc",            20, 0, 4);
+TH1D * h_dedx_slice_2_nc_pi0         = new TH1D ("h_dedx_slice_2_nc_pi0",          "h_dedx_slice_2_nc_pi0",        20, 0, 4);
+TH1D * h_dedx_slice_2_cosmic         = new TH1D ("h_dedx_slice_2_cosmic",          "h_dedx_slice_2_cosmic",        20, 0, 4);
+TH1D * h_dedx_slice_2_other_mixed    = new TH1D ("h_dedx_slice_2_other_mixed",     "h_dedx_slice_2_other_mixed",   20, 0, 4);
+TH1D * h_dedx_slice_2_unmatched      = new TH1D ("h_dedx_slice_2_unmatched",       "h_dedx_slice_2_unmatched",     20, 0, 4);
+TH1D * h_dedx_slice_2_intime         = new TH1D ("h_dedx_slice_2_intime",          "h_dedx_slice_2_intime",        20, 0, 4);
+TH1D * h_dedx_slice_2_data           = new TH1D ("h_dedx_slice_2_data",            "h_dedx_slice_2_data",          20, 0, 4);
+
+TH1D * h_dedx_slice_3_nue_cc         = new TH1D ("h_dedx_slice_3_nue_cc",          "h_dedx_slice_3_nue_cc",        20, 0, 4);
+TH1D * h_dedx_slice_3_nue_cc_out_fv  = new TH1D ("h_dedx_slice_3_nue_cc_out_fv",   "h_dedx_slice_3_nue_cc_out_fv", 20, 0, 4);
+TH1D * h_dedx_slice_3_nue_cc_mixed   = new TH1D ("h_dedx_slice_3_nue_cc_mixed",    "h_dedx_slice_3_nue_cc_mixed",  20, 0, 4);
+TH1D * h_dedx_slice_3_numu_cc        = new TH1D ("h_dedx_slice_3_numu_cc",         "h_dedx_slice_3_numu_cc",       20, 0, 4);
+TH1D * h_dedx_slice_3_numu_cc_mixed  = new TH1D ("h_dedx_slice_3_numu_cc_mixed",   "h_dedx_slice_3_numu_cc_mixed", 20, 0, 4);
+TH1D * h_dedx_slice_3_nc             = new TH1D ("h_dedx_slice_3_nc",              "h_dedx_slice_3_nc",            20, 0, 4);
+TH1D * h_dedx_slice_3_nc_pi0         = new TH1D ("h_dedx_slice_3_nc_pi0",          "h_dedx_slice_3_nc_pi0",        20, 0, 4);
+TH1D * h_dedx_slice_3_cosmic         = new TH1D ("h_dedx_slice_3_cosmic",          "h_dedx_slice_3_cosmic",        20, 0, 4);
+TH1D * h_dedx_slice_3_other_mixed    = new TH1D ("h_dedx_slice_3_other_mixed",     "h_dedx_slice_3_other_mixed",   20, 0, 4);
+TH1D * h_dedx_slice_3_unmatched      = new TH1D ("h_dedx_slice_3_unmatched",       "h_dedx_slice_3_unmatched",     20, 0, 4);
+TH1D * h_dedx_slice_3_intime         = new TH1D ("h_dedx_slice_3_intime",          "h_dedx_slice_3_intime",        20, 0, 4);
+TH1D * h_dedx_slice_3_data           = new TH1D ("h_dedx_slice_3_data",            "h_dedx_slice_3_data",          20, 0, 4);
+
 }; //end class
 
 }//end namespace

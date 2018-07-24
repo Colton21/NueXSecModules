@@ -380,6 +380,36 @@ void selection_functions_data::LeadingMomentumThetaSliceData(std::vector<xsecAna
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::dedxThetaSliceData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                  TH1D * h_dedx_1_data,
+                                                  TH1D * h_dedx_2_data,
+                                                  TH1D * h_dedx_3_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shower_dedx = leading_shower.PfpdEdx().at(2);
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, 0, 0);
+		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+		if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_data->Fill(leading_shower_dedx); }
+		if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_data->Fill(leading_shower_dedx); }
+		if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_data->Fill(leading_shower_dedx); }
+	}
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions_data::LeadingMomentumTrackTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                                 TH1D * h_ele_pfp_momentum_no_track_data,
