@@ -145,11 +145,11 @@ void FillTPCOClassV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     std::vector<std::pair<std::string, int> > * tpco_classifier_v);
 //***************************************************************************
 //***************************************************************************
-static double calcNumNucleons(double _x1, double _x2, double _y1,
+static double calcNumNucleons(const bool is_data, double _x1, double _x2, double _y1,
                               double _y2, double _z1, double _z2);
 //***************************************************************************
 //***************************************************************************
-static void calcXSec(double _x1, double _x2, double _y1,
+static void calcXSec(const bool is_data, double _x1, double _x2, double _y1,
                      double _y2, double _z1, double _z2,
                      double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************

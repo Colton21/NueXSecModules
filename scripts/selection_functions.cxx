@@ -998,7 +998,7 @@ void selection_functions::FillTPCOClassV(std::vector<xsecAna::TPCObjectContainer
 }
 //***************************************************************************
 //***************************************************************************
-double selection_functions::calcNumNucleons(double _x1, double _x2, double _y1,
+double selection_functions::calcNumNucleons(const bool is_data, double _x1, double _x2, double _y1,
                                             double _y2, double _z1, double _z2)
 {
 	const double det_x1 = 0;
@@ -1017,8 +1017,9 @@ double selection_functions::calcNumNucleons(double _x1, double _x2, double _y1,
 
 	const double vol = (x2 - x1) * (y2 - y1) * (z2 - z1); //cm^3
 
-	const double lar_density = 1.3954; // g/cm^3
-	//cosnt double lar_density_data = 1.3836; // g/cm^3 -- comes from Joseph's note
+	double lar_density = 0;
+	if(!is_data) {lar_density = 1.3954; } // g/cm^3
+	if(is_data)  {lar_density = 1.3836; } // g/cm^3 -- comes from Joseph's note
 	const double avagadro_num = 6.022e23; // molecule per mol
 	const double n_nucleon = 40.0; // argon has 40
 	const double mol_mass = 39.95; // g/mol
@@ -1039,15 +1040,16 @@ double selection_functions::calcNumNucleons(double _x1, double _x2, double _y1,
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::calcXSec(double _x1, double _x2, double _y1,
+void selection_functions::calcXSec(const bool is_data, double _x1, double _x2, double _y1,
                                    double _y2, double _z1, double _z2,
                                    double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc)
 {
 	const int n_events = n_total - n_bkg;
 	//scale_factor = 2.4 * math.pow(10, 17)  # POT / nue
 	//calculate the number of nucleons based on the fiducial volume
-	const double n_target = selection_functions::calcNumNucleons(_x1, _x2, _y1,
+	const double n_target = selection_functions::calcNumNucleons(is_data, _x1, _x2, _y1,
 	                                                             _y2, _z1, _z2);
+
 
 	std::cout << "-------------------" << std::endl;
 	std::cout << "N_total    :  " << n_total << std::endl;
@@ -1106,7 +1108,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	//******************************
 
 	const int n_total_data = final_counter_data;
-	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	selection_functions::calcXSec(true, _x1, _x2, _y1, _y2, _z1, _z2,
 	                              n_total_data, n_bkg_data, flux_data,
 	                              efficiency, xsec_cc);
 	double xsec_cc_data = xsec_cc->at(0);
@@ -1125,7 +1127,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	//************************************
 	//nue
 	const int n_total_mc = final_counter_nue_cc + final_counter_nue_bar_cc + n_bkg;
-	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	selection_functions::calcXSec(false, _x1, _x2, _y1, _y2, _z1, _z2,
 	                              final_counter_nue_cc, 0, flux_nue,
 	                              efficiency_nue, xsec_cc);
 	double xsec_cc_stat_mc_nue = xsec_cc->at(0) * (pow((sqrt(n_total_mc) / n_total_mc), 2) +
@@ -1140,7 +1142,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	xsec_cc->clear();
 
 	//nue_bar
-	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	selection_functions::calcXSec(false, _x1, _x2, _y1, _y2, _z1, _z2,
 	                              final_counter_nue_bar_cc, 0, flux_nue_bar,
 	                              efficiency_nue_bar, xsec_cc);
 	double xsec_cc_stat_mc_nue_bar = xsec_cc->at(0) * (pow((sqrt(n_total_mc) / n_total_mc), 2) +
@@ -1157,7 +1159,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	//************************************
 	//******** True Level ****************
 	//************************************
-	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	selection_functions::calcXSec(false, _x1, _x2, _y1, _y2, _z1, _z2,
 	                              total_mc_entries_inFV_nue, 0, flux_nue,
 	                              1, xsec_cc);
 	double xsec_cc_stat_truth = xsec_cc->at(1);
@@ -1169,7 +1171,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	          << xsec_cc->at(2) << std::endl;
 	xsec_cc->clear();
 
-	selection_functions::calcXSec(_x1, _x2, _y1, _y2, _z1, _z2,
+	selection_functions::calcXSec(false, _x1, _x2, _y1, _y2, _z1, _z2,
 	                              total_mc_entries_inFV_nue_bar, 0, flux_nue_bar,
 	                              1, xsec_cc);
 	xsec_cc_stat_truth = xsec_cc->at(1);
