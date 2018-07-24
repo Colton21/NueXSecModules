@@ -11,7 +11,9 @@ void selection::make_selection( const char * _file1,
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
-	const bool _post_cuts_verbose = false;
+	const bool _post_cuts_verbose = true;
+	gErrorIgnoreLevel = kWarning;
+
 	//first we need to open the root file
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
@@ -187,8 +189,8 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(24, 0);
 
-	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v_data
-	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v_data
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	//check if a 3rd input parameter was given - if not skip the loop for data
 	if(strcmp(_file3, "empty") != 0)
@@ -260,7 +262,7 @@ void selection::make_selection( const char * _file1,
 			{
 				if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 				continue;
-			}        //false
+			}//false
 
 			//writing the run and subrun values to a text file -
 			//this can be used as a cross-check for POT counting
@@ -638,8 +640,8 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
 	tabulated_origins_intime->resize(24, 0);
 
-	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	if(strcmp(_file2, "empty") != 0)
 	{
@@ -1276,8 +1278,8 @@ void selection::make_selection( const char * _file1,
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	// std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
 	//         = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
-	std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_open_angle_cuts_v
-	        = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_open_angle_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
 
 	std::cout << "=====================" << std::endl;
 	std::cout << "== Begin Selection ==" << std::endl;
@@ -3122,7 +3124,16 @@ void selection::make_selection( const char * _file1,
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 
-	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v, _post_cuts_verbose); }
+	if(_post_cuts_verbose == true)
+	{
+		std::cout << "Print Post Cuts MC: " << std::endl;
+		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v,      _post_cuts_verbose);
+	}
+	if(_post_cuts_verbose == true)
+	{
+		std::cout << "Print Post Cuts On-Beam Data: " << std::endl;
+		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_data, _post_cuts_verbose);
+	}
 	_functions_instance.selection_functions::PostCutVectorPlots(post_cuts_v, _post_cuts_verbose,
 	                                                            h_post_cuts_num_showers_purity_qe,
 	                                                            h_post_cuts_num_showers_purity_res,
@@ -3150,9 +3161,6 @@ void selection::make_selection( const char * _file1,
 //********************//
 //**** Histograms ****//
 //*******************//
-
-	gErrorIgnoreLevel = kWarning;
-
 	for(auto const flash_timing : * flash_time)        {h_flash_time->Fill(flash_timing.first);        }
 	for(auto const flash_timing : * data_flash_time)   {h_flash_time_data->Fill(flash_timing.first);   }
 	for(auto const flash_timing : * intime_flash_time) {h_flash_time_intime->Fill(flash_timing.first); }
@@ -3227,8 +3235,8 @@ void selection::make_selection( const char * _file1,
 	                                      ";True Nue Electron Dir Y;Efficiency", "../scripts/plots/signal_selection_ele_dir_y_efficiency.pdf");
 	histogram_functions::PlotTEfficiency (h_ele_dir_z_eff_num, h_ele_dir_z_eff_den,
 	                                      ";True Nue Electron Dir Z;Efficiency", "../scripts/plots/signal_selection_ele_dir_z_efficiency.pdf");
-	histogram_functions::PlotTEfficiency (h_post_cuts_num_tracks_showers_signal_total, h_post_cuts_num_tracks_showers_bkg_total,
-	                                      ";Num Reco Showers; Num Reco Tracks", "../scripts/plots/post_cuts_num_tracks_showers_eff_purity_total.pdf");
+	// histogram_functions::PlotTEfficiency (h_post_cuts_num_tracks_showers_signal_total, h_post_cuts_num_tracks_showers_bkg_total,
+	//                                       ";Num Reco Showers; Num Reco Tracks", "../scripts/plots/post_cuts_num_tracks_showers_eff_purity_total.pdf");
 	histogram_functions::PlotTEfficiency(h_ele_cos_theta_eff_num_pre_cuts, h_ele_cos_theta_eff_den, ";True Electron Cos(#theta) Pre-Cuts;Efficiency",
 	                                     "../scripts/plots/signal_selection_ele_cos_theta_pre_cuts_efficiency.pdf");
 
@@ -3238,7 +3246,7 @@ void selection::make_selection( const char * _file1,
 	                                      "../scripts/plots/signal_selection_ele_energy_efficiency.pdf");
 	//these histograms are the same, but are being rebinned
 	histogram_functions::PlotTEfficiency(h_ele_eng_eff_num_pre_cuts, h_ele_eng_eff_den, true,
-	                                     ";True Electron Energy Pre-Cuts;Efficiency", "../scripts/plots/signal_selection_ele_eng_pre_cuts_efficiency_rebin.pdf");
+	                                     ";True Electron Energy Pre-Cuts [GeV];Efficiency", "../scripts/plots/signal_selection_ele_eng_pre_cuts_efficiency_rebin.pdf");
 	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, true,
 	                                      ";True Nue Electron Energy [GeV];Efficiency", "../scripts/plots/signal_selection_ele_energy_efficiency_rebin.pdf");
 
@@ -4518,7 +4526,7 @@ void selection::make_selection( const char * _file1,
 	                                            "Leading Shower Cos(#theta)", "",
 	                                            "../scripts/plots/post_cuts_leading_cos_theta_last_intime.pdf");
 	histogram_functions::PlotSimpleStackInTime (h_ele_cos_theta_nue_cc,  h_ele_cos_theta_nue_cc_mixed,
-	                                            h_ele_cos_theta_last_nue_cc_out_fv,
+	                                            h_ele_cos_theta_nue_cc_out_fv,
 	                                            h_ele_cos_theta_numu_cc, h_ele_cos_theta_numu_cc_mixed,
 	                                            h_ele_cos_theta_cosmic,  h_ele_cos_theta_nc,
 	                                            h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,

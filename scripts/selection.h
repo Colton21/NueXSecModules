@@ -205,8 +205,8 @@ std::vector<int> tabulated_origins;
 //TEfficiency histograms
 TH1D * h_nue_eng_eff_den           = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 40, 0, 4);
 TH1D * h_nue_eng_eff_num           = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 40, 0, 4);
-TH1D * h_ele_eng_eff_den           = new TH1D("h_ele_eng_eff_den", "h_nue_ele_eff_den", 40, 0, 4);
-TH1D * h_ele_eng_eff_num           = new TH1D("h_ele_eng_eff_num", "h_nue_ele_eff_num", 40, 0, 4);
+TH1D * h_ele_eng_eff_den           = new TH1D("h_ele_eng_eff_den", "h_ele_eng_eff_den", 40, 0, 4);
+TH1D * h_ele_eng_eff_num           = new TH1D("h_ele_eng_eff_num", "h_ele_eng_eff_num", 40, 0, 4);
 TH1D * h_ele_eng_eff_num_pre_cuts  = new TH1D("h_ele_eng_eff_num_pre_cuts", "h_ele_eng_eff_num_pre_cuts", 40, 0, 4);
 TH1D * h_nue_vtx_x_eff_den         = new TH1D("h_nue_vtx_x_eff_den", "h_nue_vtx_x_eff_den", 6, 0, 256.35);
 TH1D * h_nue_vtx_x_eff_num         = new TH1D("h_nue_vtx_x_eff_num", "h_nue_vtx_x_eff_num", 6, 0, 256.35);

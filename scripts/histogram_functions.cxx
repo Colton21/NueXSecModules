@@ -33,7 +33,7 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 {
 	TCanvas * efficiency_c1 = new TCanvas();
 	efficiency_c1->cd();
-	TH1* h_num_clone = (TH1*)h_num->Clone("h_hum_clone");
+	TH1* h_num_clone = (TH1*)h_num->Clone("h_num_clone");
 	TH1* h_den_clone = (TH1*)h_den->Clone("h_den_clone");
 
 	if(rebin)
@@ -49,14 +49,24 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->SetMarkerStyle(20);
 		teff->SetMarkerSize(0.5);
 		teff->Draw("AP");
+		std::cout << "----------" << std::endl;
 		for(int i = 1; i < h_num_clone_rebin->GetNbinsX()+1; i++)
 		{
 			std::cout << "Bin: " << i << " Value: " << h_num_clone_rebin->GetBinContent(i) / h_den_clone_rebin->GetBinContent(i) << std::endl;
 		}
+		std::cout << "----------" << std::endl;
 
 	}
 	if(!rebin)
 	{
+		// std::cout << h_num_clone->GetNbinsX()<< ", " << h_den_clone->GetNbinsX() << std::endl;
+		// // num
+		// std::cout << "[";
+		// for (int i(0); i< h_num_clone->GetSize(); i++) {std::cout << h_num_clone->GetBinContent(i) << ", "; }
+		// std::cout << "]" << std::endl;
+		// std::cout << "[";
+		// for (int i(0); i< h_den_clone->GetSize(); i++) {std::cout << h_den_clone->GetBinContent(i) << ", "; }
+		// std::cout << "]" << std::endl;
 		TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
 		teff->SetTitle(title);
 		teff->SetLineColor(kGreen+3);
@@ -66,6 +76,34 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->Draw("AP");
 	}
 	efficiency_c1->Print(print_name);
+	std::cout << "Print Name: " << print_name << std::endl;
+}
+
+void histogram_functions::PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name)
+{
+	TCanvas * efficiency_c1 = new TCanvas();
+	efficiency_c1->cd();
+	TH2* h_num_clone = (TH2*)h_num->Clone("h_num_clone");
+	TH2* h_den_clone = (TH2*)h_den->Clone("h_den_clone");
+
+	//std::cout << h_num_clone->GetNbinsX()<< ", " << h_den_clone->GetNbinsX() << std::endl;
+	// num
+	// std::cout << "[";
+	// for (int i(0); i< h_num_clone->GetSize(); i++) {std::cout << h_num_clone->GetBinContent(i) << ", "; }
+	// std::cout << "]" << std::endl;
+	// std::cout << "[";
+	// for (int i(0); i< h_den_clone->GetSize(); i++) {std::cout << h_den_clone->GetBinContent(i) << ", "; }
+	// std::cout << "]" << std::endl;
+	TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
+	teff->SetTitle(title);
+	teff->SetLineColor(kGreen+3);
+	teff->SetMarkerColor(kGreen+3);
+	teff->SetMarkerStyle(20);
+	teff->SetMarkerSize(0.5);
+	teff->Draw("AP");
+
+	efficiency_c1->Print(print_name);
+	std::cout << "Print Name: " << print_name << std::endl;
 }
 
 void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
@@ -271,6 +309,7 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 
 	h_nue_cc_clone->Sumw2();
 	h_nue_cc_mixed_clone->Sumw2();
+	h_nue_cc_out_fv_clone->Sumw2();
 	h_cosmic_clone->Sumw2();
 	h_numu_cc_clone->Sumw2();
 	h_nc_clone->Sumw2();
@@ -281,6 +320,7 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 
 	h_nue_cc_clone->Scale(data_scale_factor);
 	h_nue_cc_mixed_clone->Scale(data_scale_factor);
+	h_nue_cc_out_fv_clone->Scale(data_scale_factor);
 	h_cosmic_clone->Scale(data_scale_factor);
 	h_numu_cc_clone->Scale(data_scale_factor);
 	h_nc_clone->Scale(data_scale_factor);
