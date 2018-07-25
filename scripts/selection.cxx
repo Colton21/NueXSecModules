@@ -1403,6 +1403,9 @@ void selection::make_selection( const char * _file1,
 			if(mc_nu_id == 1 || mc_nu_id == 5)
 			{
 				h_nue_true_energy_theta->Fill(mc_nu_energy, acos(mc_cos_theta) * (180 / 3.1415));
+				h_nue_true_energy_phi->Fill(mc_nu_energy, mc_phi * (180 / 3.1415));
+				h_ele_true_energy_theta->Fill(mc_ele_energy, acos(mc_ele_cos_theta) * (180 / 3.1415));
+				h_ele_true_energy_phi->Fill(mc_ele_energy, mc_ele_phi * (180 / 3.1415));
 			}
 		}
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true)
@@ -3193,6 +3196,12 @@ void selection::make_selection( const char * _file1,
 	                                     "../scripts/plots/true_all_energy_theta.pdf");
 	histogram_functions::Plot2DHistogram(h_nue_true_energy_theta, "True Nue/Nue-bar CC", "True Neutrino Energy [GeV]", "True Neutrino Theta [Degrees]",
 	                                     "../scripts/plots/true_nue_energy_theta.pdf");
+	histogram_functions::Plot2DHistogram(h_nue_true_energy_phi, "True Nue/Nue-bar CC", "True Neutrino Energy [GeV]", "True Neutrino Phi [Degrees]",
+	                                     "../scripts/plots/true_nue_energy_phi.pdf");
+	histogram_functions::Plot2DHistogram(h_ele_true_energy_theta, "True Electron", "True Electron Energy [GeV]", "True Electron Theta [Degrees]",
+	                                     "../scripts/plots/true_ele_energy_theta.pdf");
+	histogram_functions::Plot2DHistogram(h_ele_true_energy_phi, "True Electron", "True Electron Energy [GeV]", "True Electron Phi [Degrees]",
+	                                     "../scripts/plots/true_ele_energy_phi.pdf");
 
 	histogram_functions::Plot1DHistogram(h_ele_phi_eff_num, "Selected True Electron Phi [Degrees]", "../scripts/plots/selected_true_electron_phi.pdf");
 	histogram_functions::Plot1DHistogram(h_ele_phi_eff_den, "True Electron Phi [Degrees]", "../scripts/plots/true_electron_phi.pdf");

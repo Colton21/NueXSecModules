@@ -1616,6 +1616,9 @@ TH1D * h_nue_true_phi    = new TH1D ("h_nue_true_phi", "h_nue_true_phi",   14, -
 TH2D * h_nue_true_theta_phi = new TH2D ("h_nue_true_theta_phi", "h_nue_true_theta_phi", 14, -180, 180, 14, 0, 180);
 TH2D * h_nue_true_energy_theta = new TH2D("h_nue_true_energy_theta", "h_nue_true_energy_theta", 20, 0, 10, 14, 0, 180);
 TH2D * h_all_true_energy_theta = new TH2D("h_all_true_energy_theta", "h_all_true_energy_theta", 20, 0, 10, 14, 0, 180);
+TH2D * h_nue_true_energy_phi   = new TH2D("h_nue_true_energy_phi",   "h_nue_true_energy_phi",   20, 0, 10, 14, -180, 180);
+TH2D * h_ele_true_energy_theta = new TH2D("h_ele_true_energy_theta", "h_ele_true_energy_theta", 20, 0, 10, 14, 0, 180);
+TH2D * h_ele_true_energy_phi   = new TH2D("h_ele_true_energy_phi",   "h_ele_true_energy_phi",   20, 0, 10, 14, -180, 180);
 
 TH2D * h_true_reco_ele_momentum = new TH2D ("h_true_reco_ele_momentum", "h_true_reco_ele_momentum", 10, 0, 3, 10, 0, 3);
 TH2D * h_true_reco_ele_costheta = new TH2D ("h_true_reco_ele_costheta", "h_true_reco_ele_costheta", 10, -1, 1, 10, -1, 1);

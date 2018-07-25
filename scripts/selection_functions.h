@@ -20,6 +20,7 @@
 #include "TPad.h"
 #include "TMarker.h"
 #include "TVector3.h"
+#include "TLine.h"
 
 #include <iostream>
 #include <vector>
@@ -165,6 +166,7 @@ static void XSecWork(double final_counter, double final_counter_nue_cc, double f
 //***************************************************************************
 //***************************************************************************
 static void xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double xsec_nue, double average_energy, double stat_error);
+static void IntegratedXsecPlot(const double data_xsec, const double mc_xsec, const double stat_err, const double sys_err);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

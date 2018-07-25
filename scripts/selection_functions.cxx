@@ -1095,6 +1095,10 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	const double efficiency = (final_counter_nue_cc + final_counter_nue_bar_cc) / double(total_mc_entries_inFV);
 	const double efficiency_stat_err = (1 / sqrt(total_mc_entries_inFV)) * sqrt(efficiency * (1 - efficiency));
 
+	const double flux_nue_nue_bar = (flux_nue + flux_nue_bar);
+	const double efficiency_nue_nue_bar = double(final_counter_nue_cc + final_counter_nue_bar_cc) /
+	                                      double(total_mc_entries_inFV_nue + total_mc_entries_inFV_nue_bar);
+
 	const double _x1 = fv_boundary_v.at(0);
 	const double _x2 = fv_boundary_v.at(1);
 	const double _y1 = fv_boundary_v.at(2);
@@ -1156,6 +1160,20 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	std::cout << "-------------------------" << std::endl;
 	xsec_cc->clear();
 
+	//nue+nue_bar
+	selection_functions::calcXSec(false, _x1, _x2, _y1, _y2, _z1, _z2,
+	                              (final_counter_nue_cc + final_counter_nue_bar_cc), 0, flux_nue_nue_bar,
+	                              efficiency_nue_nue_bar, xsec_cc);
+	double xsec_cc_nue_nue_bar_mc = xsec_cc->at(0);
+
+	std::cout << "-------------------------" << std::endl;
+	std::cout << " Cross Section Results (MC - nue + nuebar):  " << std::endl;
+	std::cout << " " << xsec_cc->at(0) << " +/- (stats) "
+	          << xsec_cc_stat_mc_nue_bar << " +/- (sys) "
+	          << xsec_cc->at(2) << std::endl;
+	std::cout << "-------------------------" << std::endl;
+	xsec_cc->clear();
+
 	//************************************
 	//******** True Level ****************
 	//************************************
@@ -1195,6 +1213,13 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	const double average_true_energy = all_energy / selected_energy_vector.size();
 	bool _verbose = false;
 	selection_functions::xsec_plot(_verbose, genie_xsec_nue, genie_xsec_nue_bar, xsec_cc_data, average_true_energy, xsec_cc_stat_data);
+
+	const double data_xsec = xsec_cc_data;
+	const double mc_xsec = xsec_cc_nue_nue_bar_mc;
+	const double stat_err = xsec_cc_stat_data;
+	const double sys_err = 0;
+
+	IntegratedXsecPlot(data_xsec, mc_xsec, stat_err, sys_err);
 
 }
 //***************************************************************************
@@ -1328,8 +1353,30 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 
 	if(f->IsOpen()) {f->Close(); }
 	if(f->IsOpen()) {xsec_f->Close(); }
-
 }
+void selection_functions::IntegratedXsecPlot(const double data_xsec, const double mc_xsec, const double stat_err, const double sys_err)
+{
+	const double full_error = sqrt( pow(stat_err, 2) + pow(sys_err, 2) );
+
+	TCanvas * c_integrated = new TCanvas();
+	c_integrated->cd();
+
+	double x[1] = {1.0};
+	double y[1] = {data_xsec};
+	double ex[1] = {0.0};
+	double ey[1] = {stat_err};
+	const int n = 1;
+
+	TGraphErrors * xsec_graph = new TGraphErrors(n, x, y, ex, ey);
+	xsec_graph->Draw("ep");
+
+	TLine * line = new TLine(0, 1, mc_xsec, 1);
+	line->SetLineColor(46);
+	line->Draw("same");
+
+	c_integrated->Print("integrated_xsec.pdf");
+}
+
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
