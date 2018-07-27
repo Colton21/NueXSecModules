@@ -150,6 +150,8 @@ double dist_tolerance;
 double pfp_hits_length_tolerance;
 double ratio_tolerance;
 
+int num_debug_events = 0;
+
 public:
 
 selection() = default;
@@ -1357,18 +1359,18 @@ TH1D * h_ele_pfp_theta_after_unmatched      = new TH1D ("h_ele_pfp_theta_after_u
 TH1D * h_ele_pfp_theta_after_intime         = new TH1D ("h_ele_pfp_theta_after_intime",         "h_ele_pfp_theta_after_intime",         20, 0, 180);
 TH1D * h_ele_pfp_theta_after_data           = new TH1D ("h_ele_pfp_theta_after_data",           "h_ele_pfp_theta_after_data",           20, 0, 180);
 
-TH1D * h_ele_pfp_theta_last_nue_cc         = new TH1D ("h_ele_pfp_theta_last_nue_cc",         "h_ele_pfp_theta_last_nue_cc",         20, 0, 180);
-TH1D * h_ele_pfp_theta_last_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_last_nue_cc_out_fv",  "h_ele_pfp_theta_last_nue_cc_out_fv",  20, 0, 180);
-TH1D * h_ele_pfp_theta_last_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_last_nue_cc_mixed",   "h_ele_pfp_theta_last_nue_cc_mixed",   20, 0, 180);
-TH1D * h_ele_pfp_theta_last_numu_cc        = new TH1D ("h_ele_pfp_theta_last_numu_cc",        "h_ele_pfp_theta_last_numu_cc",        20, 0, 180);
-TH1D * h_ele_pfp_theta_last_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_last_numu_cc_mixed",  "h_ele_pfp_theta_last_numu_cc_mixed",  20, 0, 180);
-TH1D * h_ele_pfp_theta_last_nc             = new TH1D ("h_ele_pfp_theta_last_nc",             "h_ele_pfp_theta_last_nc",             20, 0, 180);
-TH1D * h_ele_pfp_theta_last_nc_pi0         = new TH1D ("h_ele_pfp_theta_last_nc_pi0",         "h_ele_pfp_theta_last_nc_pi0",         20, 0, 180);
-TH1D * h_ele_pfp_theta_last_cosmic         = new TH1D ("h_ele_pfp_theta_last_cosmic",         "h_ele_pfp_theta_last_cosmic",         20, 0, 180);
-TH1D * h_ele_pfp_theta_last_other_mixed    = new TH1D ("h_ele_pfp_theta_last_other_mixed",    "h_ele_pfp_theta_last_other_mixed",    20, 0, 180);
-TH1D * h_ele_pfp_theta_last_unmatched      = new TH1D ("h_ele_pfp_theta_last_unmatched",      "h_ele_pfp_theta_last_unmatched",      20, 0, 180);
-TH1D * h_ele_pfp_theta_last_intime         = new TH1D ("h_ele_pfp_theta_last_intime",         "h_ele_pfp_theta_last_intime",         20, 0, 180);
-TH1D * h_ele_pfp_theta_last_data           = new TH1D ("h_ele_pfp_theta_last_data",           "h_ele_pfp_theta_last_data",           20, 0, 180);
+TH1D * h_ele_pfp_theta_last_nue_cc         = new TH1D ("h_ele_pfp_theta_last_nue_cc",         "h_ele_pfp_theta_last_nue_cc",         16, 0, 180);
+TH1D * h_ele_pfp_theta_last_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_last_nue_cc_out_fv",  "h_ele_pfp_theta_last_nue_cc_out_fv",  16, 0, 180);
+TH1D * h_ele_pfp_theta_last_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_last_nue_cc_mixed",   "h_ele_pfp_theta_last_nue_cc_mixed",   16, 0, 180);
+TH1D * h_ele_pfp_theta_last_numu_cc        = new TH1D ("h_ele_pfp_theta_last_numu_cc",        "h_ele_pfp_theta_last_numu_cc",        16, 0, 180);
+TH1D * h_ele_pfp_theta_last_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_last_numu_cc_mixed",  "h_ele_pfp_theta_last_numu_cc_mixed",  16, 0, 180);
+TH1D * h_ele_pfp_theta_last_nc             = new TH1D ("h_ele_pfp_theta_last_nc",             "h_ele_pfp_theta_last_nc",             16, 0, 180);
+TH1D * h_ele_pfp_theta_last_nc_pi0         = new TH1D ("h_ele_pfp_theta_last_nc_pi0",         "h_ele_pfp_theta_last_nc_pi0",         16, 0, 180);
+TH1D * h_ele_pfp_theta_last_cosmic         = new TH1D ("h_ele_pfp_theta_last_cosmic",         "h_ele_pfp_theta_last_cosmic",         16, 0, 180);
+TH1D * h_ele_pfp_theta_last_other_mixed    = new TH1D ("h_ele_pfp_theta_last_other_mixed",    "h_ele_pfp_theta_last_other_mixed",    16, 0, 180);
+TH1D * h_ele_pfp_theta_last_unmatched      = new TH1D ("h_ele_pfp_theta_last_unmatched",      "h_ele_pfp_theta_last_unmatched",      16, 0, 180);
+TH1D * h_ele_pfp_theta_last_intime         = new TH1D ("h_ele_pfp_theta_last_intime",         "h_ele_pfp_theta_last_intime",         16, 0, 180);
+TH1D * h_ele_pfp_theta_last_data           = new TH1D ("h_ele_pfp_theta_last_data",           "h_ele_pfp_theta_last_data",           16, 0, 180);
 
 TH1D * h_ele_pfp_phi_nue_cc         = new TH1D ("h_ele_pfp_phi_nue_cc",         "h_ele_pfp_phi_nue_cc",         20, -180, 180);
 TH1D * h_ele_pfp_phi_nue_cc_out_fv  = new TH1D ("h_ele_pfp_phi_nue_cc_out_fv",  "h_ele_pfp_phi_nue_cc_out_fv",  20, -180, 180);
@@ -1396,18 +1398,18 @@ TH1D * h_ele_pfp_phi_after_unmatched      = new TH1D ("h_ele_pfp_phi_after_unmat
 TH1D * h_ele_pfp_phi_after_intime         = new TH1D ("h_ele_pfp_phi_after_intime",         "h_ele_pfp_phi_after_intime",         20, -180, 180);
 TH1D * h_ele_pfp_phi_after_data           = new TH1D ("h_ele_pfp_phi_after_data",           "h_ele_pfp_phi_after_data",           20, -180, 180);
 
-TH1D * h_ele_pfp_phi_last_nue_cc         = new TH1D ("h_ele_pfp_phi_last_nue_cc",         "h_ele_pfp_phi_last_nue_cc",         20, -180, 180);
-TH1D * h_ele_pfp_phi_last_nue_cc_out_fv  = new TH1D ("h_ele_pfp_phi_last_nue_cc_out_fv",  "h_ele_pfp_phi_last_nue_cc_out_fv",  20, -180, 180);
-TH1D * h_ele_pfp_phi_last_nue_cc_mixed   = new TH1D ("h_ele_pfp_phi_last_nue_cc_mixed",   "h_ele_pfp_phi_last_nue_cc_mixed",   20, -180, 180);
-TH1D * h_ele_pfp_phi_last_numu_cc        = new TH1D ("h_ele_pfp_phi_last_numu_cc",        "h_ele_pfp_phi_last_numu_cc",        20, -180, 180);
-TH1D * h_ele_pfp_phi_last_numu_cc_mixed  = new TH1D ("h_ele_pfp_phi_last_numu_cc_mixed",  "h_ele_pfp_phi_last_numu_cc_mixed",  20, -180, 180);
-TH1D * h_ele_pfp_phi_last_nc             = new TH1D ("h_ele_pfp_phi_last_nc",             "h_ele_pfp_phi_last_nc",             20, -180, 180);
-TH1D * h_ele_pfp_phi_last_nc_pi0         = new TH1D ("h_ele_pfp_phi_last_nc_pi0",         "h_ele_pfp_phi_last_nc_pi0",         20, -180, 180);
-TH1D * h_ele_pfp_phi_last_cosmic         = new TH1D ("h_ele_pfp_phi_last_cosmic",         "h_ele_pfp_phi_last_cosmic",         20, -180, 180);
-TH1D * h_ele_pfp_phi_last_other_mixed    = new TH1D ("h_ele_pfp_phi_last_other_mixed",    "h_ele_pfp_phi_last_other_mixed",    20, -180, 180);
-TH1D * h_ele_pfp_phi_last_unmatched      = new TH1D ("h_ele_pfp_phi_last_unmatched",      "h_ele_pfp_phi_last_unmatched",      20, -180, 180);
-TH1D * h_ele_pfp_phi_last_intime         = new TH1D ("h_ele_pfp_phi_last_intime",         "h_ele_pfp_phi_last_intime",         20, -180, 180);
-TH1D * h_ele_pfp_phi_last_data           = new TH1D ("h_ele_pfp_phi_last_data",           "h_ele_pfp_phi_last_data",           20, -180, 180);
+TH1D * h_ele_pfp_phi_last_nue_cc         = new TH1D ("h_ele_pfp_phi_last_nue_cc",         "h_ele_pfp_phi_last_nue_cc",         16, -180, 180);
+TH1D * h_ele_pfp_phi_last_nue_cc_out_fv  = new TH1D ("h_ele_pfp_phi_last_nue_cc_out_fv",  "h_ele_pfp_phi_last_nue_cc_out_fv",  16, -180, 180);
+TH1D * h_ele_pfp_phi_last_nue_cc_mixed   = new TH1D ("h_ele_pfp_phi_last_nue_cc_mixed",   "h_ele_pfp_phi_last_nue_cc_mixed",   16, -180, 180);
+TH1D * h_ele_pfp_phi_last_numu_cc        = new TH1D ("h_ele_pfp_phi_last_numu_cc",        "h_ele_pfp_phi_last_numu_cc",        16, -180, 180);
+TH1D * h_ele_pfp_phi_last_numu_cc_mixed  = new TH1D ("h_ele_pfp_phi_last_numu_cc_mixed",  "h_ele_pfp_phi_last_numu_cc_mixed",  16, -180, 180);
+TH1D * h_ele_pfp_phi_last_nc             = new TH1D ("h_ele_pfp_phi_last_nc",             "h_ele_pfp_phi_last_nc",             16, -180, 180);
+TH1D * h_ele_pfp_phi_last_nc_pi0         = new TH1D ("h_ele_pfp_phi_last_nc_pi0",         "h_ele_pfp_phi_last_nc_pi0",         16, -180, 180);
+TH1D * h_ele_pfp_phi_last_cosmic         = new TH1D ("h_ele_pfp_phi_last_cosmic",         "h_ele_pfp_phi_last_cosmic",         16, -180, 180);
+TH1D * h_ele_pfp_phi_last_other_mixed    = new TH1D ("h_ele_pfp_phi_last_other_mixed",    "h_ele_pfp_phi_last_other_mixed",    16, -180, 180);
+TH1D * h_ele_pfp_phi_last_unmatched      = new TH1D ("h_ele_pfp_phi_last_unmatched",      "h_ele_pfp_phi_last_unmatched",      16, -180, 180);
+TH1D * h_ele_pfp_phi_last_intime         = new TH1D ("h_ele_pfp_phi_last_intime",         "h_ele_pfp_phi_last_intime",         16, -180, 180);
+TH1D * h_ele_pfp_phi_last_data           = new TH1D ("h_ele_pfp_phi_last_data",           "h_ele_pfp_phi_last_data",           16, -180, 180);
 
 TH1D * h_leading_shwr_length_1shwr_nue_cc         = new TH1D ("h_leading_shwr_length_1shwr_nue_cc",         "h_leading_shwr_length_1shwr_nue_cc",         20, 0, 300);
 TH1D * h_leading_shwr_length_1shwr_nue_cc_out_fv  = new TH1D ("h_leading_shwr_length_1shwr_nue_cc_out_fv",  "h_leading_shwr_length_1shwr_nue_cc_out_fv",  20, 0, 300);

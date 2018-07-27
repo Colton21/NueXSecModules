@@ -185,7 +185,6 @@ Pfp Vtx Z      : 689.711
 Opening Angle  : 10.7942
 TPCO Reason    : Passed
 * * * * * * * * * * * * * * * * *
-/**//*****************************
 * * * * * * * * * * * * * * * * *
 Event Type     : Data
 Event Number   : 4313
@@ -277,6 +276,7 @@ Pfp Vtx Z      : 288.638
 Opening Angle  : 11.9443
 TPCO Reason    : Passed
 * * * * * * * * * * * * * * * * *
+/ begin below//*****************************
 * * * * * * * * * * * * * * * * *
 Event Type     : Data
 Event Number   : 5671

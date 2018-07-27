@@ -11,7 +11,7 @@ void selection::make_selection( const char * _file1,
 
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
-	const bool _post_cuts_verbose = true;
+	const bool _post_cuts_verbose = false;
 	gErrorIgnoreLevel = kWarning;
 
 	//first we need to open the root file
@@ -460,6 +460,10 @@ void selection::make_selection( const char * _file1,
 			//******************************************************
 			_data_functions_instance.selection_functions_data::PostCutsdEdxData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_cuts_data);
 			_data_functions_instance.selection_functions_data::dEdxThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_theta_pre_cuts_data);
+			_data_functions_instance.selection_functions_data::dedxThetaSliceData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                      h_dedx_slice_1_data,
+			                                                                      h_dedx_slice_2_data,
+			                                                                      h_dedx_slice_3_data);
 
 			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
@@ -555,11 +559,6 @@ void selection::make_selection( const char * _file1,
 			                                                                                 h_ele_momentum_slice_1_data,
 			                                                                                 h_ele_momentum_slice_2_data,
 			                                                                                 h_ele_momentum_slice_3_data);
-
-			_data_functions_instance.selection_functions_data::dedxThetaSliceData(data_tpc_object_container_v, passed_tpco_data, _verbose,
-			                                                                      h_dedx_slice_1_data,
-			                                                                      h_dedx_slice_2_data,
-			                                                                      h_dedx_slice_3_data);
 
 			_data_functions_instance.selection_functions_data::EnergyCosThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_eng_costheta_data);
 			_data_functions_instance.selection_functions_data::EnergyCosThetaSlicesData(data_tpc_object_container_v, passed_tpco_data, _verbose,
@@ -955,6 +954,11 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                        _verbose, h_dedx_cuts_ext_unmatched);
 
+			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                      h_dedx_slice_1_intime,
+			                                                                      h_dedx_slice_2_intime,
+			                                                                      h_dedx_slice_3_intime);
+
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
@@ -1086,11 +1090,6 @@ void selection::make_selection( const char * _file1,
 			                                                                                 h_ele_momentum_slice_1_intime,
 			                                                                                 h_ele_momentum_slice_2_intime,
 			                                                                                 h_ele_momentum_slice_3_intime);
-
-			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
-			                                                                      h_dedx_slice_1_intime,
-			                                                                      h_dedx_slice_2_intime,
-			                                                                      h_dedx_slice_3_intime);
 
 			_functions_instance.selection_functions::dEdxThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                         _verbose, h_dedx_theta_intime);
@@ -1281,9 +1280,9 @@ void selection::make_selection( const char * _file1,
 	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_open_angle_cuts_v
 	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
 
-	std::cout << "=====================" << std::endl;
-	std::cout << "== Begin Selection ==" << std::endl;
-	std::cout << "=====================" << std::endl;
+	std::cout << "========================" << std::endl;
+	std::cout << "== Begin MC Selection ==" << std::endl;
+	std::cout << "========================" << std::endl;
 
 	const int total_entries = mytree->GetEntries();
 	std::cout << "Total Events     : " << total_entries << std::endl;
@@ -1323,7 +1322,7 @@ void selection::make_selection( const char * _file1,
 	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
 
 	//**********************************
-	//now let's do the TPCO related cuts
+	//now let's do the cuts
 	//*********************************
 	for(int event = 0; event < total_entries; event++)
 	{
@@ -1336,18 +1335,10 @@ void selection::make_selection( const char * _file1,
 		mytree->GetEntry(event);
 		mctruth_counter_tree->GetEntry(event);
 
+
 		//********************************
 		//before Any cuts!!!
 		//********************************
-
-		//***********************************************************
-		//this is where the in-time optical cut actually takes effect
-		//***********************************************************
-		if(passed_runs->at(event) == 0)
-		{
-			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
-			continue;
-		}//false
 
 		//check if nue interaction has true vtx in TPC
 		//std::cout << tpc_object_container_v->size() << std::endl;
@@ -1432,9 +1423,19 @@ void selection::make_selection( const char * _file1,
 			h_nue_true_phi->Fill(mc_phi * (180 / 3.1415));
 			h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
 		}
+		//********************************
+		//begin cuts!!!
+		//********************************
+
 		//***********************************************************
-		//this is where the in-time optical cut again takes effect
+		//this is where the in-time optical cut actually takes effect
 		//***********************************************************
+		if(passed_runs->at(event) == 0)
+		{
+			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
+			continue;
+		}//false
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -1457,6 +1458,9 @@ void selection::make_selection( const char * _file1,
 		                                                     h_pfp_zy_vtx_nue_cc,
 		                                                     h_pfp_zy_vtx_all);
 
+		//***********************************************************
+		//this is where the pe optical cut takes effect
+		//***********************************************************
 		//PE threshold cut
 		if(passed_runs->at(event) == 2)
 		{
@@ -1483,6 +1487,44 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_1, h_reco_ele_e_1, h_mc_reco_ele_e_1);
 			// _functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, dummy_passed_tpco, tpco_classifier_v, mc_ele_energy,
 			//                                                             h_mc_ele_e_0, h_reco_ele_e_0, h_mc_reco_ele_e_0);
+		}
+		if(mc_nu_id == 1 || mc_nu_id == 5) {
+			if(true_in_tpc == true)
+			{
+				int pass = 0;
+				bool case_1 = false;
+				bool case_2 = false;
+				for(auto const passed_tpco_pair : * passed_tpco) {pass += passed_tpco_pair.first; }
+				if(pass > 0) {case_1 = true; } //lets more pass?
+				if(tabulated_origins->at(0) >= 1) {case_2 = true; } //lets less pass, not reflected in printed values
+				if(case_1 && !case_2)
+				{
+					std::cout << "mc_nu_id: " << mc_nu_id << std::endl;
+					int num_tpc_obj = 0;
+					for(const auto tpco_classifier : * tpco_classifier_v)
+					{
+						auto const tpc_obj = tpc_object_container_v->at(num_tpc_obj);
+
+						if(tpco_classifier.first != "cosmic")
+						{
+							std::cout << '\t' << "classifier_id: " << tpco_classifier.first;
+							std::cout << ", Mode: " << tpc_obj.Mode() << ", PFP_PDG: " << tpc_obj.PFParticlePdgCode();
+							std::cout << ", CCNC: " << tpc_obj.CCNC() << ", HasMCPi0: " << tpc_obj.HasMCPi0() << std::endl;
+							const int n_pfp = tpc_obj.NumPFParticles();
+							for(int j = 0; j < n_pfp; j++)
+							{
+								auto const part = tpc_obj.GetParticle(j);
+								//const int n_pfp_hits = part.NumPFPHits();
+								const int mc_parent_pdg = part.MCParentPdg();
+								const int pfp_pdg = part.PFParticlePdgCode();
+								std::cout << '\t' << '\t' << "MC Parent PDG: " << mc_parent_pdg << ", PFP PDG: " << pfp_pdg << std::endl;
+							}
+						}
+						num_tpc_obj++;
+					}
+					num_debug_events++;
+				}
+			}
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                 h_ele_momentum_nue_cut_nue_cc,
@@ -2263,6 +2305,38 @@ void selection::make_selection( const char * _file1,
 		                                                   h_dedx_theta_pre_cuts_numu_cc_mixed, h_dedx_theta_pre_cuts_other_mixed,
 		                                                   h_dedx_theta_pre_cuts_unmatched);
 
+		_functions_instance.selection_functions::PostCutsdedxThetaSlice(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                h_dedx_slice_1_nue_cc,
+		                                                                h_dedx_slice_1_nue_cc_out_fv,
+		                                                                h_dedx_slice_1_nue_cc_mixed,
+		                                                                h_dedx_slice_1_numu_cc,
+		                                                                h_dedx_slice_1_numu_cc_mixed,
+		                                                                h_dedx_slice_1_nc,
+		                                                                h_dedx_slice_1_nc_pi0,
+		                                                                h_dedx_slice_1_cosmic,
+		                                                                h_dedx_slice_1_other_mixed,
+		                                                                h_dedx_slice_1_unmatched,
+		                                                                h_dedx_slice_2_nue_cc,
+		                                                                h_dedx_slice_2_nue_cc_out_fv,
+		                                                                h_dedx_slice_2_nue_cc_mixed,
+		                                                                h_dedx_slice_2_numu_cc,
+		                                                                h_dedx_slice_2_numu_cc_mixed,
+		                                                                h_dedx_slice_2_nc,
+		                                                                h_dedx_slice_2_nc_pi0,
+		                                                                h_dedx_slice_2_cosmic,
+		                                                                h_dedx_slice_2_other_mixed,
+		                                                                h_dedx_slice_2_unmatched,
+		                                                                h_dedx_slice_3_nue_cc,
+		                                                                h_dedx_slice_3_nue_cc_out_fv,
+		                                                                h_dedx_slice_3_nue_cc_mixed,
+		                                                                h_dedx_slice_3_numu_cc,
+		                                                                h_dedx_slice_3_numu_cc_mixed,
+		                                                                h_dedx_slice_3_nc,
+		                                                                h_dedx_slice_3_nc_pi0,
+		                                                                h_dedx_slice_3_cosmic,
+		                                                                h_dedx_slice_3_other_mixed,
+		                                                                h_dedx_slice_3_unmatched);
+
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
@@ -2514,11 +2588,6 @@ void selection::make_selection( const char * _file1,
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, track_containment_counter_v);
 
-		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true)
-		{
-			_functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-			                                                            h_mc_ele_e_13, h_reco_ele_e_13, h_mc_reco_ele_e_13);
-		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                 h_ele_momentum_containment_cut_nue_cc,
 		                                                                 h_ele_momentum_containment_cut_nue_cc_out_fv,
@@ -2606,9 +2675,12 @@ void selection::make_selection( const char * _file1,
 		//these are for the tefficiency plots, post all cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true)
 		{
-			int pass = 0;
-			for(auto const passed_tpco_pair : * passed_tpco) {pass += passed_tpco_pair.first; }
-			if(pass > 0)
+			// int pass = 0;
+			// for(auto const passed_tpco_pair : * passed_tpco) {pass += passed_tpco_pair.first; }
+			// if(pass > 0)
+			_functions_instance.selection_functions::FillTrueRecoEnergy(tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
+			                                                            h_mc_ele_e_13, h_reco_ele_e_13, h_mc_reco_ele_e_13);
+			if(tabulated_origins->at(0) >= 1)
 			{
 				selected_energy_vector.push_back(mc_nu_energy);
 				h_nue_eng_eff_num->Fill(mc_nu_energy);
@@ -2920,37 +2992,37 @@ void selection::make_selection( const char * _file1,
 		                                                                           h_ele_momentum_slice_3_other_mixed,
 		                                                                           h_ele_momentum_slice_3_unmatched);
 
-		_functions_instance.selection_functions::PostCutsdedxThetaSlice(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		                                                                h_dedx_slice_1_nue_cc,
-		                                                                h_dedx_slice_1_nue_cc_out_fv,
-		                                                                h_dedx_slice_1_nue_cc_mixed,
-		                                                                h_dedx_slice_1_numu_cc,
-		                                                                h_dedx_slice_1_numu_cc_mixed,
-		                                                                h_dedx_slice_1_nc,
-		                                                                h_dedx_slice_1_nc_pi0,
-		                                                                h_dedx_slice_1_cosmic,
-		                                                                h_dedx_slice_1_other_mixed,
-		                                                                h_dedx_slice_1_unmatched,
-		                                                                h_dedx_slice_2_nue_cc,
-		                                                                h_dedx_slice_2_nue_cc_out_fv,
-		                                                                h_dedx_slice_2_nue_cc_mixed,
-		                                                                h_dedx_slice_2_numu_cc,
-		                                                                h_dedx_slice_2_numu_cc_mixed,
-		                                                                h_dedx_slice_2_nc,
-		                                                                h_dedx_slice_2_nc_pi0,
-		                                                                h_dedx_slice_2_cosmic,
-		                                                                h_dedx_slice_2_other_mixed,
-		                                                                h_dedx_slice_2_unmatched,
-		                                                                h_dedx_slice_3_nue_cc,
-		                                                                h_dedx_slice_3_nue_cc_out_fv,
-		                                                                h_dedx_slice_3_nue_cc_mixed,
-		                                                                h_dedx_slice_3_numu_cc,
-		                                                                h_dedx_slice_3_numu_cc_mixed,
-		                                                                h_dedx_slice_3_nc,
-		                                                                h_dedx_slice_3_nc_pi0,
-		                                                                h_dedx_slice_3_cosmic,
-		                                                                h_dedx_slice_3_other_mixed,
-		                                                                h_dedx_slice_3_unmatched);
+		// _functions_instance.selection_functions::PostCutsdedxThetaSlice(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		//                                                                 h_dedx_slice_1_nue_cc,
+		//                                                                 h_dedx_slice_1_nue_cc_out_fv,
+		//                                                                 h_dedx_slice_1_nue_cc_mixed,
+		//                                                                 h_dedx_slice_1_numu_cc,
+		//                                                                 h_dedx_slice_1_numu_cc_mixed,
+		//                                                                 h_dedx_slice_1_nc,
+		//                                                                 h_dedx_slice_1_nc_pi0,
+		//                                                                 h_dedx_slice_1_cosmic,
+		//                                                                 h_dedx_slice_1_other_mixed,
+		//                                                                 h_dedx_slice_1_unmatched,
+		//                                                                 h_dedx_slice_2_nue_cc,
+		//                                                                 h_dedx_slice_2_nue_cc_out_fv,
+		//                                                                 h_dedx_slice_2_nue_cc_mixed,
+		//                                                                 h_dedx_slice_2_numu_cc,
+		//                                                                 h_dedx_slice_2_numu_cc_mixed,
+		//                                                                 h_dedx_slice_2_nc,
+		//                                                                 h_dedx_slice_2_nc_pi0,
+		//                                                                 h_dedx_slice_2_cosmic,
+		//                                                                 h_dedx_slice_2_other_mixed,
+		//                                                                 h_dedx_slice_2_unmatched,
+		//                                                                 h_dedx_slice_3_nue_cc,
+		//                                                                 h_dedx_slice_3_nue_cc_out_fv,
+		//                                                                 h_dedx_slice_3_nue_cc_mixed,
+		//                                                                 h_dedx_slice_3_numu_cc,
+		//                                                                 h_dedx_slice_3_numu_cc_mixed,
+		//                                                                 h_dedx_slice_3_nc,
+		//                                                                 h_dedx_slice_3_nc_pi0,
+		//                                                                 h_dedx_slice_3_cosmic,
+		//                                                                 h_dedx_slice_3_other_mixed,
+		//                                                                 h_dedx_slice_3_unmatched);
 
 		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
 		                                                              0, 0, tpco_classifier_v,
@@ -3021,6 +3093,7 @@ void selection::make_selection( const char * _file1,
 		                                                                  h_low_true_momentum, h_med_true_momentum, h_high_true_momentum);
 
 	}//end event loop
+	std::cout << "Debugging Events: " << num_debug_events << std::endl;
 
 	std::cout << "------------------ " << std::endl;
 	std::cout << " MC Nue          : " << total_mc_entries_inFV_nue << std::endl;
@@ -5196,19 +5269,19 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot1DHistogram(h_mc_ele_e_12, "True Selected Electron Energy [GeV]", "../scripts/plots/selected_mc_ele_eng_12.pdf");
 	histogram_functions::Plot1DHistogram(h_mc_ele_e_13, "True Selected Electron Energy [GeV]", "../scripts/plots/selected_mc_ele_eng_13.pdf");
 
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_1,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_1.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_2,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_2.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_3,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_3.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_4,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_4.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_5,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_5.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_6,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_6.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_7,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_7.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_8,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_8.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_9,  "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_9.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_10, "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_10.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_11, "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_11.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_12, "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_12.pdf");
-	histogram_functions::Plot1DHistogram(h_reco_ele_e_13, "Reco Selected Leading Shower Energy [GeV]", "../scripts/plots/selected_reco_ele_eng_13.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_1,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_1.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_2,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_2.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_3,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_3.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_4,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_4.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_5,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_5.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_6,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_6.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_7,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_7.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_8,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_8.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_9,  "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_9.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_10, "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_10.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_11, "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_11.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_12, "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_12.pdf");
+	histogram_functions::Plot1DHistogram(h_reco_ele_e_13, "Reco Selected Leading Shower Momentum [GeV]", "../scripts/plots/selected_reco_ele_eng_13.pdf");
 
 	histogram_functions::Plot2DHistogram(h_mc_reco_ele_e_1, "", "True Electron Energy [GeV]", "Reco Leading Shower Energy [GeV]",
 	                                     "../scripts/plots/selected_mc_reco_ele_eng_1.pdf");

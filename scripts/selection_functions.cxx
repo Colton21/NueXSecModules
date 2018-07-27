@@ -832,7 +832,7 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 	std::cout << "---------------------------" << std::endl;
 	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
 	const double purity = double(counter_nue_cc) / double(counter);
-	std::cout << " Efficiency       : " << efficiency << std::endl;
+	std::cout << " Efficiency       : " << "( " << counter_nue_cc << " / " << mc_nue_cc_counter << " ) = " << efficiency << std::endl;
 	std::cout << " Purity           : " << purity << std::endl;
 	std::cout << "------------------------" << std::endl;
 	std::cout << "------------------------" << std::endl;
@@ -908,6 +908,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	int leading_pdg = 0;
 	int leading_mc_parent_pdg = 0;
 	std::string leading_origin = "kNothing";
+
 	for(int j = 0; j < n_pfp; j++)
 	{
 		auto const part = tpc_obj.GetParticle(j);
@@ -923,8 +924,8 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 			}
 		}
 		//if(n_pfp_showers)
-		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == 12))  { part_nue_cc++; }
-		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == -12)) { part_nue_bar_cc++; }
+		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && mc_parent_pdg == 12)  { part_nue_cc++; }
+		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && mc_parent_pdg == -12) { part_nue_bar_cc++; }
 		if(part.CCNC() == 0 && part.Origin() == "kBeamNeutrino" && (mc_parent_pdg == 14 || mc_parent_pdg == -14)) { part_numu_cc++; }
 		if(part.CCNC() == 1 && part.Origin() == "kBeamNeutrino")
 		{
@@ -945,7 +946,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	//now to catagorise the tpco
 	if(part_cosmic > 0)
 	{
-		if(part_nue_cc  > 0 )                        { return std::make_pair("nue_cc_mixed",  leading_index); }
+		if(part_nue_cc  > 0 || part_nue_bar_cc > 0)  { return std::make_pair("nue_cc_mixed",  leading_index); }
 		if(part_numu_cc > 0 )                        { return std::make_pair("numu_cc_mixed", leading_index); }
 		if(part_nc  > 0 || part_nc_pi0 > 0)          { return std::make_pair("other_mixed",   leading_index); }
 		return std::make_pair("cosmic", leading_index);
@@ -956,6 +957,9 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	//where the neutrino vertex IS the true tpc object vertex
 	if(part_cosmic == 0)
 	{
+		if(part_nue_cc      > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
+		if(part_nue_bar_cc  > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
+
 		if(part_nue_cc    > 0 && tpc_obj_mode == 0   ) { return std::make_pair("nue_cc_qe",     leading_index);   }
 		if(part_nue_cc    > 0 && tpc_obj_mode == 1   ) { return std::make_pair("nue_cc_res",    leading_index);   }
 		if(part_nue_cc    > 0 && tpc_obj_mode == 2   ) { return std::make_pair("nue_cc_dis",    leading_index);   }
@@ -968,8 +972,6 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		if(part_nue_bar_cc    > 0 && tpc_obj_mode == 3   ) { return std::make_pair("nue_bar_cc_coh",    leading_index);   }
 		if(part_nue_bar_cc    > 0 && tpc_obj_mode == 10  ) { return std::make_pair("nue_bar_cc_mec",    leading_index);   }
 
-		if(part_nue_cc      > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
-		if(part_nue_bar_cc  > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
 		if(part_numu_cc     > 0 && tpc_obj_mode == 0   ) { return std::make_pair("numu_cc_qe",    leading_index);   }
 		if(part_numu_cc     > 0 && tpc_obj_mode == 1   ) { return std::make_pair("numu_cc_res",   leading_index);   }
 		if(part_numu_cc     > 0 && tpc_obj_mode == 2   ) { return std::make_pair("numu_cc_dis",   leading_index);   }
@@ -1217,7 +1219,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	const double data_xsec = xsec_cc_data;
 	const double mc_xsec = xsec_cc_nue_nue_bar_mc;
 	const double stat_err = xsec_cc_stat_data;
-	const double sys_err = 0;
+	const double sys_err = data_xsec * sqrt( pow(0.20, 2) + pow(0.20, 2));
 
 	IntegratedXsecPlot(data_xsec, mc_xsec, stat_err, sys_err);
 
@@ -1356,7 +1358,8 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 }
 void selection_functions::IntegratedXsecPlot(const double data_xsec, const double mc_xsec, const double stat_err, const double sys_err)
 {
-	const double full_error = sqrt( pow(stat_err, 2) + pow(sys_err, 2) );
+	//const double full_error = sqrt( pow(stat_err, 2) + pow(sys_err, 2) );
+	const double full_error = sqrt( pow(0, 2) + pow(sys_err, 2) );
 
 	TCanvas * c_integrated = new TCanvas();
 	c_integrated->cd();
@@ -1364,17 +1367,26 @@ void selection_functions::IntegratedXsecPlot(const double data_xsec, const doubl
 	double x[1] = {1.0};
 	double y[1] = {data_xsec};
 	double ex[1] = {0.0};
-	double ey[1] = {stat_err};
+	double ey[1] = {full_error};
 	const int n = 1;
 
 	TGraphErrors * xsec_graph = new TGraphErrors(n, x, y, ex, ey);
-	xsec_graph->Draw("ep");
+	xsec_graph->GetXaxis()->SetLimits(0.9, 1.1);//5 GeV
+	xsec_graph->SetMinimum(3.6e-39);
+	xsec_graph->SetMaximum(7.2e-39);
+	xsec_graph->SetMarkerStyle(3);
+	xsec_graph->Draw();
 
-	TLine * line = new TLine(0, 1, mc_xsec, 1);
+	TLine * line = new TLine(0.9, mc_xsec, 1.1, mc_xsec);
 	line->SetLineColor(46);
 	line->Draw("same");
 
-	c_integrated->Print("integrated_xsec.pdf");
+	TLegend * leg = new TLegend();
+	leg->AddEntry(xsec_graph, "Data Cross Section", "l");
+	leg->AddEntry(line, "GENIE", "l");
+	leg->Draw();
+
+	c_integrated->Print("../scripts/plots/integrated_xsec.pdf");
 }
 
 //***************************************************************************
@@ -5984,7 +5996,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 		if(event_type == "nue_cc_dis" || event_type == "nue_bar_cc_dis")  {signal_bkg = 3; }
 		if(event_type == "nue_cc_coh" || event_type == "nue_bar_cc_coh")  {signal_bkg = 4; }
 		if(event_type == "nue_cc_mec" || event_type == "nue_bar_cc_mec")  {signal_bkg = 5; }
-		if(event_type == "InTime")      {signal_bkg = 6; }
+		if(event_type == "Data")      {signal_bkg = 6; }
 		//if(signal_bkg == 1)
 		if(event_type == "nue_cc_qe" || event_type == "nue_bar_cc_qe")
 		{
@@ -6229,14 +6241,23 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 	double purity_3_1_mec = double(signal_events_3_1_mec) / total_events_3_1;
 	double purity_4_1_mec = double(signal_events_4_1_mec) / total_events_4_1;
 
-	double purity_1_0_total = purity_1_0_qe + purity_1_0_res + purity_1_0_dis + purity_1_0_coh + purity_1_0_mec;
-	double purity_2_0_total = purity_2_0_qe + purity_2_0_res + purity_2_0_dis + purity_2_0_coh + purity_2_0_mec;
-	double purity_3_0_total = purity_3_0_qe + purity_3_0_res + purity_3_0_dis + purity_3_0_coh + purity_3_0_mec;
-	double purity_4_0_total = purity_4_0_qe + purity_4_0_res + purity_4_0_dis + purity_4_0_coh + purity_4_0_mec;
-	double purity_1_1_total = purity_1_1_qe + purity_1_1_res + purity_1_1_dis + purity_1_1_coh + purity_1_1_mec;
-	double purity_2_1_total = purity_2_1_qe + purity_2_1_res + purity_2_1_dis + purity_2_1_coh + purity_2_1_mec;
-	double purity_3_1_total = purity_3_1_qe + purity_3_1_res + purity_3_1_dis + purity_3_1_coh + purity_3_1_mec;
-	double purity_4_1_total = purity_4_1_qe + purity_4_1_res + purity_4_1_dis + purity_4_1_coh + purity_4_1_mec;
+	// double purity_1_0_total = purity_1_0_qe + purity_1_0_res + purity_1_0_dis + purity_1_0_coh + purity_1_0_mec;
+	// double purity_2_0_total = purity_2_0_qe + purity_2_0_res + purity_2_0_dis + purity_2_0_coh + purity_2_0_mec;
+	// double purity_3_0_total = purity_3_0_qe + purity_3_0_res + purity_3_0_dis + purity_3_0_coh + purity_3_0_mec;
+	// double purity_4_0_total = purity_4_0_qe + purity_4_0_res + purity_4_0_dis + purity_4_0_coh + purity_4_0_mec;
+	// double purity_1_1_total = purity_1_1_qe + purity_1_1_res + purity_1_1_dis + purity_1_1_coh + purity_1_1_mec;
+	// double purity_2_1_total = purity_2_1_qe + purity_2_1_res + purity_2_1_dis + purity_2_1_coh + purity_2_1_mec;
+	// double purity_3_1_total = purity_3_1_qe + purity_3_1_res + purity_3_1_dis + purity_3_1_coh + purity_3_1_mec;
+	// double purity_4_1_total = purity_4_1_qe + purity_4_1_res + purity_4_1_dis + purity_4_1_coh + purity_4_1_mec;
+
+	double purity_1_0_total = double(signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec) / total_events_1_0;
+	double purity_2_0_total = double(signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec) / total_events_2_0;
+	double purity_3_0_total = double(signal_events_3_0_qe + signal_events_3_0_res + signal_events_3_0_dis + signal_events_3_0_coh + signal_events_3_0_mec) / total_events_3_0;
+	double purity_4_0_total = double(signal_events_4_0_qe + signal_events_4_0_res + signal_events_4_0_dis + signal_events_4_0_coh + signal_events_4_0_mec) / total_events_4_0;
+	double purity_1_1_total = double(signal_events_1_1_qe + signal_events_1_1_res + signal_events_1_1_dis + signal_events_1_1_coh + signal_events_1_1_mec) / total_events_1_1;
+	double purity_2_1_total = double(signal_events_2_1_qe + signal_events_2_1_res + signal_events_2_1_dis + signal_events_2_1_coh + signal_events_2_1_mec) / total_events_2_1;
+	double purity_3_1_total = double(signal_events_3_1_qe + signal_events_3_1_res + signal_events_3_1_dis + signal_events_3_1_coh + signal_events_3_1_mec) / total_events_3_1;
+	double purity_4_1_total = double(signal_events_4_1_qe + signal_events_4_1_res + signal_events_4_1_dis + signal_events_4_1_coh + signal_events_4_1_mec) / total_events_4_1;
 
 	post_cuts_num_tracks_showers_purity_qe->SetBinContent(1, 1, purity_1_0_qe);
 	post_cuts_num_tracks_showers_purity_qe->SetBinContent(2, 1, purity_2_0_qe);

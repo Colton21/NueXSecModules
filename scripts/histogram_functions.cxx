@@ -785,7 +785,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
 	stack->SetMaximum(y_maximum * 1.2);
 
-	stack->Draw("hist");
+	stack->Draw("e hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
 	h_data->Draw("same PE");
 
