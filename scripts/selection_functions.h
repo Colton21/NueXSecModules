@@ -1316,5 +1316,36 @@ void dEdxThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH2D * h_dedx_theta_intime);
 //***************************************************************************
 //***************************************************************************
+void EventMultiplicity(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+        TH1D * h_multiplicity_shower_nue_cc,
+        TH1D * h_multiplicity_shower_nue_cc_mixed,
+        TH1D * h_multiplicity_shower_nue_cc_out_fv,
+        TH1D * h_multiplicity_shower_numu_cc,
+        TH1D * h_multiplicity_shower_nc,
+        TH1D * h_multiplicity_shower_nc_pi0,
+        TH1D * h_multiplicity_shower_cosmic,
+        TH1D * h_multiplicity_shower_numu_cc_mixed,
+        TH1D * h_multiplicity_shower_other_mixed,
+        TH1D * h_multiplicity_shower_unmatched,
+        TH1D * h_multiplicity_track_nue_cc,
+        TH1D * h_multiplicity_track_nue_cc_mixed,
+        TH1D * h_multiplicity_track_nue_cc_out_fv,
+        TH1D * h_multiplicity_track_numu_cc,
+        TH1D * h_multiplicity_track_nc,
+        TH1D * h_multiplicity_track_nc_pi0,
+        TH1D * h_multiplicity_track_cosmic,
+        TH1D * h_multiplicity_track_numu_cc_mixed,
+        TH1D * h_multiplicity_track_other_mixed,
+        TH1D * h_multiplicity_track_unmatched
+        );
+void EventMultiplicityInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             TH1D * h_multiplicity_shower_intime,
+                             TH1D * h_multiplicity_track_intime);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

@@ -1,5 +1,6 @@
 #include "histogram_functions.h"
 
+//void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name)
 void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name)
 {
 	TCanvas * c1 = new TCanvas();
@@ -152,8 +153,8 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
                                                   const double intime_scale_factor, const char * x_axis_name,
                                                   const char * print_name1, const char * print_name2)
 {
-	TCanvas * c1 = new TCanvas();
-	c1->cd();
+	TCanvas * c1a = new TCanvas();
+	c1a->cd();
 
 	TH1 * h_1_clone = (TH1*)histogram_1->Clone("h_1_clone");
 	TH1 * h_2_clone = (TH1*)histogram_2->Clone("h_2_clone");
@@ -176,7 +177,15 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	//leg1->SetTextFont(132);
 	leg1->Draw();
 
-	c1->Print(print_name1);
+	c1a->Print(print_name1);
+
+	TCanvas * c1b = new TCanvas();
+	c1b->cd();
+
+	TH1 * h_divide_clone = (TH1*)h_2_clone->Clone("h_divide_clone");
+	h_divide_clone->Divide(h_1_clone);
+	h_divide_clone->Draw("e");
+	c1b->Print("../scripts/plots/numi_timing_on_off_divide.pdf");
 
 	TCanvas * c2 = new TCanvas();
 	c2->cd();
@@ -785,9 +794,23 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
 	stack->SetMaximum(y_maximum * 1.2);
 
-	stack->Draw("e hist");
+	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
 	h_data->Draw("same PE");
+
+	TH1 * h_error_hist = (TH1*)h_nue_cc_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_nue_cc_mixed_clone, 1);
+	h_error_hist->Add(h_nue_cc_out_fv_clone, 1);
+	h_error_hist->Add(h_numu_cc_clone, 1);
+	h_error_hist->Add(h_nc_pi0_clone, 1);
+	h_error_hist->Add(h_nc_clone, 1);
+	h_error_hist->Add(h_other_mixed_clone, 1);
+	h_error_hist->Add(h_cosmic_clone, 1);
+	h_error_hist->Add(h_unmatched_clone, 1);
+	h_error_hist->Add(h_intime_clone, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);

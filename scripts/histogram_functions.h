@@ -19,6 +19,7 @@
 #include "TLine.h"
 
 #include <iostream>
+#include <string>
 
 class histogram_functions {
 

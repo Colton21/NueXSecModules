@@ -1119,4 +1119,22 @@ void selection_functions_data::dEdxThetaData(std::vector<xsecAna::TPCObjectConta
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::EventMultiplicityData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                     TH1D * h_multiplicity_shower_data, TH1D * h_multiplicity_track_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		h_multiplicity_shower_data->Fill(n_pfp_showers);
+		h_multiplicity_track_data->Fill(n_pfp_tracks);
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

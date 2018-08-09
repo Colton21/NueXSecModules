@@ -246,6 +246,11 @@ void dEdxThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contain
                    TH2D * h_dedx_theta_data);
 //***************************************************************************
 //***************************************************************************
+void EventMultiplicityData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                           TH1D * h_multiplicity_shower_data, TH1D * h_multiplicity_track_data);
+//***************************************************************************
+//***************************************************************************
 };
 
 
