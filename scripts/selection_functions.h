@@ -20,6 +20,7 @@
 #include "TPad.h"
 #include "TMarker.h"
 #include "TVector3.h"
+#include "TLine.h"
 
 #include <iostream>
 #include <vector>
@@ -90,17 +91,17 @@ void PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,
                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,
-                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
 //***************************************************************************
 //***************************************************************************
-void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double,
+void PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,
                                                std::string, std::string, int, int, double> > * post_cuts_v, bool _post_cuts_verbose);
 //***************************************************************************
 //***************************************************************************
-void PostCutVectorPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
+void PostCutVectorPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
                         bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
                         TH1 * post_cuts_num_showers_purity_res,
                         TH1 * post_cuts_num_showers_purity_dis,
@@ -145,11 +146,11 @@ void FillTPCOClassV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     std::vector<std::pair<std::string, int> > * tpco_classifier_v);
 //***************************************************************************
 //***************************************************************************
-static double calcNumNucleons(double _x1, double _x2, double _y1,
+static double calcNumNucleons(const bool is_data, double _x1, double _x2, double _y1,
                               double _y2, double _z1, double _z2);
 //***************************************************************************
 //***************************************************************************
-static void calcXSec(double _x1, double _x2, double _y1,
+static void calcXSec(const bool is_data, double _x1, double _x2, double _y1,
                      double _y2, double _z1, double _z2,
                      double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************
@@ -165,6 +166,7 @@ static void XSecWork(double final_counter, double final_counter_nue_cc, double f
 //***************************************************************************
 //***************************************************************************
 static void xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double xsec_nue, double average_energy, double stat_error);
+static void IntegratedXsecPlot(const double data_xsec, const double mc_xsec, const double stat_err, const double sys_err);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -813,6 +815,86 @@ void LeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object
                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_intime);
 //***************************************************************************
 //***************************************************************************
+void PostCutsLeadingMomentumThetaSlice(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                       TH1D * h_ele_momentum_1_nue_cc,
+                                       TH1D * h_ele_momentum_1_nue_cc_out_fv,
+                                       TH1D * h_ele_momentum_1_nue_cc_mixed,
+                                       TH1D * h_ele_momentum_1_numu_cc,
+                                       TH1D * h_ele_momentum_1_numu_cc_mixed,
+                                       TH1D * h_ele_momentum_1_nc,
+                                       TH1D * h_ele_momentum_1_nc_pi0,
+                                       TH1D * h_ele_momentum_1_cosmic,
+                                       TH1D * h_ele_momentum_1_other_mixed,
+                                       TH1D * h_ele_momentum_1_unmatched,
+                                       TH1D * h_ele_momentum_2_nue_cc,
+                                       TH1D * h_ele_momentum_2_nue_cc_out_fv,
+                                       TH1D * h_ele_momentum_2_nue_cc_mixed,
+                                       TH1D * h_ele_momentum_2_numu_cc,
+                                       TH1D * h_ele_momentum_2_numu_cc_mixed,
+                                       TH1D * h_ele_momentum_2_nc,
+                                       TH1D * h_ele_momentum_2_nc_pi0,
+                                       TH1D * h_ele_momentum_2_cosmic,
+                                       TH1D * h_ele_momentum_2_other_mixed,
+                                       TH1D * h_ele_momentum_2_unmatched,
+                                       TH1D * h_ele_momentum_3_nue_cc,
+                                       TH1D * h_ele_momentum_3_nue_cc_out_fv,
+                                       TH1D * h_ele_momentum_3_nue_cc_mixed,
+                                       TH1D * h_ele_momentum_3_numu_cc,
+                                       TH1D * h_ele_momentum_3_numu_cc_mixed,
+                                       TH1D * h_ele_momentum_3_nc,
+                                       TH1D * h_ele_momentum_3_nc_pi0,
+                                       TH1D * h_ele_momentum_3_cosmic,
+                                       TH1D * h_ele_momentum_3_other_mixed,
+                                       TH1D * h_ele_momentum_3_unmatched);
+void PostCutsLeadingMomentumThetaSliceInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             TH1D * h_ele_momentum_1_intime,
+                                             TH1D * h_ele_momentum_2_intime,
+                                             TH1D * h_ele_momentum_3_intime);
+//***************************************************************************
+//***************************************************************************
+void PostCutsdedxThetaSlice(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                            std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                            TH1D * h_dedx_1_nue_cc,
+                            TH1D * h_dedx_1_nue_cc_out_fv,
+                            TH1D * h_dedx_1_nue_cc_mixed,
+                            TH1D * h_dedx_1_numu_cc,
+                            TH1D * h_dedx_1_numu_cc_mixed,
+                            TH1D * h_dedx_1_nc,
+                            TH1D * h_dedx_1_nc_pi0,
+                            TH1D * h_dedx_1_cosmic,
+                            TH1D * h_dedx_1_other_mixed,
+                            TH1D * h_dedx_1_unmatched,
+                            TH1D * h_dedx_2_nue_cc,
+                            TH1D * h_dedx_2_nue_cc_out_fv,
+                            TH1D * h_dedx_2_nue_cc_mixed,
+                            TH1D * h_dedx_2_numu_cc,
+                            TH1D * h_dedx_2_numu_cc_mixed,
+                            TH1D * h_dedx_2_nc,
+                            TH1D * h_dedx_2_nc_pi0,
+                            TH1D * h_dedx_2_cosmic,
+                            TH1D * h_dedx_2_other_mixed,
+                            TH1D * h_dedx_2_unmatched,
+                            TH1D * h_dedx_3_nue_cc,
+                            TH1D * h_dedx_3_nue_cc_out_fv,
+                            TH1D * h_dedx_3_nue_cc_mixed,
+                            TH1D * h_dedx_3_numu_cc,
+                            TH1D * h_dedx_3_numu_cc_mixed,
+                            TH1D * h_dedx_3_nc,
+                            TH1D * h_dedx_3_nc_pi0,
+                            TH1D * h_dedx_3_cosmic,
+                            TH1D * h_dedx_3_other_mixed,
+                            TH1D * h_dedx_3_unmatched);
+void PostCutsdedxThetaSliceInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  TH1D * h_dedx_1_intime,
+                                  TH1D * h_dedx_2_intime,
+                                  TH1D * h_dedx_3_intime);
+//***************************************************************************
+//***************************************************************************
 void LeadingPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                 std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -896,7 +978,7 @@ void Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        TH1D * h_leading_shwr_hits_2shwr_unmatched);
 //***************************************************************************
 //***************************************************************************
-void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
+void PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
                           bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
                           TH2 * post_cuts_num_tracks_showers_purity_qe,
                           TH2 * post_cuts_num_tracks_showers_purity_res,
@@ -1232,6 +1314,37 @@ void dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v
 void dEdxThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                      TH2D * h_dedx_theta_intime);
+//***************************************************************************
+//***************************************************************************
+void EventMultiplicity(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+        TH1D * h_multiplicity_shower_nue_cc,
+        TH1D * h_multiplicity_shower_nue_cc_mixed,
+        TH1D * h_multiplicity_shower_nue_cc_out_fv,
+        TH1D * h_multiplicity_shower_numu_cc,
+        TH1D * h_multiplicity_shower_nc,
+        TH1D * h_multiplicity_shower_nc_pi0,
+        TH1D * h_multiplicity_shower_cosmic,
+        TH1D * h_multiplicity_shower_numu_cc_mixed,
+        TH1D * h_multiplicity_shower_other_mixed,
+        TH1D * h_multiplicity_shower_unmatched,
+        TH1D * h_multiplicity_track_nue_cc,
+        TH1D * h_multiplicity_track_nue_cc_mixed,
+        TH1D * h_multiplicity_track_nue_cc_out_fv,
+        TH1D * h_multiplicity_track_numu_cc,
+        TH1D * h_multiplicity_track_nc,
+        TH1D * h_multiplicity_track_nc_pi0,
+        TH1D * h_multiplicity_track_cosmic,
+        TH1D * h_multiplicity_track_numu_cc_mixed,
+        TH1D * h_multiplicity_track_other_mixed,
+        TH1D * h_multiplicity_track_unmatched
+        );
+void EventMultiplicityInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             TH1D * h_multiplicity_shower_intime,
+                             TH1D * h_multiplicity_track_intime);
 //***************************************************************************
 //***************************************************************************
 };

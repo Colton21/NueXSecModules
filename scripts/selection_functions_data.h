@@ -19,14 +19,12 @@
 #include "TGraphErrors.h"
 #include "TPad.h"
 #include "TMarker.h"
+#include "TVector3.h"
 
 #include <iostream>
 #include <vector>
 
 #include "../xsecAna/LinkDef.h"
-
-
-
 
 class selection_functions_data {
 
@@ -181,6 +179,20 @@ void LeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_data);
 //***************************************************************************
 //***************************************************************************
+void LeadingMomentumThetaSliceData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_ele_momentum_1_data,
+                                   TH1D * h_ele_momentum_2_data,
+                                   TH1D * h_ele_momentum_3_data);
+//***************************************************************************
+//***************************************************************************
+void dedxThetaSliceData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                        TH1D * h_dedx_1_data,
+                        TH1D * h_dedx_2_data,
+                        TH1D * h_dedx_3_data);
+//***************************************************************************
+//***************************************************************************
 void LeadingMomentumTrackTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                       TH1D * h_ele_pfp_momentum_no_track_data,
@@ -232,6 +244,11 @@ void PostCutsLeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_
 void dEdxThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                    TH2D * h_dedx_theta_data);
+//***************************************************************************
+//***************************************************************************
+void EventMultiplicityData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                           TH1D * h_multiplicity_shower_data, TH1D * h_multiplicity_track_data);
 //***************************************************************************
 //***************************************************************************
 };

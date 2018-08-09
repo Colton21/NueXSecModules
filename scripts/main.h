@@ -31,6 +31,8 @@
 
  */
 
+//this is the default place
+char * file_locate_prefix = (char*)"../scripts/plots/";
 
 //These values are the defaults and will run if no parameter list is given
 //The parameter list is generated when running any of the python scripts
@@ -56,8 +58,8 @@ const double _z2 = 20;
 
 //in time flash
 const int flash_pe_threshold = 50;
-const double flash_time_start = 5;
-const double flash_time_end = 16;
+const double flash_time_start = 5.8;
+const double flash_time_end = 15.5;
 
 //vertex to flash
 //standard 100 cm
