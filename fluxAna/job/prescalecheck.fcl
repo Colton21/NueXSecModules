@@ -6,7 +6,7 @@ process_name : PrescaleCheckProcess
 
 services:
 {
-  TFileService: {fileName: "prescale_numi_ext.root"}
+  TFileService: {fileName: "swtrigger_info_numi.root"}
   TimeTracker:  @local::microboone_time_tracker
   MemoryTracker: @local::microboone_memory_tracker
   @table::microboone_simulation_services
