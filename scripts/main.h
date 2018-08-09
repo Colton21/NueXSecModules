@@ -31,6 +31,8 @@
 
  */
 
+//this is the default place
+char * file_locate_prefix = (char*)"../scripts/plots/";
 
 //These values are the defaults and will run if no parameter list is given
 //The parameter list is generated when running any of the python scripts
