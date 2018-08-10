@@ -607,6 +607,12 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::LeadingMomentumTrackTopologyData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                                    h_ele_pfp_momentum_no_track_data, h_ele_pfp_momentum_has_track_data);
 
+			_data_functions_instance.selection_functions_data::LeadingPhiTrackTopologyData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                               h_ele_pfp_phi_no_track_data, h_ele_pfp_phi_has_track_data);
+
+			_data_functions_instance.selection_functions_data::LeadingThetaTrackTopologyData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                                 h_ele_pfp_theta_no_track_data, h_ele_pfp_theta_has_track_data);
+
 			_data_functions_instance.selection_functions_data::LeadingPhiData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_phi_last_data);
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_last_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, theta_translation, phi_translation,
@@ -1179,6 +1185,12 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::LeadingMomentumInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_momentum_intime);
 			_functions_instance.selection_functions::LeadingMomentumTrackTopologyInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                            h_ele_pfp_momentum_no_track_intime, h_ele_pfp_momentum_has_track_intime);
+
+			_functions_instance.selection_functions::LeadingPhiTrackTopologyInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                       h_ele_pfp_phi_no_track_intime, h_ele_pfp_phi_has_track_intime);
+
+			_functions_instance.selection_functions::LeadingThetaTrackTopologyInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                         h_ele_pfp_theta_no_track_intime, h_ele_pfp_theta_has_track_intime);
 
 			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                        _verbose, h_dedx_cuts_last_ext_unmatched);
@@ -3271,6 +3283,28 @@ void selection::make_selection( const char * _file1,
 		                                                    h_ele_pfp_phi_last_other_mixed,
 		                                                    h_ele_pfp_phi_last_unmatched);
 
+		_functions_instance.selection_functions::LeadingPhiTrackTopology(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                 h_ele_pfp_phi_no_track_nue_cc,
+		                                                                 h_ele_pfp_phi_no_track_nue_cc_out_fv,
+		                                                                 h_ele_pfp_phi_no_track_nue_cc_mixed,
+		                                                                 h_ele_pfp_phi_no_track_numu_cc,
+		                                                                 h_ele_pfp_phi_no_track_numu_cc_mixed,
+		                                                                 h_ele_pfp_phi_no_track_nc,
+		                                                                 h_ele_pfp_phi_no_track_nc_pi0,
+		                                                                 h_ele_pfp_phi_no_track_cosmic,
+		                                                                 h_ele_pfp_phi_no_track_other_mixed,
+		                                                                 h_ele_pfp_phi_no_track_unmatched,
+		                                                                 h_ele_pfp_phi_has_track_nue_cc,
+		                                                                 h_ele_pfp_phi_has_track_nue_cc_out_fv,
+		                                                                 h_ele_pfp_phi_has_track_nue_cc_mixed,
+		                                                                 h_ele_pfp_phi_has_track_numu_cc,
+		                                                                 h_ele_pfp_phi_has_track_numu_cc_mixed,
+		                                                                 h_ele_pfp_phi_has_track_nc,
+		                                                                 h_ele_pfp_phi_has_track_nc_pi0,
+		                                                                 h_ele_pfp_phi_has_track_cosmic,
+		                                                                 h_ele_pfp_phi_has_track_other_mixed,
+		                                                                 h_ele_pfp_phi_has_track_unmatched);
+
 		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, theta_translation, phi_translation,
 		                                                      _verbose, tpco_classifier_v,
 		                                                      h_ele_pfp_theta_last_nue_cc,
@@ -3283,6 +3317,28 @@ void selection::make_selection( const char * _file1,
 		                                                      h_ele_pfp_theta_last_cosmic,
 		                                                      h_ele_pfp_theta_last_other_mixed,
 		                                                      h_ele_pfp_theta_last_unmatched);
+
+		_functions_instance.selection_functions::LeadingThetaTrackTopology(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                   h_ele_pfp_theta_no_track_nue_cc,
+		                                                                   h_ele_pfp_theta_no_track_nue_cc_out_fv,
+		                                                                   h_ele_pfp_theta_no_track_nue_cc_mixed,
+		                                                                   h_ele_pfp_theta_no_track_numu_cc,
+		                                                                   h_ele_pfp_theta_no_track_numu_cc_mixed,
+		                                                                   h_ele_pfp_theta_no_track_nc,
+		                                                                   h_ele_pfp_theta_no_track_nc_pi0,
+		                                                                   h_ele_pfp_theta_no_track_cosmic,
+		                                                                   h_ele_pfp_theta_no_track_other_mixed,
+		                                                                   h_ele_pfp_theta_no_track_unmatched,
+		                                                                   h_ele_pfp_theta_has_track_nue_cc,
+		                                                                   h_ele_pfp_theta_has_track_nue_cc_out_fv,
+		                                                                   h_ele_pfp_theta_has_track_nue_cc_mixed,
+		                                                                   h_ele_pfp_theta_has_track_numu_cc,
+		                                                                   h_ele_pfp_theta_has_track_numu_cc_mixed,
+		                                                                   h_ele_pfp_theta_has_track_nc,
+		                                                                   h_ele_pfp_theta_has_track_nc_pi0,
+		                                                                   h_ele_pfp_theta_has_track_cosmic,
+		                                                                   h_ele_pfp_theta_has_track_other_mixed,
+		                                                                   h_ele_pfp_theta_has_track_unmatched);
 
 		_functions_instance.selection_functions::Leading1Shwr2Shwr(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                           h_leading_shwr_length_1shwr_nue_cc,
@@ -5087,6 +5143,47 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_momentum_has_track_data, data_scale_factor,
 	                                          "", "Leading Shower Momentum [GeV]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_no_track_nue_cc,  h_ele_pfp_phi_no_track_nue_cc_mixed,
+	                                          h_ele_pfp_phi_no_track_nue_cc_out_fv,
+	                                          h_ele_pfp_phi_no_track_numu_cc, h_ele_pfp_phi_no_track_numu_cc_mixed,
+	                                          h_ele_pfp_phi_no_track_cosmic,  h_ele_pfp_phi_no_track_nc,
+	                                          h_ele_pfp_phi_no_track_nc_pi0,  h_ele_pfp_phi_no_track_other_mixed,
+	                                          h_ele_pfp_phi_no_track_unmatched, h_ele_pfp_phi_no_track_intime, intime_scale_factor,
+	                                          h_ele_pfp_phi_no_track_data, data_scale_factor,
+	                                          "", "Leading Shower Phi [Degrees]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_no_track_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_has_track_nue_cc,  h_ele_pfp_phi_has_track_nue_cc_mixed,
+	                                          h_ele_pfp_phi_has_track_nue_cc_out_fv,
+	                                          h_ele_pfp_phi_has_track_numu_cc, h_ele_pfp_phi_has_track_numu_cc_mixed,
+	                                          h_ele_pfp_phi_has_track_cosmic,  h_ele_pfp_phi_has_track_nc,
+	                                          h_ele_pfp_phi_has_track_nc_pi0,  h_ele_pfp_phi_has_track_other_mixed,
+	                                          h_ele_pfp_phi_has_track_unmatched, h_ele_pfp_phi_has_track_intime, intime_scale_factor,
+	                                          h_ele_pfp_phi_has_track_data, data_scale_factor,
+	                                          "", "Leading Shower Phi [Degrees]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_has_track_data.pdf"));
+//
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_no_track_nue_cc,  h_ele_pfp_theta_no_track_nue_cc_mixed,
+	                                          h_ele_pfp_theta_no_track_nue_cc_out_fv,
+	                                          h_ele_pfp_theta_no_track_numu_cc, h_ele_pfp_theta_no_track_numu_cc_mixed,
+	                                          h_ele_pfp_theta_no_track_cosmic,  h_ele_pfp_theta_no_track_nc,
+	                                          h_ele_pfp_theta_no_track_nc_pi0,  h_ele_pfp_theta_no_track_other_mixed,
+	                                          h_ele_pfp_theta_no_track_unmatched, h_ele_pfp_theta_no_track_intime, intime_scale_factor,
+	                                          h_ele_pfp_theta_no_track_data, data_scale_factor,
+	                                          "", "Leading Shower Theta [Degrees]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_no_track_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_has_track_nue_cc,  h_ele_pfp_theta_has_track_nue_cc_mixed,
+	                                          h_ele_pfp_theta_has_track_nue_cc_out_fv,
+	                                          h_ele_pfp_theta_has_track_numu_cc, h_ele_pfp_theta_has_track_numu_cc_mixed,
+	                                          h_ele_pfp_theta_has_track_cosmic,  h_ele_pfp_theta_has_track_nc,
+	                                          h_ele_pfp_theta_has_track_nc_pi0,  h_ele_pfp_theta_has_track_other_mixed,
+	                                          h_ele_pfp_theta_has_track_unmatched, h_ele_pfp_theta_has_track_intime, intime_scale_factor,
+	                                          h_ele_pfp_theta_has_track_data, data_scale_factor,
+	                                          "", "Leading Shower Theta [Degrees]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_has_track_data.pdf"));
+
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_nue_cc,  h_ele_pfp_theta_nue_cc_mixed,
 	                                      h_ele_pfp_theta_nue_cc_out_fv,

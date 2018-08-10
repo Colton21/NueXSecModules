@@ -1296,6 +1296,68 @@ void LeadingMomentumTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer>
                                         TH1D * h_ele_pfp_momentum_has_track_intime);
 //***************************************************************************
 //***************************************************************************
+void LeadingThetaTrackTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                               TH1D * h_ele_pfp_theta_no_track_nue_cc,
+                               TH1D * h_ele_pfp_theta_no_track_nue_cc_out_fv,
+                               TH1D * h_ele_pfp_theta_no_track_nue_cc_mixed,
+                               TH1D * h_ele_pfp_theta_no_track_numu_cc,
+                               TH1D * h_ele_pfp_theta_no_track_numu_cc_mixed,
+                               TH1D * h_ele_pfp_theta_no_track_nc,
+                               TH1D * h_ele_pfp_theta_no_track_nc_pi0,
+                               TH1D * h_ele_pfp_theta_no_track_cosmic,
+                               TH1D * h_ele_pfp_theta_no_track_other_mixed,
+                               TH1D * h_ele_pfp_theta_no_track_unmatched,
+                               TH1D * h_ele_pfp_theta_has_track_nue_cc,
+                               TH1D * h_ele_pfp_theta_has_track_nue_cc_out_fv,
+                               TH1D * h_ele_pfp_theta_has_track_nue_cc_mixed,
+                               TH1D * h_ele_pfp_theta_has_track_numu_cc,
+                               TH1D * h_ele_pfp_theta_has_track_numu_cc_mixed,
+                               TH1D * h_ele_pfp_theta_has_track_nc,
+                               TH1D * h_ele_pfp_theta_has_track_nc_pi0,
+                               TH1D * h_ele_pfp_theta_has_track_cosmic,
+                               TH1D * h_ele_pfp_theta_has_track_other_mixed,
+                               TH1D * h_ele_pfp_theta_has_track_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingThetaTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                     TH1D * h_ele_pfp_theta_no_track_intime,
+                                     TH1D * h_ele_pfp_theta_has_track_intime);
+//***************************************************************************
+//***************************************************************************
+void LeadingPhiTrackTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                             TH1D * h_ele_pfp_phi_no_track_nue_cc,
+                             TH1D * h_ele_pfp_phi_no_track_nue_cc_out_fv,
+                             TH1D * h_ele_pfp_phi_no_track_nue_cc_mixed,
+                             TH1D * h_ele_pfp_phi_no_track_numu_cc,
+                             TH1D * h_ele_pfp_phi_no_track_numu_cc_mixed,
+                             TH1D * h_ele_pfp_phi_no_track_nc,
+                             TH1D * h_ele_pfp_phi_no_track_nc_pi0,
+                             TH1D * h_ele_pfp_phi_no_track_cosmic,
+                             TH1D * h_ele_pfp_phi_no_track_other_mixed,
+                             TH1D * h_ele_pfp_phi_no_track_unmatched,
+                             TH1D * h_ele_pfp_phi_has_track_nue_cc,
+                             TH1D * h_ele_pfp_phi_has_track_nue_cc_out_fv,
+                             TH1D * h_ele_pfp_phi_has_track_nue_cc_mixed,
+                             TH1D * h_ele_pfp_phi_has_track_numu_cc,
+                             TH1D * h_ele_pfp_phi_has_track_numu_cc_mixed,
+                             TH1D * h_ele_pfp_phi_has_track_nc,
+                             TH1D * h_ele_pfp_phi_has_track_nc_pi0,
+                             TH1D * h_ele_pfp_phi_has_track_cosmic,
+                             TH1D * h_ele_pfp_phi_has_track_other_mixed,
+                             TH1D * h_ele_pfp_phi_has_track_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingPhiTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_ele_pfp_phi_no_track_intime,
+                                   TH1D * h_ele_pfp_phi_has_track_intime);
+//***************************************************************************
+//***************************************************************************
 void dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                std::vector<std::pair<std::string, int> > * tpco_classifier_v,
