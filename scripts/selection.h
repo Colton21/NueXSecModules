@@ -2589,6 +2589,10 @@ TH1D * h_multiplicity_track_containment_cut_unmatched      = new TH1D ("h_multip
 TH1D * h_multiplicity_track_containment_cut_intime         = new TH1D ("h_multiplicity_track_containment_cut_intime",          "h_multiplicity_track_containment_cut_intime",        5, 0, 5);
 TH1D * h_multiplicity_track_containment_cut_data           = new TH1D ("h_multiplicity_track_containment_cut_data",            "h_multiplicity_track_containment_cut_data",          5, 0, 5);
 
+TH1D * h_ele_resolution_momentum = new TH1D("h_ele_resolution_momentum", "h_ele_resolution_momentum", 20, -1, 1);
+TH1D * h_ele_resolution_phi      = new TH1D("h_ele_resolution_phi",      "h_ele_resolution_phi",      20, -1, 1);
+TH1D * h_ele_resolution_theta    = new TH1D("h_ele_resolution_theta",    "h_ele_resolution_theta",    20, -1, 1);
+
 }; //end class
 
 }//end namespace

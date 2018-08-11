@@ -1409,5 +1409,12 @@ void EventMultiplicityInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
                              TH1D * h_multiplicity_track_intime);
 //***************************************************************************
 //***************************************************************************
+void TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                       const double mc_ele_momentum, const double mc_ele_phi, const double mc_ele_theta,
+                       TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta);
+//***************************************************************************
+//***************************************************************************
 };
 #endif

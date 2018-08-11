@@ -3108,6 +3108,9 @@ void selection::make_selection( const char * _file1,
 				                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
 				_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v, mc_ele_momentum, mc_ele_cos_theta,
 				                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e);
+				_functions_instance.selection_functions::TrueEleResolution(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+				                                                           mc_ele_momentum, mc_ele_phi  * (180/3.1415), mc_ele_theta,
+				                                                           h_ele_resolution_momentum, h_ele_resolution_phi, h_ele_resolution_theta);
 			}
 		}
 
@@ -6911,6 +6914,13 @@ void selection::make_selection( const char * _file1,
 	        data_scale_factor,
 	        "Theta Slice (90 - 180)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_3_data.pdf"));
+
+	histogram_functions::Plot1DHistogram(h_ele_resolution_momentum, "Momentum Resolution (True - Reco) / True",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum.pdf"));
+	histogram_functions::Plot1DHistogram(h_ele_resolution_phi, "Phi Resolution (True - Reco) / True",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_phi.pdf"));
+	histogram_functions::Plot1DHistogram(h_ele_resolution_theta, "Theta Resolution (True - Reco) / True",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_theta.pdf"));
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();

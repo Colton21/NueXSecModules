@@ -9436,4 +9436,61 @@ void selection_functions::EventMultiplicityInTime(std::vector<xsecAna::TPCObject
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                            std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                            const double mc_ele_momentum, const double mc_ele_phi, const double mc_ele_theta,
+                                            TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		//const double leading_shower_cos_theta = leading_shower.pfpDirZ() / leading_shower.pfpMomentum();
+		const double leading_shower_momentum = leading_shower.pfpMomentum();
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+
+		const double resolution_momentum = (mc_ele_momentum - leading_shower_momentum) / mc_ele_momentum;
+		const double resolution_phi = (mc_ele_phi - leading_shower_phi) / mc_ele_phi;
+		const double resolution_theta = (mc_ele_theta - leading_shower_theta) / mc_ele_theta;
+
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
+		{
+			h_ele_resolution_momentum->Fill(resolution_momentum);
+			h_ele_resolution_phi->Fill(resolution_phi);
+			h_ele_resolution_theta->Fill(resolution_theta);
+		}
+		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
+		{
+			h_ele_resolution_momentum->Fill(resolution_momentum);
+			h_ele_resolution_phi->Fill(resolution_phi);
+			h_ele_resolution_theta->Fill(resolution_theta);
+		}
+		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
+		{
+			h_ele_resolution_momentum->Fill(resolution_momentum);
+			h_ele_resolution_phi->Fill(resolution_phi);
+			h_ele_resolution_theta->Fill(resolution_theta);
+		}
+		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
+		{
+			h_ele_resolution_momentum->Fill(resolution_momentum);
+			h_ele_resolution_phi->Fill(resolution_phi);
+			h_ele_resolution_theta->Fill(resolution_theta);
+		}
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
+		{
+			h_ele_resolution_momentum->Fill(resolution_momentum);
+			h_ele_resolution_phi->Fill(resolution_phi);
+			h_ele_resolution_theta->Fill(resolution_theta);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions
