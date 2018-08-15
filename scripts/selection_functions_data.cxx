@@ -1197,4 +1197,57 @@ void selection_functions_data::EventMultiplicityData(std::vector<xsecAna::TPCObj
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::LeadingKinematicsShowerTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                                   TH1D * h_ele_pfp_momentum_1shwr_data,
+                                                                   TH1D * h_ele_pfp_momentum_2shwr_data,
+                                                                   TH1D * h_ele_pfp_theta_1shwr_data,
+                                                                   TH1D * h_ele_pfp_theta_2shwr_data,
+                                                                   TH1D * h_ele_pfp_phi_1shwr_data,
+                                                                   TH1D * h_ele_pfp_phi_2shwr_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		const double leading_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+		const int num_showers = tpc_obj.NPfpShowers();
+		if(num_showers == 1)
+		{
+			h_ele_pfp_momentum_1shwr_data->Fill(leading_momentum);
+			h_ele_pfp_theta_1shwr_data->Fill(leading_theta);
+			h_ele_pfp_phi_1shwr_data->Fill(leading_phi);
+		}
+		if(num_showers >= 2)
+		{
+			h_ele_pfp_momentum_2shwr_data->Fill(leading_momentum);
+			h_ele_pfp_theta_2shwr_data->Fill(leading_theta);
+			h_ele_pfp_phi_2shwr_data->Fill(leading_phi);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
 //end functions

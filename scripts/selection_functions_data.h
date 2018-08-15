@@ -263,6 +263,16 @@ void EventMultiplicityData(std::vector<xsecAna::TPCObjectContainer> * tpc_object
                            TH1D * h_multiplicity_shower_data, TH1D * h_multiplicity_track_data);
 //***************************************************************************
 //***************************************************************************
+void LeadingKinematicsShowerTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                         TH1D * h_ele_pfp_momentum_1shwr_data,
+                                         TH1D * h_ele_pfp_momentum_2shwr_data,
+                                         TH1D * h_ele_pfp_theta_1shwr_data,
+                                         TH1D * h_ele_pfp_theta_2shwr_data,
+                                         TH1D * h_ele_pfp_phi_1shwr_data,
+                                         TH1D * h_ele_pfp_phi_2shwr_data);
+//***************************************************************************
+//***************************************************************************
 };
 
 

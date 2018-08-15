@@ -9440,7 +9440,9 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                             const double mc_ele_momentum, const double mc_ele_phi, const double mc_ele_theta,
-                                            TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta)
+                                            const double mc_ele_dir_x, const double mc_ele_dir_y, const double mc_ele_dir_z,
+                                            TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta,
+                                            TH1D * h_ele_resolution_dot_prod)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -9459,35 +9461,449 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
 		const double resolution_phi = (mc_ele_phi - leading_shower_phi) / mc_ele_phi;
 		const double resolution_theta = (mc_ele_theta - leading_shower_theta) / mc_ele_theta;
 
+		const double mc_reco_dot_prod = ((mc_ele_dir_x * leading_shower.pfpDirX()) +
+		                                 (mc_ele_dir_y * leading_shower.pfpDirY()) +
+		                                 (mc_ele_dir_z * leading_shower.pfpDirZ()));
+
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
 			h_ele_resolution_momentum->Fill(resolution_momentum);
 			h_ele_resolution_phi->Fill(resolution_phi);
 			h_ele_resolution_theta->Fill(resolution_theta);
+			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod);
 		}
 		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
 		{
 			h_ele_resolution_momentum->Fill(resolution_momentum);
 			h_ele_resolution_phi->Fill(resolution_phi);
 			h_ele_resolution_theta->Fill(resolution_theta);
+			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod);
 		}
 		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
 		{
 			h_ele_resolution_momentum->Fill(resolution_momentum);
 			h_ele_resolution_phi->Fill(resolution_phi);
 			h_ele_resolution_theta->Fill(resolution_theta);
+			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod);
 		}
 		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
 		{
 			h_ele_resolution_momentum->Fill(resolution_momentum);
 			h_ele_resolution_phi->Fill(resolution_phi);
 			h_ele_resolution_theta->Fill(resolution_theta);
+			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod);
 		}
 		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
 			h_ele_resolution_momentum->Fill(resolution_momentum);
 			h_ele_resolution_phi->Fill(resolution_phi);
 			h_ele_resolution_theta->Fill(resolution_theta);
+			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::LeadingKinematicsShowerTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_nue_cc,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_nue_cc_out_fv,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_nue_cc_mixed,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_numu_cc,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_numu_cc_mixed,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_nc,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_nc_pi0,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_cosmic,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_other_mixed,
+                                                          TH1D * h_ele_pfp_momentum_1shwr_unmatched,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_nue_cc,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_nue_cc_out_fv,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_nue_cc_mixed,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_numu_cc,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_numu_cc_mixed,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_nc,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_nc_pi0,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_cosmic,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_other_mixed,
+                                                          TH1D * h_ele_pfp_momentum_2shwr_unmatched,
+                                                          TH1D * h_ele_pfp_theta_1shwr_nue_cc,
+                                                          TH1D * h_ele_pfp_theta_1shwr_nue_cc_out_fv,
+                                                          TH1D * h_ele_pfp_theta_1shwr_nue_cc_mixed,
+                                                          TH1D * h_ele_pfp_theta_1shwr_numu_cc,
+                                                          TH1D * h_ele_pfp_theta_1shwr_numu_cc_mixed,
+                                                          TH1D * h_ele_pfp_theta_1shwr_nc,
+                                                          TH1D * h_ele_pfp_theta_1shwr_nc_pi0,
+                                                          TH1D * h_ele_pfp_theta_1shwr_cosmic,
+                                                          TH1D * h_ele_pfp_theta_1shwr_other_mixed,
+                                                          TH1D * h_ele_pfp_theta_1shwr_unmatched,
+                                                          TH1D * h_ele_pfp_theta_2shwr_nue_cc,
+                                                          TH1D * h_ele_pfp_theta_2shwr_nue_cc_out_fv,
+                                                          TH1D * h_ele_pfp_theta_2shwr_nue_cc_mixed,
+                                                          TH1D * h_ele_pfp_theta_2shwr_numu_cc,
+                                                          TH1D * h_ele_pfp_theta_2shwr_numu_cc_mixed,
+                                                          TH1D * h_ele_pfp_theta_2shwr_nc,
+                                                          TH1D * h_ele_pfp_theta_2shwr_nc_pi0,
+                                                          TH1D * h_ele_pfp_theta_2shwr_cosmic,
+                                                          TH1D * h_ele_pfp_theta_2shwr_other_mixed,
+                                                          TH1D * h_ele_pfp_theta_2shwr_unmatched,
+                                                          TH1D * h_ele_pfp_phi_1shwr_nue_cc,
+                                                          TH1D * h_ele_pfp_phi_1shwr_nue_cc_out_fv,
+                                                          TH1D * h_ele_pfp_phi_1shwr_nue_cc_mixed,
+                                                          TH1D * h_ele_pfp_phi_1shwr_numu_cc,
+                                                          TH1D * h_ele_pfp_phi_1shwr_numu_cc_mixed,
+                                                          TH1D * h_ele_pfp_phi_1shwr_nc,
+                                                          TH1D * h_ele_pfp_phi_1shwr_nc_pi0,
+                                                          TH1D * h_ele_pfp_phi_1shwr_cosmic,
+                                                          TH1D * h_ele_pfp_phi_1shwr_other_mixed,
+                                                          TH1D * h_ele_pfp_phi_1shwr_unmatched,
+                                                          TH1D * h_ele_pfp_phi_2shwr_nue_cc,
+                                                          TH1D * h_ele_pfp_phi_2shwr_nue_cc_out_fv,
+                                                          TH1D * h_ele_pfp_phi_2shwr_nue_cc_mixed,
+                                                          TH1D * h_ele_pfp_phi_2shwr_numu_cc,
+                                                          TH1D * h_ele_pfp_phi_2shwr_numu_cc_mixed,
+                                                          TH1D * h_ele_pfp_phi_2shwr_nc,
+                                                          TH1D * h_ele_pfp_phi_2shwr_nc_pi0,
+                                                          TH1D * h_ele_pfp_phi_2shwr_cosmic,
+                                                          TH1D * h_ele_pfp_phi_2shwr_other_mixed,
+                                                          TH1D * h_ele_pfp_phi_2shwr_unmatched)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		const double leading_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+
+		const int num_showers = tpc_obj.NPfpShowers();
+
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nue_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nue_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nue_cc_out_fv->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nue_cc_out_fv->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nue_cc_out_fv->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nue_cc_out_fv->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nue_cc_out_fv->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nue_cc_out_fv->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nue_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nue_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nue_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nue_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nue_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nue_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nue_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nue_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nue_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nue_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_numu_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_numu_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_numu_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_numu_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_numu_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_numu_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_numu_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_numu_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_numu_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_numu_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nc")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nc_pi0->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nc_pi0->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nc_pi0->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nc_pi0->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nc_pi0->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nc_pi0->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_nue_cc_mixed->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_nue_cc_mixed->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_nue_cc_mixed->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_nue_cc_mixed->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_nue_cc_mixed->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_nue_cc_mixed->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_numu_cc->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_numu_cc->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_numu_cc->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_numu_cc->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "cosmic")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_cosmic->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_cosmic->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_cosmic->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_cosmic->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_cosmic->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_cosmic->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "other_mixed")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_other_mixed->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_other_mixed->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_other_mixed->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_other_mixed->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_other_mixed->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_other_mixed->Fill(leading_phi);
+			}
+		}
+		if(tpco_id == "unmatched")
+		{
+			if(num_showers == 1)
+			{
+				h_ele_pfp_momentum_1shwr_unmatched->Fill(leading_momentum);
+				h_ele_pfp_theta_1shwr_unmatched->Fill(leading_theta);
+				h_ele_pfp_phi_1shwr_unmatched->Fill(leading_phi);
+			}
+			if(num_showers >= 2)
+			{
+				h_ele_pfp_momentum_2shwr_unmatched->Fill(leading_momentum);
+				h_ele_pfp_theta_2shwr_unmatched->Fill(leading_theta);
+				h_ele_pfp_phi_2shwr_unmatched->Fill(leading_phi);
+			}
+		}
+	}//end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::LeadingKinematicsShowerTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                                TH1D * h_ele_pfp_momentum_1shwr_intime,
+                                                                TH1D * h_ele_pfp_momentum_2shwr_intime,
+                                                                TH1D * h_ele_pfp_theta_1shwr_intime,
+                                                                TH1D * h_ele_pfp_theta_2shwr_intime,
+                                                                TH1D * h_ele_pfp_phi_1shwr_intime,
+                                                                TH1D * h_ele_pfp_phi_2shwr_intime)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		const double leading_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+		const int num_showers = tpc_obj.NPfpShowers();
+		if(num_showers == 1)
+		{
+			h_ele_pfp_momentum_1shwr_intime->Fill(leading_momentum);
+			h_ele_pfp_theta_1shwr_intime->Fill(leading_theta);
+			h_ele_pfp_phi_1shwr_intime->Fill(leading_phi);
+		}
+		if(num_showers >= 2)
+		{
+			h_ele_pfp_momentum_2shwr_intime->Fill(leading_momentum);
+			h_ele_pfp_theta_2shwr_intime->Fill(leading_theta);
+			h_ele_pfp_phi_2shwr_intime->Fill(leading_phi);
 		}
 	}
 }
