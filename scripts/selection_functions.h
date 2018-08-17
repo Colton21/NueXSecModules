@@ -1414,7 +1414,8 @@ void TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                        const double mc_ele_momentum, const double mc_ele_phi, const double mc_ele_theta,
                        const double mc_ele_dir_x, const double mc_ele_dir_y, const double mc_ele_dir_z,
-                       TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta, TH1D * h_ele_resolution_dot_prod);
+                       TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta,
+                       TH1D * h_ele_resolution_dot_prod, TH2D * h_ele_resolution_momentum_dot_prod);
 //***************************************************************************
 //***************************************************************************
 void LeadingKinematicsShowerTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

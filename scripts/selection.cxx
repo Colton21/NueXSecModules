@@ -3122,7 +3122,7 @@ void selection::make_selection( const char * _file1,
 				                                                           mc_ele_momentum, mc_ele_phi  * (180/3.1415), mc_ele_theta,
 				                                                           mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z,
 				                                                           h_ele_resolution_momentum, h_ele_resolution_phi, h_ele_resolution_theta,
-				                                                           h_ele_resolution_dot_prod);
+				                                                           h_ele_resolution_dot_prod, h_ele_resolution_momentum_dot_prod);
 			}
 		}
 
@@ -6402,10 +6402,14 @@ void selection::make_selection( const char * _file1,
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_pre_cuts_data.pdf"),
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_pre_cuts_diff.pdf"));
 
-	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_nue_cc, "Signal", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", Form("%s%s", file_locate_prefix, "pfp_zy_vtx_nue_cc.pdf"));
-	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_all, "All", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", Form("%s%s", file_locate_prefix, "pfp_zy_vtx_all.pdf"));
-	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_ext, "EXT", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", Form("%s%s", file_locate_prefix, "pfp_zy_vtx_ext.pdf"));
-	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_data, "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]", Form("%s%s", file_locate_prefix, "pfp_zy_vtx_data.pdf"));
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_nue_cc, "Signal", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
+	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_nue_cc.pdf"));
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_all, "All", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
+	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_all.pdf"));
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_ext, "EXT", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
+	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_ext.pdf"));
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_data, "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
+	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
 	        h_multiplicity_shower_nue_cut_nue_cc,
@@ -6997,6 +7001,8 @@ void selection::make_selection( const char * _file1,
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_theta.pdf"));
 	histogram_functions::Plot1DHistogram(h_ele_resolution_dot_prod, "True.Reco Direction",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_dot_prod.pdf"));
+	histogram_functions::Plot2DHistogram(h_ele_resolution_momentum_dot_prod, " ", "True Electron Momentum [GeV]", "True.Reco Shower Direction",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
 	        h_ele_pfp_momentum_1shwr_nue_cc,

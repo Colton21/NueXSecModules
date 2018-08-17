@@ -2593,6 +2593,7 @@ TH1D * h_ele_resolution_momentum = new TH1D("h_ele_resolution_momentum", "h_ele_
 TH1D * h_ele_resolution_phi      = new TH1D("h_ele_resolution_phi",      "h_ele_resolution_phi",      20, -1, 1);
 TH1D * h_ele_resolution_theta    = new TH1D("h_ele_resolution_theta",    "h_ele_resolution_theta",    20, -1, 1);
 TH1D * h_ele_resolution_dot_prod = new TH1D("h_ele_resolution_dot_prod", "h_ele_resolution_dot_prod", 20, -1, 1);
+TH2D * h_ele_resolution_momentum_dot_prod = new TH2D("h_ele_resolution_momentum_dot_prod", "h_ele_resolution_momentum_dot_prod", 30, 0, 5, 30, -1, 1);
 
 TH1D * h_ele_pfp_momentum_1shwr_nue_cc        = new TH1D("h_ele_pfp_momentum_1shwr_nue_cc",        "h_ele_pfp_momentum_1shwr_nue_cc",        10, 0, 3);
 TH1D * h_ele_pfp_momentum_1shwr_nue_cc_out_fv = new TH1D("h_ele_pfp_momentum_1shwr_nue_cc_out_fv", "h_ele_pfp_momentum_1shwr_nue_cc_out_fv", 10, 0, 3);
