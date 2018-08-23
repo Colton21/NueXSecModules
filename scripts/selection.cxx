@@ -3727,12 +3727,24 @@ void selection::make_selection( const char * _file1,
 	{
 		std::cout << "Print Post Cuts MC: " << std::endl;
 		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v,      _post_cuts_verbose);
+		//filling a file with all of the run subrun and event numbers
 	}
 	if(_post_cuts_verbose == true)
 	{
 		std::cout << "Print Post Cuts On-Beam Data: " << std::endl;
 		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_data, _post_cuts_verbose);
 	}
+	std::ofstream selected_run_subrun_event_file;
+	selected_run_subrun_event_file.open("selected_run_subrun_event_list.txt");
+	for(auto const post_cuts : * post_cuts_v)
+	{
+		const int event_num = std::get<0>(post_cuts);
+		const int run_num = std::get<1>(post_cuts);
+		const int sub_run_num = std::get<2>(post_cuts);
+		const std::string tpco_classification = std::get<7>(post_cuts);
+		selected_run_subrun_event_file << tpco_classification << " " << run_num << " " << sub_run_num << " " << event_num << "\n";
+	}
+	selected_run_subrun_event_file.close();
 	_functions_instance.selection_functions::PostCutVectorPlots(post_cuts_v, _post_cuts_verbose,
 	                                                            h_post_cuts_num_showers_purity_qe,
 	                                                            h_post_cuts_num_showers_purity_res,
