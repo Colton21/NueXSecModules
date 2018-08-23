@@ -688,6 +688,10 @@ void selection_cuts::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_objec
 
 		bool has_nue = false;
 		bool has_valid_shower = false;
+
+		//test case -- difference is very small following all selection cuts
+		//if(tpc_obj.NPfpShowers() != 0) {has_nue = true; has_valid_shower = true; }
+
 		for(int j = 0; j <n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
