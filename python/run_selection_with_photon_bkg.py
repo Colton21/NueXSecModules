@@ -51,8 +51,8 @@ write_to_file(f2, z2)
 
 # optical cuts
 flash_pe_threshold = 50.0
-flash_time_start = 5.8
-flash_time_end = 15.5
+flash_time_start = 5.5
+flash_time_end = 16.0
 
 write_to_file(f, flash_pe_threshold)
 write_to_file(f, flash_time_start)
@@ -79,7 +79,8 @@ write_to_file(f2, shwr_nue_tolerance)
 write_to_file(f2, trk_nue_tolerance)
 
 # leading shower hit thresholds
-shwr_hit_threshold = 200.0
+#shwr_hit_threshold = 200.0
+shwr_hit_threshold = 120.0
 shwr_hit_threshold_collection = 80.0
 
 write_to_file(f, shwr_hit_threshold)

@@ -58,8 +58,10 @@ const double _z2 = 20;
 
 //in time flash
 const int flash_pe_threshold = 50;
-const double flash_time_start = 5.8;
-const double flash_time_end = 15.5;
+//const double flash_time_start = 5.8;
+//const double flash_time_end = 15.5;
+const double flash_time_start = 5.5;
+const double flash_time_end = 16.0;
 
 //vertex to flash
 //standard 100 cm
@@ -74,7 +76,7 @@ const double trk_nue_tolerance = 4;//cm
 //hit threshold for at least one shower
 //standard 120 hits
 //higher cuts 200 hits
-const double shwr_hit_threshold = 200;//hits
+const double shwr_hit_threshold = 120;//hits
 
 //hit threshold for at least one shower on collection plane
 //standard 50 hits
