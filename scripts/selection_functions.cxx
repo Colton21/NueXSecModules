@@ -1367,7 +1367,8 @@ void selection_functions::IntegratedXsecPlot(const double data_xsec, const doubl
 	double x[1] = {1.0};
 	double y[1] = {data_xsec};
 	double ex[1] = {0.0};
-	double ey[1] = {full_error};
+	//double ey[1] = {full_error};
+	double ey[1] = {data_xsec * 0.1579}; // this is the current stats error
 	const int n = 1;
 
 	TGraphErrors * xsec_graph = new TGraphErrors(n, x, y, ex, ey);
@@ -1375,6 +1376,8 @@ void selection_functions::IntegratedXsecPlot(const double data_xsec, const doubl
 	xsec_graph->SetMinimum(3.6e-39);
 	xsec_graph->SetMaximum(7.2e-39);
 	xsec_graph->SetMarkerStyle(3);
+	xsec_graph->GetYaxis()->SetTitle("#nu_e + #nu_e_bar Cross Section");
+	xsec_graph->SetTitle(" ");
 	xsec_graph->Draw();
 
 	TLine * line = new TLine(0.9, mc_xsec, 1.1, mc_xsec);
@@ -1383,7 +1386,7 @@ void selection_functions::IntegratedXsecPlot(const double data_xsec, const doubl
 
 	TLegend * leg = new TLegend();
 	leg->AddEntry(xsec_graph, "Data Cross Section", "l");
-	leg->AddEntry(line, "GENIE", "l");
+	leg->AddEntry(line, "MC Truth", "l");
 	leg->Draw();
 
 	c_integrated->Print("../scripts/plots/integrated_xsec.pdf");
