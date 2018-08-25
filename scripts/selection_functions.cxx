@@ -2613,7 +2613,8 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                               double mc_nu_energy, double mc_ele_energy,
-                                              TH2D * h_shwr_hits_nu_eng, TH2D * h_shwr_hits_ele_eng)
+                                              TH2D * h_shwr_hits_nu_eng, TH2D * h_shwr_hits_ele_eng,
+                                              TH2D * h_shwr_collection_hits_nu_eng, TH2D * h_shwr_collection_hits_ele_eng)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -2625,6 +2626,7 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 
 		int pfp_shower_hits = 0;
+		int pfp_collection_shower_hits = 0;
 		if(tpco_id == "nue_cc_qe"  ||
 		   tpco_id == "nue_cc_res" ||
 		   tpco_id == "nue_cc_dis" ||
@@ -2640,10 +2642,16 @@ void selection_functions::PostCutHitThreshold(std::vector<xsecAna::TPCObjectCont
 			{
 				auto const part = tpc_obj.GetParticle(j);
 				const int mc_pdg_code = part.MCPdgCode();
-				if(mc_pdg_code == 11 || mc_pdg_code == -11) {pfp_shower_hits = part.NumPFPHits(); }
+				if(mc_pdg_code == 11 || mc_pdg_code == -11)
+				{
+					pfp_shower_hits = part.NumPFPHits();
+					pfp_collection_shower_hits = part.NumPFPHitsW();
+				}
 			}//end loop pfp objects
 			h_shwr_hits_nu_eng->Fill(mc_nu_energy, pfp_shower_hits);
 			h_shwr_hits_ele_eng->Fill(mc_ele_energy, pfp_shower_hits);
+			h_shwr_collection_hits_nu_eng->Fill(mc_nu_energy, pfp_collection_shower_hits);
+			h_shwr_collection_hits_ele_eng->Fill(mc_ele_energy, pfp_collection_shower_hits);
 		}//if classified as pure nue cc in fv, i.e. signal
 	} //end loop tpc objects
 }

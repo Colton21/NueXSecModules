@@ -1725,9 +1725,11 @@ void selection::make_selection( const char * _file1,
 		if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true)
 		{
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-			                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng, h_shwr_hits_ele_eng);
+			                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng, h_shwr_hits_ele_eng,
+			                                                             h_shwr_collection_hits_nu_eng, h_shwr_collection_hits_ele_eng);
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-			                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng_zoom, h_shwr_hits_ele_eng_zoom);
+			                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng_zoom, h_shwr_hits_ele_eng_zoom,
+			                                                             h_shwr_collection_hits_nu_eng_zoom, h_shwr_collection_hits_ele_eng_zoom);
 
 			_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 			                                                     mc_ele_momentum, mc_ele_cos_theta,
@@ -2117,10 +2119,12 @@ void selection::make_selection( const char * _file1,
 		{
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose,
 			                                                             tpco_classifier_v, mc_nu_energy, mc_ele_energy,
-			                                                             h_shwr_hits_nu_eng_last, h_shwr_hits_ele_eng_last);
+			                                                             h_shwr_hits_nu_eng_last, h_shwr_hits_ele_eng_last,
+			                                                             h_shwr_collection_hits_nu_eng_last, h_shwr_collection_hits_ele_eng_last);
 			_functions_instance.selection_functions::PostCutHitThreshold(tpc_object_container_v, passed_tpco, _verbose,
 			                                                             tpco_classifier_v, mc_nu_energy, mc_ele_energy,
-			                                                             h_shwr_hits_nu_eng_zoom_last, h_shwr_hits_ele_eng_zoom_last);
+			                                                             h_shwr_hits_nu_eng_zoom_last, h_shwr_hits_ele_eng_zoom_last,
+			                                                             h_shwr_collection_hits_nu_eng_zoom_last, h_shwr_collection_hits_ele_eng_zoom_last);
 		}
 
 		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
@@ -4430,6 +4434,32 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng_zoom_last, "", "True Electron Energy [GeV]", "Signal Electron Shower Hits",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_ele_eng_zoom_last.pdf"));
 
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_nu_eng, "", "True Neutrino Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_nu_eng.pdf"));
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_ele_eng, "", "True Electron Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_ele_eng.pdf"));
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_nu_eng_zoom, "", "True Neutrino Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_nu_eng_zoom.pdf"));
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_ele_eng_zoom, "", "True Electron Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_ele_eng_zoom.pdf"));
+
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_nu_eng_last, "", "True Neutrino Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_nu_eng_last.pdf"));
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_ele_eng_last, "", "True Electron Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_ele_eng_last.pdf"));
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_nu_eng_zoom_last, "", "True Neutrino Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_nu_eng_zoom_last.pdf"));
+	histogram_functions::Plot2DHistogram (h_shwr_collection_hits_ele_eng_zoom_last, "", "True Electron Energy [GeV]",
+	                                      "Signal Electron Shower Hits (Collection)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_collection_hits_ele_eng_zoom_last.pdf"));
+
 	h_pfp_shower_nue_cc_qe_last->SetFillColor(30);
 	h_pfp_shower_nue_cc_out_fv_last->SetFillColor(45);
 	h_pfp_shower_nue_cc_res_last->SetFillColor(31);
@@ -5106,6 +5136,9 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_total_hits_leading_shower_data, data_scale_factor,
 	                                          "", "Leading Shower Hits - All Planes", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_data.pdf"));
+
+	histogram_functions::Plot1DHistogram (h_pre_cut_total_hits_leading_shower_nue_cc, "Signal Events Leading Shower Hits - All Planes",
+	                                      Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_signal_only_data.pdf"));
 
 	histogram_functions::Plot2DHistogram (h_ele_eng_total_hits, "", "Hits - All Planes", "True Electron Energy [GeV]",
 	                                      Form("%s%s", file_locate_prefix, "post_cuts_ele_eng_total_hits.pdf"));
@@ -6422,6 +6455,10 @@ void selection::make_selection( const char * _file1,
 	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_ext.pdf"));
 	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_data, "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
 	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_data.pdf"));
+
+	histogram_functions::Plot2DHistogramNormZ(h_pfp_zy_vtx_all, h_pfp_zy_vtx_data, "All", "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
+	                                          Form("%s%s", file_locate_prefix, "pfp_zy_vtx_all_norm_z.pdf"),
+	                                          Form("%s%s", file_locate_prefix, "pfp_zy_vtx_data_norm_z.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
 	        h_multiplicity_shower_nue_cut_nue_cc,

@@ -37,6 +37,8 @@ static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x
                              const char * draw_option);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
                              const char * draw_option, const int x_divisions, const int y_divisions);
+static void Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogram_2, const char * title_1, const char * title_2,
+                                  const char * x_axis_name, const char * y_axis_name, const char * print_name_1, const char * print_name_2);
 static void Plot2DHistogramOffSet (TH2 * histogram, const double label_offset, const double title_offset, const char * title,
                                    const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,

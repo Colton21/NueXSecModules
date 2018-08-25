@@ -118,6 +118,38 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->Draw("colz");
 	c1->Print(print_name);
 }
+
+void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogram_2, const char * title_1, const char * title_2,
+                                                const char * x_axis_name, const char * y_axis_name, const char * print_name_1, const char * print_name_2)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	histogram_1->GetXaxis()->SetTitle(x_axis_name);
+	histogram_1->GetYaxis()->SetTitle(y_axis_name);
+	histogram_1->SetTitle(title_1);
+	histogram_1->SetStats(kFALSE);
+	histogram_1->Draw("colz");
+
+	TCanvas * c2 = new TCanvas();
+	c2->cd();
+	histogram_2->GetXaxis()->SetTitle(x_axis_name);
+	histogram_2->GetYaxis()->SetTitle(y_axis_name);
+	histogram_2->SetTitle(title_2);
+	histogram_2->SetStats(kFALSE);
+	histogram_2->Draw("colz");
+
+	histogram_1->GetZaxis()->SetRangeUser(histogram_2->GetZaxis()->GetBinLowEdge(1),
+	                                      histogram_2->GetZaxis()->GetBinLowEdge(histogram_2->GetNbinsZ()+1));
+	std::cout << "\t" << histogram_2->GetZaxis()->GetBinLowEdge(1) << ", " << histogram_2->GetZaxis()->GetBinLowEdge(histogram_2->GetNbinsZ()+1) << std::endl;
+	c1->cd();
+	histogram_1->Draw("colz");
+	c2->cd();
+	histogram_2->Draw("colz");
+
+	c1->Print(print_name_1);
+	c2->Print(print_name_2);
+}
+
 void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3,
                                            const double data_scale_factor, const double intime_scale_factor,
                                            const char * x_axis_name, const char * print_name)

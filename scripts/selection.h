@@ -55,6 +55,11 @@ const double data_scale_factor = 0.13;
 //according to Zarko's new script - 5,287,179 EXT (prescale folded in already)
 // 6180310 / 5287179 = 1.16
 
+//now with the "full" ext (aug 2018)
+//not-prescaled value: 42,898,984
+// with prescale values: 6,311,670.5
+// 6,180,310 / 6,311,670.5 = 0.97918
+
 const double intime_scale_factor = 1.16;
 
 //if I look only at the 4 individual samples of the ext and calculate the scale
@@ -821,6 +826,16 @@ TH2D * h_shwr_hits_nu_eng_zoom_last  = new TH2D ("h_shwr_hits_nu_eng_zoom_last",
 TH2D * h_shwr_hits_ele_eng_zoom_last = new TH2D ("h_shwr_hits_ele_eng_zoom_last", "h_shwr_hits_ele_eng_zoom_last", 20, 0, 2, 20, 0, 500);
 TH2D * h_shwr_hits_nu_eng_last       = new TH2D ("h_shwr_hits_nu_eng_last",       "h_shwr_hits_nu_eng_last", 20, 0, 4, 20, 0, 5000);
 TH2D * h_shwr_hits_ele_eng_last      = new TH2D ("h_shwr_hits_ele_eng_last",      "h_shwr_hits_ele_eng_last", 20, 0, 2, 20, 0, 5000);
+
+TH2D * h_shwr_collection_hits_nu_eng_zoom  = new TH2D ("h_shwr_collection_hits_nu_eng_zoom",  "h_shwr_collection_hits_nu_eng_zoom", 20, 0, 4, 20, 0, 500);
+TH2D * h_shwr_collection_hits_ele_eng_zoom = new TH2D ("h_shwr_collection_hits_ele_eng_zoom", "h_shwr_collection_hits_ele_eng_zoom", 20, 0, 2, 20, 0, 500);
+TH2D * h_shwr_collection_hits_nu_eng       = new TH2D ("h_shwr_collection_hits_nu_eng",       "h_shwr_collection_hits_nu_eng", 20, 0, 4, 20, 0, 2000);
+TH2D * h_shwr_collection_hits_ele_eng      = new TH2D ("h_shwr_collection_hits_ele_eng",      "h_shwr_collection_hits_ele_eng", 20, 0, 2, 20, 0, 2000);
+
+TH2D * h_shwr_collection_hits_nu_eng_zoom_last  = new TH2D ("h_shwr_collection_hits_nu_eng_zoom_last",  "h_shwr_collection_hits_nu_eng_zoom_last", 20, 0, 4, 20, 0, 500);
+TH2D * h_shwr_collection_hits_ele_eng_zoom_last = new TH2D ("h_shwr_collection_hits_ele_eng_zoom_last", "h_shwr_collection_hits_ele_eng_zoom_last", 20, 0, 2, 20, 0, 500);
+TH2D * h_shwr_collection_hits_nu_eng_last       = new TH2D ("h_shwr_collection_hits_nu_eng_last",       "h_shwr_collection_hits_nu_eng_last", 20, 0, 4, 20, 0, 2000);
+TH2D * h_shwr_collection_hits_ele_eng_last      = new TH2D ("h_shwr_collection_hits_ele_eng_last",      "h_shwr_collection_hits_ele_eng_last", 20, 0, 2, 20, 0, 2000);
 
 
 TH1D * h_selected_nu_energy_no_cut         = new TH1D ("h_selected_nu_energy_no_cut",         "h_selected_nu_energy_no_cut", 20, 0, 5);
