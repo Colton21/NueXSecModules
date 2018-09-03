@@ -51,6 +51,7 @@ const double data_scale_factor = 0.13;
 // per event weighted prescale is 0.51
 //(26749613 (ext) * 0.51 (prescale)) = 13642302.63
 // 6180310 / 13642302.63 = 0.453
+//const double intime_scale_factor = 1.16;
 
 //according to Zarko's new script - 5,287,179 EXT (prescale folded in already)
 // 6180310 / 5287179 = 1.16
@@ -60,7 +61,7 @@ const double data_scale_factor = 0.13;
 // with prescale values: 6,311,670.5
 // 6,180,310 / 6,311,670.5 = 0.97918
 
-const double intime_scale_factor = 1.16;
+const double intime_scale_factor = 0.97918;
 
 //if I look only at the 4 individual samples of the ext and calculate the scale
 //factors for a temporary check

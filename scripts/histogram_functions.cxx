@@ -138,8 +138,8 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 	histogram_2->SetStats(kFALSE);
 	histogram_2->Draw("colz");
 
-	histogram_1->GetZaxis()->SetRangeUser(histogram_2->GetZaxis()->GetBinLowEdge(1),
-	                                      histogram_2->GetZaxis()->GetBinLowEdge(histogram_2->GetNbinsZ()+1));
+	histogram_1->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
+	                                      histogram_2->GetMaximum());//GetBinLowEdge(histogram_2->GetNbinsZ()+1));
 	std::cout << "\t" << histogram_2->GetZaxis()->GetBinLowEdge(1) << ", " << histogram_2->GetZaxis()->GetBinLowEdge(histogram_2->GetNbinsZ()+1) << std::endl;
 	c1->cd();
 	histogram_1->Draw("colz");
@@ -892,6 +892,184 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 	c1->Print(print_name);
 }
+
+void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                                           TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                                           TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
+                                                           const double intime_scale_factor, TH1 * h_data, const double data_scale_factor,
+                                                           const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas(title, title, 500, 500);
+	c1->cd();
+
+	TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
+	TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
+	topPad->SetBottomMargin(0.08);
+	bottomPad->SetTopMargin(0.0);
+	bottomPad->SetBottomMargin(0.12);
+	bottomPad->SetGridy();
+	topPad->Draw();
+	bottomPad->Draw();
+	topPad->cd();
+
+	THStack * stack = new THStack();
+	h_nue_cc->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_intime->SetStats(kFALSE);
+	h_data->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
+	h_nue_cc->SetFillColor(30);
+	h_nue_cc_mixed->SetFillColor(38);
+	h_numu_cc->SetFillColor(28);
+	h_nc_pi0->SetFillColor(36);
+	h_cosmic->SetFillColor(1);
+	h_nc->SetFillColor(46);
+	h_nue_cc_out_fv->SetFillColor(20);
+	h_other_mixed->SetFillColor(42);
+	h_unmatched->SetFillColor(12);
+	h_intime->SetFillColor(41);
+	h_intime->SetFillStyle(3345);
+	//h_intime->SetFillSytle(3354);
+
+	//h_data->Scale(data_scale_factor);
+	h_data->SetMarkerStyle(20);
+	h_data->SetMarkerSize(0.5);
+	h_data->Sumw2();
+
+	// TH1 * h_nue_cc_clone        = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
+	// TH1 * h_nue_cc_mixed_clone  = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	// TH1 * h_nue_cc_out_fv_clone = (TH1*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	// TH1 * h_cosmic_clone        = (TH1*)h_cosmic->Clone("h_cosmic_clone");
+	// TH1 * h_numu_cc_clone       = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
+	// TH1 * h_nc_clone            = (TH1*)h_nc->Clone("h_nc_clone");
+	// TH1 * h_nc_pi0_clone        = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	// TH1 * h_other_mixed_clone   = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
+	// TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+	// TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
+
+	double new_bins [7] = {0.0, 0.25, 0.5, 1.0, 1.5, 4.0};
+
+	TH1 * h_nue_cc_rebin        = (TH1*)h_nue_cc->Rebin(5, "h_nue_cc_rebin", new_bins);
+	TH1 * h_nue_cc_mixed_rebin  = (TH1*)h_nue_cc_mixed->Rebin(5, "h_nue_cc_mixed_rebin", new_bins);
+	TH1 * h_nue_cc_out_fv_rebin = (TH1*)h_nue_cc_out_fv->Rebin(5, "h_nue_cc_out_fv_rebin", new_bins);
+	TH1 * h_cosmic_rebin        = (TH1*)h_cosmic->Rebin(5, "h_cosmic_rebin", new_bins);
+	TH1 * h_numu_cc_rebin       = (TH1*)h_numu_cc->Rebin(5, "h_numu_cc_rebin", new_bins);
+	TH1 * h_nc_rebin            = (TH1*)h_nc->Rebin(5, "h_nc_rebin", new_bins);
+	TH1 * h_nc_pi0_rebin        = (TH1*)h_nc_pi0->Rebin(5, "h_nc_pi0_rebin", new_bins);
+	TH1 * h_other_mixed_rebin   = (TH1*)h_other_mixed->Rebin(5, "h_other_mixed_rebin", new_bins);
+	TH1 * h_unmatched_rebin     = (TH1*)h_unmatched->Rebin(5, "h_unmatched_rebin", new_bins);
+	TH1 * h_intime_rebin        = (TH1*)h_intime->Rebin(5, "h_intime_rebin", new_bins);
+	TH1 * h_data_rebin          = (TH1*)h_data->Rebin(5, "h_data_rebin", new_bins);
+
+	h_nue_cc_rebin->Sumw2();
+	h_nue_cc_mixed_rebin->Sumw2();
+	h_nue_cc_out_fv_rebin->Sumw2();
+	h_numu_cc_rebin->Sumw2();
+	h_nc_pi0_rebin->Sumw2();
+	h_cosmic_rebin->Sumw2();
+	h_nc_rebin->Sumw2();
+	h_other_mixed_rebin->Sumw2();
+	h_unmatched_rebin->Sumw2();
+	h_intime_rebin->Sumw2();
+	h_data_rebin->Sumw2();
+
+	h_nue_cc_rebin->Scale(data_scale_factor);
+	h_nue_cc_mixed_rebin->Scale(data_scale_factor);
+	h_nue_cc_out_fv_rebin->Scale(data_scale_factor);
+	h_cosmic_rebin->Scale(data_scale_factor);
+	h_numu_cc_rebin->Scale(data_scale_factor);
+	h_nc_rebin->Scale(data_scale_factor);
+	h_nc_pi0_rebin->Scale(data_scale_factor);
+	h_other_mixed_rebin->Scale(data_scale_factor);
+	h_unmatched_rebin->Scale(data_scale_factor);
+	h_intime_rebin->Scale(intime_scale_factor);
+
+	stack->Add(h_nue_cc_rebin);
+	stack->Add(h_nue_cc_mixed_rebin);
+	stack->Add(h_nue_cc_out_fv_rebin);
+	stack->Add(h_cosmic_rebin);
+	stack->Add(h_numu_cc_rebin);
+	stack->Add(h_nc_rebin);
+	stack->Add(h_nc_pi0_rebin);
+	stack->Add(h_other_mixed_rebin);
+	stack->Add(h_unmatched_rebin);
+	stack->Add(h_intime_rebin);
+
+	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
+	stack->SetMaximum(y_maximum * 1.2);
+
+	stack->Draw("hist");
+	stack->GetXaxis()->SetTitle(x_axis_name);
+	h_data_rebin->Draw("same PE");
+
+	TH1 * h_error_hist = (TH1*)h_nue_cc_rebin->Clone("h_error_hist");
+	h_error_hist->Add(h_nue_cc_mixed_rebin, 1);
+	h_error_hist->Add(h_nue_cc_out_fv_rebin, 1);
+	h_error_hist->Add(h_numu_cc_rebin, 1);
+	h_error_hist->Add(h_nc_pi0_rebin, 1);
+	h_error_hist->Add(h_nc_rebin, 1);
+	h_error_hist->Add(h_other_mixed_rebin, 1);
+	h_error_hist->Add(h_cosmic_rebin, 1);
+	h_error_hist->Add(h_unmatched_rebin, 1);
+	h_error_hist->Add(h_intime_rebin, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV",  "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
+	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
+	leg_stack->AddEntry(h_nc,              "NC",            "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
+	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",      "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "f");
+	leg_stack->AddEntry(h_intime,          "InTime",        "f");
+	leg_stack->Draw();
+
+	bottomPad->cd();
+	TH1 * ratioPlot = (TH1*)h_data_rebin->Clone("ratioPlot");
+	// ratioPlot->Add(h_nue_cc_clone,        -1);
+	// ratioPlot->Add(h_nue_cc_mixed_clone,  -1);
+	// ratioPlot->Add(h_nue_cc_out_fv_clone, -1);
+	// ratioPlot->Add(h_cosmic_clone,        -1);
+	// ratioPlot->Add(h_numu_cc_clone,       -1);
+	// ratioPlot->Add(h_nc_clone,            -1);
+	// ratioPlot->Add(h_nc_pi0_clone,        -1);
+	// ratioPlot->Add(h_other_mixed_clone,   -1);
+	// ratioPlot->Add(h_unmatched_clone,     -1);
+	// ratioPlot->Add(h_intime_clone,        -1);
+	//ratioPlot->Divide(h_data);
+	TH1 * h_mc_ext_sum = (TH1*)h_nue_cc_rebin->Clone("h_mc_ext_sum");
+	//h_mc_ext_sum->Add(h_nue_cc_clone,        1);
+	h_mc_ext_sum->Add(h_nue_cc_mixed_rebin,  1);
+	h_mc_ext_sum->Add(h_nue_cc_out_fv_rebin, 1);
+	h_mc_ext_sum->Add(h_cosmic_rebin,        1);
+	h_mc_ext_sum->Add(h_numu_cc_rebin,       1);
+	h_mc_ext_sum->Add(h_nc_rebin,            1);
+	h_mc_ext_sum->Add(h_nc_pi0_rebin,        1);
+	h_mc_ext_sum->Add(h_other_mixed_rebin,   1);
+	h_mc_ext_sum->Add(h_unmatched_rebin,     1);
+	h_mc_ext_sum->Add(h_intime_rebin,        1);
+
+	ratioPlot->Add(h_mc_ext_sum, -1);
+	ratioPlot->Divide(h_mc_ext_sum);
+	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
+	ratioPlot->Draw();
+
+	c1->Print(print_name);
+}
+
 void histogram_functions::PlotdEdxTheta(
         TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc,
         TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH1 * h_nc,

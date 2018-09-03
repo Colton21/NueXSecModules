@@ -132,7 +132,7 @@ void selection_functions::PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectConta
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_intime->Fill(leading_dedx * (242.72 / 196.979));
+		h_dedx_cuts_intime->Fill(leading_dedx);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -232,7 +232,7 @@ void selection_functions::PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TP
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_ext_unmatched->Fill(leading_dedx * (242.72 / 196.979));
+		h_dedx_cuts_ext_unmatched->Fill(leading_dedx);
 	}//end loop tpc objects
 }
 //***************************************************************************
@@ -3059,7 +3059,7 @@ void selection_functions::dEdxVsOpenAngleInTime(std::vector<xsecAna::TPCObjectCo
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
-		h_dedx_open_angle_intime->Fill(leading_dedx * (242.72 / 196.979), leading_open_angle);
+		h_dedx_open_angle_intime->Fill(leading_dedx, leading_open_angle);
 	}
 }
 //***************************************************************************
@@ -8207,7 +8207,7 @@ void selection_functions::dEdxCollectionAngleInTime(std::vector<xsecAna::TPCObje
 		const double leading_dir_y = leading_shower.pfpDirY();
 		const double leading_dir_z = leading_shower.pfpDirZ();
 		const double leading_angle_collection = atan2(leading_dir_y, leading_dir_z);
-		h_dedx_collection_angle_intime->Fill(leading_dedx * (242.72 / 196.979), leading_angle_collection);
+		h_dedx_collection_angle_intime->Fill(leading_dedx, leading_angle_collection);
 	}
 }
 //***************************************************************************
@@ -9002,112 +9002,112 @@ void selection_functions::PostCutsdedxThetaSlice(std::vector<xsecAna::TPCObjectC
 
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nue_cc_out_fv->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nue_cc_out_fv->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nue_cc_out_fv->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nue_cc_out_fv->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nue_cc_out_fv->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nue_cc_out_fv->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nue_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nue_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "numu_cc_res")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "numu_cc_dis")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "numu_cc_coh")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "numu_cc_mec")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nc")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nc_pi0")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nc_pi0->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nc_pi0->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nc_pi0->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nc_pi0->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nc_pi0->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nc_pi0->Fill(leading_dedx); }
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_nue_cc_mixed->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_nue_cc_mixed->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_nue_cc_mixed->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_nue_cc_mixed->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_nue_cc_mixed->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_nue_cc_mixed->Fill(leading_dedx); }
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
 			//h_ele_pfp_phi_numu_cc_mixed->Fill(leading_shower_phi);
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_numu_cc->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_numu_cc->Fill(leading_dedx); }
 		}
 		if(tpco_id == "cosmic")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_cosmic->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_cosmic->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_cosmic->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_cosmic->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_cosmic->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_cosmic->Fill(leading_dedx); }
 		}
 		if(tpco_id == "other_mixed")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_other_mixed->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_other_mixed->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_other_mixed->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_other_mixed->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_other_mixed->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_other_mixed->Fill(leading_dedx); }
 		}
 		if(tpco_id == "unmatched")
 		{
-			if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_unmatched->Fill(leading_dedx); }
-			if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_unmatched->Fill(leading_dedx); }
-			if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_unmatched->Fill(leading_dedx); }
+			if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_unmatched->Fill(leading_dedx); }
+			if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_unmatched->Fill(leading_dedx); }
+			if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_unmatched->Fill(leading_dedx); }
 		}
 	}//end pfp loop
 }
@@ -9151,9 +9151,9 @@ void selection_functions::PostCutsdedxThetaSliceInTime(std::vector<xsecAna::TPCO
 		TVector3 numi_vector;
 		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
-		if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_intime->Fill(leading_dedx * (242.72 / 196.979)); }
-		if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_intime->Fill(leading_dedx * (242.72 / 196.979)); }
-		if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_intime->Fill(leading_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 0 && leading_shower_theta < 60)     {h_dedx_1_intime->Fill(leading_dedx); }
+		if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_intime->Fill(leading_dedx); }
+		if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_intime->Fill(leading_dedx); }
 	}
 }
 //***************************************************************************
@@ -9294,7 +9294,7 @@ void selection_functions::dEdxThetaInTime(std::vector<xsecAna::TPCObjectContaine
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
-		h_dedx_theta_intime->Fill(leading_dedx * (242.72 / 196.979), leading_shower_theta);
+		h_dedx_theta_intime->Fill(leading_dedx, leading_shower_theta);
 	}
 }
 //***************************************************************************

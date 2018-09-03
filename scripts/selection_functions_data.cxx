@@ -403,9 +403,9 @@ void selection_functions_data::dedxThetaSliceData(std::vector<xsecAna::TPCObject
 		TVector3 numi_vector;
 		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
-		if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_dedx_1_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
-		if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_dedx_2_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
-		if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_dedx_3_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
 	}
 }
 //***************************************************************************

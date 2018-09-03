@@ -108,6 +108,12 @@ void selection::make_selection( const char * _file1,
 	true_in_tpc_v.resize(total_mc_entries, false);
 	int total_mc_entries_inFV_nue = 0;
 	int total_mc_entries_inFV_nue_bar = 0;
+	int total_mc_entries_inFV_numu_cc = 0;
+	int total_mc_entries_inFV_nue_nc = 0;
+	int total_mc_entries_inFV_numu_nc = 0;
+	int total_mc_entries_inFV_numu_cc_bar = 0;
+	int total_mc_entries_inFV_nue_nc_bar = 0;
+	int total_mc_entries_inFV_numu_nc_bar = 0;
 	for(int i = 0; i < total_mc_entries; i++)
 	{
 		mctruth_counter_tree->GetEntry(i);
@@ -123,6 +129,12 @@ void selection::make_selection( const char * _file1,
 		true_in_tpc_v.at(i) = true_in_tpc;
 		if(true_in_tpc == true && (mc_nu_id == 1)) {total_mc_entries_inFV_nue++; }
 		if(true_in_tpc == true && (mc_nu_id == 5)) {total_mc_entries_inFV_nue_bar++; }
+		if(true_in_tpc == true && (mc_nu_id == 2)) {total_mc_entries_inFV_numu_cc++; }
+		if(true_in_tpc == true && (mc_nu_id == 3)) {total_mc_entries_inFV_nue_nc++; }
+		if(true_in_tpc == true && (mc_nu_id == 4)) {total_mc_entries_inFV_numu_nc++; }
+		if(true_in_tpc == true && (mc_nu_id == 6)) {total_mc_entries_inFV_numu_cc_bar++; }
+		if(true_in_tpc == true && (mc_nu_id == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
+		if(true_in_tpc == true && (mc_nu_id == 8)) {total_mc_entries_inFV_numu_nc_bar++; }
 	}
 	int total_mc_entries_inFV = total_mc_entries_inFV_nue + total_mc_entries_inFV_nue_bar;
 
@@ -1433,11 +1445,6 @@ void selection::make_selection( const char * _file1,
 	// 2 = in-time, but not enough PE -- this counts against my efficiency
 	passed_runs->resize(total_entries);
 
-	//let's do the in-time cut as the very first thing
-	std::cout << "=====================" << std::endl;
-	std::cout << "==== In Time Cut ====" << std::endl;
-	std::cout << "=====================" << std::endl;
-
 	_cuts_instance.selection_cuts::loop_flashes(f, optree, flash_pe_threshold, flash_time_start, flash_time_end, passed_runs, flash_time, 2);
 	run_sum = 0;
 	out_of_time_sum = 0;
@@ -1459,6 +1466,24 @@ void selection::make_selection( const char * _file1,
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
 	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
 
+	int test_mc_nue_cc_counter = 0;
+	int test_mc_numu_cc_counter = 0;
+	int test_mc_nue_nc_counter = 0;
+	int test_mc_numu_nc_counter = 0;
+	int test_mc_nue_cc_counter_bar = 0;
+	int test_mc_numu_cc_counter_bar = 0;
+	int test_mc_nue_nc_counter_bar = 0;
+	int test_mc_numu_nc_counter_bar = 0;
+
+	int infv_test_mc_nue_cc_counter = 0;
+	int infv_test_mc_numu_cc_counter = 0;
+	int infv_test_mc_nue_nc_counter = 0;
+	int infv_test_mc_numu_nc_counter = 0;
+	int infv_test_mc_nue_cc_counter_bar = 0;
+	int infv_test_mc_numu_cc_counter_bar = 0;
+	int infv_test_mc_nue_nc_counter_bar = 0;
+	int infv_test_mc_numu_nc_counter_bar = 0;
+
 	//**********************************
 	//now let's do the cuts
 	//*********************************
@@ -1473,27 +1498,46 @@ void selection::make_selection( const char * _file1,
 		mytree->GetEntry(event);
 		mctruth_counter_tree->GetEntry(event);
 
-
 		//********************************
 		//before Any cuts!!!
 		//********************************
 
 		//check if nue interaction has true vtx in TPC
 		//std::cout << tpc_object_container_v->size() << std::endl;
-		bool true_in_tpc = false;
-		for (int i = 0; i < tpc_object_container_v->size(); i++)
-		{
-			auto const tpc_object_container = tpc_object_container_v->at(i);
-			double _mc_nu_vtx_x = 0.;
-			double _mc_nu_vtx_y = 0.;
-			double _mc_nu_vtx_z = 0.;
-			_mc_nu_vtx_x = tpc_object_container.mcVtxX();
-			_mc_nu_vtx_y = tpc_object_container.mcVtxY();
-			_mc_nu_vtx_z = tpc_object_container.mcVtxZ();
+		// bool true_in_tpc = false;
+		// for (int i = 0; i < tpc_object_container_v->size(); i++)
+		// {
+		//      auto const tpc_object_container = tpc_object_container_v->at(i);
+		//      double _mc_nu_vtx_x = 0.;
+		//      double _mc_nu_vtx_y = 0.;
+		//      double _mc_nu_vtx_z = 0.;
+		//      _mc_nu_vtx_x = tpc_object_container.mcVtxX();
+		//      _mc_nu_vtx_y = tpc_object_container.mcVtxY();
+		//      _mc_nu_vtx_z = tpc_object_container.mcVtxZ();
+		//
+		//      true_in_tpc = _cuts_instance.selection_cuts::in_fv(_mc_nu_vtx_x, _mc_nu_vtx_y, _mc_nu_vtx_z, fv_boundary_v);
+		//      if(true_in_tpc == true) {break; }
+		// }
+		const bool true_in_tpc = true_in_tpc_v.at(event);
 
-			true_in_tpc = _cuts_instance.selection_cuts::in_fv(_mc_nu_vtx_x, _mc_nu_vtx_y, _mc_nu_vtx_z, fv_boundary_v);
-			if(true_in_tpc == true) {break; }
-		}
+		if(mc_nu_id == 1) {test_mc_nue_cc_counter++; }
+		if(mc_nu_id == 2) {test_mc_numu_cc_counter++; }
+		if(mc_nu_id == 3) {test_mc_nue_nc_counter++; }
+		if(mc_nu_id == 4) {test_mc_numu_nc_counter++; }
+		if(mc_nu_id == 5) {test_mc_nue_cc_counter_bar++; }
+		if(mc_nu_id == 6) {test_mc_numu_cc_counter_bar++; }
+		if(mc_nu_id == 7) {test_mc_nue_nc_counter_bar++; }
+		if(mc_nu_id == 8) {test_mc_numu_nc_counter_bar++; }
+
+		if(mc_nu_id == 1 && true_in_tpc == true) {infv_test_mc_nue_cc_counter++; }
+		if(mc_nu_id == 2 && true_in_tpc == true) {infv_test_mc_numu_cc_counter++; }
+		if(mc_nu_id == 3 && true_in_tpc == true) {infv_test_mc_nue_nc_counter++; }
+		if(mc_nu_id == 4 && true_in_tpc == true) {infv_test_mc_numu_nc_counter++; }
+		if(mc_nu_id == 5 && true_in_tpc == true) {infv_test_mc_nue_cc_counter_bar++; }
+		if(mc_nu_id == 6 && true_in_tpc == true) {infv_test_mc_numu_cc_counter_bar++; }
+		if(mc_nu_id == 7 && true_in_tpc == true) {infv_test_mc_nue_nc_counter_bar++; }
+		if(mc_nu_id == 8 && true_in_tpc == true) {infv_test_mc_numu_nc_counter_bar++; }
+
 
 		//now we apply the classifier to all TPC Objects in this event
 		std::vector<std::pair<std::string, int> > * tpco_classifier_v = new std::vector<std::pair<std::string, int> >;
@@ -1635,33 +1679,33 @@ void selection::make_selection( const char * _file1,
 				for(auto const passed_tpco_pair : * passed_tpco) {pass += passed_tpco_pair.first; }
 				if(pass > 0) {case_1 = true; } //lets more pass?
 				if(tabulated_origins->at(0) >= 1) {case_2 = true; } //lets less pass, not reflected in printed values
-				if(case_1 && !case_2)
-				{
-					std::cout << "mc_nu_id: " << mc_nu_id << std::endl;
-					int num_tpc_obj = 0;
-					for(const auto tpco_classifier : * tpco_classifier_v)
-					{
-						auto const tpc_obj = tpc_object_container_v->at(num_tpc_obj);
-
-						if(tpco_classifier.first != "cosmic")
-						{
-							std::cout << '\t' << "classifier_id: " << tpco_classifier.first;
-							std::cout << ", Mode: " << tpc_obj.Mode() << ", PFP_PDG: " << tpc_obj.PFParticlePdgCode();
-							std::cout << ", CCNC: " << tpc_obj.CCNC() << ", HasMCPi0: " << tpc_obj.HasMCPi0() << std::endl;
-							const int n_pfp = tpc_obj.NumPFParticles();
-							for(int j = 0; j < n_pfp; j++)
-							{
-								auto const part = tpc_obj.GetParticle(j);
-								//const int n_pfp_hits = part.NumPFPHits();
-								const int mc_parent_pdg = part.MCParentPdg();
-								const int pfp_pdg = part.PFParticlePdgCode();
-								std::cout << '\t' << '\t' << "MC Parent PDG: " << mc_parent_pdg << ", PFP PDG: " << pfp_pdg << std::endl;
-							}
-						}
-						num_tpc_obj++;
-					}
-					num_debug_events++;
-				}
+				// if(case_1 && !case_2)
+				// {
+				//      std::cout << "mc_nu_id: " << mc_nu_id << std::endl;
+				//      int num_tpc_obj = 0;
+				//      for(const auto tpco_classifier : * tpco_classifier_v)
+				//      {
+				//              auto const tpc_obj = tpc_object_container_v->at(num_tpc_obj);
+				//
+				//              if(tpco_classifier.first != "cosmic")
+				//              {
+				//                      std::cout << '\t' << "classifier_id: " << tpco_classifier.first;
+				//                      std::cout << ", Mode: " << tpc_obj.Mode() << ", PFP_PDG: " << tpc_obj.PFParticlePdgCode();
+				//                      std::cout << ", CCNC: " << tpc_obj.CCNC() << ", HasMCPi0: " << tpc_obj.HasMCPi0() << std::endl;
+				//                      const int n_pfp = tpc_obj.NumPFParticles();
+				//                      for(int j = 0; j < n_pfp; j++)
+				//                      {
+				//                              auto const part = tpc_obj.GetParticle(j);
+				//                              //const int n_pfp_hits = part.NumPFPHits();
+				//                              const int mc_parent_pdg = part.MCParentPdg();
+				//                              const int pfp_pdg = part.PFParticlePdgCode();
+				//                              std::cout << '\t' << '\t' << "MC Parent PDG: " << mc_parent_pdg << ", PFP PDG: " << pfp_pdg << std::endl;
+				//                      }
+				//              }
+				//              num_tpc_obj++;
+				//      }
+				//      num_debug_events++;
+				// }
 			}
 		}
 		_functions_instance.selection_functions::PostCutsLeadingMomentum(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
@@ -3626,10 +3670,35 @@ void selection::make_selection( const char * _file1,
 	std::cout << " MC Nue          : " << total_mc_entries_inFV_nue << std::endl;
 	std::cout << " MC NueBar       : " << total_mc_entries_inFV_nue_bar << std::endl;
 	std::cout << " MC Entries in FV: " << total_mc_entries_inFV << std::endl;
+	std::cout << total_mc_entries_inFV_numu_cc << std::endl;
+	std::cout << total_mc_entries_inFV_nue_nc << std::endl;
+	std::cout << total_mc_entries_inFV_numu_nc << std::endl;
+	std::cout << total_mc_entries_inFV_numu_cc_bar << std::endl;
+	std::cout << total_mc_entries_inFV_nue_nc_bar << std::endl;
+	std::cout << total_mc_entries_inFV_numu_nc_bar << std::endl;
 	std::cout << "------------------ " << std::endl;
 	std::cout << "------------------ " << std::endl;
 	std::cout << "  End Selection    " << std::endl;
 	std::cout << "------------------ " << std::endl;
+
+
+	std::cout << test_mc_nue_cc_counter << std::endl;
+	std::cout << test_mc_numu_cc_counter << std::endl;
+	std::cout << test_mc_nue_nc_counter << std::endl;
+	std::cout << test_mc_numu_nc_counter << std::endl;
+	std::cout << test_mc_nue_cc_counter_bar << std::endl;
+	std::cout << test_mc_numu_cc_counter_bar << std::endl;
+	std::cout << test_mc_nue_nc_counter_bar << std::endl;
+	std::cout << test_mc_numu_nc_counter_bar << std::endl;
+	std::cout << "--------------------------------------" << std::endl;
+	std::cout << infv_test_mc_nue_cc_counter << std::endl;
+	std::cout << infv_test_mc_numu_cc_counter << std::endl;
+	std::cout << infv_test_mc_nue_nc_counter << std::endl;
+	std::cout << infv_test_mc_numu_nc_counter << std::endl;
+	std::cout << infv_test_mc_nue_cc_counter_bar << std::endl;
+	std::cout << infv_test_mc_numu_cc_counter_bar << std::endl;
+	std::cout << infv_test_mc_nue_nc_counter_bar << std::endl;
+	std::cout << infv_test_mc_numu_nc_counter_bar << std::endl;
 
 	//we also want some metrics to print at the end
 	//*************************************************************************************************************************
@@ -5236,35 +5305,35 @@ void selection::make_selection( const char * _file1,
 	                                            intime_scale_factor, data_scale_factor, "",
 	                                            "Leading Shower Momentum [GeV]", "",
 	                                            Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_intime.pdf"));
-	histogram_functions::PlotSimpleStackData (h_ele_pfp_momentum_nue_cc,  h_ele_pfp_momentum_nue_cc_mixed,
-	                                          h_ele_pfp_momentum_nue_cc_out_fv,
-	                                          h_ele_pfp_momentum_numu_cc, h_ele_pfp_momentum_numu_cc_mixed,
-	                                          h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
-	                                          h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
-	                                          h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, intime_scale_factor,
-	                                          h_ele_pfp_momentum_data, data_scale_factor,
-	                                          "", "Leading Shower Momentum [GeV]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_data.pdf"));
+	histogram_functions::PlotSimpleStackDataMomentumRebin (h_ele_pfp_momentum_nue_cc,  h_ele_pfp_momentum_nue_cc_mixed,
+	                                                       h_ele_pfp_momentum_nue_cc_out_fv,
+	                                                       h_ele_pfp_momentum_numu_cc, h_ele_pfp_momentum_numu_cc_mixed,
+	                                                       h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
+	                                                       h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
+	                                                       h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, intime_scale_factor,
+	                                                       h_ele_pfp_momentum_data, data_scale_factor,
+	                                                       "", "Leading Shower Momentum [GeV]", "",
+	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_data.pdf"));
 
-	histogram_functions::PlotSimpleStackData (h_ele_pfp_momentum_no_track_nue_cc,  h_ele_pfp_momentum_no_track_nue_cc_mixed,
-	                                          h_ele_pfp_momentum_no_track_nue_cc_out_fv,
-	                                          h_ele_pfp_momentum_no_track_numu_cc, h_ele_pfp_momentum_no_track_numu_cc_mixed,
-	                                          h_ele_pfp_momentum_no_track_cosmic,  h_ele_pfp_momentum_no_track_nc,
-	                                          h_ele_pfp_momentum_no_track_nc_pi0,  h_ele_pfp_momentum_no_track_other_mixed,
-	                                          h_ele_pfp_momentum_no_track_unmatched, h_ele_pfp_momentum_no_track_intime, intime_scale_factor,
-	                                          h_ele_pfp_momentum_no_track_data, data_scale_factor,
-	                                          "", "Leading Shower Momentum [GeV]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_no_track_data.pdf"));
+	histogram_functions::PlotSimpleStackDataMomentumRebin (h_ele_pfp_momentum_no_track_nue_cc,  h_ele_pfp_momentum_no_track_nue_cc_mixed,
+	                                                       h_ele_pfp_momentum_no_track_nue_cc_out_fv,
+	                                                       h_ele_pfp_momentum_no_track_numu_cc, h_ele_pfp_momentum_no_track_numu_cc_mixed,
+	                                                       h_ele_pfp_momentum_no_track_cosmic,  h_ele_pfp_momentum_no_track_nc,
+	                                                       h_ele_pfp_momentum_no_track_nc_pi0,  h_ele_pfp_momentum_no_track_other_mixed,
+	                                                       h_ele_pfp_momentum_no_track_unmatched, h_ele_pfp_momentum_no_track_intime, intime_scale_factor,
+	                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor,
+	                                                       "", "Leading Shower Momentum [GeV]", "",
+	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_no_track_data.pdf"));
 
-	histogram_functions::PlotSimpleStackData (h_ele_pfp_momentum_has_track_nue_cc,  h_ele_pfp_momentum_has_track_nue_cc_mixed,
-	                                          h_ele_pfp_momentum_has_track_nue_cc_out_fv,
-	                                          h_ele_pfp_momentum_has_track_numu_cc, h_ele_pfp_momentum_has_track_numu_cc_mixed,
-	                                          h_ele_pfp_momentum_has_track_cosmic,  h_ele_pfp_momentum_has_track_nc,
-	                                          h_ele_pfp_momentum_has_track_nc_pi0,  h_ele_pfp_momentum_has_track_other_mixed,
-	                                          h_ele_pfp_momentum_has_track_unmatched, h_ele_pfp_momentum_has_track_intime, intime_scale_factor,
-	                                          h_ele_pfp_momentum_has_track_data, data_scale_factor,
-	                                          "", "Leading Shower Momentum [GeV]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_data.pdf"));
+	histogram_functions::PlotSimpleStackDataMomentumRebin (h_ele_pfp_momentum_has_track_nue_cc,  h_ele_pfp_momentum_has_track_nue_cc_mixed,
+	                                                       h_ele_pfp_momentum_has_track_nue_cc_out_fv,
+	                                                       h_ele_pfp_momentum_has_track_numu_cc, h_ele_pfp_momentum_has_track_numu_cc_mixed,
+	                                                       h_ele_pfp_momentum_has_track_cosmic,  h_ele_pfp_momentum_has_track_nc,
+	                                                       h_ele_pfp_momentum_has_track_nc_pi0,  h_ele_pfp_momentum_has_track_other_mixed,
+	                                                       h_ele_pfp_momentum_has_track_unmatched, h_ele_pfp_momentum_has_track_intime, intime_scale_factor,
+	                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor,
+	                                                       "", "Leading Shower Momentum [GeV]", "",
+	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_no_track_nue_cc,  h_ele_pfp_phi_no_track_nue_cc_mixed,
 	                                          h_ele_pfp_phi_no_track_nue_cc_out_fv,
@@ -5956,16 +6025,16 @@ void selection::make_selection( const char * _file1,
 	        "Reco Selected Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "selected_reco_ele_eng_overlay.pdf"));
 
-	histogram_functions::PlotSimpleStackData(h_ele_momentum_no_cut_nue_cc,        h_ele_momentum_no_cut_nue_cc_mixed,
-	                                         h_ele_momentum_no_cut_nue_cc_out_fv, h_ele_momentum_no_cut_numu_cc,   h_ele_momentum_no_cut_numu_cc_mixed,
-	                                         h_ele_momentum_no_cut_cosmic,        h_ele_momentum_no_cut_nc,        h_ele_momentum_no_cut_nc_pi0,
-	                                         h_ele_momentum_no_cut_other_mixed,   h_ele_momentum_no_cut_unmatched, h_ele_momentum_no_cut_intime,
-	                                         intime_scale_factor,                 h_ele_momentum_no_cut_data,      data_scale_factor,
-	                                         "No Cut", "Leading Shower Momentum [GeV]", "",
-	                                         Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_no_cut_data.pdf"));
+	histogram_functions::PlotSimpleStackDataMomentumRebin(h_ele_momentum_no_cut_nue_cc,        h_ele_momentum_no_cut_nue_cc_mixed,
+	                                                      h_ele_momentum_no_cut_nue_cc_out_fv, h_ele_momentum_no_cut_numu_cc,   h_ele_momentum_no_cut_numu_cc_mixed,
+	                                                      h_ele_momentum_no_cut_cosmic,        h_ele_momentum_no_cut_nc,        h_ele_momentum_no_cut_nc_pi0,
+	                                                      h_ele_momentum_no_cut_other_mixed,   h_ele_momentum_no_cut_unmatched, h_ele_momentum_no_cut_intime,
+	                                                      intime_scale_factor,                 h_ele_momentum_no_cut_data,      data_scale_factor,
+	                                                      "No Cut", "Leading Shower Momentum [GeV]", "",
+	                                                      Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_no_cut_data.pdf"));
 
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_nue_cut_nue_cc,
 	        h_ele_momentum_nue_cut_nue_cc_mixed,
 	        h_ele_momentum_nue_cut_nue_cc_out_fv,
@@ -5999,7 +6068,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_nue_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_fv_cut_nue_cc,
 	        h_ele_momentum_fv_cut_nue_cc_mixed,
 	        h_ele_momentum_fv_cut_nue_cc_out_fv,
@@ -6033,7 +6102,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_fv_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_flash_vtx_cut_nue_cc,
 	        h_ele_momentum_flash_vtx_cut_nue_cc_mixed,
 	        h_ele_momentum_flash_vtx_cut_nue_cc_out_fv,
@@ -6067,7 +6136,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_flash_vtx.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_shwr_vtx_cut_nue_cc,
 	        h_ele_momentum_shwr_vtx_cut_nue_cc_mixed,
 	        h_ele_momentum_shwr_vtx_cut_nue_cc_out_fv,
@@ -6101,7 +6170,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_shwr_vtx.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_trk_vtx_cut_nue_cc,
 	        h_ele_momentum_trk_vtx_cut_nue_cc_mixed,
 	        h_ele_momentum_trk_vtx_cut_nue_cc_out_fv,
@@ -6135,7 +6204,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_trk_vtx.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_hit_cut_nue_cc,
 	        h_ele_momentum_hit_cut_nue_cc_mixed,
 	        h_ele_momentum_hit_cut_nue_cc_out_fv,
@@ -6169,7 +6238,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_hit_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_yhit_cut_nue_cc,
 	        h_ele_momentum_yhit_cut_nue_cc_mixed,
 	        h_ele_momentum_yhit_cut_nue_cc_out_fv,
@@ -6203,7 +6272,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_yhit_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_open_angle_cut_nue_cc,
 	        h_ele_momentum_open_angle_cut_nue_cc_mixed,
 	        h_ele_momentum_open_angle_cut_nue_cc_out_fv,
@@ -6237,7 +6306,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_open_angle_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_dedx_cut_nue_cc,
 	        h_ele_momentum_dedx_cut_nue_cc_mixed,
 	        h_ele_momentum_dedx_cut_nue_cc_out_fv,
@@ -6271,7 +6340,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_dedx_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_2shwr_cut_nue_cc,
 	        h_ele_momentum_2shwr_cut_nue_cc_mixed,
 	        h_ele_momentum_2shwr_cut_nue_cc_out_fv,
@@ -6305,7 +6374,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_2shwr_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_hit_length_cut_nue_cc,
 	        h_ele_momentum_hit_length_cut_nue_cc_mixed,
 	        h_ele_momentum_hit_length_cut_nue_cc_out_fv,
@@ -6339,7 +6408,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_hit_length_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_length_ratio_cut_nue_cc,
 	        h_ele_momentum_length_ratio_cut_nue_cc_mixed,
 	        h_ele_momentum_length_ratio_cut_nue_cc_out_fv,
@@ -6373,7 +6442,7 @@ void selection::make_selection( const char * _file1,
 	        "(True Particle) Leading Shower Momentum [GeV]",
 	        "", Form("%s%s", file_locate_prefix, "leading_momentum_true_particle_length_ratio_cut.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_containment_cut_nue_cc,
 	        h_ele_momentum_containment_cut_nue_cc_mixed,
 	        h_ele_momentum_containment_cut_nue_cc_out_fv,
@@ -6934,7 +7003,7 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot1DHistogramGausFit(h_med_true_momentum, "Selected Electron Momentum (True) [GeV]", Form("%s%s", file_locate_prefix, "true_electron_momentum_med.pdf"));
 	histogram_functions::Plot1DHistogramGausFit(h_high_true_momentum, "Selected Electron Momentum (True) [GeV]", Form("%s%s", file_locate_prefix, "true_electron_momentum_high.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_slice_1_nue_cc,
 	        h_ele_momentum_slice_1_nue_cc_mixed,
 	        h_ele_momentum_slice_1_nue_cc_out_fv,
@@ -6952,7 +7021,7 @@ void selection::make_selection( const char * _file1,
 	        "Theta Slice (0 - 40)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_1_data.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_slice_2_nue_cc,
 	        h_ele_momentum_slice_2_nue_cc_mixed,
 	        h_ele_momentum_slice_2_nue_cc_out_fv,
@@ -6970,7 +7039,7 @@ void selection::make_selection( const char * _file1,
 	        "Theta Slice (40 - 90)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_2_data.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_momentum_slice_3_nue_cc,
 	        h_ele_momentum_slice_3_nue_cc_mixed,
 	        h_ele_momentum_slice_3_nue_cc_out_fv,
@@ -7053,7 +7122,7 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot2DHistogram(h_ele_resolution_momentum_dot_prod, " ", "True Electron Momentum [GeV]", "True.Reco Shower Direction",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_pfp_momentum_1shwr_nue_cc,
 	        h_ele_pfp_momentum_1shwr_nue_cc_mixed,
 	        h_ele_pfp_momentum_1shwr_nue_cc_out_fv,
@@ -7071,7 +7140,7 @@ void selection::make_selection( const char * _file1,
 	        "", "Leading Shower Momentum (TPCO w/ 1 Shower) [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_momentum_1shwr_data.pdf"));
 
-	histogram_functions::PlotSimpleStackData(
+	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_pfp_momentum_2shwr_nue_cc,
 	        h_ele_pfp_momentum_2shwr_nue_cc_mixed,
 	        h_ele_pfp_momentum_2shwr_nue_cc_out_fv,
