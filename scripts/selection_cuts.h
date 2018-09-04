@@ -65,7 +65,7 @@ void OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
                   const std::vector<double> tolerance_open_angle, const bool _verbose);
 //***************************************************************************
 void dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose);
+             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose, const bool is_ext);
 //***************************************************************************
 void SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double dist_tolerance);

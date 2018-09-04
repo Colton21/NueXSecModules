@@ -357,7 +357,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
 
-			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
 
@@ -639,7 +639,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
 
-			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
 
@@ -918,7 +918,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 		//*********** dEdx cut for the leading shower *********
 		//******************************************************
 
-		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
 

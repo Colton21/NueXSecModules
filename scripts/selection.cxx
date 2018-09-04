@@ -205,6 +205,8 @@ void selection::make_selection( const char * _file1,
 	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v_data
 	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
 
+	std::vector<std::tuple<int, int, int> > duplicate_test;
+
 	//check if a 3rd input parameter was given - if not skip the loop for data
 	if(strcmp(_file3, "empty") != 0)
 	{
@@ -291,6 +293,12 @@ void selection::make_selection( const char * _file1,
 			}
 			last_data_run = data_run;
 			last_data_subrun = data_subrun;
+
+			for(auto const tpc_obj : * data_tpc_object_container_v)
+			{
+				duplicate_test.push_back(std::make_tuple(tpc_obj.RunNumber(), tpc_obj.SubRunNumber(), tpc_obj.EventNumber()));
+				break;
+			}
 
 			//XY Position of largest flash
 			std::vector < double > largest_flash_v = data_largest_flash_v_v->at(event);
@@ -516,7 +524,7 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_pre_dedx_data, h_multiplicity_track_pre_dedx_data);
 
-			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
 
@@ -1078,7 +1086,7 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_2_intime,
 			                                                                      h_dedx_slice_3_intime);
 
-			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
 
@@ -2688,7 +2696,7 @@ void selection::make_selection( const char * _file1,
 		                                                                h_dedx_slice_3_other_mixed,
 		                                                                h_dedx_slice_3_unmatched);
 
-		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose);
+		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -3699,6 +3707,28 @@ void selection::make_selection( const char * _file1,
 	std::cout << infv_test_mc_numu_cc_counter_bar << std::endl;
 	std::cout << infv_test_mc_nue_nc_counter_bar << std::endl;
 	std::cout << infv_test_mc_numu_nc_counter_bar << std::endl;
+
+	//duplicate test here
+	//first need to sort by the run number
+	std::sort(begin(duplicate_test), end(duplicate_test), [](std::tuple<int, int, int> const &t1, std::tuple<int,int,int> const &t2) {
+			return std::get<0>(t1) < std::get<0>(t2);
+		});
+
+	std::tuple<int, int, int> last_tuple (0,0,0);
+	for(auto const tuple : duplicate_test)
+	{
+		if(std::get<0>(tuple) == std::get<0>(last_tuple))
+		{
+			if(std::get<1>(tuple) == std::get<1>(last_tuple))
+			{
+				if(std::get<2>(tuple) == std::get<2>(last_tuple))
+				{
+					std::cout << "Duplicate Events at Num: " << std::get<0>(tuple) << ", " << std::get<1>(tuple) << ", " << std::get<2>(tuple) << std::endl;
+				}
+			}
+		}
+		last_tuple = tuple;
+	}
 
 	//we also want some metrics to print at the end
 	//*************************************************************************************************************************
