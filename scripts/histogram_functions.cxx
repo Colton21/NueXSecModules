@@ -305,6 +305,59 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	c3b->Print("../scripts/plots/flash_time_data_divide.pdf");
 
 }
+void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, TH1 * h_flash_data,
+                                        const double intime_scale_factor, const double data_scale_factor,
+                                        const char * x_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+
+	h_flash_mc->SetStats(kFALSE);
+	h_flash_intime->SetStats(kFALSE);
+	h_flash_data->SetStats(kFALSE);
+
+	h_flash_mc->SetFillColor(49);
+	h_flash_intime->SetFillColor(41);
+	h_flash_intime->SetFillStyle(3345);
+
+	TH1 * h_mc_clone       = (TH1*)h_flash_mc->Clone("h_mc_clone");
+	TH1 * h_intime_clone   = (TH1*)h_flash_intime->Clone("h_intime_clone");
+
+	const double y_maximum = std::max(h_flash_data->GetMaximum(), stack->GetMaximum());
+	stack->SetMaximum(y_maximum * 1.2);
+
+	h_mc_clone->Sumw2();
+	h_intime_clone->Sumw2();
+
+	h_mc_clone->Scale(data_scale_factor);
+	h_intime_clone->Scale(intime_scale_factor);
+
+	h_flash_data->SetMarkerStyle(20);
+	h_flash_data->SetMarkerSize(0.5);
+	h_flash_data->Sumw2();
+
+	stack->Add(h_mc_clone);
+	stack->Add(h_intime_clone);
+
+	stack->Draw("hist");
+	stack->GetXaxis()->SetTitle(x_axis_name);
+	h_flash_data->Draw("same PE");
+
+	TH1 * h_error_hist = (TH1*)h_mc_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_intime_clone, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
+
+	TLegend * leg_stack = new TLegend(0.85,0.85,0.95,0.95);
+	leg_stack->AddEntry(h_flash_mc,      "MC",   "f");
+	leg_stack->AddEntry(h_flash_intime,  "EXT",  "f");
+	leg_stack->Draw();
+	c1->Print(print_name);
+
+}
+
 
 void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc, TH2 * h_cosmic, TH2 * h_nc,
                                         TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
@@ -411,6 +464,19 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	c1->cd();
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
+	histogram->SetTitle(title);
+	histogram->SetStats(kFALSE);
+	histogram->Draw(draw_option);
+	c1->Print(print_name);
+}
+void histogram_functions::Plot2DHistogramLogZ (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
+                                               const char * draw_option)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetYaxis()->SetTitle(y_axis_name);
+	c1->SetLogz();
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);

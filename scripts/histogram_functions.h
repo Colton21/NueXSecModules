@@ -37,6 +37,8 @@ static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x
                              const char * draw_option);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
                              const char * draw_option, const int x_divisions, const int y_divisions);
+static void Plot2DHistogramLogZ (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
+                                 const char * draw_option);
 static void Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogram_2, const char * title_1, const char * title_2,
                                   const char * x_axis_name, const char * y_axis_name, const char * print_name_1, const char * print_name_2);
 static void Plot2DHistogramOffSet (TH2 * histogram, const double label_offset, const double title_offset, const char * title,
@@ -63,6 +65,9 @@ static void TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogr
 static void TimingHistogramsOverlay(std::vector<std::pair<double, int> > * data_flash_time, TH1 * histogram_1, TH1 * histogram_2,
                                     const double intime_scale_factor, const char * x_axis_name,
                                     const char * print_name1, const char * print_name2);
+static void PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, TH1 * h_flash_data,
+                          const double intime_scale_factor, const double data_scale_factor,
+                          const char * x_axis_name, const char * print_name);
 static void LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2* h_nue_cc_out_fv, TH2 * h_numu_cc, TH2 * h_cosmic, TH2 * h_nc,
                           TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
                           TH2 * h_data, const double data_scale_factor,
