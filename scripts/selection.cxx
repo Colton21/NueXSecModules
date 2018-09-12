@@ -608,6 +608,8 @@ void selection::make_selection( const char * _file1,
 			//***************************************************************
 			//*** contained track cut *** //
 			//**************************************************************
+			_data_functions_instance.selection_functions_data::IsContainedPlotData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                       _verbose, fv_boundary_v, h_track_containment_data);
 
 			_cuts_instance.selection_cuts::ContainedTracksCut(data_tpc_object_container_v, passed_tpco_data, _verbose, fv_boundary_v, true);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
@@ -5987,6 +5989,20 @@ void selection::make_selection( const char * _file1,
 	                                            h_track_containment_unmatched,
 	                                            h_track_containment_intime, intime_scale_factor, data_scale_factor, "",
 	                                            "Track Containment", "", Form("%s%s", file_locate_prefix, "track_containment.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_track_containment_nue_cc,
+	                                          h_track_containment_nue_cc_out_fv,
+	                                          h_track_containment_nue_cc_mixed,
+	                                          h_track_containment_numu_cc,
+	                                          h_track_containment_numu_cc_mixed,
+	                                          h_track_containment_nc,
+	                                          h_track_containment_nc_pi0,
+	                                          h_track_containment_cosmic,
+	                                          h_track_containment_other_mixed,
+	                                          h_track_containment_unmatched,
+	                                          h_track_containment_intime, intime_scale_factor,
+	                                          h_track_containment_data, data_scale_factor, "",
+	                                          "Track Containment", "", Form("%s%s", file_locate_prefix, "track_containment_data.pdf"));
 
 	histogram_functions::Plot2DHistogram(h_dedx_collection_angle_nue_cc, "", "Nue CC - dE/dx [MeV/cm]", "Shower Angle to Collection Plane",
 	                                     Form("%s%s", file_locate_prefix, "dedx_collection_angle_nue_cc.pdf"));

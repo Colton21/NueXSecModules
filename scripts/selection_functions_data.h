@@ -273,6 +273,11 @@ void LeadingKinematicsShowerTopologyData(std::vector<xsecAna::TPCObjectContainer
                                          TH1D * h_ele_pfp_phi_2shwr_data);
 //***************************************************************************
 //***************************************************************************
+void IsContainedPlotData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                         std::vector<double> fv_boundary_v, TH1 * h_track_containment_data);
+//***************************************************************************
+//***************************************************************************
 };
 
 

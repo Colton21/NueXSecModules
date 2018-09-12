@@ -145,13 +145,13 @@ for num in range(num_events4):
     h_timing_pe_4.Fill(flash_time, flash_pe)
     h_timing_pe_4_2.Fill(flash_time, flash_pe)
 
-intime_scale_factor_1 = 6180310. / 1141794.9
-intime_scale_factor_2 = 6180310. / 1619476.0
-intime_scale_factor_3 = 6180310. / 1937816.9
-intime_scale_factor_4 = 6180310. / 588091.2
-intime_scale_factor_234 = 6180310. / (1619476.0 + 1937816.9 + 588091.2)
+intime_scale_factor_1 = 6180310. / 1141794.85  # 1141794.9
+intime_scale_factor_2 = 6180310. / 1619475.95  # 1619476.0
+intime_scale_factor_3 = 6180310. / 1937816.9  # 1937816.9
+intime_scale_factor_4 = 6180310. / 1612582.8  # 588091.2
+intime_scale_factor_234 = 6180310. / (1619475.95 + 1937816.9 + 1612582.8)
 intime_scale_factor_total = 6180310. / \
-    (1141794.9 + 1619476.0 + 1937816.9 + 588091.2)
+    (1141794.85 + 1619475.95 + 1937816.9 + 1612582.8)
 
 print "Scale Factors: "
 print '\t', "1: ", intime_scale_factor_1

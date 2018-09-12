@@ -1250,4 +1250,67 @@ void selection_functions_data::LeadingKinematicsShowerTopologyData(std::vector<x
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::IsContainedPlotData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                   std::vector<double> fv_boundary_v, TH1 * h_track_containment_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+
+	const double det_x1 = 0;
+	const double det_x2 = 256.35;
+	const double det_y1 = -116.5;
+	const double det_y2 = 116.5;
+	const double det_z1 = 0;
+	const double det_z2 = 1036.8;
+
+	const double x1 = fv_boundary_v.at(0);
+	const double x2 = fv_boundary_v.at(1);
+	const double y1 = fv_boundary_v.at(2);
+	const double y2 = fv_boundary_v.at(3);
+	const double z1 = fv_boundary_v.at(4);
+	const double z2 = fv_boundary_v.at(5);
+
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+		auto const tpc_obj = tpc_object_container_v->at(i);
+
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+
+		int is_contained;
+
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double pfp_vtx_x = pfp.pfpVtxX();
+				const double pfp_vtx_y = pfp.pfpVtxY();
+				const double pfp_vtx_z = pfp.pfpVtxZ();
+				const double pfp_dir_x = pfp.pfpDirX();
+				const double pfp_dir_y = pfp.pfpDirY();
+				const double pfp_dir_z = pfp.pfpDirZ();
+				const double trk_length = pfp.pfpLength();
+				const double pfp_end_x = (pfp.pfpVtxX() + (trk_length * pfp_dir_x));
+				const double pfp_end_y = (pfp.pfpVtxY() + (trk_length * pfp_dir_y));
+				const double pfp_end_z = (pfp.pfpVtxZ() + (trk_length * pfp_dir_z));
+
+				if(pfp_vtx_x <= det_x1 + x1 || pfp_vtx_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_vtx_y <= det_y1 + y1 || pfp_vtx_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_vtx_z <= det_z1 + z1 || pfp_vtx_z >= det_z2 - z2) {is_contained = 0; break; }
+				if(pfp_end_x <= det_x1 + x1 || pfp_end_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_end_y <= det_y1 + y1 || pfp_end_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_end_z <= det_z1 + z1 || pfp_end_z >= det_z2 - z2) {is_contained = 0; break; }
+				is_contained = 1;
+			}
+		}
+		h_track_containment_data->Fill(is_contained);
+	}//end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
 //end functions
