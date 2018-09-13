@@ -29,9 +29,7 @@ Data 6980 118 5945
 Data 6888 44 2242
 Data 6908 215 10776
 Data 6991 122 6141
-Data 6787 14 731
 Data 6923 85 4277
-Data 7023 1093 54677
 Data 7079 29 1472
 Data 7128 9 462
 Data 7010 1171 58556
@@ -81,7 +79,6 @@ Data 7315 45 2264
 Data 8312 60 3024
 Data 7305 3 186
 Data 8050 266 13328
-Data 8288 17 861
 nue_cc_qe 3 393 39233
 nue_cc_qe 3 1770 176936
 nue_cc_res 3 3648 364776
@@ -137,7 +134,6 @@ cosmic 3 1153 115281
 nue_cc_res 3 7587 758671
 numu_cc_dis 3 771 77065
 nue_cc_mec 3 5608 560749
-numu_cc_qe 3 7258 725751
 nc_pi0 3 3699 369838
 nue_cc_qe 3 4376 437586
 nue_cc_qe 3 2218 221704
@@ -183,7 +179,6 @@ nue_cc_res 3 6084 608348
 nue_cc_qe 3 860 85985
 nue_cc_qe 3 6580 657967
 nue_cc_qe 3 5418 541774
-numu_cc_qe 3 519 51895
 nue_cc_qe 3 2351 235074
 nue_cc_res 3 5864 586336
 nue_bar_cc_mec 3 7666 766588
@@ -242,7 +237,6 @@ nue_cc_mec 3 4733 473228
 cosmic 3 5315 531458
 nue_cc_qe 3 4838 483703
 cosmic 3 4028 402800
-nc_pi0 3 6197 619632
 cosmic 3 544 54311
 nc_pi0 3 5097 509608
 nue_cc_dis 3 257 25631
@@ -340,14 +334,12 @@ nc_pi0 3 3573 357244
 nue_cc_dis 3 6921 692046
 nc_pi0 3 6923 692257
 numu_cc_dis 3 6063 606247
-nc_pi0 3 7231 723021
 nue_cc_res 3 312 31177
 nue_cc_qe 3 4039 403852
 numu_cc_res 3 834 83314
 nc_pi0 3 1724 172352
 nue_cc_qe 3 5544 554337
 nc_pi0 3 5015 501467
-nc_pi0 3 2188 218729
 nc_pi0 3 6269 626829
 nue_cc_out_fv 3 7216 721522
 cosmic 3 3250 324922
@@ -355,12 +347,10 @@ nue_cc_mec 3 1220 121976
 cosmic 3 6221 622001
 nue_cc_qe 3 7222 722130
 nue_cc_qe 3 7762 776197
-nc_pi0 3 1070 106962
 nue_cc_res 3 5871 587034
 numu_cc_mec 3 5443 544216
 nue_cc_qe 3 4695 469465
 numu_cc_mec 3 4695 469492
-nue_cc_qe 3 4290 428960
 numu_cc_dis 3 5670 566957
 nue_bar_cc_qe 3 5670 566983
 nue_bar_cc_qe 3 2765 276418
@@ -388,7 +378,6 @@ nue_cc_qe 3 3999 399889
 nue_cc_qe 3 50 4997
 nue_cc_mec 3 4794 479380
 cosmic 3 1885 188441
-numu_cc_res 3 6760 675977
 nc_pi0 3 1283 128234
 nue_cc_mec 3 1121 112075
 nue_cc_res 3 3948 394767
@@ -446,7 +435,6 @@ cosmic 3 3574 357317
 nue_cc_res 3 5665 566409
 cosmic 3 5561 556039
 nue_cc_dis 3 5561 556084
-numu_cc_res 3 5619 561883
 nue_bar_cc_qe 3 7808 780728
 nue_cc_qe 3 7571 757019
 nue_bar_cc_qe 3 4356 435531
@@ -459,7 +447,6 @@ numu_cc_dis 3 866 86503
 nue_cc_mec 3 3721 372002
 nue_cc_qe 3 7461 746021
 cosmic 3 7492 749102
-numu_cc_mec 3 796 79584
 nue_cc_qe 3 6741 674006
 nue_bar_cc_qe 3 6115 611471
 nue_cc_qe 3 51 5043
@@ -474,10 +461,8 @@ nue_cc_dis 3 6560 655933
 nue_cc_qe 3 514 51349
 nc_pi0 3 320 31919
 nc 3 7304 730356
-nue_cc_mec 3 5941 594067
 cosmic 3 2265 226412
 nue_cc_mec 3 2265 226463
-nc_pi0 3 7242 724117
 nue_cc_res 3 4171 417018
 cosmic 3 1135 113423
 nue_cc_out_fv 3 3864 386317
@@ -580,7 +565,6 @@ nue_cc_mec 3 4955 495465
 nue_bar_cc_mec 3 7307 730647
 nue_cc_qe 3 397 39695
 nue_cc_qe 3 1471 147067
-numu_cc_mec 3 6545 654402
 nue_cc_qe 3 2401 240075
 cosmic 3 3471 347012
 nue_cc_mec 3 505 50419
@@ -594,7 +578,6 @@ nue_cc_qe 3 4450 444959
 numu_cc_res 3 3435 343470
 cosmic 3 3435 343487
 nue_cc_qe 3 6414 641326
-numu_cc_res 3 6414 641364
 nue_cc_res 3 1621 162077
 nc_pi0 3 1202 120156
 cosmic 3 7289 728851
@@ -624,7 +607,6 @@ nue_cc_mec 3 7946 794553
 nue_bar_cc_res 3 6584 658332
 other_mixed 3 898 89798
 numu_cc_res 3 1622 162150
-nc_pi0 3 6900 689932
 nc_pi0 3 6742 674194
 nue_cc_mec 3 7671 767086
 nc 3 1717 171601
@@ -678,7 +660,6 @@ nue_cc_mec 3 3738 373716
 nue_cc_mec 3 447 44687
 nue_cc_qe 3 4837 483682
 nc 3 970 96992
-numu_cc_res 3 2947 294639
 nue_cc_res 3 2947 294692
 nue_cc_qe 3 2443 244231
 nue_cc_qe 3 2443 244288
@@ -688,7 +669,6 @@ nue_cc_qe 3 1526 152552
 nc_pi0 3 3134 313382
 nue_cc_mec 3 5133 513256
 nue_cc_qe 3 1755 175478
-numu_cc_res 3 1755 175490
 cosmic 3 3777 377673
 nue_cc_qe 3 2297 229628
 nue_bar_cc_res 3 3156 315583
@@ -711,7 +691,6 @@ numu_cc_mixed 3 151 15062
 nue_cc_mec 3 3283 328249
 nue_bar_cc_qe 3 5060 505902
 cosmic 3 7816 781580
-numu_cc_qe 3 7917 791644
 numu_cc_dis 3 6098 609777
 nue_cc_qe 3 2643 264219
 nue_cc_qe 3 5406 540575
@@ -743,7 +722,6 @@ nue_bar_cc_qe 3 5414 541307
 nue_cc_mec 3 1145 114470
 numu_cc_dis 3 4877 487666
 numu_cc_res 3 3177 317674
-nc_pi0 3 3599 359893
 cosmic 3 5096 509523
 nue_cc_qe 3 5179 517853
 nue_bar_cc_mec 3 7072 707165
@@ -759,7 +737,6 @@ nc 3 2116 211561
 cosmic 3 5123 512276
 nue_bar_cc_mec 3 7373 737243
 nc 3 4477 447649
-nue_cc_res 3 5359 535828
 nue_cc_mec 3 2558 255727
 numu_cc_dis 3 2558 255752
 nc_pi0 3 7423 742245
@@ -777,7 +754,6 @@ nue_cc_mec 3 5736 573584
 cosmic 3 199 19812
 numu_cc_dis 3 6308 630766
 nue_cc_dis 3 2916 291594
-nc_pi0 3 742 74130
 numu_cc_res 3 1662 166109
 nc_pi0 3 2091 209082
 other_mixed 3 6867 686696
@@ -793,7 +769,6 @@ nue_bar_cc_qe 3 2733 273291
 nc 3 3207 320610
 nue_cc_res 3 1132 113164
 nc_pi0 3 1289 128863
-nue_cc_qe 3 2575 257438
 nue_cc_mec 3 4490 448911
 nue_bar_cc_qe 3 2657 265681
 cosmic 3 1250 124904
@@ -834,7 +809,6 @@ nue_cc_qe 3 2176 217595
 numu_cc_dis 3 5728 572754
 nue_cc_res 3 1258 125727
 cosmic 3 5410 540919
-nue_cc_qe 3 6448 644748
 nue_cc_mec 3 1408 140741
 nue_cc_qe 3 275 27477
 nc_pi0 3 5977 597665
@@ -861,7 +835,6 @@ nue_cc_qe 3 4527 452671
 nc_pi0 3 6182 618183
 numu_cc_dis 3 7883 788284
 nue_cc_qe 3 4869 486827
-nue_cc_qe 3 8 750
 nue_cc_mec 3 8 793
 nue_cc_mec 3 3421 342080
 nue_cc_res 3 449 44880
@@ -891,7 +864,6 @@ numu_cc_res 3 1338 133712
 nue_cc_dis 3 2154 215346
 numu_cc_res 3 4230 422969
 nue_cc_qe 3 6731 673096
-nc_pi0 3 7903 790231
 nue_cc_qe 3 657 65658
 nc_pi0 3 4473 447249
 nue_cc_res 3 4473 447298
@@ -899,7 +871,6 @@ nue_cc_qe 3 4751 475070
 nue_cc_qe 3 4553 455235
 nue_cc_qe 3 1906 190550
 nue_cc_res 3 3118 311789
-nc_pi0 3 3318 331775
 numu_cc_dis 3 557 55610
 nue_cc_qe 3 5816 581550
 nue_bar_cc_mec 3 5816 581576
@@ -907,7 +878,6 @@ cosmic 3 2857 285653
 numu_cc_res 3 5543 554297
 nue_cc_res 3 1325 132402
 nc_pi0 3 3107 310675
-nc_pi0 3 6539 653873
 nue_cc_qe 3 2097 209628
 nc_pi0 3 5604 560374
 cosmic 3 4876 487510
@@ -967,16 +937,13 @@ nue_bar_cc_qe 3 2847 284612
 nue_cc_out_fv 3 3774 377347
 nue_cc_qe 3 2334 233391
 nc_pi0 3 5846 584560
-numu_cc_qe 3 5846 584594
 numu_cc_dis 3 2539 253876
-nc_pi0 3 1129 112817
 nue_cc_qe 3 6609 660885
 nue_cc_qe 3 6696 669562
 numu_cc_res 3 4973 497265
 nue_cc_mec 3 6947 694603
 nue_cc_qe 3 6619 661864
 nue_cc_qe 3 6620 661966
-cosmic 3 1077 107693
 nue_cc_qe 3 7922 792193
 nue_cc_qe 3 7696 769572
 nue_cc_qe 3 2400 239969
@@ -985,7 +952,6 @@ nue_bar_cc_res 3 781 78030
 cosmic 3 3029 302828
 nue_cc_qe 3 6785 678447
 nue_bar_cc_mec 3 6785 678465
-cosmic 3 315 31421
 nue_cc_qe 3 2891 289063
 nc_pi0 3 1608 160791
 nue_cc_mec 3 617 61681
@@ -1025,7 +991,6 @@ nue_cc_qe 3 2385 238433
 nc_pi0 3 7646 764508
 nue_bar_cc_res 3 2678 267722
 nue_cc_qe 3 4657 465658
-numu_cc_qe 3 5373 537276
 nue_cc_mec 3 3028 302745
 nue_cc_mixed 3 5326 532552
 nue_bar_cc_mec 3 2980 297909

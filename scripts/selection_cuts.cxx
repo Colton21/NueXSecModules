@@ -943,9 +943,8 @@ void selection_cuts::ContainedTracksCut(std::vector<xsecAna::TPCObjectContainer>
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		//this is normally enabled, but due to test cut below it is off
 		if(n_pfp_tracks == 0) {continue; }
-		int leading_index = 0;
-		int leading_hits  = 0;
 
 		for(int j = 0; j < n_pfp; j++)
 		{
@@ -979,6 +978,29 @@ void selection_cuts::ContainedTracksCut(std::vector<xsecAna::TPCObjectContainer>
 				}
 			}//end is track
 		}//end loop pfparticles
+		 //adding temporary cut on the shower direction here
+		 // const int n_pfp_showers = tpc_obj.NPfpShowers();
+		 // int leading_index = 0;
+		 // int leading_hits  = 0;
+		 // for(int j = 0; j < n_pfp; j++)
+		 // {
+		 //     auto const part = tpc_obj.GetParticle(j);
+		 //     const int pfp_pdg = part.PFParticlePdgCode();
+		 //     const int n_pfp_hits = part.NumPFPHits();
+		 //     if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+		 //     {
+		 //             leading_hits = n_pfp_hits;
+		 //             leading_index = j;
+		 //     }
+		 // }//end loop pfparticles
+		 // auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		 // const double leading_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		 //
+		 // if(leading_theta > 60)
+		 // {
+		 //     passed_tpco->at(i).first = 0;
+		 //     passed_tpco->at(i).second = "Contained";
+		 // }
 	}//end loop tpc objects
 }
 //***************************************************************************

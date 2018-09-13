@@ -76,7 +76,7 @@ const double trk_nue_tolerance = 4;//cm
 //hit threshold for at least one shower
 //standard 120 hits
 //higher cuts 200 hits
-const double shwr_hit_threshold = 120;//hits
+const double shwr_hit_threshold = 200;//hits
 
 //hit threshold for at least one shower on collection plane
 //standard 50 hits

@@ -4140,6 +4140,17 @@ void selection::make_selection( const char * _file1,
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data.pdf"));
 
+	histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc,  h_vtx_flash_nue_cc_mixed,
+	                                          h_vtx_flash_nue_cc_out_fv,
+	                                          h_vtx_flash_numu_cc, h_vtx_flash_numu_cc_mixed,
+	                                          h_vtx_flash_cosmic,  h_vtx_flash_nc,
+	                                          h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
+	                                          h_vtx_flash_unmatched, h_vtx_flash_intime, intime_scale_factor,
+	                                          h_vtx_flash_data, data_scale_factor,
+	                                          0.75, 0.95, 0.75, 0.95, true, "",
+	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data_logy.pdf"));
+
 	histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
 	                                          h_vtx_flash_upstream_nue_cc_out_fv,
 	                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
@@ -4198,6 +4209,17 @@ void selection::make_selection( const char * _file1,
 	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data.pdf"));
 
+	histogram_functions::PlotSimpleStackData (h_trk_vtx_dist_nue_cc,  h_trk_vtx_dist_nue_cc_mixed,
+	                                          h_trk_vtx_dist_nue_cc_out_fv,
+	                                          h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_numu_cc_mixed,
+	                                          h_trk_vtx_dist_cosmic,  h_trk_vtx_dist_nc,
+	                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
+	                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, intime_scale_factor,
+	                                          h_trk_vtx_dist_data, data_scale_factor,
+	                                          0.75, 0.95, 0.75, 0.95, true, "",
+	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_logy.pdf"));
+
 	histogram_functions::PlotSimpleStackData (h_trk_vtx_dist_nue_cc_after,  h_trk_vtx_dist_nue_cc_mixed_after,
 	                                          h_trk_vtx_dist_nue_cc_out_fv_after,
 	                                          h_trk_vtx_dist_numu_cc_after, h_trk_vtx_dist_numu_cc_mixed_after,
@@ -4235,6 +4257,32 @@ void selection::make_selection( const char * _file1,
 	                                          h_shwr_vtx_dist_data, data_scale_factor, "",
 	                                          "Shower to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_shwr_vtx_dist_nue_cc,  h_shwr_vtx_dist_nue_cc_mixed,
+	                                          h_shwr_vtx_dist_nue_cc_out_fv,
+	                                          h_shwr_vtx_dist_numu_cc, h_shwr_vtx_dist_numu_cc_mixed,
+	                                          h_shwr_vtx_dist_cosmic,  h_shwr_vtx_dist_nc,
+	                                          h_shwr_vtx_dist_nc_pi0,  h_shwr_vtx_dist_other_mixed,
+	                                          h_shwr_vtx_dist_unmatched, h_shwr_vtx_dist_intime, intime_scale_factor,
+	                                          h_shwr_vtx_dist_data, data_scale_factor,
+	                                          0.75, 0.95, 0.75, 0.95, true, "",
+	                                          "Shower to Nue Candidate Vertex Distance [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_logy.pdf"));
+
+	int total_total = 0;
+	double bin_val_total = 0;
+	for(int i = 0; i < h_shwr_vtx_dist_nue_cc->GetNbinsX()+2; i++)
+	{
+		const double bin_val = h_shwr_vtx_dist_nue_cc->GetBinContent(i);
+		std::cout << "Distance: " << h_shwr_vtx_dist_nue_cc->GetBinLowEdge(i) << ", Num Signal: " <<  bin_val << std::endl;
+		if(h_shwr_vtx_dist_nue_cc->GetBinLowEdge(i) > 4)
+		{
+			bin_val_total += bin_val;
+		}
+		total_total += bin_val;
+	}
+	std::cout << "Num Signals: " << total_total << std::endl;
+	std::cout << "Removed: " << bin_val_total << std::endl;
 
 	histogram_functions::PlotSimpleStackData (h_shwr_vtx_dist_nue_cc_after,  h_shwr_vtx_dist_nue_cc_mixed_after,
 	                                          h_shwr_vtx_dist_nue_cc_out_fv_after,
@@ -4723,6 +4771,17 @@ void selection::make_selection( const char * _file1,
 	                                          h_second_shwr_dist_data, data_scale_factor, "",
 	                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_second_shwr_dist_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_second_shwr_dist_nue_cc,  h_second_shwr_dist_nue_cc_mixed,
+	                                          h_second_shwr_dist_nue_cc_out_fv,
+	                                          h_second_shwr_dist_numu_cc, h_second_shwr_dist_numu_cc_mixed,
+	                                          h_second_shwr_dist_cosmic,  h_second_shwr_dist_nc,
+	                                          h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
+	                                          h_second_shwr_dist_unmatched, h_second_shwr_dist_intime, intime_scale_factor,
+	                                          h_second_shwr_dist_data, data_scale_factor,
+	                                          0.75, 0.95, 0.75, 0.95, true, "",
+	                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_second_shwr_dist_data_logy.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_second_shwr_dist_nue_cc_after,  h_second_shwr_dist_nue_cc_mixed_after,
 	                                          h_second_shwr_dist_nue_cc_out_fv_after,
@@ -5284,6 +5343,33 @@ void selection::make_selection( const char * _file1,
 	                                          "", "Leading Shower Hits - All Planes", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_data.pdf"));
 
+	int total_total_hits = 0;
+	double bin_val_total_hits = 0;
+	for(int i = 0; i < h_pre_cut_total_hits_leading_shower_nue_cc->GetNbinsX()+2; i++)
+	{
+		const double bin_val = h_pre_cut_total_hits_leading_shower_nue_cc->GetBinContent(i);
+		std::cout << "Hits: " << h_pre_cut_total_hits_leading_shower_nue_cc->GetBinLowEdge(i) << ", Num Signal: " <<  bin_val << std::endl;
+		if(h_pre_cut_total_hits_leading_shower_nue_cc->GetBinLowEdge(i) < 200)
+		{
+			bin_val_total_hits += bin_val;
+		}
+		total_total_hits += bin_val;
+	}
+	std::cout << "Num Signals: " << total_total_hits << std::endl;
+	std::cout << "Removed: " << bin_val_total_hits << std::endl;
+
+	histogram_functions::PlotSimpleStackData (h_pre_cut_total_hits_leading_shower_nue_cc,  h_pre_cut_total_hits_leading_shower_nue_cc_mixed,
+	                                          h_pre_cut_total_hits_leading_shower_nue_cc_out_fv,
+	                                          h_pre_cut_total_hits_leading_shower_numu_cc, h_pre_cut_total_hits_leading_shower_numu_cc_mixed,
+	                                          h_pre_cut_total_hits_leading_shower_cosmic,  h_pre_cut_total_hits_leading_shower_nc,
+	                                          h_pre_cut_total_hits_leading_shower_nc_pi0,  h_pre_cut_total_hits_leading_shower_other_mixed,
+	                                          h_pre_cut_total_hits_leading_shower_unmatched,
+	                                          h_pre_cut_total_hits_leading_shower_intime,intime_scale_factor,
+	                                          h_pre_cut_total_hits_leading_shower_data, data_scale_factor,
+	                                          0.75, 0.95, 0.75, 0.95, true,
+	                                          "", "Leading Shower Hits - All Planes", "",
+	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_data_logy.pdf"));
+
 	histogram_functions::Plot1DHistogram (h_pre_cut_total_hits_leading_shower_nue_cc, "Signal Events Leading Shower Hits - All Planes",
 	                                      Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_signal_only_data.pdf"));
 
@@ -5340,7 +5426,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_last_nc_pi0,  h_ele_cos_theta_last_other_mixed,
 	                                          h_ele_cos_theta_last_unmatched, h_ele_cos_theta_last_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_last_data, data_scale_factor,
-	                                          0.15, 0.35, 0.70, 0.95, "",
+	                                          0.15, 0.35, 0.70, 0.95, false, "",
 	                                          "Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_data.pdf"));
 
@@ -5351,7 +5437,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_last_trans_nc_pi0,    h_ele_cos_theta_last_trans_other_mixed,
 	                                          h_ele_cos_theta_last_trans_unmatched, h_ele_cos_theta_last_trans_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_last_trans_data, data_scale_factor,
-	                                          0.15, 0.35, 0.70, 0.95, "",
+	                                          0.15, 0.35, 0.70, 0.95, false, "",
 	                                          "(NuMI Transform) Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_trans_data.pdf"));
 
@@ -5362,7 +5448,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
 	                                          h_ele_cos_theta_unmatched, h_ele_cos_theta_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_data, data_scale_factor,
-	                                          0.15, 0.35, 0.70, 0.95, "",
+	                                          0.15, 0.35, 0.70, 0.95, false, "",
 	                                          "(Before Open Angle Cut) Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_data.pdf"));
 

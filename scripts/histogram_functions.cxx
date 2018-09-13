@@ -547,7 +547,7 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
 	                    h_data, data_scale_factor,
-	                    0.75, 0.95, 0.75, 0.95,
+	                    0.75, 0.95, 0.75, 0.95, false,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
 void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,
@@ -797,7 +797,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
                                               TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                               TH1 * h_data, const double data_scale_factor,
-                                              const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                              const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2, const bool logy,
                                               const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	TCanvas * c1 = new TCanvas(title, title, 500, 500);
@@ -890,7 +890,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	stack->Add(h_intime_clone);
 
 	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
-	stack->SetMaximum(y_maximum * 1.2);
+	if(logy == false) {stack->SetMaximum(y_maximum * 1.2); }
 
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
@@ -925,6 +925,13 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	leg_stack->AddEntry(h_intime,          "InTime",        "f");
 	leg_stack->Draw();
 
+	//if(logy == true) {c1->SetLogy(); }
+	if(logy == true)
+	{
+		stack->GetYaxis()->SetRangeUser(1, y_maximum * 1.2);
+		topPad->SetLogy();
+	}
+
 	bottomPad->cd();
 	TH1 * ratioPlot = (TH1*)h_data->Clone("ratioPlot");
 	// ratioPlot->Add(h_nue_cc_clone,        -1);
@@ -954,7 +961,6 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	ratioPlot->Divide(h_mc_ext_sum);
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->Draw();
-
 
 	c1->Print(print_name);
 }
