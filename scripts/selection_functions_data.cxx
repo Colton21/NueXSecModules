@@ -108,6 +108,32 @@ void selection_functions_data::PostCutsdEdxData(std::vector<xsecAna::TPCObjectCo
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::PostCutsdEdxAltScaleData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double alt_scale,
+                                                        TH1D * h_dedx_cuts_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_class.first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		h_dedx_cuts_data->Fill(leading_dedx * (242.72 / 196.979) * alt_scale);
+	}        //end loop tpc objects
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions_data::PostCutOpenAngleData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                     TH1D * h_leading_shower_open_angle_data)

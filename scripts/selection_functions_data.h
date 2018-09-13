@@ -51,6 +51,9 @@ std::pair<std::string, int> TPCO_Classifier_Data(xsecAna::TPCObjectContainer tpc
 void PostCutsdEdxData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                       TH1D * h_dedx_cuts_data);
+void PostCutsdEdxAltScaleData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double alt_scale,
+                              TH1D * h_dedx_cuts_data);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngleData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

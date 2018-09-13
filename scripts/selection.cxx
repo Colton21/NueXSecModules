@@ -517,11 +517,24 @@ void selection::make_selection( const char * _file1,
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
 			_data_functions_instance.selection_functions_data::PostCutsdEdxData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_cuts_data);
+
+			_data_functions_instance.selection_functions_data::PostCutsdEdxAltScaleData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                            _verbose, 0.98, h_dedx_cuts_scale_1_data);
+			_data_functions_instance.selection_functions_data::PostCutsdEdxAltScaleData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                            _verbose, 0.97, h_dedx_cuts_scale_2_data);
+			_data_functions_instance.selection_functions_data::PostCutsdEdxAltScaleData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                            _verbose, 0.95, h_dedx_cuts_scale_3_data);
+
 			_data_functions_instance.selection_functions_data::dEdxThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_theta_pre_cuts_data);
 			_data_functions_instance.selection_functions_data::dedxThetaSliceData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                      h_dedx_slice_1_data,
 			                                                                      h_dedx_slice_2_data,
 			                                                                      h_dedx_slice_3_data);
+
+			_data_functions_instance.selection_functions_data::dedxThetaSliceData(data_tpc_object_container_v, passed_tpco_data, _verbose,
+			                                                                      h_dedx_slice_1_zoom_data,
+			                                                                      h_dedx_slice_2_zoom_data,
+			                                                                      h_dedx_slice_3_zoom_data);
 
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_pre_dedx_data, h_multiplicity_track_pre_dedx_data);
@@ -1079,6 +1092,14 @@ void selection::make_selection( const char * _file1,
 			//*********** dEdx cut for the leading shower *********
 			//******************************************************
 			_functions_instance.selection_functions::PostCutsdEdxInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_dedx_cuts_intime);
+
+			_functions_instance.selection_functions::PostCutsdEdxAltScaleInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                    _verbose, 0.98, h_dedx_cuts_scale_1_intime);
+			_functions_instance.selection_functions::PostCutsdEdxAltScaleInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                    _verbose, 0.97, h_dedx_cuts_scale_2_intime);
+			_functions_instance.selection_functions::PostCutsdEdxAltScaleInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                    _verbose, 0.95, h_dedx_cuts_scale_3_intime);
+
 			_functions_instance.selection_functions::dEdxCollectionAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                   _verbose, h_dedx_collection_angle_intime);
 			_functions_instance.selection_functions::dEdxThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
@@ -1091,6 +1112,11 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_1_intime,
 			                                                                      h_dedx_slice_2_intime,
 			                                                                      h_dedx_slice_3_intime);
+
+			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
+			                                                                      h_dedx_slice_1_zoom_intime,
+			                                                                      h_dedx_slice_2_zoom_intime,
+			                                                                      h_dedx_slice_3_zoom_intime);
 
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
@@ -2704,6 +2730,38 @@ void selection::make_selection( const char * _file1,
 		                                                                h_dedx_slice_3_other_mixed,
 		                                                                h_dedx_slice_3_unmatched);
 
+		_functions_instance.selection_functions::PostCutsdedxThetaSlice(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+		                                                                h_dedx_slice_1_zoom_nue_cc,
+		                                                                h_dedx_slice_1_zoom_nue_cc_out_fv,
+		                                                                h_dedx_slice_1_zoom_nue_cc_mixed,
+		                                                                h_dedx_slice_1_zoom_numu_cc,
+		                                                                h_dedx_slice_1_zoom_numu_cc_mixed,
+		                                                                h_dedx_slice_1_zoom_nc,
+		                                                                h_dedx_slice_1_zoom_nc_pi0,
+		                                                                h_dedx_slice_1_zoom_cosmic,
+		                                                                h_dedx_slice_1_zoom_other_mixed,
+		                                                                h_dedx_slice_1_zoom_unmatched,
+		                                                                h_dedx_slice_2_zoom_nue_cc,
+		                                                                h_dedx_slice_2_zoom_nue_cc_out_fv,
+		                                                                h_dedx_slice_2_zoom_nue_cc_mixed,
+		                                                                h_dedx_slice_2_zoom_numu_cc,
+		                                                                h_dedx_slice_2_zoom_numu_cc_mixed,
+		                                                                h_dedx_slice_2_zoom_nc,
+		                                                                h_dedx_slice_2_zoom_nc_pi0,
+		                                                                h_dedx_slice_2_zoom_cosmic,
+		                                                                h_dedx_slice_2_zoom_other_mixed,
+		                                                                h_dedx_slice_2_zoom_unmatched,
+		                                                                h_dedx_slice_3_zoom_nue_cc,
+		                                                                h_dedx_slice_3_zoom_nue_cc_out_fv,
+		                                                                h_dedx_slice_3_zoom_nue_cc_mixed,
+		                                                                h_dedx_slice_3_zoom_numu_cc,
+		                                                                h_dedx_slice_3_zoom_numu_cc_mixed,
+		                                                                h_dedx_slice_3_zoom_nc,
+		                                                                h_dedx_slice_3_zoom_nc_pi0,
+		                                                                h_dedx_slice_3_zoom_cosmic,
+		                                                                h_dedx_slice_3_zoom_other_mixed,
+		                                                                h_dedx_slice_3_zoom_unmatched);
+
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
@@ -4103,6 +4161,34 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_intime, intime_scale_factor,
 	                                          h_dedx_cuts_data, data_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
+	                                          h_dedx_cuts_nue_cc_out_fv,
+	                                          h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
+	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
+	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
+	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_1_intime, intime_scale_factor,
+	                                          h_dedx_cuts_scale_1_data, data_scale_factor, "",
+	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_1_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
+	                                          h_dedx_cuts_nue_cc_out_fv,
+	                                          h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
+	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
+	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
+	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_2_intime, intime_scale_factor,
+	                                          h_dedx_cuts_scale_2_data, data_scale_factor, "",
+	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_2_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
+	                                          h_dedx_cuts_nue_cc_out_fv,
+	                                          h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
+	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
+	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
+	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_3_intime, intime_scale_factor,
+	                                          h_dedx_cuts_scale_3_data, data_scale_factor, "",
+	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_data.pdf"));
+
 	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc_after,  h_dedx_cuts_nue_cc_mixed_after,
 	                                          h_dedx_cuts_nue_cc_out_fv_after,
 	                                          h_dedx_cuts_numu_cc_after, h_dedx_cuts_numu_cc_mixed_after,
@@ -7267,8 +7353,26 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_1_data,
 	        data_scale_factor,
-	        "Theta Slice (0 - 40)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_slice_1_zoom_nue_cc,
+	        h_dedx_slice_1_zoom_nue_cc_mixed,
+	        h_dedx_slice_1_zoom_nue_cc_out_fv,
+	        h_dedx_slice_1_zoom_numu_cc,
+	        h_dedx_slice_1_zoom_numu_cc_mixed,
+	        h_dedx_slice_1_zoom_cosmic,
+	        h_dedx_slice_1_zoom_nc,
+	        h_dedx_slice_1_zoom_nc_pi0,
+	        h_dedx_slice_1_zoom_other_mixed,
+	        h_dedx_slice_1_zoom_unmatched,
+	        h_dedx_slice_1_zoom_intime,
+	        intime_scale_factor,
+	        h_dedx_slice_1_zoom_data,
+	        data_scale_factor,
+	        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm]", "",
+	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_zoom_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
 	        h_dedx_slice_2_nue_cc,
@@ -7285,8 +7389,26 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_2_data,
 	        data_scale_factor,
-	        "Theta Slice (40 - 90)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "Theta Slice (60 - 120)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_2_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_slice_2_zoom_nue_cc,
+	        h_dedx_slice_2_zoom_nue_cc_mixed,
+	        h_dedx_slice_2_zoom_nue_cc_out_fv,
+	        h_dedx_slice_2_zoom_numu_cc,
+	        h_dedx_slice_2_zoom_numu_cc_mixed,
+	        h_dedx_slice_2_zoom_cosmic,
+	        h_dedx_slice_2_zoom_nc,
+	        h_dedx_slice_2_zoom_nc_pi0,
+	        h_dedx_slice_2_zoom_other_mixed,
+	        h_dedx_slice_2_zoom_unmatched,
+	        h_dedx_slice_2_zoom_intime,
+	        intime_scale_factor,
+	        h_dedx_slice_2_zoom_data,
+	        data_scale_factor,
+	        "Theta Slice (60 - 120)", "Leading Shower dE/dx [MeV/cm]", "",
+	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_2_zoom_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
 	        h_dedx_slice_3_nue_cc,
@@ -7303,8 +7425,26 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_3_data,
 	        data_scale_factor,
-	        "Theta Slice (90 - 180)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "Theta Slice (120 - 180)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_3_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_slice_3_zoom_nue_cc,
+	        h_dedx_slice_3_zoom_nue_cc_mixed,
+	        h_dedx_slice_3_zoom_nue_cc_out_fv,
+	        h_dedx_slice_3_zoom_numu_cc,
+	        h_dedx_slice_3_zoom_numu_cc_mixed,
+	        h_dedx_slice_3_zoom_cosmic,
+	        h_dedx_slice_3_zoom_nc,
+	        h_dedx_slice_3_zoom_nc_pi0,
+	        h_dedx_slice_3_zoom_other_mixed,
+	        h_dedx_slice_3_zoom_unmatched,
+	        h_dedx_slice_3_zoom_intime,
+	        intime_scale_factor,
+	        h_dedx_slice_3_zoom_data,
+	        data_scale_factor,
+	        "Theta Slice (120 - 180)", "Leading Shower dE/dx [MeV/cm]", "",
+	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_3_zoom_data.pdf"));
 
 	histogram_functions::Plot1DHistogram(h_ele_resolution_momentum, "Momentum Resolution (True - Reco) / True",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum.pdf"));

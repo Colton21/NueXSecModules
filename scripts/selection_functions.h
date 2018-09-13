@@ -53,6 +53,9 @@ void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
 void PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                         TH1D * h_dedx_cuts_intime);
+void PostCutsdEdxAltScaleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double alt_scale,
+                                TH1D * h_dedx_cuts_intime);
 //***************************************************************************
 void PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
