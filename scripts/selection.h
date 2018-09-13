@@ -71,6 +71,12 @@ const double intime_scale_factor = 0.97918;
 //const double intime_scale_factor = (6180310. / 588091.2); //batch 4
 
 
+//currently (sept 2018), we're still seeing an offset between the off and on beam sampels
+//the median offset before the beam window is approx: 9.6% - let's apply this as a unique
+//scaling factor
+const bool use_alt_scaling = true;
+const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
+
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
