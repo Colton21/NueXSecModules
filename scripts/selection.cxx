@@ -1611,7 +1611,7 @@ void selection::make_selection( const char * _file1,
 			mc_ele_cos_theta = mc_ele_dir_z;
 			mc_ele_theta = acos(mc_ele_dir_z) * (180/3.1415);
 		}
-		const double mc_ele_phi       = atan2(mc_ele_dir_y, mc_ele_dir_x);
+		const double mc_ele_phi = atan2(mc_ele_dir_y, mc_ele_dir_x);
 		if(true_in_tpc == true)
 		{
 			h_all_true_energy_theta->Fill(mc_nu_energy, acos(mc_cos_theta) * (180 / 3.1415));
@@ -3244,7 +3244,8 @@ void selection::make_selection( const char * _file1,
 				                                                           mc_ele_momentum, mc_ele_phi  * (180/3.1415), mc_ele_theta,
 				                                                           mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z,
 				                                                           h_ele_resolution_momentum, h_ele_resolution_phi, h_ele_resolution_theta,
-				                                                           h_ele_resolution_dot_prod, h_ele_resolution_momentum_dot_prod);
+				                                                           h_ele_resolution_dot_prod, h_ele_resolution_momentum_dot_prod,
+				                                                           h_ele_resolution_momentum_dot_prod_zoom_y);
 			}
 		}
 
@@ -4337,6 +4338,22 @@ void selection::make_selection( const char * _file1,
 	                                          0.75, 0.95, 0.75, 0.95, true, "",
 	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_logy.pdf"));
+
+	int tracks_num_signals = 0;
+	int tracks_num_total = 0;
+	for(int i = 0; i < h_trk_vtx_dist_nue_cc->GetNbinsX() + 1; i++)
+	{
+		tracks_num_signals += h_trk_vtx_dist_nue_cc->GetBinContent(i) * data_scale_factor;
+		tracks_num_total += ((h_trk_vtx_dist_nue_cc->GetBinContent(i) + h_trk_vtx_dist_nue_cc_mixed->GetBinContent(i) +
+		                      h_trk_vtx_dist_nue_cc_out_fv->GetBinContent(i) + h_trk_vtx_dist_numu_cc->GetBinContent(i) +
+		                      h_trk_vtx_dist_numu_cc_mixed->GetBinContent(i) +
+		                      h_trk_vtx_dist_cosmic->GetBinContent(i) + h_trk_vtx_dist_nc->GetBinContent(i) + h_trk_vtx_dist_nc_pi0->GetBinContent(i) +
+		                      h_trk_vtx_dist_other_mixed->GetBinContent(i) + h_trk_vtx_dist_unmatched->GetBinContent(i)) * data_scale_factor +
+		                     (h_trk_vtx_dist_intime->GetBinContent(i) * intime_scale_factor));
+	}
+	std::cout << "--- At this point in the selection we have: " << tracks_num_signals << " signal events with >= 1 Reco Track" << std::endl;
+	std::cout << "--- And a total of : " << tracks_num_total <<  " events with >= 1 Reco Track" << std::endl;
+
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_trk_vtx_dist_nue_cc,  h_trk_vtx_dist_nue_cc_mixed,
 		                                          h_trk_vtx_dist_nue_cc_out_fv,
@@ -5718,6 +5735,24 @@ void selection::make_selection( const char * _file1,
 	                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor,
 	                                                       "", "Leading Shower Momentum [GeV]", "",
 	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_data.pdf"));
+
+	int tracks_num_signals_2 = 0;
+	int tracks_num_total_2 = 0;
+	for(int i = 0; i < h_ele_pfp_momentum_has_track_nue_cc->GetNbinsX() + 1; i++)
+	{
+		tracks_num_signals += h_ele_pfp_momentum_has_track_nue_cc->GetBinContent(i) * data_scale_factor;
+		tracks_num_total += ((h_ele_pfp_momentum_has_track_nue_cc->GetBinContent(i) + h_ele_pfp_momentum_has_track_nue_cc_mixed->GetBinContent(i) +
+		                      h_ele_pfp_momentum_has_track_nue_cc_out_fv->GetBinContent(i) + h_ele_pfp_momentum_has_track_numu_cc->GetBinContent(i) +
+		                      h_ele_pfp_momentum_has_track_numu_cc_mixed->GetBinContent(i) +
+		                      h_ele_pfp_momentum_has_track_cosmic->GetBinContent(i) + h_ele_pfp_momentum_has_track_nc->GetBinContent(i) +
+		                      h_ele_pfp_momentum_has_track_nc_pi0->GetBinContent(i) +
+		                      h_ele_pfp_momentum_has_track_other_mixed->GetBinContent(i) +
+		                      h_ele_pfp_momentum_has_track_unmatched->GetBinContent(i)) * data_scale_factor +
+		                     (h_ele_pfp_momentum_has_track_intime->GetBinContent(i) * intime_scale_factor));
+	}
+	std::cout << "--- At the end of the selection we have: " << tracks_num_signals_2 << " signal events with >= 1 Reco Track" << std::endl;
+	std::cout << "--- And a total of : " << tracks_num_total_2 <<  " events with >= 1 Reco Track" << std::endl;
+
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackDataMomentumRebin (h_ele_pfp_momentum_nue_cc,  h_ele_pfp_momentum_nue_cc_mixed,
 		                                                       h_ele_pfp_momentum_nue_cc_out_fv,
@@ -6373,12 +6408,12 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_electron, h_dedx_cuts_proton, h_dedx_cuts_photon, h_dedx_cuts_pion,
 	                                             h_dedx_cuts_kaon, h_dedx_cuts_muon, h_dedx_cuts_neutron, h_dedx_cuts_mc_unmatched,
 	                                             h_dedx_cuts_ext_unmatched, intime_scale_factor, data_scale_factor, 0.75, 0.95, 0.75, 0.95,
-	                                             "True Particle dE/dx", "True Particle dE/dx [MeV/cm]", "",
+	                                             "True Particle Type - Reco dE/dx", "Leading Shower dE/dx [MeV/cm]", "",
 	                                             Form("%s%s", file_locate_prefix, "post_cuts_dedx_true_particle.pdf"));
 	histogram_functions::PlotSimpleStackParticle(h_dedx_cuts_last_electron, h_dedx_cuts_last_proton, h_dedx_cuts_last_photon, h_dedx_cuts_last_pion,
 	                                             h_dedx_cuts_last_kaon, h_dedx_cuts_last_muon, h_dedx_cuts_last_neutron, h_dedx_cuts_last_mc_unmatched,
 	                                             h_dedx_cuts_last_ext_unmatched, intime_scale_factor, data_scale_factor, 0.75, 0.95, 0.75, 0.95,
-	                                             "True Particle dE/dx", "True Particle dE/dx [MeV/cm]",
+	                                             "True Particle Type - Reco dE/dx", "Leading Shower dE/dx [MeV/cm]",
 	                                             "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_true_particle_last.pdf"));
 
 
@@ -7814,6 +7849,8 @@ void selection::make_selection( const char * _file1,
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_dot_prod.pdf"));
 	histogram_functions::Plot2DHistogram(h_ele_resolution_momentum_dot_prod, " ", "True Electron Momentum [GeV]", "True.Reco Shower Direction",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod.pdf"));
+	histogram_functions::Plot2DHistogram(h_ele_resolution_momentum_dot_prod_zoom_y, " ", "True Electron Momentum [GeV]", "True.Reco Shower Direction",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod_zoom_y.pdf"));
 
 	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_pfp_momentum_1shwr_nue_cc,

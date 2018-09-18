@@ -621,6 +621,19 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
 
+	TH1 * h_error_hist = (TH1*)h_electron_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_proton_clone, 1);
+	h_error_hist->Add(h_photon_clone, 1);
+	h_error_hist->Add(h_pion_clone, 1);
+	h_error_hist->Add(h_kaon_clone, 1);
+	h_error_hist->Add(h_muon_clone, 1);
+	h_error_hist->Add(h_neutron_clone, 1);
+	h_error_hist->Add(h_unmatched_clone, 1);
+	h_error_hist->Add(h_unmatched_ext_clone, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
+
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
@@ -1025,19 +1038,20 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	// TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
 	// TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
 
-	double new_bins [7] = {0.0, 0.25, 0.5, 1.0, 1.5, 4.0};
+	double new_bins [7] = {0.0, 0.15, 0.30, 0.5, 1.0, 1.5, 4.0};
+	const double num_bins = 6;
 
-	TH1 * h_nue_cc_rebin        = (TH1*)h_nue_cc->Rebin(5, "h_nue_cc_rebin", new_bins);
-	TH1 * h_nue_cc_mixed_rebin  = (TH1*)h_nue_cc_mixed->Rebin(5, "h_nue_cc_mixed_rebin", new_bins);
-	TH1 * h_nue_cc_out_fv_rebin = (TH1*)h_nue_cc_out_fv->Rebin(5, "h_nue_cc_out_fv_rebin", new_bins);
-	TH1 * h_cosmic_rebin        = (TH1*)h_cosmic->Rebin(5, "h_cosmic_rebin", new_bins);
-	TH1 * h_numu_cc_rebin       = (TH1*)h_numu_cc->Rebin(5, "h_numu_cc_rebin", new_bins);
-	TH1 * h_nc_rebin            = (TH1*)h_nc->Rebin(5, "h_nc_rebin", new_bins);
-	TH1 * h_nc_pi0_rebin        = (TH1*)h_nc_pi0->Rebin(5, "h_nc_pi0_rebin", new_bins);
-	TH1 * h_other_mixed_rebin   = (TH1*)h_other_mixed->Rebin(5, "h_other_mixed_rebin", new_bins);
-	TH1 * h_unmatched_rebin     = (TH1*)h_unmatched->Rebin(5, "h_unmatched_rebin", new_bins);
-	TH1 * h_intime_rebin        = (TH1*)h_intime->Rebin(5, "h_intime_rebin", new_bins);
-	TH1 * h_data_rebin          = (TH1*)h_data->Rebin(5, "h_data_rebin", new_bins);
+	TH1 * h_nue_cc_rebin        = (TH1*)h_nue_cc->Rebin(num_bins, "h_nue_cc_rebin", new_bins);
+	TH1 * h_nue_cc_mixed_rebin  = (TH1*)h_nue_cc_mixed->Rebin(num_bins, "h_nue_cc_mixed_rebin", new_bins);
+	TH1 * h_nue_cc_out_fv_rebin = (TH1*)h_nue_cc_out_fv->Rebin(num_bins, "h_nue_cc_out_fv_rebin", new_bins);
+	TH1 * h_cosmic_rebin        = (TH1*)h_cosmic->Rebin(num_bins, "h_cosmic_rebin", new_bins);
+	TH1 * h_numu_cc_rebin       = (TH1*)h_numu_cc->Rebin(num_bins, "h_numu_cc_rebin", new_bins);
+	TH1 * h_nc_rebin            = (TH1*)h_nc->Rebin(num_bins, "h_nc_rebin", new_bins);
+	TH1 * h_nc_pi0_rebin        = (TH1*)h_nc_pi0->Rebin(num_bins, "h_nc_pi0_rebin", new_bins);
+	TH1 * h_other_mixed_rebin   = (TH1*)h_other_mixed->Rebin(num_bins, "h_other_mixed_rebin", new_bins);
+	TH1 * h_unmatched_rebin     = (TH1*)h_unmatched->Rebin(num_bins, "h_unmatched_rebin", new_bins);
+	TH1 * h_intime_rebin        = (TH1*)h_intime->Rebin(num_bins, "h_intime_rebin", new_bins);
+	TH1 * h_data_rebin          = (TH1*)h_data->Rebin(num_bins, "h_data_rebin", new_bins);
 
 	h_nue_cc_rebin->Sumw2();
 	h_nue_cc_mixed_rebin->Sumw2();
