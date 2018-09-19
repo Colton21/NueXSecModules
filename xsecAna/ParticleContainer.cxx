@@ -178,10 +178,31 @@ void ParticleContainer::SetpfpOpenAngle(double _pfp_open_angle){
 void ParticleContainer::SetPfpClusterdQdx(std::vector<std::vector<double> > _pfp_cluster_dqdx){
 	pfp_cluster_dqdx = _pfp_cluster_dqdx;
 }
+void ParticleContainer::SetPfpClusterdQ(std::vector<std::vector<double> > _pfp_cluster_dq){
+	pfp_cluster_dq = _pfp_cluster_dq;
+}
+void ParticleContainer::SetPfpClusterdX(std::vector<std::vector<double> > _pfp_cluster_dx){
+	pfp_cluster_dx = _pfp_cluster_dx;
+}
 
 void ParticleContainer::SetPfpdEdx(std::vector<double> _pfp_dedx){
 	pfp_dedx = _pfp_dedx;
 }
+
+void ParticleContainer::SetPfpClusterdQdx_alt(std::vector<std::vector<double> > _pfp_cluster_dqdx_alt){
+	pfp_cluster_dqdx_alt = _pfp_cluster_dqdx_alt;
+}
+void ParticleContainer::SetPfpClusterdQ_alt(std::vector<std::vector<double> > _pfp_cluster_dq_alt){
+	pfp_cluster_dq_alt = _pfp_cluster_dq_alt;
+}
+void ParticleContainer::SetPfpClusterdX_alt(std::vector<std::vector<double> > _pfp_cluster_dx_alt){
+	pfp_cluster_dx_alt = _pfp_cluster_dx_alt;
+}
+
+void ParticleContainer::SetPfpdEdx_alt(std::vector<double> _pfp_dedx_alt){
+	pfp_dedx_alt = _pfp_dedx_alt;
+}
+
 
 //need to write the getter functions too!
 
@@ -358,9 +379,29 @@ double ParticleContainer::pfpOpenAngle() const {
 std::vector < std::vector < double > > ParticleContainer::PfpClusterdQdx() const {
 	return pfp_cluster_dqdx;
 }
+std::vector<std::vector<double> > ParticleContainer::PfpClusterdQ() const {
+	return pfp_cluster_dq;
+}
+std::vector<std::vector<double> > ParticleContainer::PfpClusterdX() const {
+	return pfp_cluster_dx;
+}
 
 std::vector<double > ParticleContainer::PfpdEdx() const {
 	return pfp_dedx;
+}
+
+std::vector < std::vector < double > > ParticleContainer::PfpClusterdQdx_alt() const {
+	return pfp_cluster_dqdx_alt;
+}
+std::vector<std::vector<double> > ParticleContainer::PfpClusterdQ_alt() const {
+	return pfp_cluster_dq_alt;
+}
+std::vector<std::vector<double> > ParticleContainer::PfpClusterdX_alt() const {
+	return pfp_cluster_dx_alt;
+}
+
+std::vector<double > ParticleContainer::PfpdEdx_alt() const {
+	return pfp_dedx_alt;
 }
 
 }//end namespace

@@ -1,83 +1,73 @@
-#ifndef SELECTION_h
-#define SELECTION_h
+#ifndef SELECTION_SLIM_h
+#define SELECTION_SLIM_h
 
 #include "selection_functions.h"
 #include "selection_cuts.h"
+#include "selection_functions_data.h"
+#include "histogram_functions.h"
 
 #include "../xsecAna/LinkDef.h"
 
+#include <fstream>
+
 namespace xsecSelection {
 
+class selection_slim {
 
-//const double POT = 4.05982e+19;      //POT - all NuMI + cosmics
-const double POT = 1.23206e+20; //POT - all NuMI + cosmics, bigger sample
-//const double POT = 2.90469e+21;    //POT - nue + cosmics
-const double scaling = 1.52938e-11;  //nues / POT / cm^2
-const double genie_xsec = 5.05191e-39; //cm^2
+private:
 
-//*******************
-// Cut Values
-//*******************
+const double POT = 1.82027e+21;
+const double data_scale_factor = 1 / 5.648;   //ie scale MC down by factor
+//const double intime_scale_factor = 0.442416; //ie scale EXT down by factor
+const double intime_scale_factor = 0.56940408;   //for first two datasets
 
-//fiducial volume
-const double _x1 = 15;
-const double _x2 = 15;
-const double _y1 = 30;
-const double _y2 = 15;
-const double _z1 = 15;
-const double _z2 = 15;
+//these are for the flux calculations
+const double scaling_nue = 1.52938e-11;          //nues  / POT / cm^2
+const double scaling_nue_bar = 7.77111e-12;      //anues / POT / cm^2
+const double scaling = scaling_nue + scaling_nue_bar;
 
-// const double _x1 = 0;
-// const double _x2 = 0;
-// const double _y1 = 0;
-// const double _y2 = 0;
-// const double _z1 = 0;
-// const double _z2 = 0;
+const double genie_xsec_nue = 5.63067e-39;     //cm^2
+const double genie_xsec_nue_bar = 2.0893e-39;     //cm^2
+//const double genie_xsec = genie_xsec_nue + genie_xsec_nue_bar;
 
-//in time flash
-const int flash_pe_threshold = 50;
-const double flash_time_start = 5;
-const double flash_time_end = 16;
+const double theta_translation = 29.36 * (3.1415/180);
+const double phi_translation = 8.121 * (3.1415/180);
+// const double theta_translation = 0.0;
+// const double phi_translation = 0.0;
 
-//vertex to flash
-//standard 100 cm
-const double tolerance = 80;//cm
+double _x1;
+double _x2;
+double _y1;
+double _y2;
+double _z1;
+double _z2;
+double flash_pe_threshold;
+double flash_time_start;
+double flash_time_end;
+double tolerance;
+double shwr_nue_tolerance;
+double trk_nue_tolerance;
+double shwr_hit_threshold;
+double shwr_hit_threshold_collection;
+double tolerance_open_angle_min;
+double tolerance_open_angle_max;
+double tolerance_dedx_min;
+double tolerance_dedx_max;
+double dist_tolerance;
+double pfp_hits_length_tolerance;
+double ratio_tolerance;
 
-//distance between pfp shower and nue object
-//standard 50 cm
-//Roberto runs with 4cm
-const double shwr_nue_tolerance = 4;//cm
-const double trk_nue_tolerance = 4;//cm
+public:
 
-//hit threshold for showers
-//standard 50 hits
-const double shwr_hit_threshold = 200;//hits
+selection_slim() = default;
 
-//hit threshold for at least one shower on collection plane
-//standard 50 hits
-const double shwr_hit_threshold_collection = 80;//hits
-
-//tolerance for leading shower open angle
-//standard 20 degrees
-//Roberto uses 15 degrees
-const std::vector<double> tolerance_open_angle {2, 15};//degrees
-
-//tolerance for dedx of leading shower
-//Roberto uses: 1.4 - 3 MeV / cm
-//standard is: 0, 3.5
-const double tolerance_dedx_min = 1.4;
-const double tolerance_dedx_max = 3;
-
-//tolerance for distance from the reco nue vtx for TPCO w/ >3 showers
-const double dist_tolerance = 22; //cm
-//22 cm is something like ~2 radiation lengths - I expect that TPCO w/ >3 showers
-//should have most of the activity around the nucleus right? or at least within the 22 cm
-
-//tolerance for hits/length - these should be a property of a shower if it's true
-const double pfp_hits_length_tolerance = 3; //hits/cm
-
-//tolerance for longest track length / leading shower length
-const double ratio_tolerance = 1;
+void make_selection_slim(
+        const char * _file1,
+        const char * _file2,
+        const char * _file3,
+        const std::vector<double> _config,
+        std::vector<std::tuple<double, double, std::string> > * results_v
+        );
 
 //********************
 //********************
@@ -118,6 +108,8 @@ int out_of_time_sum = 0;
 int low_pe_sum = 0;
 
 std::vector<int> tabulated_origins;
+
+}; //end class
 
 }//end namespace
 

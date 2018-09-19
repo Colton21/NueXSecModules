@@ -1,0 +1,2569 @@
+* * * * * * * * * * * * * * * * *
+Print Post Cuts On-Beam Data: 
+* * * * * * * * * * * * * * * * *
+Total Passed Events: 197
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6887
+Run Number     : 5519
+SubRun Number  : 137
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 72.7683
+Pfp Vtx Y      : -91.5037
+Pfp Vtx Z      : 882.896
+Opening Angle  : 14.3437
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5302
+Run Number     : 5280
+SubRun Number  : 106
+Num PFP Tracks : 2
+Num PFP Showers: 1
+Pfp Vtx X      : 47.457
+Pfp Vtx Y      : -24.1001
+Pfp Vtx Z      : 320.601
+Opening Angle  : 3.19828
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 623
+Run Number     : 5340
+SubRun Number  : 12
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 152.901
+Pfp Vtx Y      : -56.7045
+Pfp Vtx Z      : 768.932
+Opening Angle  : 9.34276
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 649
+Run Number     : 5361
+SubRun Number  : 12
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 159.046
+Pfp Vtx Y      : -27.0114
+Pfp Vtx Z      : 745.055
+Opening Angle  : 10.6762
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4513
+Run Number     : 5025
+SubRun Number  : 90
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 208.186
+Pfp Vtx Y      : -1.68002
+Pfp Vtx Z      : 462.694
+Opening Angle  : 5.93258
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1610
+Run Number     : 5262
+SubRun Number  : 32
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 49.648
+Pfp Vtx Y      : -32.9834
+Pfp Vtx Z      : 805.223
+Opening Angle  : 13.4285
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5191
+Run Number     : 5203
+SubRun Number  : 103
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 199.749
+Pfp Vtx Y      : -19.5375
+Pfp Vtx Z      : 105.903
+Opening Angle  : 2.81517
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3212
+Run Number     : 5272
+SubRun Number  : 64
+Num PFP Tracks : 2
+Num PFP Showers: 1
+Pfp Vtx X      : 210.753
+Pfp Vtx Y      : 82.3594
+Pfp Vtx Z      : 878.897
+Opening Angle  : 3.10564
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4075
+Run Number     : 5558
+SubRun Number  : 81
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 220.161
+Pfp Vtx Y      : 33.0977
+Pfp Vtx Z      : 451.911
+Opening Angle  : 5.53848
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2594
+Run Number     : 5021
+SubRun Number  : 51
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 234.091
+Pfp Vtx Y      : 12.9248
+Pfp Vtx Z      : 795.001
+Opening Angle  : 2.52306
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4247
+Run Number     : 5031
+SubRun Number  : 84
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 81.4932
+Pfp Vtx Y      : -57.19
+Pfp Vtx Z      : 368.799
+Opening Angle  : 4.81682
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 534
+Run Number     : 5361
+SubRun Number  : 10
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 184.194
+Pfp Vtx Y      : 84.1246
+Pfp Vtx Z      : 810.928
+Opening Angle  : 5.92211
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1096
+Run Number     : 5059
+SubRun Number  : 21
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 85.6285
+Pfp Vtx Y      : 57.6873
+Pfp Vtx Z      : 630.068
+Opening Angle  : 4.72195
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 801
+Run Number     : 5024
+SubRun Number  : 16
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 51.5499
+Pfp Vtx Y      : 2.45881
+Pfp Vtx Z      : 689.711
+Opening Angle  : 10.7942
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4313
+Run Number     : 5419
+SubRun Number  : 86
+Num PFP Tracks : 1
+Num PFP Showers: 3
+Pfp Vtx X      : 104.795
+Pfp Vtx Y      : 75.5657
+Pfp Vtx Z      : 738.874
+Opening Angle  : 8.44671
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5587
+Run Number     : 5412
+SubRun Number  : 111
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 98.7032
+Pfp Vtx Y      : 77.6931
+Pfp Vtx Z      : 968.698
+Opening Angle  : 4.34181
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3329
+Run Number     : 5280
+SubRun Number  : 66
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 41.0382
+Pfp Vtx Y      : 85.8238
+Pfp Vtx Z      : 934.404
+Opening Angle  : 10.1449
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3350
+Run Number     : 5226
+SubRun Number  : 66
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 222.997
+Pfp Vtx Y      : -8.80815
+Pfp Vtx Z      : 472.874
+Opening Angle  : 3.22052
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3444
+Run Number     : 4955
+SubRun Number  : 68
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 215.639
+Pfp Vtx Y      : 65.006
+Pfp Vtx Z      : 879.536
+Opening Angle  : 5.14301
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7389
+Run Number     : 5029
+SubRun Number  : 147
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 153.01
+Pfp Vtx Y      : 7.17353
+Pfp Vtx Z      : 370.756
+Opening Angle  : 6.15078
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9986
+Run Number     : 5454
+SubRun Number  : 199
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 74.2645
+Pfp Vtx Y      : -90.0961
+Pfp Vtx Z      : 288.638
+Opening Angle  : 11.9443
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+/ begin below//*****************************
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5671
+Run Number     : 5084
+SubRun Number  : 113
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 217.197
+Pfp Vtx Y      : 36.8197
+Pfp Vtx Z      : 158.091
+Opening Angle  : 13.4457
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 134
+Run Number     : 5440
+SubRun Number  : 2
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 114.815
+Pfp Vtx Y      : -36.0095
+Pfp Vtx Z      : 822.899
+Opening Angle  : 4.81246
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1942
+Run Number     : 5565
+SubRun Number  : 38
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 44.4737
+Pfp Vtx Y      : -39.8679
+Pfp Vtx Z      : 559.171
+Opening Angle  : 4.35362
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2240
+Run Number     : 5134
+SubRun Number  : 44
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 82.2381
+Pfp Vtx Y      : -65.6488
+Pfp Vtx Z      : 294.44
+Opening Angle  : 7.67895
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3526
+Run Number     : 5092
+SubRun Number  : 70
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 73.1246
+Pfp Vtx Y      : 32.8583
+Pfp Vtx Z      : 122.797
+Opening Angle  : 10.4133
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2437
+Run Number     : 5127
+SubRun Number  : 48
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 108.335
+Pfp Vtx Y      : -41.9359
+Pfp Vtx Z      : 271.225
+Opening Angle  : 3.40995
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3367
+Run Number     : 5000
+SubRun Number  : 67
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 99.9232
+Pfp Vtx Y      : -62.4494
+Pfp Vtx Z      : 809.9
+Opening Angle  : 5.45383
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2123
+Run Number     : 5525
+SubRun Number  : 42
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 142.545
+Pfp Vtx Y      : 62.5237
+Pfp Vtx Z      : 933.797
+Opening Angle  : 11.9149
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6406
+Run Number     : 5084
+SubRun Number  : 128
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 29.3021
+Pfp Vtx Y      : 17.0286
+Pfp Vtx Z      : 373.384
+Opening Angle  : 7.82287
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3374
+Run Number     : 5521
+SubRun Number  : 67
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 171.021
+Pfp Vtx Y      : 46.8915
+Pfp Vtx Z      : 626.253
+Opening Angle  : 11.8821
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 83
+Run Number     : 5528
+SubRun Number  : 1
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 198.745
+Pfp Vtx Y      : -64.1557
+Pfp Vtx Z      : 781.767
+Opening Angle  : 2.37591
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5530
+Run Number     : 5331
+SubRun Number  : 110
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 169.325
+Pfp Vtx Y      : 21.5458
+Pfp Vtx Z      : 740.92
+Opening Angle  : 2.95882
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1855
+Run Number     : 5155
+SubRun Number  : 37
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 212.753
+Pfp Vtx Y      : -58.0993
+Pfp Vtx Z      : 865.156
+Opening Angle  : 4.23723
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 781
+Run Number     : 5511
+SubRun Number  : 15
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 187.41
+Pfp Vtx Y      : 16.8221
+Pfp Vtx Z      : 174.907
+Opening Angle  : 13.4633
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9139
+Run Number     : 5013
+SubRun Number  : 182
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 150.668
+Pfp Vtx Y      : 60.5329
+Pfp Vtx Z      : 862.477
+Opening Angle  : 6.23045
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5259
+Run Number     : 5508
+SubRun Number  : 105
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 149.959
+Pfp Vtx Y      : 68.6308
+Pfp Vtx Z      : 729.135
+Opening Angle  : 4.55329
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4947
+Run Number     : 5449
+SubRun Number  : 98
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 82.818
+Pfp Vtx Y      : -16.6154
+Pfp Vtx Z      : 429.112
+Opening Angle  : 8.01664
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5840
+Run Number     : 5084
+SubRun Number  : 116
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 78.4229
+Pfp Vtx Y      : -71.1995
+Pfp Vtx Z      : 768.78
+Opening Angle  : 2.0958
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2542
+Run Number     : 5005
+SubRun Number  : 50
+Num PFP Tracks : 2
+Num PFP Showers: 3
+Pfp Vtx X      : 57.929
+Pfp Vtx Y      : -17.2067
+Pfp Vtx Z      : 991.75
+Opening Angle  : 8.39658
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6510
+Run Number     : 5331
+SubRun Number  : 130
+Num PFP Tracks : 2
+Num PFP Showers: 2
+Pfp Vtx X      : 176.551
+Pfp Vtx Y      : 24.727
+Pfp Vtx Z      : 459.609
+Opening Angle  : 9.54897
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 585
+Run Number     : 5013
+SubRun Number  : 11
+Num PFP Tracks : 3
+Num PFP Showers: 3
+Pfp Vtx X      : 137.669
+Pfp Vtx Y      : -64.1392
+Pfp Vtx Z      : 230.771
+Opening Angle  : 3.07357
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1810
+Run Number     : 5540
+SubRun Number  : 36
+Num PFP Tracks : 2
+Num PFP Showers: 1
+Pfp Vtx X      : 43.8163
+Pfp Vtx Y      : 29.1158
+Pfp Vtx Z      : 786.992
+Opening Angle  : 4.95022
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1234
+Run Number     : 5331
+SubRun Number  : 24
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 188.25
+Pfp Vtx Y      : -27.9571
+Pfp Vtx Z      : 295.687
+Opening Angle  : 4.50106
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 750
+Run Number     : 5499
+SubRun Number  : 14
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 155.572
+Pfp Vtx Y      : 61.892
+Pfp Vtx Z      : 902.286
+Opening Angle  : 2.15267
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7852
+Run Number     : 5705
+SubRun Number  : 157
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 27.8402
+Pfp Vtx Y      : -94.4884
+Pfp Vtx Z      : 327.714
+Opening Angle  : 5.74674
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5398
+Run Number     : 6106
+SubRun Number  : 107
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 198.087
+Pfp Vtx Y      : 72.3647
+Pfp Vtx Z      : 646.125
+Opening Angle  : 12.5189
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1722
+Run Number     : 5616
+SubRun Number  : 34
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 225.022
+Pfp Vtx Y      : 14.2659
+Pfp Vtx Z      : 175.382
+Opening Angle  : 9.78321
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 871
+Run Number     : 5982
+SubRun Number  : 17
+Num PFP Tracks : 1
+Num PFP Showers: 3
+Pfp Vtx X      : 200.559
+Pfp Vtx Y      : 75.5778
+Pfp Vtx Z      : 559.976
+Opening Angle  : 9.4014
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1396
+Run Number     : 6100
+SubRun Number  : 27
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 47.0893
+Pfp Vtx Y      : 22.4748
+Pfp Vtx Z      : 549.203
+Opening Angle  : 10.9698
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2111
+Run Number     : 5965
+SubRun Number  : 42
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 235.842
+Pfp Vtx Y      : -43.9121
+Pfp Vtx Z      : 343.567
+Opening Angle  : 6.89488
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4642
+Run Number     : 5912
+SubRun Number  : 92
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 122.43
+Pfp Vtx Y      : -51.5857
+Pfp Vtx Z      : 661.529
+Opening Angle  : 4.05304
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7412
+Run Number     : 6098
+SubRun Number  : 148
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 167.239
+Pfp Vtx Y      : -48.1487
+Pfp Vtx Z      : 682.623
+Opening Angle  : 11.5999
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2957
+Run Number     : 5935
+SubRun Number  : 59
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 91.2822
+Pfp Vtx Y      : -46.0416
+Pfp Vtx Z      : 574.467
+Opening Angle  : 3.63619
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3522
+Run Number     : 5650
+SubRun Number  : 70
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 225.117
+Pfp Vtx Y      : -47.7171
+Pfp Vtx Z      : 506.545
+Opening Angle  : 4.91325
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 636
+Run Number     : 6007
+SubRun Number  : 12
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 23.7643
+Pfp Vtx Y      : 49.5297
+Pfp Vtx Z      : 949.428
+Opening Angle  : 8.08893
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 393
+Run Number     : 5752
+SubRun Number  : 7
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 215.94
+Pfp Vtx Y      : 55.0485
+Pfp Vtx Z      : 141.634
+Opening Angle  : 3.69294
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4111
+Run Number     : 5709
+SubRun Number  : 82
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 156.719
+Pfp Vtx Y      : -56.4769
+Pfp Vtx Z      : 317.775
+Opening Angle  : 6.74647
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3525
+Run Number     : 5749
+SubRun Number  : 70
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 59.1767
+Pfp Vtx Y      : 49.2099
+Pfp Vtx Z      : 338.192
+Opening Angle  : 6.42914
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 732
+Run Number     : 5727
+SubRun Number  : 14
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 75.1048
+Pfp Vtx Y      : -77.8905
+Pfp Vtx Z      : 748.039
+Opening Angle  : 8.98946
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7639
+Run Number     : 5616
+SubRun Number  : 152
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 114.729
+Pfp Vtx Y      : -53.2155
+Pfp Vtx Z      : 829.08
+Opening Angle  : 8.92566
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3860
+Run Number     : 5733
+SubRun Number  : 77
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 211.195
+Pfp Vtx Y      : -57.2151
+Pfp Vtx Z      : 869.274
+Opening Angle  : 6.97586
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4092
+Run Number     : 5727
+SubRun Number  : 81
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 67.4796
+Pfp Vtx Y      : 15.0721
+Pfp Vtx Z      : 226.083
+Opening Angle  : 12.2655
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 533
+Run Number     : 6002
+SubRun Number  : 10
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 114.158
+Pfp Vtx Y      : -62.0767
+Pfp Vtx Z      : 502.6
+Opening Angle  : 4.46545
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4805
+Run Number     : 5977
+SubRun Number  : 96
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 164.617
+Pfp Vtx Y      : -49.95
+Pfp Vtx Z      : 194.148
+Opening Angle  : 6.11273
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5811
+Run Number     : 5906
+SubRun Number  : 116
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 98.7734
+Pfp Vtx Y      : -33.9251
+Pfp Vtx Z      : 933.679
+Opening Angle  : 5.10884
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 404
+Run Number     : 5916
+SubRun Number  : 8
+Num PFP Tracks : 3
+Num PFP Showers: 1
+Pfp Vtx X      : 172.807
+Pfp Vtx Y      : 78.2144
+Pfp Vtx Z      : 227.251
+Opening Angle  : 4.54104
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1044
+Run Number     : 5731
+SubRun Number  : 20
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 151.282
+Pfp Vtx Y      : 30.3952
+Pfp Vtx Z      : 384.091
+Opening Angle  : 7.05684
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5528
+Run Number     : 5709
+SubRun Number  : 110
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 156.705
+Pfp Vtx Y      : -38.9499
+Pfp Vtx Z      : 913.784
+Opening Angle  : 3.48822
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4552
+Run Number     : 6021
+SubRun Number  : 91
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 49.6589
+Pfp Vtx Y      : -88.1378
+Pfp Vtx Z      : 903.338
+Opening Angle  : 5.21497
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2200
+Run Number     : 5983
+SubRun Number  : 43
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 116.582
+Pfp Vtx Y      : 28.9036
+Pfp Vtx Z      : 923.168
+Opening Angle  : 7.17444
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6801
+Run Number     : 6022
+SubRun Number  : 136
+Num PFP Tracks : 2
+Num PFP Showers: 3
+Pfp Vtx X      : 70.6671
+Pfp Vtx Y      : 31.0976
+Pfp Vtx Z      : 332.547
+Opening Angle  : 3.10058
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 206
+Run Number     : 5960
+SubRun Number  : 4
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 105.855
+Pfp Vtx Y      : 32.5547
+Pfp Vtx Z      : 775.281
+Opening Angle  : 6.1524
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9107
+Run Number     : 5385
+SubRun Number  : 182
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 68.764
+Pfp Vtx Y      : -51.6362
+Pfp Vtx Z      : 274.45
+Opening Angle  : 2.12667
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4798
+Run Number     : 5906
+SubRun Number  : 95
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 154.783
+Pfp Vtx Y      : 9.09549
+Pfp Vtx Z      : 823.233
+Opening Angle  : 11.0459
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7364
+Run Number     : 6103
+SubRun Number  : 147
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 95.7275
+Pfp Vtx Y      : -17.3828
+Pfp Vtx Z      : 220.142
+Opening Angle  : 7.10025
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5470
+Run Number     : 6021
+SubRun Number  : 109
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 50.0222
+Pfp Vtx Y      : -88.2827
+Pfp Vtx Z      : 531.574
+Opening Angle  : 7.48603
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 311
+Run Number     : 5397
+SubRun Number  : 6
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 223.656
+Pfp Vtx Y      : 53.7704
+Pfp Vtx Z      : 292.024
+Opening Angle  : 7.75467
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 38
+Run Number     : 5628
+SubRun Number  : 0
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 186.087
+Pfp Vtx Y      : 77.3391
+Pfp Vtx Z      : 192.656
+Opening Angle  : 5.54995
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3538
+Run Number     : 5632
+SubRun Number  : 70
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 184.783
+Pfp Vtx Y      : 17.1182
+Pfp Vtx Z      : 737.576
+Opening Angle  : 4.64746
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2158
+Run Number     : 5752
+SubRun Number  : 43
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 36.5116
+Pfp Vtx Y      : -62.3341
+Pfp Vtx Z      : 457.778
+Opening Angle  : 8.95451
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 365
+Run Number     : 5906
+SubRun Number  : 7
+Num PFP Tracks : 2
+Num PFP Showers: 2
+Pfp Vtx X      : 178.881
+Pfp Vtx Y      : -80.3676
+Pfp Vtx Z      : 766.487
+Opening Angle  : 10.4907
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 503
+Run Number     : 5969
+SubRun Number  : 10
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 24.8422
+Pfp Vtx Y      : -67.0006
+Pfp Vtx Z      : 277.919
+Opening Angle  : 5.52936
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 303
+Run Number     : 5627
+SubRun Number  : 6
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 35.372
+Pfp Vtx Y      : 29.7077
+Pfp Vtx Z      : 639.302
+Opening Angle  : 8.95233
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4562
+Run Number     : 6007
+SubRun Number  : 91
+Num PFP Tracks : 2
+Num PFP Showers: 3
+Pfp Vtx X      : 86.7088
+Pfp Vtx Y      : 5.35536
+Pfp Vtx Z      : 634.204
+Opening Angle  : 12.2479
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1109
+Run Number     : 5956
+SubRun Number  : 22
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 203.527
+Pfp Vtx Y      : -80.815
+Pfp Vtx Z      : 811.383
+Opening Angle  : 13.1524
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6220
+Run Number     : 5925
+SubRun Number  : 124
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 46.1675
+Pfp Vtx Y      : -62.035
+Pfp Vtx Z      : 471.933
+Opening Angle  : 10.9071
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6249
+Run Number     : 5637
+SubRun Number  : 124
+Num PFP Tracks : 2
+Num PFP Showers: 1
+Pfp Vtx X      : 164.448
+Pfp Vtx Y      : 39.4209
+Pfp Vtx Z      : 525.616
+Opening Angle  : 7.15141
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1140
+Run Number     : 5371
+SubRun Number  : 22
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 32.3131
+Pfp Vtx Y      : -26.4156
+Pfp Vtx Z      : 728.483
+Opening Angle  : 3.19477
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 48
+Run Number     : 6099
+SubRun Number  : 0
+Num PFP Tracks : 2
+Num PFP Showers: 1
+Pfp Vtx X      : 58.8727
+Pfp Vtx Y      : 88.2126
+Pfp Vtx Z      : 605.644
+Opening Angle  : 9.64796
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2731
+Run Number     : 5182
+SubRun Number  : 54
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 208.371
+Pfp Vtx Y      : 44.335
+Pfp Vtx Z      : 151.1
+Opening Angle  : 7.55674
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2414
+Run Number     : 5536
+SubRun Number  : 48
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 196.911
+Pfp Vtx Y      : -48.1336
+Pfp Vtx Z      : 97.45
+Opening Angle  : 13.5428
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5267
+Run Number     : 5914
+SubRun Number  : 105
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 206.766
+Pfp Vtx Y      : 16.6823
+Pfp Vtx Z      : 827.988
+Opening Angle  : 8.21776
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3733
+Run Number     : 6340
+SubRun Number  : 74
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 112.875
+Pfp Vtx Y      : 69.5732
+Pfp Vtx Z      : 632.094
+Opening Angle  : 2.96578
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5534
+Run Number     : 6281
+SubRun Number  : 110
+Num PFP Tracks : 1
+Num PFP Showers: 3
+Pfp Vtx X      : 77.624
+Pfp Vtx Y      : -13.8884
+Pfp Vtx Z      : 924.934
+Opening Angle  : 6.41609
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2271
+Run Number     : 6122
+SubRun Number  : 45
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 135.013
+Pfp Vtx Y      : 52.022
+Pfp Vtx Z      : 583.085
+Opening Angle  : 7.8052
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 351
+Run Number     : 6210
+SubRun Number  : 7
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 224.056
+Pfp Vtx Y      : -68.7927
+Pfp Vtx Z      : 677.474
+Opening Angle  : 6.7485
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1
+Run Number     : 6119
+SubRun Number  : 0
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 223.959
+Pfp Vtx Y      : -50.3188
+Pfp Vtx Z      : 687.939
+Opening Angle  : 6.17495
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4102
+Run Number     : 6224
+SubRun Number  : 82
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 203.752
+Pfp Vtx Y      : -46.5424
+Pfp Vtx Z      : 653.284
+Opening Angle  : 3.76187
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1493
+Run Number     : 6334
+SubRun Number  : 29
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 21.5312
+Pfp Vtx Y      : -50.7506
+Pfp Vtx Z      : 511.359
+Opening Angle  : 5.77938
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7795
+Run Number     : 6407
+SubRun Number  : 155
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 197.664
+Pfp Vtx Y      : -21.0823
+Pfp Vtx Z      : 436.618
+Opening Angle  : 7.37486
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3275
+Run Number     : 6203
+SubRun Number  : 65
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 32.4143
+Pfp Vtx Y      : 71.2242
+Pfp Vtx Z      : 170.903
+Opening Angle  : 3.42219
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1546
+Run Number     : 6329
+SubRun Number  : 30
+Num PFP Tracks : 1
+Num PFP Showers: 3
+Pfp Vtx X      : 200.327
+Pfp Vtx Y      : -32.967
+Pfp Vtx Z      : 425.822
+Opening Angle  : 8.19913
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1323
+Run Number     : 6438
+SubRun Number  : 26
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 213.799
+Pfp Vtx Y      : 53.3302
+Pfp Vtx Z      : 465.437
+Opening Angle  : 3.42286
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1174
+Run Number     : 6194
+SubRun Number  : 23
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 54.3111
+Pfp Vtx Y      : -71.7434
+Pfp Vtx Z      : 884.082
+Opening Angle  : 7.64253
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9773
+Run Number     : 6387
+SubRun Number  : 195
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 85.6292
+Pfp Vtx Y      : -48.5808
+Pfp Vtx Z      : 583.403
+Opening Angle  : 3.31221
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1143
+Run Number     : 6286
+SubRun Number  : 22
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 91.9058
+Pfp Vtx Y      : -41.0046
+Pfp Vtx Z      : 918.59
+Opening Angle  : 4.32698
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 167
+Run Number     : 6347
+SubRun Number  : 3
+Num PFP Tracks : 1
+Num PFP Showers: 3
+Pfp Vtx X      : 85.2582
+Pfp Vtx Y      : -11.428
+Pfp Vtx Z      : 201.775
+Opening Angle  : 10.7154
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7656
+Run Number     : 6324
+SubRun Number  : 153
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 235.186
+Pfp Vtx Y      : 0.553177
+Pfp Vtx Z      : 608.87
+Opening Angle  : 13.7961
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 936
+Run Number     : 6219
+SubRun Number  : 18
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 173.005
+Pfp Vtx Y      : 72.4755
+Pfp Vtx Z      : 766.474
+Opening Angle  : 7.89913
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3970
+Run Number     : 6420
+SubRun Number  : 79
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 53.8396
+Pfp Vtx Y      : 48.0573
+Pfp Vtx Z      : 218.827
+Opening Angle  : 14.411
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5479
+Run Number     : 6298
+SubRun Number  : 109
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 42.9932
+Pfp Vtx Y      : 44.1218
+Pfp Vtx Z      : 608.145
+Opening Angle  : 9.92557
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1477
+Run Number     : 6402
+SubRun Number  : 29
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 65.5963
+Pfp Vtx Y      : 61.3357
+Pfp Vtx Z      : 997.04
+Opening Angle  : 2.94308
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4652
+Run Number     : 6324
+SubRun Number  : 93
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 67.7927
+Pfp Vtx Y      : 43.8759
+Pfp Vtx Z      : 835.303
+Opening Angle  : 3.33738
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3912
+Run Number     : 6070
+SubRun Number  : 78
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 105.715
+Pfp Vtx Y      : -32.501
+Pfp Vtx Z      : 902.666
+Opening Angle  : 8.08715
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7140
+Run Number     : 6318
+SubRun Number  : 142
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 118.942
+Pfp Vtx Y      : -31.7477
+Pfp Vtx Z      : 834.818
+Opening Angle  : 5.32471
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 221
+Run Number     : 6362
+SubRun Number  : 4
+Num PFP Tracks : 0
+Num PFP Showers: 7
+Pfp Vtx X      : 148.083
+Pfp Vtx Y      : 23.7999
+Pfp Vtx Z      : 610.882
+Opening Angle  : 4.40715
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 11
+Run Number     : 6144
+SubRun Number  : 0
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 154.019
+Pfp Vtx Y      : 57.7298
+Pfp Vtx Z      : 228.925
+Opening Angle  : 11.5416
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3777
+Run Number     : 6319
+SubRun Number  : 75
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 190.743
+Pfp Vtx Y      : -33.68
+Pfp Vtx Z      : 357.02
+Opening Angle  : 3.82798
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7331
+Run Number     : 6226
+SubRun Number  : 146
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 160.327
+Pfp Vtx Y      : 65.9135
+Pfp Vtx Z      : 136.246
+Opening Angle  : 4.03977
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1030
+Run Number     : 6319
+SubRun Number  : 20
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 187.418
+Pfp Vtx Y      : 6.48406
+Pfp Vtx Z      : 224.619
+Opening Angle  : 9.10036
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2447
+Run Number     : 6217
+SubRun Number  : 48
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 164.958
+Pfp Vtx Y      : 25.5227
+Pfp Vtx Z      : 631.368
+Opening Angle  : 6.15319
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3317
+Run Number     : 6022
+SubRun Number  : 66
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 32.8196
+Pfp Vtx Y      : -41.5673
+Pfp Vtx Z      : 459.619
+Opening Angle  : 6.23752
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9564
+Run Number     : 6417
+SubRun Number  : 191
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 163.827
+Pfp Vtx Y      : 6.24059
+Pfp Vtx Z      : 618.977
+Opening Angle  : 9.70383
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2961
+Run Number     : 6379
+SubRun Number  : 59
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 145.704
+Pfp Vtx Y      : -40.1957
+Pfp Vtx Z      : 502.291
+Opening Angle  : 7.83838
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 158
+Run Number     : 6318
+SubRun Number  : 3
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 203.8
+Pfp Vtx Y      : 60.4183
+Pfp Vtx Z      : 204.389
+Opening Angle  : 6.8112
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9067
+Run Number     : 6348
+SubRun Number  : 181
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 228.741
+Pfp Vtx Y      : 79.0624
+Pfp Vtx Z      : 788.091
+Opening Angle  : 9.55772
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4093
+Run Number     : 6298
+SubRun Number  : 81
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 22.94
+Pfp Vtx Y      : -82.4468
+Pfp Vtx Z      : 556.359
+Opening Angle  : 10.954
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2162
+Run Number     : 6356
+SubRun Number  : 43
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 27.1583
+Pfp Vtx Y      : -85.545
+Pfp Vtx Z      : 427.535
+Opening Angle  : 7.27163
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1347
+Run Number     : 6425
+SubRun Number  : 26
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 121.078
+Pfp Vtx Y      : 91.0105
+Pfp Vtx Z      : 418.271
+Opening Angle  : 7.99255
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 110
+Run Number     : 6329
+SubRun Number  : 2
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 59.1289
+Pfp Vtx Y      : 83.383
+Pfp Vtx Z      : 656.355
+Opening Angle  : 13.1483
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2454
+Run Number     : 6440
+SubRun Number  : 49
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 228.603
+Pfp Vtx Y      : 26.6206
+Pfp Vtx Z      : 698.267
+Opening Angle  : 5.02976
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 451
+Run Number     : 6401
+SubRun Number  : 9
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 130.42
+Pfp Vtx Y      : 25.2399
+Pfp Vtx Z      : 170.634
+Opening Angle  : 14.1495
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 8173
+Run Number     : 6417
+SubRun Number  : 163
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 165.489
+Pfp Vtx Y      : -65.2942
+Pfp Vtx Z      : 571.007
+Opening Angle  : 6.38338
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 10419
+Run Number     : 6118
+SubRun Number  : 208
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 94.2792
+Pfp Vtx Y      : -16.8419
+Pfp Vtx Z      : 101.714
+Opening Angle  : 10.761
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2106
+Run Number     : 6305
+SubRun Number  : 42
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 86.0772
+Pfp Vtx Y      : -13.7743
+Pfp Vtx Z      : 955.362
+Opening Angle  : 7.09575
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 829
+Run Number     : 6297
+SubRun Number  : 16
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 233.667
+Pfp Vtx Y      : 34.4523
+Pfp Vtx Z      : 565.969
+Opening Angle  : 11.6644
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2186
+Run Number     : 6180
+SubRun Number  : 43
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 220.762
+Pfp Vtx Y      : 38.3067
+Pfp Vtx Z      : 264.158
+Opening Angle  : 5.81674
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1873
+Run Number     : 6376
+SubRun Number  : 37
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 27.8718
+Pfp Vtx Y      : -52.6712
+Pfp Vtx Z      : 631.652
+Opening Angle  : 7.54261
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9350
+Run Number     : 6198
+SubRun Number  : 186
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 183.609
+Pfp Vtx Y      : 50.1656
+Pfp Vtx Z      : 430.169
+Opening Angle  : 3.66573
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2132
+Run Number     : 6329
+SubRun Number  : 42
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 209.09
+Pfp Vtx Y      : 64.9575
+Pfp Vtx Z      : 433.982
+Opening Angle  : 10.017
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 416
+Run Number     : 6566
+SubRun Number  : 8
+Num PFP Tracks : 2
+Num PFP Showers: 5
+Pfp Vtx X      : 226.95
+Pfp Vtx Y      : -15.1659
+Pfp Vtx Z      : 627.748
+Opening Angle  : 6.15881
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 885
+Run Number     : 6574
+SubRun Number  : 17
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 121.777
+Pfp Vtx Y      : -40.2826
+Pfp Vtx Z      : 949.665
+Opening Angle  : 6.1436
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1059
+Run Number     : 6606
+SubRun Number  : 21
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 184.682
+Pfp Vtx Y      : 45.5347
+Pfp Vtx Z      : 137.175
+Opening Angle  : 6.29566
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 259
+Run Number     : 6533
+SubRun Number  : 5
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 165.058
+Pfp Vtx Y      : 13.4828
+Pfp Vtx Z      : 556.828
+Opening Angle  : 3.46056
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5985
+Run Number     : 6341
+SubRun Number  : 119
+Num PFP Tracks : 1
+Num PFP Showers: 3
+Pfp Vtx X      : 227.262
+Pfp Vtx Y      : 8.21582
+Pfp Vtx Z      : 689.615
+Opening Angle  : 11.9065
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2051
+Run Number     : 5029
+SubRun Number  : 41
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 232.335
+Pfp Vtx Y      : -39.1087
+Pfp Vtx Z      : 795.237
+Opening Angle  : 4.48436
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3142
+Run Number     : 6526
+SubRun Number  : 62
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 221.761
+Pfp Vtx Y      : -37.3883
+Pfp Vtx Z      : 562.614
+Opening Angle  : 8.47542
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 211
+Run Number     : 6546
+SubRun Number  : 4
+Num PFP Tracks : 3
+Num PFP Showers: 3
+Pfp Vtx X      : 110.685
+Pfp Vtx Y      : -25.9539
+Pfp Vtx Z      : 754.714
+Opening Angle  : 11.094
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2378
+Run Number     : 6574
+SubRun Number  : 47
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 138.947
+Pfp Vtx Y      : -29.2626
+Pfp Vtx Z      : 175.737
+Opening Angle  : 5.11168
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 600
+Run Number     : 6588
+SubRun Number  : 11
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 46.4749
+Pfp Vtx Y      : -90.3856
+Pfp Vtx Z      : 482.963
+Opening Angle  : 4.98752
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1140
+Run Number     : 6671
+SubRun Number  : 22
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 186.929
+Pfp Vtx Y      : 72.3609
+Pfp Vtx Z      : 878.049
+Opening Angle  : 5.49133
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3944
+Run Number     : 6566
+SubRun Number  : 78
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 21.97
+Pfp Vtx Y      : 22.2233
+Pfp Vtx Z      : 182.651
+Opening Angle  : 7.6913
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7588
+Run Number     : 5586
+SubRun Number  : 151
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 139.058
+Pfp Vtx Y      : -67.5919
+Pfp Vtx Z      : 626.707
+Opening Angle  : 3.33804
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 10468
+Run Number     : 6562
+SubRun Number  : 209
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 78.056
+Pfp Vtx Y      : 9.63851
+Pfp Vtx Z      : 744.565
+Opening Angle  : 10.6446
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6943
+Run Number     : 6698
+SubRun Number  : 138
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 51.129
+Pfp Vtx Y      : -0.119776
+Pfp Vtx Z      : 632.864
+Opening Angle  : 5.32179
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3148
+Run Number     : 5044
+SubRun Number  : 62
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 200.934
+Pfp Vtx Y      : -15.9711
+Pfp Vtx Z      : 249.291
+Opening Angle  : 4.22923
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 329
+Run Number     : 6371
+SubRun Number  : 6
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 41.2892
+Pfp Vtx Y      : -14.2521
+Pfp Vtx Z      : 401.25
+Opening Angle  : 12.7197
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1672
+Run Number     : 6499
+SubRun Number  : 33
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 157.964
+Pfp Vtx Y      : -55.8892
+Pfp Vtx Z      : 381.485
+Opening Angle  : 3.65407
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5279
+Run Number     : 6382
+SubRun Number  : 105
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 92.3495
+Pfp Vtx Y      : 33.3623
+Pfp Vtx Z      : 349.443
+Opening Angle  : 8.1995
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3881
+Run Number     : 6647
+SubRun Number  : 77
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 60.3583
+Pfp Vtx Y      : -34.7045
+Pfp Vtx Z      : 596.364
+Opening Angle  : 2.16296
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4386
+Run Number     : 6529
+SubRun Number  : 87
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 100.178
+Pfp Vtx Y      : -33.1579
+Pfp Vtx Z      : 671.587
+Opening Angle  : 5.39237
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6839
+Run Number     : 6689
+SubRun Number  : 136
+Num PFP Tracks : 2
+Num PFP Showers: 2
+Pfp Vtx X      : 91.3035
+Pfp Vtx Y      : 26.4173
+Pfp Vtx Z      : 769.16
+Opening Angle  : 4.90959
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 7708
+Run Number     : 6533
+SubRun Number  : 154
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 63.3113
+Pfp Vtx Y      : -95.0169
+Pfp Vtx Z      : 721.021
+Opening Angle  : 6.18508
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 8358
+Run Number     : 5564
+SubRun Number  : 167
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 118.812
+Pfp Vtx Y      : -26.8272
+Pfp Vtx Z      : 328.253
+Opening Angle  : 8.56086
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 11648
+Run Number     : 6683
+SubRun Number  : 232
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 166.579
+Pfp Vtx Y      : -33.1139
+Pfp Vtx Z      : 763.496
+Opening Angle  : 7.61588
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 8172
+Run Number     : 6663
+SubRun Number  : 163
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 219.347
+Pfp Vtx Y      : 40.7269
+Pfp Vtx Z      : 858.67
+Opening Angle  : 8.78233
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1087
+Run Number     : 6605
+SubRun Number  : 21
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 23.5558
+Pfp Vtx Y      : 63.4688
+Pfp Vtx Z      : 432.461
+Opening Angle  : 9.38399
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6620
+Run Number     : 6598
+SubRun Number  : 132
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 98.9366
+Pfp Vtx Y      : 24.0635
+Pfp Vtx Z      : 125.124
+Opening Angle  : 5.3736
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 855
+Run Number     : 5505
+SubRun Number  : 17
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 170.819
+Pfp Vtx Y      : -5.83492
+Pfp Vtx Z      : 409.415
+Opening Angle  : 10.1612
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9796
+Run Number     : 5586
+SubRun Number  : 195
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 169.665
+Pfp Vtx Y      : 40.6852
+Pfp Vtx Z      : 760.243
+Opening Angle  : 4.2113
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4345
+Run Number     : 6348
+SubRun Number  : 86
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 225.655
+Pfp Vtx Y      : 5.16893
+Pfp Vtx Z      : 232.15
+Opening Angle  : 13.9142
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5174
+Run Number     : 6529
+SubRun Number  : 103
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 76.2957
+Pfp Vtx Y      : 21.2867
+Pfp Vtx Z      : 150.134
+Opening Angle  : 9.52922
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1605
+Run Number     : 6594
+SubRun Number  : 32
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 225.775
+Pfp Vtx Y      : 85.305
+Pfp Vtx Z      : 292.14
+Opening Angle  : 5.94514
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 6184
+Run Number     : 6668
+SubRun Number  : 123
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 221.075
+Pfp Vtx Y      : 38.8191
+Pfp Vtx Z      : 549.317
+Opening Angle  : 9.51738
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 690
+Run Number     : 6631
+SubRun Number  : 13
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 44.6659
+Pfp Vtx Y      : 49.3429
+Pfp Vtx Z      : 867.258
+Opening Angle  : 2.73555
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5489
+Run Number     : 6553
+SubRun Number  : 109
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 80.6884
+Pfp Vtx Y      : -49.8303
+Pfp Vtx Z      : 137.643
+Opening Angle  : 7.21195
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 306
+Run Number     : 6633
+SubRun Number  : 6
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 71.6427
+Pfp Vtx Y      : 60.0048
+Pfp Vtx Z      : 719.752
+Opening Angle  : 13.2376
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1847
+Run Number     : 6609
+SubRun Number  : 36
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 22.0624
+Pfp Vtx Y      : -58.7936
+Pfp Vtx Z      : 524.068
+Opening Angle  : 3.963
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 4553
+Run Number     : 6666
+SubRun Number  : 91
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 29.6204
+Pfp Vtx Y      : -42.9271
+Pfp Vtx Z      : 334.937
+Opening Angle  : 7.25545
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5873
+Run Number     : 5462
+SubRun Number  : 117
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 32.2651
+Pfp Vtx Y      : 60.9914
+Pfp Vtx Z      : 584.633
+Opening Angle  : 14.4743
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5218
+Run Number     : 6634
+SubRun Number  : 104
+Num PFP Tracks : 1
+Num PFP Showers: 6
+Pfp Vtx X      : 179.579
+Pfp Vtx Y      : -17.4751
+Pfp Vtx Z      : 470.161
+Opening Angle  : 6.63054
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2317
+Run Number     : 6625
+SubRun Number  : 46
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 88.0768
+Pfp Vtx Y      : 31.2877
+Pfp Vtx Z      : 898.132
+Opening Angle  : 6.87869
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 8966
+Run Number     : 6340
+SubRun Number  : 179
+Num PFP Tracks : 0
+Num PFP Showers: 4
+Pfp Vtx X      : 109.843
+Pfp Vtx Y      : -68.0611
+Pfp Vtx Z      : 614.807
+Opening Angle  : 6.59412
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1936
+Run Number     : 6691
+SubRun Number  : 38
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 200.137
+Pfp Vtx Y      : -52.045
+Pfp Vtx Z      : 292.974
+Opening Angle  : 7.79351
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2745
+Run Number     : 6525
+SubRun Number  : 54
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 170.048
+Pfp Vtx Y      : -20.2174
+Pfp Vtx Z      : 843.252
+Opening Angle  : 3.28944
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2999
+Run Number     : 6527
+SubRun Number  : 59
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 62.2205
+Pfp Vtx Y      : 19.188
+Pfp Vtx Z      : 209.701
+Opening Angle  : 13.6739
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 494
+Run Number     : 6594
+SubRun Number  : 9
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 153.319
+Pfp Vtx Y      : 56.3814
+Pfp Vtx Z      : 484.931
+Opening Angle  : 10.7045
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 860
+Run Number     : 6623
+SubRun Number  : 17
+Num PFP Tracks : 0
+Num PFP Showers: 3
+Pfp Vtx X      : 119.685
+Pfp Vtx Y      : 5.56308
+Pfp Vtx Z      : 329.961
+Opening Angle  : 6.9949
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 2083
+Run Number     : 6603
+SubRun Number  : 41
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 179.483
+Pfp Vtx Y      : -72.7104
+Pfp Vtx Z      : 773.668
+Opening Angle  : 13.4132
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 11019
+Run Number     : 6564
+SubRun Number  : 220
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 86.6953
+Pfp Vtx Y      : -55.6755
+Pfp Vtx Z      : 546.926
+Opening Angle  : 4.53584
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3280
+Run Number     : 6563
+SubRun Number  : 65
+Num PFP Tracks : 1
+Num PFP Showers: 1
+Pfp Vtx X      : 185.962
+Pfp Vtx Y      : -20.3326
+Pfp Vtx Z      : 561.313
+Opening Angle  : 4.69045
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 1175
+Run Number     : 6442
+SubRun Number  : 23
+Num PFP Tracks : 2
+Num PFP Showers: 1
+Pfp Vtx X      : 69.6464
+Pfp Vtx Y      : 28.552
+Pfp Vtx Z      : 111.96
+Opening Angle  : 11.0444
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 3191
+Run Number     : 6680
+SubRun Number  : 63
+Num PFP Tracks : 0
+Num PFP Showers: 2
+Pfp Vtx X      : 118.115
+Pfp Vtx Y      : 31.5881
+Pfp Vtx Z      : 615.625
+Opening Angle  : 6.85936
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 5027
+Run Number     : 6653
+SubRun Number  : 100
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 200.559
+Pfp Vtx Y      : -40.0537
+Pfp Vtx Z      : 413.844
+Opening Angle  : 8.58065
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 9257
+Run Number     : 6663
+SubRun Number  : 185
+Num PFP Tracks : 0
+Num PFP Showers: 1
+Pfp Vtx X      : 81.117
+Pfp Vtx Y      : -48.3644
+Pfp Vtx Z      : 412.162
+Opening Angle  : 5.70587
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+* * * * * * * * * * * * * * * * *
+Event Type     : Data
+Event Number   : 317
+Run Number     : 6580
+SubRun Number  : 6
+Num PFP Tracks : 1
+Num PFP Showers: 2
+Pfp Vtx X      : 104.438
+Pfp Vtx Y      : -54.1552
+Pfp Vtx Z      : 488.744
+Opening Angle  : 9.53822
+TPCO Reason    : Passed
+* * * * * * * * * * * * * * * * *
+   * * * END * * *   
+* * * * * * * * * * * * * * * * *

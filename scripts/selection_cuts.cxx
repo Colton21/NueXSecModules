@@ -20,7 +20,7 @@ bool selection_cuts::flash_pe(int flash_pe, int flash_pe_threshold)
 }
 //***************************************************************************
 void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
-                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<double> * flash_time)
+                                  double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time, const int stream)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 
@@ -60,7 +60,26 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		//events successfully pass this cut
 		current_run = fRun;
 		current_event = fEvent;
-		flash_time->push_back(fOpFlashTime);
+		double op_flash_time = fOpFlashTime;
+
+		//const int stream values:
+		// 0 = data (on-beam)
+		// 1 = ext  (off-beam)
+		// 2 = mc
+
+		//Note: EXT and On-Beam triggers are shifted
+		//this shifts the EXT to the On-Beam timing
+		if(stream == 1) {op_flash_time = op_flash_time - 0.343; }
+		//if(ext) {op_flash_time = op_flash_time - 0.406; }
+
+		//in this case the MC is shifted compared to the on-beam data
+		//this is an artefact of the MC simulation - should be corrected eventually
+		//in the future.
+		//based on comparisons, shift is ~1 us
+		if(stream == 2) {op_flash_time = op_flash_time + 1.0; }
+
+		auto const pair = std::make_pair(op_flash_time, current_run);
+		flash_time->push_back(pair);
 
 		//new event
 		if(current_event != last_event)
@@ -68,7 +87,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 			optical_list_pe.clear();
 			optical_list_time.clear();
 			optical_list_pe.push_back(fOpFlashPE);
-			optical_list_time.push_back(fOpFlashTime);
+			optical_list_time.push_back(op_flash_time);
 		}
 		//same event
 		if(current_event == last_event && current_run == last_run)
@@ -76,7 +95,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 			optical_list_pe_v.pop_back();
 			optical_list_time_v.pop_back();
 			optical_list_pe.push_back(fOpFlashPE);
-			optical_list_time.push_back(fOpFlashTime);
+			optical_list_time.push_back(op_flash_time);
 		}
 		last_event = current_event;
 		last_run = current_run;
@@ -419,9 +438,9 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 		if(flash_v.at(5) >= 50) {flash_counter++; }
 		if(flash_v.at(5) == 0) {out_time_counter++; }
 	}
-	std::cout << "Largest Flashes >= 50 PE              : " << flash_counter << std::endl;
-	std::cout << "Largest Flashes Out-Time or Too Small : " << out_time_counter << std::endl;
-	std::cout << "Largest Flash Vector Size             : " << largest_flash_v_v->size() << std::endl;
+	// std::cout << "Largest Flashes >= 50 PE              : " << flash_counter << std::endl;
+	// std::cout << "Largest Flashes Out-Time or Too Small : " << out_time_counter << std::endl;
+	// std::cout << "Largest Flash Vector Size             : " << largest_flash_v_v->size() << std::endl;
 }
 //***************************************************************************
 void selection_cuts::flashRecoVtxDist(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -435,7 +454,17 @@ void selection_cuts::flashRecoVtxDist(std::vector< double > largest_flash_v, std
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
-		const bool is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tolerance);
+		bool is_close;
+		//flash is upstream
+		if(tpc_vtx_z < largest_flash_v.at(1))
+		{
+			is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), tolerance);
+		}
+		//flash is downstream
+		if(tpc_vtx_z >= largest_flash_v.at(1))
+		{
+			is_close = opt_vtx_distance(tpc_vtx_y, tpc_vtx_z, largest_flash_v.at(0), largest_flash_v.at(1), (tolerance - 20));
+		}
 		if(is_close == 1)//true
 		{
 			//passed_tpco->at(i).first = 1;
@@ -659,6 +688,10 @@ void selection_cuts::HasNue(std::vector<xsecAna::TPCObjectContainer> * tpc_objec
 
 		bool has_nue = false;
 		bool has_valid_shower = false;
+
+		//test case -- difference is very small following all selection cuts
+		//if(tpc_obj.NPfpShowers() != 0) {has_nue = true; has_valid_shower = true; }
+
 		for(int j = 0; j <n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);
@@ -683,6 +716,7 @@ void selection_cuts::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
+
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		const int n_pfp = tpc_obj.NumPFParticles();
 		int leading_index = 0;
@@ -709,13 +743,15 @@ void selection_cuts::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 }//end open angle cut
 //***************************************************************************
 void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose)
+                             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose, const bool is_ext)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
 		if(passed_tpco->at(i).first == 0) {continue; }
+
 		auto const tpc_obj = tpc_object_container_v->at(i);
+		const bool is_data = tpc_obj.IsData();
 		const int n_pfp = tpc_obj.NumPFParticles();
 		int leading_index = 0;
 		int leading_hits  = 0;
@@ -731,7 +767,8 @@ void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 			}
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		if(is_data && !is_ext) {leading_dedx = leading_dedx * (242.72 / 196.979); }
 		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min)
 		{
 			passed_tpco->at(i).first = 0;
@@ -883,6 +920,90 @@ void selection_cuts::LongestTrackLeadingShowerCut(std::vector<xsecAna::TPCObject
 	}
 }
 //***************************************************************************
+bool selection_cuts::IsContained(std::vector<double> track_start, std::vector<double> track_end, std::vector<double> fv_boundary_v)
+{
+	if(in_fv(track_start.at(0), track_start.at(1), track_start.at(2), fv_boundary_v) == true
+	   && in_fv(track_end.at(0), track_end.at(1), track_end.at(2), fv_boundary_v) == true)
+	{
+		return true;
+	}
+	return false;
+}
+//***************************************************************************
+void selection_cuts::ContainedTracksCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        std::vector<double> fv_boundary_v, const bool enabled)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(enabled == false) {continue; }
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		//this is normally enabled, but due to test cut below it is off
+		if(n_pfp_tracks == 0) {continue; }
+
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double pfp_vtx_x = pfp.pfpVtxX();
+				const double pfp_vtx_y = pfp.pfpVtxY();
+				const double pfp_vtx_z = pfp.pfpVtxZ();
+				const double pfp_dir_x = pfp.pfpDirX();
+				const double pfp_dir_y = pfp.pfpDirY();
+				const double pfp_dir_z = pfp.pfpDirZ();
+				const double trk_length = pfp.pfpLength();
+				const double pfp_end_x = (pfp.pfpVtxX() + (trk_length * pfp_dir_x));
+				const double pfp_end_y = (pfp.pfpVtxY() + (trk_length * pfp_dir_y));
+				const double pfp_end_z = (pfp.pfpVtxZ() + (trk_length * pfp_dir_z));
+
+				std::vector<double> pfp_start_vtx {pfp_vtx_x, pfp_vtx_y, pfp_vtx_z};
+				std::vector<double> pfp_end_vtx {pfp_end_x, pfp_end_y, pfp_end_z};
+
+				const bool is_contained = IsContained(pfp_start_vtx, pfp_end_vtx, fv_boundary_v);
+
+				//if not contained
+				if(is_contained == false)
+				{
+					passed_tpco->at(i).first = 0;
+					passed_tpco->at(i).second = "Contained";
+					if(_verbose) {std::cout << "[Containment] TPC Object Failed!" << std::endl; }
+					break;
+				}
+			}//end is track
+		}//end loop pfparticles
+		 //adding temporary cut on the shower direction here
+		 // const int n_pfp_showers = tpc_obj.NPfpShowers();
+		 // int leading_index = 0;
+		 // int leading_hits  = 0;
+		 // for(int j = 0; j < n_pfp; j++)
+		 // {
+		 //     auto const part = tpc_obj.GetParticle(j);
+		 //     const int pfp_pdg = part.PFParticlePdgCode();
+		 //     const int n_pfp_hits = part.NumPFPHits();
+		 //     if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+		 //     {
+		 //             leading_hits = n_pfp_hits;
+		 //             leading_index = j;
+		 //     }
+		 // }//end loop pfparticles
+		 // auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		 // const double leading_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		 //
+		 // if(leading_theta > 60)
+		 // {
+		 //     passed_tpco->at(i).first = 0;
+		 //     passed_tpco->at(i).second = "Contained";
+		 // }
+	}//end loop tpc objects
+}
+//***************************************************************************
 //this gives a list of all of the origins of the tpc objects
 void selection_cuts::GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::string> * tpco_origin_v)
 {
@@ -894,3 +1015,4 @@ void selection_cuts::GetOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_o
 		tpco_origin_v->push_back(tpc_obj_origin);
 	}
 }
+//***************************************************************************

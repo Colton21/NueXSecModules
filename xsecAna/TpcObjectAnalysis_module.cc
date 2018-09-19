@@ -82,6 +82,10 @@ double calibration_u;
 double calibration_v;
 double calibration_w;
 
+double calibration_u_data;
+double calibration_v_data;
+double calibration_w_data;
+
 bool _debug;
 bool _verbose;
 bool _cosmic_only;
@@ -248,7 +252,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	_sr_tree->Branch("begintime",          &_sr_begintime,          "begintime/D");
 	_sr_tree->Branch("endtime",            &_sr_endtime,            "endtime/D");
 	_sr_tree->Branch("pot",                &_sr_pot,                "pot/D");
-	_run_subrun_list_file.open ("run_subrub_list.txt", std::ofstream::out | std::ofstream::trunc);
+	_run_subrun_list_file.open ("run_subrun_list.txt", std::ofstream::out | std::ofstream::trunc);
 
 	_potsum_producer_mc             = p.get<std::string>("POTSummaryProducerMC");
 	_potsum_producer_data           = p.get<std::string>("POTSummaryProducerData");
@@ -260,6 +264,10 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	calibration_u                   = p.get<double>("CalibrationU");
 	calibration_v                   = p.get<double>("CalibrationV");
 	calibration_w                   = p.get<double>("CalibrationW");
+
+	calibration_u_data		= p.get<double>("CalibrationDataU");
+	calibration_v_data		= p.get<double>("CalibrationDataV");
+	calibration_w_data		= p.get<double>("CalibrationDataW");
 
 	_debug                          = p.get<bool>("Debug", false);
 	_verbose                        = p.get<bool>("Verbose", false);
@@ -666,19 +674,41 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			std::vector<art::Ptr<recob::Cluster> > clusters = clusters_from_pfpart.at(pfp.key());
 			const int num_clusters = clusters.size();
 			std::vector < std::vector< double > > shower_cluster_dqdx;
+			std::vector < std::vector< double > > shower_cluster_dq;
+			std::vector < std::vector< double > > shower_cluster_dx;
+
+			std::vector < std::vector< double > > shower_cluster_dqdx_alt;
+			std::vector < std::vector< double > > shower_cluster_dq_alt;
+			std::vector < std::vector< double > > shower_cluster_dx_alt;
+
+			std::vector<double> shower_dEdx;
+			std::vector<double> shower_dEdx_alt;
+
 			shower_cluster_dqdx.resize(num_clusters);
+			shower_cluster_dq.resize(num_clusters);
+			shower_cluster_dx.resize(num_clusters);
+
+			shower_cluster_dqdx_alt.resize(num_clusters);
+			shower_cluster_dq_alt.resize(num_clusters);
+			shower_cluster_dx_alt.resize(num_clusters);
+
+			shower_dEdx.resize(3, 0);
+			shower_dEdx_alt.resize(3, 0);
+
 			for(int clust = 0; clust < num_clusters; clust++)
 			{
-				shower_cluster_dqdx.at(clust).resize(3);
-				shower_cluster_dqdx.at(clust).at(0) = 0;
-				shower_cluster_dqdx.at(clust).at(1) = 0;
-				shower_cluster_dqdx.at(clust).at(2) = 0;
+				shower_cluster_dqdx.at(clust).resize(3, 0);
+				shower_cluster_dq.at(clust).resize(3, 0);
+				shower_cluster_dx.at(clust).resize(3, 0);
+
+				shower_cluster_dqdx_alt.at(clust).resize(3, 0);
+				shower_cluster_dq_alt.at(clust).resize(3, 0);
+				shower_cluster_dx_alt.at(clust).resize(3, 0);
 			}
-			std::vector<double> shower_dEdx;
-			shower_dEdx.resize(3);
-			shower_dEdx.at(0) = 0;
-			shower_dEdx.at(1) = 0;
-			shower_dEdx.at(2) = 0;
+
+			std::vector<double> dqdx_cali;
+			dqdx_cali.resize(3, 0);
+
 
 			const int pfpPdg = pfp->PdgCode();
 			//if(_verbose) {std::cout << "[Analyze] PFP PDG Code " << pfpPdg << std::endl; }
@@ -849,8 +879,11 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_track, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
-					xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_track, calibration_u, calibration_v, calibration_w,
-					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);
+					if(!_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_track, calibration_u, calibration_v, calibration_w,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
+
+                                        if(_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_track, calibration_u_data, calibration_v_data, calibration_w_data,
+                                                                            pfp_energy_u, pfp_energy_v, pfp_energy_w);}
 
 					n_pfp_tracks++;
 				}
@@ -878,10 +911,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
 					//trying to do dqdx!
-					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters,
-					                                      _dQdxRectangleLength,_dQdxRectangleWidth, this_shower, shower_cluster_dqdx, _verbose);
+					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
+					                                      this_shower, shower_cluster_dqdx, shower_cluster_dq, shower_cluster_dx, _verbose);
+					xsecAna::utility::ConstructShowerdQdXAlternative(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
+					                                                 this_shower, shower_cluster_dqdx_alt, shower_cluster_dq_alt, shower_cluster_dx_alt, dqdx_cali, _verbose);
 					//then dEdx!
 					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_alt, shower_dEdx_alt);
 					// for(auto const cluster_dqdx : shower_cluster_dqdx)
 					// {
 					//      //cluster dqdx is size 3 - one for each plane
@@ -893,8 +929,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
 					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
 
-					xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u, calibration_v, calibration_w,
-					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);
+					if(!_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u, calibration_v, calibration_w,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
+
+
+					if(_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u_data, calibration_v_data, calibration_w_data,
+					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
 
 					n_pfp_showers++;
 				}
@@ -918,7 +958,14 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetpfpEnergyV(pfp_energy_v);
 			particle_container.SetpfpEnergyW(pfp_energy_w);
 			particle_container.SetPfpClusterdQdx(shower_cluster_dqdx);
+			particle_container.SetPfpClusterdQ(shower_cluster_dq);
+			particle_container.SetPfpClusterdX(shower_cluster_dx);
 			particle_container.SetPfpdEdx(shower_dEdx);
+
+			particle_container.SetPfpClusterdQdx_alt(shower_cluster_dqdx_alt);
+			particle_container.SetPfpClusterdQ_alt(shower_cluster_dq_alt);
+			particle_container.SetPfpClusterdX_alt(shower_cluster_dx_alt);
+			particle_container.SetPfpdEdx_alt(shower_dEdx_alt);
 
 			tpc_object_container.AddParticle(particle_container);
 

@@ -1,5 +1,6 @@
 #include "histogram_functions.h"
 
+//void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name)
 void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name)
 {
 	TCanvas * c1 = new TCanvas();
@@ -11,20 +12,99 @@ void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_
 	c1->Print(print_name);
 }
 
+void histogram_functions::Plot1DHistogramGausFit (TH1 * histogram, const char * x_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->Draw();
+
+	histogram->Fit("gaus");
+
+	c1->Print(print_name);
+}
+
 void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name)
 {
+	PlotTEfficiency(h_num, h_den, false, title, print_name);
+}
 
+void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool rebin, const char * title, const char * print_name)
+{
 	TCanvas * efficiency_c1 = new TCanvas();
 	efficiency_c1->cd();
+	TH1* h_num_clone = (TH1*)h_num->Clone("h_num_clone");
+	TH1* h_den_clone = (TH1*)h_den->Clone("h_den_clone");
 
-	TEfficiency * teff = new TEfficiency(*h_num, *h_den);
+	if(rebin)
+	{
+		double new_bins [7] = {0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 4.0};
+		TH1* h_num_clone_rebin = (TH1*)h_num_clone->Rebin(6, "h_num_clone_rebin", new_bins);
+		TH1* h_den_clone_rebin = (TH1*)h_den_clone->Rebin(6, "h_num_clone_rebin", new_bins);
+
+		TEfficiency * teff = new TEfficiency(*h_num_clone_rebin, *h_den_clone_rebin);
+		teff->SetTitle(title);
+		teff->SetLineColor(kGreen+3);
+		teff->SetMarkerColor(kGreen+3);
+		teff->SetMarkerStyle(20);
+		teff->SetMarkerSize(0.5);
+		teff->Draw("AP");
+		std::cout << "----------" << std::endl;
+		for(int i = 1; i < h_num_clone_rebin->GetNbinsX()+1; i++)
+		{
+			std::cout << "Bin: " << i << " Value: " << h_num_clone_rebin->GetBinContent(i) / h_den_clone_rebin->GetBinContent(i) << std::endl;
+		}
+		std::cout << "----------" << std::endl;
+
+	}
+	if(!rebin)
+	{
+		// std::cout << h_num_clone->GetNbinsX()<< ", " << h_den_clone->GetNbinsX() << std::endl;
+		// // num
+		// std::cout << "[";
+		// for (int i(0); i< h_num_clone->GetSize(); i++) {std::cout << h_num_clone->GetBinContent(i) << ", "; }
+		// std::cout << "]" << std::endl;
+		// std::cout << "[";
+		// for (int i(0); i< h_den_clone->GetSize(); i++) {std::cout << h_den_clone->GetBinContent(i) << ", "; }
+		// std::cout << "]" << std::endl;
+		TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
+		teff->SetTitle(title);
+		teff->SetLineColor(kGreen+3);
+		teff->SetMarkerColor(kGreen+3);
+		teff->SetMarkerStyle(20);
+		teff->SetMarkerSize(0.5);
+		teff->Draw("AP");
+	}
+	efficiency_c1->Print(print_name);
+	std::cout << "Print Name: " << print_name << std::endl;
+}
+
+void histogram_functions::PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name)
+{
+	TCanvas * efficiency_c1 = new TCanvas();
+	efficiency_c1->cd();
+	TH2* h_num_clone = (TH2*)h_num->Clone("h_num_clone");
+	TH2* h_den_clone = (TH2*)h_den->Clone("h_den_clone");
+
+	//std::cout << h_num_clone->GetNbinsX()<< ", " << h_den_clone->GetNbinsX() << std::endl;
+	// num
+	// std::cout << "[";
+	// for (int i(0); i< h_num_clone->GetSize(); i++) {std::cout << h_num_clone->GetBinContent(i) << ", "; }
+	// std::cout << "]" << std::endl;
+	// std::cout << "[";
+	// for (int i(0); i< h_den_clone->GetSize(); i++) {std::cout << h_den_clone->GetBinContent(i) << ", "; }
+	// std::cout << "]" << std::endl;
+	TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
 	teff->SetTitle(title);
 	teff->SetLineColor(kGreen+3);
 	teff->SetMarkerColor(kGreen+3);
 	teff->SetMarkerStyle(20);
 	teff->SetMarkerSize(0.5);
 	teff->Draw("AP");
+
 	efficiency_c1->Print(print_name);
+	std::cout << "Print Name: " << print_name << std::endl;
 }
 
 void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
@@ -38,7 +118,248 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->Draw("colz");
 	c1->Print(print_name);
 }
-void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_numu_cc, TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
+
+void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogram_2, const char * title_1, const char * title_2,
+                                                const char * x_axis_name, const char * y_axis_name, const char * print_name_1, const char * print_name_2)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	histogram_1->GetXaxis()->SetTitle(x_axis_name);
+	histogram_1->GetYaxis()->SetTitle(y_axis_name);
+	histogram_1->SetTitle(title_1);
+	histogram_1->SetStats(kFALSE);
+	histogram_1->Draw("colz");
+
+	TCanvas * c2 = new TCanvas();
+	c2->cd();
+	histogram_2->GetXaxis()->SetTitle(x_axis_name);
+	histogram_2->GetYaxis()->SetTitle(y_axis_name);
+	histogram_2->SetTitle(title_2);
+	histogram_2->SetStats(kFALSE);
+	histogram_2->Draw("colz");
+
+	histogram_1->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
+	                                      histogram_2->GetMaximum());//GetBinLowEdge(histogram_2->GetNbinsZ()+1));
+	std::cout << "\t" << histogram_2->GetZaxis()->GetBinLowEdge(1) << ", " << histogram_2->GetZaxis()->GetBinLowEdge(histogram_2->GetNbinsZ()+1) << std::endl;
+	c1->cd();
+	histogram_1->Draw("colz");
+	c2->cd();
+	histogram_2->Draw("colz");
+
+	c1->Print(print_name_1);
+	c2->Print(print_name_2);
+}
+
+void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3,
+                                           const double data_scale_factor, const double intime_scale_factor,
+                                           const char * x_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+
+	TH1 * h_1_clone = (TH1*)histogram_1->Clone("h_1_clone");
+	TH1 * h_2_clone = (TH1*)histogram_2->Clone("h_2_clone");
+	TH1 * h_3_clone = (TH1*)histogram_3->Clone("h_3_clone");
+
+	h_1_clone->Sumw2();
+	h_2_clone->Sumw2();
+	h_3_clone->Sumw2();
+
+	h_1_clone->Scale(data_scale_factor);
+	h_2_clone->Scale(intime_scale_factor);
+	h_3_clone->Add(h_2_clone, -1);
+
+	h_3_clone->GetXaxis()->SetTitle(x_axis_name);
+	h_3_clone->GetYaxis()->SetRangeUser(-3000, 3000);
+
+	h_3_clone->Draw("hist");
+	h_1_clone->SetLineColor(46);
+	h_1_clone->Draw("hist same");
+
+	c1->Print(print_name);
+
+}
+
+//used to overlay both the intime and data flash histograms
+void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, int> > * data_flash_time, TH1 * histogram_1, TH1 * histogram_2,
+                                                  const double intime_scale_factor, const char * x_axis_name,
+                                                  const char * print_name1, const char * print_name2)
+{
+	TCanvas * c1a = new TCanvas();
+	c1a->cd();
+
+	TH1 * h_1_clone = (TH1*)histogram_1->Clone("h_1_clone");
+	TH1 * h_2_clone = (TH1*)histogram_2->Clone("h_2_clone");
+
+	h_1_clone->GetXaxis()->SetTitle(x_axis_name);
+	h_1_clone->SetLineColor(46);
+	h_1_clone->Sumw2();
+	h_2_clone->Sumw2();
+	h_1_clone->Scale(intime_scale_factor);
+
+	h_1_clone->SetStats(kFALSE);
+	h_2_clone->SetStats(kFALSE);
+	h_1_clone->SetTitle("");
+	h_1_clone->Draw("e");
+	h_2_clone->Draw("e same");
+
+	TLegend * leg1 = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg1->AddEntry(h_1_clone,    "NuMI EXT Run 1",      "l");
+	leg1->AddEntry(h_2_clone,    "NuMI On-Beam Run 1",  "l");
+	//leg1->SetTextFont(132);
+	leg1->Draw();
+
+	c1a->Print(print_name1);
+
+	TCanvas * c1b = new TCanvas();
+	c1b->cd();
+
+	TH1 * h_divide_clone = (TH1*)h_2_clone->Clone("h_divide_clone");
+	h_divide_clone->Divide(h_1_clone);
+	h_divide_clone->Draw("e");
+	c1b->Print("../scripts/plots/numi_timing_on_off_divide.pdf");
+
+	TCanvas * c2 = new TCanvas();
+	c2->cd();
+	TH1 * h_3_clone = (TH1*)h_2_clone->Clone("h_3_clone");
+	h_3_clone->Add(h_1_clone, -1);
+	h_3_clone->SetStats(kFALSE);
+	//h_3_clone->SetBins(80, 0, 20);
+	h_3_clone->Sumw2();
+	h_3_clone->SetTitle("");
+	h_3_clone->Draw("e");
+
+	TLegend * leg2 = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg2->AddEntry(h_3_clone,    "NuMI On-Beam - Off-Beam Run 1",  "l");
+	//leg2->SetTextFont(132);
+	leg2->Draw();
+
+	c2->Print(print_name2);
+
+	TH1D * h_flash_time_data_first_half   = new TH1D ("h_flash_time_data_first_half",    "h_flash_time_data_first_half",   80, 0, 20);
+	TH1D * h_flash_time_data_second_half  = new TH1D ("h_flash_time_data_second_half",   "h_flash_time_data_second_half",  80, 0, 20);
+
+	h_flash_time_data_first_half->Sumw2();
+	h_flash_time_data_second_half->Sumw2();
+
+	for(auto const flash_timing : * data_flash_time)
+	{
+		const double run_number = flash_timing.second;
+		if(run_number <= 6450) {h_flash_time_data_first_half->Fill(flash_timing.first); }
+		if(run_number > 6450) {h_flash_time_data_second_half->Fill(flash_timing.first); }
+	}
+
+	Plot1DHistogram(h_flash_time_data_first_half,   "Flash Time [#mus]", "../scripts/plots/flash_time_data_first_half.pdf");
+	Plot1DHistogram(h_flash_time_data_second_half,  "Flash Time [#mus]", "../scripts/plots/flash_time_data_second_half.pdf");
+
+	TCanvas * c3a = new TCanvas();
+	c3a->cd();
+	const double integral_1 = h_flash_time_data_first_half->Integral();
+	const double integral_2 = h_flash_time_data_second_half->Integral();
+	//h_flash_time_data_first_half->Scale(1./integral);
+	h_flash_time_data_second_half->Scale(integral_1 / integral_2);
+	//h_flash_time_data_second_half->Integral();
+
+
+	h_flash_time_data_first_half->Sumw2();
+	h_flash_time_data_second_half->Sumw2();
+	h_flash_time_data_first_half->SetStats(kFALSE);
+	h_flash_time_data_second_half->SetStats(kFALSE);
+
+	h_flash_time_data_first_half->GetXaxis()->SetTitle("Flash Time [#mus]");
+	h_flash_time_data_first_half->SetTitle("");
+	h_flash_time_data_first_half->Draw("p e");
+	h_flash_time_data_second_half->SetLineColor(46);
+	h_flash_time_data_second_half->Draw("p e same");
+
+	TLegend * leg3a = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg3a->AddEntry(h_flash_time_data_first_half,  "NuMI On-Beam Run 1 (<= 6450)", "l");
+	leg3a->AddEntry(h_flash_time_data_second_half, "NuMI On-Beam Run 1 (> 6450)", "l");
+	//leg3a->SetTextFont(132);
+	leg3a->Draw();
+
+	c3a->Print("../scripts/plots/flash_time_data_first_second_half.pdf");
+
+
+	TCanvas * c3b = new TCanvas();
+	c3b->cd();
+	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
+	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
+	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.5);
+	h_flash_time_data_divide->GetXaxis()->SetTitle("Flash Time [#mus]");
+	h_flash_time_data_divide->GetYaxis()->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
+	h_flash_time_data_divide->SetStats(kFALSE);
+	h_flash_time_data_divide->Sumw2();
+	h_flash_time_data_divide->SetTitle("");
+	h_flash_time_data_divide->Draw("e");
+
+	TLine * line = new TLine(0, 1, 20, 1);
+	line->SetLineColor(46);
+	line->Draw("same");
+
+	TLegend * leg3b = new TLegend(0.7, 0.85, 0.98, 0.98);
+	leg3b->AddEntry(h_flash_time_data_divide, "NuMI Run 1 1st-Half / 2nd-Half", "l");
+	//leg3b->SetTextFont(132);
+	leg3b->Draw();
+
+	c3b->Print("../scripts/plots/flash_time_data_divide.pdf");
+
+}
+void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, TH1 * h_flash_data,
+                                        const double intime_scale_factor, const double data_scale_factor,
+                                        const char * x_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+
+	h_flash_mc->SetStats(kFALSE);
+	h_flash_intime->SetStats(kFALSE);
+	h_flash_data->SetStats(kFALSE);
+
+	h_flash_mc->SetFillColor(49);
+	h_flash_intime->SetFillColor(41);
+	h_flash_intime->SetFillStyle(3345);
+
+	TH1 * h_mc_clone       = (TH1*)h_flash_mc->Clone("h_mc_clone");
+	TH1 * h_intime_clone   = (TH1*)h_flash_intime->Clone("h_intime_clone");
+
+	const double y_maximum = std::max(h_flash_data->GetMaximum(), stack->GetMaximum());
+	stack->SetMaximum(y_maximum * 1.2);
+
+	h_mc_clone->Sumw2();
+	h_intime_clone->Sumw2();
+
+	h_mc_clone->Scale(data_scale_factor);
+	h_intime_clone->Scale(intime_scale_factor);
+
+	h_flash_data->SetMarkerStyle(20);
+	h_flash_data->SetMarkerSize(0.5);
+	h_flash_data->Sumw2();
+
+	stack->Add(h_mc_clone);
+	stack->Add(h_intime_clone);
+
+	stack->Draw("hist");
+	stack->GetXaxis()->SetTitle(x_axis_name);
+	h_flash_data->Draw("same PE");
+
+	TH1 * h_error_hist = (TH1*)h_mc_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_intime_clone, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
+
+	TLegend * leg_stack = new TLegend(0.85,0.85,0.95,0.95);
+	leg_stack->AddEntry(h_flash_mc,      "MC",   "f");
+	leg_stack->AddEntry(h_flash_intime,  "EXT",  "f");
+	leg_stack->Draw();
+	c1->Print(print_name);
+
+}
+
+
+void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc, TH2 * h_cosmic, TH2 * h_nc,
                                         TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
                                         TH2 * h_data, const double data_scale_factor,
                                         const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
@@ -53,7 +374,6 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	h_nc_pi0->SetStats(kFALSE);
 	h_cosmic->SetStats(kFALSE);
 	h_nc->SetStats(kFALSE);
-	h_numu_cc_mixed->SetStats(kFALSE);
 	h_other_mixed->SetStats(kFALSE);
 	h_unmatched->SetStats(kFALSE);
 	h_intime->SetStats(kFALSE);
@@ -65,54 +385,57 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	h_cosmic->SetFillStyle(1001);
 	h_cosmic->SetFillColor(kBlack);
 	h_nc->SetFillColor(46);
-	h_numu_cc_mixed->SetFillColor(20);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
-	TH2 * h_intime_clone = (TH2*)h_intime->Clone("h_intime_clone");
+	TH2 * h_intime_clone        = (TH2*)h_intime->Clone("h_intime_clone");
+	TH2 * h_nue_cc_clone        = (TH2*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH2 * h_nue_cc_mixed_clone  = (TH2*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH2 * h_nue_cc_out_fv_clone = (TH2*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	TH2 * h_cosmic_clone        = (TH2*)h_cosmic->Clone("h_cosmic_clone");
+	TH2 * h_numu_cc_clone       = (TH2*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH2 * h_nc_clone            = (TH2*)h_nc->Clone("h_nc_clone");
+	TH2 * h_nc_pi0_clone        = (TH2*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH2 * h_other_mixed_clone   = (TH2*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH2 * h_unmatched_clone     = (TH2*)h_unmatched->Clone("h_unmatched_clone");
+
+	h_nue_cc_clone->Sumw2();
+	h_nue_cc_mixed_clone->Sumw2();
+	h_nue_cc_out_fv_clone->Sumw2();
+	h_cosmic_clone->Sumw2();
+	h_numu_cc_clone->Sumw2();
+	h_nc_clone->Sumw2();
+	h_nc_pi0_clone->Sumw2();
+	h_other_mixed_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_intime_clone->Sumw2();
+
+	h_nue_cc_clone->Scale(data_scale_factor);
+	h_nue_cc_mixed_clone->Scale(data_scale_factor);
+	h_nue_cc_out_fv_clone->Scale(data_scale_factor);
+	h_cosmic_clone->Scale(data_scale_factor);
+	h_numu_cc_clone->Scale(data_scale_factor);
+	h_nc_clone->Scale(data_scale_factor);
+	h_nc_pi0_clone->Scale(data_scale_factor);
+	h_other_mixed_clone->Scale(data_scale_factor);
+	h_unmatched_clone->Scale(data_scale_factor);
 	h_intime_clone->Scale(intime_scale_factor);
-	h_data->Scale(data_scale_factor);
+
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	//h_data->Sumw2();
-	h_data->Scale(1./h_data->Integral());
+	h_data->Sumw2();
 
-	const double integral = h_nue_cc->Integral() +
-	                        h_nue_cc_mixed->Integral() +
-	                        h_cosmic->Integral() +
-	                        h_numu_cc->Integral() +
-	                        h_numu_cc_mixed->Integral() +
-	                        h_nc->Integral() +
-	                        h_nc_pi0->Integral() +
-	                        h_other_mixed->Integral() +
-	                        h_unmatched->Integral() +
-	                        h_intime_clone->Integral();
-
-	h_nue_cc->Scale(1./integral);
-	h_nue_cc_mixed->Scale(1./integral);
-	h_cosmic->Scale(1./integral);
-	h_numu_cc->Scale(1./integral);
-	h_numu_cc_mixed->Scale(1./integral);
-	h_nc->Scale(1./integral);
-	h_nc_pi0->Scale(1./integral);
-	h_other_mixed->Scale(1./integral);
-	h_unmatched->Scale(1./integral);
-	h_intime_clone->Scale(1./integral);
-	stack->Add(h_nue_cc);
-	stack->Add(h_nue_cc_mixed);
-	stack->Add(h_cosmic);
-	stack->Add(h_numu_cc);
-	//stack->Add(h_numu_cc_mixed);
-	stack->Add(h_nc);
-	stack->Add(h_nc_pi0);
-	stack->Add(h_other_mixed);
-	stack->Add(h_unmatched);
+	stack->Add(h_nue_cc_clone);
+	stack->Add(h_nue_cc_mixed_clone);
+	stack->Add(h_cosmic_clone);
+	stack->Add(h_numu_cc_clone);
+	stack->Add(h_nc_clone);
+	stack->Add(h_nc_pi0_clone);
+	stack->Add(h_other_mixed_clone);
+	stack->Add(h_unmatched_clone);
 	stack->Add(h_intime_clone);
-
-	// const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
-	// stack->SetMaximum(y_maximum * 1.2);
 
 	stack->Draw("lego4 0");
 	stack->GetXaxis()->SetTitle(x_axis_name);
@@ -123,9 +446,9 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
 	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC Out FV", "f");
 	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
 	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
-	leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
 	leg_stack->AddEntry(h_nc,              "NC",            "f");
 	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
 	leg_stack->AddEntry(h_other_mixed,     "Other Mixed",   "f");
@@ -141,6 +464,19 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	c1->cd();
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
+	histogram->SetTitle(title);
+	histogram->SetStats(kFALSE);
+	histogram->Draw(draw_option);
+	c1->Print(print_name);
+}
+void histogram_functions::Plot2DHistogramLogZ (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
+                                               const char * draw_option)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetYaxis()->SetTitle(y_axis_name);
+	c1->SetLogz();
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);
@@ -189,14 +525,15 @@ void histogram_functions::PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed,
 }
 void histogram_functions::PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                                  TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
-                                                 TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                                 TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
+                                                 const double intime_scale_factor, const double data_scale_factor,
                                                  const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	//default legend position
 	//0.75,0.75,0.95,0.95
 	PlotSimpleStackInTime(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
-	                      h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
-	                      0.75, 0.95, 0.75, 0.95,
+	                      h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor, data_scale_factor,
+	                      0.80, 0.95, 0.75, 0.95,
 	                      title, x_axis_name, y_axis_name, print_name);
 }
 void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
@@ -207,12 +544,144 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 {
 	//default legend position
 	//0.75,0.75,0.95,0.95
+
+	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
 	                    h_data, data_scale_factor,
-	                    0.75, 0.95, 0.75, 0.95,
+	                    0.73, 0.98, 0.98, 0.50, false, 1.2,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
+void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                               TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                               TH1 * h_data, const double data_scale_factor,
+                                               const double x_min, const double x_max, const double y_min, const double y_max, const bool logy,
+                                               const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	//default legend position
+	//0.75,0.75,0.95,0.95
+
+	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
+	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
+	                    h_data, data_scale_factor,
+	                    x_min, x_max, y_min, y_max, logy, 1.2,
+	                    title, x_axis_name, y_axis_name, print_name);
+}
+
+void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                               TH1 * h_data, const double data_scale_factor, const double y_scale_factor,
+                                               const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
+	                    h_data, data_scale_factor,
+	                    0.73, 0.98, 0.98, 0.50, false, y_scale_factor,
+	                    title, x_axis_name, y_axis_name, print_name);
+}
+
+void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,
+                                                  TH1 * h_kaon, TH1 * h_muon, TH1 * h_neutron, TH1 * h_unmatched,
+                                                  TH1 * h_unmatched_ext, const double intime_scale_factor, const double data_scale_factor,
+                                                  const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                                  const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	THStack * stack = new THStack();
+	h_electron->SetStats(kFALSE);
+	h_proton->SetStats(kFALSE);
+	h_photon->SetStats(kFALSE);
+	h_pion->SetStats(kFALSE);
+	h_kaon->SetStats(kFALSE);
+	h_muon->SetStats(kFALSE);
+	h_neutron->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_unmatched_ext->SetStats(kFALSE);
+	h_electron->SetFillColor(30);
+	h_proton->SetFillColor(38);
+	h_photon->SetFillColor(28);
+	h_pion->SetFillColor(36);
+	h_kaon->SetFillColor(1);
+	h_muon->SetFillColor(46);
+	h_neutron->SetFillColor(20);
+	h_unmatched->SetFillColor(12);
+	h_unmatched_ext->SetFillColor(41);
+	h_unmatched_ext->SetFillStyle(3345);
+
+	TH1 * h_electron_clone      = (TH1*)h_electron->Clone("h_electron_clone");
+	TH1 * h_proton_clone        = (TH1*)h_proton->Clone("h_proton_clone");
+	TH1 * h_photon_clone        = (TH1*)h_photon->Clone("h_photon_clone");
+	TH1 * h_pion_clone          = (TH1*)h_pion->Clone("h_pion_clone");
+	TH1 * h_kaon_clone          = (TH1*)h_kaon->Clone("h_kaon_clone");
+	TH1 * h_muon_clone          = (TH1*)h_muon->Clone("h_muon_clone");
+	TH1 * h_neutron_clone       = (TH1*)h_neutron->Clone("h_neutron_clone");
+	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+	TH1 * h_unmatched_ext_clone = (TH1*)h_unmatched_ext->Clone("h_unmatched_ext_clone");
+
+	h_electron_clone->Sumw2();
+	h_proton_clone->Sumw2();
+	h_photon_clone->Sumw2();
+	h_pion_clone->Sumw2();
+	h_kaon_clone->Sumw2();
+	h_muon_clone->Sumw2();
+	h_neutron_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_unmatched_ext_clone->Sumw2();
+
+	h_electron_clone->Scale(data_scale_factor);
+	h_proton_clone->Scale(data_scale_factor);
+	h_photon_clone->Scale(data_scale_factor);
+	h_pion_clone->Scale(data_scale_factor);
+	h_kaon_clone->Scale(data_scale_factor);
+	h_muon_clone->Scale(data_scale_factor);
+	h_neutron_clone->Scale(data_scale_factor);
+	h_unmatched_clone->Scale(data_scale_factor);
+	h_unmatched_ext_clone->Scale(intime_scale_factor);
+
+	stack->Add(h_electron_clone);
+	stack->Add(h_proton_clone);
+	stack->Add(h_photon_clone);
+	stack->Add(h_pion_clone);
+	stack->Add(h_kaon_clone);
+	stack->Add(h_muon_clone);
+	stack->Add(h_neutron_clone);
+	stack->Add(h_unmatched_clone);
+	stack->Add(h_unmatched_ext_clone);
+	stack->Draw("hist");
+	stack->GetXaxis()->SetTitle(x_axis_name);
+
+	TH1 * h_error_hist = (TH1*)h_electron_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_proton_clone, 1);
+	h_error_hist->Add(h_photon_clone, 1);
+	h_error_hist->Add(h_pion_clone, 1);
+	h_error_hist->Add(h_kaon_clone, 1);
+	h_error_hist->Add(h_muon_clone, 1);
+	h_error_hist->Add(h_neutron_clone, 1);
+	h_error_hist->Add(h_unmatched_clone, 1);
+	h_error_hist->Add(h_unmatched_ext_clone, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_electron,        "Electron",   "f");
+	leg_stack->AddEntry(h_proton,          "Proton",     "f");
+	leg_stack->AddEntry(h_photon,          "Photon",     "f");
+	leg_stack->AddEntry(h_pion,            "Pion",       "f");
+	leg_stack->AddEntry(h_kaon,            "Kaon",       "f");
+	leg_stack->AddEntry(h_muon,            "Muon",       "f");
+	leg_stack->AddEntry(h_neutron,         "Neutron",    "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",  "f");
+	leg_stack->AddEntry(h_unmatched_ext,   "EXT",        "f");
+	leg_stack->Draw();
+	c1->Print(print_name);
+}
+
 void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                           TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                           TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched,
@@ -259,22 +728,23 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_nue_cc,          "Nue CC",       "f");
-	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV", "f");
-	leg_stack->AddEntry(h_cosmic,          "Cosmic",       "f");
-	leg_stack->AddEntry(h_numu_cc,         "Numu CC",      "f");
-	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack->AddEntry(h_nc,              "NC",           "f");
-	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",       "f");
-	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",     "f");
-	leg_stack->AddEntry(h_unmatched,       "Unmatched",    "f");
+	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",       "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed", "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC OutFV", "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",           "f");
+	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",     "f");
+	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed",  "f");
+	leg_stack->AddEntry(h_nc,              "NC",               "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",       "f");
+	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",         "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",        "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
 }
 void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                                 TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
-                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
+                                                const double intime_scale_factor, const double data_scale_factor,
                                                 const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                                 const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
@@ -306,18 +776,47 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
 	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
+	TH1 * h_nue_cc_clone = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH1 * h_nue_cc_mixed_clone = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH1 * h_nue_cc_out_fv_clone = (TH1*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	TH1 * h_cosmic_clone = (TH1*)h_cosmic->Clone("h_cosmic_clone");
+	TH1 * h_numu_cc_clone = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH1 * h_nc_clone = (TH1*)h_nc->Clone("h_nc_clone");
+	TH1 * h_nc_pi0_clone = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH1 * h_other_mixed_clone = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH1 * h_unmatched_clone = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+
+	h_nue_cc_clone->Sumw2();
+	h_nue_cc_mixed_clone->Sumw2();
+	h_nue_cc_out_fv_clone->Sumw2();
+	h_cosmic_clone->Sumw2();
+	h_numu_cc_clone->Sumw2();
+	h_nc_clone->Sumw2();
+	h_nc_pi0_clone->Sumw2();
+	h_other_mixed_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_intime_clone->Sumw2();
+
+	h_nue_cc_clone->Scale(data_scale_factor);
+	h_nue_cc_mixed_clone->Scale(data_scale_factor);
+	h_nue_cc_out_fv_clone->Scale(data_scale_factor);
+	h_cosmic_clone->Scale(data_scale_factor);
+	h_numu_cc_clone->Scale(data_scale_factor);
+	h_nc_clone->Scale(data_scale_factor);
+	h_nc_pi0_clone->Scale(data_scale_factor);
+	h_other_mixed_clone->Scale(data_scale_factor);
+	h_unmatched_clone->Scale(data_scale_factor);
 	h_intime_clone->Scale(intime_scale_factor);
-	stack->Add(h_nue_cc);
-	stack->Add(h_nue_cc_mixed);
-	stack->Add(h_nue_cc_out_fv);
-	stack->Add(h_cosmic);
-	//h_numu_cc->Add(h_numu_cc_mixed, 1);
-	stack->Add(h_numu_cc);
-	//stack->Add(h_numu_cc_mixed);
-	stack->Add(h_nc);
-	stack->Add(h_nc_pi0);
-	stack->Add(h_other_mixed);
-	stack->Add(h_unmatched);
+
+	stack->Add(h_nue_cc_clone);
+	stack->Add(h_nue_cc_mixed_clone);
+	stack->Add(h_nue_cc_out_fv_clone);
+	stack->Add(h_cosmic_clone);
+	stack->Add(h_numu_cc_clone);
+	stack->Add(h_nc_clone);
+	stack->Add(h_nc_pi0_clone);
+	stack->Add(h_other_mixed_clone);
+	stack->Add(h_unmatched_clone);
 	stack->Add(h_intime_clone);
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
@@ -343,17 +842,26 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
                                               TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                               TH1 * h_data, const double data_scale_factor,
-                                              const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                              const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2, const bool logy,
+                                              const double y_scale_factor,
                                               const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	TCanvas * c1 = new TCanvas(title, title, 500, 500);
 	c1->cd();
 
-	TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
-	TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
-	topPad->SetBottomMargin(0.08);
-	bottomPad->SetTopMargin(0.0);
-	bottomPad->SetBottomMargin(0.12);
+	//TPad *pad2 = new TPad("pad2", "pad2", 0, 0.3, 1, 1.0);
+	//TPad *pad2_2 = new TPad("pad2_2", "pad2_2", 0, 0.05, 1, 0.3);
+
+	//TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
+	//TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
+	TPad * topPad = new TPad("topPad", "", 0, 0.3, 1, 1.0);
+	TPad * bottomPad = new TPad("bottomPad", "", 0, 0.05, 1, 0.3);
+	//was 0.01
+	topPad->SetBottomMargin(0.05);
+	//bottomPad->SetTopMargin(0.0);
+	//bottomPad->SetBottomMargin(0.12);
+	bottomPad->SetTopMargin(0.04);
+	bottomPad->SetBottomMargin(0.25);
 	bottomPad->SetGridy();
 	topPad->Draw();
 	bottomPad->Draw();
@@ -366,7 +874,6 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_nc_pi0->SetStats(kFALSE);
 	h_cosmic->SetStats(kFALSE);
 	h_nc->SetStats(kFALSE);
-	h_numu_cc_mixed->SetStats(kFALSE);
 	h_other_mixed->SetStats(kFALSE);
 	h_unmatched->SetStats(kFALSE);
 	h_intime->SetStats(kFALSE);
@@ -379,58 +886,39 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_cosmic->SetFillColor(1);
 	h_nc->SetFillColor(46);
 	h_nue_cc_out_fv->SetFillColor(20);
-	//h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
-
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
 	//h_intime->SetFillSytle(3354);
-	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
-	h_intime_clone->Scale(intime_scale_factor);
 
 	//h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
 	//h_data->Sumw2();
-	//h_data->Scale(1./h_data->Integral());
-	//h_data->GetXaxis()->SetTitle(x_axis_name);
-	//h_numu_cc->Add(h_numu_cc_mixed, 1);
 
-	//no longer do area normalisation
-	// const double integral = h_nue_cc->Integral() +
-	//                         h_nue_cc_mixed->Integral() +
-	//                         h_nue_cc_out_fv->Integral() +
-	//                         h_cosmic->Integral() +
-	//                         h_numu_cc->Integral() +
-	//                         //h_numu_cc_mixed->Integral() +
-	//                         h_nc->Integral() +
-	//                         h_nc_pi0->Integral() +
-	//                         h_other_mixed->Integral() +
-	//                         h_unmatched->Integral() +
-	//                         h_intime_clone->Integral();
-	//
-	// h_nue_cc->Scale(1./integral);
-	// h_nue_cc_mixed->Scale(1./integral);
-	// h_nue_cc_out_fv->Scale(1./integral);
-	// h_cosmic->Scale(1./integral);
-	// h_numu_cc->Scale(1./integral);
-	// //h_numu_cc_mixed->Scale(1./integral);
-	// h_nc->Scale(1./integral);
-	// h_nc_pi0->Scale(1./integral);
-	// h_other_mixed->Scale(1./integral);
-	// h_unmatched->Scale(1./integral);
-	// h_intime_clone->Scale(1./integral);
-
-	TH1 * h_nue_cc_clone = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
-	TH1 * h_nue_cc_mixed_clone = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH1 * h_nue_cc_clone        = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH1 * h_nue_cc_mixed_clone  = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
 	TH1 * h_nue_cc_out_fv_clone = (TH1*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
-	TH1 * h_cosmic_clone = (TH1*)h_cosmic->Clone("h_cosmic_clone");
-	TH1 * h_numu_cc_clone = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
-	TH1 * h_nc_clone = (TH1*)h_nc->Clone("h_nc_clone");
-	TH1 * h_nc_pi0_clone = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
-	TH1 * h_other_mixed_clone = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
-	TH1 * h_unmatched_clone = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+	TH1 * h_cosmic_clone        = (TH1*)h_cosmic->Clone("h_cosmic_clone");
+	TH1 * h_numu_cc_clone       = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH1 * h_nc_clone            = (TH1*)h_nc->Clone("h_nc_clone");
+	TH1 * h_nc_pi0_clone        = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH1 * h_other_mixed_clone   = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+	TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
+
+	h_nue_cc_clone->Sumw2();
+	h_nue_cc_mixed_clone->Sumw2();
+	h_nue_cc_out_fv_clone->Sumw2();
+	h_numu_cc_clone->Sumw2();
+	h_nc_pi0_clone->Sumw2();
+	h_cosmic_clone->Sumw2();
+	h_nc_clone->Sumw2();
+	h_other_mixed_clone->Sumw2();
+	h_unmatched_clone->Sumw2();
+	h_intime_clone->Sumw2();
+	h_data->Sumw2();
 
 	h_nue_cc_clone->Scale(data_scale_factor);
 	h_nue_cc_mixed_clone->Scale(data_scale_factor);
@@ -441,13 +929,14 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_nc_pi0_clone->Scale(data_scale_factor);
 	h_other_mixed_clone->Scale(data_scale_factor);
 	h_unmatched_clone->Scale(data_scale_factor);
+	h_intime_clone->Scale(intime_scale_factor);
+
 
 	stack->Add(h_nue_cc_clone);
 	stack->Add(h_nue_cc_mixed_clone);
 	stack->Add(h_nue_cc_out_fv_clone);
 	stack->Add(h_cosmic_clone);
 	stack->Add(h_numu_cc_clone);
-	//stack->Add(h_numu_cc_mixed);
 	stack->Add(h_nc_clone);
 	stack->Add(h_nc_pi0_clone);
 	stack->Add(h_other_mixed_clone);
@@ -455,48 +944,412 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	stack->Add(h_intime_clone);
 
 	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
-	stack->SetMaximum(y_maximum * 1.2);
+	stack->SetMaximum(y_maximum * y_scale_factor);
 
-	//h_data->Draw();
 	stack->Draw("hist");
-	stack->GetXaxis()->SetTitle(x_axis_name);
+	//stack->GetXaxis()->SetTitle(x_axis_name);
+	stack->GetYaxis()->SetTitle("Entries");
+	stack->GetXaxis()->SetLabelOffset(10);
 	h_data->Draw("same PE");
+
+	TH1 * h_error_hist = (TH1*)h_nue_cc_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_nue_cc_mixed_clone, 1);
+	h_error_hist->Add(h_nue_cc_out_fv_clone, 1);
+	h_error_hist->Add(h_numu_cc_clone, 1);
+	h_error_hist->Add(h_nc_pi0_clone, 1);
+	h_error_hist->Add(h_nc_clone, 1);
+	h_error_hist->Add(h_other_mixed_clone, 1);
+	h_error_hist->Add(h_cosmic_clone, 1);
+	h_error_hist->Add(h_unmatched_clone, 1);
+	h_error_hist->Add(h_intime_clone, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
-	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
-	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV",  "f");
-	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
-	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
-	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack->AddEntry(h_nc,              "NC",            "f");
-	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
-	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",      "f");
-	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "f");
-	leg_stack->AddEntry(h_intime,          "InTime",        "f");
+	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC OutFV",  "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",            "f");
+	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",      "f");
+	leg_stack->AddEntry(h_nc,              "NC",                "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
+	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
+	leg_stack->AddEntry(h_intime,          "InTime",            "f");
 	leg_stack->Draw();
 
+	stack->GetYaxis()->SetRangeUser(1, y_maximum * 1.2);
+	if(logy == true) {topPad->SetLogy(); }
+
+	TH1 * h_last = (TH1*) stack->GetStack()->Last();
+	const double chi2 = Chi2Calc(h_last, h_data);
+	//std::cout << "*** Chi2: " << chi2 << " ***" << std::endl;
+
+	//0.73, 0.98, 0.98, 0.50
+	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
+	TPaveText * pt = new TPaveText(.40,.83,.73,1.08, "NBNDC");
+	std::ostringstream o_string;
+	o_string << chi2;
+	std::string convert_string = o_string.str();
+	std::string chi2_string = "#chi^{2}/NBins = " + convert_string;
+	pt->AddText(chi2_string.c_str());
+	pt->SetFillStyle(0);
+	pt->SetBorderSize(0);
+	pt->Draw();
 
 	bottomPad->cd();
 	TH1 * ratioPlot = (TH1*)h_data->Clone("ratioPlot");
-	ratioPlot->Add(h_nue_cc_clone,        -1);
-	ratioPlot->Add(h_nue_cc_mixed_clone,  -1);
-	ratioPlot->Add(h_nue_cc_out_fv_clone, -1);
-	ratioPlot->Add(h_cosmic_clone,        -1);
-	ratioPlot->Add(h_numu_cc_clone,       -1);
-	ratioPlot->Add(h_nc_clone,            -1);
-	ratioPlot->Add(h_nc_pi0_clone,        -1);
-	ratioPlot->Add(h_other_mixed_clone,   -1);
-	ratioPlot->Add(h_unmatched_clone,     -1);
-	ratioPlot->Add(h_intime_clone,        -1);
+	// ratioPlot->Add(h_nue_cc_clone,        -1);
+	// ratioPlot->Add(h_nue_cc_mixed_clone,  -1);
+	// ratioPlot->Add(h_nue_cc_out_fv_clone, -1);
+	// ratioPlot->Add(h_cosmic_clone,        -1);
+	// ratioPlot->Add(h_numu_cc_clone,       -1);
+	// ratioPlot->Add(h_nc_clone,            -1);
+	// ratioPlot->Add(h_nc_pi0_clone,        -1);
+	// ratioPlot->Add(h_other_mixed_clone,   -1);
+	// ratioPlot->Add(h_unmatched_clone,     -1);
+	// ratioPlot->Add(h_intime_clone,        -1);
+	//ratioPlot->Divide(h_data);
+	TH1 * h_mc_ext_sum = (TH1*)h_nue_cc_clone->Clone("h_mc_ext_sum");
+	//h_mc_ext_sum->Add(h_nue_cc_clone,        1);
+	h_mc_ext_sum->Add(h_nue_cc_mixed_clone,  1);
+	h_mc_ext_sum->Add(h_nue_cc_out_fv_clone, 1);
+	h_mc_ext_sum->Add(h_cosmic_clone,        1);
+	h_mc_ext_sum->Add(h_numu_cc_clone,       1);
+	h_mc_ext_sum->Add(h_nc_clone,            1);
+	h_mc_ext_sum->Add(h_nc_pi0_clone,        1);
+	h_mc_ext_sum->Add(h_other_mixed_clone,   1);
+	h_mc_ext_sum->Add(h_unmatched_clone,     1);
+	h_mc_ext_sum->Add(h_intime_clone,        1);
+
+	ratioPlot->GetXaxis()->SetLabelSize(12);
+	ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetYaxis()->SetLabelSize(11);
+	ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetXaxis()->SetTitleOffset(3.6);
+	ratioPlot->GetXaxis()->SetTitleSize(15);
+	ratioPlot->GetXaxis()->SetTitleFont(43);
+
+	ratioPlot->Add(h_mc_ext_sum, -1);
+	ratioPlot->Divide(h_mc_ext_sum);
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
-	ratioPlot->Divide(h_data);
+	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
+	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
+	ratioPlot->GetYaxis()->SetTitleSize(11);
+	ratioPlot->GetYaxis()->SetTitleFont(43);
+	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
 
+	c1->Print(print_name);
+
+	delete h_nue_cc_clone;
+	delete h_nue_cc_mixed_clone;
+	delete h_nue_cc_out_fv_clone;
+	delete h_cosmic_clone;
+	delete h_numu_cc_clone;
+	delete h_nc_clone;
+	delete h_nc_pi0_clone;
+	delete h_other_mixed_clone;
+	delete h_unmatched_clone;
+	delete h_intime_clone;
+
+	delete h_error_hist;
+	delete h_last;
+
+	delete ratioPlot;
+	delete h_mc_ext_sum;
+
+	delete c1;
+	delete topPad;
+	delete bottomPad;
+
+	delete stack;
+	delete leg_stack;
+	delete pt;
+
+}
+
+void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                                           TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                                           TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
+                                                           const double intime_scale_factor, TH1 * h_data, const double data_scale_factor,
+                                                           const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas(title, title, 500, 500);
+	c1->cd();
+
+	//TPad *pad2 = new TPad("pad2", "pad2", 0, 0.3, 1, 1.0);
+	//TPad *pad2_2 = new TPad("pad2_2", "pad2_2", 0, 0.05, 1, 0.3);
+
+	//TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
+	//TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
+	TPad * topPad = new TPad("topPad", "", 0, 0.3, 1, 1.0);
+	TPad * bottomPad = new TPad("bottomPad", "", 0, 0.05, 1, 0.3);
+	//was 0.01
+	topPad->SetBottomMargin(0.05);
+	//bottomPad->SetTopMargin(0.0);
+	//bottomPad->SetBottomMargin(0.12);
+	bottomPad->SetTopMargin(0.04);
+	bottomPad->SetBottomMargin(0.25);
+	bottomPad->SetGridy();
+	topPad->Draw();
+	bottomPad->Draw();
+	topPad->cd();
+
+
+	THStack * stack = new THStack();
+	h_nue_cc->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_intime->SetStats(kFALSE);
+	h_data->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
+	h_nue_cc->SetFillColor(30);
+	h_nue_cc_mixed->SetFillColor(38);
+	h_numu_cc->SetFillColor(28);
+	h_nc_pi0->SetFillColor(36);
+	h_cosmic->SetFillColor(1);
+	h_nc->SetFillColor(46);
+	h_nue_cc_out_fv->SetFillColor(20);
+	h_other_mixed->SetFillColor(42);
+	h_unmatched->SetFillColor(12);
+	h_intime->SetFillColor(41);
+	h_intime->SetFillStyle(3345);
+	//h_intime->SetFillSytle(3354);
+
+	//h_data->Scale(data_scale_factor);
+	h_data->SetMarkerStyle(20);
+	h_data->SetMarkerSize(0.5);
+	h_data->Sumw2();
+
+	// TH1 * h_nue_cc_clone        = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
+	// TH1 * h_nue_cc_mixed_clone  = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	// TH1 * h_nue_cc_out_fv_clone = (TH1*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	// TH1 * h_cosmic_clone        = (TH1*)h_cosmic->Clone("h_cosmic_clone");
+	// TH1 * h_numu_cc_clone       = (TH1*)h_numu_cc->Clone("h_numu_cc_clone");
+	// TH1 * h_nc_clone            = (TH1*)h_nc->Clone("h_nc_clone");
+	// TH1 * h_nc_pi0_clone        = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	// TH1 * h_other_mixed_clone   = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
+	// TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
+	// TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
+
+	double new_bins [8] = {0.0, 0.20, 0.40, 0.6, 0.8, 1.0, 1.25, 4.0};
+	const double num_bins = 7;
+
+	TH1 * h_nue_cc_rebin        = (TH1*)h_nue_cc->Rebin(num_bins, "h_nue_cc_rebin", new_bins);
+	TH1 * h_nue_cc_mixed_rebin  = (TH1*)h_nue_cc_mixed->Rebin(num_bins, "h_nue_cc_mixed_rebin", new_bins);
+	TH1 * h_nue_cc_out_fv_rebin = (TH1*)h_nue_cc_out_fv->Rebin(num_bins, "h_nue_cc_out_fv_rebin", new_bins);
+	TH1 * h_cosmic_rebin        = (TH1*)h_cosmic->Rebin(num_bins, "h_cosmic_rebin", new_bins);
+	TH1 * h_numu_cc_rebin       = (TH1*)h_numu_cc->Rebin(num_bins, "h_numu_cc_rebin", new_bins);
+	TH1 * h_nc_rebin            = (TH1*)h_nc->Rebin(num_bins, "h_nc_rebin", new_bins);
+	TH1 * h_nc_pi0_rebin        = (TH1*)h_nc_pi0->Rebin(num_bins, "h_nc_pi0_rebin", new_bins);
+	TH1 * h_other_mixed_rebin   = (TH1*)h_other_mixed->Rebin(num_bins, "h_other_mixed_rebin", new_bins);
+	TH1 * h_unmatched_rebin     = (TH1*)h_unmatched->Rebin(num_bins, "h_unmatched_rebin", new_bins);
+	TH1 * h_intime_rebin        = (TH1*)h_intime->Rebin(num_bins, "h_intime_rebin", new_bins);
+	TH1 * h_data_rebin          = (TH1*)h_data->Rebin(num_bins, "h_data_rebin", new_bins);
+
+	h_nue_cc_rebin->Sumw2();
+	h_nue_cc_mixed_rebin->Sumw2();
+	h_nue_cc_out_fv_rebin->Sumw2();
+	h_numu_cc_rebin->Sumw2();
+	h_nc_pi0_rebin->Sumw2();
+	h_cosmic_rebin->Sumw2();
+	h_nc_rebin->Sumw2();
+	h_other_mixed_rebin->Sumw2();
+	h_unmatched_rebin->Sumw2();
+	h_intime_rebin->Sumw2();
+	h_data_rebin->Sumw2();
+
+	h_nue_cc_rebin->Scale(data_scale_factor);
+	h_nue_cc_mixed_rebin->Scale(data_scale_factor);
+	h_nue_cc_out_fv_rebin->Scale(data_scale_factor);
+	h_cosmic_rebin->Scale(data_scale_factor);
+	h_numu_cc_rebin->Scale(data_scale_factor);
+	h_nc_rebin->Scale(data_scale_factor);
+	h_nc_pi0_rebin->Scale(data_scale_factor);
+	h_other_mixed_rebin->Scale(data_scale_factor);
+	h_unmatched_rebin->Scale(data_scale_factor);
+	h_intime_rebin->Scale(intime_scale_factor);
+
+	stack->Add(h_nue_cc_rebin);
+	stack->Add(h_nue_cc_mixed_rebin);
+	stack->Add(h_nue_cc_out_fv_rebin);
+	stack->Add(h_cosmic_rebin);
+	stack->Add(h_numu_cc_rebin);
+	stack->Add(h_nc_rebin);
+	stack->Add(h_nc_pi0_rebin);
+	stack->Add(h_other_mixed_rebin);
+	stack->Add(h_unmatched_rebin);
+	stack->Add(h_intime_rebin);
+
+	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
+	stack->SetMaximum(y_maximum * 1.2);
+
+	stack->Draw("hist");
+	//stack->GetYaxis()->SetTitle(y_axis_name);
+	stack->GetYaxis()->SetTitle("Entries");
+	stack->GetXaxis()->SetLabelOffset(10);
+	h_data_rebin->Draw("same PE");
+
+	TH1 * h_error_hist = (TH1*)h_nue_cc_rebin->Clone("h_error_hist");
+	h_error_hist->Add(h_nue_cc_mixed_rebin, 1);
+	h_error_hist->Add(h_nue_cc_out_fv_rebin, 1);
+	h_error_hist->Add(h_numu_cc_rebin, 1);
+	h_error_hist->Add(h_nc_pi0_rebin, 1);
+	h_error_hist->Add(h_nc_rebin, 1);
+	h_error_hist->Add(h_other_mixed_rebin, 1);
+	h_error_hist->Add(h_cosmic_rebin, 1);
+	h_error_hist->Add(h_unmatched_rebin, 1);
+	h_error_hist->Add(h_intime_rebin, 1);
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2 hist same");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(0.73, 0.98, 0.98, 0.50);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC OutFV",  "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",            "f");
+	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",      "f");
+	leg_stack->AddEntry(h_nc,              "NC",                "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
+	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
+	leg_stack->AddEntry(h_intime,          "InTime",            "f");
+	leg_stack->Draw();
+
+	bottomPad->cd();
+	TH1 * ratioPlot = (TH1*)h_data_rebin->Clone("ratioPlot");
+	// ratioPlot->Add(h_nue_cc_clone,        -1);
+	// ratioPlot->Add(h_nue_cc_mixed_clone,  -1);
+	// ratioPlot->Add(h_nue_cc_out_fv_clone, -1);
+	// ratioPlot->Add(h_cosmic_clone,        -1);
+	// ratioPlot->Add(h_numu_cc_clone,       -1);
+	// ratioPlot->Add(h_nc_clone,            -1);
+	// ratioPlot->Add(h_nc_pi0_clone,        -1);
+	// ratioPlot->Add(h_other_mixed_clone,   -1);
+	// ratioPlot->Add(h_unmatched_clone,     -1);
+	// ratioPlot->Add(h_intime_clone,        -1);
+	//ratioPlot->Divide(h_data);
+	TH1 * h_mc_ext_sum = (TH1*)h_nue_cc_rebin->Clone("h_mc_ext_sum");
+	//h_mc_ext_sum->Add(h_nue_cc_clone,        1);
+	h_mc_ext_sum->Add(h_nue_cc_mixed_rebin,  1);
+	h_mc_ext_sum->Add(h_nue_cc_out_fv_rebin, 1);
+	h_mc_ext_sum->Add(h_cosmic_rebin,        1);
+	h_mc_ext_sum->Add(h_numu_cc_rebin,       1);
+	h_mc_ext_sum->Add(h_nc_rebin,            1);
+	h_mc_ext_sum->Add(h_nc_pi0_rebin,        1);
+	h_mc_ext_sum->Add(h_other_mixed_rebin,   1);
+	h_mc_ext_sum->Add(h_unmatched_rebin,     1);
+	h_mc_ext_sum->Add(h_intime_rebin,        1);
+
+	ratioPlot->GetXaxis()->SetLabelSize(12);
+	ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetYaxis()->SetLabelSize(11);
+	ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetXaxis()->SetTitleOffset(3.6);
+	ratioPlot->GetXaxis()->SetTitleSize(15);
+	ratioPlot->GetXaxis()->SetTitleFont(43);
+
+	ratioPlot->Add(h_mc_ext_sum, -1);
+	ratioPlot->Divide(h_mc_ext_sum);
+	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
+	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
+	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
+	ratioPlot->GetYaxis()->SetTitleSize(11);
+	ratioPlot->GetYaxis()->SetTitleFont(43);
+	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->SetTitle(" ");
+	ratioPlot->Draw();
 
 	c1->Print(print_name);
+}
+
+void histogram_functions::PlotdEdxTheta(
+        TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc,
+        TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH1 * h_nc,
+        TH2 * h_nc_pi0, TH2 * h_other_mixed, TH2 * h_unmatched, TH2 * h_intime, const double intime_scale_factor,
+        TH2 * h_data, const double data_scale_factor,
+        const char * title, const char * x_axis_name, const char * y_axis_name,
+        const char * print_name1, const char * print_name2, const char * print_name3
+        )
+{
+
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+
+	h_nue_cc->SetStats(kFALSE);
+	h_nue_cc_mixed->SetStats(kFALSE);
+	h_numu_cc->SetStats(kFALSE);
+	h_nc_pi0->SetStats(kFALSE);
+	h_cosmic->SetStats(kFALSE);
+	h_nc->SetStats(kFALSE);
+	h_numu_cc_mixed->SetStats(kFALSE);
+	h_other_mixed->SetStats(kFALSE);
+	h_unmatched->SetStats(kFALSE);
+	h_intime->SetStats(kFALSE);
+	h_data->SetStats(kFALSE);
+	h_nue_cc_out_fv->SetStats(kFALSE);
+
+	TH2 * h_nue_cc_clone = (TH2*)h_nue_cc->Clone("h_nue_cc_clone");
+	TH2 * h_nue_cc_mixed_clone = (TH2*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
+	TH2 * h_nue_cc_out_fv_clone = (TH2*)h_nue_cc_out_fv->Clone("h_nue_cc_out_fv_clone");
+	TH2 * h_cosmic_clone = (TH2*)h_cosmic->Clone("h_cosmic_clone");
+	TH2 * h_numu_cc_clone = (TH2*)h_numu_cc->Clone("h_numu_cc_clone");
+	TH2 * h_nc_clone = (TH2*)h_nc->Clone("h_nc_clone");
+	TH2 * h_nc_pi0_clone = (TH2*)h_nc_pi0->Clone("h_nc_pi0_clone");
+	TH2 * h_other_mixed_clone = (TH2*)h_other_mixed->Clone("h_other_mixed_clone");
+	TH2 * h_unmatched_clone = (TH2*)h_unmatched->Clone("h_unmatched_clone");
+	TH2 * h_intime_clone = (TH2*)h_intime->Clone("h_intime_clone");
+
+	h_nue_cc_clone->Scale(data_scale_factor);
+
+
+	TH2 * h_dummy_mc = (TH2*)h_nue_cc_clone->Clone("h_dummy_mc");
+
+	h_dummy_mc->Add(h_nue_cc_mixed_clone,  data_scale_factor);
+	h_dummy_mc->Add(h_nue_cc_out_fv_clone, data_scale_factor);
+	h_dummy_mc->Add(h_cosmic_clone,        data_scale_factor);
+	h_dummy_mc->Add(h_numu_cc_clone,       data_scale_factor);
+	h_dummy_mc->Add(h_nc_clone,            data_scale_factor);
+	h_dummy_mc->Add(h_nc_pi0_clone,        data_scale_factor);
+	h_dummy_mc->Add(h_other_mixed_clone,   data_scale_factor);
+	h_dummy_mc->Add(h_unmatched_clone,     data_scale_factor);
+	h_dummy_mc->Add(h_intime_clone,        intime_scale_factor);
+
+	h_dummy_mc->GetXaxis()->SetTitle("Leading Shower dE/dx [MeV/cm]");
+	h_dummy_mc->GetYaxis()->SetTitle("Leading Shower Theta [Degrees]");
+	h_dummy_mc->Draw("colz");
+	c1->Print(print_name1);
+
+	TCanvas * c2 = new TCanvas();
+	c2->cd();
+	h_data->SetStats(kFALSE);
+	TH2 * h_data_clone = (TH2*)h_data->Clone("h_data_clone");
+	h_data_clone->GetXaxis()->SetTitle("Leading Shower dE/dx [MeV/cm]");
+	h_data_clone->GetYaxis()->SetTitle("Leading Shower Theta [Degrees]");
+	h_data_clone->Draw("colz");
+	c2->Print(print_name2);
+
+	TCanvas * c3 = new TCanvas();
+	c3->cd();
+	TH2 * h_division = (TH2*)h_data_clone->Clone("h_division");
+	h_division->Divide(h_dummy_mc);
+	h_division->Draw("colz");
+	c3->Print(print_name3);
+
+
 }
 void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
                                           TH1 * h_nue_cc_out_fv,
@@ -600,6 +1453,107 @@ void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
 	c1->Print(print_name);
 
 }
+
+void histogram_functions::EnergyOverlay(
+        TH1 * h_0,
+        TH1 * h_1,
+        TH1 * h_2,
+        TH1 * h_3,
+        TH1 * h_4,
+        TH1 * h_5,
+        TH1 * h_6,
+        TH1 * h_7,
+        TH1 * h_8,
+        TH1 * h_9,
+        TH1 * h_10,
+        TH1 * h_11,
+        TH1 * h_12,
+        TH1 * h_13,
+        const char * x_axis_name, const char * y_axis_name, const char * print_name
+        )
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	h_0->SetStats(kFALSE);
+	h_0->SetFillColor(1);
+	h_0->GetXaxis()->SetTitle(x_axis_name);
+	const double nu_energy_no_cut_integral = h_0->Integral();
+	h_0->Scale(1./nu_energy_no_cut_integral);
+	h_0->Draw("hist");
+	h_1->SetStats(kFALSE);
+	h_1->SetFillColor(29);
+	h_1->Scale(1./nu_energy_no_cut_integral);
+	h_1->Draw("hist same");
+	h_2->SetFillColor(30);
+	h_2->SetStats(kFALSE);
+	h_2->Scale(1./nu_energy_no_cut_integral);
+	h_2->Draw("hist same");
+	h_3->SetFillColor(45);
+	h_3->SetStats(kFALSE);
+	h_3->Scale(1./nu_energy_no_cut_integral);
+	h_3->Draw("hist same");
+	h_4->SetFillColor(28);
+	h_4->SetStats(kFALSE);
+	h_4->Scale(1./nu_energy_no_cut_integral);
+	h_4->Draw("hist same");
+	h_5->SetFillColor(26);
+	h_5->SetStats(kFALSE);
+	h_5->Scale(1./nu_energy_no_cut_integral);
+	h_5->Draw("hist same");
+	h_6->SetFillColor(36);
+	h_6->SetStats(kFALSE);
+	h_6->Scale(1./nu_energy_no_cut_integral);
+	h_6->Draw("hist same");
+	h_7->SetFillColor(39);
+	h_7->SetStats(kFALSE);
+	h_7->Scale(1./nu_energy_no_cut_integral);
+	h_7->Draw("hist same");
+	h_8->SetFillColor(42);
+	h_8->SetStats(kFALSE);
+	h_8->Scale(1./nu_energy_no_cut_integral);
+	h_8->Draw("hist same");
+	h_9->SetFillColor(12);
+	h_9->SetStats(kFALSE);
+	h_9->Scale(1./nu_energy_no_cut_integral);
+	h_9->Draw("hist same");
+	h_10->SetFillColor(1);
+	h_10->SetStats(kFALSE);
+	h_10->Scale(1./nu_energy_no_cut_integral);
+	h_10->Draw("hist same");
+	h_11->SetFillColor(46);
+	h_11->SetStats(kFALSE);
+	h_11->Scale(1./nu_energy_no_cut_integral);
+	h_11->Draw("hist same");
+	h_12->SetFillColor(19);
+	h_12->SetStats(kFALSE);
+	h_12->Scale(1./nu_energy_no_cut_integral);
+	h_12->Draw("hist same");
+	h_13->SetFillColor(41);
+	h_13->SetStats(kFALSE);
+	h_13->Scale(1./nu_energy_no_cut_integral);
+	h_13->Draw("hist same");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_sequential1 = new TLegend(0.65,0.65,0.85,0.85);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_sequential1->AddEntry(h_0,   "No Cut",           "f");
+	leg_sequential1->AddEntry(h_1,   "Reco Nue",         "f");
+	leg_sequential1->AddEntry(h_2,   "Fiducial Volume",  "f");
+	leg_sequential1->AddEntry(h_3,   "Vtx To Flash",     "f");
+	leg_sequential1->AddEntry(h_4,   "Shower Vtx",       "f");
+	leg_sequential1->AddEntry(h_5,   "Track Vtx",        "f");
+	leg_sequential1->AddEntry(h_6,   "Total Hits",       "f");
+	leg_sequential1->AddEntry(h_7,   "Collection Hits",  "f");
+	leg_sequential1->AddEntry(h_8,   "Open Angle",       "f");
+	leg_sequential1->AddEntry(h_9,   "dE/dx",            "f");
+	leg_sequential1->AddEntry(h_10,  "Secondary Shower", "f");
+	leg_sequential1->AddEntry(h_11,  "Hits/Length",      "f");
+	leg_sequential1->AddEntry(h_12,  "TrkShwr Length",   "f");
+	leg_sequential1->AddEntry(h_13,  "Trk Containment",  "f");
+	leg_sequential1->Draw();
+	c1->Print(print_name);
+}
+
 
 void histogram_functions::PostHistogramOverlay(TH1 * h_no_cut, TH1 * h_reco_nue,
                                                TH1 * h_in_fv, TH1 * h_vtx_flash, TH1 * h_shwr_vtx,
@@ -959,4 +1913,31 @@ void histogram_functions::OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, T
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "p");
 	leg_stack->Draw();
 	c1->Print(print_name);
+}
+
+const double histogram_functions::Chi2Calc(TH1 * h_mc_ext, TH1 * h_data){
+	const int n_bins = h_mc_ext->GetNbinsX();
+
+	const double f_1 = h_mc_ext->Integral();
+	const double f_2 = h_data->Integral();
+
+	//area normalised?
+	h_mc_ext->Scale(f_1/f_2);
+	//h_data->Scale(1./f_2);
+	//h_mc_ext->Scale(1./f_2);
+
+	double chi2 = 0;
+	for( int i = 1; i < n_bins; i++)
+	{
+		const double n_mc_ext = h_mc_ext->GetBinContent(i);
+		const double n_data   = h_data->GetBinContent(i);
+		//N_BNB[ii]*=fac1/fac2;
+
+		//don't calculate chi2 for bins where no comparison possible
+		if(n_data == 0 || n_mc_ext == 0) { continue; }
+
+		chi2 += (pow((n_mc_ext - n_data),2) / n_mc_ext);
+	}
+	chi2 = chi2 / n_bins;
+	return chi2;
 }

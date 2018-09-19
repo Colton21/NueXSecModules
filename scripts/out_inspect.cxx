@@ -1,3 +1,9 @@
+//This is a much older version of the selection code, used primarily for debugging
+// ** If you're looking to quickly test the output of the larsoft module - i.e. see
+// if the libraries are being accepted OK or the file is valid, this module is OK
+// DO NOT use this module if you are looking to perform the selection or produce such plots
+
+
 #include "../xsecAna/TpcObjectContainer.h"
 #include "../xsecAna/ParticleContainer.h"
 

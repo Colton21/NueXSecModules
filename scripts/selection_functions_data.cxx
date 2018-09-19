@@ -103,7 +103,33 @@ void selection_functions_data::PostCutsdEdxData(std::vector<xsecAna::TPCObjectCo
 		std::string tpco_id = tpco_class.first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_data->Fill(leading_dedx);
+		h_dedx_cuts_data->Fill(leading_dedx * (242.72 / 196.979));
+	}        //end loop tpc objects
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::PostCutsdEdxAltScaleData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double alt_scale,
+                                                        TH1D * h_dedx_cuts_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		int leading_index = tpco_class.second;
+		std::string tpco_id = tpco_class.first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		h_dedx_cuts_data->Fill(leading_dedx * (242.72 / 196.979) * alt_scale);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -315,7 +341,17 @@ void selection_functions_data::LeadingThetaData(std::vector<xsecAna::TPCObjectCo
 		std::string tpco_id = tpco_class.first;
 		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
+		//const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
+
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, 0, 0);
+		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+
+
 		h_ele_pfp_theta_data->Fill(leading_shower_theta);
 	}//end pfp loop
 }
@@ -336,6 +372,154 @@ void selection_functions_data::LeadingMomentumData(std::vector<xsecAna::TPCObjec
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_shower_momentum = leading_shower.pfpMomentum();
 		h_ele_pfp_momentum_data->Fill(leading_shower_momentum);
+	}//end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::LeadingMomentumThetaSliceData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                             TH1D * h_ele_momentum_1_data,
+                                                             TH1D * h_ele_momentum_2_data,
+                                                             TH1D * h_ele_momentum_3_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shower_momentum = leading_shower.pfpMomentum();
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, 0, 0);
+		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+		if(leading_shower_theta >= 0 && leading_shower_theta < 40)    {h_ele_momentum_1_data->Fill(leading_shower_momentum); }
+		if(leading_shower_theta >= 40 && leading_shower_theta < 90)   {h_ele_momentum_2_data->Fill(leading_shower_momentum); }
+		if(leading_shower_theta >= 90 && leading_shower_theta <= 180) {h_ele_momentum_3_data->Fill(leading_shower_momentum); }
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::dedxThetaSliceData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                  TH1D * h_dedx_1_data,
+                                                  TH1D * h_dedx_2_data,
+                                                  TH1D * h_dedx_3_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shower_dedx = leading_shower.PfpdEdx().at(2);
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, 0, 0);
+		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+		if(leading_shower_theta >= 0 && leading_shower_theta < 60)    {h_dedx_1_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
+		if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_data->Fill(leading_shower_dedx * (242.72 / 196.979)); }
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::LeadingMomentumTrackTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                                TH1D * h_ele_pfp_momentum_no_track_data,
+                                                                TH1D * h_ele_pfp_momentum_has_track_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_shower_momentum = leading_shower.pfpMomentum();
+		if(n_pfp_tracks == 0)
+		{
+			h_ele_pfp_momentum_no_track_data->Fill(leading_shower_momentum);
+		}
+		if(n_pfp_tracks >= 1)
+		{
+			h_ele_pfp_momentum_has_track_data->Fill(leading_shower_momentum);
+		}
+	}//end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::LeadingThetaTrackTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                             TH1D * h_ele_pfp_theta_no_track_data,
+                                                             TH1D * h_ele_pfp_theta_has_track_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		//const double leading_shower_momentum = leading_shower.pfpMomentum();
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		//const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+		if(n_pfp_tracks == 0)
+		{
+			h_ele_pfp_theta_no_track_data->Fill(leading_shower_theta);
+		}
+		if(n_pfp_tracks >= 1)
+		{
+			h_ele_pfp_theta_has_track_data->Fill(leading_shower_theta);
+		}
+	}//end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::LeadingPhiTrackTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                           TH1D * h_ele_pfp_phi_no_track_data,
+                                                           TH1D * h_ele_pfp_phi_has_track_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		//const double leading_shower_momentum = leading_shower.pfpMomentum();
+		//const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_shower_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+		if(n_pfp_tracks == 0)
+		{
+			h_ele_pfp_phi_no_track_data->Fill(leading_shower_phi);
+		}
+		if(n_pfp_tracks >= 1)
+		{
+			h_ele_pfp_phi_has_track_data->Fill(leading_shower_phi);
+		}
 	}//end pfp loop
 }
 //***************************************************************************
@@ -468,7 +652,7 @@ void selection_functions_data::dEdxVsOpenAngleData(std::vector<xsecAna::TPCObjec
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 		if(tpco_id == "unmatched")
 		{
-			h_dedx_open_angle_data->Fill(leading_dedx, leading_open_angle);
+			h_dedx_open_angle_data->Fill(leading_dedx * (242.72 / 196.979), leading_open_angle);
 		}
 	}
 }
@@ -553,9 +737,14 @@ void selection_functions_data::LeadingCosThetaData(std::vector<xsecAna::TPCObjec
 		std::string tpco_id = tpco_class.first;
 		const int leading_index = tpco_class.second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		double leading_shower_cos_theta = leading_shower.pfpDirZ();
-		double leading_shower_theta = (acos(leading_shower_cos_theta) * (180 / 3.1415)) + theta_translation;
-		leading_shower_cos_theta = cos(leading_shower_theta);
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
+		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
 		h_ele_cos_theta_data->Fill(leading_shower_cos_theta);
 	}//end pfp loop
 }
@@ -770,6 +959,25 @@ void selection_functions_data::FailureReasonData(std::vector<xsecAna::TPCObjectC
 //***************************************************************************
 void selection_functions_data::XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               std::vector<TH1 * > * h_ele_pfp_xyz_data,
+                                               TH2 * h_pfp_zy_vtx_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_x = tpc_obj.pfpVtxX();
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		h_ele_pfp_xyz_data->at(0)->Fill(tpc_vtx_x);
+		h_ele_pfp_xyz_data->at(1)->Fill(tpc_vtx_y);
+		h_ele_pfp_xyz_data->at(2)->Fill(tpc_vtx_z);
+		h_pfp_zy_vtx_data->Fill(tpc_vtx_z, tpc_vtx_y);
+	}
+}
+void selection_functions_data::XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                std::vector<TH1 * > * h_ele_pfp_xyz_data)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -884,6 +1092,250 @@ void selection_functions_data::LeadingShowerTrackLengthsData(std::vector<xsecAna
 		const double longest_trk_leading_shwr_ratio = longest_track / leading_shwr_length;
 		h_shwr_trk_length_data->Fill(longest_trk_leading_shwr_ratio);
 	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::PostCutsVtxFlashUpstreamData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                            std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z < tpc_vtx_z) {continue; }//skip this event if the flash is downstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		h_vtx_flash_data->Fill(distance);
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::PostCutsVtxFlashDownstreamData(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                              std::vector<std::pair<int, std::string> > * passed_tpco, TH1D * h_vtx_flash_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double tpc_vtx_y = tpc_obj.pfpVtxY();
+		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+		const double flash_vtx_y = largest_flash_v.at(0);
+		const double flash_vtx_z = largest_flash_v.at(1);
+		if(flash_vtx_z >= tpc_vtx_z) {continue; }//skip this event if the flash is upstream
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const double distance = sqrt(pow((tpc_vtx_y - flash_vtx_y), 2) + pow((tpc_vtx_z - flash_vtx_z), 2) );
+		h_vtx_flash_data->Fill(distance);
+	}        //end loop tpc objects
+}//end function
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::PostCutsLeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                           TH1D * h_ele_momentum_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		h_ele_momentum_data->Fill(leading_momentum);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::dEdxThetaData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             TH2D * h_dedx_theta_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		h_dedx_theta_data->Fill(leading_dedx * (242.72 / 196.979), leading_shower_theta);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::EventMultiplicityData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                     TH1D * h_multiplicity_shower_data, TH1D * h_multiplicity_track_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		h_multiplicity_shower_data->Fill(n_pfp_showers);
+		h_multiplicity_track_data->Fill(n_pfp_tracks);
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::LeadingKinematicsShowerTopologyData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                                   TH1D * h_ele_pfp_momentum_1shwr_data,
+                                                                   TH1D * h_ele_pfp_momentum_2shwr_data,
+                                                                   TH1D * h_ele_pfp_theta_1shwr_data,
+                                                                   TH1D * h_ele_pfp_theta_2shwr_data,
+                                                                   TH1D * h_ele_pfp_phi_1shwr_data,
+                                                                   TH1D * h_ele_pfp_phi_2shwr_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_momentum = leading_shower.pfpMomentum();
+		const double leading_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
+		const double leading_phi = atan2(leading_shower.pfpDirY(), leading_shower.pfpDirX()) * 180 / 3.1415;
+		const int num_showers = tpc_obj.NPfpShowers();
+		if(num_showers == 1)
+		{
+			h_ele_pfp_momentum_1shwr_data->Fill(leading_momentum);
+			h_ele_pfp_theta_1shwr_data->Fill(leading_theta);
+			h_ele_pfp_phi_1shwr_data->Fill(leading_phi);
+		}
+		if(num_showers >= 2)
+		{
+			h_ele_pfp_momentum_2shwr_data->Fill(leading_momentum);
+			h_ele_pfp_theta_2shwr_data->Fill(leading_theta);
+			h_ele_pfp_phi_2shwr_data->Fill(leading_phi);
+		}
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions_data::IsContainedPlotData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                                   std::vector<double> fv_boundary_v, TH1 * h_track_containment_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+
+	const double det_x1 = 0;
+	const double det_x2 = 256.35;
+	const double det_y1 = -116.5;
+	const double det_y2 = 116.5;
+	const double det_z1 = 0;
+	const double det_z2 = 1036.8;
+
+	const double x1 = fv_boundary_v.at(0);
+	const double x2 = fv_boundary_v.at(1);
+	const double y1 = fv_boundary_v.at(2);
+	const double y2 = fv_boundary_v.at(3);
+	const double z1 = fv_boundary_v.at(4);
+	const double z2 = fv_boundary_v.at(5);
+
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+		auto const tpc_obj = tpc_object_container_v->at(i);
+
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_tracks = tpc_obj.NPfpTracks();
+		if(n_pfp_tracks == 0) {continue; }
+
+		int is_contained;
+
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const pfp = tpc_obj.GetParticle(j);
+			const int pfp_pdg = pfp.PFParticlePdgCode();
+			if(pfp_pdg == 13)
+			{
+				const double pfp_vtx_x = pfp.pfpVtxX();
+				const double pfp_vtx_y = pfp.pfpVtxY();
+				const double pfp_vtx_z = pfp.pfpVtxZ();
+				const double pfp_dir_x = pfp.pfpDirX();
+				const double pfp_dir_y = pfp.pfpDirY();
+				const double pfp_dir_z = pfp.pfpDirZ();
+				const double trk_length = pfp.pfpLength();
+				const double pfp_end_x = (pfp.pfpVtxX() + (trk_length * pfp_dir_x));
+				const double pfp_end_y = (pfp.pfpVtxY() + (trk_length * pfp_dir_y));
+				const double pfp_end_z = (pfp.pfpVtxZ() + (trk_length * pfp_dir_z));
+
+				if(pfp_vtx_x <= det_x1 + x1 || pfp_vtx_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_vtx_y <= det_y1 + y1 || pfp_vtx_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_vtx_z <= det_z1 + z1 || pfp_vtx_z >= det_z2 - z2) {is_contained = 0; break; }
+				if(pfp_end_x <= det_x1 + x1 || pfp_end_x >= det_x2 - x2) {is_contained = 0; break; }
+				if(pfp_end_y <= det_y1 + y1 || pfp_end_y >= det_y2 - y2) {is_contained = 0; break; }
+				if(pfp_end_z <= det_z1 + z1 || pfp_end_z >= det_z2 - z2) {is_contained = 0; break; }
+				is_contained = 1;
+			}
+		}
+		h_track_containment_data->Fill(is_contained);
+	}//end pfp loop
 }
 //***************************************************************************
 //***************************************************************************

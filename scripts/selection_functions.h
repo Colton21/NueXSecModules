@@ -20,6 +20,7 @@
 #include "TPad.h"
 #include "TMarker.h"
 #include "TVector3.h"
+#include "TLine.h"
 
 #include <iostream>
 #include <vector>
@@ -52,21 +53,58 @@ void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_containe
 void PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                         TH1D * h_dedx_cuts_intime);
+void PostCutsdEdxAltScaleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, const double alt_scale,
+                                TH1D * h_dedx_cuts_intime);
+//***************************************************************************
+void PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                              TH1D * h_dedx_cuts_electron,
+                              TH1D * h_dedx_cuts_photon,
+                              TH1D * h_dedx_cuts_proton,
+                              TH1D * h_dedx_cuts_pion,
+                              TH1D * h_dedx_cuts_muon,
+                              TH1D * h_dedx_cuts_kaon,
+                              TH1D * h_dedx_cuts_neutron,
+                              TH1D * h_dedx_cuts_unmatched);
+void PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                    TH1 * h_dedx_cuts_ext_unmatched);
+void PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                  TH2D * h_dedx_cuts_electron,
+                                  TH2D * h_dedx_cuts_photon,
+                                  TH2D * h_dedx_cuts_proton,
+                                  TH2D * h_dedx_cuts_pion,
+                                  TH2D * h_dedx_cuts_muon,
+                                  TH2D * h_dedx_cuts_kaon,
+                                  TH2D * h_dedx_cuts_neutron,
+                                  TH2D * h_dedx_cuts_unmatched,
+                                  TH2D * h_dedx_cuts_collection_electron,
+                                  TH2D * h_dedx_cuts_collection_photon,
+                                  TH2D * h_dedx_cuts_collection_proton,
+                                  TH2D * h_dedx_cuts_collection_pion,
+                                  TH2D * h_dedx_cuts_collection_muon,
+                                  TH2D * h_dedx_cuts_collection_kaon,
+                                  TH2D * h_dedx_cuts_collection_neutron,
+                                  TH2D * h_dedx_cuts_collection_unmatched);
 //***************************************************************************
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,
                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,
-                       std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v);
 //***************************************************************************
 //***************************************************************************
-void PrintPostCutVector(std::vector<std::tuple<int, int, double, double, double,
+void PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,
                                                std::string, std::string, int, int, double> > * post_cuts_v, bool _post_cuts_verbose);
 //***************************************************************************
 //***************************************************************************
-void PostCutVectorPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
+void PostCutVectorPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
                         bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
                         TH1 * post_cuts_num_showers_purity_res,
                         TH1 * post_cuts_num_showers_purity_dis,
@@ -95,6 +133,11 @@ static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int i
                       double intime_scale_factor, double data_scale_factor, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
+static void ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
+                                   double intime_scale_factor, double data_scale_factor, std::string cut_name,
+                                   std::vector<std::tuple< double, double, std::string> > * results_v);
+//***************************************************************************
+//***************************************************************************
 static void PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * has_track,
                                 std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr);
 //***************************************************************************
@@ -106,25 +149,27 @@ void FillTPCOClassV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_contai
                     std::vector<std::pair<std::string, int> > * tpco_classifier_v);
 //***************************************************************************
 //***************************************************************************
-static double calcNumNucleons(double _x1, double _x2, double _y1,
+static double calcNumNucleons(const bool is_data, double _x1, double _x2, double _y1,
                               double _y2, double _z1, double _z2);
 //***************************************************************************
 //***************************************************************************
-static void calcXSec(double _x1, double _x2, double _y1,
+static void calcXSec(const bool is_data, double _x1, double _x2, double _y1,
                      double _y2, double _z1, double _z2,
                      double n_total, double n_bkg, double flux, double efficiency, std::vector<double>  * xsec_cc);
 //***************************************************************************
 //***************************************************************************
-static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_cc_mixed,
+static void XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_bar_cc, double final_counter_nue_cc_mixed,
                      double final_counter_nue_cc_out_fv, double final_counter_cosmic, double final_counter_nc, double final_counter_numu_cc,
                      double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
                      double final_counter_other_mixed, double final_counter_intime,
                      double intime_scale_factor, double final_counter_data, double data_scale_factor,
-                     std::vector<double> fv_boundary_v, double flux,
-                     std::vector<double> selected_energy_vector, double genie_xsec, const int total_mc_entries_inFV);
+                     std::vector<double> fv_boundary_v, double flux_nue, double flux_nue_bar,
+                     std::vector<double> selected_energy_vector, double genie_xsec_nue, double genie_xsec_nue_bar,
+                     const int total_mc_entries_inFV_nue, const int total_mc_entries_inFV_nue_bar);
 //***************************************************************************
 //***************************************************************************
-static void xsec_plot(bool _verbose, double genie_xsec, double xsec, double average_energy, double stat_error);
+static void xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double xsec_nue, double average_energy, double stat_error);
+static void IntegratedXsecPlot(const double data_xsec, const double mc_xsec, const double stat_err, const double sys_err);
 //***************************************************************************
 //***************************************************************************
 void PostCutOpenAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -400,7 +445,8 @@ void PostCutHitThreshold(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                          double mc_nu_energy, double mc_ele_energy,
-                         TH2D * h_shwr_hits_nu_eng, TH2D * h_shwr_hits_ele_eng);
+                         TH2D * h_shwr_hits_nu_eng, TH2D * h_shwr_hits_ele_eng,
+                         TH2D * h_shwr_collection_hits_nu_eng, TH2D * h_shwr_collection_hits_ele_eng);
 //***************************************************************************
 //***************************************************************************
 void TopologyEfficiency(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -773,6 +819,86 @@ void LeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object
                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_intime);
 //***************************************************************************
 //***************************************************************************
+void PostCutsLeadingMomentumThetaSlice(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                       TH1D * h_ele_momentum_1_nue_cc,
+                                       TH1D * h_ele_momentum_1_nue_cc_out_fv,
+                                       TH1D * h_ele_momentum_1_nue_cc_mixed,
+                                       TH1D * h_ele_momentum_1_numu_cc,
+                                       TH1D * h_ele_momentum_1_numu_cc_mixed,
+                                       TH1D * h_ele_momentum_1_nc,
+                                       TH1D * h_ele_momentum_1_nc_pi0,
+                                       TH1D * h_ele_momentum_1_cosmic,
+                                       TH1D * h_ele_momentum_1_other_mixed,
+                                       TH1D * h_ele_momentum_1_unmatched,
+                                       TH1D * h_ele_momentum_2_nue_cc,
+                                       TH1D * h_ele_momentum_2_nue_cc_out_fv,
+                                       TH1D * h_ele_momentum_2_nue_cc_mixed,
+                                       TH1D * h_ele_momentum_2_numu_cc,
+                                       TH1D * h_ele_momentum_2_numu_cc_mixed,
+                                       TH1D * h_ele_momentum_2_nc,
+                                       TH1D * h_ele_momentum_2_nc_pi0,
+                                       TH1D * h_ele_momentum_2_cosmic,
+                                       TH1D * h_ele_momentum_2_other_mixed,
+                                       TH1D * h_ele_momentum_2_unmatched,
+                                       TH1D * h_ele_momentum_3_nue_cc,
+                                       TH1D * h_ele_momentum_3_nue_cc_out_fv,
+                                       TH1D * h_ele_momentum_3_nue_cc_mixed,
+                                       TH1D * h_ele_momentum_3_numu_cc,
+                                       TH1D * h_ele_momentum_3_numu_cc_mixed,
+                                       TH1D * h_ele_momentum_3_nc,
+                                       TH1D * h_ele_momentum_3_nc_pi0,
+                                       TH1D * h_ele_momentum_3_cosmic,
+                                       TH1D * h_ele_momentum_3_other_mixed,
+                                       TH1D * h_ele_momentum_3_unmatched);
+void PostCutsLeadingMomentumThetaSliceInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                             TH1D * h_ele_momentum_1_intime,
+                                             TH1D * h_ele_momentum_2_intime,
+                                             TH1D * h_ele_momentum_3_intime);
+//***************************************************************************
+//***************************************************************************
+void PostCutsdedxThetaSlice(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                            std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                            std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                            TH1D * h_dedx_1_nue_cc,
+                            TH1D * h_dedx_1_nue_cc_out_fv,
+                            TH1D * h_dedx_1_nue_cc_mixed,
+                            TH1D * h_dedx_1_numu_cc,
+                            TH1D * h_dedx_1_numu_cc_mixed,
+                            TH1D * h_dedx_1_nc,
+                            TH1D * h_dedx_1_nc_pi0,
+                            TH1D * h_dedx_1_cosmic,
+                            TH1D * h_dedx_1_other_mixed,
+                            TH1D * h_dedx_1_unmatched,
+                            TH1D * h_dedx_2_nue_cc,
+                            TH1D * h_dedx_2_nue_cc_out_fv,
+                            TH1D * h_dedx_2_nue_cc_mixed,
+                            TH1D * h_dedx_2_numu_cc,
+                            TH1D * h_dedx_2_numu_cc_mixed,
+                            TH1D * h_dedx_2_nc,
+                            TH1D * h_dedx_2_nc_pi0,
+                            TH1D * h_dedx_2_cosmic,
+                            TH1D * h_dedx_2_other_mixed,
+                            TH1D * h_dedx_2_unmatched,
+                            TH1D * h_dedx_3_nue_cc,
+                            TH1D * h_dedx_3_nue_cc_out_fv,
+                            TH1D * h_dedx_3_nue_cc_mixed,
+                            TH1D * h_dedx_3_numu_cc,
+                            TH1D * h_dedx_3_numu_cc_mixed,
+                            TH1D * h_dedx_3_nc,
+                            TH1D * h_dedx_3_nc_pi0,
+                            TH1D * h_dedx_3_cosmic,
+                            TH1D * h_dedx_3_other_mixed,
+                            TH1D * h_dedx_3_unmatched);
+void PostCutsdedxThetaSliceInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  TH1D * h_dedx_1_intime,
+                                  TH1D * h_dedx_2_intime,
+                                  TH1D * h_dedx_3_intime);
+//***************************************************************************
+//***************************************************************************
 void LeadingPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                 std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -856,7 +982,7 @@ void Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        TH1D * h_leading_shwr_hits_2shwr_unmatched);
 //***************************************************************************
 //***************************************************************************
-void PostCutVector2DPlots(std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
+void PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v,
                           bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
                           TH2 * post_cuts_num_tracks_showers_purity_qe,
                           TH2 * post_cuts_num_tracks_showers_purity_res,
@@ -882,6 +1008,43 @@ void LeadingThetaPhi(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      TH2D * h_ele_theta_phi_cosmic,
                      TH2D * h_ele_theta_phi_other_mixed,
                      TH2D * h_ele_theta_phi_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingThetaPhiInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                           TH2D * h_ele_theta_phi_intime);
+//***************************************************************************
+//***************************************************************************
+void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                 std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                 const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_unmatched);
+void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                 std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                 std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                 const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                 std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
+                 TH2 * h_pfp_zy_vtx_nue_cc,
+                 TH2 * h_pfp_zy_vtx_all);
 //***************************************************************************
 //***************************************************************************
 void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -916,6 +1079,10 @@ void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  TH2 * h_mc_reco_vtx_x_nue_cc_out_fv,
                  TH2 * h_mc_reco_vtx_y_nue_cc_out_fv,
                  TH2 * h_mc_reco_vtx_z_nue_cc_out_fv);
+void XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                       std::vector<TH1 *> * h_ele_pfp_xyz_intime,
+                       TH2 * h_pfp_zy_vtx_ext);
 void XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                        std::vector<TH1 *> * h_ele_pfp_xyz_intime);
@@ -985,6 +1152,350 @@ void EnergyCosThetaSlicesInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_o
                                 TH1 * h_ele_eng_for_intime,
                                 TH1 * h_ele_eng_mid_intime,
                                 TH1 * h_ele_eng_back_intime);
+//***************************************************************************
+//***************************************************************************
+void DifferentialEnergySlices(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                              TH1 * h_low_true_momentum, TH1 * h_med_true_momentum, TH1 * h_high_true_momentum);
+//***************************************************************************
+//***************************************************************************
+void IsContainedPlot(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                     std::vector<double> fv_boundary_v,
+                     TH1 * h_track_containment_nue_cc,
+                     TH1 * h_track_containment_nue_cc_out_fv,
+                     TH1 * h_track_containment_nue_cc_mixed,
+                     TH1 * h_track_containment_numu_cc,
+                     TH1 * h_track_containment_numu_cc_mixed,
+                     TH1 * h_track_containment_nc,
+                     TH1 * h_track_containment_nc_pi0,
+                     TH1 * h_track_containment_cosmic,
+                     TH1 * h_track_containment_other_mixed,
+                     TH1 * h_track_containment_unmatched);
+void IsContainedPlotInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                           std::vector<double> fv_boundary_v, TH1 * h_track_containment_intime);
+//***************************************************************************
+//***************************************************************************
+void dEdxCollectionAngle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                         TH2D * h_dedx_collection_angle_nue_cc,
+                         TH2D * h_dedx_collection_angle_nue_cc_mixed,
+                         TH2D * h_dedx_collection_angle_nue_cc_out_fv,
+                         TH2D * h_dedx_collection_angle_numu_cc,
+                         TH2D * h_dedx_collection_angle_nc,
+                         TH2D * h_dedx_collection_angle_cosmic,
+                         TH2D * h_dedx_collection_angle_nc_pi0,
+                         TH2D * h_dedx_collection_angle_numu_cc_mixed,
+                         TH2D * h_dedx_collection_angle_other_mixed,
+                         TH2D * h_dedx_collection_angle_unmatched     );
+void dEdxCollectionAngleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                               TH2D * h_dedx_collection_angle_intime);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashDownstream(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_out_fv, TH1D * h_vtx_flash_nue_cc_mixed,
+                                TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                                TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
+                                TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                                TH1D * h_vtx_flash_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashUpstream(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                              std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                              TH1D * h_vtx_flash_nue_cc, TH1D * h_vtx_flash_nue_cc_out_fv, TH1D * h_vtx_flash_nue_cc_mixed,
+                              TH1D * h_vtx_flash_numu_cc, TH1D * h_vtx_flash_nc,
+                              TH1D * h_vtx_flash_cosmic, TH1D * h_vtx_flash_nc_pi0,
+                              TH1D * h_vtx_flash_numu_cc_mixed, TH1D * h_vtx_flash_other_mixed,
+                              TH1D * h_vtx_flash_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashDownstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime);
+//***************************************************************************
+//***************************************************************************
+void PostCutsVtxFlashUpstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime);
+//***************************************************************************
+//***************************************************************************
+void FillTrueRecoEnergy(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                        std::vector<std::pair<int, std::string> > * passed_tpco,
+                        std::vector<std::pair<std::string, int> > * tpco_classifier_v, double mc_ele_energy,
+                        TH1D * h_mc_ele_energy,
+                        TH1D * h_reco_ele_energy,
+                        TH2D * h_mc_reco_ele_energy);
+//***************************************************************************
+//***************************************************************************
+void PostCutsLeadingMomentumTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                         TH1D * h_leading_momentum_electron,
+                                         TH1D * h_leading_momentum_photon,
+                                         TH1D * h_leading_momentum_proton,
+                                         TH1D * h_leading_momentum_pion,
+                                         TH1D * h_leading_momentum_muon,
+                                         TH1D * h_leading_momentum_kaon,
+                                         TH1D * h_leading_momentum_neutron,
+                                         TH1D * h_leading_momentum_mc_unmatched);
+void PostCutsLeadingMomentumTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                               TH1D * h_leading_momentum_type_cosmic);
+//***************************************************************************
+//***************************************************************************
+void PostCutsLeadingMomentum(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                             TH1D * h_ele_momentum_nue_cc,
+                             TH1D * h_ele_momentum_nue_cc_out_fv,
+                             TH1D * h_ele_momentum_nue_cc_mixed,
+                             TH1D * h_ele_momentum_numu_cc,
+                             TH1D * h_ele_momentum_numu_cc_mixed,
+                             TH1D * h_ele_momentum_nc,
+                             TH1D * h_ele_momentum_nc_pi0,
+                             TH1D * h_ele_momentum_cosmic,
+                             TH1D * h_ele_momentum_other_mixed,
+                             TH1D * h_ele_momentum_unmatched);
+//***************************************************************************
+//***************************************************************************
+void PostCutsLeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_ele_momentum_intime);
+//***************************************************************************
+//***************************************************************************
+void LeadingMomentumTrackTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                  std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                  std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc_out_fv,
+                                  TH1D * h_ele_pfp_momentum_no_track_nue_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_numu_cc,
+                                  TH1D * h_ele_pfp_momentum_no_track_numu_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_nc,
+                                  TH1D * h_ele_pfp_momentum_no_track_nc_pi0,
+                                  TH1D * h_ele_pfp_momentum_no_track_cosmic,
+                                  TH1D * h_ele_pfp_momentum_no_track_other_mixed,
+                                  TH1D * h_ele_pfp_momentum_no_track_unmatched,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc_out_fv,
+                                  TH1D * h_ele_pfp_momentum_has_track_nue_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_numu_cc,
+                                  TH1D * h_ele_pfp_momentum_has_track_numu_cc_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_nc,
+                                  TH1D * h_ele_pfp_momentum_has_track_nc_pi0,
+                                  TH1D * h_ele_pfp_momentum_has_track_cosmic,
+                                  TH1D * h_ele_pfp_momentum_has_track_other_mixed,
+                                  TH1D * h_ele_pfp_momentum_has_track_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingMomentumTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                        TH1D * h_ele_pfp_momentum_no_track_intime,
+                                        TH1D * h_ele_pfp_momentum_has_track_intime);
+//***************************************************************************
+//***************************************************************************
+void LeadingThetaTrackTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                               TH1D * h_ele_pfp_theta_no_track_nue_cc,
+                               TH1D * h_ele_pfp_theta_no_track_nue_cc_out_fv,
+                               TH1D * h_ele_pfp_theta_no_track_nue_cc_mixed,
+                               TH1D * h_ele_pfp_theta_no_track_numu_cc,
+                               TH1D * h_ele_pfp_theta_no_track_numu_cc_mixed,
+                               TH1D * h_ele_pfp_theta_no_track_nc,
+                               TH1D * h_ele_pfp_theta_no_track_nc_pi0,
+                               TH1D * h_ele_pfp_theta_no_track_cosmic,
+                               TH1D * h_ele_pfp_theta_no_track_other_mixed,
+                               TH1D * h_ele_pfp_theta_no_track_unmatched,
+                               TH1D * h_ele_pfp_theta_has_track_nue_cc,
+                               TH1D * h_ele_pfp_theta_has_track_nue_cc_out_fv,
+                               TH1D * h_ele_pfp_theta_has_track_nue_cc_mixed,
+                               TH1D * h_ele_pfp_theta_has_track_numu_cc,
+                               TH1D * h_ele_pfp_theta_has_track_numu_cc_mixed,
+                               TH1D * h_ele_pfp_theta_has_track_nc,
+                               TH1D * h_ele_pfp_theta_has_track_nc_pi0,
+                               TH1D * h_ele_pfp_theta_has_track_cosmic,
+                               TH1D * h_ele_pfp_theta_has_track_other_mixed,
+                               TH1D * h_ele_pfp_theta_has_track_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingThetaTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                     TH1D * h_ele_pfp_theta_no_track_intime,
+                                     TH1D * h_ele_pfp_theta_has_track_intime);
+//***************************************************************************
+//***************************************************************************
+void LeadingPhiTrackTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                             TH1D * h_ele_pfp_phi_no_track_nue_cc,
+                             TH1D * h_ele_pfp_phi_no_track_nue_cc_out_fv,
+                             TH1D * h_ele_pfp_phi_no_track_nue_cc_mixed,
+                             TH1D * h_ele_pfp_phi_no_track_numu_cc,
+                             TH1D * h_ele_pfp_phi_no_track_numu_cc_mixed,
+                             TH1D * h_ele_pfp_phi_no_track_nc,
+                             TH1D * h_ele_pfp_phi_no_track_nc_pi0,
+                             TH1D * h_ele_pfp_phi_no_track_cosmic,
+                             TH1D * h_ele_pfp_phi_no_track_other_mixed,
+                             TH1D * h_ele_pfp_phi_no_track_unmatched,
+                             TH1D * h_ele_pfp_phi_has_track_nue_cc,
+                             TH1D * h_ele_pfp_phi_has_track_nue_cc_out_fv,
+                             TH1D * h_ele_pfp_phi_has_track_nue_cc_mixed,
+                             TH1D * h_ele_pfp_phi_has_track_numu_cc,
+                             TH1D * h_ele_pfp_phi_has_track_numu_cc_mixed,
+                             TH1D * h_ele_pfp_phi_has_track_nc,
+                             TH1D * h_ele_pfp_phi_has_track_nc_pi0,
+                             TH1D * h_ele_pfp_phi_has_track_cosmic,
+                             TH1D * h_ele_pfp_phi_has_track_other_mixed,
+                             TH1D * h_ele_pfp_phi_has_track_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingPhiTrackTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                   TH1D * h_ele_pfp_phi_no_track_intime,
+                                   TH1D * h_ele_pfp_phi_has_track_intime);
+//***************************************************************************
+//***************************************************************************
+void dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+               std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+               std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+               TH2D * h_dedx_theta_nue_cc,
+               TH2D * h_dedx_theta_nue_cc_mixed,
+               TH2D * h_dedx_theta_nue_cc_out_fv,
+               TH2D * h_dedx_theta_numu_cc,
+               TH2D * h_dedx_theta_nc,
+               TH2D * h_dedx_theta_cosmic,
+               TH2D * h_dedx_theta_nc_pi0,
+               TH2D * h_dedx_theta_numu_cc_mixed,
+               TH2D * h_dedx_theta_other_mixed,
+               TH2D * h_dedx_theta_unmatched);
+//***************************************************************************
+//***************************************************************************
+void dEdxThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     TH2D * h_dedx_theta_intime);
+//***************************************************************************
+//***************************************************************************
+void EventMultiplicity(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+        TH1D * h_multiplicity_shower_nue_cc,
+        TH1D * h_multiplicity_shower_nue_cc_mixed,
+        TH1D * h_multiplicity_shower_nue_cc_out_fv,
+        TH1D * h_multiplicity_shower_numu_cc,
+        TH1D * h_multiplicity_shower_nc,
+        TH1D * h_multiplicity_shower_nc_pi0,
+        TH1D * h_multiplicity_shower_cosmic,
+        TH1D * h_multiplicity_shower_numu_cc_mixed,
+        TH1D * h_multiplicity_shower_other_mixed,
+        TH1D * h_multiplicity_shower_unmatched,
+        TH1D * h_multiplicity_track_nue_cc,
+        TH1D * h_multiplicity_track_nue_cc_mixed,
+        TH1D * h_multiplicity_track_nue_cc_out_fv,
+        TH1D * h_multiplicity_track_numu_cc,
+        TH1D * h_multiplicity_track_nc,
+        TH1D * h_multiplicity_track_nc_pi0,
+        TH1D * h_multiplicity_track_cosmic,
+        TH1D * h_multiplicity_track_numu_cc_mixed,
+        TH1D * h_multiplicity_track_other_mixed,
+        TH1D * h_multiplicity_track_unmatched
+        );
+void EventMultiplicityInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                             TH1D * h_multiplicity_shower_intime,
+                             TH1D * h_multiplicity_track_intime);
+//***************************************************************************
+//***************************************************************************
+void TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                       const double mc_ele_momentum, const double mc_ele_phi, const double mc_ele_theta,
+                       const double mc_ele_dir_x, const double mc_ele_dir_y, const double mc_ele_dir_z,
+                       TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta,
+                       TH1D * h_ele_resolution_dot_prod, TH2D * h_ele_resolution_momentum_dot_prod,
+                       TH2D * h_ele_resolution_momentum_dot_prod_zoom_y);
+//***************************************************************************
+//***************************************************************************
+void LeadingKinematicsShowerTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                     std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                     TH1D * h_ele_pfp_momentum_1shwr_nue_cc,
+                                     TH1D * h_ele_pfp_momentum_1shwr_nue_cc_out_fv,
+                                     TH1D * h_ele_pfp_momentum_1shwr_nue_cc_mixed,
+                                     TH1D * h_ele_pfp_momentum_1shwr_numu_cc,
+                                     TH1D * h_ele_pfp_momentum_1shwr_numu_cc_mixed,
+                                     TH1D * h_ele_pfp_momentum_1shwr_nc,
+                                     TH1D * h_ele_pfp_momentum_1shwr_nc_pi0,
+                                     TH1D * h_ele_pfp_momentum_1shwr_cosmic,
+                                     TH1D * h_ele_pfp_momentum_1shwr_other_mixed,
+                                     TH1D * h_ele_pfp_momentum_1shwr_unmatched,
+                                     TH1D * h_ele_pfp_momentum_2shwr_nue_cc,
+                                     TH1D * h_ele_pfp_momentum_2shwr_nue_cc_out_fv,
+                                     TH1D * h_ele_pfp_momentum_2shwr_nue_cc_mixed,
+                                     TH1D * h_ele_pfp_momentum_2shwr_numu_cc,
+                                     TH1D * h_ele_pfp_momentum_2shwr_numu_cc_mixed,
+                                     TH1D * h_ele_pfp_momentum_2shwr_nc,
+                                     TH1D * h_ele_pfp_momentum_2shwr_nc_pi0,
+                                     TH1D * h_ele_pfp_momentum_2shwr_cosmic,
+                                     TH1D * h_ele_pfp_momentum_2shwr_other_mixed,
+                                     TH1D * h_ele_pfp_momentum_2shwr_unmatched,
+                                     TH1D * h_ele_pfp_theta_1shwr_nue_cc,
+                                     TH1D * h_ele_pfp_theta_1shwr_nue_cc_out_fv,
+                                     TH1D * h_ele_pfp_theta_1shwr_nue_cc_mixed,
+                                     TH1D * h_ele_pfp_theta_1shwr_numu_cc,
+                                     TH1D * h_ele_pfp_theta_1shwr_numu_cc_mixed,
+                                     TH1D * h_ele_pfp_theta_1shwr_nc,
+                                     TH1D * h_ele_pfp_theta_1shwr_nc_pi0,
+                                     TH1D * h_ele_pfp_theta_1shwr_cosmic,
+                                     TH1D * h_ele_pfp_theta_1shwr_other_mixed,
+                                     TH1D * h_ele_pfp_theta_1shwr_unmatched,
+                                     TH1D * h_ele_pfp_theta_2shwr_nue_cc,
+                                     TH1D * h_ele_pfp_theta_2shwr_nue_cc_out_fv,
+                                     TH1D * h_ele_pfp_theta_2shwr_nue_cc_mixed,
+                                     TH1D * h_ele_pfp_theta_2shwr_numu_cc,
+                                     TH1D * h_ele_pfp_theta_2shwr_numu_cc_mixed,
+                                     TH1D * h_ele_pfp_theta_2shwr_nc,
+                                     TH1D * h_ele_pfp_theta_2shwr_nc_pi0,
+                                     TH1D * h_ele_pfp_theta_2shwr_cosmic,
+                                     TH1D * h_ele_pfp_theta_2shwr_other_mixed,
+                                     TH1D * h_ele_pfp_theta_2shwr_unmatched,
+                                     TH1D * h_ele_pfp_phi_1shwr_nue_cc,
+                                     TH1D * h_ele_pfp_phi_1shwr_nue_cc_out_fv,
+                                     TH1D * h_ele_pfp_phi_1shwr_nue_cc_mixed,
+                                     TH1D * h_ele_pfp_phi_1shwr_numu_cc,
+                                     TH1D * h_ele_pfp_phi_1shwr_numu_cc_mixed,
+                                     TH1D * h_ele_pfp_phi_1shwr_nc,
+                                     TH1D * h_ele_pfp_phi_1shwr_nc_pi0,
+                                     TH1D * h_ele_pfp_phi_1shwr_cosmic,
+                                     TH1D * h_ele_pfp_phi_1shwr_other_mixed,
+                                     TH1D * h_ele_pfp_phi_1shwr_unmatched,
+                                     TH1D * h_ele_pfp_phi_2shwr_nue_cc,
+                                     TH1D * h_ele_pfp_phi_2shwr_nue_cc_out_fv,
+                                     TH1D * h_ele_pfp_phi_2shwr_nue_cc_mixed,
+                                     TH1D * h_ele_pfp_phi_2shwr_numu_cc,
+                                     TH1D * h_ele_pfp_phi_2shwr_numu_cc_mixed,
+                                     TH1D * h_ele_pfp_phi_2shwr_nc,
+                                     TH1D * h_ele_pfp_phi_2shwr_nc_pi0,
+                                     TH1D * h_ele_pfp_phi_2shwr_cosmic,
+                                     TH1D * h_ele_pfp_phi_2shwr_other_mixed,
+                                     TH1D * h_ele_pfp_phi_2shwr_unmatched);
+//***************************************************************************
+//***************************************************************************
+void LeadingKinematicsShowerTopologyInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                           TH1D * h_ele_pfp_momentum_1shwr_intime,
+                                           TH1D * h_ele_pfp_momentum_2shwr_intime,
+                                           TH1D * h_ele_pfp_theta_1shwr_intime,
+                                           TH1D * h_ele_pfp_theta_2shwr_intime,
+                                           TH1D * h_ele_pfp_phi_1shwr_intime,
+                                           TH1D * h_ele_pfp_phi_2shwr_intime);
 //***************************************************************************
 //***************************************************************************
 };
