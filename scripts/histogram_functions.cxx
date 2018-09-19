@@ -533,7 +533,7 @@ void histogram_functions::PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_
 	//0.75,0.75,0.95,0.95
 	PlotSimpleStackInTime(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                      h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor, data_scale_factor,
-	                      0.75, 0.95, 0.75, 0.95,
+	                      0.80, 0.95, 0.75, 0.95,
 	                      title, x_axis_name, y_axis_name, print_name);
 }
 void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
@@ -544,12 +544,44 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 {
 	//default legend position
 	//0.75,0.75,0.95,0.95
+
+	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
 	                    h_data, data_scale_factor,
-	                    0.75, 0.95, 0.75, 0.95, false,
+	                    0.73, 0.98, 0.98, 0.50, false, 1.2,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
+void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
+                                               TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                               TH1 * h_data, const double data_scale_factor,
+                                               const double x_min, const double x_max, const double y_min, const double y_max, const bool logy,
+                                               const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	//default legend position
+	//0.75,0.75,0.95,0.95
+
+	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
+	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
+	                    h_data, data_scale_factor,
+	                    x_min, x_max, y_min, y_max, logy, 1.2,
+	                    title, x_axis_name, y_axis_name, print_name);
+}
+
+void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
+                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
+                                               TH1 * h_data, const double data_scale_factor, const double y_scale_factor,
+                                               const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
+	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
+	                    h_data, data_scale_factor,
+	                    0.73, 0.98, 0.98, 0.50, false, y_scale_factor,
+	                    title, x_axis_name, y_axis_name, print_name);
+}
+
 void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_photon, TH1 * h_pion,
                                                   TH1 * h_kaon, TH1 * h_muon, TH1 * h_neutron, TH1 * h_unmatched,
                                                   TH1 * h_unmatched_ext, const double intime_scale_factor, const double data_scale_factor,
@@ -696,16 +728,16 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_nue_cc,          "Nue CC",       "f");
-	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed", "f");
-	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV", "f");
-	leg_stack->AddEntry(h_cosmic,          "Cosmic",       "f");
-	leg_stack->AddEntry(h_numu_cc,         "Numu CC",      "f");
-	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed", "f");
-	leg_stack->AddEntry(h_nc,              "NC",           "f");
-	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",       "f");
-	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",     "f");
-	leg_stack->AddEntry(h_unmatched,       "Unmatched",    "f");
+	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",       "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed", "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC OutFV", "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",           "f");
+	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",     "f");
+	//leg_stack->AddEntry(h_numu_cc_mixed,   "Numu CC Mixed",  "f");
+	leg_stack->AddEntry(h_nc,              "NC",               "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",       "f");
+	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",         "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",        "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
 }
@@ -811,16 +843,25 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                               TH1 * h_data, const double data_scale_factor,
                                               const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2, const bool logy,
+                                              const double y_scale_factor,
                                               const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	TCanvas * c1 = new TCanvas(title, title, 500, 500);
 	c1->cd();
 
-	TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
-	TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
-	topPad->SetBottomMargin(0.08);
-	bottomPad->SetTopMargin(0.0);
-	bottomPad->SetBottomMargin(0.12);
+	//TPad *pad2 = new TPad("pad2", "pad2", 0, 0.3, 1, 1.0);
+	//TPad *pad2_2 = new TPad("pad2_2", "pad2_2", 0, 0.05, 1, 0.3);
+
+	//TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
+	//TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
+	TPad * topPad = new TPad("topPad", "", 0, 0.3, 1, 1.0);
+	TPad * bottomPad = new TPad("bottomPad", "", 0, 0.05, 1, 0.3);
+	//was 0.01
+	topPad->SetBottomMargin(0.05);
+	//bottomPad->SetTopMargin(0.0);
+	//bottomPad->SetBottomMargin(0.12);
+	bottomPad->SetTopMargin(0.04);
+	bottomPad->SetBottomMargin(0.25);
 	bottomPad->SetGridy();
 	topPad->Draw();
 	bottomPad->Draw();
@@ -854,7 +895,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	//h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	h_data->Sumw2();
+	//h_data->Sumw2();
 
 	TH1 * h_nue_cc_clone        = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
 	TH1 * h_nue_cc_mixed_clone  = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
@@ -865,7 +906,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	TH1 * h_nc_pi0_clone        = (TH1*)h_nc_pi0->Clone("h_nc_pi0_clone");
 	TH1 * h_other_mixed_clone   = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
 	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
-	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
+	TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
 
 	h_nue_cc_clone->Sumw2();
 	h_nue_cc_mixed_clone->Sumw2();
@@ -903,10 +944,12 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	stack->Add(h_intime_clone);
 
 	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
-	if(logy == false) {stack->SetMaximum(y_maximum * 1.2); }
+	stack->SetMaximum(y_maximum * y_scale_factor);
 
 	stack->Draw("hist");
-	stack->GetXaxis()->SetTitle(x_axis_name);
+	//stack->GetXaxis()->SetTitle(x_axis_name);
+	stack->GetYaxis()->SetTitle("Entries");
+	stack->GetXaxis()->SetLabelOffset(10);
 	h_data->Draw("same PE");
 
 	TH1 * h_error_hist = (TH1*)h_nue_cc_clone->Clone("h_error_hist");
@@ -926,24 +969,36 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
-	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
-	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV",  "f");
-	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
-	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
-	leg_stack->AddEntry(h_nc,              "NC",            "f");
-	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
-	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",      "f");
-	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "f");
-	leg_stack->AddEntry(h_intime,          "InTime",        "f");
+	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC OutFV",  "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",            "f");
+	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",      "f");
+	leg_stack->AddEntry(h_nc,              "NC",                "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
+	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
+	leg_stack->AddEntry(h_intime,          "InTime",            "f");
 	leg_stack->Draw();
 
-	//if(logy == true) {c1->SetLogy(); }
-	if(logy == true)
-	{
-		stack->GetYaxis()->SetRangeUser(1, y_maximum * 1.2);
-		topPad->SetLogy();
-	}
+	stack->GetYaxis()->SetRangeUser(1, y_maximum * 1.2);
+	if(logy == true) {topPad->SetLogy(); }
+
+	TH1 * h_last = (TH1*) stack->GetStack()->Last();
+	const double chi2 = Chi2Calc(h_last, h_data);
+	//std::cout << "*** Chi2: " << chi2 << " ***" << std::endl;
+
+	//0.73, 0.98, 0.98, 0.50
+	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
+	TPaveText * pt = new TPaveText(.40,.83,.73,1.08, "NBNDC");
+	std::ostringstream o_string;
+	o_string << chi2;
+	std::string convert_string = o_string.str();
+	std::string chi2_string = "#chi^{2}/NBins = " + convert_string;
+	pt->AddText(chi2_string.c_str());
+	pt->SetFillStyle(0);
+	pt->SetBorderSize(0);
+	pt->Draw();
 
 	bottomPad->cd();
 	TH1 * ratioPlot = (TH1*)h_data->Clone("ratioPlot");
@@ -970,12 +1025,52 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_mc_ext_sum->Add(h_unmatched_clone,     1);
 	h_mc_ext_sum->Add(h_intime_clone,        1);
 
+	ratioPlot->GetXaxis()->SetLabelSize(12);
+	ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetYaxis()->SetLabelSize(11);
+	ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetXaxis()->SetTitleOffset(3.6);
+	ratioPlot->GetXaxis()->SetTitleSize(15);
+	ratioPlot->GetXaxis()->SetTitleFont(43);
+
 	ratioPlot->Add(h_mc_ext_sum, -1);
 	ratioPlot->Divide(h_mc_ext_sum);
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
+	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
+	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
+	ratioPlot->GetYaxis()->SetTitleSize(11);
+	ratioPlot->GetYaxis()->SetTitleFont(43);
+	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
 
 	c1->Print(print_name);
+
+	delete h_nue_cc_clone;
+	delete h_nue_cc_mixed_clone;
+	delete h_nue_cc_out_fv_clone;
+	delete h_cosmic_clone;
+	delete h_numu_cc_clone;
+	delete h_nc_clone;
+	delete h_nc_pi0_clone;
+	delete h_other_mixed_clone;
+	delete h_unmatched_clone;
+	delete h_intime_clone;
+
+	delete h_error_hist;
+	delete h_last;
+
+	delete ratioPlot;
+	delete h_mc_ext_sum;
+
+	delete c1;
+	delete topPad;
+	delete bottomPad;
+
+	delete stack;
+	delete leg_stack;
+	delete pt;
+
 }
 
 void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
@@ -987,15 +1082,24 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	TCanvas * c1 = new TCanvas(title, title, 500, 500);
 	c1->cd();
 
-	TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
-	TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
-	topPad->SetBottomMargin(0.08);
-	bottomPad->SetTopMargin(0.0);
-	bottomPad->SetBottomMargin(0.12);
+	//TPad *pad2 = new TPad("pad2", "pad2", 0, 0.3, 1, 1.0);
+	//TPad *pad2_2 = new TPad("pad2_2", "pad2_2", 0, 0.05, 1, 0.3);
+
+	//TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
+	//TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
+	TPad * topPad = new TPad("topPad", "", 0, 0.3, 1, 1.0);
+	TPad * bottomPad = new TPad("bottomPad", "", 0, 0.05, 1, 0.3);
+	//was 0.01
+	topPad->SetBottomMargin(0.05);
+	//bottomPad->SetTopMargin(0.0);
+	//bottomPad->SetBottomMargin(0.12);
+	bottomPad->SetTopMargin(0.04);
+	bottomPad->SetBottomMargin(0.25);
 	bottomPad->SetGridy();
 	topPad->Draw();
 	bottomPad->Draw();
 	topPad->cd();
+
 
 	THStack * stack = new THStack();
 	h_nue_cc->SetStats(kFALSE);
@@ -1038,8 +1142,8 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	// TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
 	// TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
 
-	double new_bins [7] = {0.0, 0.15, 0.30, 0.5, 1.0, 1.5, 4.0};
-	const double num_bins = 6;
+	double new_bins [8] = {0.0, 0.20, 0.40, 0.6, 0.8, 1.0, 1.25, 4.0};
+	const double num_bins = 7;
 
 	TH1 * h_nue_cc_rebin        = (TH1*)h_nue_cc->Rebin(num_bins, "h_nue_cc_rebin", new_bins);
 	TH1 * h_nue_cc_mixed_rebin  = (TH1*)h_nue_cc_mixed->Rebin(num_bins, "h_nue_cc_mixed_rebin", new_bins);
@@ -1091,7 +1195,9 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	stack->SetMaximum(y_maximum * 1.2);
 
 	stack->Draw("hist");
-	stack->GetXaxis()->SetTitle(x_axis_name);
+	//stack->GetYaxis()->SetTitle(y_axis_name);
+	stack->GetYaxis()->SetTitle("Entries");
+	stack->GetXaxis()->SetLabelOffset(10);
 	h_data_rebin->Draw("same PE");
 
 	TH1 * h_error_hist = (TH1*)h_nue_cc_rebin->Clone("h_error_hist");
@@ -1109,18 +1215,18 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	h_error_hist->Draw("e2 hist same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
+	TLegend * leg_stack = new TLegend(0.73, 0.98, 0.98, 0.50);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_nue_cc,          "Nue CC",        "f");
-	leg_stack->AddEntry(h_nue_cc_mixed,    "Nue CC Mixed",  "f");
-	leg_stack->AddEntry(h_nue_cc_out_fv,   "Nue CC OutFV",  "f");
-	leg_stack->AddEntry(h_cosmic,          "Cosmic",        "f");
-	leg_stack->AddEntry(h_numu_cc,         "Numu CC",       "f");
-	leg_stack->AddEntry(h_nc,              "NC",            "f");
-	leg_stack->AddEntry(h_nc_pi0,          "NC Pi0",        "f");
-	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",      "f");
-	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "f");
-	leg_stack->AddEntry(h_intime,          "InTime",        "f");
+	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");
+	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC OutFV",  "f");
+	leg_stack->AddEntry(h_cosmic,          "Cosmic",            "f");
+	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",      "f");
+	leg_stack->AddEntry(h_nc,              "NC",                "f");
+	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
+	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
+	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
+	leg_stack->AddEntry(h_intime,          "InTime",            "f");
 	leg_stack->Draw();
 
 	bottomPad->cd();
@@ -1148,9 +1254,23 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	h_mc_ext_sum->Add(h_unmatched_rebin,     1);
 	h_mc_ext_sum->Add(h_intime_rebin,        1);
 
+	ratioPlot->GetXaxis()->SetLabelSize(12);
+	ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetYaxis()->SetLabelSize(11);
+	ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetXaxis()->SetTitleOffset(3.6);
+	ratioPlot->GetXaxis()->SetTitleSize(15);
+	ratioPlot->GetXaxis()->SetTitleFont(43);
+
 	ratioPlot->Add(h_mc_ext_sum, -1);
 	ratioPlot->Divide(h_mc_ext_sum);
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
+	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
+	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
+	ratioPlot->GetYaxis()->SetTitleSize(11);
+	ratioPlot->GetYaxis()->SetTitleFont(43);
+	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
 
 	c1->Print(print_name);
@@ -1793,4 +1913,31 @@ void histogram_functions::OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, T
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",     "p");
 	leg_stack->Draw();
 	c1->Print(print_name);
+}
+
+const double histogram_functions::Chi2Calc(TH1 * h_mc_ext, TH1 * h_data){
+	const int n_bins = h_mc_ext->GetNbinsX();
+
+	const double f_1 = h_mc_ext->Integral();
+	const double f_2 = h_data->Integral();
+
+	//area normalised?
+	h_mc_ext->Scale(f_1/f_2);
+	//h_data->Scale(1./f_2);
+	//h_mc_ext->Scale(1./f_2);
+
+	double chi2 = 0;
+	for( int i = 1; i < n_bins; i++)
+	{
+		const double n_mc_ext = h_mc_ext->GetBinContent(i);
+		const double n_data   = h_data->GetBinContent(i);
+		//N_BNB[ii]*=fac1/fac2;
+
+		//don't calculate chi2 for bins where no comparison possible
+		if(n_data == 0 || n_mc_ext == 0) { continue; }
+
+		chi2 += (pow((n_mc_ext - n_data),2) / n_mc_ext);
+	}
+	chi2 = chi2 / n_bins;
+	return chi2;
 }
