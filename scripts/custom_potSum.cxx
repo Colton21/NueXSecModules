@@ -13,11 +13,11 @@ int main(int argc, char * argv[])
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; return 1; }
 	TTree * mytree = (TTree*)f->Get("AnalyzeTPCO/pot_tree");
+        TTree * pot_tree2 = (TTree*)f->Get("AnalyzeTPCO/pottree");
 
 	double pot_sum = 0;
 	double pot;
 	mytree->SetBranchAddress("pot", &pot);
-
 
 	for(int i = 0; i < mytree->GetEntries(); i++)
 	{
@@ -26,6 +26,17 @@ int main(int argc, char * argv[])
 		pot_sum = pot_sum + pot;
 	}
 
-	std::cout << "Total POT: " << pot_sum << std::endl;
+	double pot_sum2 = 0;
+	double pot2;
+	pot_tree2->SetBranchAddress("pot", &pot2);
+
+	for(int i = 0; i < pot_tree2->GetEntries(); i++)
+	{
+		pot_tree2->GetEntry(i);
+		pot_sum2 += pot2;
+	}
+
+	std::cout << "Total POT (Method 1): " << pot_sum  << std::endl;
+	std::cout << "Total POT (Method 2): " << pot_sum2 << std::endl;
 	return 0;
 }
