@@ -3777,25 +3777,25 @@ void selection::make_selection( const char * _file1,
 
 	//duplicate test here
 	//first need to sort by the run number
-	std::sort(begin(duplicate_test), end(duplicate_test), [](std::tuple<int, int, int> const &t1, std::tuple<int,int,int> const &t2) {
-			return std::get<0>(t1) < std::get<0>(t2);
-		});
-
-	std::tuple<int, int, int> last_tuple (0,0,0);
-	for(auto const tuple : duplicate_test)
-	{
-		if(std::get<0>(tuple) == std::get<0>(last_tuple))
-		{
-			if(std::get<1>(tuple) == std::get<1>(last_tuple))
-			{
-				if(std::get<2>(tuple) == std::get<2>(last_tuple))
-				{
-					std::cout << "Duplicate Events at Num: " << std::get<0>(tuple) << ", " << std::get<1>(tuple) << ", " << std::get<2>(tuple) << std::endl;
-				}
-			}
-		}
-		last_tuple = tuple;
-	}
+	// std::sort(begin(duplicate_test), end(duplicate_test), [](std::tuple<int, int, int> const &t1, std::tuple<int,int,int> const &t2) {
+	//              return std::get<0>(t1) < std::get<0>(t2);
+	//      });
+	//
+	// std::tuple<int, int, int> last_tuple (0,0,0);
+	// for(auto const tuple : duplicate_test)
+	// {
+	//      if(std::get<0>(tuple) == std::get<0>(last_tuple))
+	//      {
+	//              if(std::get<1>(tuple) == std::get<1>(last_tuple))
+	//              {
+	//                      if(std::get<2>(tuple) == std::get<2>(last_tuple))
+	//                      {
+	//                              std::cout << "Duplicate Events at Num: " << std::get<0>(tuple) << ", " << std::get<1>(tuple) << ", " << std::get<2>(tuple) << std::endl;
+	//                      }
+	//              }
+	//      }
+	//      last_tuple = tuple;
+	// }
 
 	//we also want some metrics to print at the end
 	//*************************************************************************************************************************
