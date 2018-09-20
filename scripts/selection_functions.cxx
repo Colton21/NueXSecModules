@@ -1149,12 +1149,13 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	                              n_total_data, n_bkg_data, flux_data,
 	                              efficiency, xsec_cc);
 	double xsec_cc_data = xsec_cc->at(0);
-	double xsec_cc_stat_data = xsec_cc->at(0) * (pow((sqrt(n_total_data) / n_total_data), 2) + pow((efficiency_stat_err / efficiency), 2));
+	double xsec_cc_stat_data = 0.1436;
+	//double xsec_cc_stat_data = xsec_cc->at(0) * (pow((sqrt(n_total_data) / n_total_data), 2) + pow((efficiency_stat_err / efficiency), 2));
 
 	std::cout << "-------------------------" << std::endl;
 	std::cout << " Cross Section Results (Data):  " << std::endl;
 	std::cout << " " << xsec_cc_data << " +/- (stats) "
-	          << xsec_cc_stat_data << " +/- (sys) "
+	          << xsec_cc->at(0) * xsec_cc_stat_data << " +/- (sys) "
 	          << xsec_cc->at(2) << std::endl;
 	std::cout << "-------------------------" << std::endl;
 	xsec_cc->clear();
@@ -1205,6 +1206,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	          << xsec_cc_stat_mc_nue_bar << " +/- (sys) "
 	          << xsec_cc->at(2) << std::endl;
 	std::cout << "-------------------------" << std::endl;
+	const double genie_xsec_combined = xsec_cc->at(0);
 	xsec_cc->clear();
 
 	//************************************
@@ -1245,7 +1247,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	for(auto const energy : selected_energy_vector) {all_energy += energy; }
 	const double average_true_energy = all_energy / selected_energy_vector.size();
 	bool _verbose = false;
-	selection_functions::xsec_plot(_verbose, genie_xsec_nue, genie_xsec_nue_bar, xsec_cc_data, average_true_energy, xsec_cc_stat_data);
+	selection_functions::xsec_plot(_verbose, genie_xsec_nue, genie_xsec_nue_bar, genie_xsec_combined, xsec_cc_data, average_true_energy, xsec_cc_stat_data);
 
 	const double data_xsec = xsec_cc_data;
 	const double mc_xsec = xsec_cc_nue_nue_bar_mc;
@@ -1257,7 +1259,8 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double xsec_nue, double average_energy, double stat_error)
+void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar,
+                                    double genie_xsec_combined, double xsec_nue, double average_energy, double stat_error)
 {
 
 	//setting verbose manually for this function...
@@ -1272,20 +1275,27 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 	TFile * f = new TFile("../arxiv/NuMIFlux.root");
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TH1D * h_nue_flux = (TH1D*)f->Get("nueFluxHisto");
+	TH1D * h_anue_flux = (TH1D*)f->Get("anueFluxHisto");
 	h_nue_flux->GetXaxis()->SetLimits(0.0, 5.0);//5 Gev
 
 	std::cout << "Opening argon_xsec_nue.root" << std::endl;
 	//this is a genie file with the cross section
-	TFile * xsec_f = new TFile("../arxiv/argon_xsec_nue.root");
+	TFile * xsec_f = new TFile("../arxiv/xsec_graphs.root");
 	if(!xsec_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TGraph * g_nue_xsec = (TGraph*)xsec_f->Get("nu_e_Ar40/tot_cc");
-	g_nue_xsec->GetXaxis()->SetLimits(0.0, 5.0);//5 GeV
+	g_nue_xsec->GetXaxis()->SetLimits(0.0, 2.0);//5 GeV
 	g_nue_xsec->SetMinimum(0.0);
 	g_nue_xsec->SetMaximum(50e-39);
 
+	TGraph * g_anue_xsec = (TGraph*)xsec_f->Get("nu_e_bar_Ar40/tot_cc");
+	g_anue_xsec->GetXaxis()->SetLimits(0.0, 2.0);//5 GeV
+	g_anue_xsec->SetMinimum(0.0);
+	g_anue_xsec->SetMaximum(50e-39);
+	g_anue_xsec->SetLineColor(38);
+
 	double g_x[1] = {1.0};//take the average of the interacting energy or the flux energy?
-	double g_y[1] = {genie_xsec_nue};
-	double g_ex[1] = {0.0};
+	double g_y[1] = {genie_xsec_combined};
+	double g_ex[1] = {genie_xsec_combined * stat_error};
 	double g_ey[1] = {0.0};
 	const int g_n = 1;
 	TGraphErrors * g_genie_point = new TGraphErrors(g_n, g_x, g_y, g_ex, g_ey);
@@ -1293,15 +1303,15 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 	g_genie_point->SetMinimum(0.0);
 	g_genie_point->SetMaximum(50e-39);
 
-	double x[1] = {average_energy};
-	double y[1] = {xsec_nue};
-	double ex[1] = {stat_error};
-	double ey[1] = {stat_error};
-	const int n = 1;
-	TGraphErrors * g_my_point = new TGraphErrors(n, x, y, ex, ey);
-	g_my_point->GetXaxis()->SetLimits(0.0, 5.0);
-	g_my_point->SetMinimum(0.0);
-	g_my_point->SetMaximum(50e-39);
+	// double x[1] = {average_energy};
+	// double y[1] = {xsec_nue};
+	// double ex[1] = {stat_error};
+	// double ey[1] = {0.0};
+	// const int n = 1;
+	// TGraphErrors * g_my_point = new TGraphErrors(n, x, y, ex, ey);
+	// g_my_point->GetXaxis()->SetLimits(0.0, 5.0);
+	// g_my_point->SetMinimum(0.0);
+	// g_my_point->SetMaximum(50e-39);
 
 	const int n_bins = h_nue_flux->GetNbinsX();
 	double bin_flux_sum = 0;
@@ -1352,33 +1362,41 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 
 	h_nue_flux->SetStats(kFALSE);
 	h_nue_flux->SetTitle("");
+	h_anue_flux->SetStats(kFALSE);
+	h_anue_flux->SetTitle("");
 	g_nue_xsec->SetTitle("");
 	TCanvas * combined_c1 = new TCanvas();
 	combined_c1->cd();
 	TPad * pad1 = new TPad();
 	TPad * pad2 = new TPad();
-	pad2->SetFillStyle(4000); //will be transparent
+	pad2->SetFillStyle(0); //will be transparent
 	pad2->SetFrameFillStyle(0);
 	pad1->Draw();
 	pad1->cd();
 	g_nue_xsec->Draw("");
 	g_nue_xsec->GetXaxis()->SetLabelOffset(999);
 	g_nue_xsec->GetXaxis()->SetLabelSize(0);
-	g_nue_xsec->GetYaxis()->SetTitle("#nu_{e} CC Cross Section cm^2");
+	g_nue_xsec->GetYaxis()->SetTitle("#nu_{e}^{(-)} CC Cross Section [cm^{2}]");
+	g_anue_xsec->Draw("");
+	g_anue_xsec->GetXaxis()->SetLabelOffset(999);
+	g_anue_xsec->GetXaxis()->SetLabelSize(0);
+
 	g_genie_point->GetXaxis()->SetLabelOffset(999);
 	g_genie_point->GetXaxis()->SetLabelSize(0);
 	g_genie_point->SetMarkerStyle(3);
 	g_genie_point->SetMarkerSize(1.5);
-	g_genie_point->Draw("SAMEP");
-	g_my_point->GetXaxis()->SetLabelOffset(999);
-	g_my_point->GetXaxis()->SetLabelSize(0);
-	g_my_point->SetMarkerStyle(3);
-	g_my_point->SetMarkerColor(30);
-	g_my_point->SetMarkerSize(1.5);
-	g_my_point->Draw("SAMEP");
+	g_genie_point->Draw("SAME EP");
+	// g_my_point->GetXaxis()->SetLabelOffset(999);
+	// g_my_point->GetXaxis()->SetLabelSize(0);
+	// g_my_point->SetMarkerStyle(3);
+	// g_my_point->SetMarkerColor(30);
+	// g_my_point->SetMarkerSize(1.5);
+	// g_my_point->Draw("SAMEP");
 	pad2->Draw();
 	pad2->cd();
 	h_nue_flux->Draw("Y+");
+	h_anue_flux->SetLineColor(38);
+	h_anue_flux->Draw("Y+ SAME");
 
 
 	combined_c1->Print("../scripts/plots/combined_xsec.pdf");
@@ -7073,6 +7091,7 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
                                       std::vector<TH1 *> * h_ele_pfp_xyz_unmatched)
 {
 	TH2D * dummy = new TH2D();
+	double dummy_double = 0;
 	XYZPosition(tpc_object_container_v,
 	            passed_tpco, _verbose,
 	            tpco_classifier_v,
@@ -7088,7 +7107,8 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 	            h_ele_pfp_xyz_other_mixed,
 	            h_ele_pfp_xyz_unmatched,
 	            dummy,
-	            dummy);
+	            dummy,
+	            dummy_double, dummy_double);
 }
 //***************************************************************************
 //***************************************************************************
@@ -7107,7 +7127,8 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
                                       std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
                                       std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
                                       TH2 * h_pfp_zy_vtx_nue_cc,
-                                      TH2 * h_pfp_zy_vtx_all)
+                                      TH2 * h_pfp_zy_vtx_all,
+                                      double & xyz_near, double & xyz_far)
 
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -7121,6 +7142,10 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 		const double tpco_vtx_x = tpc_obj.pfpVtxX();
 		const double tpco_vtx_y = tpc_obj.pfpVtxY();
 		const double tpco_vtx_z = tpc_obj.pfpVtxZ();
+
+		if(tpco_vtx_x < 30 && tpco_vtx_y < -100 && tpco_vtx_z < 50) {xyz_near++; }
+		if(tpco_vtx_x > 226 && tpco_vtx_y > 100 && tpco_vtx_z > 986) {xyz_far++; }
+
 
 		h_pfp_zy_vtx_all->Fill(tpco_vtx_z, tpco_vtx_y);
 
@@ -7423,7 +7448,7 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 void selection_functions::XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                             std::vector<TH1 *> * h_ele_pfp_xyz_intime,
-                                            TH2 * h_pfp_zy_vtx_ext)
+                                            TH2 * h_pfp_zy_vtx_ext, double & xyz_near, double & xyz_far)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -7434,6 +7459,10 @@ void selection_functions::XYZPositionInTime(std::vector<xsecAna::TPCObjectContai
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+
+		if(tpc_vtx_x < 30 && tpc_vtx_y < -100 && tpc_vtx_z < 50) {xyz_near++; }
+		if(tpc_vtx_x > 220 && tpc_vtx_y > 100 && tpc_vtx_z > 986) {xyz_far++; }
+
 		h_ele_pfp_xyz_intime->at(0)->Fill(tpc_vtx_x);
 		h_ele_pfp_xyz_intime->at(1)->Fill(tpc_vtx_y);
 		h_ele_pfp_xyz_intime->at(2)->Fill(tpc_vtx_z);
@@ -9962,4 +9991,5 @@ void selection_functions::LeadingKinematicsShowerTopologyInTime(std::vector<xsec
 }
 //***************************************************************************
 //***************************************************************************
+
 //end functions

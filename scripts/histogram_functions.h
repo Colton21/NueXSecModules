@@ -18,6 +18,7 @@
 #include "TMarker.h"
 #include "TLine.h"
 #include "TPaveText.h"
+#include "TMath.h"
 
 #include <iostream>
 #include <string>
@@ -34,6 +35,21 @@ static void Plot1DHistogramGausFit (TH1 * histogram, const char * x_axis_name, c
 static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name);
 static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool rebin, const char * title, const char * print_name);
 static void PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name);
+static void PlotTEfficiencyOverlay(TH1 *h_num,
+                                   TH1 * h_nue_eng_eff_reco_nue,
+                                   TH1 * h_nue_eng_eff_in_fv,
+                                   TH1 * h_nue_eng_eff_vtx_flash,
+                                   TH1 * h_nue_eng_eff_shwr_vtx,
+                                   TH1 * h_nue_eng_eff_trk_vtx,
+                                   TH1 * h_nue_eng_eff_hit,
+                                   TH1 * h_nue_eng_eff_yhit,
+                                   TH1 * h_nue_eng_eff_open_angle,
+                                   TH1 * h_nue_eng_eff_dedx,
+                                   TH1 * h_nue_eng_eff_2shwr,
+                                   TH1 * h_nue_eng_eff_hit_len,
+                                   TH1 * h_nue_eng_eff_trk_shwr,
+                                   TH1 * h_nue_eng_eff_contain,
+                                   TH1 *h_den, const bool rebin, const char * title, const char * print_name);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
                              const char * draw_option);
@@ -189,7 +205,7 @@ static void PlotdEdxTheta(
         const char * print_name1, const char * print_name2, const char * print_name3
         );
 
-static const double Chi2Calc(TH1 * h_mc_ext, TH1 * h_data);
+static std::vector<double> Chi2Calc(TH1 * h_mc_ext, TH1 * h_data);
 
 };
 #endif

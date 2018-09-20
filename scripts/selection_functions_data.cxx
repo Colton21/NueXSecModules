@@ -960,7 +960,7 @@ void selection_functions_data::FailureReasonData(std::vector<xsecAna::TPCObjectC
 void selection_functions_data::XYZPositionData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                std::vector<TH1 * > * h_ele_pfp_xyz_data,
-                                               TH2 * h_pfp_zy_vtx_data)
+                                               TH2 * h_pfp_zy_vtx_data, double & xyz_near, double & xyz_far)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -970,6 +970,10 @@ void selection_functions_data::XYZPositionData(std::vector<xsecAna::TPCObjectCon
 		const double tpc_vtx_x = tpc_obj.pfpVtxX();
 		const double tpc_vtx_y = tpc_obj.pfpVtxY();
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
+
+		if(tpc_vtx_x < 30 && tpc_vtx_y < -100 && tpc_vtx_z < 50) {xyz_near++; }
+		if(tpc_vtx_x > 220 && tpc_vtx_y > 100 && tpc_vtx_z > 986) {xyz_far++; }
+
 		h_ele_pfp_xyz_data->at(0)->Fill(tpc_vtx_x);
 		h_ele_pfp_xyz_data->at(1)->Fill(tpc_vtx_y);
 		h_ele_pfp_xyz_data->at(2)->Fill(tpc_vtx_z);

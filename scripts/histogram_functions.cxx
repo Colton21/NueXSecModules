@@ -51,11 +51,11 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->SetMarkerSize(0.5);
 		teff->Draw("AP");
 		std::cout << "----------" << std::endl;
-		for(int i = 1; i < h_num_clone_rebin->GetNbinsX()+1; i++)
-		{
-			std::cout << "Bin: " << i << " Value: " << h_num_clone_rebin->GetBinContent(i) / h_den_clone_rebin->GetBinContent(i) << std::endl;
-		}
-		std::cout << "----------" << std::endl;
+		// for(int i = 1; i < h_num_clone_rebin->GetNbinsX()+1; i++)
+		// {
+		//      std::cout << "Bin: " << i << " Value: " << h_num_clone_rebin->GetBinContent(i) / h_den_clone_rebin->GetBinContent(i) << std::endl;
+		// }
+		// std::cout << "----------" << std::endl;
 
 	}
 	if(!rebin)
@@ -78,6 +78,149 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 	}
 	efficiency_c1->Print(print_name);
 	std::cout << "Print Name: " << print_name << std::endl;
+}
+void histogram_functions::PlotTEfficiencyOverlay(TH1 *h_num,
+                                                 TH1 * h_reco_nue,
+                                                 TH1 * h_in_fv,
+                                                 TH1 * h_vtx_flash,
+                                                 TH1 * h_shwr_vtx,
+                                                 TH1 * h_trk_vtx,
+                                                 TH1 * h_hit,
+                                                 TH1 * h_yhit,
+                                                 TH1 * h_open_angle,
+                                                 TH1 * h_dedx,
+                                                 TH1 * h_2shwr,
+                                                 TH1 * h_hit_len,
+                                                 TH1 * h_trk_shwr,
+                                                 TH1 * h_contain,
+                                                 TH1 *h_den, const bool rebin, const char * title, const char * print_name)
+{
+	TCanvas * efficiency_c1 = new TCanvas();
+	efficiency_c1->cd();
+	TH1 * h_num_clone                    = (TH1*)h_num->Clone("h_num_clone");
+	TH1 * h_nue_eng_eff_reco_nue_clone   = (TH1*)h_reco_nue->Clone("h_reco_nue_clone");
+	TH1 * h_nue_eng_eff_in_fv_clone      = (TH1*)h_in_fv->Clone("h_in_fv_clone");
+	TH1 * h_nue_eng_eff_vtx_flash_clone  = (TH1*)h_vtx_flash->Clone("h_vtx_flash_clone");
+	TH1 * h_nue_eng_eff_shwr_vtx_clone   = (TH1*)h_shwr_vtx->Clone("h_shwr_vtx_clone");
+	TH1 * h_nue_eng_eff_trk_vtx_clone    = (TH1*)h_trk_vtx->Clone("h_trk_vtx_clone");
+	TH1 * h_nue_eng_eff_hit_clone        = (TH1*)h_hit->Clone("h_hit_clone");
+	TH1 * h_nue_eng_eff_yhit_clone       = (TH1*)h_yhit->Clone("h_yhit_clone");
+	TH1 * h_nue_eng_eff_open_angle_clone = (TH1*)h_open_angle->Clone("h_open_angle_clone");
+	TH1 * h_nue_eng_eff_dedx_clone       = (TH1*)h_dedx->Clone("h_dedx_clone");
+	TH1 * h_nue_eng_eff_2shwr_clone      = (TH1*)h_2shwr->Clone("h_2shwr_clone");
+	TH1 * h_nue_eng_eff_hit_len_clone    = (TH1*)h_hit_len->Clone("h_hit_len_clone");
+	TH1 * h_nue_eng_eff_trk_shwr_clone   = (TH1*)h_trk_shwr->Clone("h_trk_shwr_clone");
+	TH1 * h_nue_eng_eff_contain_clone    = (TH1*)h_contain->Clone("h_contain_clone");
+	TH1 * h_den_clone                    = (TH1*)h_den->Clone("h_den_clone");
+
+	if(rebin)
+	{
+		double new_bins [7] = {0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 4.0};
+		TH1* h_num_clone_rebin = (TH1*)h_num_clone->Rebin(6, "h_num_clone_rebin", new_bins);
+		TH1* h_den_clone_rebin = (TH1*)h_den_clone->Rebin(6, "h_num_clone_rebin", new_bins);
+		TH1 * h_nue_eng_eff_reco_nue_clone_rebin   = (TH1*)h_nue_eng_eff_reco_nue_clone->Rebin(6,   "h_nue_eng_eff_reco_nue_clone_rebin",   new_bins);
+		TH1 * h_nue_eng_eff_in_fv_clone_rebin      = (TH1*)h_nue_eng_eff_in_fv_clone->Rebin(6,      "h_nue_eng_eff_in_fv_clone_rebin",      new_bins);
+		TH1 * h_nue_eng_eff_vtx_flash_clone_rebin  = (TH1*)h_nue_eng_eff_vtx_flash_clone->Rebin(6,  "h_nue_eng_eff_vtx_flash_clone_rebin",  new_bins);
+		TH1 * h_nue_eng_eff_shwr_vtx_clone_rebin   = (TH1*)h_nue_eng_eff_shwr_vtx_clone->Rebin(6,   "h_nue_eng_eff_shwr_vtx_clone_rebin",   new_bins);
+		TH1 * h_nue_eng_eff_trk_vtx_clone_rebin    = (TH1*)h_nue_eng_eff_trk_vtx_clone->Rebin(6,    "h_nue_eng_eff_trk_vtx_clone_rebin",    new_bins);
+		TH1 * h_nue_eng_eff_hit_clone_rebin        = (TH1*)h_nue_eng_eff_hit_clone->Rebin(6,        "h_nue_eng_eff_hit_clone_rebin",        new_bins);
+		TH1 * h_nue_eng_eff_yhit_clone_rebin       = (TH1*)h_nue_eng_eff_yhit_clone->Rebin(6,       "h_nue_eng_eff_yhit_clone_rebin",       new_bins);
+		TH1 * h_nue_eng_eff_open_angle_clone_rebin = (TH1*)h_nue_eng_eff_open_angle_clone->Rebin(6, "h_nue_eng_eff_open_angle_clone_rebin", new_bins);
+		TH1 * h_nue_eng_eff_dedx_clone_rebin       = (TH1*)h_nue_eng_eff_dedx_clone->Rebin(6,       "h_nue_eng_eff_dedx_clone_rebin",       new_bins);
+		TH1 * h_nue_eng_eff_2shwr_clone_rebin      = (TH1*)h_nue_eng_eff_2shwr_clone->Rebin(6,      "h_nue_eng_eff_2shwr_clone_rebin",      new_bins);
+		TH1 * h_nue_eng_eff_hit_len_clone_rebin    = (TH1*)h_nue_eng_eff_hit_len_clone->Rebin(6,    "h_nue_eng_eff_hit_len_clone_rebin",    new_bins);
+		TH1 * h_nue_eng_eff_trk_shwr_clone_rebin   = (TH1*)h_nue_eng_eff_trk_shwr_clone->Rebin(6,   "h_nue_eng_eff_trk_shwr_clone_rebin",   new_bins);
+		TH1 * h_nue_eng_eff_contain_clone_rebin    = (TH1*)h_nue_eng_eff_contain_clone->Rebin(6,    "h_nue_eng_eff_contain_clone_rebin",    new_bins);
+
+
+		TEfficiency * teff            = new TEfficiency(*h_num_clone_rebin,                     *h_den_clone_rebin);
+		TEfficiency * teff_reco_nue   = new TEfficiency(*h_nue_eng_eff_reco_nue_clone_rebin,    *h_den_clone_rebin);
+		TEfficiency * teff_in_fv      = new TEfficiency(*h_nue_eng_eff_in_fv_clone_rebin,       *h_den_clone_rebin);
+		TEfficiency * teff_vtx_flash  = new TEfficiency(*h_nue_eng_eff_vtx_flash_clone_rebin,   *h_den_clone_rebin);
+		TEfficiency * teff_shwr_vtx   = new TEfficiency(*h_nue_eng_eff_shwr_vtx_clone_rebin,    *h_den_clone_rebin);
+		TEfficiency * teff_trk_vtx    = new TEfficiency(*h_nue_eng_eff_trk_vtx_clone_rebin,     *h_den_clone_rebin);
+		TEfficiency * teff_hit        = new TEfficiency(*h_nue_eng_eff_hit_clone_rebin,         *h_den_clone_rebin);
+		TEfficiency * teff_yhit       = new TEfficiency(*h_nue_eng_eff_yhit_clone_rebin,        *h_den_clone_rebin);
+		TEfficiency * teff_open_angle = new TEfficiency(*h_nue_eng_eff_open_angle_clone_rebin,  *h_den_clone_rebin);
+		TEfficiency * teff_dedx       = new TEfficiency(*h_nue_eng_eff_dedx_clone_rebin,        *h_den_clone_rebin);
+		TEfficiency * teff_2shwr      = new TEfficiency(*h_nue_eng_eff_2shwr_clone_rebin,       *h_den_clone_rebin);
+		TEfficiency * teff_hit_len    = new TEfficiency(*h_nue_eng_eff_hit_len_clone_rebin,     *h_den_clone_rebin);
+		TEfficiency * teff_trk_shwr   = new TEfficiency(*h_nue_eng_eff_trk_shwr_clone_rebin,    *h_den_clone_rebin);
+		TEfficiency * teff_contain    = new TEfficiency(*h_nue_eng_eff_contain_clone_rebin,     *h_den_clone_rebin);
+
+		teff->SetTitle(title);
+		//teff->SetLineColor(kGreen+3);
+		//teff->SetMarkerColor(kGreen+3);
+		teff->SetMarkerStyle(20);
+		teff->SetMarkerSize(0.5);
+		teff_reco_nue->SetMarkerStyle(20);
+		teff_in_fv->SetMarkerStyle(20);
+		teff_vtx_flash->SetMarkerStyle(20);
+		teff_shwr_vtx->SetMarkerStyle(20);
+		teff_trk_vtx->SetMarkerStyle(20);
+		teff_hit->SetMarkerStyle(20);
+		teff_yhit->SetMarkerStyle(20);
+		teff_open_angle->SetMarkerStyle(20);
+		teff_dedx->SetMarkerStyle(20);
+		teff_2shwr->SetMarkerStyle(20);
+		teff_hit_len->SetMarkerStyle(20);
+		teff_trk_shwr->SetMarkerStyle(20);
+		teff_contain->SetMarkerStyle(20);
+		teff_reco_nue->SetMarkerSize(0.5);
+		teff_in_fv->SetMarkerSize(0.5);
+		teff_vtx_flash->SetMarkerSize(0.5);
+		teff_shwr_vtx->SetMarkerSize(0.5);
+		teff_trk_vtx->SetMarkerSize(0.5);
+		teff_hit->SetMarkerSize(0.5);
+		teff_yhit->SetMarkerSize(0.5);
+		teff_open_angle->SetMarkerSize(0.5);
+		teff_dedx->SetMarkerSize(0.5);
+		teff_2shwr->SetMarkerSize(0.5);
+		teff_hit_len->SetMarkerSize(0.5);
+		teff_trk_shwr->SetMarkerSize(0.5);
+		teff_contain->SetMarkerSize(0.5);
+		teff_reco_nue->SetMarkerColor(46);
+		teff_in_fv->SetMarkerColor(40);
+		teff_vtx_flash->SetMarkerColor(43);
+		teff_shwr_vtx->SetMarkerColor(9);
+		teff_trk_vtx->SetMarkerColor(34);
+		teff_hit->SetMarkerColor(8);
+		teff_yhit->SetMarkerColor(49);
+		teff_open_angle->SetMarkerColor(7);
+		teff_dedx->SetMarkerColor(6);
+		teff_2shwr->SetMarkerColor(41);
+		teff_hit_len->SetMarkerColor(38);
+		teff_trk_shwr->SetMarkerColor(12);
+		teff_contain->SetMarkerColor(30);
+		teff_reco_nue->SetLineColor(46);
+		teff_in_fv->SetLineColor(40);
+		teff_vtx_flash->SetLineColor(43);
+		teff_shwr_vtx->SetLineColor(9);
+		teff_trk_vtx->SetLineColor(34);
+		teff_hit->SetLineColor(8);
+		teff_yhit->SetLineColor(49);
+		teff_open_angle->SetLineColor(7);
+		teff_dedx->SetLineColor(6);
+		teff_2shwr->SetLineColor(41);
+		teff_hit_len->SetLineColor(38);
+		teff_trk_shwr->SetLineColor(12);
+		teff_contain->SetLineColor(30);
+		teff->Draw("AP");
+		teff_reco_nue->Draw("AP SAME");
+		teff_in_fv->Draw("AP SAME");
+		teff_vtx_flash->Draw("AP SAME");
+		teff_shwr_vtx->Draw("AP SAME");
+		teff_trk_vtx->Draw("AP SAME");
+		teff_hit->Draw("AP SAME");
+		teff_yhit->Draw("AP SAME");
+		teff_open_angle->Draw("AP SAME");
+		teff_dedx->Draw("AP SAME");
+		teff_2shwr->Draw("AP SAME");
+		teff_hit_len->Draw("AP SAME");
+		teff_trk_shwr->Draw("AP SAME");
+		teff_contain->Draw("AP SAME");
+	}
+	efficiency_c1->Print(print_name);
 }
 
 void histogram_functions::PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name)
@@ -549,7 +692,7 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
 	                    h_data, data_scale_factor,
-	                    0.73, 0.98, 0.98, 0.50, false, 1.2,
+	                    0.75, 0.98, 0.98, 0.50, false, 1.2,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
 void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
@@ -578,7 +721,7 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
 	                    h_data, data_scale_factor,
-	                    0.73, 0.98, 0.98, 0.50, false, y_scale_factor,
+	                    0.745, 0.98, 0.98, 0.50, false, y_scale_factor,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
 
@@ -985,20 +1128,58 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	if(logy == true) {topPad->SetLogy(); }
 
 	TH1 * h_last = (TH1*) stack->GetStack()->Last();
-	const double chi2 = Chi2Calc(h_last, h_data);
-	//std::cout << "*** Chi2: " << chi2 << " ***" << std::endl;
+	std::vector <double> chi2  = Chi2Calc(h_last, h_data);
+	//chi2 : chi2/ndf, mc+ext, data
 
-	//0.73, 0.98, 0.98, 0.50
-	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
-	TPaveText * pt = new TPaveText(.40,.83,.73,1.08, "NBNDC");
+	//x_min, y_min, x_max, y_max
+	//reduced chi2
+	TPaveText * pt = new TPaveText(.46,.80,.73,1.06, "NBNDC");
 	std::ostringstream o_string;
-	o_string << chi2;
+	o_string << float(chi2.at(0));
 	std::string convert_string = o_string.str();
-	std::string chi2_string = "#chi^{2}/NBins = " + convert_string;
+	std::string chi2_string = "#chi^{2}/DOF=" + convert_string;
 	pt->AddText(chi2_string.c_str());
 	pt->SetFillStyle(0);
 	pt->SetBorderSize(0);
 	pt->Draw();
+
+	//num events
+	TPaveText * pt2 = new TPaveText(.13,.80,.46,1.06, "NBNDC");
+	std::ostringstream o_string2a;
+	std::ostringstream o_string2b;
+	o_string2a << int(chi2.at(2));
+	o_string2b << int(chi2.at(1));
+	std::string convert_string2a = o_string2a.str();
+	std::string convert_string2b = o_string2b.str();
+	std::string chi2_string2 = "Data: " + convert_string2a + "|MC+EXT:" + convert_string2b;
+	pt2->AddText(chi2_string2.c_str());
+	pt2->SetFillStyle(0);
+	pt2->SetBorderSize(0);
+	pt2->Draw();
+
+	//num bins
+	TPaveText * pt3 = new TPaveText(.60,.80,.73,.975, "NBNDC");
+	std::ostringstream o_string3;
+	o_string3 << int(chi2.at(3));
+	std::string convert_string3 = o_string3.str();
+	std::string ndf_string = "DOF=" + convert_string3;
+	pt3->AddText(ndf_string.c_str());
+	pt3->SetFillStyle(0);
+	pt3->SetBorderSize(0);
+	pt3->Draw();
+
+	//p value
+	TPaveText * pt4 = new TPaveText(.45,.80,.60,.975, "NBNDC");
+	std::ostringstream o_string4;
+	o_string4.precision(4);
+	o_string4 << std::fixed;
+	o_string4 << chi2.at(4);
+	std::string convert_string4 = o_string4.str();
+	std::string p_string = "P=" + convert_string4;
+	pt4->AddText(p_string.c_str());
+	pt4->SetFillStyle(0);
+	pt4->SetBorderSize(0);
+	pt4->Draw();
 
 	bottomPad->cd();
 	TH1 * ratioPlot = (TH1*)h_data->Clone("ratioPlot");
@@ -1064,12 +1245,12 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	delete h_mc_ext_sum;
 
 	delete c1;
-	delete topPad;
-	delete bottomPad;
+	// delete topPad;
+	// delete bottomPad;
 
-	delete stack;
-	delete leg_stack;
-	delete pt;
+	//delete stack;
+	//delete leg_stack;
+	// delete pt;
 
 }
 
@@ -1191,7 +1372,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	stack->Add(h_unmatched_rebin);
 	stack->Add(h_intime_rebin);
 
-	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
+	const double y_maximum = std::max(h_data_rebin->GetMaximum(), stack->GetMaximum());
 	stack->SetMaximum(y_maximum * 1.2);
 
 	stack->Draw("hist");
@@ -1228,6 +1409,34 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
 	leg_stack->AddEntry(h_intime,          "InTime",            "f");
 	leg_stack->Draw();
+
+	TH1 * h_last = (TH1*) stack->GetStack()->Last();
+	std::vector <double> chi2  = Chi2Calc(h_last, h_data);
+	//chi2 : chi2/ndf, mc+ext, data
+
+	//x_min, y_min, x_max, y_max
+	TPaveText * pt = new TPaveText(.46,.83,.73,1.08, "NBNDC");
+	std::ostringstream o_string;
+	o_string << float(chi2.at(0));
+	std::string convert_string = o_string.str();
+	std::string chi2_string = "#chi^{2}/DOF=" + convert_string;
+	pt->AddText(chi2_string.c_str());
+	pt->SetFillStyle(0);
+	pt->SetBorderSize(0);
+	pt->Draw();
+
+	TPaveText * pt2 = new TPaveText(.12,.80,.46,1.08, "NBNDC");
+	std::ostringstream o_string2a;
+	std::ostringstream o_string2b;
+	o_string2a << int(chi2.at(2));
+	o_string2b << int(chi2.at(1));
+	std::string convert_string2a = o_string2a.str();
+	std::string convert_string2b = o_string2b.str();
+	std::string chi2_string2 = "Data: " + convert_string2a + "|MC+EXT:" + convert_string2b;
+	pt2->AddText(chi2_string2.c_str());
+	pt2->SetFillStyle(0);
+	pt2->SetBorderSize(0);
+	pt2->Draw();
 
 	bottomPad->cd();
 	TH1 * ratioPlot = (TH1*)h_data_rebin->Clone("ratioPlot");
@@ -1274,6 +1483,25 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	ratioPlot->Draw();
 
 	c1->Print(print_name);
+
+	delete h_nue_cc_rebin;
+	delete h_nue_cc_mixed_rebin;
+	delete h_nue_cc_out_fv_rebin;
+	delete h_cosmic_rebin;
+	delete h_numu_cc_rebin;
+	delete h_nc_rebin;
+	delete h_nc_pi0_rebin;
+	delete h_other_mixed_rebin;
+	delete h_unmatched_rebin;
+	delete h_intime_rebin;
+
+	delete h_error_hist;
+	delete h_last;
+
+	delete ratioPlot;
+	delete h_mc_ext_sum;
+
+	delete c1;
 }
 
 void histogram_functions::PlotdEdxTheta(
@@ -1915,29 +2143,48 @@ void histogram_functions::OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, T
 	c1->Print(print_name);
 }
 
-const double histogram_functions::Chi2Calc(TH1 * h_mc_ext, TH1 * h_data){
+std::vector <double> histogram_functions::Chi2Calc(TH1 * h_mc_ext, TH1 * h_data){
 	const int n_bins = h_mc_ext->GetNbinsX();
 
 	const double f_1 = h_mc_ext->Integral();
 	const double f_2 = h_data->Integral();
 
 	//area normalised?
-	h_mc_ext->Scale(f_1/f_2);
-	//h_data->Scale(1./f_2);
-	//h_mc_ext->Scale(1./f_2);
+	TH1 * h_mc_ext_clone = (TH1*)h_mc_ext->Clone("h_mc_ext_clone");
+	TH1 * h_data_clone = (TH1*)h_data->Clone("h_data_clone");
+	h_mc_ext_clone->Scale(f_2/f_1);
+	//h_data_clone->Scale(1./f_2);
 
-	double chi2 = 0;
+	std::vector <double> chi2;
+	double chi2_val = 0;
+	double n_mc_ext_val = 0;
+	double n_data_val = 0;
 	for( int i = 1; i < n_bins; i++)
 	{
-		const double n_mc_ext = h_mc_ext->GetBinContent(i);
-		const double n_data   = h_data->GetBinContent(i);
+		const double n_mc_ext = h_mc_ext_clone->GetBinContent(i);
+		const double n_data   = h_data_clone->GetBinContent(i);
 		//N_BNB[ii]*=fac1/fac2;
 
 		//don't calculate chi2 for bins where no comparison possible
 		if(n_data == 0 || n_mc_ext == 0) { continue; }
 
-		chi2 += (pow((n_mc_ext - n_data),2) / n_mc_ext);
+		//chi2_val += (pow((n_mc_ext - n_data),2) / n_mc_ext);
+		//chi2_val += (pow((n_data - n_mc_ext),2)) / (((n_data * f_2) / pow(f_2, 2)) + ((n_mc_ext * f_1) / pow(f_1, 2)));
+		chi2_val += 2 * (n_mc_ext - n_data + (n_data * TMath::Log(n_data/n_mc_ext)));
+
+		n_mc_ext_val += n_mc_ext;
+		n_data_val += n_data;
 	}
-	chi2 = chi2 / n_bins;
+	const double reduced_chi2 = chi2_val / (n_bins-1);
+	const double p = TMath::Prob(chi2_val, n_bins);
+
+	chi2.push_back(reduced_chi2);
+	//correct this value back to the un-normalised
+	//chi2.push_back(n_mc_ext_val * f_1);
+	//chi2.push_back(n_data_val * f_2);
+	chi2.push_back(n_mc_ext_val * (f_1 / f_2));
+	chi2.push_back(n_data_val);
+	chi2.push_back(n_bins);
+	chi2.push_back(p);
 	return chi2;
 }

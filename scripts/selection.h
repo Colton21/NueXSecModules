@@ -229,6 +229,21 @@ std::vector<int> tabulated_origins;
 //TEfficiency histograms
 TH1D * h_nue_eng_eff_den           = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 40, 0, 4);
 TH1D * h_nue_eng_eff_num           = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 40, 0, 4);
+
+TH1D * h_ele_eng_eff_reco_nue       = new TH1D ("h_ele_eng_eff_reco_nue",       "h_ele_eng_eff_reco_nue",   40, 0, 4);
+TH1D * h_ele_eng_eff_in_fv          = new TH1D ("h_ele_eng_eff_in_fv",          "h_ele_eng_eff_in_fv",      40, 0, 4);
+TH1D * h_ele_eng_eff_vtx_flash      = new TH1D ("h_ele_eng_eff_vtx_flash",      "h_ele_eng_eff_vtx_flash",  40, 0, 4);
+TH1D * h_ele_eng_eff_shwr_vtx       = new TH1D ("h_ele_eng_eff_shwr_vtx",       "h_ele_eng_eff_shwr_vtx",   40, 0, 4);
+TH1D * h_ele_eng_eff_trk_vtx        = new TH1D ("h_ele_eng_eff_trk_vtx",        "h_ele_eng_eff_trk_vtx",    40, 0, 4);
+TH1D * h_ele_eng_eff_hit            = new TH1D ("h_ele_eng_eff_hit",            "h_ele_eng_eff_hit",        40, 0, 4);
+TH1D * h_ele_eng_eff_yhit           = new TH1D ("h_ele_eng_eff_yhit",           "h_ele_eng_eff_yhit",       40, 0, 4);
+TH1D * h_ele_eng_eff_open_angle     = new TH1D ("h_ele_eng_eff_open_angle",     "h_ele_eng_eff_open_angle", 40, 0, 4);
+TH1D * h_ele_eng_eff_dedx           = new TH1D ("h_ele_eng_eff_dedx",           "h_ele_eng_eff_dedx",       40, 0, 4);
+TH1D * h_ele_eng_eff_2shwr          = new TH1D ("h_ele_eng_eff_2shwr",          "h_ele_eng_eff_2shwr",      40, 0, 4);
+TH1D * h_ele_eng_eff_hit_len        = new TH1D ("h_ele_eng_eff_hit_len",        "h_ele_eng_eff_hit_len",    40, 0, 4);
+TH1D * h_ele_eng_eff_trk_shwr       = new TH1D ("h_ele_eng_eff_trk_shwr",       "h_ele_eng_eff_trk_shwr",   40, 0, 4);
+TH1D * h_ele_eng_eff_contain        = new TH1D ("h_ele_eng_eff_contain",        "h_ele_eng_eff_contain",    40, 0, 4);
+
 TH1D * h_ele_eng_eff_den           = new TH1D("h_ele_eng_eff_den", "h_ele_eng_eff_den", 40, 0, 4);
 TH1D * h_ele_eng_eff_num           = new TH1D("h_ele_eng_eff_num", "h_ele_eng_eff_num", 40, 0, 4);
 TH1D * h_ele_eng_eff_num_pre_cuts  = new TH1D("h_ele_eng_eff_num_pre_cuts", "h_ele_eng_eff_num_pre_cuts", 40, 0, 4);
@@ -2676,7 +2691,7 @@ TH1D * h_ele_resolution_phi      = new TH1D("h_ele_resolution_phi",      "h_ele_
 TH1D * h_ele_resolution_theta    = new TH1D("h_ele_resolution_theta",    "h_ele_resolution_theta",    20, -1, 1);
 TH1D * h_ele_resolution_dot_prod = new TH1D("h_ele_resolution_dot_prod", "h_ele_resolution_dot_prod", 20, -1, 1);
 TH2D * h_ele_resolution_momentum_dot_prod = new TH2D("h_ele_resolution_momentum_dot_prod", "h_ele_resolution_momentum_dot_prod", 30, 0, 5, 30, -1, 1);
-TH2D * h_ele_resolution_momentum_dot_prod_zoom_y = new TH2D("h_ele_resolution_momentum_dot_prod_zoom_y", "h_ele_resolution_momentum_dot_prod_zoom_y", 30, 0, 5, 30, 0.6, 1);
+TH2D * h_ele_resolution_momentum_dot_prod_zoom_y = new TH2D("h_ele_resolution_momentum_dot_prod_zoom_y", "h_ele_resolution_momentum_dot_prod_zoom_y", 30, 0, 5, 30, 0.8, 1);
 
 TH1D * h_ele_pfp_momentum_1shwr_nue_cc        = new TH1D("h_ele_pfp_momentum_1shwr_nue_cc",        "h_ele_pfp_momentum_1shwr_nue_cc",        30, 0, 3);
 TH1D * h_ele_pfp_momentum_1shwr_nue_cc_out_fv = new TH1D("h_ele_pfp_momentum_1shwr_nue_cc_out_fv", "h_ele_pfp_momentum_1shwr_nue_cc_out_fv", 30, 0, 3);

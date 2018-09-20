@@ -168,7 +168,8 @@ static void XSecWork(double final_counter, double final_counter_nue_cc, double f
                      const int total_mc_entries_inFV_nue, const int total_mc_entries_inFV_nue_bar);
 //***************************************************************************
 //***************************************************************************
-static void xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double xsec_nue, double average_energy, double stat_error);
+static void xsec_plot(bool _verbose, double genie_xsec_nue, double genie_xsec_nue_bar, double genie_xsec_combined,
+                      double xsec_nue, double average_energy, double stat_error);
 static void IntegratedXsecPlot(const double data_xsec, const double mc_xsec, const double stat_err, const double sys_err);
 //***************************************************************************
 //***************************************************************************
@@ -1044,7 +1045,8 @@ void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
                  std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
                  std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
                  TH2 * h_pfp_zy_vtx_nue_cc,
-                 TH2 * h_pfp_zy_vtx_all);
+                 TH2 * h_pfp_zy_vtx_all,
+                 double & xyz_near, double & xyz_far);
 //***************************************************************************
 //***************************************************************************
 void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
@@ -1082,7 +1084,7 @@ void XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container
 void XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                        std::vector<TH1 *> * h_ele_pfp_xyz_intime,
-                       TH2 * h_pfp_zy_vtx_ext);
+                       TH2 * h_pfp_zy_vtx_ext, double & xyz_near, double & xyz_far);
 void XYZPositionInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                        std::vector<TH1 *> * h_ele_pfp_xyz_intime);
