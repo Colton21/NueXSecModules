@@ -79,7 +79,7 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 	efficiency_c1->Print(print_name);
 	std::cout << "Print Name: " << print_name << std::endl;
 }
-void histogram_functions::PlotTEfficiencyOverlay(TH1 *h_num,
+void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
                                                  TH1 * h_reco_nue,
                                                  TH1 * h_in_fv,
                                                  TH1 * h_vtx_flash,
@@ -93,7 +93,7 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 *h_num,
                                                  TH1 * h_hit_len,
                                                  TH1 * h_trk_shwr,
                                                  TH1 * h_contain,
-                                                 TH1 *h_den, const bool rebin, const char * title, const char * print_name)
+                                                 TH1 * h_den, const bool rebin, const char * title, const char * print_name)
 {
 	TCanvas * efficiency_c1 = new TCanvas();
 	efficiency_c1->cd();
@@ -112,6 +112,24 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 *h_num,
 	TH1 * h_nue_eng_eff_trk_shwr_clone   = (TH1*)h_trk_shwr->Clone("h_trk_shwr_clone");
 	TH1 * h_nue_eng_eff_contain_clone    = (TH1*)h_contain->Clone("h_contain_clone");
 	TH1 * h_den_clone                    = (TH1*)h_den->Clone("h_den_clone");
+
+	std::cout << "Integral: " << h_num_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_reco_nue_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_in_fv_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_vtx_flash_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_shwr_vtx_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_trk_vtx_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_hit_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_yhit_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_open_angle_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_dedx_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_2shwr_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_hit_len_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_trk_shwr_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_nue_eng_eff_contain_clone->Integral() << std::endl;
+	std::cout << "Integral: " << h_den_clone->Integral() << std::endl;
+
+
 
 	if(rebin)
 	{
@@ -132,6 +150,7 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 *h_num,
 		TH1 * h_nue_eng_eff_trk_shwr_clone_rebin   = (TH1*)h_nue_eng_eff_trk_shwr_clone->Rebin(6,   "h_nue_eng_eff_trk_shwr_clone_rebin",   new_bins);
 		TH1 * h_nue_eng_eff_contain_clone_rebin    = (TH1*)h_nue_eng_eff_contain_clone->Rebin(6,    "h_nue_eng_eff_contain_clone_rebin",    new_bins);
 
+		std::cout << "Got Here 1 " << std::endl;
 
 		TEfficiency * teff            = new TEfficiency(*h_num_clone_rebin,                     *h_den_clone_rebin);
 		TEfficiency * teff_reco_nue   = new TEfficiency(*h_nue_eng_eff_reco_nue_clone_rebin,    *h_den_clone_rebin);
@@ -147,6 +166,8 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 *h_num,
 		TEfficiency * teff_hit_len    = new TEfficiency(*h_nue_eng_eff_hit_len_clone_rebin,     *h_den_clone_rebin);
 		TEfficiency * teff_trk_shwr   = new TEfficiency(*h_nue_eng_eff_trk_shwr_clone_rebin,    *h_den_clone_rebin);
 		TEfficiency * teff_contain    = new TEfficiency(*h_nue_eng_eff_contain_clone_rebin,     *h_den_clone_rebin);
+
+		std::cout << "Got Here 1 " << std::endl;
 
 		teff->SetTitle(title);
 		//teff->SetLineColor(kGreen+3);
@@ -205,22 +226,29 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 *h_num,
 		teff_hit_len->SetLineColor(38);
 		teff_trk_shwr->SetLineColor(12);
 		teff_contain->SetLineColor(30);
-		teff->Draw("AP");
-		teff_reco_nue->Draw("AP SAME");
-		teff_in_fv->Draw("AP SAME");
-		teff_vtx_flash->Draw("AP SAME");
-		teff_shwr_vtx->Draw("AP SAME");
-		teff_trk_vtx->Draw("AP SAME");
-		teff_hit->Draw("AP SAME");
-		teff_yhit->Draw("AP SAME");
-		teff_open_angle->Draw("AP SAME");
-		teff_dedx->Draw("AP SAME");
-		teff_2shwr->Draw("AP SAME");
-		teff_hit_len->Draw("AP SAME");
-		teff_trk_shwr->Draw("AP SAME");
-		teff_contain->Draw("AP SAME");
+
+		std::cout << "Got Here 1 " << std::endl;
+
+		teff->Draw("P");
+		teff_reco_nue->Draw("PSAME");
+		teff_in_fv->Draw("PSAME");
+		teff_vtx_flash->Draw("PSAME");
+		teff_shwr_vtx->Draw("PSAME");
+		teff_trk_vtx->Draw("PSAME");
+		teff_hit->Draw("PSAME");
+		teff_yhit->Draw("PSAME");
+		teff_open_angle->Draw("PSAME");
+		teff_dedx->Draw("PSAME");
+		teff_2shwr->Draw("PSAME");
+		teff_hit_len->Draw("PSAME");
+		teff_trk_shwr->Draw("PSAME");
+		teff_contain->Draw("PSAME");
+		std::cout << "Got Here 1 " << std::endl;
+
 	}
 	efficiency_c1->Print(print_name);
+
+	std::cout << "Got Here 1 " << std::endl;
 }
 
 void histogram_functions::PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name)
@@ -1158,7 +1186,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	pt2->Draw();
 
 	//num bins
-	TPaveText * pt3 = new TPaveText(.60,.80,.73,.975, "NBNDC");
+	TPaveText * pt3 = new TPaveText(.60,.80,.73,.973, "NBNDC");
 	std::ostringstream o_string3;
 	o_string3 << int(chi2.at(3));
 	std::string convert_string3 = o_string3.str();
@@ -1169,7 +1197,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	pt3->Draw();
 
 	//p value
-	TPaveText * pt4 = new TPaveText(.45,.80,.60,.975, "NBNDC");
+	TPaveText * pt4 = new TPaveText(.45,.80,.60,.973, "NBNDC");
 	std::ostringstream o_string4;
 	o_string4.precision(4);
 	o_string4 << std::fixed;
@@ -1415,7 +1443,8 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	//chi2 : chi2/ndf, mc+ext, data
 
 	//x_min, y_min, x_max, y_max
-	TPaveText * pt = new TPaveText(.46,.83,.73,1.08, "NBNDC");
+	//reduced chi2
+	TPaveText * pt = new TPaveText(.46,.80,.73,1.06, "NBNDC");
 	std::ostringstream o_string;
 	o_string << float(chi2.at(0));
 	std::string convert_string = o_string.str();
@@ -1425,7 +1454,8 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt->SetBorderSize(0);
 	pt->Draw();
 
-	TPaveText * pt2 = new TPaveText(.12,.80,.46,1.08, "NBNDC");
+	//num events
+	TPaveText * pt2 = new TPaveText(.13,.80,.46,1.06, "NBNDC");
 	std::ostringstream o_string2a;
 	std::ostringstream o_string2b;
 	o_string2a << int(chi2.at(2));
@@ -1437,6 +1467,30 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt2->SetFillStyle(0);
 	pt2->SetBorderSize(0);
 	pt2->Draw();
+
+	//num bins
+	TPaveText * pt3 = new TPaveText(.60,.80,.73,.973, "NBNDC");
+	std::ostringstream o_string3;
+	o_string3 << int(chi2.at(3));
+	std::string convert_string3 = o_string3.str();
+	std::string ndf_string = "DOF=" + convert_string3;
+	pt3->AddText(ndf_string.c_str());
+	pt3->SetFillStyle(0);
+	pt3->SetBorderSize(0);
+	pt3->Draw();
+
+	//p value
+	TPaveText * pt4 = new TPaveText(.45,.80,.60,.973, "NBNDC");
+	std::ostringstream o_string4;
+	o_string4.precision(4);
+	o_string4 << std::fixed;
+	o_string4 << chi2.at(4);
+	std::string convert_string4 = o_string4.str();
+	std::string p_string = "P=" + convert_string4;
+	pt4->AddText(p_string.c_str());
+	pt4->SetFillStyle(0);
+	pt4->SetBorderSize(0);
+	pt4->Draw();
 
 	bottomPad->cd();
 	TH1 * ratioPlot = (TH1*)h_data_rebin->Clone("ratioPlot");

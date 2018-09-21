@@ -63,6 +63,19 @@ opt_tree4 = dir4.Get("optical_tree")
 num_events4 = opt_tree4.GetEntries()
 print "Number of Events: ", num_events4
 
+# this is the full off-beam file
+file6_path = sys.argv[6]
+file6 = TFile(file6_path, 'Read')
+if(file6.IsOpen()):
+    print 'File ', file6_path, ' is open'
+if(file6.IsOpen() == False):
+    quit()
+dir6 = file6.AnalyzeTPCO
+opt_tree6 = dir6.Get("optical_tree")
+num_events6 = opt_tree6.GetEntries()
+print "Total Off-Beam Events: ", num_events6
+
+
 h_timing_1 = TH1D("h_timing_1", "h_timing_1", 60, 0, 20)
 h_timing_2 = TH1D("h_timing_2", "h_timing_2", 60, 0, 20)
 h_timing_3 = TH1D("h_timing_3", "h_timing_3", 60, 0, 20)
@@ -99,7 +112,7 @@ h_timing_pe_4_2 = TH2D(
 
 # differences in trigger board configurations
 ext_off_set_factor = 0.343
-#ext_off_set_factor = 0.406
+# ext_off_set_factor = 0.406
 
 for num in range(num_events1):
     opt_tree1.GetEntry(num)
@@ -359,11 +372,15 @@ num_events5 = opt_tree5.GetEntries()
 print "Number of Events (On-Beam): ", num_events5
 
 h_timing_5 = TH1D("h_timing_5", "h_timing_5", 60, 0, 20)
+h_timing_5_threshold = TH1D("h_timing_5_threshold",
+                            "h_timing_5_threshold", 60, 0, 20)
 h_pe_5 = TH1D("h_pe_5", "h_pe_5", 80, 0, 2000)
 h_timing_pe_5 = TH2D("h_timing_pe_5", "h_timing_pe_5", 80, 0, 20, 80, 0, 2000)
 
 h_timing_ext_total = TH1D("h_timing_ext_total",
                           "h_timing_ext_total", 60, 0, 20)
+h_timing_ext_total_threshold = TH1D(
+    "h_timing_ext_total_threshold", "h_timing_ext_total_threshold", 60, 0, 20)
 h_timing_ext_234 = TH1D("h_timing_ext_234", "h_timing_ext_234", 60, 0, 20)
 
 h_pe_ext_total = TH1D("h_pe_ext_total", "h_pe_ext_total", 80, 0, 2000)
@@ -393,6 +410,17 @@ h_timing_pe_ext_total.Add(h_timing_pe_3_2, 1)
 h_timing_pe_ext_total.Add(h_timing_pe_4_2, 1)
 h_timing_pe_ext_total.Scale(intime_scale_factor_total)
 
+pe_threshold = 50
+current_event = -1
+last_event = -1
+current_run = -1
+last_run = -1
+current_pe = -1
+last_pe = -1
+
+largest_pe_list = []
+largest_pe_list_ext = []
+
 for num in range(num_events5):
     opt_tree5.GetEntry(num)
     flash_time = opt_tree5.OpFlashTime
@@ -400,7 +428,62 @@ for num in range(num_events5):
     h_timing_5.Fill(flash_time)
     h_pe_5.Fill(flash_pe)
     h_timing_pe_5.Fill(flash_time, flash_pe)
+    if(flash_pe >= pe_threshold and flash_time > 0):
+        h_timing_5_threshold.Fill(flash_time)
 
+    current_event = opt_tree5.Event
+    current_run = opt_tree5.Run
+    current_pe = flash_pe
+
+    if(current_event != last_event):
+        largest_pe_list.append(flash_time)
+
+    if(current_event == last_event and current_run == last_run and current_pe > last_pe):
+        largest_pe_list.pop()
+        largest_pe_list.append(flash_time)
+
+    last_event = current_event
+    last_run = current_run
+    last_pe = current_pe
+
+h_timing_5_largest = TH1D("h_timing_5_largest",
+                          "h_timing_5_largest", 60, 0, 20)
+for time in largest_pe_list:
+    h_timing_5_largest.Fill(time)
+
+current_event = -1
+last_event = -1
+current_run = -1
+last_run = -1
+current_pe = -1
+last_pe = -1
+
+for num in range(num_events6):
+    opt_tree6.GetEntry(num)
+    flash_time = opt_tree6.OpFlashTime
+    flash_pe = opt_tree6.OpFlashPE
+    if(flash_pe >= pe_threshold and flash_time > 0):
+        h_timing_ext_total_threshold.Fill(flash_time - ext_off_set_factor)
+
+        current_event = opt_tree6.Event
+        current_run = opt_tree6.Run
+        current_pe = flash_pe
+
+        if(current_event != last_event):
+            largest_pe_list_ext.append(flash_time - ext_off_set_factor)
+
+        if(current_event == last_event and current_run == last_run and current_pe > last_pe):
+            largest_pe_list_ext.pop()
+            largest_pe_list_ext.append(flash_time - ext_off_set_factor)
+
+        last_event = current_event
+        last_run = current_run
+        last_pe = current_pe
+
+h_timing_ext_total_largest = TH1D("h_timing_ext_total_largest",
+                                  "h_timing_ext_total_largest", 60, 0, 20)
+for time in largest_pe_list_ext:
+    h_timing_ext_total_largest.Fill(time)
 
 h_on_minus_off_1 = h_timing_5.Clone()
 h_on_minus_off_2 = h_timing_5.Clone()
@@ -417,6 +500,9 @@ h_on_minus_off_total.Add(h_timing_ext_total, -1)
 
 h_divide_on_off = h_timing_5.Clone()
 h_divide_on_off.Divide(h_timing_ext_total)
+
+h_divide_on_off_largest = h_timing_5_largest.Clone()
+h_divide_on_off_largest.Divide(h_timing_ext_total_largest)
 
 h_divide_on_off_234 = h_timing_5.Clone()
 h_divide_on_off_234.Divide(h_timing_ext_234)
@@ -455,17 +541,65 @@ median_post_beam = median(bin_val_v_2)
 print "Median scaling before beam window: ", median_pre_beam
 print "Median scaling after  beam window: ", median_post_beam
 
+
+# now let's see if we can get some normalisation factors
+bin_val_v_1_2 = []
+bin_val_v_2_2 = []
+for bin_num in range(h_divide_on_off_largest.GetNbinsX() - 1):
+    if(bin_num == 0):
+        continue
+    bin_val = h_divide_on_off_largest.GetBinContent(bin_num)
+    bin_center = h_divide_on_off_largest.GetBinCenter(bin_num)
+    if(bin_center < 6):
+        bin_val_v_1_2.append(bin_val)
+    if(bin_center > 15):
+        bin_val_v_2_2.append(bin_val)
+
+median_pre_beam_largest = median(bin_val_v_1_2)
+median_post_beam_largest = median(bin_val_v_2_2)
+
+print "(Largest Flash) Median scaling before beam window: ", median_pre_beam_largest
+print "(Largest Flash) Median scaling after  beam window: ", median_post_beam_largest
+
 c3a = TCanvas()
 c3a.cd()
 h_timing_5.Draw("e")
 c3a.Print("plots/on_beam_timing.pdf")
 
-c3b = TCanvas()
-c3b.cd()
+c3ba = TCanvas()
+c3ba.cd()
 h_timing_5.Draw("e")
 h_timing_ext_total.SetLineColor(46)
+h_timing_5.GetXaxis().SetTitle("Flash Time [#mus]")
+h_timing_5.SetTitle(" ")
+h_timing_5.SetStats(False)
 h_timing_ext_total.Draw("e same")
-c3b.Print("plots/on_beam_ext_overlay.pdf")
+c3ba.Print("plots/on_beam_ext_overlay.pdf")
+
+# flashes over the threshold of 50 PE
+c3bb = TCanvas()
+c3bb.cd()
+h_timing_5_threshold.Draw("e")
+h_timing_ext_total_threshold.Scale(intime_scale_factor_total)
+h_timing_ext_total_threshold.SetLineColor(46)
+h_timing_5_threshold.GetXaxis().SetTitle("Flash Time [#mus]")
+h_timing_5_threshold.SetTitle(" ")
+h_timing_5_threshold.SetStats(False)
+h_timing_ext_total_threshold.Draw("e same")
+c3bb.Print("plots/on_beam_ext_overlay_pe_threshold.pdf")
+
+# what about timing for the largest flash only? (must be greater than the
+# PE threshold)
+c3bc = TCanvas()
+c3bc.cd()
+h_timing_5_largest.Draw("e")
+h_timing_ext_total_largest.Scale(intime_scale_factor_total)
+h_timing_ext_total_largest.SetLineColor(46)
+h_timing_5_largest.GetXaxis().SetTitle("Flash Time [#mus]")
+h_timing_5_largest.SetTitle(" ")
+h_timing_5_largest.SetStats(False)
+h_timing_ext_total_largest.Draw("e same")
+c3bc.Print("plots/on_beam_ext_overlay_pe_largest.pdf")
 
 c3c = TCanvas()
 c3c.cd()
@@ -527,6 +661,9 @@ c3k.Print("plots/on_minus_off_4.pdf")
 c3l = TCanvas()
 c3l.cd()
 h_on_minus_off_total.Draw()
+h_on_minus_off_total.GetXaxis().SetTitle("Reconstructed Flash Time [ns]")
+h_on_minus_off_total.SetTitle(" ")
+h_on_minus_off_total.SetStas(False)
 line.Draw("same")
 c3l.Print("plots/on_minus_off_total.pdf")
 

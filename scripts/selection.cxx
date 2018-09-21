@@ -1702,7 +1702,7 @@ void selection::make_selection( const char * _file1,
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v);
 
-		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1) {h_ele_eng_eff_reco_nue->Fill(mc_ele_energy); }
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1) {h_ele_eng_eff_num->Fill(mc_ele_energy); }
 		//****************************
 		// ****** reco nue cut *******
 		//****************************
@@ -3244,8 +3244,8 @@ void selection::make_selection( const char * _file1,
 			if(tabulated_origins->at(0) >= 1)
 			{
 				selected_energy_vector.push_back(mc_nu_energy);
-				//h_nue_eng_eff_num->Fill(mc_nu_energy);
-				h_ele_eng_eff_num->Fill(mc_ele_energy);
+				h_nue_eng_eff_num->Fill(mc_nu_energy);
+				//h_ele_eng_eff_num->Fill(mc_ele_energy);
 				h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
 				h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
 				h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z);
@@ -3956,6 +3956,7 @@ void selection::make_selection( const char * _file1,
 	                                                            h_post_open_angle_cuts_num_showers_purity_mec);
 
 	_functions_instance.selection_functions::PostCutVector2DPlots(post_cuts_v, _post_cuts_verbose, intime_scale_factor, data_scale_factor,
+	                                                              total_mc_entries_inFV,
 	                                                              h_post_cuts_num_tracks_showers_purity_qe,
 	                                                              h_post_cuts_num_tracks_showers_purity_res,
 	                                                              h_post_cuts_num_tracks_showers_purity_dis,
@@ -4268,6 +4269,16 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_scale_3_data, data_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_data.pdf"));
 
+	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
+	                                          h_dedx_cuts_nue_cc_out_fv,
+	                                          h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
+	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
+	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
+	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_3_intime, scaled_intime_scale_factor,
+	                                          h_dedx_cuts_scale_3_data, data_scale_factor, "",
+	                                          "Collection Plane dE/dx [MeV/cm (Scaled)]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_scaled_data.pdf"));
+
 	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc_after,  h_dedx_cuts_nue_cc_mixed_after,
 	                                          h_dedx_cuts_nue_cc_out_fv_after,
 	                                          h_dedx_cuts_numu_cc_after, h_dedx_cuts_numu_cc_mixed_after,
@@ -4276,6 +4287,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_unmatched_after, h_dedx_cuts_intime_after, intime_scale_factor,
 	                                          h_dedx_cuts_data_after, data_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data_after.pdf"));
+
 
 	histogram_functions::PlotSimpleStack (h_vtx_flash_nue_cc,  h_vtx_flash_nue_cc_mixed,
 	                                      h_vtx_flash_nue_cc_out_fv,

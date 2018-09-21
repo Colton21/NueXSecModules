@@ -230,6 +230,8 @@ std::vector<int> tabulated_origins;
 TH1D * h_nue_eng_eff_den           = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 40, 0, 4);
 TH1D * h_nue_eng_eff_num           = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 40, 0, 4);
 
+TH1D * h_ele_eng_eff_den            = new TH1D ("h_ele_eng_eff_den",            "h_ele_eng_eff_den",        40, 0, 4);
+TH1D * h_ele_eng_eff_num            = new TH1D ("h_ele_eng_eff_num",            "h_ele_eng_eff_num",        40, 0, 4);
 TH1D * h_ele_eng_eff_reco_nue       = new TH1D ("h_ele_eng_eff_reco_nue",       "h_ele_eng_eff_reco_nue",   40, 0, 4);
 TH1D * h_ele_eng_eff_in_fv          = new TH1D ("h_ele_eng_eff_in_fv",          "h_ele_eng_eff_in_fv",      40, 0, 4);
 TH1D * h_ele_eng_eff_vtx_flash      = new TH1D ("h_ele_eng_eff_vtx_flash",      "h_ele_eng_eff_vtx_flash",  40, 0, 4);
@@ -244,8 +246,6 @@ TH1D * h_ele_eng_eff_hit_len        = new TH1D ("h_ele_eng_eff_hit_len",        
 TH1D * h_ele_eng_eff_trk_shwr       = new TH1D ("h_ele_eng_eff_trk_shwr",       "h_ele_eng_eff_trk_shwr",   40, 0, 4);
 TH1D * h_ele_eng_eff_contain        = new TH1D ("h_ele_eng_eff_contain",        "h_ele_eng_eff_contain",    40, 0, 4);
 
-TH1D * h_ele_eng_eff_den           = new TH1D("h_ele_eng_eff_den", "h_ele_eng_eff_den", 40, 0, 4);
-TH1D * h_ele_eng_eff_num           = new TH1D("h_ele_eng_eff_num", "h_ele_eng_eff_num", 40, 0, 4);
 TH1D * h_ele_eng_eff_num_pre_cuts  = new TH1D("h_ele_eng_eff_num_pre_cuts", "h_ele_eng_eff_num_pre_cuts", 40, 0, 4);
 TH1D * h_nue_vtx_x_eff_den         = new TH1D("h_nue_vtx_x_eff_den", "h_nue_vtx_x_eff_den", 6, 0, 256.35);
 TH1D * h_nue_vtx_x_eff_num         = new TH1D("h_nue_vtx_x_eff_num", "h_nue_vtx_x_eff_num", 6, 0, 256.35);

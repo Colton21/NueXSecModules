@@ -1276,19 +1276,20 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TH1D * h_nue_flux = (TH1D*)f->Get("nueFluxHisto");
 	TH1D * h_anue_flux = (TH1D*)f->Get("anueFluxHisto");
-	h_nue_flux->GetXaxis()->SetLimits(0.0, 5.0);//5 Gev
+	h_nue_flux->GetXaxis()->SetLimits(0.0, 2.0);// Gev
+	h_anue_flux->GetXaxis()->SetLimits(0.0, 2.0);
 
 	std::cout << "Opening argon_xsec_nue.root" << std::endl;
 	//this is a genie file with the cross section
 	TFile * xsec_f = new TFile("../arxiv/xsec_graphs.root");
 	if(!xsec_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TGraph * g_nue_xsec = (TGraph*)xsec_f->Get("nu_e_Ar40/tot_cc");
-	g_nue_xsec->GetXaxis()->SetLimits(0.0, 2.0);//5 GeV
+	g_nue_xsec->GetXaxis()->SetLimits(0.0, 2.0);// GeV
 	g_nue_xsec->SetMinimum(0.0);
 	g_nue_xsec->SetMaximum(50e-39);
 
 	TGraph * g_anue_xsec = (TGraph*)xsec_f->Get("nu_e_bar_Ar40/tot_cc");
-	g_anue_xsec->GetXaxis()->SetLimits(0.0, 2.0);//5 GeV
+	g_anue_xsec->GetXaxis()->SetLimits(0.0, 2.0);// GeV
 	g_anue_xsec->SetMinimum(0.0);
 	g_anue_xsec->SetMaximum(50e-39);
 	g_anue_xsec->SetLineColor(38);
@@ -1299,7 +1300,7 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 	double g_ey[1] = {0.0};
 	const int g_n = 1;
 	TGraphErrors * g_genie_point = new TGraphErrors(g_n, g_x, g_y, g_ex, g_ey);
-	g_genie_point->GetXaxis()->SetLimits(0.0, 5.0);//5 GeV
+	g_genie_point->GetXaxis()->SetLimits(0.0, 2.0);//5 GeV
 	g_genie_point->SetMinimum(0.0);
 	g_genie_point->SetMaximum(50e-39);
 
@@ -1327,7 +1328,8 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 		//g_nue_xsec->GetY()[bin] *= 1e-38 / 40;
 		//g_nue_xsec->GetY() [bin] = g_nue_xsec->Eval(bin_energy) * 1e-38 / 40;
 		//std::cout <<  bin_energy << " , " << g_nue_xsec->GetY() [bin] << std::endl;
-		const double bin_xsec_val = g_nue_xsec->Eval(bin_energy) * 1e-38 / 40;//this gets the units per nucleon per cm^2
+		const double bin_xsec_val  = g_nue_xsec->Eval(bin_energy) * 1e-38 / 40;//this gets the units per nucleon per cm^2
+		const double bin_xsec_val2 = g_anue_xsec->Eval(bin_energy) * 1e-38 / 40;
 		const double bin_interactions = bin_xsec_val * bin_flux;
 		bin_interaction_sum = bin_interaction_sum + bin_interactions;
 
@@ -1343,6 +1345,7 @@ void selection_functions::xsec_plot(bool _verbose, double genie_xsec_nue, double
 	for(int bin = 0; bin < g_nue_xsec->GetN(); bin++)
 	{
 		g_nue_xsec->GetY() [bin] *= 1e-38 / 40;
+		g_anue_xsec->GetY() [bin] *= 1e-38 /40;
 	}
 	if(_verbose)
 	{
@@ -6511,6 +6514,7 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double,
                                                                       std::string, std::string, int, int, double> > * post_cuts_v,
                                                bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
+                                               const int total_mc_entries_inFV,
                                                TH2 * post_cuts_num_tracks_showers_purity_qe,
                                                TH2 * post_cuts_num_tracks_showers_purity_res,
                                                TH2 * post_cuts_num_tracks_showers_purity_dis,
@@ -6874,6 +6878,7 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 	// double purity_2_1_total = purity_2_1_qe + purity_2_1_res + purity_2_1_dis + purity_2_1_coh + purity_2_1_mec;
 	// double purity_3_1_total = purity_3_1_qe + purity_3_1_res + purity_3_1_dis + purity_3_1_coh + purity_3_1_mec;
 	// double purity_4_1_total = purity_4_1_qe + purity_4_1_res + purity_4_1_dis + purity_4_1_coh + purity_4_1_mec;
+	// total_mc_entries_inFV
 
 	double purity_1_0_total = double(signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec) / total_events_1_0;
 	double purity_2_0_total = double(signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec) / total_events_2_0;
