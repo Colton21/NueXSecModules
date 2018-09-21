@@ -19,6 +19,7 @@
 #include "TLine.h"
 #include "TPaveText.h"
 #include "TMath.h"
+#include "TGraphAsymmErrors.h"
 
 #include <iostream>
 #include <string>

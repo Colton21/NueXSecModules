@@ -3897,13 +3897,13 @@ void selection::make_selection( const char * _file1,
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0),
 	                                            intime_scale_factor, data_scale_factor, "dE / dx", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, secondary_shower_counter_v, intime_secondary_shower_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, ">1 Shower TPCO Dist", results_v);
+	                                            intime_scale_factor, data_scale_factor, ">1 Shower-Dist", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_lengthRatio_counter_v, intime_hit_lengthRatio_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Hit Length Ratio", results_v);
+	                                            intime_scale_factor, data_scale_factor, "Hit-Len-Ratio", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "TrkLen/ShwrLen Rati", results_v);
+	                                            intime_scale_factor, data_scale_factor, "TrkLen/ShwrLen Ratio", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Track Containment", results_v);
+	                                            intime_scale_factor, data_scale_factor, "Track Contained", results_v);
 
 	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 	//*************************************************************************************************************************

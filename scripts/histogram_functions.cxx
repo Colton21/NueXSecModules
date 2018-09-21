@@ -196,8 +196,10 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		teff_hit_len->SetMarkerSize(0.5);
 		teff_trk_shwr->SetMarkerSize(0.5);
 		teff_contain->SetMarkerSize(0.5);
-		teff_reco_nue->SetMarkerColor(46);
-		teff_in_fv->SetMarkerColor(40);
+
+		teff->SetMarkerColor(30);
+		teff_reco_nue->SetMarkerColor(12);
+		teff_in_fv->SetMarkerColor(38);
 		teff_vtx_flash->SetMarkerColor(43);
 		teff_shwr_vtx->SetMarkerColor(9);
 		teff_trk_vtx->SetMarkerColor(34);
@@ -206,11 +208,13 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		teff_open_angle->SetMarkerColor(7);
 		teff_dedx->SetMarkerColor(6);
 		teff_2shwr->SetMarkerColor(41);
-		teff_hit_len->SetMarkerColor(38);
-		teff_trk_shwr->SetMarkerColor(12);
+		teff_hit_len->SetMarkerColor(40);
+		teff_trk_shwr->SetMarkerColor(46);
 		teff_contain->SetMarkerColor(30);
-		teff_reco_nue->SetLineColor(46);
-		teff_in_fv->SetLineColor(40);
+
+		teff->SetLineColor(30);
+		teff_reco_nue->SetLineColor(12);
+		teff_in_fv->SetLineColor(38);
 		teff_vtx_flash->SetLineColor(43);
 		teff_shwr_vtx->SetLineColor(9);
 		teff_trk_vtx->SetLineColor(34);
@@ -219,11 +223,11 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		teff_open_angle->SetLineColor(7);
 		teff_dedx->SetLineColor(6);
 		teff_2shwr->SetLineColor(41);
-		teff_hit_len->SetLineColor(38);
-		teff_trk_shwr->SetLineColor(12);
-		teff_contain->SetLineColor(30);
+		teff_hit_len->SetLineColor(40);
+		teff_trk_shwr->SetLineColor(46);
+		teff_contain->SetLineColor(1);
 
-		teff->Draw("P");
+		teff->Draw("AP");
 		teff_reco_nue->Draw("PSAME");
 		teff_in_fv->Draw("PSAME");
 		teff_vtx_flash->Draw("PSAME");
@@ -237,10 +241,35 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		teff_hit_len->Draw("PSAME");
 		teff_trk_shwr->Draw("PSAME");
 		teff_contain->Draw("PSAME");
+
+		// gPad->Update();
+		// auto graph = teff->GetPaintedGraph();
+		// graph->SetMinimum(0.0);
+		// graph->SetMaximum(0.80);
+		// gPad->Update();
+		efficiency_c1->Update();
+		teff->GetPaintedGraph()->GetYaxis()->SetRangeUser(0, 0.80);
+		efficiency_c1->Update();
+
+		TLegend * leg1 = new TLegend(0.75, 0.98, 0.98, 0.50);
+		leg1->AddEntry(teff,           "Reco2",         "l");
+		leg1->AddEntry(teff_reco_nue,  "Reco #nu_{e}",  "l");
+		leg1->AddEntry(teff_in_fv,     "InFV",          "l");
+		leg1->AddEntry(teff_vtx_flash, "VtxFlash",      "l");
+		leg1->AddEntry(teff_shwr_vtx,  "ShwrVtx",       "l");
+		leg1->AddEntry(teff_trk_vtx,   "TrkVtx",        "l");
+		leg1->AddEntry(teff_hit,       "Hit",           "l");
+		leg1->AddEntry(teff_yhit,      "YHit",          "l");
+		leg1->AddEntry(teff_open_angle, "OpenAngle",    "l");
+		leg1->AddEntry(teff_dedx,       "dE/dx",        "l");
+		leg1->AddEntry(teff_2shwr,      ">1ShwrDist",   "l");
+		leg1->AddEntry(teff_hit_len,    "HitLen",       "l");
+		leg1->AddEntry(teff_trk_shwr,   "TrkShwrLen",   "l");
+		leg1->AddEntry(teff_contain,    "TrkContain",   "l");
+		leg1->Draw();
+
 	}
 	efficiency_c1->Print(print_name);
-
-	std::cout << "Got Here 1 " << std::endl;
 }
 
 void histogram_functions::PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name)
