@@ -4056,7 +4056,8 @@ void selection::make_selection( const char * _file1,
 	                                            h_ele_eng_eff_hit_len,
 	                                            h_ele_eng_eff_trk_shwr,
 	                                            h_ele_eng_eff_contain,
-	                                            h_ele_eng_eff_den, true, ";True Electron Energy [GeV]", "signal_selection_ele_energy_efficiency_stack_rebin.pdf");
+	                                            h_ele_eng_eff_den, true, ";True Electron Energy [GeV]",
+	                                            Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency_stack_rebin.pdf"));
 
 	histogram_functions::PlotTEfficiency (h_nue_vtx_x_eff_num, h_nue_vtx_x_eff_den,
 	                                      ";True Neutrino Vtx X [cm];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_nu_vtx_x_efficiency.pdf"));

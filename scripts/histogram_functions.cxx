@@ -150,8 +150,6 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		TH1 * h_nue_eng_eff_trk_shwr_clone_rebin   = (TH1*)h_nue_eng_eff_trk_shwr_clone->Rebin(6,   "h_nue_eng_eff_trk_shwr_clone_rebin",   new_bins);
 		TH1 * h_nue_eng_eff_contain_clone_rebin    = (TH1*)h_nue_eng_eff_contain_clone->Rebin(6,    "h_nue_eng_eff_contain_clone_rebin",    new_bins);
 
-		std::cout << "Got Here 1 " << std::endl;
-
 		TEfficiency * teff            = new TEfficiency(*h_num_clone_rebin,                     *h_den_clone_rebin);
 		TEfficiency * teff_reco_nue   = new TEfficiency(*h_nue_eng_eff_reco_nue_clone_rebin,    *h_den_clone_rebin);
 		TEfficiency * teff_in_fv      = new TEfficiency(*h_nue_eng_eff_in_fv_clone_rebin,       *h_den_clone_rebin);
@@ -166,8 +164,6 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		TEfficiency * teff_hit_len    = new TEfficiency(*h_nue_eng_eff_hit_len_clone_rebin,     *h_den_clone_rebin);
 		TEfficiency * teff_trk_shwr   = new TEfficiency(*h_nue_eng_eff_trk_shwr_clone_rebin,    *h_den_clone_rebin);
 		TEfficiency * teff_contain    = new TEfficiency(*h_nue_eng_eff_contain_clone_rebin,     *h_den_clone_rebin);
-
-		std::cout << "Got Here 1 " << std::endl;
 
 		teff->SetTitle(title);
 		//teff->SetLineColor(kGreen+3);
@@ -227,8 +223,6 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		teff_trk_shwr->SetLineColor(12);
 		teff_contain->SetLineColor(30);
 
-		std::cout << "Got Here 1 " << std::endl;
-
 		teff->Draw("P");
 		teff_reco_nue->Draw("PSAME");
 		teff_in_fv->Draw("PSAME");
@@ -243,8 +237,6 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		teff_hit_len->Draw("PSAME");
 		teff_trk_shwr->Draw("PSAME");
 		teff_contain->Draw("PSAME");
-		std::cout << "Got Here 1 " << std::endl;
-
 	}
 	efficiency_c1->Print(print_name);
 
