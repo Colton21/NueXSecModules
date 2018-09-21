@@ -126,7 +126,9 @@ int main(int argc, char *argv[]){
 	//python script does most of the file managing, since script needs to be contained
 	std::ofstream output_file;
 	const char * output_file_name = "selection_output.txt"; //I'll expand this to also come from the python script
-	output_file.open(output_file_name, std::ios_base::app); //Only append to this file
+	//output_file.open(output_file_name, std::ios_base::app); //Only append to this file
+	//we want this to be only the current run, for now
+	output_file.open(output_file_name, std::ios_base::trunc);
 	if(!output_file.is_open())
 	{
 		std::cout << "*** \t Output File did not open! \t ***" << std::endl;
