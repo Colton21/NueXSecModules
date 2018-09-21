@@ -50,7 +50,7 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->SetMarkerStyle(20);
 		teff->SetMarkerSize(0.5);
 		teff->Draw("AP");
-		std::cout << "----------" << std::endl;
+		//std::cout << "----------" << std::endl;
 		// for(int i = 1; i < h_num_clone_rebin->GetNbinsX()+1; i++)
 		// {
 		//      std::cout << "Bin: " << i << " Value: " << h_num_clone_rebin->GetBinContent(i) / h_den_clone_rebin->GetBinContent(i) << std::endl;
@@ -210,7 +210,7 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		teff_2shwr->SetMarkerColor(41);
 		teff_hit_len->SetMarkerColor(40);
 		teff_trk_shwr->SetMarkerColor(46);
-		teff_contain->SetMarkerColor(30);
+		teff_contain->SetMarkerColor(1);
 
 		teff->SetLineColor(30);
 		teff_reco_nue->SetLineColor(12);

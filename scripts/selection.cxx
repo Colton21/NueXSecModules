@@ -4098,14 +4098,14 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::PlotTEfficiency(h_ele_eng_eff_num_pre_cuts, h_ele_eng_eff_den,
 	                                     ";True Electron Energy Pre-Cuts;Efficiency",
 	                                     Form("%s%s", file_locate_prefix, "signal_selection_ele_eng_pre_cuts_efficiency.pdf"));
-	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, ";True Nue Electron Energy [GeV];Efficiency",
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_contain, h_ele_eng_eff_den, ";True Electron Energy [GeV];Efficiency",
 	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency.pdf"));
 	//these histograms are the same, but are being rebinned
 	histogram_functions::PlotTEfficiency(h_ele_eng_eff_num_pre_cuts, h_ele_eng_eff_den, true,
 	                                     ";True Electron Energy Pre-Cuts [GeV];Efficiency",
 	                                     Form("%s%s", file_locate_prefix, "signal_selection_ele_eng_pre_cuts_efficiency_rebin.pdf"));
-	histogram_functions::PlotTEfficiency (h_ele_eng_eff_num, h_ele_eng_eff_den, true,
-	                                      ";True Nue Electron Energy [GeV];Efficiency",
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_contain, h_ele_eng_eff_den, true,
+	                                      ";True Electron Energy [GeV];Efficiency",
 	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency_rebin.pdf"));
 
 
