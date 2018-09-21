@@ -24,20 +24,55 @@ average_num = 0
 #average_den = (nue_flux.GetEntries() + anue_flux.GetEntries())
 average_den = (nue_flux.Integral() + anue_flux.Integral())
 
+summed_flux = TH1D("summed_flux", "summed_flux", 400, 0, 20)
+summed_flux.Add(nue_flux, 1)
+summed_flux.Add(anue_flux, 1)
+
 for bin in range(nue_flux_bins):
     nue_flux_list.append(nue_flux.GetBinContent(bin))
     bin_flux_list.append(nue_flux.GetBinCenter(bin))
     average_num = average_num + \
         (nue_flux.GetBinContent(bin) * nue_flux.GetBinCenter(bin))
+    #summed_flux.Fill(nue_flux.GetBinCenter(bin), nue_flux.GetBinContent(bin))
 
 for bin in range(anue_flux_bins):
     anue_flux_list.append(anue_flux.GetBinContent(bin))
     a_bin_flux_list.append(anue_flux.GetBinCenter(bin))
     average_num = average_num + \
         (anue_flux.GetBinContent(bin) * anue_flux.GetBinCenter(bin))
+    #summed_flux.Fill(anue_flux.GetBinCenter(bin), anue_flux.GetBinContent(bin))
 
 average = float(average_num) / float(average_den)
 print 'Average: ', average
+
+average_bin = 0
+for bin in range(nue_flux_bins):
+    if(summed_flux.GetBinCenter(bin) <= average):
+        continue
+    # here we should get the bin with the average in it
+    average_bin = bin
+    break
+
+max_sum = 0
+max_bin_val = 0
+summed_flux_integral = summed_flux.Integral()
+print summed_flux_integral
+for bin in range(average_bin, nue_flux_bins):
+    max_sum = max_sum + summed_flux.GetBinContent(bin)
+    if(max_sum / summed_flux_integral >= 0.68):
+        max_bin_val = summed_flux.GetBinCenter(bin)
+        break
+
+min_sum = 0
+min_bin_val = 0
+for bin in range(average_bin, nue_flux_bins, -1):
+    min_sum = min_sum + summed_flux.GetBinContent(bin)
+    if(min_sum / summed_flux_integral >= 0.68):
+        min_bin_val = summed_flux.GetBinCenter(bin)
+        break
+
+print "MaxBinVal: ", max_bin_val
+print "MinBinVal: ", min_bin_val
 
 file2_path = sys.argv[2]
 file2 = TFile(file2_path, 'READ')
