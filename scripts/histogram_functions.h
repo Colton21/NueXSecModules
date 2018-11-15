@@ -37,6 +37,8 @@ static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const c
 static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool rebin, const char * title, const char * print_name);
 static void PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name);
 static void PlotTEfficiencyOverlay(TH1 *h_num,
+                                   TH1 * h_nue_eng_eff_intime,
+                                   TH1 * h_nue_eng_eff_pe,
                                    TH1 * h_nue_eng_eff_reco_nue,
                                    TH1 * h_nue_eng_eff_in_fv,
                                    TH1 * h_nue_eng_eff_vtx_flash,
@@ -107,19 +109,21 @@ static void PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_
 static void PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                 TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                 TH1 * h_data, const double data_scale_factor,
-                                const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2, const bool logy,
+                                const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                const bool logy, const bool area_norm,
                                 const double y_scale_factor,
                                 const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                  TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                  TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
                                  TH1 * h_data, const double data_scale_factor,
-                                 const double x_min, const double x_max, const double y_min, const double y_max, const bool logy,
+                                 const double x_min, const double x_max, const double y_min, const double y_max, const bool logy, const bool area_norm,
                                  const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                              TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                              TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
                                              const double intime_scale_factor, TH1 * h_data, const double data_scale_factor,
+                                             const bool area_norm,
                                              const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 static void PlotDetailStack(TH1 * h_nue_cc_qe,
                             TH1 * h_nue_cc_out_fv,
@@ -206,7 +210,7 @@ static void PlotdEdxTheta(
         const char * print_name1, const char * print_name2, const char * print_name3
         );
 
-static std::vector<double> Chi2Calc(TH1 * h_mc_ext, TH1 * h_data);
+static std::vector<double> Chi2Calc(TH1 * h_mc_ext, TH1 * h_data, const bool area_norm, const double return_norm);
 
 };
 #endif

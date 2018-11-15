@@ -349,7 +349,7 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
                                             std::vector<std::pair<int, std::string> > * passed_tpco,
                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                             std::vector<std::tuple<int, int, int, double, double, double,
-                                                                   std::string, std::string, int, int, double> > * post_cuts_v)
+                                                                   std::string, std::string, int, int, double, double> > * post_cuts_v)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -373,16 +373,18 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double opening_angle = leading_shower.pfpOpenAngle();
+		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
 
-		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> my_tuple =
-		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers, opening_angle);
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> my_tuple =
+		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
+		                        opening_angle, shower_energy);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                             std::vector<std::pair<int, std::string> > * passed_tpco,
                                             std::vector<std::tuple<int, int, int, double, double, double,
-                                                                   std::string, std::string, int, int, double> > * post_cuts_v)
+                                                                   std::string, std::string, int, int, double, double> > * post_cuts_v)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -420,16 +422,18 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double opening_angle = leading_shower.pfpOpenAngle();
+		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
 
-		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> my_tuple =
-		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers, opening_angle);
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> my_tuple =
+		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
+		                        opening_angle, shower_energy);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,
-                                                                    std::string, std::string, int, int, double> > * post_cuts_v, bool _post_cuts_verbose)
+                                                                    std::string, std::string, int, int, double, double> > * post_cuts_v, bool _post_cuts_verbose)
 {
 	const int passed_events = post_cuts_v->size();
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
@@ -448,6 +452,7 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 		const int num_tracks = std::get<8>(my_tuple);
 		const int num_showers = std::get<9>(my_tuple);
 		const double opening_angle = std::get<10>(my_tuple);
+		const double shower_energy = std::get<11>(my_tuple);
 		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 		std::cout << "Event Type     : " << event_type << std::endl;
 		std::cout << "Event Number   : " << event_num << std::endl;
@@ -459,6 +464,7 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 		std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
 		std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
 		std::cout << "Opening Angle  : " << opening_angle * (180 / 3.1415) << std::endl;
+		std::cout << "Leading Energy : " << shower_energy << std::endl;
 		std::cout << "TPCO Reason    : " << reason << std::endl;
 		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 	}
@@ -466,7 +472,7 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 }
 void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string,
-                                                                    std::string, int, int, double> > * post_cuts_v,
+                                                                    std::string, int, int, double, double> > * post_cuts_v,
                                              bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
                                              TH1 * post_cuts_num_showers_purity_res,
                                              TH1 * post_cuts_num_showers_purity_dis,
@@ -6512,7 +6518,7 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double,
-                                                                      std::string, std::string, int, int, double> > * post_cuts_v,
+                                                                      std::string, std::string, int, int, double, double> > * post_cuts_v,
                                                bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
                                                const int total_mc_entries_inFV,
                                                TH2 * post_cuts_num_tracks_showers_purity_qe,
