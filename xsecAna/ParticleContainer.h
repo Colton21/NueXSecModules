@@ -86,6 +86,14 @@ std::vector < std::vector < double > > pfp_cluster_dq_alt;
 std::vector < std::vector < double > > pfp_cluster_dx_alt;
 std::vector<double> pfp_dedx_alt;
 
+std::vector< std::vector < double > > pfp_cluster_dqdx_cali;
+std::vector< std::vector < double > > pfp_cluster_dqdx_omit;
+std::vector< std::vector < double > > pfp_cluster_dqdx_omit_cali;
+
+std::vector<double> pfp_dedx_cali;
+std::vector<double> pfp_dedx_omit;
+std::vector<double> pfp_dedx_omit_cali;
+
 public:
 
 ParticleContainer()=default;
@@ -168,6 +176,14 @@ void SetPfpClusterdQ_alt(std::vector<std::vector<double> >);
 void SetPfpClusterdX_alt(std::vector<std::vector<double> >);
 void SetPfpdEdx_alt(std::vector<double>);
 
+void SetPfpClusterdQdxCali(std::vector<std::vector<double>>);
+void SetPfpClusterdQdxOmitFirst(std::vector<std::vector<double>>);
+void SetPfpClusterdQdxOmitFirst_cali(std::vector<std::vector<double>>);
+
+void SetPfpdEdxCali(std::vector<double>);
+void SetPfpdEdxOmitFirst(std::vector<double>);
+void SetPfpdEdxOmitFirst_cali(std::vector<double>);
+
 //need to write the getter functions too!
 
 int Index() const; //index is particle number in tpc object container
@@ -245,6 +261,14 @@ std::vector< std::vector< double > > PfpClusterdQdx_alt () const;
 std::vector<std::vector<double> > PfpClusterdQ_alt () const;
 std::vector<std::vector<double> > PfpClusterdX_alt () const;
 std::vector< double > PfpdEdx_alt () const;
+
+std::vector < std::vector < double > >  PfpClusterdQdxCali() const;
+std::vector < std::vector < double > >  PfpClusterdQdxOmitFirst() const;
+std::vector < std::vector < double > >  PfpClusterdQdxOmitFirst_cali() const;
+
+std::vector < double > PfpdEdx_cali() const;
+std::vector < double > PfpdEdxOmitFirst() const;
+std::vector < double > PfpdEdxOmitFirst_cali() const;
 
 };//end class
 

@@ -99,7 +99,8 @@ static void ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_data,
                                 std::vector<art::Ptr<recob::Cluster> > clusters, double _dQdxRectangleLength, double _dQdxRectangleWidth,
                                 const art::Ptr<recob::Shower> shower, std::vector< std::vector < double > > & shower_cluster_dqdx,
                                 std::vector< std::vector < double > > & shower_cluster_dq,
-                                std::vector< std::vector < double > > & shower_cluster_dx,  bool _verbose);
+                                std::vector< std::vector < double > > & shower_cluster_dx,  
+				bool _verbose, bool use_xyz_calibration, bool omit_first_point);
 
 static void ConvertdEdX(std::vector< std::vector < double > > & shower_cluster_dqdx, std::vector<double> & shower_dEdx);
 

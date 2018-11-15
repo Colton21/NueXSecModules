@@ -681,8 +681,15 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			std::vector < std::vector< double > > shower_cluster_dq_alt;
 			std::vector < std::vector< double > > shower_cluster_dx_alt;
 
+			std::vector < std::vector< double > > shower_cluster_dqdx_cali;
+			std::vector < std::vector< double > > shower_cluster_dqdx_omit;
+			std::vector < std::vector< double > > shower_cluster_dqdx_omit_cali;
+
 			std::vector<double> shower_dEdx;
 			std::vector<double> shower_dEdx_alt;
+			std::vector<double> shower_dEdx_cali;
+			std::vector<double> shower_dEdx_omit;
+			std::vector<double> shower_dEdx_omit_cali;
 
 			shower_cluster_dqdx.resize(num_clusters);
 			shower_cluster_dq.resize(num_clusters);
@@ -692,8 +699,15 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			shower_cluster_dq_alt.resize(num_clusters);
 			shower_cluster_dx_alt.resize(num_clusters);
 
+			shower_cluster_dqdx_cali.resize(num_clusters);
+			shower_cluster_dqdx_omit.resize(num_clusters);
+			shower_cluster_dqdx_omit_cali.resize(num_clusters);
+
 			shower_dEdx.resize(3, 0);
 			shower_dEdx_alt.resize(3, 0);
+			shower_dEdx_cali.resize(3,0);
+			shower_dEdx_omit.resize(3, 0);
+			shower_dEdx_omit_cali.resize(3, 0);
 
 			for(int clust = 0; clust < num_clusters; clust++)
 			{
@@ -704,6 +718,10 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				shower_cluster_dqdx_alt.at(clust).resize(3, 0);
 				shower_cluster_dq_alt.at(clust).resize(3, 0);
 				shower_cluster_dx_alt.at(clust).resize(3, 0);
+
+				shower_cluster_dqdx_cali.at(clust).resize(3, 0);
+				shower_cluster_dqdx_omit.at(clust).resize(3, 0);
+				shower_cluster_dqdx_omit_cali.at(clust).resize(3, 0);
 			}
 
 			std::vector<double> dqdx_cali;
@@ -910,14 +928,42 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					xsecAna::utility::GetNumberOfHitsPerPlane(e, _pfp_producer, this_shower, pfp_hits_u, pfp_hits_v, pfp_hits_w);
 					pfp_hits = (pfp_hits_u + pfp_hits_v + pfp_hits_w);
 
-					//trying to do dqdx!
-					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
-					                                      this_shower, shower_cluster_dqdx, shower_cluster_dq, shower_cluster_dx, _verbose);
-					xsecAna::utility::ConstructShowerdQdXAlternative(geoHelper, _is_data, ClusterToHitsMap, clusters, _dQdxRectangleLength,_dQdxRectangleWidth,
-					                                                 this_shower, shower_cluster_dqdx_alt, shower_cluster_dq_alt, shower_cluster_dx_alt, dqdx_cali, _verbose);
+					//trying to do dqdx
+					//1st bool argument - use xyz calibration
+					//2nd bool argument - omit first point in box
+					//this is the default method
+					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters, 
+									      _dQdxRectangleLength,_dQdxRectangleWidth,
+					                                      this_shower, shower_cluster_dqdx, shower_cluster_dq, shower_cluster_dx, _verbose,
+									      false, false);
+					//this method uses the xyz calibration map
+                                        xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters,
+                                                                              _dQdxRectangleLength,_dQdxRectangleWidth,
+                                                                              this_shower, shower_cluster_dqdx_cali, shower_cluster_dq, shower_cluster_dx, _verbose,
+                                                                              true, false);
+					//this is the default method - but omitting first point of box
+					xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters, 
+									      _dQdxRectangleLength,_dQdxRectangleWidth,
+					                                      this_shower, shower_cluster_dqdx_omit, shower_cluster_dq, shower_cluster_dx, _verbose,
+									      false, true);
+					//this method uses the xyz calibration map - omitting first point of box
+                                        xsecAna::utility::ConstructShowerdQdX(geoHelper, _is_data, ClusterToHitsMap, clusters,
+                                                                              _dQdxRectangleLength,_dQdxRectangleWidth,
+                                                                              this_shower, shower_cluster_dqdx_omit_cali, 
+									      shower_cluster_dq, shower_cluster_dx, _verbose,
+                                                                              true, true);
+
+					//this is a test method used by pandora lee group
+					xsecAna::utility::ConstructShowerdQdXAlternative(geoHelper, _is_data, ClusterToHitsMap, clusters, 
+											 _dQdxRectangleLength,_dQdxRectangleWidth,
+					                                                 this_shower, shower_cluster_dqdx_alt, 
+											 shower_cluster_dq_alt, shower_cluster_dx_alt, dqdx_cali, _verbose);
 					//then dEdx!
-					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx, shower_dEdx);
-					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_alt, shower_dEdx_alt);
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx,           shower_dEdx);
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_alt,       shower_dEdx_alt);
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_cali,      shower_dEdx_cali);
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_omit,      shower_dEdx_omit);
+					xsecAna::utility::ConvertdEdX(shower_cluster_dqdx_omit_cali, shower_dEdx_omit_cali);
 					// for(auto const cluster_dqdx : shower_cluster_dqdx)
 					// {
 					//      //cluster dqdx is size 3 - one for each plane
@@ -929,11 +975,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 1: " << shower_dEdx.at(1) << std::endl; }
 					// if(_verbose) {std::cout << "[Analyze] [dEdx] Plane 2: " << shower_dEdx.at(2) << std::endl; }
 
-					if(!_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u, calibration_v, calibration_w,
-					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
+					if(!_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, 
+									calibration_u, calibration_v, calibration_w,
+					                                pfp_energy_u, pfp_energy_v, pfp_energy_w);}
 
 
-					if(_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, calibration_u_data, calibration_v_data, calibration_w_data,
+					if(_is_data){xsecAna::utility::GetEnergyPerPlane(e, _pfp_producer, this_shower, 
+								      	    calibration_u_data, calibration_v_data, calibration_w_data,
 					                                    pfp_energy_u, pfp_energy_v, pfp_energy_w);}
 
 					n_pfp_showers++;
@@ -966,6 +1014,13 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 			particle_container.SetPfpClusterdQ_alt(shower_cluster_dq_alt);
 			particle_container.SetPfpClusterdX_alt(shower_cluster_dx_alt);
 			particle_container.SetPfpdEdx_alt(shower_dEdx_alt);
+
+			particle_container.SetPfpClusterdQdxCali(shower_cluster_dqdx_cali);
+			particle_container.SetPfpdEdxCali(shower_dEdx_cali);
+			particle_container.SetPfpClusterdQdxOmitFirst(shower_cluster_dqdx_omit);
+			particle_container.SetPfpdEdxOmitFirst(shower_dEdx_omit);
+			particle_container.SetPfpClusterdQdxOmitFirst_cali(shower_cluster_dqdx_omit_cali);
+			particle_container.SetPfpdEdxOmitFirst_cali(shower_dEdx_omit_cali);
 
 			tpc_object_container.AddParticle(particle_container);
 

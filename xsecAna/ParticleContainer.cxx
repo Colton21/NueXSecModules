@@ -203,6 +203,24 @@ void ParticleContainer::SetPfpdEdx_alt(std::vector<double> _pfp_dedx_alt){
 	pfp_dedx_alt = _pfp_dedx_alt;
 }
 
+void ParticleContainer::SetPfpClusterdQdxCali(std::vector<std::vector<double> > _pfp_cluster_dqdx_cali){
+	pfp_cluster_dqdx_cali = _pfp_cluster_dqdx_cali;
+}
+void ParticleContainer::SetPfpClusterdQdxOmitFirst(std::vector<std::vector<double> > _pfp_cluster_dqdx_omit){
+	pfp_cluster_dqdx_omit = _pfp_cluster_dqdx_omit;
+}
+void ParticleContainer::SetPfpClusterdQdxOmitFirst_cali(std::vector<std::vector<double> > _pfp_cluster_dqdx_omit_cali){
+	pfp_cluster_dqdx_omit_cali = _pfp_cluster_dqdx_omit_cali;
+}
+void ParticleContainer::SetPfpdEdxCali(std::vector<double> _pfp_dedx_cali){
+	pfp_dedx_cali = _pfp_dedx_cali;
+}
+void ParticleContainer::SetPfpdEdxOmitFirst(std::vector<double> _pfp_dedx_omit){
+	pfp_dedx_omit = _pfp_dedx_omit;
+}
+void ParticleContainer::SetPfpdEdxOmitFirst_cali(std::vector<double> _pfp_dedx_omit_cali){
+	pfp_dedx_omit_cali = _pfp_dedx_omit_cali;
+}
 
 //need to write the getter functions too!
 
@@ -402,6 +420,26 @@ std::vector<std::vector<double> > ParticleContainer::PfpClusterdX_alt() const {
 
 std::vector<double > ParticleContainer::PfpdEdx_alt() const {
 	return pfp_dedx_alt;
+}
+
+std::vector < std::vector < double > >  ParticleContainer::PfpClusterdQdxCali() const {
+	return pfp_cluster_dqdx_cali;
+}
+std::vector < std::vector < double > >  ParticleContainer::PfpClusterdQdxOmitFirst() const {
+	return pfp_cluster_dqdx_omit;
+}
+std::vector < std::vector < double > >  ParticleContainer::PfpClusterdQdxOmitFirst_cali() const {
+	return pfp_cluster_dqdx_omit_cali;
+}
+
+std::vector < double > ParticleContainer::PfpdEdx_cali() const {
+	return pfp_dedx_cali;
+}
+std::vector < double > ParticleContainer::PfpdEdxOmitFirst() const {
+	return pfp_dedx_omit;
+}
+std::vector < double > ParticleContainer::PfpdEdxOmitFirst_cali() const {
+	return pfp_dedx_omit_cali;
 }
 
 }//end namespace
