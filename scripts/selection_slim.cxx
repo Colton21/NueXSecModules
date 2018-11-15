@@ -171,8 +171,8 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v_data
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_data
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
 
 	//check if a 3rd input parameter was given - if not skip the loop for data
 	if(strcmp(_file3, "empty") != 0)
@@ -451,8 +451,8 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
 	tabulated_origins_intime->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
 
 	if(strcmp(_file2, "empty") != 0)
 	{

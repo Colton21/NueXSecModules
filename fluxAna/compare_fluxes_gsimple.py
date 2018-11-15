@@ -91,8 +91,8 @@ corrected_nue.SetStats(0)   # No statistics on upper plot
 simple_nue.SetStats(0)
 corrected_nue.SetLineColor(38)
 simple_nue.SetLineColor(46)
-corrected_nue.SetLineWidth(6)
-simple_nue.SetLineWidth(6)
+corrected_nue.SetLineWidth(4)
+simple_nue.SetLineWidth(4)
 simple_nue.GetXaxis().SetRangeUser(0, 4)
 corrected_nue.GetXaxis().SetRangeUser(0, 4)
 
@@ -127,7 +127,7 @@ ratio_nue.SetMaximum(1.5)  # .. range
 ratio_nue.GetXaxis().SetRangeUser(0, 4)
 ratio_nue.Sumw2()
 ratio_nue.SetStats(0)  # No statistics on lower plot
-ratio_nue.SetMarkerStyle(21)
+ratio_nue.SetMarkerStyle(3)
 ratio_nue.Draw("hist p")  # Draw the ratio plot
 
 # Y axis h1 plot settings
@@ -167,8 +167,8 @@ corrected_nuebar.SetStats(0)   # No statistics on upper plot
 simple_nuebar.SetStats(0)
 corrected_nuebar.SetLineColor(38)
 simple_nuebar.SetLineColor(46)
-corrected_nuebar.SetLineWidth(6)
-simple_nuebar.SetLineWidth(6)
+corrected_nuebar.SetLineWidth(4)
+simple_nuebar.SetLineWidth(4)
 simple_nuebar.GetXaxis().SetRangeUser(0, 4)
 corrected_nuebar.GetXaxis().SetRangeUser(0, 4)
 
@@ -203,7 +203,7 @@ ratio_nuebar.SetMaximum(1.5)  # .. range
 ratio_nuebar.GetXaxis().SetRangeUser(0, 4)
 ratio_nuebar.Sumw2()
 ratio_nuebar.SetStats(0)  # No statistics on lower plot
-ratio_nuebar.SetMarkerStyle(21)
+ratio_nuebar.SetMarkerStyle(3)
 ratio_nuebar.Draw("hist p")  # Draw the ratio plot
 
 # Y axis h1 plot settings
@@ -243,8 +243,8 @@ corrected_numu.SetStats(0)   # No statistics on upper plot
 simple_numu.SetStats(0)
 corrected_numu.SetLineColor(38)
 simple_numu.SetLineColor(46)
-corrected_numu.SetLineWidth(6)
-simple_numu.SetLineWidth(6)
+corrected_numu.SetLineWidth(4)
+simple_numu.SetLineWidth(4)
 simple_numu.GetXaxis().SetRangeUser(0, 4)
 corrected_numu.GetXaxis().SetRangeUser(0, 4)
 
@@ -279,7 +279,7 @@ ratio_numu.SetMaximum(1.5)  # .. range
 ratio_numu.GetXaxis().SetRangeUser(0, 4)
 ratio_numu.Sumw2()
 ratio_numu.SetStats(0)  # No statistics on lower plot
-ratio_numu.SetMarkerStyle(21)
+ratio_numu.SetMarkerStyle(3)
 ratio_numu.Draw("hist p")  # Draw the ratio plot
 
 # Y axis h1 plot settings
@@ -320,8 +320,8 @@ corrected_numubar.SetStats(0)   # No statistics on upper plot
 simple_numubar.SetStats(0)
 corrected_numubar.SetLineColor(38)
 simple_numubar.SetLineColor(46)
-corrected_numubar.SetLineWidth(6)
-simple_numubar.SetLineWidth(6)
+corrected_numubar.SetLineWidth(4)
+simple_numubar.SetLineWidth(4)
 simple_numubar.GetXaxis().SetRangeUser(0, 4)
 corrected_numubar.GetXaxis().SetRangeUser(0, 4)
 
@@ -356,7 +356,7 @@ ratio_numubar.SetMaximum(1.5)  # .. range
 ratio_numubar.GetXaxis().SetRangeUser(0, 4)
 ratio_numubar.Sumw2()
 ratio_numubar.SetStats(0)  # No statistics on lower plot
-ratio_numubar.SetMarkerStyle(21)
+ratio_numubar.SetMarkerStyle(3)
 ratio_numubar.Draw("hist p")  # Draw the ratio plot
 
 # Y axis h1 plot settings

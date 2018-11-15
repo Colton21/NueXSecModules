@@ -210,8 +210,8 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v_data
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_data
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
 
 	std::vector<std::tuple<int, int, int> > duplicate_test;
 
@@ -293,9 +293,10 @@ void selection::make_selection( const char * _file1,
 			{
 				data_run    = tpc_obj.RunNumber();
 				data_subrun = tpc_obj.SubRunNumber();
+				const int data_event  = tpc_obj.EventNumber();
 				if(data_run != last_data_run && data_subrun != last_data_subrun)
 				{
-					run_subrun_file << data_run << " " << data_subrun << "\n";
+					run_subrun_file << data_run << " " << data_subrun << " " << data_event << "\n";
 					break;
 				}
 			}
@@ -690,7 +691,6 @@ void selection::make_selection( const char * _file1,
 			                                                                                       h_ele_pfp_momentum_1shwr_data, h_ele_pfp_momentum_2shwr_data,
 			                                                                                       h_ele_pfp_theta_1shwr_data, h_ele_pfp_theta_2shwr_data,
 			                                                                                       h_ele_pfp_phi_1shwr_data, h_ele_pfp_phi_2shwr_data);
-
 			//delete at the very end!
 			delete passed_tpco_data;
 		}
@@ -758,8 +758,8 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
 	tabulated_origins_intime->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
 
 	if(strcmp(_file2, "empty") != 0)
 	{
@@ -1475,8 +1475,8 @@ void selection::make_selection( const char * _file1,
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	// std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
 	//         = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> > * post_open_angle_cuts_v
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_open_angle_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
 
 	std::cout << "========================" << std::endl;
 	std::cout << "== Begin MC Selection ==" << std::endl;
@@ -1658,7 +1658,6 @@ void selection::make_selection( const char * _file1,
 		//********************************
 		//begin cuts!!!
 		//********************************
-
 		//***********************************************************
 		//this is where the in-time optical cut actually takes effect
 		//***********************************************************
@@ -1690,6 +1689,11 @@ void selection::make_selection( const char * _file1,
 		                                                     h_pfp_zy_vtx_nue_cc,
 		                                                     h_pfp_zy_vtx_all, xyz_near_mc, xyz_far_mc);
 
+		//temporary location for the first teff
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1) {h_ele_eng_eff_num->Fill(mc_ele_energy); }
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1) {h_ele_eng_eff_intime->Fill(mc_ele_energy); }
+
+
 		//***********************************************************
 		//this is where the pe optical cut takes effect
 		//***********************************************************
@@ -1702,7 +1706,7 @@ void selection::make_selection( const char * _file1,
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v);
 
-		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1) {h_ele_eng_eff_num->Fill(mc_ele_energy); }
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1) {h_ele_eng_eff_pe->Fill(mc_ele_energy); }
 		//****************************
 		// ****** reco nue cut *******
 		//****************************
@@ -3923,7 +3927,7 @@ void selection::make_selection( const char * _file1,
 	if(_post_cuts_verbose == true)
 	{
 		std::cout << "Print Post Cuts MC: " << std::endl;
-		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v,      _post_cuts_verbose);
+		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v,  _post_cuts_verbose);
 		//filling a file with all of the run subrun and event numbers
 	}
 	if(_post_cuts_verbose == true)
@@ -3940,7 +3944,28 @@ void selection::make_selection( const char * _file1,
 		const int sub_run_num = std::get<2>(post_cuts);
 		const std::string tpco_classification = std::get<7>(post_cuts);
 		selected_run_subrun_event_file << tpco_classification << " " << run_num << " " << sub_run_num << " " << event_num << "\n";
+		if(run_num == 5280 && sub_run_num == 106 && event_num == 5302)
+		{
+			std::cout << "Energy: " << std::get<11>(post_cuts) << std::endl;
+		}
 	}
+	for(auto const post_cuts_data : * post_cuts_v_data)
+	{
+		const int event_num = std::get<0>(post_cuts_data);
+		const int run_num = std::get<1>(post_cuts_data);
+		const int sub_run_num = std::get<2>(post_cuts_data);
+		const double nu_x = std::get<3>(post_cuts_data);
+		const double nu_y = std::get<4>(post_cuts_data);
+		const double nu_z = std::get<5>(post_cuts_data);
+		if(run_num == 5280 && sub_run_num == 106 && event_num == 5302)
+		{
+			std::cout << "Energy: " << std::get<11>(post_cuts_data) << std::endl;
+		}
+		std::cout << "On Beam Data: " << " Run: " << run_num << " SubRun: " << sub_run_num << " Event: " << event_num
+		          << ", Z: " << nu_z << ", X: " << nu_x << std::endl;
+	}
+
+
 	selected_run_subrun_event_file.close();
 	_functions_instance.selection_functions::PostCutVectorPlots(post_cuts_v, _post_cuts_verbose,
 	                                                            h_post_cuts_num_showers_purity_qe,
@@ -4012,7 +4037,7 @@ void selection::make_selection( const char * _file1,
 	                                      Form("%s%s", file_locate_prefix, "selected_true_neutrino_num_charged_particles.pdf"));
 	histogram_functions::Plot1DHistogram(h_nue_true_theta, "True Neutrino Theta [Degrees]", Form("%s%s", file_locate_prefix, "true_nue_theta.pdf"));
 	histogram_functions::Plot1DHistogram(h_nue_true_phi,   "True Neutrino Phi [Degrees]",   Form("%s%s", file_locate_prefix, "true_nue_phi.pdf"));
-	histogram_functions::Plot2DHistogramLogZ(h_nue_true_theta_phi, "True Nue CC", "Phi [Degrees]", "Theta [Degrees]",
+	histogram_functions::Plot2DHistogramLogZ(h_nue_true_theta_phi, "True #nu_e / #nu_e-bar CC", "Phi [Degrees]", "Theta [Degrees]",
 	                                         Form("%s%s", file_locate_prefix, "true_nue_theta_phi.pdf"), "colz");
 	histogram_functions::Plot2DHistogram(h_all_true_energy_theta, "True All Neutrino Flavours", "True Neutrino Energy [GeV]", "True Neutrino Theta [Degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_all_energy_theta.pdf"));
@@ -4043,6 +4068,8 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::PlotTEfficiency (h_nue_eng_eff_num, h_nue_eng_eff_den, true,
 	                                      ";True Neutrino Energy [GeV];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_nu_energy_efficiency_rebin.pdf"));
 	histogram_functions::PlotTEfficiencyOverlay(h_ele_eng_eff_num,
+	                                            h_ele_eng_eff_intime,
+	                                            h_ele_eng_eff_pe,
 	                                            h_ele_eng_eff_reco_nue,
 	                                            h_ele_eng_eff_in_fv,
 	                                            h_ele_eng_eff_vtx_flash,
@@ -4056,7 +4083,7 @@ void selection::make_selection( const char * _file1,
 	                                            h_ele_eng_eff_hit_len,
 	                                            h_ele_eng_eff_trk_shwr,
 	                                            h_ele_eng_eff_contain,
-	                                            h_ele_eng_eff_den, true, ";True Electron Energy [GeV]",
+	                                            h_ele_eng_eff_den, true, ";True Electron Energy [GeV];Efficiency",
 	                                            Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency_stack_rebin.pdf"));
 
 	histogram_functions::PlotTEfficiency (h_nue_vtx_x_eff_num, h_nue_vtx_x_eff_den,
@@ -4280,6 +4307,17 @@ void selection::make_selection( const char * _file1,
 	                                          "Collection Plane dE/dx [MeV/cm (Scaled)]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_scaled_data.pdf"));
 
+	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
+	                                          h_dedx_cuts_nue_cc_out_fv,
+	                                          h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
+	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
+	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
+	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_3_intime, intime_scale_factor,
+	                                          h_dedx_cuts_scale_3_data, data_scale_factor,
+	                                          0.73, 0.98, 0.98, 0.50, false, true, "",
+	                                          "Collection Plane dE/dx [MeV/cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_area_norm_data.pdf"));
+
 	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc_after,  h_dedx_cuts_nue_cc_mixed_after,
 	                                          h_dedx_cuts_nue_cc_out_fv_after,
 	                                          h_dedx_cuts_numu_cc_after, h_dedx_cuts_numu_cc_mixed_after,
@@ -4336,7 +4374,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
 	                                          h_vtx_flash_unmatched, h_vtx_flash_intime, intime_scale_factor,
 	                                          h_vtx_flash_data, data_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, "",
+	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data_logy.pdf"));
 
@@ -4359,6 +4397,46 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_downstream_data, data_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
+	                                          h_vtx_flash_upstream_nue_cc_out_fv,
+	                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
+	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
+	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
+	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, scaled_intime_scale_factor,
+	                                          h_vtx_flash_upstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, false, "",
+	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_scaled_data_logy.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_vtx_flash_downstream_nue_cc,  h_vtx_flash_downstream_nue_cc_mixed,
+	                                          h_vtx_flash_downstream_nue_cc_out_fv,
+	                                          h_vtx_flash_downstream_numu_cc, h_vtx_flash_downstream_numu_cc_mixed,
+	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
+	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
+	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, scaled_intime_scale_factor,
+	                                          h_vtx_flash_downstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, false, "",
+	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_scaled_data_logy.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
+	                                          h_vtx_flash_upstream_nue_cc_out_fv,
+	                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
+	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
+	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
+	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, intime_scale_factor,
+	                                          h_vtx_flash_upstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, true, "",
+	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_area_norm_data_logy.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_vtx_flash_downstream_nue_cc,  h_vtx_flash_downstream_nue_cc_mixed,
+	                                          h_vtx_flash_downstream_nue_cc_out_fv,
+	                                          h_vtx_flash_downstream_numu_cc, h_vtx_flash_downstream_numu_cc_mixed,
+	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
+	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
+	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, intime_scale_factor,
+	                                          h_vtx_flash_downstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, true, "",
+	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_area_norm_data_logy.pdf"));
 
 
 	histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc_after,  h_vtx_flash_nue_cc_mixed_after,
@@ -4405,7 +4483,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
 	                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, intime_scale_factor,
 	                                          h_trk_vtx_dist_data, data_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, "",
+	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_logy.pdf"));
 
@@ -4432,7 +4510,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
 		                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, scaled_intime_scale_factor,
 		                                          h_trk_vtx_dist_data, data_scale_factor,
-		                                          0.73, 0.98, 0.98, 0.50, true, "",
+		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 		                                          "Track to Nue Candidate Vertex Distance [cm] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_scaled_logy.pdf"));
 	}
@@ -4482,7 +4560,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_shwr_vtx_dist_nc_pi0,  h_shwr_vtx_dist_other_mixed,
 	                                          h_shwr_vtx_dist_unmatched, h_shwr_vtx_dist_intime, intime_scale_factor,
 	                                          h_shwr_vtx_dist_data, data_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, "",
+	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "Shower to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_logy.pdf"));
 	if(use_alt_scaling) {
@@ -4493,7 +4571,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_shwr_vtx_dist_nc_pi0,  h_shwr_vtx_dist_other_mixed,
 		                                          h_shwr_vtx_dist_unmatched, h_shwr_vtx_dist_intime, scaled_intime_scale_factor,
 		                                          h_shwr_vtx_dist_data, data_scale_factor,
-		                                          0.73, 0.98, 0.98, 0.50, true, "",
+		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 		                                          "Shower to Nue Candidate Vertex Distance [cm] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_scaled_logy.pdf"));
 	}
@@ -5019,7 +5097,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
 	                                          h_second_shwr_dist_unmatched, h_second_shwr_dist_intime, intime_scale_factor,
 	                                          h_second_shwr_dist_data, data_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, "",
+	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_second_shwr_dist_data_logy.pdf"));
 
@@ -5446,6 +5524,19 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_leading_shower_data, data_scale_factor,
 	                                          "", "Leading Shower Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_collection_hits_leading_shower_nue_cc,  h_collection_hits_leading_shower_nue_cc_mixed,
+	                                          h_collection_hits_leading_shower_nue_cc_out_fv,
+	                                          h_collection_hits_leading_shower_numu_cc, h_collection_hits_leading_shower_numu_cc_mixed,
+	                                          h_collection_hits_leading_shower_cosmic,  h_collection_hits_leading_shower_nc,
+	                                          h_collection_hits_leading_shower_nc_pi0,  h_collection_hits_leading_shower_other_mixed,
+	                                          h_collection_hits_leading_shower_unmatched,
+	                                          h_collection_hits_leading_shower_intime, intime_scale_factor,
+	                                          h_collection_hits_leading_shower_data, data_scale_factor,
+	                                          0.73, 0.98, 0.98, 0.50, false, true,
+	                                          "", "Leading Shower Hits - Collection Plane", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_area_norm_data.pdf"));
+
 	histogram_functions::PlotSimpleStackData (h_total_hits_leading_shower_nue_cc,  h_total_hits_leading_shower_nue_cc_mixed,
 	                                          h_total_hits_leading_shower_nue_cc_out_fv,
 	                                          h_total_hits_leading_shower_numu_cc, h_total_hits_leading_shower_numu_cc_mixed,
@@ -5661,7 +5752,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_total_hits_leading_shower_unmatched,
 	                                          h_pre_cut_total_hits_leading_shower_intime,intime_scale_factor,
 	                                          h_pre_cut_total_hits_leading_shower_data, data_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true,
+	                                          0.73, 0.98, 0.98, 0.50, true, false,
 	                                          "", "Leading Shower Hits - All Planes", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_data_logy.pdf"));
 
@@ -5721,7 +5812,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_last_nc_pi0,  h_ele_cos_theta_last_other_mixed,
 	                                          h_ele_cos_theta_last_unmatched, h_ele_cos_theta_last_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_last_data, data_scale_factor,
-	                                          0.15, 0.40, 0.98, 0.50, false, "",
+	                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 	                                          "Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_data.pdf"));
 	if(use_alt_scaling) {
@@ -5732,7 +5823,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_cos_theta_last_nc_pi0,  h_ele_cos_theta_last_other_mixed,
 		                                          h_ele_cos_theta_last_unmatched, h_ele_cos_theta_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_cos_theta_last_data, data_scale_factor,
-		                                          0.15, 0.40, 0.98, 0.50, false, "",
+		                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 		                                          "Leading Shower Cos(#theta) (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_scaled_data.pdf"));
 	}
@@ -5744,7 +5835,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_last_trans_nc_pi0,    h_ele_cos_theta_last_trans_other_mixed,
 	                                          h_ele_cos_theta_last_trans_unmatched, h_ele_cos_theta_last_trans_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_last_trans_data, data_scale_factor,
-	                                          0.15, 0.40, 0.98, 0.50, false, "",
+	                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 	                                          "(NuMI Transform) Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_trans_data.pdf"));
 
@@ -5755,7 +5846,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
 	                                          h_ele_cos_theta_unmatched, h_ele_cos_theta_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_data, data_scale_factor,
-	                                          0.15, 0.40, 0.98, 0.50, false, "",
+	                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 	                                          "(Before Open Angle Cut) Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_data.pdf"));
 
@@ -5782,7 +5873,7 @@ void selection::make_selection( const char * _file1,
 	                                                       h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
 	                                                       h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
 	                                                       h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, intime_scale_factor,
-	                                                       h_ele_pfp_momentum_data, data_scale_factor,
+	                                                       h_ele_pfp_momentum_data, data_scale_factor, false,
 	                                                       "", "Leading Shower Momentum [GeV]", "",
 	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_data.pdf"));
 
@@ -5792,7 +5883,7 @@ void selection::make_selection( const char * _file1,
 	                                                       h_ele_pfp_momentum_no_track_cosmic,  h_ele_pfp_momentum_no_track_nc,
 	                                                       h_ele_pfp_momentum_no_track_nc_pi0,  h_ele_pfp_momentum_no_track_other_mixed,
 	                                                       h_ele_pfp_momentum_no_track_unmatched, h_ele_pfp_momentum_no_track_intime, intime_scale_factor,
-	                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor,
+	                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor, false,
 	                                                       "", "Leading Shower Momentum [GeV]", "",
 	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_no_track_data.pdf"));
 
@@ -5802,7 +5893,7 @@ void selection::make_selection( const char * _file1,
 	                                                       h_ele_pfp_momentum_has_track_cosmic,  h_ele_pfp_momentum_has_track_nc,
 	                                                       h_ele_pfp_momentum_has_track_nc_pi0,  h_ele_pfp_momentum_has_track_other_mixed,
 	                                                       h_ele_pfp_momentum_has_track_unmatched, h_ele_pfp_momentum_has_track_intime, intime_scale_factor,
-	                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor,
+	                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor, false,
 	                                                       "", "Leading Shower Momentum [GeV]", "",
 	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_data.pdf"));
 
@@ -5830,9 +5921,19 @@ void selection::make_selection( const char * _file1,
 		                                                       h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
 		                                                       h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
 		                                                       h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, scaled_intime_scale_factor,
-		                                                       h_ele_pfp_momentum_data, data_scale_factor,
+		                                                       h_ele_pfp_momentum_data, data_scale_factor, false,
 		                                                       "", "Leading Shower Momentum [GeV] (Scaled)", "",
 		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_scaled_data.pdf"));
+
+		histogram_functions::PlotSimpleStackDataMomentumRebin (h_ele_pfp_momentum_nue_cc,  h_ele_pfp_momentum_nue_cc_mixed,
+		                                                       h_ele_pfp_momentum_nue_cc_out_fv,
+		                                                       h_ele_pfp_momentum_numu_cc, h_ele_pfp_momentum_numu_cc_mixed,
+		                                                       h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
+		                                                       h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
+		                                                       h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, intime_scale_factor,
+		                                                       h_ele_pfp_momentum_data, data_scale_factor, true,
+		                                                       "", "Leading Shower Momentum [GeV]", "",
+		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_area_norm_data.pdf"));
 
 		histogram_functions::PlotSimpleStackDataMomentumRebin (h_ele_pfp_momentum_no_track_nue_cc,  h_ele_pfp_momentum_no_track_nue_cc_mixed,
 		                                                       h_ele_pfp_momentum_no_track_nue_cc_out_fv,
@@ -5840,7 +5941,7 @@ void selection::make_selection( const char * _file1,
 		                                                       h_ele_pfp_momentum_no_track_cosmic,  h_ele_pfp_momentum_no_track_nc,
 		                                                       h_ele_pfp_momentum_no_track_nc_pi0,  h_ele_pfp_momentum_no_track_other_mixed,
 		                                                       h_ele_pfp_momentum_no_track_unmatched, h_ele_pfp_momentum_no_track_intime, scaled_intime_scale_factor,
-		                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor,
+		                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor, false,
 		                                                       "", "Leading Shower Momentum [GeV] (Scaled)", "",
 		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_no_track_scaled_data.pdf"));
 
@@ -5850,7 +5951,7 @@ void selection::make_selection( const char * _file1,
 		                                                       h_ele_pfp_momentum_has_track_cosmic,  h_ele_pfp_momentum_has_track_nc,
 		                                                       h_ele_pfp_momentum_has_track_nc_pi0,  h_ele_pfp_momentum_has_track_other_mixed,
 		                                                       h_ele_pfp_momentum_has_track_unmatched, h_ele_pfp_momentum_has_track_intime, scaled_intime_scale_factor,
-		                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor,
+		                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor, false,
 		                                                       "", "Leading Shower Momentum [GeV] (Scaled)", "",
 		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_scaled_data.pdf"));
 	}
@@ -5862,7 +5963,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_no_track_nc_pi0,  h_ele_pfp_phi_no_track_other_mixed,
 	                                          h_ele_pfp_phi_no_track_unmatched, h_ele_pfp_phi_no_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_no_track_data, data_scale_factor,
-	                                          0.73, 0.98, 1.0, 0.60, false, 1.5,
+	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_no_track_data.pdf"));
 
@@ -5873,7 +5974,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_has_track_nc_pi0,  h_ele_pfp_phi_has_track_other_mixed,
 	                                          h_ele_pfp_phi_has_track_unmatched, h_ele_pfp_phi_has_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_has_track_data, data_scale_factor,
-	                                          0.73, 0.98, 1.0, 0.60, false, 1.5,
+	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_has_track_data.pdf"));
 //
@@ -5988,6 +6089,17 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_theta_last_data, data_scale_factor,
 		                                          "", "Leading Shower Theta [Degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_scaled_data.pdf"));
+
+		histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_last_nue_cc,  h_ele_pfp_theta_last_nue_cc_mixed,
+		                                          h_ele_pfp_theta_last_nue_cc_out_fv,
+		                                          h_ele_pfp_theta_last_numu_cc, h_ele_pfp_theta_last_numu_cc_mixed,
+		                                          h_ele_pfp_theta_last_cosmic,  h_ele_pfp_theta_last_nc,
+		                                          h_ele_pfp_theta_last_nc_pi0,  h_ele_pfp_theta_last_other_mixed,
+		                                          h_ele_pfp_theta_last_unmatched, h_ele_pfp_theta_last_intime, scaled_intime_scale_factor,
+		                                          h_ele_pfp_theta_last_data, data_scale_factor,
+		                                          0.73, 0.98, 0.98, 0.50, false, true,
+		                                          "", "Leading Shower Theta [Degrees]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_area_norm_data.pdf"));
 	}
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_phi_nue_cc,  h_ele_pfp_phi_nue_cc_mixed,
@@ -6014,7 +6126,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_nc_pi0,  h_ele_pfp_phi_other_mixed,
 	                                          h_ele_pfp_phi_unmatched, h_ele_pfp_phi_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_data, data_scale_factor,
-	                                          0.73, 0.98, 1.0, 0.60, false, 1.5,
+	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_phi_data.pdf"));
 
@@ -6042,7 +6154,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_after_nc_pi0,  h_ele_pfp_phi_after_other_mixed,
 	                                          h_ele_pfp_phi_after_unmatched, h_ele_pfp_phi_after_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_after_data, data_scale_factor,
-	                                          0.73, 0.98, 1.0, 0.60, false, 1.5,
+	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_collection_cut_leading_phi_data.pdf"));
 
@@ -6070,7 +6182,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
 	                                          h_ele_pfp_phi_last_unmatched, h_ele_pfp_phi_last_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_last_data, data_scale_factor,
-	                                          0.73, 0.98, 1.0, 0.60, false, 1.5,
+	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_data.pdf"));
 	if(use_alt_scaling) {
@@ -6081,9 +6193,20 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
 		                                          h_ele_pfp_phi_last_unmatched, h_ele_pfp_phi_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_pfp_phi_last_data, data_scale_factor,
-		                                          0.73, 0.98, 1.0, 0.60, false, 1.5,
+		                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 		                                          "", "Leading Shower Phi [Degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_scaled_data.pdf"));
+
+		histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_last_nue_cc,  h_ele_pfp_phi_last_nue_cc_mixed,
+		                                          h_ele_pfp_phi_last_nue_cc_out_fv,
+		                                          h_ele_pfp_phi_last_numu_cc, h_ele_pfp_phi_last_numu_cc_mixed,
+		                                          h_ele_pfp_phi_last_cosmic,  h_ele_pfp_phi_last_nc,
+		                                          h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
+		                                          h_ele_pfp_phi_last_unmatched, h_ele_pfp_phi_last_intime, scaled_intime_scale_factor,
+		                                          h_ele_pfp_phi_last_data, data_scale_factor,
+		                                          0.73, 0.98, 1.0, 0.60, false, true, 1.5,
+		                                          "", "Leading Shower Phi [Degrees]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_area_norm_data.pdf"));
 	}
 
 	histogram_functions::PlotSimpleStack (h_leading_shwr_length_1shwr_nue_cc,  h_leading_shwr_length_1shwr_nue_cc_mixed,
@@ -6518,7 +6641,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_track_containment_unmatched,
 	                                          h_track_containment_intime, intime_scale_factor,
 	                                          h_track_containment_data, data_scale_factor,
-	                                          0.15, 0.40, 0.98, 0.50, false, " ",
+	                                          0.15, 0.40, 0.98, 0.50, false, false, " ",
 	                                          "Track Containment", "", Form("%s%s", file_locate_prefix, "track_containment_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_track_containment_nue_cc,
@@ -6667,7 +6790,7 @@ void selection::make_selection( const char * _file1,
 	                                                      h_ele_momentum_no_cut_nue_cc_out_fv, h_ele_momentum_no_cut_numu_cc,   h_ele_momentum_no_cut_numu_cc_mixed,
 	                                                      h_ele_momentum_no_cut_cosmic,        h_ele_momentum_no_cut_nc,        h_ele_momentum_no_cut_nc_pi0,
 	                                                      h_ele_momentum_no_cut_other_mixed,   h_ele_momentum_no_cut_unmatched, h_ele_momentum_no_cut_intime,
-	                                                      intime_scale_factor,                 h_ele_momentum_no_cut_data,      data_scale_factor,
+	                                                      intime_scale_factor,                 h_ele_momentum_no_cut_data,      data_scale_factor, false,
 	                                                      "No Cut", "Leading Shower Momentum [GeV]", "",
 	                                                      Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_no_cut_data.pdf"));
 
@@ -6687,6 +6810,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_nue_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Nue Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_nue_cut_data.pdf"));
 
@@ -6721,6 +6845,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_fv_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Fiducial Volume Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_fv_cut_data.pdf"));
 
@@ -6755,6 +6880,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_flash_vtx_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Flash Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_flash_vtx_cut_data.pdf"));
 
@@ -6789,6 +6915,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_shwr_vtx_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Shower Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_shwr_vtx_cut_data.pdf"));
 
@@ -6823,6 +6950,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_trk_vtx_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Track Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_trk_vtx_cut_data.pdf"));
 
@@ -6857,6 +6985,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_hit_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Total Hit Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_hit_cut_data.pdf"));
 
@@ -6891,6 +7020,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_yhit_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Collection Hit Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_yhit_cut_data.pdf"));
 
@@ -6925,6 +7055,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_open_angle_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Open Angle Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_open_angle_cut_data.pdf"));
 
@@ -6959,6 +7090,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_dedx_cut_data,
 	        data_scale_factor,
+	        false,
 	        "dE/dx Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_dedx_cut_data.pdf"));
 
@@ -6993,6 +7125,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_2shwr_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Secondary Shower Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_2shwr_cut_data.pdf"));
 
@@ -7027,6 +7160,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_hit_length_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Hit/Length Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_hit_length_cut_data.pdf"));
 
@@ -7061,6 +7195,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_length_ratio_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Trk Length / Shower Length Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_length_ratio_cut_data.pdf"));
 
@@ -7095,6 +7230,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_containment_cut_data,
 	        data_scale_factor,
+	        false,
 	        "Track Containment Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_containment_cut_data.pdf"));
 
@@ -7659,6 +7795,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_slice_1_data,
 	        data_scale_factor,
+	        false,
 	        "Theta Slice (0 - 40)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_1_data.pdf"));
 
@@ -7677,6 +7814,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_slice_2_data,
 	        data_scale_factor,
+	        false,
 	        "Theta Slice (40 - 90)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_2_data.pdf"));
 
@@ -7695,6 +7833,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_slice_3_data,
 	        data_scale_factor,
+	        false,
 	        "Theta Slice (90 - 180)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_3_data.pdf"));
 
@@ -7944,6 +8083,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_momentum_1shwr_data,
 	        data_scale_factor,
+	        false,
 	        "", "Leading Shower Momentum (TPCO w/ 1 Shower) [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_momentum_1shwr_data.pdf"));
 
@@ -7962,6 +8102,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_momentum_2shwr_data,
 	        data_scale_factor,
+	        false,
 	        "", "Leading Shower Momentum (TPCO w/ 2+ Showers) [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_momentum_2shwr_data.pdf"));
 

@@ -11,6 +11,25 @@ eff_list = []
 pur_list = []
 eff_pur_list = []
 
+# should be size 15
+# this is purity without Off-Beam
+
+eff_list_short = (0.5489, 0.38, 0.315, 0.261, 0.125, 0.087)
+pur_list_short = (0.00806, 0.0382, 0.0448, 0.1583, 0.3022, 0.3973)
+num_list_edit = (1, 2, 3, 4, 5, 6)
+
+pur_nu_only_list = (0.04270, 0.1257, 0.1488, 0.2927, 0.4986, 0.6530)
+
+cut_list_edit = (r'Reco $\nu_{e}$ in FV', r'Vertex to Flash', r'Shower/Track to $\nu$',
+                 r'Hit Thresholds', r'dE/dx', r'Track Contained')
+
+# pur_nu_only_list = (0.00329, 0.00338, 0.0244, 0.0427, 0.1257, 0.1451,
+# 0.1488, 0.272, 0.2927, 0.3375, 0.4986, 0.5765, 0.6091, 0.6259, 0.6530)
+
+# cut_list_edit = (r'In Time', r'PE Threshold', r'Reco $\nu_{e}$', r'In Fid. Vol.', r'Vertex to Flash', r'Shower to $\nu$', r'Track to $\nu$', r'Hit Threshold',
+#                 r'YPlane Hit Threshold', r'Opening Angle', r'dE/dx', r'Secondary Shower Dist.', r'Hit/Length Ratio',
+#                 r'Track Len / Shower Len Ratio', r'Track Contained')
+
 num = 1
 for line in file:
     line_info = line.split(",")
@@ -26,9 +45,9 @@ for line in file:
 file.close()
 
 fig, ax1 = plt.subplots()
-line1a = ax1.plot(num_list, eff_list, 'darkcyan',
+line1a = ax1.plot(num_list_edit, eff_list_short, 'darkcyan',
                   linewidth=2.0, label=r'Efficiency')
-line1b = ax1.plot(num_list, pur_list, 'royalblue',
+line1b = ax1.plot(num_list_edit, pur_list_short, 'royalblue',
                   linewidth=2.0, label=r'Purity')
 
 ax1.set_xlabel('Selection Cut')
@@ -36,27 +55,31 @@ ax1.set_xlabel('Selection Cut')
 ax1.set_ylabel(r'Selection Performance')
 # ax1.tick_params('y', colors='b')
 
-ax2 = ax1.twinx()
-line1c = ax2.plot(num_list, eff_pur_list, 'blueviolet',
-                  linewidth=2.0, label=r'Efficiency x Purity')
-ax2.set_ylabel(r'Efficiency x Purity')
-# line2a = ax2.plot(num_list, pur_list, 'royalblue',
+#ax2 = ax1.twinx()
+# line1c = ax2.plot(num_list, eff_pur_list, 'blueviolet',
+#                  linewidth=2.0, label=r'Efficiency x Purity')
+#ax2.set_ylabel(r'Efficiency x Purity')
+# line2a = ax1.plot(num_list, pur_list, 'royalblue',
 #                  linewidth=2.0, label=r'Purity')
 
-lines = line1a + line1b + line1c
+line1d = ax1.plot(num_list_edit, pur_nu_only_list, 'blueviolet',
+                  linewidth=2.0, label=r'Purity (Beam Only)')
+
+lines = line1a + line1b + line1d
 labels = [l.get_label() for l in lines]
 # ax3.legend(lines, labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
 #           ncol=2, mode="expand", borderaxespad=0.)
 ax1.legend(lines, labels, loc=9, ncol=3)
 
 ax1.set_ylim(0, 1.0)
-ax2.set_ylim(0, 0.1)
+#ax2.set_ylim(0, 0.1)
 #plt.xlim(0.0, 3.0)
 #plt.xticks(num_list, cut_list)
 # for tick in ax1.get_xticklabels():
 #    tick.set_rotation(45)
 
-ax1.set_xticks(num_list)
-ax1.set_xticklabels(cut_list, rotation=40, ha='right')
+ax1.set_xticks(num_list_edit)
+ax1.set_xticklabels(cut_list_edit, rotation=40, ha='right')
 
+plt.grid(True)
 plt.show()
