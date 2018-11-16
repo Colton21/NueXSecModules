@@ -2788,6 +2788,46 @@ void selection::make_selection( const char * _file1,
 		                                                                h_dedx_slice_3_zoom_other_mixed,
 		                                                                h_dedx_slice_3_zoom_unmatched);
 
+		//testing which method of dE/dx is best
+		_functions_instance.selection_functions::EvaluatedEdxMethod(tpc_object_container_v, passed_tpco, tpco_classifier_v,
+		                                                            h_dedx_nue,
+		                                                            h_dedx_nue_out_fv,
+		                                                            h_dedx_nue_mixed,
+		                                                            h_dedx_numu,
+		                                                            h_dedx_nc,
+		                                                            h_dedx_nc_pi0,
+		                                                            h_dedx_cosmic,
+		                                                            h_dedx_other_mixed,
+		                                                            h_dedx_unmatched,
+		                                                            h_dedx_cali_nue,
+		                                                            h_dedx_cali_nue_out_fv,
+		                                                            h_dedx_cali_nue_mixed,
+		                                                            h_dedx_cali_numu,
+		                                                            h_dedx_cali_nc,
+		                                                            h_dedx_cali_nc_pi0,
+		                                                            h_dedx_cali_cosmic,
+		                                                            h_dedx_cali_other_mixed,
+		                                                            h_dedx_cali_unmatched,
+		                                                            h_dedx_omit_nue,
+		                                                            h_dedx_omit_nue_out_fv,
+		                                                            h_dedx_omit_nue_mixed,
+		                                                            h_dedx_omit_numu,
+		                                                            h_dedx_omit_nc,
+		                                                            h_dedx_omit_nc_pi0,
+		                                                            h_dedx_omit_cosmic,
+		                                                            h_dedx_omit_other_mixed,
+		                                                            h_dedx_omit_unmatched,
+		                                                            h_dedx_omit_cali_nue,
+		                                                            h_dedx_omit_cali_nue_out_fv,
+		                                                            h_dedx_omit_cali_nue_mixed,
+		                                                            h_dedx_omit_cali_numu,
+		                                                            h_dedx_omit_cali_nc,
+		                                                            h_dedx_omit_cali_nc_pi0,
+		                                                            h_dedx_omit_cali_cosmic,
+		                                                            h_dedx_omit_cali_other_mixed,
+		                                                            h_dedx_omit_cali_unmatched
+		                                                            );
+
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);

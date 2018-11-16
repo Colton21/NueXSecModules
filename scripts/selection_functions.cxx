@@ -10002,5 +10002,194 @@ void selection_functions::LeadingKinematicsShowerTopologyInTime(std::vector<xsec
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions::EvaluatedEdxMethod(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco,
+        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+        TH1D * dedx_nue,
+        TH1D * dedx_nue_out_fv,
+        TH1D * dedx_nue_mixed,
+        TH1D * dedx_numu,
+        TH1D * dedx_nc,
+        TH1D * dedx_nc_pi0,
+        TH1D * dedx_cosmic,
+        TH1D * dedx_other_mixed,
+        TH1D * dedx_unmatched,
+        TH1D * dedx_cali_nue,
+        TH1D * dedx_cali_nue_out_fv,
+        TH1D * dedx_cali_nue_mixed,
+        TH1D * dedx_cali_numu,
+        TH1D * dedx_cali_nc,
+        TH1D * dedx_cali_nc_pi0,
+        TH1D * dedx_cali_cosmic,
+        TH1D * dedx_cali_other_mixed,
+        TH1D * dedx_cali_unmatched,
+        TH1D * dedx_omit_nue,
+        TH1D * dedx_omit_nue_out_fv,
+        TH1D * dedx_omit_nue_mixed,
+        TH1D * dedx_omit_numu,
+        TH1D * dedx_omit_nc,
+        TH1D * dedx_omit_nc_pi0,
+        TH1D * dedx_omit_cosmic,
+        TH1D * dedx_omit_other_mixed,
+        TH1D * dedx_omit_unmatched,
+        TH1D * dedx_omit_cali_nue,
+        TH1D * dedx_omit_cali_nue_out_fv,
+        TH1D * dedx_omit_cali_nue_mixed,
+        TH1D * dedx_omit_cali_numu,
+        TH1D * dedx_omit_cali_nc,
+        TH1D * dedx_omit_cali_nc_pi0,
+        TH1D * dedx_omit_cali_cosmic,
+        TH1D * dedx_omit_cali_other_mixed,
+        TH1D * dedx_omit_cali_unmatched
+        )
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		const int leading_index = tpco_classifier_v->at(i).second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+
+		//multiple methods of getting the dE/dx
+		const double dedx = leading_shower.PfpdEdx().at(2);
+		const double dedx_cali = leading_shower.PfpdEdx_cali().at(2);
+		const double dedx_omit = leading_shower.PfpdEdxOmitFirst().at(2);
+		const double dedx_omit_cali = leading_shower.PfpdEdxOmitFirst_cali().at(2);
+
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
+		{
+			dedx_nue->Fill(dedx);
+			dedx_cali_nue->Fill(dedx_cali);
+			dedx_omit_nue->Fill(dedx_omit);
+			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			dedx_nue_out_fv->Fill(dedx);
+			dedx_cali_nue_out_fv->Fill(dedx_cali);
+			dedx_omit_nue_out_fv->Fill(dedx_omit);
+			dedx_omit_cali_nue_out_fv->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
+		{
+			dedx_nue->Fill(dedx);
+			dedx_cali_nue->Fill(dedx_cali);
+			dedx_omit_nue->Fill(dedx_omit);
+			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
+		{
+			dedx_nue->Fill(dedx);
+			dedx_cali_nue->Fill(dedx_cali);
+			dedx_omit_nue->Fill(dedx_omit);
+			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
+		{
+			dedx_nue->Fill(dedx);
+			dedx_cali_nue->Fill(dedx_cali);
+			dedx_omit_nue->Fill(dedx_omit);
+			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
+		{
+			dedx_nue->Fill(dedx);
+			dedx_cali_nue->Fill(dedx_cali);
+			dedx_omit_nue->Fill(dedx_omit);
+			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "numu_cc_qe")
+		{
+			dedx_numu->Fill(dedx);
+			dedx_cali_numu->Fill(dedx_cali);
+			dedx_omit_numu->Fill(dedx_omit);
+			dedx_omit_cali_numu->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "numu_cc_res")
+		{
+			dedx_numu->Fill(dedx);
+			dedx_cali_numu->Fill(dedx_cali);
+			dedx_omit_numu->Fill(dedx_omit);
+			dedx_omit_cali_numu->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "numu_cc_dis")
+		{
+			dedx_numu->Fill(dedx);
+			dedx_cali_numu->Fill(dedx_cali);
+			dedx_omit_numu->Fill(dedx_omit);
+			dedx_omit_cali_numu->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "numu_cc_coh")
+		{
+			dedx_numu->Fill(dedx);
+			dedx_cali_numu->Fill(dedx_cali);
+			dedx_omit_numu->Fill(dedx_omit);
+			dedx_omit_cali_numu->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "numu_cc_mec")
+		{
+			dedx_numu->Fill(dedx);
+			dedx_cali_numu->Fill(dedx_cali);
+			dedx_omit_numu->Fill(dedx_omit);
+			dedx_omit_cali_numu->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nc")
+		{
+			dedx_nc->Fill(dedx);
+			dedx_cali_nc->Fill(dedx_cali);
+			dedx_omit_nc->Fill(dedx_omit);
+			dedx_omit_cali_nc->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nc_pi0")
+		{
+			dedx_nc_pi0->Fill(dedx);
+			dedx_cali_nc_pi0->Fill(dedx_cali);
+			dedx_omit_nc_pi0->Fill(dedx_omit);
+			dedx_omit_cali_nc_pi0->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "nue_cc_mixed")
+		{
+			dedx_nue_mixed->Fill(dedx);
+			dedx_cali_nue_mixed->Fill(dedx_cali);
+			dedx_omit_nue_mixed->Fill(dedx_omit);
+			dedx_omit_cali_nue_mixed->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "numu_cc_mixed")
+		{
+			dedx_numu->Fill(dedx);
+			dedx_cali_numu->Fill(dedx_cali);
+			dedx_omit_numu->Fill(dedx_omit);
+			dedx_omit_cali_numu->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "cosmic")
+		{
+			dedx_cosmic->Fill(dedx);
+			dedx_cali_cosmic->Fill(dedx_cali);
+			dedx_omit_cosmic->Fill(dedx_omit);
+			dedx_omit_cali_cosmic->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "other_mixed")
+		{
+			dedx_other_mixed->Fill(dedx);
+			dedx_cali_other_mixed->Fill(dedx_cali);
+			dedx_omit_other_mixed->Fill(dedx_omit);
+			dedx_omit_cali_other_mixed->Fill(dedx_omit_cali);
+		}
+		if(tpco_id == "unmatched")
+		{
+			dedx_unmatched->Fill(dedx);
+			dedx_cali_unmatched->Fill(dedx_cali);
+			dedx_omit_unmatched->Fill(dedx_omit);
+			dedx_omit_cali_unmatched->Fill(dedx_omit_cali);
+		}
+	}//end pfp loop
+}
+
+//***************************************************************************
+//***************************************************************************
+
 
 //end functions

@@ -2777,6 +2777,43 @@ TH1D * h_flash_z_data   = new TH1D("h_flash_z_data", "h_flash_z_data", 100, 0, 1
 TH1D * h_flash_z_intime = new TH1D("h_flash_z_intime", "h_flash_intime", 100, 0, 1040);
 TH1D * h_flash_z_mc     = new TH1D("h_flash_z_mc", "h_flash_z_mc", 100, 0, 1040);
 
+TH1D * h_dedx_nue                   = new TH1D("h_dedx_nue",                   "h_dedx_nue",                   20, 0, 10);
+TH1D * h_dedx_nue_out_fv            = new TH1D("h_dedx_nue_out_fv",            "h_dedx_nue_out_fv",            20, 0, 10);
+TH1D * h_dedx_nue_mixed             = new TH1D("h_dedx_nue_mixed",             "h_dedx_nue_mixed",             20, 0, 10);
+TH1D * h_dedx_numu                  = new TH1D("h_dedx_numu",                  "h_dedx_numu",                  20, 0, 10);
+TH1D * h_dedx_nc                    = new TH1D("h_dedx_nc",                    "h_dedx_nc",                    20, 0, 10);
+TH1D * h_dedx_nc_pi0                = new TH1D("h_dedx_nc_pi0",                "h_dedx_nc_pi0",                20, 0, 10);
+TH1D * h_dedx_cosmic                = new TH1D("h_dedx_cosmic",                "h_dedx_cosmic",                20, 0, 10);
+TH1D * h_dedx_other_mixed           = new TH1D("h_dedx_other_mixed",           "h_dedx_other_mixed",           20, 0, 10);
+TH1D * h_dedx_unmatched             = new TH1D("h_dedx_unmatched",             "h_dedx_unmatched",             20, 0, 10);
+TH1D * h_dedx_cali_nue              = new TH1D("h_dedx_cali_nue",              "h_dedx_cali_nue",              20, 0, 10);
+TH1D * h_dedx_cali_nue_out_fv       = new TH1D("h_dedx_cali_nue_out_fv",       "h_dedx_cali_nue_out_fv",       20, 0, 10);
+TH1D * h_dedx_cali_nue_mixed        = new TH1D("h_dedx_cali_nue_mixed",        "h_dedx_cali_nue_mixed",        20, 0, 10);
+TH1D * h_dedx_cali_numu             = new TH1D("h_dedx_cali_numu",             "h_dedx_cali_numu",             20, 0, 10);
+TH1D * h_dedx_cali_nc               = new TH1D("h_dedx_cali_nc",               "h_dedx_cali_nc",               20, 0, 10);
+TH1D * h_dedx_cali_nc_pi0           = new TH1D("h_dedx_cali_nc_pi0",           "h_dedx_cali_nc_pi0",           20, 0, 10);
+TH1D * h_dedx_cali_cosmic           = new TH1D("h_dedx_cali_cosmic",           "h_dedx_cali_cosmic",           20, 0, 10);
+TH1D * h_dedx_cali_other_mixed      = new TH1D("h_dedx_cali_other_mixed",      "h_dedx_cali_other_mixed",      20, 0, 10);
+TH1D * h_dedx_cali_unmatched        = new TH1D("h_dedx_cali_unmatched",        "h_dedx_cali_unmatched",        20, 0, 10);
+TH1D * h_dedx_omit_nue              = new TH1D("h_dedx_omit_nue",              "h_dedx_omit_nue",              20, 0, 10);
+TH1D * h_dedx_omit_nue_out_fv       = new TH1D("h_dedx_omit_nue_out_fv",       "h_dedx_omit_nue_out_fv",       20, 0, 10);
+TH1D * h_dedx_omit_nue_mixed        = new TH1D("h_dedx_omit_nue_mixed",        "h_dedx_omit_nue_mixed",        20, 0, 10);
+TH1D * h_dedx_omit_numu             = new TH1D("h_dedx_omit_numu",             "h_dedx_omit_numu",             20, 0, 10);
+TH1D * h_dedx_omit_nc               = new TH1D("h_dedx_omit_nc",               "h_dedx_omit_nc",               20, 0, 10);
+TH1D * h_dedx_omit_nc_pi0           = new TH1D("h_dedx_omit_nc_pi0",           "h_dedx_omit_nc_pi0",           20, 0, 10);
+TH1D * h_dedx_omit_cosmic           = new TH1D("h_dedx_omit_cosmic",           "h_dedx_omit_cosmic",           20, 0, 10);
+TH1D * h_dedx_omit_other_mixed      = new TH1D("h_dedx_omit_other_mixed",      "h_dedx_omit_other_mixed",      20, 0, 10);
+TH1D * h_dedx_omit_unmatched        = new TH1D("h_dedx_omit_unmatched",        "h_dedx_omit_unmatched",        20, 0, 10);
+TH1D * h_dedx_omit_cali_nue         = new TH1D("h_dedx_omit_cali_nue",         "h_dedx_omit_cali_nue",         20, 0, 10);
+TH1D * h_dedx_omit_cali_nue_out_fv  = new TH1D("h_dedx_omit_cali_nue_out_fv",  "h_dedx_omit_cali_nue_out_fv",  20, 0, 10);
+TH1D * h_dedx_omit_cali_nue_mixed   = new TH1D("h_dedx_omit_cali_nue_mixed",   "h_dedx_omit_cali_nue_mixed",   20, 0, 10);
+TH1D * h_dedx_omit_cali_numu        = new TH1D("h_dedx_omit_cali_numu",        "h_dedx_omit_cali_numu",        20, 0, 10);
+TH1D * h_dedx_omit_cali_nc          = new TH1D("h_dedx_omit_cali_nc",          "h_dedx_omit_cali_nc",          20, 0, 10);
+TH1D * h_dedx_omit_cali_nc_pi0      = new TH1D("h_dedx_omit_cali_nc_pi0",      "h_dedx_omit_cali_nc_pi0",      20, 0, 10);
+TH1D * h_dedx_omit_cali_cosmic      = new TH1D("h_dedx_omit_cali_cosmic",      "h_dedx_omit_cali_cosmic",      20, 0, 10);
+TH1D * h_dedx_omit_cali_other_mixed = new TH1D("h_dedx_omit_cali_other_mixed", "h_dedx_omit_cali_other_mixed", 20, 0, 10);
+TH1D * h_dedx_omit_cali_unmatched   = new TH1D("h_dedx_omit_cali_unmatched",   "h_dedx_omit_cali_unmatched",   20, 0, 10);
+
 }; //end class
 
 }//end namespace

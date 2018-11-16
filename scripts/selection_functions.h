@@ -1501,5 +1501,48 @@ void LeadingKinematicsShowerTopologyInTime(std::vector<xsecAna::TPCObjectContain
                                            TH1D * h_ele_pfp_phi_2shwr_intime);
 //***************************************************************************
 //***************************************************************************
+void EvaluatedEdxMethod(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco,
+        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+        TH1D * dedx_nue,
+        TH1D * dedx_nue_out_fv,
+        TH1D * dedx_nue_mixed,
+        TH1D * dedx_numu,
+        TH1D * dedx_nc,
+        TH1D * dedx_nc_pi0,
+        TH1D * dedx_cosmic,
+        TH1D * dedx_other_mixed,
+        TH1D * dedx_unmatched,
+        TH1D * dedx_cali_nue,
+        TH1D * dedx_cali_nue_out_fv,
+        TH1D * dedx_cali_nue_mixed,
+        TH1D * dedx_cali_numu,
+        TH1D * dedx_cali_nc,
+        TH1D * dedx_cali_nc_pi0,
+        TH1D * dedx_cali_cosmic,
+        TH1D * dedx_cali_other_mixed,
+        TH1D * dedx_cali_unmatched,
+        TH1D * dedx_omit_nue,
+        TH1D * dedx_omit_nue_out_fv,
+        TH1D * dedx_omit_nue_mixed,
+        TH1D * dedx_omit_numu,
+        TH1D * dedx_omit_nc,
+        TH1D * dedx_omit_nc_pi0,
+        TH1D * dedx_omit_cosmic,
+        TH1D * dedx_omit_other_mixed,
+        TH1D * dedx_omit_unmatched,
+        TH1D * dedx_omit_cali_nue,
+        TH1D * dedx_omit_cali_nue_out_fv,
+        TH1D * dedx_omit_cali_nue_mixed,
+        TH1D * dedx_omit_cali_numu,
+        TH1D * dedx_omit_cali_nc,
+        TH1D * dedx_omit_cali_nc_pi0,
+        TH1D * dedx_omit_cali_cosmic,
+        TH1D * dedx_omit_cali_other_mixed,
+        TH1D * dedx_omit_cali_unmatched
+        );
+//***************************************************************************
+//***************************************************************************
 };
 #endif
