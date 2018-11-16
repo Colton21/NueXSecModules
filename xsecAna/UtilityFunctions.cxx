@@ -253,6 +253,8 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
                                   std::vector< std::vector < double > > & shower_cluster_dq, std::vector< std::vector < double > > & shower_cluster_dx,
                                   bool _verbose, bool use_xyz_calibration, bool omit_first_point)
 {
+	std::cout << "[Analyze] [Utility] [dQdx] Start - XYZ Calibration - " << use_xyz_calibration << " - Omit First Point - " << omit_first_point << std::endl;
+
 	double _gain = 0;
 	const double _data_gain = 240;
 	const double _mc_gain = 200;
@@ -376,6 +378,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 				  {
 				    dqdx_plane2.push_back(charge / wire_pitch * (yzcorrection * xcorrection));
 				    //Plane2Hits.push_back(hit);
+				    std::cout << "[Analyze] [Utility] [dQdx] Collection dQ/dx: " << charge / wire_pitch * (yzcorrection * xcorrection) << std::endl;
 				  }
 				  if(cluster->Plane().Plane == 0) {dq_plane0.push_back(charge); }
 				  if(cluster->Plane().Plane == 1) {dq_plane1.push_back(charge); }
@@ -431,48 +434,6 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 
 }//end function dqdx
 
-/*
-//function uses xyzt calibration to calculate median dE/dx
-//value is returned for each wire plane
-const std::vector<double> utility::XYZTCalibrateddEdx(std::vector < std::vector < recob::Hit > > & PlaneHitsInBox,
-						      std::vector<double> & ShowerPitch,
-						      std::vector<double> & T0)
-{
-  std::vector<double> median_dEdx_v;
-
-  for(int plane = 0; plane < PlaneHitsInBox.size(); plane++)
-  {
-    //create vector for calculating median
-    std::vector<double> dQdx_v;
-    for( hit : PlaneHitsInBox.at(plane) )
-    {
-      //funciton expects : hit, pitch, T0
-      //const double dEdx = CalorimetryAlg::dEdx_AREA(hit, ShowerPitch.at(plane), T0.at(plane));
-
-      const double hit_position = hit->WireID().Wire * wire_spacing;
-      const double hit_ns       = hit->PeakTime() * drift * fromTickToNs;
-
-      energyCalibProvider.YZdqdxCorrection(plane, );
-
-      dQdx_v.push_back(dEdx);
-    }
-
-    //now take median dE/dx
-    double median_dEdx = 0;
-    size_t n = dEdx_v / 2;
-    if (n > 0)
-    {
-      std::nth_element(dEdx_v.begin(), dEdx_v.begin() + n, dEdx_v.end());
-      median_dEdx = dEdx_v.at(n);
-    }
-
-    //if this plane has no hits, use default of 0
-    //this should happen 3 times for MicroBooNE
-    median_dEdx_v.push_back(median_dEdx);
-  }
-  return median_dEdx_v;
-}
-*/
 void utility::ConvertdEdX(std::vector< std::vector < double > > & shower_cluster_dqdx, std::vector<double> & shower_dEdx)
 {
 	const double work_function = 23;//eV
