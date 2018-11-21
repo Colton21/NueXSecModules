@@ -815,7 +815,8 @@ void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origin
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
 void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
-                                    double intime_scale_factor, double data_scale_factor, std::string cut_name)
+                                    double intime_scale_factor, double data_scale_factor,
+                                    int counter_dirt, double dirt_scale_factor, std::string cut_name)
 {
 	int counter                = counter_v->at(7);
 	int counter_nue_cc         = counter_v->at(0);
@@ -839,7 +840,7 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 	int counter_numu_cc_coh    = counter_v->at(20);
 	int counter_numu_cc_mec    = counter_v->at(21);
 
-	counter = counter + (counter_intime_cosmics * (intime_scale_factor / data_scale_factor));
+	counter = counter + (counter_intime_cosmics * (intime_scale_factor / data_scale_factor)) + (counter_dirt * (dirt_scale_factor / data_scale_factor));
 
 	std::cout << " <" << cut_name << "> " << std::endl;
 	std::cout << " Total Candidate Nue     : " << counter                << "\t \t " << double(counter                * data_scale_factor  ) << std::endl;
@@ -855,6 +856,8 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 	std::cout << " Number of Other Mixed   : " << counter_other_mixed    << "\t \t " << double(counter_other_mixed    * data_scale_factor  ) << std::endl;
 	std::cout << " Number of InTime Cosmics: " << double(counter_intime_cosmics * (intime_scale_factor / data_scale_factor))
 	          << "\t \t " << double(counter_intime_cosmics * intime_scale_factor) << std::endl;
+	std::cout << "Number of Dirt           : " << double(counter_dirt * dirt_scale_factor / data_scale_factor)
+	          << "\t \t" << double (counter_dirt * dirt_scale_factor)<< std::endl;
 	std::cout << "---------Unscaled----------" << std::endl;
 	std::cout << " Nue CC QE               : " << counter_nue_cc_qe   << std::endl;
 	std::cout << " Nue CC Res              : " << counter_nue_cc_res  << std::endl;
@@ -876,13 +879,15 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
-                                                 double intime_scale_factor, double data_scale_factor, std::string cut_name,
+void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics, int counter_dirt,
+                                                 double intime_scale_factor, double data_scale_factor, double dirt_scale_factor, std::string cut_name,
                                                  std::vector<std::tuple< double, double, std::string> > * results_v)
 {
 	int counter           = counter_v->at(7);
 	int counter_nue_cc    = counter_v->at(0);
-	counter = counter + double(counter_intime_cosmics * (intime_scale_factor / data_scale_factor));
+	counter = counter +
+	          double(counter_intime_cosmics * (intime_scale_factor / data_scale_factor)) +
+	          double(counter_dirt * (dirt_scale_factor / data_scale_factor));
 	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
 	const double purity     = double(counter_nue_cc) / double(counter);
 

@@ -4,6 +4,7 @@ namespace xsecSelection {
 void selection_slim::make_selection_slim( const char * _file1,
                                           const char * _file2,
                                           const char * _file3,
+                                          const char * _file4,
                                           const std::vector<double> _config,
                                           std::vector<std::tuple<double, double, std::string> > * results_v
                                           )
@@ -406,6 +407,264 @@ void selection_slim::make_selection_slim( const char * _file1,
 	 //****************************
 	 //*** END Data Calculation ***
 	 //****************************
+
+	//**********************************
+	//**********************************
+	// ** Dirt Events *******************
+	//*********************************
+	//*********************************
+
+	std::vector<int> * dirt_in_time_counter_v = new std::vector<int>;
+	dirt_in_time_counter_v->resize(24, 0);
+	std::vector<int> * dirt_pe_counter_v = new std::vector<int>;
+	dirt_pe_counter_v->resize(24, 0);
+	std::vector<int> * dirt_reco_nue_counter_v = new std::vector<int>;
+	dirt_reco_nue_counter_v->resize(24, 0);
+	std::vector<int> * dirt_in_fv_counter_v = new std::vector<int>;
+	dirt_in_fv_counter_v->resize(24, 0);
+	std::vector<int> * dirt_vtx_flash_counter_v = new std::vector<int>;
+	dirt_vtx_flash_counter_v->resize(24, 0);
+	std::vector<int> * dirt_shwr_tpco_counter_v = new std::vector<int>;
+	dirt_shwr_tpco_counter_v->resize(24, 0);
+	std::vector<int> * dirt_trk_tpco_counter_v = new std::vector<int>;
+	dirt_trk_tpco_counter_v->resize(24, 0);
+	std::vector<int> * dirt_hit_threshold_counter_v = new std::vector<int>;
+	dirt_hit_threshold_counter_v->resize(24, 0);
+	std::vector<int> * dirt_open_angle_counter_v = new std::vector<int>;
+	dirt_open_angle_counter_v->resize(24, 0);
+	std::vector<int> * dirt_dedx_counter_v = new std::vector<int>;
+	dirt_dedx_counter_v->resize(24, 0);
+	std::vector<int> * dirt_secondary_shower_counter_v = new std::vector<int>;
+	dirt_secondary_shower_counter_v->resize(24, 0);
+	std::vector<int> * dirt_hit_lengthRatio_counter_v = new std::vector<int>;
+	dirt_hit_lengthRatio_counter_v->resize(24, 0);
+	std::vector<int> * dirt_hit_threshold_collection_counter_v = new std::vector<int>;
+	dirt_hit_threshold_collection_counter_v->resize(24, 0);
+	std::vector<int> * dirt_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	dirt_trk_len_shwr_len_ratio_counter_v->resize(24, 0);
+	std::vector<int> * dirt_track_containment_counter_v = new std::vector<int>;
+	dirt_track_containment_counter_v->resize(24, 0);
+
+
+	std::vector<std::pair<double, int> > * dirt_flash_time = new std::vector<std::pair<double, int> >;
+
+	std::vector<int> * tabulated_origins_dirt = new std::vector<int>;
+	tabulated_origins_dirt->resize(24, 0);
+
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_dirt
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+
+	if(strcmp(_file4, "empty") != 0)
+	{
+		std::cout << "File Path: " << _file4 << std::endl;
+		TFile * dirt_f = new TFile(_file4);
+		if(!dirt_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
+		TTree * dirt_tree   = (TTree*)dirt_f->Get("AnalyzeTPCO/tree");
+		TTree * dirt_optree = (TTree*)dirt_f->Get("AnalyzeTPCO/optical_tree");
+
+		std::vector<xsecAna::TPCObjectContainer> * dirt_tpc_object_container_v = new std::vector<xsecAna::TPCObjectContainer>;
+		dirt_tree->SetBranchAddress("TpcObjectContainerV", &dirt_tpc_object_container_v);
+
+		std::ofstream run_subrun_file;
+		run_subrun_file.open("run_subrun_list_intime.txt");
+		int data_run = 0;
+		int data_subrun = 0;
+		int last_data_run = 0;
+		int last_data_subrun = 0;
+
+		std::cout << "=====================" << std::endl;
+		std::cout << "== Dirt Background ==" << std::endl;
+		std::cout << "=====================" << std::endl;
+
+		const int in_time_total_entries = dirt_tree->GetEntries();
+		std::cout << "Total Events: " << in_time_total_entries << std::endl;
+
+		std::vector<int> * dirt_passed_runs = new std::vector<int>;
+		//passed runs is filled with 0, 1, or 2
+		//0 = not in time
+		//1 = passed - in time and PE threshold
+		// 2 = in-time, but not enough PE -- this counts against my efficiency
+		dirt_passed_runs->resize(in_time_total_entries);
+
+		_cuts_instance.selection_cuts::loop_flashes(dirt_f, dirt_optree, flash_pe_threshold,
+		                                            flash_time_start, flash_time_end, dirt_passed_runs, dirt_flash_time, 1);
+		for(auto const run : * dirt_passed_runs)
+		{
+			if(run == 1) {run_sum++; }
+			if(run == 0) {out_of_time_sum++; }
+			if(run == 2) {low_pe_sum++; }
+		}
+		std::cout << " -------------------------------------- " << std::endl;
+		std::cout << "Passed Runs Vector Size: " << dirt_passed_runs->size() << std::endl;
+		std::cout << "Number Events In-Time & > 50 PE: " << run_sum << std::endl;
+		std::cout << "Number Events Not In-Time      : " << out_of_time_sum << std::endl;
+		std::cout << "Number Events In-Time & < 50 PE: " << low_pe_sum << std::endl;
+		std::cout << " -------------------------------------- " << std::endl;
+
+		//get vector with largest flashes y,z positions
+		std::vector< std::vector< double> > * dirt_largest_flash_v_v = new std::vector < std::vector < double > >;
+		_cuts_instance.selection_cuts::SetXYflashVector(dirt_f, dirt_optree, dirt_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		std::cout << "Largest Flash Vector Size: " << dirt_largest_flash_v_v->size() << std::endl;
+
+		for(int event = 0; event < in_time_total_entries; event++)
+		{
+			if(_verbose)
+			{
+				std::cout << "----------------------" << std::endl;
+				std::cout << "DIRT EVENT NUMBER] \t " << event << std::endl;
+				std::cout << "----------------------" << std::endl;
+			}
+			dirt_tree->GetEntry(event);
+
+			//writing the run and subrun values to a text file -
+			//this can be used as a cross-check for POT counting
+
+			for(auto const tpc_obj : * dirt_tpc_object_container_v)
+			{
+				data_run    = tpc_obj.RunNumber();
+				data_subrun = tpc_obj.SubRunNumber();
+				if(data_run != last_data_run && data_subrun != last_data_subrun)
+				{
+					run_subrun_file << data_run << " " << data_subrun << "\n";
+					break;
+				}
+			}
+			last_data_run = data_run;
+			last_data_subrun = data_subrun;
+
+			//***********************************************************
+			//this is where the in-time optical cut actually takes effect
+			//***********************************************************
+			if(_verbose) {std::cout << "In-Time Optical Cut (1)" << std::endl; }
+			if(dirt_passed_runs->at(event) == 0)
+			{
+				if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
+				continue;
+			}//false
+
+			//YZ Position of largest flash
+			std::vector < double > largest_flash_v = dirt_largest_flash_v_v->at(event);
+
+			//List of TPC Objects which pass the cuts
+			std::vector<std::pair<int, std::string> > * passed_tpco_dirt = new std::vector<std::pair<int, std::string> >;
+			passed_tpco_dirt->resize(dirt_tpc_object_container_v->size());
+			std::vector<std::pair<int, std::string> > * dummy_passed_tpco_dirt = new std::vector<std::pair<int, std::string> >;
+			dummy_passed_tpco_dirt->resize(dirt_tpc_object_container_v->size());
+			//set initial state of objects
+			for(int i = 0; i < passed_tpco_dirt->size(); i++)
+			{
+				passed_tpco_dirt->at(i).first = 1;
+				passed_tpco_dirt->at(i).second = "Passed";
+				dummy_passed_tpco_dirt->at(i).first = 1;
+				dummy_passed_tpco_dirt->at(i).second = "Passed";
+			}
+			//***********************************************************
+			//this is where the in-time optical cut again takes effect
+			//***********************************************************
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_in_time_counter_v);
+
+			//PE threshold cut
+			if(_verbose) {std::cout << "In-Time Optical Cut (2)" << std::endl; }
+			if(dirt_passed_runs->at(event) == 2)
+			{
+				if(_verbose) std::cout << "[Passed In-Time Cut] [Failed PE Threshold] " << std::endl;
+				continue;
+			}
+
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_pe_counter_v);
+
+			//****************************
+			// ****** reco nue cut *******
+			//****************************
+			_cuts_instance.selection_cuts::HasNue(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_reco_nue_counter_v);
+			//************************
+			//******** in fv cut *****
+			//************************
+			_cuts_instance.selection_cuts::fiducial_volume_cut(dirt_tpc_object_container_v, fv_boundary_v, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_in_fv_counter_v);
+			//*****************************
+			//**** vertex to flash cut ****
+			//*****************************
+			_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, dirt_tpc_object_container_v, tolerance, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_vtx_flash_counter_v);
+			//******************************************************
+			//*** distance between pfp shower and nue object cut ***
+			//******************************************************
+			_cuts_instance.selection_cuts::VtxNuDistance(dirt_tpc_object_container_v, shwr_nue_tolerance, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_shwr_tpco_counter_v);
+			//******************************************************
+			// **** distance between pfp track and nue object cut **
+			//******************************************************
+			_cuts_instance.selection_cuts::VtxTrackNuDistance(dirt_tpc_object_container_v, trk_nue_tolerance, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_trk_tpco_counter_v);
+			//****************************************************
+			// ******** hit threshold for showers cut *************
+			//******************************************************
+			_cuts_instance.selection_cuts::HitThreshold(dirt_tpc_object_container_v, shwr_hit_threshold, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_hit_threshold_counter_v);
+			//***************************************//
+			//*** Collection Plane Hits Threshold ***//
+			//***************************************//
+			_cuts_instance.selection_cuts::HitThresholdCollection(dirt_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_hit_threshold_collection_counter_v);
+			//*****************************************************
+			//****** open angle cut for the leading shower ********
+			//******************************************************
+			_cuts_instance.selection_cuts::OpenAngleCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_open_angle, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_open_angle_counter_v);
+			//*****************************************************
+			//*********** dEdx cut for the leading shower *********
+			//******************************************************
+			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
+			//***************************************************************************
+			// ******* Secondary Showers Distance Cut *****************
+			//***************************************************************************
+			_cuts_instance.selection_cuts::SecondaryShowersDistCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, dist_tolerance);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_secondary_shower_counter_v);
+			//******************************************************************************
+			// ********** Hit Length Ratio Cut *************
+			//******************************************************************************
+			_cuts_instance.selection_cuts::HitLengthRatioCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, pfp_hits_length_tolerance);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_hit_lengthRatio_counter_v);
+			//******************************************************************************
+			//*** cut for longest track / leading shower ratio *** //
+			//******************************************************************************
+			_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, ratio_tolerance);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_trk_len_shwr_len_ratio_counter_v);
+			//******************************************************************************
+			//*** contained track cut *** //
+			//******************************************************************************
+			_cuts_instance.selection_cuts::ContainedTracksCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, fv_boundary_v, true);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_track_containment_counter_v);
+
+			//*********** Dirt *********
+			//*************************************
+			// ******** End Selection Cuts! *******
+			//*************************************
+			_functions_instance.selection_functions::FillPostCutVector(dirt_tpc_object_container_v, passed_tpco_dirt, post_cuts_v_dirt);
+			//delete at the very end!
+			delete passed_tpco_dirt;
+		}
+	}//end string compare for dirt file
+
+	//end Dirt
 
 //***********************************
 	//***********************************
@@ -987,82 +1246,87 @@ void selection_slim::make_selection_slim( const char * _file1,
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 	selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "In Time");
-	selection_functions_data::PrintInfoData(1 * data_in_time_counter_v->at(0),                                  "In Time");
+	                                intime_scale_factor, data_scale_factor, dirt_in_time_counter_v->at(0), dirt_scale_factor, "In Time");
+	selection_functions_data::PrintInfoData(1 * data_in_time_counter_v->at(0),                                                "In Time");
 	selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "PE Threshold");
-	selection_functions_data::PrintInfoData(1 * data_pe_counter_v->at(0),                                       "PE Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_pe_counter_v->at(0), dirt_scale_factor, "PE Threshold");
+	selection_functions_data::PrintInfoData(1 * data_pe_counter_v->at(0),                                                "PE Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Reco Nue");
-	selection_functions_data::PrintInfoData(1 * data_reco_nue_counter_v->at(0),                                 "Reco Nue");
+	                                intime_scale_factor, data_scale_factor, dirt_reco_nue_counter_v->at(0), dirt_scale_factor, "Reco Nue");
+	selection_functions_data::PrintInfoData(1 * data_reco_nue_counter_v->at(0),                                                "Reco Nue");
 	selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "In FV");
-	selection_functions_data::PrintInfoData(1 * data_in_fv_counter_v->at(0),                                    "In FV");
+	                                intime_scale_factor, data_scale_factor, dirt_in_fv_counter_v->at(0), dirt_scale_factor, "In FV");
+	selection_functions_data::PrintInfoData(1 * data_in_fv_counter_v->at(0),                                                "In FV");
 	selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Vtx-to-Flash");
-	selection_functions_data::PrintInfoData(1 * data_vtx_flash_counter_v->at(0),                                "Vtx-to-Flash");
+	                                intime_scale_factor, data_scale_factor, dirt_vtx_flash_counter_v->at(0), dirt_scale_factor, "Vtx-to-Flash");
+	selection_functions_data::PrintInfoData(1 * data_vtx_flash_counter_v->at(0),                                                "Vtx-to-Flash");
 	selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Shower-to-TPCO");
-	selection_functions_data::PrintInfoData(1 * data_shwr_tpco_counter_v->at(0),                                "Shower-to-TPCO");
+	                                intime_scale_factor, data_scale_factor, dirt_shwr_tpco_counter_v->at(0), dirt_scale_factor, "Shower-to-TPCO");
+	selection_functions_data::PrintInfoData(1 * data_shwr_tpco_counter_v->at(0),                                                "Shower-to-TPCO");
 	selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Track-to-TPCO");
-	selection_functions_data::PrintInfoData(1 * data_trk_tpco_counter_v->at(0),                                 "Track-to-TPCO");
+	                                intime_scale_factor, data_scale_factor, dirt_trk_tpco_counter_v->at(0), dirt_scale_factor, "Track-to-TPCO");
+	selection_functions_data::PrintInfoData(1 * data_trk_tpco_counter_v->at(0),                                                "Track-to-TPCO");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Hit Threshold");
-	selection_functions_data::PrintInfoData(1 * data_hit_threshold_counter_v->at(0),                            "Hit Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_counter_v->at(0), dirt_scale_factor, "Hit Threshold");
+	selection_functions_data::PrintInfoData(1 * data_hit_threshold_counter_v->at(0),                                                "Hit Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, intime_hit_threshold_collection_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                      "YPlane Hit Threshold");
-	selection_functions_data::PrintInfoData(1 * data_hit_threshold_collection_counter_v->at(0),                  "YPlane hit Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_collection_counter_v->at(0), dirt_scale_factor, "YPlane Hit Threshold");
+	selection_functions_data::PrintInfoData(1 * data_hit_threshold_collection_counter_v->at(0),                                                "YPlane hit Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Open Angle");
-	selection_functions_data::PrintInfoData(1 * data_open_angle_counter_v->at(0),                               "Open Angle");
+	                                intime_scale_factor, data_scale_factor, dirt_open_angle_counter_v->at(0), dirt_scale_factor, "Open Angle");
+	selection_functions_data::PrintInfoData(1 * data_open_angle_counter_v->at(0),                                                "Open Angle");
 	selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     " dE / dx ");
-	selection_functions_data::PrintInfoData(1 * data_dedx_counter_v->at(0),                                     " dE / dx ");
+	                                intime_scale_factor, data_scale_factor, dirt_dedx_counter_v->at(0), dirt_scale_factor, " dE / dx ");
+	selection_functions_data::PrintInfoData(1 * data_dedx_counter_v->at(0),                                                " dE / dx ");
 	selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, intime_secondary_shower_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     ">1 Shower TPCO Dist");
-	selection_functions_data::PrintInfoData(1 * data_secondary_shower_counter_v->at(0),                         ">1 Shower TPCO Dist");
+	                                intime_scale_factor, data_scale_factor, dirt_secondary_shower_counter_v->at(0), dirt_scale_factor, ">1 Shower TPCO Dist");
+	selection_functions_data::PrintInfoData(1 * data_secondary_shower_counter_v->at(0),                                                ">1 Shower TPCO Dist");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, intime_hit_lengthRatio_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Hit Length Ratio");
-	selection_functions_data::PrintInfoData(1 * data_hit_lengthRatio_counter_v->at(0),                          "Hit Length Ratio");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_lengthRatio_counter_v->at(0), dirt_scale_factor, "Hit Length Ratio");
+	selection_functions_data::PrintInfoData(1 * data_hit_lengthRatio_counter_v->at(0),                                                "Hit Length Ratio");
 	selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "TrkLen/ShwrLen Ratio");
-	selection_functions_data::PrintInfoData(1 * data_trk_len_shwr_len_ratio_counter_v->at(0),                   "TrkLen/ShwrLen Ratio");
+	                                intime_scale_factor, data_scale_factor, dirt_trk_len_shwr_len_ratio_counter_v->at(0), dirt_scale_factor, "TrkLen/ShwrLen Ratio");
+	selection_functions_data::PrintInfoData(1 * data_trk_len_shwr_len_ratio_counter_v->at(0),                                                "TrkLen/ShwrLen Ratio");
 	selection_functions::PrintInfo( total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Track Containment");
-	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                        "Track Containment");
+	                                intime_scale_factor, data_scale_factor, dirt_track_containment_counter_v->at(0), dirt_scale_factor, "Track Containment");
+	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                                                "Track Containment");
 
 	//***********************************************************************************************************************
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "In Time", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "PE Threshold", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Reco Nue", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "In FV", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Vtx-to-Flash", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Shwr-to-TPCO", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Trk-to-TPCO", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Hit Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0), dirt_in_time_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "In Time", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0), dirt_pe_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "PE Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0), dirt_reco_nue_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Reco Nue", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0), dirt_in_fv_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "In FV", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0), dirt_vtx_flash_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Vtx-to-Flash", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0), dirt_shwr_tpco_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Shwr-to-TPCO", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0), dirt_trk_tpco_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Trk-to-TPCO", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0), dirt_hit_threshold_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Hit Threshold", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_collection_counter_v, intime_hit_threshold_collection_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "YPlane Hit Threshold", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Open Angle", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "dE / dx", results_v);
+	                                            dirt_hit_threshold_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "YPlane Hit Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0), dirt_open_angle_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Open Angle", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0), dirt_dedx_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "dE / dx", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, secondary_shower_counter_v, intime_secondary_shower_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, ">1 Shower TPCO Dist", results_v);
+	                                            dirt_secondary_shower_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, ">1 Shower-Dist", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_lengthRatio_counter_v, intime_hit_lengthRatio_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Hit Length Ratio", results_v);
+	                                            dirt_hit_lengthRatio_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Hit-Len-Ratio", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "TrkLen/ShwrLen Rati", results_v);
+	                                            dirt_trk_len_shwr_len_ratio_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "TrkLen/ShwrLen Ratio", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Track Containment", results_v);
+	                                            dirt_track_containment_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Track Contained", results_v);
 
 	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 	//*************************************************************************************************************************

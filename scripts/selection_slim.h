@@ -16,10 +16,14 @@ class selection_slim {
 
 private:
 
+//values are old - need to be updated - circa Nov 2018
 const double POT = 1.82027e+21;
 const double data_scale_factor = 1 / 5.648;   //ie scale MC down by factor
 //const double intime_scale_factor = 0.442416; //ie scale EXT down by factor
 const double intime_scale_factor = 0.56940408;   //for first two datasets
+
+//dirt scaling
+const double dirt_scale_factor = 0;
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;          //nues  / POT / cm^2
@@ -65,6 +69,7 @@ void make_selection_slim(
         const char * _file1,
         const char * _file2,
         const char * _file3,
+        const char * _file4,
         const std::vector<double> _config,
         std::vector<std::tuple<double, double, std::string> > * results_v
         );

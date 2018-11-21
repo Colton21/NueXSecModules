@@ -2,9 +2,6 @@
 
 int main(int argc, char *argv[]){
 
-	const char * file1 = argv[1];//mc
-	const char * file2 = argv[2];//ext
-	const char * file3 = argv[3];//on-beam data
 	const char * input_config_file_name;
 	const char * input_file_locate_prefix;
 
@@ -12,11 +9,24 @@ int main(int argc, char *argv[]){
 	bool using_slim_version = false;
 	bool using_dynamic_file_prefix = false;
 
+	bool monte_carlo_file = false;
+	bool cosmic_file = false;
+	bool data_file = false;
+	bool dirt_file = false;
+	bool variation_file = false;
+
+	char * monte_carlo_file_path = "empty";
+	char * cosmic_file_path = "empty";
+	char * data_file_path = "empty";
+	char * dirt_file_path = "empty";
+	char * variation_file_path = "empty";
+
+
 	//start after name of .exe
 	for(int i =1; i < argc; i++)
 	{
 		auto const arg = argv[i];
-		std::cout << arg << std::endl; //this is for debugging
+		//std::cout << arg << std::endl; //this is for debugging
 		if(strcmp(arg, "--slim") == 0)
 		{
 			using_slim_version = true;
@@ -33,9 +43,33 @@ int main(int argc, char *argv[]){
 			using_dynamic_file_prefix = true;
 			file_locate_prefix = argv[i+1];
 		}
+		//checking file paths
+		if(strcmp(arg, "--mc") == 0)
+		{
+			monte_carlo_file = true;
+			monte_carlo_file_path = argv[i+1];
+		}
+		if(strcmp(arg, "--cosmic") == 0)
+		{
+			cosmic_file = true;
+			cosmic_file_path = argv[i+1];
+		}
+		if(strcmp(arg, "--data") == 0)
+		{
+			data_file = true;
+			data_file_path = argv[i+1];
+		}
+		if(strcmp(arg, "--dirt") == 0)
+		{
+			dirt_file = true;
+			dirt_file_path = argv[i+1];
+		}
+		if(strcmp(arg, "--var") == 0)
+		{
+			variation_file = true;
+			variation_file_path = argv[i+1];
+		}
 	}
-
-	std::cout << "INPUT FORMAT: MC_FILE INTIME_FILE DATA_FILE" << std::endl;
 	if(argc < 2 )  { std::cout << " \n Please inclue the input file path \n " << std::endl; exit(1); }
 
 	std::vector<double> config;
@@ -91,36 +125,36 @@ int main(int argc, char *argv[]){
 		}
 	}
 
-	if(using_default_config == true)  {config = default_config; }
-	if(using_default_config == false) {config = input_config; }
+	if(using_default_config == true)
+	{
+		config = default_config;
+		std::cout << "(Default) Parameter Config from header" << std::endl;
+	}
+	if(using_default_config == false)
+	{
+		config = input_config;
+		std::cout << "Paramerter Config from input file" << std::endl;
+	}
 
 	std::vector<std::tuple<double, double, std::string> > * results_v = new std::vector<std::tuple<double, double, std::string> >;
 
-	double _argc = argc;
-	if(using_slim_version == true)    {_argc = _argc - 1; }//this is to account for the "--slim"
-	if(using_default_config == false) {_argc = _argc - 2; }//this is to account for the "-c" and "config_file"
-	if(using_dynamic_file_prefix == true) { _argc = _argc - 2; } // this is to account for the "-f" and "path"
+	// double _argc = argc;
+	// if(using_slim_version == true)    {_argc = _argc - 1; }//this is to account for the "--slim"
+	// if(using_default_config == false) {_argc = _argc - 2; }//this is to account for the "-c" and "config_file"
+	// if(using_dynamic_file_prefix == true) { _argc = _argc - 2; } // this is to account for the "-f" and "path"
 
-	if(_argc == 2)
+	//default state
+	if(using_slim_version == false)
 	{
-		std::cout << "Running without in-time cosmics " << std::endl;
-		std::cout << "Running without data" << std::endl;
-		if(using_slim_version == false) {_selection_instance.xsecSelection::selection::make_selection(file1, "empty", "empty", config, results_v, file_locate_prefix); }
-		if(using_slim_version == true)  {_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(file1, "empty", "empty", config, results_v); }
+		_selection_instance.xsecSelection::selection::make_selection(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
+		                                                             config, results_v, file_locate_prefix);
 	}
-	if(_argc == 3)
+	//slim selection
+	if(using_slim_version == true)
 	{
-		std::cout << "Running without data " << std::endl;
-		if(using_slim_version == false) {_selection_instance.xsecSelection::selection::make_selection(file1, file2, "empty", config, results_v, file_locate_prefix); }
-		if(using_slim_version == true)  {_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(file1, file2, "empty", config, results_v); }
+		_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
+		                                                                            config, results_v);
 	}
-	if(_argc == 4)
-	{
-		std::cout << "Running with MC, EXT, and Data" << std::endl;
-		if(using_slim_version == false) {_selection_instance.xsecSelection::selection::make_selection(file1, file2, file3, config, results_v, file_locate_prefix); }
-		if(using_slim_version == true)  {_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(file1, file2, file3, config, results_v); }
-	}
-
 
 	//write results from selection to output file
 	//python script does most of the file managing, since script needs to be contained

@@ -4,6 +4,7 @@ namespace xsecSelection {
 void selection::make_selection( const char * _file1,
                                 const char * _file2,
                                 const char * _file3,
+                                const char * _file4,
                                 const std::vector<double> _config,
                                 std::vector<std::tuple<double, double, std::string> > * results_v,
                                 const char * file_locate_prefix
@@ -154,6 +155,7 @@ void selection::make_selection( const char * _file1,
 	double xyz_far_mc = 0;
 	double xyz_far_ext = 0;
 	double xyz_far_data = 0;
+	double xyz_far_dirt = 0;
 
 	//*****************
 	//***** DATA *****
@@ -699,6 +701,610 @@ void selection::make_selection( const char * _file1,
 	 //*** END Data Calculation ***
 	 //****************************
 
+//**********************************
+	//**********************************
+	// ** Dirt Events *******************
+	//*********************************
+//*********************************
+
+
+	std::vector<int> * dirt_in_time_counter_v = new std::vector<int>;
+	dirt_in_time_counter_v->resize(24, 0);
+	std::vector<int> * dirt_pe_counter_v = new std::vector<int>;
+	dirt_pe_counter_v->resize(24, 0);
+	std::vector<int> * dirt_reco_nue_counter_v = new std::vector<int>;
+	dirt_reco_nue_counter_v->resize(24, 0);
+	std::vector<int> * dirt_in_fv_counter_v = new std::vector<int>;
+	dirt_in_fv_counter_v->resize(24, 0);
+	std::vector<int> * dirt_vtx_flash_counter_v = new std::vector<int>;
+	dirt_vtx_flash_counter_v->resize(24, 0);
+	std::vector<int> * dirt_shwr_tpco_counter_v = new std::vector<int>;
+	dirt_shwr_tpco_counter_v->resize(24, 0);
+	std::vector<int> * dirt_trk_tpco_counter_v = new std::vector<int>;
+	dirt_trk_tpco_counter_v->resize(24, 0);
+	std::vector<int> * dirt_hit_threshold_counter_v = new std::vector<int>;
+	dirt_hit_threshold_counter_v->resize(24, 0);
+	std::vector<int> * dirt_open_angle_counter_v = new std::vector<int>;
+	dirt_open_angle_counter_v->resize(24, 0);
+	std::vector<int> * dirt_dedx_counter_v = new std::vector<int>;
+	dirt_dedx_counter_v->resize(24, 0);
+	std::vector<int> * dirt_secondary_shower_counter_v = new std::vector<int>;
+	dirt_secondary_shower_counter_v->resize(24, 0);
+	std::vector<int> * dirt_hit_lengthRatio_counter_v = new std::vector<int>;
+	dirt_hit_lengthRatio_counter_v->resize(24, 0);
+	std::vector<int> * dirt_hit_threshold_collection_counter_v = new std::vector<int>;
+	dirt_hit_threshold_collection_counter_v->resize(24, 0);
+	std::vector<int> * dirt_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	dirt_trk_len_shwr_len_ratio_counter_v->resize(24, 0);
+	std::vector<int> * dirt_track_containment_counter_v = new std::vector<int>;
+	dirt_track_containment_counter_v->resize(24, 0);
+
+	std::vector<std::pair<double, int> > * dirt_flash_time = new std::vector<std::pair<double, int> >;
+
+	std::vector<TH1 * > * h_ele_pfp_xyz_dirt = new std::vector<TH1 * >;
+	h_ele_pfp_xyz_dirt->push_back(h_ele_pfp_x_dirt);
+	h_ele_pfp_xyz_dirt->push_back(h_ele_pfp_y_dirt);
+	h_ele_pfp_xyz_dirt->push_back(h_ele_pfp_z_dirt);
+
+	std::vector<TH1 * > * h_any_pfp_xyz_dirt = new std::vector<TH1 * >;
+	h_any_pfp_xyz_dirt->push_back(h_any_pfp_x_dirt);
+	h_any_pfp_xyz_dirt->push_back(h_any_pfp_y_dirt);
+	h_any_pfp_xyz_dirt->push_back(h_any_pfp_z_dirt);
+
+	std::vector<TH1 * > * h_any_pfp_xyz_last_dirt = new std::vector<TH1 * >;
+	h_any_pfp_xyz_last_dirt->push_back(h_any_pfp_x_last_dirt);
+	h_any_pfp_xyz_last_dirt->push_back(h_any_pfp_y_last_dirt);
+	h_any_pfp_xyz_last_dirt->push_back(h_any_pfp_z_last_dirt);
+
+	std::vector<int> * tabulated_origins_dirt = new std::vector<int>;
+	tabulated_origins_dirt->resize(24, 0);
+
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_dirt
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+
+	if(strcmp(_file4, "empty") != 0)
+	{
+		std::cout << "File Path: " << _file4 << std::endl;
+		TFile * dirt_f = new TFile(_file4);
+		if(!dirt_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
+		TTree * dirt_tree   = (TTree*)dirt_f->Get("AnalyzeTPCO/tree");
+		TTree * dirt_optree = (TTree*)dirt_f->Get("AnalyzeTPCO/optical_tree");
+
+		std::vector<xsecAna::TPCObjectContainer> * dirt_tpc_object_container_v = new std::vector<xsecAna::TPCObjectContainer>;
+		dirt_tree->SetBranchAddress("TpcObjectContainerV", &dirt_tpc_object_container_v);
+
+		std::ofstream run_subrun_file;
+		run_subrun_file.open("run_subrun_list_intime.txt");
+		int data_run = 0;
+		int data_subrun = 0;
+		int last_data_run = 0;
+		int last_data_subrun = 0;
+
+		std::cout << "=====================" << std::endl;
+		std::cout << "== Dirt Background ==" << std::endl;
+		std::cout << "=====================" << std::endl;
+
+		const int in_time_total_entries = dirt_tree->GetEntries();
+		std::cout << "Total Events: " << in_time_total_entries << std::endl;
+
+		std::vector<int> * dirt_passed_runs = new std::vector<int>;
+		//passed runs is filled with 0, 1, or 2
+		//0 = not in time
+		//1 = passed - in time and PE threshold
+		// 2 = in-time, but not enough PE -- this counts against my efficiency
+		dirt_passed_runs->resize(in_time_total_entries);
+
+		_cuts_instance.selection_cuts::loop_flashes(dirt_f, dirt_optree, flash_pe_threshold,
+		                                            flash_time_start, flash_time_end, dirt_passed_runs, dirt_flash_time, 1);
+		for(auto const run : * dirt_passed_runs)
+		{
+			if(run == 1) {run_sum++; }
+			if(run == 0) {out_of_time_sum++; }
+			if(run == 2) {low_pe_sum++; }
+		}
+		std::cout << " -------------------------------------- " << std::endl;
+		std::cout << "Passed Runs Vector Size: " << dirt_passed_runs->size() << std::endl;
+		std::cout << "Number Events In-Time & > 50 PE: " << run_sum << std::endl;
+		std::cout << "Number Events Not In-Time      : " << out_of_time_sum << std::endl;
+		std::cout << "Number Events In-Time & < 50 PE: " << low_pe_sum << std::endl;
+		std::cout << " -------------------------------------- " << std::endl;
+
+		//get vector with largest flashes y,z positions
+		std::vector< std::vector< double> > * dirt_largest_flash_v_v = new std::vector < std::vector < double > >;
+		_cuts_instance.selection_cuts::SetXYflashVector(dirt_f, dirt_optree, dirt_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		std::cout << "Largest Flash Vector Size: " << dirt_largest_flash_v_v->size() << std::endl;
+
+		for(int event = 0; event < in_time_total_entries; event++)
+		{
+			if(_verbose)
+			{
+				std::cout << "----------------------" << std::endl;
+				std::cout << "DIRT EVENT NUMBER] \t " << event << std::endl;
+				std::cout << "----------------------" << std::endl;
+			}
+			dirt_tree->GetEntry(event);
+
+			//writing the run and subrun values to a text file -
+			//this can be used as a cross-check for POT counting
+
+			for(auto const tpc_obj : * dirt_tpc_object_container_v)
+			{
+				data_run    = tpc_obj.RunNumber();
+				data_subrun = tpc_obj.SubRunNumber();
+				if(data_run != last_data_run && data_subrun != last_data_subrun)
+				{
+					run_subrun_file << data_run << " " << data_subrun << "\n";
+					break;
+				}
+			}
+			last_data_run = data_run;
+			last_data_subrun = data_subrun;
+
+			//***********************************************************
+			//this is where the in-time optical cut actually takes effect
+			//***********************************************************
+			if(_verbose) {std::cout << "In-Time Optical Cut (1)" << std::endl; }
+			if(dirt_passed_runs->at(event) == 0)
+			{
+				if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
+				continue;
+			}//false
+
+			//YZ Position of largest flash
+			std::vector < double > largest_flash_v = dirt_largest_flash_v_v->at(event);
+			//control for poorly reco flashes
+			if(largest_flash_v.at(1) != 0) {h_flash_z_dirt->Fill(largest_flash_v.at(1)); }
+
+			//List of TPC Objects which pass the cuts
+			std::vector<std::pair<int, std::string> > * passed_tpco_dirt = new std::vector<std::pair<int, std::string> >;
+			passed_tpco_dirt->resize(dirt_tpc_object_container_v->size());
+			std::vector<std::pair<int, std::string> > * dummy_passed_tpco_dirt = new std::vector<std::pair<int, std::string> >;
+			dummy_passed_tpco_dirt->resize(dirt_tpc_object_container_v->size());
+			//set initial state of objects
+			for(int i = 0; i < passed_tpco_dirt->size(); i++)
+			{
+				passed_tpco_dirt->at(i).first = 1;
+				passed_tpco_dirt->at(i).second = "Passed";
+				dummy_passed_tpco_dirt->at(i).first = 1;
+				dummy_passed_tpco_dirt->at(i).second = "Passed";
+			}
+			//***********************************************************
+			//this is where the in-time optical cut again takes effect
+			//***********************************************************
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_in_time_counter_v);
+
+			_functions_instance.selection_functions::XYZPositionInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                           h_any_pfp_xyz_dirt, h_pfp_zy_vtx_dirt, xyz_near_ext, xyz_far_dirt);
+
+			//PE threshold cut
+			if(_verbose) {std::cout << "In-Time Optical Cut (2)" << std::endl; }
+			if(dirt_passed_runs->at(event) == 2)
+			{
+				if(_verbose) std::cout << "[Passed In-Time Cut] [Failed PE Threshold] " << std::endl;
+				continue;
+			}
+
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_pe_counter_v);
+
+			//****************************
+			// ****** reco nue cut *******
+			//****************************
+			if(_verbose) {std::cout << "In-Time Reco Nue Cut" << std::endl; }
+			_cuts_instance.selection_cuts::HasNue(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_reco_nue_counter_v);
+
+			//** Testing leading shower length vs hits **//
+			_functions_instance.selection_functions::ShowerLengthvsHitsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_shwr_len_hits_dirt);
+			_functions_instance.selection_functions::XYZPositionInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_pfp_xyz_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_nue_cut_dirt);
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, dummy_passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_no_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_nue_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_nue_cut_dirt,
+			                                                                 h_multiplicity_track_nue_cut_dirt);
+
+			//************************
+			//******** in fv cut *****
+			//************************
+			if(_verbose) {std::cout << "In-Time FV Cut" << std::endl; }
+			_cuts_instance.selection_cuts::fiducial_volume_cut(dirt_tpc_object_container_v, fv_boundary_v, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_in_fv_counter_v);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_fv_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_fv_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_fv_cut_dirt,
+			                                                                 h_multiplicity_track_fv_cut_dirt);
+
+			//*****************************
+			//**** vertex to flash cut ****
+			//*****************************
+			if(_verbose) {std::cout << "In-Time Vertex-Flash Cut" << std::endl; }
+			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                _verbose, h_vtx_flash_dirt);
+			_functions_instance.selection_functions::PostCutsVtxFlashUpstreamInTime(largest_flash_v, dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                        _verbose, h_vtx_flash_upstream_dirt);
+			_functions_instance.selection_functions::PostCutsVtxFlashDownstreamInTime(largest_flash_v, dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                          _verbose, h_vtx_flash_downstream_dirt);
+
+			_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, dirt_tpc_object_container_v, tolerance, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_vtx_flash_counter_v);
+
+			_functions_instance.selection_functions::PostCutsVtxFlashInTime(largest_flash_v, dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                _verbose, h_vtx_flash_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_flash_vtx_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_flash_vtx_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_flash_vtx_cut_dirt,
+			                                                                 h_multiplicity_track_flash_vtx_cut_dirt);
+			//******************************************************
+			//*** distance between pfp shower and nue object cut ***
+			//******************************************************
+			if(_verbose) {std::cout << "In-Time Shower-Vtx Cut" << std::endl; }
+			_functions_instance.selection_functions::PostCutsShwrVtxInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_shwr_vtx_dist_dirt);
+
+			_cuts_instance.selection_cuts::VtxNuDistance(dirt_tpc_object_container_v, shwr_nue_tolerance, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_shwr_tpco_counter_v);
+
+			_functions_instance.selection_functions::PostCutsShwrVtxInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_shwr_vtx_dist_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_shwr_vtx_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_shwr_vtx_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_shwr_vtx_cut_dirt,
+			                                                                 h_multiplicity_track_shwr_vtx_cut_dirt);
+
+			//******************************************************
+			// **** distance between pfp track and nue object cut **
+			//******************************************************
+			if(_verbose) {std::cout << "In-Time Track-Vtx Cut" << std::endl; }
+			_functions_instance.selection_functions::PostCutTrkVtxInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_trk_vtx_dist_dirt);
+
+			_cuts_instance.selection_cuts::VtxTrackNuDistance(dirt_tpc_object_container_v, trk_nue_tolerance, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_trk_tpco_counter_v);
+
+			_functions_instance.selection_functions::PostCutTrkVtxInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_trk_vtx_dist_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_trk_vtx_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_trk_vtx_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_trk_vtx_cut_dirt,
+			                                                                 h_multiplicity_track_trk_vtx_cut_dirt);
+
+			//****************************************************
+			// ******** hit threshold for showers cut *************
+			//******************************************************
+			_functions_instance.selection_functions::HitsPlots1DInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                           h_pre_cut_collection_hits_track_dirt,
+			                                                           h_pre_cut_collection_hits_shower_dirt,
+			                                                           h_pre_cut_collection_hits_leading_shower_dirt,
+			                                                           h_pre_cut_total_hits_leading_shower_dirt);
+
+			_cuts_instance.selection_cuts::HitThreshold(dirt_tpc_object_container_v, shwr_hit_threshold, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_hit_threshold_counter_v);
+
+			_functions_instance.selection_functions::dEdxVsOpenAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_dedx_open_angle_dirt);
+			_functions_instance.selection_functions::LeadingCosThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, 0, 0,
+			                                                               _verbose, h_ele_cos_theta_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_hit_cut_dirt);
+
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_hit_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_hit_cut_dirt,
+			                                                                 h_multiplicity_track_hit_cut_dirt);
+
+			//***************************************//
+			//*** Collection Plane Hits Threshold ***//
+			//***************************************//
+			_functions_instance.selection_functions::LeadingPhiInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                          h_ele_pfp_phi_dirt);
+
+			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, 0, 0, _verbose,
+			                                                            h_ele_pfp_theta_dirt);
+
+			_functions_instance.selection_functions::HitsPlots1DInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                           h_collection_hits_track_dirt,
+			                                                           h_collection_hits_shower_dirt,
+			                                                           h_collection_hits_leading_shower_dirt,
+			                                                           h_total_hits_leading_shower_dirt);
+
+			_cuts_instance.selection_cuts::HitThresholdCollection(dirt_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco_dirt, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_hit_threshold_collection_counter_v);
+
+			_functions_instance.selection_functions::LeadingPhiInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_pfp_phi_after_dirt);
+
+			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, 0, 0, _verbose, h_ele_pfp_theta_after_dirt);
+
+			_functions_instance.selection_functions::HitsPlots1DInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                           h_collection_hits_track_dirt_after,
+			                                                           h_collection_hits_shower_dirt_after,
+			                                                           h_collection_hits_leading_shower_dirt_after,
+			                                                           h_total_hits_leading_shower_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_yhit_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_yhit_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_yhit_cut_dirt,
+			                                                                 h_multiplicity_track_yhit_cut_dirt);
+
+			//*****************************************************
+			//****** open angle cut for the leading shower ********
+			//******************************************************
+			_functions_instance.selection_functions::NumShowersOpenAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, h_pfp_shower_open_angle_dirt);
+			_functions_instance.selection_functions::PostCutOpenAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                _verbose, h_leading_shower_open_angle_dirt);
+			_functions_instance.selection_functions::PostCutOpenAngle1ShowerInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                       _verbose, h_leading_shower_open_angle_1_dirt);
+			_functions_instance.selection_functions::PostCutOpenAngle2PlusShowerInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                           _verbose, h_leading_shower_open_angle_2plus_dirt);
+			_cuts_instance.selection_cuts::OpenAngleCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_open_angle, _verbose);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_open_angle_counter_v);
+
+			_functions_instance.selection_functions::NumShowersOpenAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, h_pfp_shower_dedx_dirt);
+
+			_functions_instance.selection_functions::PostCutOpenAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                _verbose, h_leading_shower_open_angle_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_open_angle_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_open_angle_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_open_angle_cut_dirt,
+			                                                                 h_multiplicity_track_open_angle_cut_dirt);
+
+			//*****************************************************
+			//*********** dEdx cut for the leading shower *********
+			//******************************************************
+			_functions_instance.selection_functions::PostCutsdEdxInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_dedx_cuts_dirt);
+
+			_functions_instance.selection_functions::PostCutsdEdxAltScaleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                    _verbose, 0.98, h_dedx_cuts_scale_1_dirt);
+			_functions_instance.selection_functions::PostCutsdEdxAltScaleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                    _verbose, 0.97, h_dedx_cuts_scale_2_dirt);
+			_functions_instance.selection_functions::PostCutsdEdxAltScaleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                    _verbose, 0.95, h_dedx_cuts_scale_3_dirt);
+
+			_functions_instance.selection_functions::dEdxCollectionAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                   _verbose, h_dedx_collection_angle_dirt);
+			_functions_instance.selection_functions::dEdxThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                         _verbose, h_dedx_theta_pre_cuts_dirt);
+
+			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                        _verbose, h_dedx_cuts_ext_unmatched);
+
+			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                      h_dedx_slice_1_dirt,
+			                                                                      h_dedx_slice_2_dirt,
+			                                                                      h_dedx_slice_3_dirt);
+
+			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                      h_dedx_slice_1_zoom_dirt,
+			                                                                      h_dedx_slice_2_zoom_dirt,
+			                                                                      h_dedx_slice_3_zoom_dirt);
+
+			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
+
+			_functions_instance.selection_functions::PostCutsdEdxInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_dedx_cuts_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_dedx_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_dedx_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_dedx_cut_dirt,
+			                                                                 h_multiplicity_track_dedx_cut_dirt);
+
+			//***************************************************************************
+			// ******* Secondary Showers Distance Cut *****************
+			//***************************************************************************
+			_functions_instance.selection_functions::SecondaryShowersDistInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                    _verbose, h_second_shwr_dist_dirt);
+			_cuts_instance.selection_cuts::SecondaryShowersDistCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, dist_tolerance);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_secondary_shower_counter_v);
+
+			_functions_instance.selection_functions::SecondaryShowersDistInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                    _verbose, h_second_shwr_dist_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_2shwr_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_2shwr_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_2shwr_cut_dirt,
+			                                                                 h_multiplicity_track_2shwr_cut_dirt);
+
+			//******************************************************************************
+			// ********** Hit Length Ratio Cut *************
+			//******************************************************************************
+			_functions_instance.selection_functions::HitLengthRatioInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_hit_length_ratio_dirt);
+
+			_cuts_instance.selection_cuts::HitLengthRatioCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, pfp_hits_length_tolerance);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_hit_lengthRatio_counter_v);
+
+			_functions_instance.selection_functions::PlaneHitsComparisonTrackInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                        _verbose, h_collection_total_hits_track_dirt);
+			_functions_instance.selection_functions::PlaneHitsComparisonShowerInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                         _verbose, h_collection_total_hits_shower_dirt);
+			_functions_instance.selection_functions::PlaneHitsComparisonLeadingShowerInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                                _verbose, h_collection_total_hits_leading_shower_dirt);
+
+			_functions_instance.selection_functions::HitLengthRatioInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                              _verbose, h_hit_length_ratio_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_hit_length_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_hit_length_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_hit_length_cut_dirt,
+			                                                                 h_multiplicity_track_hit_length_cut_dirt);
+
+			//******************************************************************************
+			//*** cut for longest track / leading shower ratio *** //
+			//******************************************************************************
+			_functions_instance.selection_functions::LeadingShowerLengthInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                   _verbose, h_leading_shwr_length_dirt);
+
+			_functions_instance.selection_functions::LeadingShowerTrackLengthsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                         h_leading_shwr_trk_length_dirt);
+
+			_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, ratio_tolerance);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_trk_len_shwr_len_ratio_counter_v);
+
+			_functions_instance.selection_functions::LeadingShowerLengthInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                   _verbose, h_leading_shwr_length_dirt_after);
+
+			_functions_instance.selection_functions::LeadingShowerTrackLengthsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                         h_leading_shwr_trk_length_dirt_after);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_length_ratio_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_length_ratio_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_length_ratio_cut_dirt,
+			                                                                 h_multiplicity_track_length_ratio_cut_dirt);
+
+			//******************************************************************************
+			//*** contained track cut *** //
+			//******************************************************************************
+			_functions_instance.selection_functions::IsContainedPlotInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                               _verbose, fv_boundary_v, h_track_containment_dirt);
+
+			_cuts_instance.selection_cuts::ContainedTracksCut(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, fv_boundary_v, true);
+			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
+			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_track_containment_counter_v);
+
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_momentum_containment_cut_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                   h_leading_momentum_containment_cut_ext_unmatched);
+
+			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                 h_multiplicity_shower_containment_cut_dirt,
+			                                                                 h_multiplicity_track_containment_cut_dirt);
+
+			//*********** Dirt *********
+			//*************************************
+			// ******** End Selection Cuts! *******
+			//*************************************
+			_functions_instance.selection_functions::LeadingMomentumInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_pfp_momentum_dirt);
+			_functions_instance.selection_functions::LeadingMomentumTrackTopologyInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                            h_ele_pfp_momentum_no_track_dirt, h_ele_pfp_momentum_has_track_dirt);
+
+			_functions_instance.selection_functions::LeadingPhiTrackTopologyInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                       h_ele_pfp_phi_no_track_dirt, h_ele_pfp_phi_has_track_dirt);
+
+			_functions_instance.selection_functions::LeadingThetaTrackTopologyInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                         h_ele_pfp_theta_no_track_dirt, h_ele_pfp_theta_has_track_dirt);
+
+			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                        _verbose, h_dedx_cuts_last_ext_unmatched);
+
+			_functions_instance.selection_functions::LeadingPhiInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_pfp_phi_last_dirt);
+			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                            theta_translation, phi_translation, _verbose, h_ele_pfp_theta_last_dirt);
+			_functions_instance.selection_functions::LeadingCosThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                               0, 0, _verbose, h_ele_cos_theta_last_dirt);
+			_functions_instance.selection_functions::LeadingCosThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                               theta_translation, phi_translation, _verbose, h_ele_cos_theta_last_trans_dirt);
+			_functions_instance.selection_functions::EnergyCosThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_eng_costheta_dirt);
+			_functions_instance.selection_functions::EnergyCosThetaSlicesInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                    0, 0,
+			                                                                    h_ele_eng_for_dirt,
+			                                                                    h_ele_eng_mid_dirt,
+			                                                                    h_ele_eng_back_dirt);
+			_functions_instance.selection_functions::EnergyCosThetaSlicesInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                    theta_translation, phi_translation,
+			                                                                    h_ele_eng_for_trans_dirt,
+			                                                                    h_ele_eng_mid_trans_dirt,
+			                                                                    h_ele_eng_back_trans_dirt);
+
+			_functions_instance.selection_functions::PostCutsLeadingMomentumThetaSliceInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                                 h_ele_momentum_slice_1_dirt,
+			                                                                                 h_ele_momentum_slice_2_dirt,
+			                                                                                 h_ele_momentum_slice_3_dirt);
+
+			_functions_instance.selection_functions::dEdxThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                         _verbose, h_dedx_theta_dirt);
+
+			_functions_instance.selection_functions::XYZPositionInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_any_pfp_xyz_last_dirt);
+
+			_functions_instance.selection_functions::FillPostCutVector(dirt_tpc_object_container_v, passed_tpco_dirt, post_cuts_v_dirt);
+			_functions_instance.selection_functions::LeadingThetaPhiInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_theta_phi_dirt);
+
+			_functions_instance.selection_functions::LeadingKinematicsShowerTopologyInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
+			                                                                               h_ele_pfp_momentum_1shwr_dirt, h_ele_pfp_momentum_2shwr_dirt,
+			                                                                               h_ele_pfp_theta_1shwr_dirt, h_ele_pfp_theta_2shwr_dirt,
+			                                                                               h_ele_pfp_phi_1shwr_dirt, h_ele_pfp_phi_2shwr_dirt);
+
+			//delete at the very end!
+			delete passed_tpco_dirt;
+		}
+	}//end string compare for dirt file
+
+//end Dirt
+
 //***********************************
 	//***********************************
 	//*** In-time Cosmics Calculation ***
@@ -753,8 +1359,6 @@ void selection::make_selection( const char * _file1,
 	h_any_pfp_xyz_last_intime->push_back(h_any_pfp_y_last_intime);
 	h_any_pfp_xyz_last_intime->push_back(h_any_pfp_z_last_intime);
 
-	std::vector<int> * tabulated_origins = new std::vector<int>;
-	tabulated_origins->resize(24, 0);
 	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
 	tabulated_origins_intime->resize(24, 0);
 
@@ -1481,6 +2085,9 @@ void selection::make_selection( const char * _file1,
 	std::cout << "========================" << std::endl;
 	std::cout << "== Begin MC Selection ==" << std::endl;
 	std::cout << "========================" << std::endl;
+
+	std::vector<int> * tabulated_origins = new std::vector<int>;
+	tabulated_origins->resize(24, 0);
 
 	const int total_entries = mytree->GetEntries();
 	std::cout << "Total Events     : " << total_entries << std::endl;
@@ -3872,82 +4479,87 @@ void selection::make_selection( const char * _file1,
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 	selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "In Time");
-	selection_functions_data::PrintInfoData(1 * data_in_time_counter_v->at(0),                                  "In Time");
+	                                intime_scale_factor, data_scale_factor, dirt_in_time_counter_v->at(0), dirt_scale_factor, "In Time");
+	selection_functions_data::PrintInfoData(1 * data_in_time_counter_v->at(0),                                                "In Time");
 	selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "PE Threshold");
-	selection_functions_data::PrintInfoData(1 * data_pe_counter_v->at(0),                                       "PE Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_pe_counter_v->at(0), dirt_scale_factor, "PE Threshold");
+	selection_functions_data::PrintInfoData(1 * data_pe_counter_v->at(0),                                                "PE Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Reco Nue");
-	selection_functions_data::PrintInfoData(1 * data_reco_nue_counter_v->at(0),                                 "Reco Nue");
+	                                intime_scale_factor, data_scale_factor, dirt_reco_nue_counter_v->at(0), dirt_scale_factor, "Reco Nue");
+	selection_functions_data::PrintInfoData(1 * data_reco_nue_counter_v->at(0),                                                "Reco Nue");
 	selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "In FV");
-	selection_functions_data::PrintInfoData(1 * data_in_fv_counter_v->at(0),                                    "In FV");
+	                                intime_scale_factor, data_scale_factor, dirt_in_fv_counter_v->at(0), dirt_scale_factor, "In FV");
+	selection_functions_data::PrintInfoData(1 * data_in_fv_counter_v->at(0),                                                "In FV");
 	selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Vtx-to-Flash");
-	selection_functions_data::PrintInfoData(1 * data_vtx_flash_counter_v->at(0),                                "Vtx-to-Flash");
+	                                intime_scale_factor, data_scale_factor, dirt_vtx_flash_counter_v->at(0), dirt_scale_factor, "Vtx-to-Flash");
+	selection_functions_data::PrintInfoData(1 * data_vtx_flash_counter_v->at(0),                                                "Vtx-to-Flash");
 	selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Shower-to-TPCO");
-	selection_functions_data::PrintInfoData(1 * data_shwr_tpco_counter_v->at(0),                                "Shower-to-TPCO");
+	                                intime_scale_factor, data_scale_factor, dirt_shwr_tpco_counter_v->at(0), dirt_scale_factor, "Shower-to-TPCO");
+	selection_functions_data::PrintInfoData(1 * data_shwr_tpco_counter_v->at(0),                                                "Shower-to-TPCO");
 	selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Track-to-TPCO");
-	selection_functions_data::PrintInfoData(1 * data_trk_tpco_counter_v->at(0),                                 "Track-to-TPCO");
+	                                intime_scale_factor, data_scale_factor, dirt_trk_tpco_counter_v->at(0), dirt_scale_factor, "Track-to-TPCO");
+	selection_functions_data::PrintInfoData(1 * data_trk_tpco_counter_v->at(0),                                                "Track-to-TPCO");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Hit Threshold");
-	selection_functions_data::PrintInfoData(1 * data_hit_threshold_counter_v->at(0),                            "Hit Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_counter_v->at(0), dirt_scale_factor, "Hit Threshold");
+	selection_functions_data::PrintInfoData(1 * data_hit_threshold_counter_v->at(0),                                                "Hit Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, intime_hit_threshold_collection_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                      "YPlane Hit Threshold");
-	selection_functions_data::PrintInfoData(1 * data_hit_threshold_collection_counter_v->at(0),                  "YPlane hit Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_collection_counter_v->at(0), dirt_scale_factor, "YPlane Hit Threshold");
+	selection_functions_data::PrintInfoData(1 * data_hit_threshold_collection_counter_v->at(0),                                                "YPlane hit Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Open Angle");
-	selection_functions_data::PrintInfoData(1 * data_open_angle_counter_v->at(0),                               "Open Angle");
+	                                intime_scale_factor, data_scale_factor, dirt_open_angle_counter_v->at(0), dirt_scale_factor, "Open Angle");
+	selection_functions_data::PrintInfoData(1 * data_open_angle_counter_v->at(0),                                                "Open Angle");
 	selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     " dE / dx ");
-	selection_functions_data::PrintInfoData(1 * data_dedx_counter_v->at(0),                                     " dE / dx ");
+	                                intime_scale_factor, data_scale_factor, dirt_dedx_counter_v->at(0), dirt_scale_factor, " dE / dx ");
+	selection_functions_data::PrintInfoData(1 * data_dedx_counter_v->at(0),                                                " dE / dx ");
 	selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, intime_secondary_shower_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     ">1 Shower TPCO Dist");
-	selection_functions_data::PrintInfoData(1 * data_secondary_shower_counter_v->at(0),                         ">1 Shower TPCO Dist");
+	                                intime_scale_factor, data_scale_factor, dirt_secondary_shower_counter_v->at(0), dirt_scale_factor, ">1 Shower TPCO Dist");
+	selection_functions_data::PrintInfoData(1 * data_secondary_shower_counter_v->at(0),                                                ">1 Shower TPCO Dist");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, intime_hit_lengthRatio_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Hit Length Ratio");
-	selection_functions_data::PrintInfoData(1 * data_hit_lengthRatio_counter_v->at(0),                          "Hit Length Ratio");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_lengthRatio_counter_v->at(0), dirt_scale_factor, "Hit Length Ratio");
+	selection_functions_data::PrintInfoData(1 * data_hit_lengthRatio_counter_v->at(0),                                                "Hit Length Ratio");
 	selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "TrkLen/ShwrLen Ratio");
-	selection_functions_data::PrintInfoData(1 * data_trk_len_shwr_len_ratio_counter_v->at(0),                   "TrkLen/ShwrLen Ratio");
+	                                intime_scale_factor, data_scale_factor, dirt_trk_len_shwr_len_ratio_counter_v->at(0), dirt_scale_factor, "TrkLen/ShwrLen Ratio");
+	selection_functions_data::PrintInfoData(1 * data_trk_len_shwr_len_ratio_counter_v->at(0),                                                "TrkLen/ShwrLen Ratio");
 	selection_functions::PrintInfo( total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor,                                     "Track Containment");
-	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                        "Track Containment");
+	                                intime_scale_factor, data_scale_factor, dirt_track_containment_counter_v->at(0), dirt_scale_factor, "Track Containment");
+	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                                                "Track Containment");
 
 	//***********************************************************************************************************************
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "In Time", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "PE Threshold", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Reco Nue", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "In FV", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Vtx-to-Flash", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Shwr-to-TPCO", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Trk-to-TPCO", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Hit Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0), dirt_in_time_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "In Time", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0), dirt_pe_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "PE Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0), dirt_reco_nue_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Reco Nue", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0), dirt_in_fv_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "In FV", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0), dirt_vtx_flash_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Vtx-to-Flash", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0), dirt_shwr_tpco_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Shwr-to-TPCO", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0), dirt_trk_tpco_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Trk-to-TPCO", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0), dirt_hit_threshold_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Hit Threshold", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_threshold_collection_counter_v, intime_hit_threshold_collection_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "YPlane Hit Threshold", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Open Angle", results_v);
-	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "dE / dx", results_v);
+	                                            dirt_hit_threshold_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "YPlane Hit Threshold", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0), dirt_open_angle_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Open Angle", results_v);
+	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0), dirt_dedx_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "dE / dx", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, secondary_shower_counter_v, intime_secondary_shower_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, ">1 Shower-Dist", results_v);
+	                                            dirt_secondary_shower_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, ">1 Shower-Dist", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, hit_lengthRatio_counter_v, intime_hit_lengthRatio_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Hit-Len-Ratio", results_v);
+	                                            dirt_hit_lengthRatio_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Hit-Len-Ratio", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "TrkLen/ShwrLen Ratio", results_v);
+	                                            dirt_trk_len_shwr_len_ratio_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "TrkLen/ShwrLen Ratio", results_v);
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
-	                                            intime_scale_factor, data_scale_factor, "Track Contained", results_v);
+	                                            dirt_track_containment_counter_v->at(0),
+	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "Track Contained", results_v);
 
 	selection_functions::PrintTopologyPurity(no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 	//*************************************************************************************************************************
@@ -4204,7 +4816,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_cosmic,  h_leading_shower_open_angle_nc,
 	                                          h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
 	                                          h_leading_shower_open_angle_unmatched, h_leading_shower_open_angle_intime, intime_scale_factor,
-	                                          h_leading_shower_open_angle_data, data_scale_factor,
+	                                          h_leading_shower_open_angle_data, data_scale_factor, h_leading_shower_open_angle_dirt, dirt_scale_factor,
 	                                          "", "Shower Opening Angle [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_data.pdf"));
 	if(use_alt_scaling) {
@@ -4214,7 +4826,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_leading_shower_open_angle_cosmic,  h_leading_shower_open_angle_nc,
 		                                          h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
 		                                          h_leading_shower_open_angle_unmatched, h_leading_shower_open_angle_intime, scaled_intime_scale_factor,
-		                                          h_leading_shower_open_angle_data, data_scale_factor,
+		                                          h_leading_shower_open_angle_data, data_scale_factor, h_leading_shower_open_angle_dirt, dirt_scale_factor,
 		                                          "", "Shower Opening Angle [Degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_scaled_data.pdf"));
 	}
@@ -4224,7 +4836,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_cosmic_after,  h_leading_shower_open_angle_nc_after,
 	                                          h_leading_shower_open_angle_nc_pi0_after,  h_leading_shower_open_angle_other_mixed_after,
 	                                          h_leading_shower_open_angle_unmatched_after, h_leading_shower_open_angle_intime_after, intime_scale_factor,
-	                                          h_leading_shower_open_angle_data_after, data_scale_factor,
+	                                          h_leading_shower_open_angle_data_after, data_scale_factor, h_leading_shower_open_angle_dirt_after, dirt_scale_factor,
 	                                          "", "Shower Opening Angle [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_data_after.pdf"));
 
@@ -4272,6 +4884,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_2plus_nc_pi0,  h_leading_shower_open_angle_2plus_other_mixed,
 	                                          h_leading_shower_open_angle_2plus_unmatched, h_leading_shower_open_angle_2plus_intime,
 	                                          intime_scale_factor, h_leading_shower_open_angle_2plus_data, data_scale_factor,
+	                                          h_leading_shower_open_angle_2plus_dirt, dirt_scale_factor,
 	                                          "", "Shower Opening Angle [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_2plus_showers_data.pdf"));
 
@@ -4297,7 +4910,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
 	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_intime, intime_scale_factor,
-	                                          h_dedx_cuts_data, data_scale_factor, "",
+	                                          h_dedx_cuts_data, data_scale_factor, h_dedx_cuts_dirt, dirt_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
@@ -4306,7 +4919,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
 		                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 		                                          h_dedx_cuts_unmatched, h_dedx_cuts_intime, scaled_intime_scale_factor,
-		                                          h_dedx_cuts_data, data_scale_factor, "",
+		                                          h_dedx_cuts_data, data_scale_factor, h_dedx_cuts_dirt, dirt_scale_factor, "",
 		                                          "Collection Plane dE/dx [MeV/cm] (Scaled)", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scaled_data.pdf"));
 	}
 
@@ -4316,7 +4929,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
 	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_1_intime, intime_scale_factor,
-	                                          h_dedx_cuts_scale_1_data, data_scale_factor, "",
+	                                          h_dedx_cuts_scale_1_data, data_scale_factor, h_dedx_cuts_scale_1_dirt, dirt_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_1_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
@@ -4325,7 +4938,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
 	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_2_intime, intime_scale_factor,
-	                                          h_dedx_cuts_scale_2_data, data_scale_factor, "",
+	                                          h_dedx_cuts_scale_2_data, data_scale_factor, h_dedx_cuts_scale_2_dirt, dirt_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_2_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
@@ -4334,7 +4947,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
 	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_3_intime, intime_scale_factor,
-	                                          h_dedx_cuts_scale_3_data, data_scale_factor, "",
+	                                          h_dedx_cuts_scale_3_data, data_scale_factor, h_dedx_cuts_scale_3_dirt, dirt_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
@@ -4343,7 +4956,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
 	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_3_intime, scaled_intime_scale_factor,
-	                                          h_dedx_cuts_scale_3_data, data_scale_factor, "",
+	                                          h_dedx_cuts_scale_3_data, data_scale_factor, h_dedx_cuts_scale_3_dirt, dirt_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm (Scaled)]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_scaled_data.pdf"));
 
@@ -4353,7 +4966,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_cosmic,  h_dedx_cuts_nc,
 	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_scale_3_intime, intime_scale_factor,
-	                                          h_dedx_cuts_scale_3_data, data_scale_factor,
+	                                          h_dedx_cuts_scale_3_data, data_scale_factor, h_dedx_cuts_scale_3_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 0.98, 0.50, false, true, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_area_norm_data.pdf"));
@@ -4364,7 +4977,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_cosmic_after,  h_dedx_cuts_nc_after,
 	                                          h_dedx_cuts_nc_pi0_after,  h_dedx_cuts_other_mixed_after,
 	                                          h_dedx_cuts_unmatched_after, h_dedx_cuts_intime_after, intime_scale_factor,
-	                                          h_dedx_cuts_data_after, data_scale_factor, "",
+	                                          h_dedx_cuts_data_after, data_scale_factor, h_dedx_cuts_dirt_after, dirt_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data_after.pdf"));
 
 
@@ -4392,7 +5005,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_cosmic,  h_vtx_flash_nc,
 	                                          h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
 	                                          h_vtx_flash_unmatched, h_vtx_flash_intime, intime_scale_factor,
-	                                          h_vtx_flash_data, data_scale_factor, "",
+	                                          h_vtx_flash_data, data_scale_factor, h_vtx_flash_dirt, dirt_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data.pdf"));
 	if(use_alt_scaling) {
@@ -4402,7 +5015,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_vtx_flash_cosmic,  h_vtx_flash_nc,
 		                                          h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
 		                                          h_vtx_flash_unmatched, h_vtx_flash_intime, scaled_intime_scale_factor,
-		                                          h_vtx_flash_data, data_scale_factor, "",
+		                                          h_vtx_flash_data, data_scale_factor, h_vtx_flash_dirt, dirt_scale_factor, "",
 		                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_scaled_data.pdf"));
 	}
@@ -4413,7 +5026,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_cosmic,  h_vtx_flash_nc,
 	                                          h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
 	                                          h_vtx_flash_unmatched, h_vtx_flash_intime, intime_scale_factor,
-	                                          h_vtx_flash_data, data_scale_factor,
+	                                          h_vtx_flash_data, data_scale_factor, h_vtx_flash_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data_logy.pdf"));
@@ -4424,7 +5037,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
 	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
 	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, intime_scale_factor,
-	                                          h_vtx_flash_upstream_data, data_scale_factor, "",
+	                                          h_vtx_flash_upstream_data, data_scale_factor, h_vtx_flash_upstream_dirt, dirt_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_data.pdf"));
 
@@ -4434,7 +5047,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
 	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
 	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, intime_scale_factor,
-	                                          h_vtx_flash_downstream_data, data_scale_factor, "",
+	                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_data.pdf"));
 
@@ -4444,7 +5057,8 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
 	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
 	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, scaled_intime_scale_factor,
-	                                          h_vtx_flash_upstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, false, "",
+	                                          h_vtx_flash_upstream_data, data_scale_factor, h_vtx_flash_upstream_dirt, dirt_scale_factor,
+	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_scaled_data_logy.pdf"));
 
@@ -4454,7 +5068,8 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
 	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
 	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, scaled_intime_scale_factor,
-	                                          h_vtx_flash_downstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, false, "",
+	                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor,
+	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_scaled_data_logy.pdf"));
 
@@ -4464,7 +5079,8 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
 	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
 	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, intime_scale_factor,
-	                                          h_vtx_flash_upstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, true, "",
+	                                          h_vtx_flash_upstream_data, data_scale_factor, h_vtx_flash_upstream_dirt, dirt_scale_factor,
+	                                          0.73, 0.98, 0.98, 0.50, true, true, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_area_norm_data_logy.pdf"));
 
@@ -4474,7 +5090,8 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
 	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
 	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, intime_scale_factor,
-	                                          h_vtx_flash_downstream_data, data_scale_factor, 0.73, 0.98, 0.98, 0.50, true, true, "",
+	                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor,
+	                                          0.73, 0.98, 0.98, 0.50, true, true, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_area_norm_data_logy.pdf"));
 
@@ -4485,7 +5102,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_cosmic_after,  h_vtx_flash_nc_after,
 	                                          h_vtx_flash_nc_pi0_after,  h_vtx_flash_other_mixed_after,
 	                                          h_vtx_flash_unmatched_after, h_vtx_flash_intime_after, intime_scale_factor,
-	                                          h_vtx_flash_data_after, data_scale_factor, "",
+	                                          h_vtx_flash_data_after, data_scale_factor, h_vtx_flash_dirt_after, dirt_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data_after.pdf"));
 
@@ -4512,7 +5129,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_trk_vtx_dist_cosmic,  h_trk_vtx_dist_nc,
 	                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
 	                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, intime_scale_factor,
-	                                          h_trk_vtx_dist_data, data_scale_factor, "",
+	                                          h_trk_vtx_dist_data, data_scale_factor, h_trk_vtx_dist_dirt, dirt_scale_factor, "",
 	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data.pdf"));
 
@@ -4522,7 +5139,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_trk_vtx_dist_cosmic,  h_trk_vtx_dist_nc,
 	                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
 	                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, intime_scale_factor,
-	                                          h_trk_vtx_dist_data, data_scale_factor,
+	                                          h_trk_vtx_dist_data, data_scale_factor, h_trk_vtx_dist_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_logy.pdf"));
@@ -4549,7 +5166,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_trk_vtx_dist_cosmic,  h_trk_vtx_dist_nc,
 		                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
 		                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, scaled_intime_scale_factor,
-		                                          h_trk_vtx_dist_data, data_scale_factor,
+		                                          h_trk_vtx_dist_data, data_scale_factor, h_trk_vtx_dist_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 		                                          "Track to Nue Candidate Vertex Distance [cm] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_scaled_logy.pdf"));
@@ -4561,7 +5178,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_trk_vtx_dist_cosmic_after,  h_trk_vtx_dist_nc_after,
 	                                          h_trk_vtx_dist_nc_pi0_after,  h_trk_vtx_dist_other_mixed_after,
 	                                          h_trk_vtx_dist_unmatched_after, h_trk_vtx_dist_intime_after, intime_scale_factor,
-	                                          h_trk_vtx_dist_data_after, data_scale_factor, "",
+	                                          h_trk_vtx_dist_data_after, data_scale_factor, h_trk_vtx_dist_dirt_after, dirt_scale_factor, "",
 	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_after.pdf"));
 
@@ -4589,7 +5206,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_shwr_vtx_dist_cosmic,  h_shwr_vtx_dist_nc,
 	                                          h_shwr_vtx_dist_nc_pi0,  h_shwr_vtx_dist_other_mixed,
 	                                          h_shwr_vtx_dist_unmatched, h_shwr_vtx_dist_intime, intime_scale_factor,
-	                                          h_shwr_vtx_dist_data, data_scale_factor, "",
+	                                          h_shwr_vtx_dist_data, data_scale_factor, h_shwr_vtx_dist_dirt, dirt_scale_factor, "",
 	                                          "Shower to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data.pdf"));
 
@@ -4599,7 +5216,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_shwr_vtx_dist_cosmic,  h_shwr_vtx_dist_nc,
 	                                          h_shwr_vtx_dist_nc_pi0,  h_shwr_vtx_dist_other_mixed,
 	                                          h_shwr_vtx_dist_unmatched, h_shwr_vtx_dist_intime, intime_scale_factor,
-	                                          h_shwr_vtx_dist_data, data_scale_factor,
+	                                          h_shwr_vtx_dist_data, data_scale_factor, h_shwr_vtx_dist_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "Shower to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_logy.pdf"));
@@ -4610,7 +5227,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_shwr_vtx_dist_cosmic,  h_shwr_vtx_dist_nc,
 		                                          h_shwr_vtx_dist_nc_pi0,  h_shwr_vtx_dist_other_mixed,
 		                                          h_shwr_vtx_dist_unmatched, h_shwr_vtx_dist_intime, scaled_intime_scale_factor,
-		                                          h_shwr_vtx_dist_data, data_scale_factor,
+		                                          h_shwr_vtx_dist_data, data_scale_factor, h_shwr_vtx_dist_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 		                                          "Shower to Nue Candidate Vertex Distance [cm] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_scaled_logy.pdf"));
@@ -4637,7 +5254,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_shwr_vtx_dist_cosmic_after,  h_shwr_vtx_dist_nc_after,
 	                                          h_shwr_vtx_dist_nc_pi0_after,  h_shwr_vtx_dist_other_mixed_after,
 	                                          h_shwr_vtx_dist_unmatched_after, h_shwr_vtx_dist_intime_after, intime_scale_factor,
-	                                          h_shwr_vtx_dist_data_after, data_scale_factor, "",
+	                                          h_shwr_vtx_dist_data_after, data_scale_factor, h_shwr_vtx_dist_dirt_after, dirt_scale_factor, "",
 	                                          "Shower to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_after.pdf"));
 
@@ -5115,7 +5732,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_second_shwr_dist_cosmic,  h_second_shwr_dist_nc,
 	                                          h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
 	                                          h_second_shwr_dist_unmatched, h_second_shwr_dist_intime, intime_scale_factor,
-	                                          h_second_shwr_dist_data, data_scale_factor, "",
+	                                          h_second_shwr_dist_data, data_scale_factor, h_second_shwr_dist_dirt, dirt_scale_factor, "",
 	                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_second_shwr_dist_data.pdf"));
 	if(use_alt_scaling) {
@@ -5125,7 +5742,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_second_shwr_dist_cosmic,  h_second_shwr_dist_nc,
 		                                          h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
 		                                          h_second_shwr_dist_unmatched, h_second_shwr_dist_intime, scaled_intime_scale_factor,
-		                                          h_second_shwr_dist_data, data_scale_factor, "",
+		                                          h_second_shwr_dist_data, data_scale_factor, h_second_shwr_dist_dirt, dirt_scale_factor, "",
 		                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_second_shwr_dist_scaled_data.pdf"));
 	}
@@ -5136,7 +5753,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_second_shwr_dist_cosmic,  h_second_shwr_dist_nc,
 	                                          h_second_shwr_dist_nc_pi0,  h_second_shwr_dist_other_mixed,
 	                                          h_second_shwr_dist_unmatched, h_second_shwr_dist_intime, intime_scale_factor,
-	                                          h_second_shwr_dist_data, data_scale_factor,
+	                                          h_second_shwr_dist_data, data_scale_factor, h_second_shwr_dist_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
 	                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_second_shwr_dist_data_logy.pdf"));
@@ -5147,7 +5764,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_second_shwr_dist_cosmic_after,  h_second_shwr_dist_nc_after,
 	                                          h_second_shwr_dist_nc_pi0_after,  h_second_shwr_dist_other_mixed_after,
 	                                          h_second_shwr_dist_unmatched_after, h_second_shwr_dist_intime_after, intime_scale_factor,
-	                                          h_second_shwr_dist_data_after, data_scale_factor, "",
+	                                          h_second_shwr_dist_data_after, data_scale_factor, h_second_shwr_dist_dirt_after, dirt_scale_factor, "",
 	                                          "(TPCO > 1 Reco Shower) Secondary Shwr-Vtx Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_second_shwr_dist_data_after.pdf"));
 
@@ -5174,7 +5791,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_hit_length_ratio_cosmic,  h_hit_length_ratio_nc,
 	                                          h_hit_length_ratio_nc_pi0,  h_hit_length_ratio_other_mixed,
 	                                          h_hit_length_ratio_unmatched, h_hit_length_ratio_intime, intime_scale_factor,
-	                                          h_hit_length_ratio_data, data_scale_factor, "",
+	                                          h_hit_length_ratio_data, data_scale_factor, h_hit_length_ratio_dirt, dirt_scale_factor, "",
 	                                          "Leading Shower (Hits / Length) [cm^-1]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_hit_length_ratio_data.pdf"));
 	if(use_alt_scaling) {
@@ -5184,7 +5801,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_hit_length_ratio_cosmic,  h_hit_length_ratio_nc,
 		                                          h_hit_length_ratio_nc_pi0,  h_hit_length_ratio_other_mixed,
 		                                          h_hit_length_ratio_unmatched, h_hit_length_ratio_intime, scaled_intime_scale_factor,
-		                                          h_hit_length_ratio_data, data_scale_factor, "",
+		                                          h_hit_length_ratio_data, data_scale_factor, h_hit_length_ratio_dirt, dirt_scale_factor, "",
 		                                          "Leading Shower (Hits / Length) [cm^-1] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_hit_length_ratio_scaled_data.pdf"));
 	}
@@ -5195,7 +5812,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_hit_length_ratio_cosmic_after,  h_hit_length_ratio_nc_after,
 	                                          h_hit_length_ratio_nc_pi0_after,  h_hit_length_ratio_other_mixed_after,
 	                                          h_hit_length_ratio_unmatched_after, h_hit_length_ratio_intime_after, intime_scale_factor,
-	                                          h_hit_length_ratio_data_after, data_scale_factor, "",
+	                                          h_hit_length_ratio_data_after, data_scale_factor, h_hit_length_ratio_dirt_after, dirt_scale_factor, "",
 	                                          "Leading Shower (Hits / Length) [cm^-1]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_hit_length_ratio_data_after.pdf"));
 
@@ -5221,7 +5838,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_trk_length_cosmic,  h_trk_length_nc,
 	                                          h_trk_length_nc_pi0,  h_trk_length_other_mixed,
 	                                          h_trk_length_unmatched, h_trk_length_intime, intime_scale_factor,
-	                                          h_trk_length_data, data_scale_factor, "",
+	                                          h_trk_length_data, data_scale_factor, h_trk_length_dirt, dirt_scale_factor, "",
 	                                          "All Track Lengths [cm]", "", Form("%s%s", file_locate_prefix, "post_all_track_lengths_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_longest_trk_length_nue_cc,  h_longest_trk_length_nue_cc_mixed,
@@ -5246,7 +5863,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_longest_trk_length_cosmic,  h_longest_trk_length_nc,
 	                                          h_longest_trk_length_nc_pi0,  h_longest_trk_length_other_mixed,
 	                                          h_longest_trk_length_unmatched, h_longest_trk_length_intime, intime_scale_factor,
-	                                          h_longest_trk_length_data, data_scale_factor, "",
+	                                          h_longest_trk_length_data, data_scale_factor, h_longest_trk_length_dirt, dirt_scale_factor, "",
 	                                          "Longest Track Lengths [cm]", "", Form("%s%s", file_locate_prefix, "post_longest_track_lengths_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_shwr_length_nue_cc,  h_shwr_length_nue_cc_mixed,
@@ -5299,7 +5916,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_shwr_length_cosmic,  h_shwr_length_nc,
 	                                          h_shwr_length_nc_pi0,  h_shwr_length_other_mixed,
 	                                          h_shwr_length_unmatched, h_shwr_length_intime, intime_scale_factor,
-	                                          h_shwr_length_data, data_scale_factor, "",
+	                                          h_shwr_length_data, data_scale_factor, h_shwr_length_dirt, dirt_scale_factor, "",
 	                                          "All Shower Lengths [cm]", "", Form("%s%s", file_locate_prefix, "post_all_shower_lengths_data.pdf"));
 	histogram_functions::PlotSimpleStackData (h_longest_shwr_length_nue_cc,  h_longest_shwr_length_nue_cc_mixed,
 	                                          h_longest_shwr_length_nue_cc_out_fv,
@@ -5307,7 +5924,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_longest_shwr_length_cosmic,  h_longest_shwr_length_nc,
 	                                          h_longest_shwr_length_nc_pi0,  h_longest_shwr_length_other_mixed,
 	                                          h_longest_shwr_length_unmatched, h_longest_shwr_length_intime, intime_scale_factor,
-	                                          h_longest_shwr_length_data, data_scale_factor, "",
+	                                          h_longest_shwr_length_data, data_scale_factor, h_longest_shwr_length_dirt, dirt_scale_factor, "",
 	                                          "Longest Shower Lengths [cm]", "", Form("%s%s", file_locate_prefix, "post_longest_shower_lengths_data.pdf"));
 	histogram_functions::PlotSimpleStackData (h_leading_shwr_length_nue_cc,  h_leading_shwr_length_nue_cc_mixed,
 	                                          h_leading_shwr_length_nue_cc_out_fv,
@@ -5315,7 +5932,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_length_cosmic,  h_leading_shwr_length_nc,
 	                                          h_leading_shwr_length_nc_pi0,  h_leading_shwr_length_other_mixed,
 	                                          h_leading_shwr_length_unmatched, h_leading_shwr_length_intime, intime_scale_factor,
-	                                          h_leading_shwr_length_data, data_scale_factor, "",
+	                                          h_leading_shwr_length_data, data_scale_factor, h_leading_shwr_length_dirt, dirt_scale_factor, "",
 	                                          "Leading Shower Lengths [cm]", "", Form("%s%s", file_locate_prefix, "post_leading_shower_lengths_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_leading_shwr_trk_length_nue_cc,  h_leading_shwr_trk_length_nue_cc_mixed,
@@ -5341,7 +5958,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_trk_length_cosmic,  h_leading_shwr_trk_length_nc,
 	                                          h_leading_shwr_trk_length_nc_pi0,  h_leading_shwr_trk_length_other_mixed,
 	                                          h_leading_shwr_trk_length_unmatched, h_leading_shwr_trk_length_intime, intime_scale_factor,
-	                                          h_leading_shwr_trk_length_data, data_scale_factor, "",
+	                                          h_leading_shwr_trk_length_data, data_scale_factor, h_leading_shwr_trk_length_dirt, dirt_scale_factor, "",
 	                                          "Longest Track / Leading Shower Lengths", "",
 	                                          Form("%s%s", file_locate_prefix, "post_leading_shower_trk_lengths_data.pdf"));
 	if(use_alt_scaling) {
@@ -5351,7 +5968,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_leading_shwr_trk_length_cosmic,  h_leading_shwr_trk_length_nc,
 		                                          h_leading_shwr_trk_length_nc_pi0,  h_leading_shwr_trk_length_other_mixed,
 		                                          h_leading_shwr_trk_length_unmatched, h_leading_shwr_trk_length_intime, scaled_intime_scale_factor,
-		                                          h_leading_shwr_trk_length_data, data_scale_factor, "",
+		                                          h_leading_shwr_trk_length_data, data_scale_factor, h_leading_shwr_trk_length_dirt, dirt_scale_factor, "",
 		                                          "Longest Track / Leading Shower Lengths (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_leading_shower_trk_lengths_scaled_data.pdf"));
 	}
@@ -5362,7 +5979,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_trk_length_cosmic_after,  h_leading_shwr_trk_length_nc_after,
 	                                          h_leading_shwr_trk_length_nc_pi0_after,  h_leading_shwr_trk_length_other_mixed_after,
 	                                          h_leading_shwr_trk_length_unmatched_after, h_leading_shwr_trk_length_intime_after, intime_scale_factor,
-	                                          h_leading_shwr_trk_length_data_after, data_scale_factor, "",
+	                                          h_leading_shwr_trk_length_data_after, data_scale_factor, h_leading_shwr_trk_length_dirt_after, dirt_scale_factor, "",
 	                                          "Longest Track / Leading Shower Lengths", "",
 	                                          Form("%s%s", file_locate_prefix, "post_leading_shower_trk_lengths_data_after.pdf"));
 
@@ -5390,7 +6007,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_longest_shwr_trk_length_cosmic,  h_longest_shwr_trk_length_nc,
 	                                          h_longest_shwr_trk_length_nc_pi0,  h_longest_shwr_trk_length_other_mixed,
 	                                          h_longest_shwr_trk_length_unmatched, h_longest_shwr_trk_length_intime, intime_scale_factor,
-	                                          h_longest_shwr_trk_length_data, data_scale_factor, "",
+	                                          h_longest_shwr_trk_length_data, data_scale_factor, h_longest_shwr_trk_length_dirt, dirt_scale_factor, "",
 	                                          "Longest Track / Longest Shower Lengths", "",
 	                                          Form("%s%s", file_locate_prefix, "post_longest_shower_trk_lengths_data.pdf"));
 
@@ -5542,7 +6159,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_track_cosmic,  h_collection_hits_track_nc,
 	                                          h_collection_hits_track_nc_pi0,  h_collection_hits_track_other_mixed,
 	                                          h_collection_hits_track_unmatched, h_collection_hits_track_intime, intime_scale_factor,
-	                                          h_collection_hits_track_data, data_scale_factor, "",
+	                                          h_collection_hits_track_data, data_scale_factor, h_collection_hits_track_dirt, dirt_scale_factor, "",
 	                                          "Tracks Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_tracks_data.pdf"));
 	histogram_functions::PlotSimpleStackData (h_collection_hits_shower_nue_cc,  h_collection_hits_shower_nue_cc_mixed,
@@ -5551,7 +6168,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_shower_cosmic,  h_collection_hits_shower_nc,
 	                                          h_collection_hits_shower_nc_pi0,  h_collection_hits_shower_other_mixed,
 	                                          h_collection_hits_shower_unmatched, h_collection_hits_shower_intime, intime_scale_factor,
-	                                          h_collection_hits_shower_data, data_scale_factor, "",
+	                                          h_collection_hits_shower_data, data_scale_factor, h_collection_hits_shower_dirt, dirt_scale_factor, "",
 	                                          "Showers Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_showers_data.pdf"));
 	histogram_functions::PlotSimpleStackData (h_collection_hits_leading_shower_nue_cc,  h_collection_hits_leading_shower_nue_cc_mixed,
@@ -5562,6 +6179,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_leading_shower_unmatched,
 	                                          h_collection_hits_leading_shower_intime, intime_scale_factor,
 	                                          h_collection_hits_leading_shower_data, data_scale_factor,
+	                                          h_collection_hits_leading_shower_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_data.pdf"));
 
@@ -5573,6 +6191,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_leading_shower_unmatched,
 	                                          h_collection_hits_leading_shower_intime, intime_scale_factor,
 	                                          h_collection_hits_leading_shower_data, data_scale_factor,
+	                                          h_collection_hits_leading_shower_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 0.98, 0.50, false, true,
 	                                          "", "Leading Shower Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_area_norm_data.pdf"));
@@ -5584,6 +6203,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_total_hits_leading_shower_nc_pi0,  h_total_hits_leading_shower_other_mixed,
 	                                          h_total_hits_leading_shower_unmatched, h_total_hits_leading_shower_intime, intime_scale_factor,
 	                                          h_total_hits_leading_shower_data, data_scale_factor,
+	                                          h_total_hits_leading_shower_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Hits - All Planes", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_total_hits_leading_shower_data.pdf"));
 	if(use_alt_scaling) {
@@ -5595,6 +6215,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_collection_hits_leading_shower_unmatched,
 		                                          h_collection_hits_leading_shower_intime, scaled_intime_scale_factor,
 		                                          h_collection_hits_leading_shower_data, data_scale_factor,
+		                                          h_collection_hits_leading_shower_dirt, dirt_scale_factor,
 		                                          "", "Leading Shower Hits - Collection Plane (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_scaled_data.pdf"));
 		histogram_functions::PlotSimpleStackData (h_total_hits_leading_shower_nue_cc,  h_total_hits_leading_shower_nue_cc_mixed,
@@ -5604,6 +6225,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_total_hits_leading_shower_nc_pi0,  h_total_hits_leading_shower_other_mixed,
 		                                          h_total_hits_leading_shower_unmatched, h_total_hits_leading_shower_intime, scaled_intime_scale_factor,
 		                                          h_total_hits_leading_shower_data, data_scale_factor,
+		                                          h_total_hits_leading_shower_dirt, dirt_scale_factor,
 		                                          "", "Leading Shower Hits - All Planes", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_total_hits_leading_shower_scaled_data.pdf"));
 	}
@@ -5614,7 +6236,8 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_track_cosmic_after,  h_collection_hits_track_nc_after,
 	                                          h_collection_hits_track_nc_pi0_after,  h_collection_hits_track_other_mixed_after,
 	                                          h_collection_hits_track_unmatched_after, h_collection_hits_track_intime_after, intime_scale_factor,
-	                                          h_collection_hits_track_data_after, data_scale_factor, "",
+	                                          h_collection_hits_track_data_after, data_scale_factor,
+	                                          h_collection_hits_track_dirt_after, dirt_scale_factor,  "",
 	                                          "Tracks Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_tracks_data_after.pdf"));
 	histogram_functions::PlotSimpleStackData (h_collection_hits_shower_nue_cc_after,  h_collection_hits_shower_nue_cc_mixed_after,
@@ -5623,7 +6246,8 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_shower_cosmic_after,  h_collection_hits_shower_nc_after,
 	                                          h_collection_hits_shower_nc_pi0_after,  h_collection_hits_shower_other_mixed_after,
 	                                          h_collection_hits_shower_unmatched_after, h_collection_hits_shower_intime_after, intime_scale_factor,
-	                                          h_collection_hits_shower_data_after, data_scale_factor, "",
+	                                          h_collection_hits_shower_data_after, data_scale_factor,
+	                                          h_collection_hits_shower_dirt_after, dirt_scale_factor, "",
 	                                          "Showers Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_showers_data_after.pdf"));
 	histogram_functions::PlotSimpleStackData (h_collection_hits_leading_shower_nue_cc_after,  h_collection_hits_leading_shower_nue_cc_mixed_after,
@@ -5634,6 +6258,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_leading_shower_unmatched_after,
 	                                          h_collection_hits_leading_shower_intime_after, intime_scale_factor,
 	                                          h_collection_hits_leading_shower_data_after, data_scale_factor,
+	                                          h_collection_hits_leading_shower_dirt_after, dirt_scale_factor,
 	                                          "", "Leading Shower Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_data_after.pdf"));
 	histogram_functions::PlotSimpleStackData (h_total_hits_leading_shower_nue_cc_after,  h_total_hits_leading_shower_nue_cc_mixed_after,
@@ -5643,6 +6268,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_total_hits_leading_shower_nc_pi0_after,  h_total_hits_leading_shower_other_mixed_after,
 	                                          h_total_hits_leading_shower_unmatched_after, h_total_hits_leading_shower_intime_after, intime_scale_factor,
 	                                          h_total_hits_leading_shower_data_after, data_scale_factor,
+	                                          h_total_hits_leading_shower_dirt_after, dirt_scale_factor,
 	                                          "", "Leading Shower Hits - All Planes", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_total_hits_leading_shower_data_after.pdf"));
 
@@ -5724,6 +6350,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_collection_hits_track_unmatched,
 	                                          h_pre_cut_collection_hits_track_intime, intime_scale_factor,
 	                                          h_pre_cut_collection_hits_track_data, data_scale_factor,
+	                                          h_pre_cut_collection_hits_track_dirt, dirt_scale_factor,
 	                                          "", "Tracks Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_collection_hits_tracks_data.pdf"));
 	histogram_functions::PlotSimpleStackData (h_pre_cut_collection_hits_shower_nue_cc,  h_pre_cut_collection_hits_shower_nue_cc_mixed,
@@ -5734,6 +6361,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_collection_hits_shower_unmatched,
 	                                          h_pre_cut_collection_hits_shower_intime, intime_scale_factor,
 	                                          h_pre_cut_collection_hits_shower_data, data_scale_factor,
+	                                          h_pre_cut_collection_hits_shower_dirt, dirt_scale_factor,
 	                                          "", "Showers Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_collection_hits_showers_data.pdf"));
 	histogram_functions::PlotSimpleStackData (h_pre_cut_collection_hits_leading_shower_nue_cc,  h_pre_cut_collection_hits_leading_shower_nue_cc_mixed,
@@ -5744,6 +6372,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_collection_hits_leading_shower_unmatched,
 	                                          h_pre_cut_collection_hits_leading_shower_intime, intime_scale_factor,
 	                                          h_pre_cut_collection_hits_leading_shower_data, data_scale_factor,
+	                                          h_pre_cut_collection_hits_leading_shower_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Hits - Collection Plane", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_collection_hits_leading_shower_data.pdf"));
 	histogram_functions::PlotSimpleStackData (h_pre_cut_total_hits_leading_shower_nue_cc,  h_pre_cut_total_hits_leading_shower_nue_cc_mixed,
@@ -5754,6 +6383,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_total_hits_leading_shower_unmatched,
 	                                          h_pre_cut_total_hits_leading_shower_intime, intime_scale_factor,
 	                                          h_pre_cut_total_hits_leading_shower_data, data_scale_factor,
+	                                          h_pre_cut_total_hits_leading_shower_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Hits - All Planes", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_data.pdf"));
 	if(use_alt_scaling) {
@@ -5765,6 +6395,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_pre_cut_total_hits_leading_shower_unmatched,
 		                                          h_pre_cut_total_hits_leading_shower_intime, scaled_intime_scale_factor,
 		                                          h_pre_cut_total_hits_leading_shower_data, data_scale_factor,
+		                                          h_pre_cut_total_hits_leading_shower_dirt, dirt_scale_factor,
 		                                          "", "Leading Shower Hits - All Planes (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_scaled_data.pdf"));
 	}
@@ -5792,6 +6423,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_total_hits_leading_shower_unmatched,
 	                                          h_pre_cut_total_hits_leading_shower_intime,intime_scale_factor,
 	                                          h_pre_cut_total_hits_leading_shower_data, data_scale_factor,
+	                                          h_pre_cut_total_hits_leading_shower_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 0.98, 0.50, true, false,
 	                                          "", "Leading Shower Hits - All Planes", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_data_logy.pdf"));
@@ -5852,6 +6484,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_last_nc_pi0,  h_ele_cos_theta_last_other_mixed,
 	                                          h_ele_cos_theta_last_unmatched, h_ele_cos_theta_last_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_last_data, data_scale_factor,
+	                                          h_ele_cos_theta_last_dirt, dirt_scale_factor,
 	                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 	                                          "Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_data.pdf"));
@@ -5863,6 +6496,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_cos_theta_last_nc_pi0,  h_ele_cos_theta_last_other_mixed,
 		                                          h_ele_cos_theta_last_unmatched, h_ele_cos_theta_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_cos_theta_last_data, data_scale_factor,
+		                                          h_ele_cos_theta_last_dirt, dirt_scale_factor,
 		                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 		                                          "Leading Shower Cos(#theta) (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_scaled_data.pdf"));
@@ -5875,6 +6509,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_last_trans_nc_pi0,    h_ele_cos_theta_last_trans_other_mixed,
 	                                          h_ele_cos_theta_last_trans_unmatched, h_ele_cos_theta_last_trans_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_last_trans_data, data_scale_factor,
+	                                          h_ele_cos_theta_last_trans_dirt, dirt_scale_factor,
 	                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 	                                          "(NuMI Transform) Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_last_trans_data.pdf"));
@@ -5886,6 +6521,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_cos_theta_nc_pi0,  h_ele_cos_theta_other_mixed,
 	                                          h_ele_cos_theta_unmatched, h_ele_cos_theta_intime, intime_scale_factor,
 	                                          h_ele_cos_theta_data, data_scale_factor,
+	                                          h_ele_cos_theta_dirt, dirt_scale_factor,
 	                                          0.15, 0.40, 0.98, 0.50, false, false, "",
 	                                          "(Before Open Angle Cut) Leading Shower Cos(#theta)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_cos_theta_data.pdf"));
@@ -5913,7 +6549,8 @@ void selection::make_selection( const char * _file1,
 	                                                       h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
 	                                                       h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
 	                                                       h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, intime_scale_factor,
-	                                                       h_ele_pfp_momentum_data, data_scale_factor, false,
+	                                                       h_ele_pfp_momentum_data, data_scale_factor,
+	                                                       h_ele_pfp_momentum_dirt, dirt_scale_factor,  false,
 	                                                       "", "Leading Shower Momentum [GeV]", "",
 	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_data.pdf"));
 
@@ -5923,7 +6560,8 @@ void selection::make_selection( const char * _file1,
 	                                                       h_ele_pfp_momentum_no_track_cosmic,  h_ele_pfp_momentum_no_track_nc,
 	                                                       h_ele_pfp_momentum_no_track_nc_pi0,  h_ele_pfp_momentum_no_track_other_mixed,
 	                                                       h_ele_pfp_momentum_no_track_unmatched, h_ele_pfp_momentum_no_track_intime, intime_scale_factor,
-	                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor, false,
+	                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor,
+	                                                       h_ele_pfp_momentum_no_track_dirt, dirt_scale_factor, false,
 	                                                       "", "Leading Shower Momentum [GeV]", "",
 	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_no_track_data.pdf"));
 
@@ -5933,7 +6571,8 @@ void selection::make_selection( const char * _file1,
 	                                                       h_ele_pfp_momentum_has_track_cosmic,  h_ele_pfp_momentum_has_track_nc,
 	                                                       h_ele_pfp_momentum_has_track_nc_pi0,  h_ele_pfp_momentum_has_track_other_mixed,
 	                                                       h_ele_pfp_momentum_has_track_unmatched, h_ele_pfp_momentum_has_track_intime, intime_scale_factor,
-	                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor, false,
+	                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor,
+	                                                       h_ele_pfp_momentum_has_track_dirt, dirt_scale_factor, false,
 	                                                       "", "Leading Shower Momentum [GeV]", "",
 	                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_data.pdf"));
 
@@ -5961,7 +6600,8 @@ void selection::make_selection( const char * _file1,
 		                                                       h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
 		                                                       h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
 		                                                       h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, scaled_intime_scale_factor,
-		                                                       h_ele_pfp_momentum_data, data_scale_factor, false,
+		                                                       h_ele_pfp_momentum_data, data_scale_factor,
+		                                                       h_ele_pfp_momentum_dirt, dirt_scale_factor, false,
 		                                                       "", "Leading Shower Momentum [GeV] (Scaled)", "",
 		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_scaled_data.pdf"));
 
@@ -5971,7 +6611,8 @@ void selection::make_selection( const char * _file1,
 		                                                       h_ele_pfp_momentum_cosmic,  h_ele_pfp_momentum_nc,
 		                                                       h_ele_pfp_momentum_nc_pi0,  h_ele_pfp_momentum_other_mixed,
 		                                                       h_ele_pfp_momentum_unmatched, h_ele_pfp_momentum_intime, intime_scale_factor,
-		                                                       h_ele_pfp_momentum_data, data_scale_factor, true,
+		                                                       h_ele_pfp_momentum_data, data_scale_factor,
+		                                                       h_ele_pfp_momentum_dirt, dirt_scale_factor, true,
 		                                                       "", "Leading Shower Momentum [GeV]", "",
 		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_area_norm_data.pdf"));
 
@@ -5981,7 +6622,8 @@ void selection::make_selection( const char * _file1,
 		                                                       h_ele_pfp_momentum_no_track_cosmic,  h_ele_pfp_momentum_no_track_nc,
 		                                                       h_ele_pfp_momentum_no_track_nc_pi0,  h_ele_pfp_momentum_no_track_other_mixed,
 		                                                       h_ele_pfp_momentum_no_track_unmatched, h_ele_pfp_momentum_no_track_intime, scaled_intime_scale_factor,
-		                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor, false,
+		                                                       h_ele_pfp_momentum_no_track_data, data_scale_factor,
+		                                                       h_ele_pfp_momentum_no_track_dirt, dirt_scale_factor, false,
 		                                                       "", "Leading Shower Momentum [GeV] (Scaled)", "",
 		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_no_track_scaled_data.pdf"));
 
@@ -5991,7 +6633,8 @@ void selection::make_selection( const char * _file1,
 		                                                       h_ele_pfp_momentum_has_track_cosmic,  h_ele_pfp_momentum_has_track_nc,
 		                                                       h_ele_pfp_momentum_has_track_nc_pi0,  h_ele_pfp_momentum_has_track_other_mixed,
 		                                                       h_ele_pfp_momentum_has_track_unmatched, h_ele_pfp_momentum_has_track_intime, scaled_intime_scale_factor,
-		                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor, false,
+		                                                       h_ele_pfp_momentum_has_track_data, data_scale_factor,
+		                                                       h_ele_pfp_momentum_has_track_dirt, dirt_scale_factor, false,
 		                                                       "", "Leading Shower Momentum [GeV] (Scaled)", "",
 		                                                       Form("%s%s", file_locate_prefix, "post_cuts_leading_momentum_has_track_scaled_data.pdf"));
 	}
@@ -6003,6 +6646,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_no_track_nc_pi0,  h_ele_pfp_phi_no_track_other_mixed,
 	                                          h_ele_pfp_phi_no_track_unmatched, h_ele_pfp_phi_no_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_no_track_data, data_scale_factor,
+	                                          h_ele_pfp_phi_no_track_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_no_track_data.pdf"));
@@ -6014,6 +6658,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_has_track_nc_pi0,  h_ele_pfp_phi_has_track_other_mixed,
 	                                          h_ele_pfp_phi_has_track_unmatched, h_ele_pfp_phi_has_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_has_track_data, data_scale_factor,
+	                                          h_ele_pfp_phi_has_track_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_has_track_data.pdf"));
@@ -6025,6 +6670,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_no_track_nc_pi0,  h_ele_pfp_theta_no_track_other_mixed,
 	                                          h_ele_pfp_theta_no_track_unmatched, h_ele_pfp_theta_no_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_no_track_data, data_scale_factor,
+	                                          h_ele_pfp_theta_no_track_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Theta [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_no_track_data.pdf"));
 
@@ -6035,6 +6681,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_has_track_nc_pi0,  h_ele_pfp_theta_has_track_other_mixed,
 	                                          h_ele_pfp_theta_has_track_unmatched, h_ele_pfp_theta_has_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_has_track_data, data_scale_factor,
+	                                          h_ele_pfp_theta_has_track_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Theta [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_has_track_data.pdf"));
 
@@ -6063,6 +6710,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_nc_pi0,  h_ele_pfp_theta_other_mixed,
 	                                          h_ele_pfp_theta_unmatched, h_ele_pfp_theta_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_data, data_scale_factor,
+	                                          h_ele_pfp_theta_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Theta [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_theta_data.pdf"));
 
@@ -6090,6 +6738,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_after_nc_pi0,  h_ele_pfp_theta_after_other_mixed,
 	                                          h_ele_pfp_theta_after_unmatched, h_ele_pfp_theta_after_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_after_data, data_scale_factor,
+	                                          h_ele_pfp_theta_after_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Theta [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_collection_cut_leading_theta_data.pdf"));
 
@@ -6117,6 +6766,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_last_nc_pi0,  h_ele_pfp_theta_last_other_mixed,
 	                                          h_ele_pfp_theta_last_unmatched, h_ele_pfp_theta_last_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_last_data, data_scale_factor,
+	                                          h_ele_pfp_theta_last_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Theta [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_data.pdf"));
 	if(use_alt_scaling) {
@@ -6127,6 +6777,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_theta_last_nc_pi0,  h_ele_pfp_theta_last_other_mixed,
 		                                          h_ele_pfp_theta_last_unmatched, h_ele_pfp_theta_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_pfp_theta_last_data, data_scale_factor,
+		                                          h_ele_pfp_theta_last_dirt, dirt_scale_factor,
 		                                          "", "Leading Shower Theta [Degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_scaled_data.pdf"));
 
@@ -6137,6 +6788,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_theta_last_nc_pi0,  h_ele_pfp_theta_last_other_mixed,
 		                                          h_ele_pfp_theta_last_unmatched, h_ele_pfp_theta_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_pfp_theta_last_data, data_scale_factor,
+		                                          h_ele_pfp_theta_last_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 0.98, 0.50, false, true,
 		                                          "", "Leading Shower Theta [Degrees]", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_area_norm_data.pdf"));
@@ -6166,6 +6818,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_nc_pi0,  h_ele_pfp_phi_other_mixed,
 	                                          h_ele_pfp_phi_unmatched, h_ele_pfp_phi_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_data, data_scale_factor,
+	                                          h_ele_pfp_phi_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_phi_data.pdf"));
@@ -6194,6 +6847,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_after_nc_pi0,  h_ele_pfp_phi_after_other_mixed,
 	                                          h_ele_pfp_phi_after_unmatched, h_ele_pfp_phi_after_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_after_data, data_scale_factor,
+	                                          h_ele_pfp_phi_after_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_collection_cut_leading_phi_data.pdf"));
@@ -6222,6 +6876,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
 	                                          h_ele_pfp_phi_last_unmatched, h_ele_pfp_phi_last_intime, intime_scale_factor,
 	                                          h_ele_pfp_phi_last_data, data_scale_factor,
+	                                          h_ele_pfp_phi_last_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 	                                          "", "Leading Shower Phi [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_data.pdf"));
@@ -6233,6 +6888,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
 		                                          h_ele_pfp_phi_last_unmatched, h_ele_pfp_phi_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_pfp_phi_last_data, data_scale_factor,
+		                                          h_ele_pfp_phi_last_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
 		                                          "", "Leading Shower Phi [Degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_scaled_data.pdf"));
@@ -6244,6 +6900,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
 		                                          h_ele_pfp_phi_last_unmatched, h_ele_pfp_phi_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_pfp_phi_last_data, data_scale_factor,
+		                                          h_ele_pfp_phi_last_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 1.0, 0.60, false, true, 1.5,
 		                                          "", "Leading Shower Phi [Degrees]", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_area_norm_data.pdf"));
@@ -6273,6 +6930,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_length_1shwr_nc_pi0,  h_leading_shwr_length_1shwr_other_mixed,
 	                                          h_leading_shwr_length_1shwr_unmatched, h_leading_shwr_length_1shwr_intime, intime_scale_factor,
 	                                          h_leading_shwr_length_1shwr_data, data_scale_factor,
+	                                          h_leading_shwr_length_1shwr_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Length (1 Shower Events) [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_length_1shwr_data.pdf"));
 
@@ -6300,6 +6958,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_length_2shwr_nc_pi0,  h_leading_shwr_length_2shwr_other_mixed,
 	                                          h_leading_shwr_length_2shwr_unmatched, h_leading_shwr_length_2shwr_intime, intime_scale_factor,
 	                                          h_leading_shwr_length_2shwr_data, data_scale_factor,
+	                                          h_leading_shwr_length_2shwr_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Length (2+ Shower Events) [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_length_2shwr_data.pdf"));
 
@@ -6327,6 +6986,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_hits_1shwr_nc_pi0,  h_leading_shwr_hits_1shwr_other_mixed,
 	                                          h_leading_shwr_hits_1shwr_unmatched, h_leading_shwr_hits_1shwr_intime, intime_scale_factor,
 	                                          h_leading_shwr_hits_1shwr_data, data_scale_factor,
+	                                          h_leading_shwr_hits_1shwr_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Hits (1 Shower Events)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_hits_1shwr_data.pdf"));
 
@@ -6354,6 +7014,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_hits_2shwr_nc_pi0,  h_leading_shwr_hits_2shwr_other_mixed,
 	                                          h_leading_shwr_hits_2shwr_unmatched, h_leading_shwr_hits_2shwr_intime, intime_scale_factor,
 	                                          h_leading_shwr_hits_2shwr_data, data_scale_factor,
+	                                          h_leading_shwr_hits_2shwr_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Hits (2+ Shower Events)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_hits_2shwr_data.pdf"));
 
@@ -6362,6 +7023,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_pfp_x_cosmic, h_ele_pfp_x_nc, h_ele_pfp_x_nc_pi0, h_ele_pfp_x_other_mixed,
 	                                         h_ele_pfp_x_unmatched, h_ele_pfp_x_intime, intime_scale_factor,
 	                                         h_ele_pfp_x_data, data_scale_factor,
+	                                         h_ele_pfp_x_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex X [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_x_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_ele_pfp_y_nue_cc, h_ele_pfp_y_nue_cc_mixed,
@@ -6369,6 +7031,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_pfp_y_cosmic, h_ele_pfp_y_nc, h_ele_pfp_y_nc_pi0, h_ele_pfp_y_other_mixed,
 	                                         h_ele_pfp_y_unmatched, h_ele_pfp_y_intime, intime_scale_factor,
 	                                         h_ele_pfp_y_data, data_scale_factor,
+	                                         h_ele_pfp_y_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex Y [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_y_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_ele_pfp_z_nue_cc, h_ele_pfp_z_nue_cc_mixed,
@@ -6376,6 +7039,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_pfp_z_cosmic, h_ele_pfp_z_nc, h_ele_pfp_z_nc_pi0, h_ele_pfp_z_other_mixed,
 	                                         h_ele_pfp_z_unmatched, h_ele_pfp_z_intime, intime_scale_factor,
 	                                         h_ele_pfp_z_data, data_scale_factor,
+	                                         h_ele_pfp_z_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex Z [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_z_data.pdf"));
 
@@ -6384,6 +7048,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_any_pfp_x_cosmic,        h_any_pfp_x_nc,           h_any_pfp_x_nc_pi0, h_any_pfp_x_other_mixed,
 	                                         h_any_pfp_x_unmatched,     h_any_pfp_x_intime, intime_scale_factor,
 	                                         h_any_pfp_x_data, data_scale_factor,
+	                                         h_any_pfp_x_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex X [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "pre_cuts_leading_pfp_x_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_any_pfp_y_nue_cc,        h_any_pfp_y_nue_cc_mixed,
@@ -6391,6 +7056,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_any_pfp_y_cosmic,        h_any_pfp_y_nc,           h_any_pfp_y_nc_pi0, h_any_pfp_y_other_mixed,
 	                                         h_any_pfp_y_unmatched,     h_any_pfp_y_intime, intime_scale_factor,
 	                                         h_any_pfp_y_data, data_scale_factor,
+	                                         h_any_pfp_y_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex Y [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "pre_cuts_leading_pfp_y_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_any_pfp_z_nue_cc,        h_any_pfp_z_nue_cc_mixed,
@@ -6398,6 +7064,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_any_pfp_z_cosmic,        h_any_pfp_z_nc,           h_any_pfp_z_nc_pi0, h_any_pfp_z_other_mixed,
 	                                         h_any_pfp_z_unmatched,     h_any_pfp_z_intime, intime_scale_factor,
 	                                         h_any_pfp_z_data, data_scale_factor,
+	                                         h_any_pfp_z_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex Z [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "pre_cuts_leading_pfp_z_data.pdf"));
 	if(use_alt_scaling) {
@@ -6406,6 +7073,7 @@ void selection::make_selection( const char * _file1,
 		                                         h_ele_pfp_x_cosmic, h_ele_pfp_x_nc, h_ele_pfp_x_nc_pi0, h_ele_pfp_x_other_mixed,
 		                                         h_ele_pfp_x_unmatched, h_ele_pfp_x_intime, scaled_intime_scale_factor,
 		                                         h_ele_pfp_x_data, data_scale_factor,
+		                                         h_ele_pfp_x_dirt, dirt_scale_factor,
 		                                         "", "Reco Vertex X [cm] (Scaled)", "",
 		                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_x_scaled_data.pdf"));
 		histogram_functions::PlotSimpleStackData(h_ele_pfp_y_nue_cc, h_ele_pfp_y_nue_cc_mixed,
@@ -6413,6 +7081,7 @@ void selection::make_selection( const char * _file1,
 		                                         h_ele_pfp_y_cosmic, h_ele_pfp_y_nc, h_ele_pfp_y_nc_pi0, h_ele_pfp_y_other_mixed,
 		                                         h_ele_pfp_y_unmatched, h_ele_pfp_y_intime, scaled_intime_scale_factor,
 		                                         h_ele_pfp_y_data, data_scale_factor,
+		                                         h_ele_pfp_y_dirt, dirt_scale_factor,
 		                                         "", "Reco Vertex Y [cm] (Scaled)", "",
 		                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_y_scaled_data.pdf"));
 		histogram_functions::PlotSimpleStackData(h_ele_pfp_z_nue_cc, h_ele_pfp_z_nue_cc_mixed,
@@ -6420,6 +7089,7 @@ void selection::make_selection( const char * _file1,
 		                                         h_ele_pfp_z_cosmic, h_ele_pfp_z_nc, h_ele_pfp_z_nc_pi0, h_ele_pfp_z_other_mixed,
 		                                         h_ele_pfp_z_unmatched, h_ele_pfp_z_intime, scaled_intime_scale_factor,
 		                                         h_ele_pfp_z_data, data_scale_factor,
+		                                         h_ele_pfp_z_dirt, dirt_scale_factor,
 		                                         "", "Reco Vertex Z [cm] (Scaled)", "",
 		                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_z_scaled_data.pdf"));
 
@@ -6428,6 +7098,7 @@ void selection::make_selection( const char * _file1,
 		                                         h_any_pfp_x_cosmic,        h_any_pfp_x_nc,           h_any_pfp_x_nc_pi0, h_any_pfp_x_other_mixed,
 		                                         h_any_pfp_x_unmatched,     h_any_pfp_x_intime, scaled_intime_scale_factor,
 		                                         h_any_pfp_x_data, data_scale_factor,
+		                                         h_any_pfp_x_dirt, dirt_scale_factor,
 		                                         "", "Reco Vertex X [cm] (Scaled)", "",
 		                                         Form("%s%s", file_locate_prefix, "pre_cuts_leading_pfp_x_scaled_data.pdf"));
 		histogram_functions::PlotSimpleStackData(h_any_pfp_y_nue_cc,        h_any_pfp_y_nue_cc_mixed,
@@ -6435,6 +7106,7 @@ void selection::make_selection( const char * _file1,
 		                                         h_any_pfp_y_cosmic,        h_any_pfp_y_nc,           h_any_pfp_y_nc_pi0, h_any_pfp_y_other_mixed,
 		                                         h_any_pfp_y_unmatched,     h_any_pfp_y_intime, scaled_intime_scale_factor,
 		                                         h_any_pfp_y_data, data_scale_factor,
+		                                         h_any_pfp_y_dirt, dirt_scale_factor,
 		                                         "", "Reco Vertex Y [cm] (Scaled)", "",
 		                                         Form("%s%s", file_locate_prefix, "pre_cuts_leading_pfp_y_scaled_data.pdf"));
 		histogram_functions::PlotSimpleStackData(h_any_pfp_z_nue_cc,        h_any_pfp_z_nue_cc_mixed,
@@ -6442,6 +7114,7 @@ void selection::make_selection( const char * _file1,
 		                                         h_any_pfp_z_cosmic,        h_any_pfp_z_nc,           h_any_pfp_z_nc_pi0, h_any_pfp_z_other_mixed,
 		                                         h_any_pfp_z_unmatched,     h_any_pfp_z_intime, scaled_intime_scale_factor,
 		                                         h_any_pfp_z_data, data_scale_factor,
+		                                         h_any_pfp_z_dirt, dirt_scale_factor,
 		                                         "", "Reco Vertex Z [cm] (Scaled)", "",
 		                                         Form("%s%s", file_locate_prefix, "pre_cuts_leading_pfp_z_scaled_data.pdf"));
 	}
@@ -6452,6 +7125,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_any_pfp_x_last_cosmic,        h_any_pfp_x_last_nc,           h_any_pfp_x_last_nc_pi0, h_any_pfp_x_last_other_mixed,
 	                                         h_any_pfp_x_last_unmatched,     h_any_pfp_x_last_intime, intime_scale_factor,
 	                                         h_any_pfp_x_last_data, data_scale_factor,
+	                                         h_any_pfp_x_last_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex X [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_x_last_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_any_pfp_y_last_nue_cc,        h_any_pfp_y_last_nue_cc_mixed,
@@ -6459,6 +7133,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_any_pfp_y_last_cosmic,        h_any_pfp_y_last_nc,           h_any_pfp_y_last_nc_pi0, h_any_pfp_y_last_other_mixed,
 	                                         h_any_pfp_y_last_unmatched,     h_any_pfp_y_last_intime, intime_scale_factor,
 	                                         h_any_pfp_y_last_data, data_scale_factor,
+	                                         h_any_pfp_y_last_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex Y [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_y_last_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_any_pfp_z_last_nue_cc,        h_any_pfp_z_last_nue_cc_mixed,
@@ -6466,6 +7141,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_any_pfp_z_last_cosmic,        h_any_pfp_z_last_nc,           h_any_pfp_z_last_nc_pi0, h_any_pfp_z_last_other_mixed,
 	                                         h_any_pfp_z_last_unmatched,     h_any_pfp_z_last_intime, intime_scale_factor,
 	                                         h_any_pfp_z_last_data, data_scale_factor,
+	                                         h_any_pfp_z_last_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex Z [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_z_last_data.pdf"));
 
@@ -6529,6 +7205,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_eng_for_cosmic,        h_ele_eng_for_nc,        h_ele_eng_for_nc_pi0,
 	                                         h_ele_eng_for_other_mixed,   h_ele_eng_for_unmatched, h_ele_eng_for_intime,
 	                                         intime_scale_factor,         h_ele_eng_for_data,      data_scale_factor,
+	                                         h_ele_eng_for_dirt, dirt_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (Cos(#theta) >= 0.5)", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_eng_for_data.pdf"));
 
@@ -6537,6 +7214,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_eng_mid_cosmic,        h_ele_eng_mid_nc,        h_ele_eng_mid_nc_pi0,
 	                                         h_ele_eng_mid_other_mixed,   h_ele_eng_mid_unmatched, h_ele_eng_mid_intime,
 	                                         intime_scale_factor,         h_ele_eng_mid_data,      data_scale_factor,
+	                                         h_ele_eng_mid_dirt, dirt_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (0.5 > Cos(#theta) > -0.5)", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_eng_mid_data.pdf"));
 
@@ -6545,6 +7223,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_eng_back_cosmic,        h_ele_eng_back_nc,        h_ele_eng_back_nc_pi0,
 	                                         h_ele_eng_back_other_mixed,   h_ele_eng_back_unmatched, h_ele_eng_back_intime,
 	                                         intime_scale_factor,          h_ele_eng_back_data,      data_scale_factor,
+	                                         h_ele_eng_back_dirt, dirt_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (Cos(#theta) <= -0.5)", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_eng_back_data.pdf"));
 
@@ -6553,6 +7232,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_eng_for_trans_cosmic,        h_ele_eng_for_trans_nc,        h_ele_eng_for_trans_nc_pi0,
 	                                         h_ele_eng_for_trans_other_mixed,   h_ele_eng_for_trans_unmatched, h_ele_eng_for_trans_intime,
 	                                         intime_scale_factor,               h_ele_eng_for_trans_data,      data_scale_factor,
+	                                         h_ele_eng_for_trans_dirt, dirt_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (Cos(#theta_t) >= 0.5)", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_eng_for_trans_data.pdf"));
 
@@ -6561,6 +7241,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_eng_mid_trans_cosmic,        h_ele_eng_mid_trans_nc,        h_ele_eng_mid_trans_nc_pi0,
 	                                         h_ele_eng_mid_trans_other_mixed,   h_ele_eng_mid_trans_unmatched, h_ele_eng_mid_trans_intime,
 	                                         intime_scale_factor,         h_ele_eng_mid_trans_data,      data_scale_factor,
+	                                         h_ele_eng_mid_trans_dirt, dirt_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (0.5 > Cos(#theta_t) > -0.5)", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_eng_mid_trans_data.pdf"));
 
@@ -6569,6 +7250,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_eng_back_trans_cosmic,        h_ele_eng_back_trans_nc,        h_ele_eng_back_trans_nc_pi0,
 	                                         h_ele_eng_back_trans_other_mixed,   h_ele_eng_back_trans_unmatched, h_ele_eng_back_trans_intime,
 	                                         intime_scale_factor,          h_ele_eng_back_trans_data,      data_scale_factor,
+	                                         h_ele_eng_back_trans_dirt, dirt_scale_factor,
 	                                         "", "Reco Electron Energy [GeV] (Cos(#theta_t) <= -0.5)", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_eng_back_trans_data.pdf"));
 
@@ -6681,6 +7363,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_track_containment_unmatched,
 	                                          h_track_containment_intime, intime_scale_factor,
 	                                          h_track_containment_data, data_scale_factor,
+	                                          h_track_containment_dirt, dirt_scale_factor,
 	                                          0.15, 0.40, 0.98, 0.50, false, false, " ",
 	                                          "Track Containment", "", Form("%s%s", file_locate_prefix, "track_containment_data.pdf"));
 	if(use_alt_scaling) {
@@ -6695,7 +7378,8 @@ void selection::make_selection( const char * _file1,
 		                                          h_track_containment_other_mixed,
 		                                          h_track_containment_unmatched,
 		                                          h_track_containment_intime, scaled_intime_scale_factor,
-		                                          h_track_containment_data, data_scale_factor, "",
+		                                          h_track_containment_data, data_scale_factor,
+		                                          h_track_containment_dirt, dirt_scale_factor, "",
 		                                          "Track Containment (Scaled)", "", Form("%s%s", file_locate_prefix, "track_containment_scaled_data.pdf"));
 	}
 
@@ -6830,7 +7514,8 @@ void selection::make_selection( const char * _file1,
 	                                                      h_ele_momentum_no_cut_nue_cc_out_fv, h_ele_momentum_no_cut_numu_cc,   h_ele_momentum_no_cut_numu_cc_mixed,
 	                                                      h_ele_momentum_no_cut_cosmic,        h_ele_momentum_no_cut_nc,        h_ele_momentum_no_cut_nc_pi0,
 	                                                      h_ele_momentum_no_cut_other_mixed,   h_ele_momentum_no_cut_unmatched, h_ele_momentum_no_cut_intime,
-	                                                      intime_scale_factor,                 h_ele_momentum_no_cut_data,      data_scale_factor, false,
+	                                                      intime_scale_factor,                 h_ele_momentum_no_cut_data,      data_scale_factor,
+	                                                      h_ele_momentum_no_cut_dirt, dirt_scale_factor, false,
 	                                                      "No Cut", "Leading Shower Momentum [GeV]", "",
 	                                                      Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_no_cut_data.pdf"));
 
@@ -6850,6 +7535,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_nue_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_nue_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Nue Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_nue_cut_data.pdf"));
@@ -6885,6 +7571,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_fv_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_fv_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Fiducial Volume Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_fv_cut_data.pdf"));
@@ -6920,6 +7607,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_flash_vtx_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_flash_vtx_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Flash Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_flash_vtx_cut_data.pdf"));
@@ -6955,6 +7643,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_shwr_vtx_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_shwr_vtx_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Shower Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_shwr_vtx_cut_data.pdf"));
@@ -6990,6 +7679,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_trk_vtx_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_trk_vtx_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Track Vertex Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_trk_vtx_cut_data.pdf"));
@@ -7025,6 +7715,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_hit_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_hit_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Total Hit Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_hit_cut_data.pdf"));
@@ -7060,6 +7751,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_yhit_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_yhit_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Collection Hit Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_yhit_cut_data.pdf"));
@@ -7095,6 +7787,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_open_angle_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_open_angle_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Open Angle Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_open_angle_cut_data.pdf"));
@@ -7130,6 +7823,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_dedx_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_dedx_cut_dirt, dirt_scale_factor,
 	        false,
 	        "dE/dx Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_dedx_cut_data.pdf"));
@@ -7165,6 +7859,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_2shwr_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_2shwr_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Secondary Shower Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_2shwr_cut_data.pdf"));
@@ -7200,6 +7895,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_hit_length_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_hit_length_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Hit/Length Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_hit_length_cut_data.pdf"));
@@ -7235,6 +7931,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_length_ratio_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_length_ratio_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Trk Length / Shower Length Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_length_ratio_cut_data.pdf"));
@@ -7270,6 +7967,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_containment_cut_data,
 	        data_scale_factor,
+	        h_ele_momentum_containment_cut_dirt, dirt_scale_factor,
 	        false,
 	        "Track Containment Cut", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_containment_cut_data.pdf"));
@@ -7338,6 +8036,8 @@ void selection::make_selection( const char * _file1,
 	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_ext.pdf"));
 	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_data, "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
 	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_data.pdf"));
+	histogram_functions::Plot2DHistogram(h_pfp_zy_vtx_dirt, "Dirt", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
+	                                     Form("%s%s", file_locate_prefix, "pfp_zy_vtx_dirt.pdf"));
 
 	histogram_functions::Plot2DHistogramNormZ(h_pfp_zy_vtx_all, h_pfp_zy_vtx_data, "All", "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
 	                                          Form("%s%s", file_locate_prefix, "pfp_zy_vtx_all_norm_z.pdf"),
@@ -7358,6 +8058,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_nue_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_nue_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_nue_cut_data.pdf"));
 
@@ -7376,6 +8077,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_nue_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_nue_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_nue_cut_data.pdf"));
 
@@ -7394,6 +8096,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_fv_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_fv_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_fv_cut_data.pdf"));
 
@@ -7412,6 +8115,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_fv_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_fv_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_fv_cut_data.pdf"));
 
@@ -7430,6 +8134,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_flash_vtx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_flash_vtx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_flash_vtx_cut_data.pdf"));
 
@@ -7448,6 +8153,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_flash_vtx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_flash_vtx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_flash_vtx_cut_data.pdf"));
 
@@ -7466,6 +8172,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_shwr_vtx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_shwr_vtx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_shwr_vtx_cut_data.pdf"));
 
@@ -7484,6 +8191,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_shwr_vtx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_shwr_vtx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_shwr_vtx_cut_data.pdf"));
 
@@ -7502,6 +8210,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_trk_vtx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_trk_vtx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_trk_vtx_cut_data.pdf"));
 
@@ -7520,6 +8229,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_trk_vtx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_trk_vtx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_trk_vtx_cut_data.pdf"));
 
@@ -7538,6 +8248,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_hit_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_hit_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_hit_cut_data.pdf"));
 
@@ -7556,6 +8267,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_hit_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_hit_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_hit_cut_data.pdf"));
 
@@ -7574,6 +8286,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_yhit_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_yhit_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_yhit_cut_data.pdf"));
 
@@ -7592,6 +8305,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_yhit_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_yhit_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_yhit_cut_data.pdf"));
 
@@ -7610,6 +8324,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_open_angle_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_open_angle_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_open_angle_cut_data.pdf"));
 
@@ -7628,6 +8343,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_open_angle_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_open_angle_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_open_angle_cut_data.pdf"));
 
@@ -7646,6 +8362,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_dedx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_dedx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_dedx_cut_data.pdf"));
 
@@ -7664,6 +8381,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_dedx_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_dedx_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_dedx_cut_data.pdf"));
 
@@ -7682,6 +8400,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_2shwr_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_2shwr_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_2shwr_cut_data.pdf"));
 
@@ -7700,6 +8419,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_2shwr_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_2shwr_cut_data, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_2shwr_cut_data.pdf"));
 
@@ -7719,6 +8439,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_hit_length_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_hit_length_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_hit_length_cut_data.pdf"));
 
@@ -7737,6 +8458,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_hit_length_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_hit_length_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_hit_length_cut_data.pdf"));
 
@@ -7756,6 +8478,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_length_ratio_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_length_ratio_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_length_ratio_cut_data.pdf"));
 
@@ -7774,6 +8497,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_length_ratio_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_length_ratio_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_length_ratio_cut_data.pdf"));
 
@@ -7792,6 +8516,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_shower_containment_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_shower_containment_cut_dirt, dirt_scale_factor,
 	        "", "Selected Shower Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_shower_multiplicity_containment_cut_data.pdf"));
 
@@ -7810,6 +8535,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_containment_cut_data,
 	        data_scale_factor,
+	        h_multiplicity_track_containment_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_containment_cut_data.pdf"));
 
@@ -7835,6 +8561,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_slice_1_data,
 	        data_scale_factor,
+	        h_ele_momentum_slice_1_dirt, dirt_scale_factor,
 	        false,
 	        "Theta Slice (0 - 40)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_1_data.pdf"));
@@ -7854,6 +8581,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_slice_2_data,
 	        data_scale_factor,
+	        h_ele_momentum_slice_2_dirt, dirt_scale_factor,
 	        false,
 	        "Theta Slice (40 - 90)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_2_data.pdf"));
@@ -7873,6 +8601,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_momentum_slice_3_data,
 	        data_scale_factor,
+	        h_ele_momentum_slice_3_dirt, dirt_scale_factor,
 	        false,
 	        "Theta Slice (90 - 180)", "Leading Shower Momentum [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_ele_momentum_theta_slice_3_data.pdf"));
@@ -7892,6 +8621,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_1_data,
 	        data_scale_factor,
+	        h_dedx_slice_1_data, dirt_scale_factor,
 	        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_data.pdf"));
 
@@ -7910,6 +8640,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_1_zoom_data,
 	        data_scale_factor,
+	        h_dedx_slice_1_zoom_dirt, dirt_scale_factor,
 	        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_zoom_data.pdf"));
 
@@ -7928,6 +8659,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_2_data,
 	        data_scale_factor,
+	        h_dedx_slice_2_dirt, dirt_scale_factor,
 	        "Theta Slice (60 - 120)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_2_data.pdf"));
 
@@ -7946,6 +8678,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_2_zoom_data,
 	        data_scale_factor,
+	        h_dedx_slice_2_zoom_dirt, dirt_scale_factor,
 	        "Theta Slice (60 - 120)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_2_zoom_data.pdf"));
 
@@ -7964,6 +8697,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_3_data,
 	        data_scale_factor,
+	        h_dedx_slice_3_dirt, dirt_scale_factor,
 	        "Theta Slice (120 - 180)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_3_data.pdf"));
 
@@ -7982,6 +8716,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_3_zoom_data,
 	        data_scale_factor,
+	        h_dedx_slice_3_zoom_dirt, dirt_scale_factor,
 	        "Theta Slice (120 - 180)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_3_zoom_data.pdf"));
 
@@ -8001,6 +8736,8 @@ void selection::make_selection( const char * _file1,
 		        scaled_intime_scale_factor,
 		        h_dedx_slice_1_data,
 		        data_scale_factor,
+		        h_dedx_slice_1_dirt,
+		        dirt_scale_factor,
 		        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm] (Scaled)", "",
 		        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_scaled_data.pdf"));
 
@@ -8019,6 +8756,7 @@ void selection::make_selection( const char * _file1,
 		        scaled_intime_scale_factor,
 		        h_dedx_slice_1_zoom_data,
 		        data_scale_factor,
+		        h_dedx_slice_1_zoom_dirt, dirt_scale_factor,
 		        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm] (Scaled)", "",
 		        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_zoom_scaled_data.pdf"));
 
@@ -8037,6 +8775,7 @@ void selection::make_selection( const char * _file1,
 		        scaled_intime_scale_factor,
 		        h_dedx_slice_2_data,
 		        data_scale_factor,
+		        h_dedx_slice_2_dirt, dirt_scale_factor,
 		        "Theta Slice (60 - 120)", "Leading Shower dE/dx [MeV/cm] (Scaled)", "",
 		        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_2_scaled_data.pdf"));
 
@@ -8055,6 +8794,7 @@ void selection::make_selection( const char * _file1,
 		        scaled_intime_scale_factor,
 		        h_dedx_slice_2_zoom_data,
 		        data_scale_factor,
+		        h_dedx_slice_2_zoom_dirt, dirt_scale_factor,
 		        "Theta Slice (60 - 120)", "Leading Shower dE/dx [MeV/cm] (Scaled)", "",
 		        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_2_zoom_scaled_data.pdf"));
 
@@ -8073,6 +8813,7 @@ void selection::make_selection( const char * _file1,
 		        scaled_intime_scale_factor,
 		        h_dedx_slice_3_data,
 		        data_scale_factor,
+		        h_dedx_slice_3_dirt, dirt_scale_factor,
 		        "Theta Slice (120 - 180)", "Leading Shower dE/dx [MeV/cm] (Scaled)", "",
 		        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_3_scaled_data.pdf"));
 
@@ -8091,6 +8832,7 @@ void selection::make_selection( const char * _file1,
 		        scaled_intime_scale_factor,
 		        h_dedx_slice_3_zoom_data,
 		        data_scale_factor,
+		        h_dedx_slice_3_zoom_dirt, dirt_scale_factor,
 		        "Theta Slice (120 - 180)", "Leading Shower dE/dx [MeV/cm] (Scaled)", "",
 		        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_3_zoom_scaled_data.pdf"));
 	}
@@ -8123,6 +8865,8 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_momentum_1shwr_data,
 	        data_scale_factor,
+	        h_ele_pfp_momentum_1shwr_dirt,
+	        dirt_scale_factor,
 	        false,
 	        "", "Leading Shower Momentum (TPCO w/ 1 Shower) [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_momentum_1shwr_data.pdf"));
@@ -8142,6 +8886,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_momentum_2shwr_data,
 	        data_scale_factor,
+	        h_ele_pfp_momentum_2shwr_dirt, dirt_scale_factor,
 	        false,
 	        "", "Leading Shower Momentum (TPCO w/ 2+ Showers) [GeV]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_momentum_2shwr_data.pdf"));
@@ -8161,6 +8906,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_theta_1shwr_data,
 	        data_scale_factor,
+	        h_ele_pfp_theta_1shwr_dirt, dirt_scale_factor,
 	        "", "Leading Shower Theta (TPCO w/ 1 Shower) [Degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_theta_1shwr_data.pdf"));
 
@@ -8179,6 +8925,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_theta_2shwr_data,
 	        data_scale_factor,
+	        h_ele_pfp_theta_2shwr_dirt, dirt_scale_factor,
 	        "", "Leading Shower Theta (TPCO w/ 2+ Showers) [Degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_theta_2shwr_data.pdf"));
 
@@ -8197,6 +8944,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_phi_1shwr_data,
 	        data_scale_factor,
+	        h_ele_pfp_phi_1shwr_dirt, dirt_scale_factor,
 	        "", "Leading Shower Phi (TPCO w/ 1 Shower) [Degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_phi_1shwr_data.pdf"));
 
@@ -8215,6 +8963,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_ele_pfp_phi_2shwr_data,
 	        data_scale_factor,
+	        h_ele_pfp_phi_2shwr_dirt, dirt_scale_factor,
 	        "", "Leading Shower Phi (TPCO w/ 2+ Showers) [Degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_phi_2shwr_data.pdf"));
 

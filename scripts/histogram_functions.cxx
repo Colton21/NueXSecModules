@@ -590,7 +590,7 @@ void histogram_functions::LegoStackData(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
-	//h_intime->SetFillSytle(3354);
+	//h_intime->SetFillStyle(3354);
 	TH2 * h_intime_clone        = (TH2*)h_intime->Clone("h_intime_clone");
 	TH2 * h_nue_cc_clone        = (TH2*)h_nue_cc->Clone("h_nue_cc_clone");
 	TH2 * h_nue_cc_mixed_clone  = (TH2*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
@@ -740,7 +740,7 @@ void histogram_functions::PlotSimpleStackInTime (TH1 * h_nue_cc, TH1 * h_nue_cc_
 void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                                TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
-                                               TH1 * h_data, const double data_scale_factor,
+                                               TH1 * h_data, const double data_scale_factor, TH1 * h_dirt, const double dirt_scale_factor,
                                                const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	//default legend position
@@ -749,14 +749,14 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
-	                    h_data, data_scale_factor,
+	                    h_data, data_scale_factor, h_dirt, dirt_scale_factor,
 	                    0.75, 0.98, 0.98, 0.50, false, false, 1.2,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
 void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                                TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
-                                               TH1 * h_data, const double data_scale_factor,
+                                               TH1 * h_data, const double data_scale_factor, TH1 * h_dirt, const double dirt_scale_factor,
                                                const double x_min, const double x_max, const double y_min, const double y_max,
                                                const bool logy, const bool area_norm,
                                                const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
@@ -767,19 +767,19 @@ void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mi
 	//I recommend xlow = 0.5, xhigh = 0.85, yhigh = 0.85, and ylow = 0.85-(0.05*nlabels)
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
-	                    h_data, data_scale_factor,
+	                    h_data, data_scale_factor, h_dirt, dirt_scale_factor,
 	                    x_min, x_max, y_min, y_max, logy, area_norm, 1.2,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
 
 void histogram_functions::PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                                TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
-                                               TH1 * h_data, const double data_scale_factor, const double y_scale_factor,
+                                               TH1 * h_data, const double data_scale_factor, TH1 * h_dirt, const double dirt_scale_factor, const double y_scale_factor,
                                                const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
 	PlotSimpleStackData(h_nue_cc, h_nue_cc_mixed, h_nue_cc_out_fv, h_numu_cc, h_numu_cc_mixed, h_cosmic, h_nc,
 	                    h_nc_pi0, h_other_mixed, h_unmatched, h_intime, intime_scale_factor,
-	                    h_data, data_scale_factor,
+	                    h_data, data_scale_factor, h_dirt, dirt_scale_factor,
 	                    0.745, 0.98, 0.98, 0.50, false, false, y_scale_factor,
 	                    title, x_axis_name, y_axis_name, print_name);
 }
@@ -976,7 +976,7 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
-	//h_intime->SetFillSytle(3354);
+	//h_intime->SetFillStyle(3354);
 	TH1 * h_intime_clone = (TH1*)h_intime->Clone("h_intime_clone");
 	TH1 * h_nue_cc_clone = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
 	TH1 * h_nue_cc_mixed_clone = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
@@ -1043,7 +1043,7 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                               TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                               TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime, const double intime_scale_factor,
-                                              TH1 * h_data, const double data_scale_factor,
+                                              TH1 * h_data, const double data_scale_factor, TH1 * h_dirt, const double dirt_scale_factor,
                                               const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                               const bool logy, const bool area_norm,
                                               const double y_scale_factor,
@@ -1096,7 +1096,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
-	//h_intime->SetFillSytle(3354);
+
+	h_dirt->SetFillColor(2);
+	h_dirt->SetFillStyle(3354);
 
 	//h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
@@ -1113,6 +1115,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	TH1 * h_other_mixed_clone   = (TH1*)h_other_mixed->Clone("h_other_mixed_clone");
 	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
 	TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
+	TH1 * h_dirt_clone          = (TH1*)h_dirt->Clone("h_dirt_clone");
 
 	h_nue_cc_clone->Sumw2();
 	h_nue_cc_mixed_clone->Sumw2();
@@ -1124,6 +1127,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_other_mixed_clone->Sumw2();
 	h_unmatched_clone->Sumw2();
 	h_intime_clone->Sumw2();
+	h_dirt_clone->Sumw2();
 	h_data->Sumw2();
 
 	h_nue_cc_clone->Scale(data_scale_factor);
@@ -1136,6 +1140,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_other_mixed_clone->Scale(data_scale_factor);
 	h_unmatched_clone->Scale(data_scale_factor);
 	h_intime_clone->Scale(intime_scale_factor);
+	h_dirt_clone->Scale(dirt_scale_factor);
 
 	double integral_data = h_data->Integral();
 
@@ -1149,7 +1154,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 		                         h_nc_clone->Integral() +
 		                         h_nc_pi0_clone->Integral() +
 		                         h_other_mixed_clone->Integral() +
-		                         h_unmatched_clone->Integral();// +
+		                         h_unmatched_clone->Integral() +
+		                         h_dirt_clone->Integral();                                                                        // +
 		//h_intime_clone->Integral();
 
 		TH1 * h_data_scaling_clone = (TH1*)h_data->Clone("h_data_scaling_clone");
@@ -1165,6 +1171,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 		h_nc_pi0_clone->Scale(integral_on_minus_off / integral_mc_ext);
 		h_other_mixed_clone->Scale(integral_on_minus_off / integral_mc_ext);
 		h_unmatched_clone->Scale(integral_on_minus_off / integral_mc_ext);
+		h_dirt_clone->Scale(integral_on_minus_off / integral_mc_ext);
 
 		// h_nue_cc_clone->Scale(integral_data / integral_mc_ext);
 		// h_nue_cc_mixed_clone->Scale(integral_data / integral_mc_ext);
@@ -1187,6 +1194,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 		h_other_mixed_clone->Scale(1. / integral_data);
 		h_unmatched_clone->Scale(1. / integral_data);
 		h_intime_clone->Scale(1. / integral_data);
+		h_dirt_clone->Scale(1. / integral_data);
 		h_data->Scale(1. / integral_data);
 
 	}
@@ -1201,6 +1209,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	stack->Add(h_nc_pi0_clone);
 	stack->Add(h_other_mixed_clone);
 	stack->Add(h_unmatched_clone);
+	stack->Add(h_dirt_clone);
 	stack->Add(h_intime_clone);
 
 	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
@@ -1242,15 +1251,16 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_data->Draw("same PE");
 
 	TH1 * h_error_hist = (TH1*)h_nue_cc_clone->Clone("h_error_hist");
-	h_error_hist->Add(h_nue_cc_mixed_clone, 1);
+	h_error_hist->Add(h_nue_cc_mixed_clone,  1);
 	h_error_hist->Add(h_nue_cc_out_fv_clone, 1);
-	h_error_hist->Add(h_numu_cc_clone, 1);
-	h_error_hist->Add(h_nc_pi0_clone, 1);
-	h_error_hist->Add(h_nc_clone, 1);
-	h_error_hist->Add(h_other_mixed_clone, 1);
-	h_error_hist->Add(h_cosmic_clone, 1);
-	h_error_hist->Add(h_unmatched_clone, 1);
-	h_error_hist->Add(h_intime_clone, 1);
+	h_error_hist->Add(h_numu_cc_clone,       1);
+	h_error_hist->Add(h_nc_pi0_clone,        1);
+	h_error_hist->Add(h_nc_clone,            1);
+	h_error_hist->Add(h_other_mixed_clone,   1);
+	h_error_hist->Add(h_cosmic_clone,        1);
+	h_error_hist->Add(h_unmatched_clone,     1);
+	h_error_hist->Add(h_dirt_clone,          1);
+	h_error_hist->Add(h_intime_clone,        1);
 
 	h_error_hist->SetFillColorAlpha(12, 0.15);
 	h_error_hist->Draw("e2 hist same");
@@ -1267,6 +1277,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
 	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
+	leg_stack->AddEntry(h_dirt,            "Dirt",              "f");
 	leg_stack->AddEntry(h_intime,          "InTime",            "f");
 	leg_stack->Draw();
 
@@ -1366,6 +1377,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_mc_ext_sum->Add(h_nc_pi0_clone,        1);
 	h_mc_ext_sum->Add(h_other_mixed_clone,   1);
 	h_mc_ext_sum->Add(h_unmatched_clone,     1);
+	h_mc_ext_sum->Add(h_dirt_clone,          1);
 	h_mc_ext_sum->Add(h_intime_clone,        1);
 
 	ratioPlot->GetXaxis()->SetLabelSize(12);
@@ -1435,6 +1447,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	delete h_other_mixed_clone;
 	delete h_unmatched_clone;
 	delete h_intime_clone;
+	delete h_dirt_clone;
 
 	delete h_error_hist;
 	delete h_last;
@@ -1456,6 +1469,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
                                                            TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                                                            TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, TH1 * h_intime,
                                                            const double intime_scale_factor, TH1 * h_data, const double data_scale_factor,
+                                                           TH1 * h_dirt, const double dirt_scale_factor,
                                                            const bool area_norm,
                                                            const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
 {
@@ -1507,7 +1521,9 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	h_unmatched->SetFillColor(12);
 	h_intime->SetFillColor(41);
 	h_intime->SetFillStyle(3345);
-	//h_intime->SetFillSytle(3354);
+
+	h_dirt->SetFillColor(2);
+	h_dirt->SetFillStyle(3354);
 
 	//h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
@@ -1538,6 +1554,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	TH1 * h_other_mixed_rebin   = (TH1*)h_other_mixed->Rebin(num_bins, "h_other_mixed_rebin", new_bins);
 	TH1 * h_unmatched_rebin     = (TH1*)h_unmatched->Rebin(num_bins, "h_unmatched_rebin", new_bins);
 	TH1 * h_intime_rebin        = (TH1*)h_intime->Rebin(num_bins, "h_intime_rebin", new_bins);
+	TH1 * h_dirt_rebin          = (TH1*)h_dirt->Rebin(num_bins, "h_dirt_rebin", new_bins);
 	TH1 * h_data_rebin          = (TH1*)h_data->Rebin(num_bins, "h_data_rebin", new_bins);
 
 	h_nue_cc_rebin->Sumw2();
@@ -1550,6 +1567,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	h_other_mixed_rebin->Sumw2();
 	h_unmatched_rebin->Sumw2();
 	h_intime_rebin->Sumw2();
+	h_dirt_rebin->Sumw2();
 	h_data_rebin->Sumw2();
 
 	h_nue_cc_rebin->Scale(data_scale_factor);
@@ -1562,6 +1580,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	h_other_mixed_rebin->Scale(data_scale_factor);
 	h_unmatched_rebin->Scale(data_scale_factor);
 	h_intime_rebin->Scale(intime_scale_factor);
+	h_dirt_rebin->Scale(dirt_scale_factor);
 
 	const double integral_data = h_data_rebin->Integral();
 
@@ -1575,7 +1594,8 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 		                               h_nc_rebin->Integral() +
 		                               h_nc_pi0_rebin->Integral() +
 		                               h_other_mixed_rebin->Integral() +
-		                               h_unmatched_rebin->Integral();// +
+		                               h_unmatched_rebin->Integral() +
+		                               h_dirt_rebin->Integral();                                                                                          // +
 		//h_intime_rebin->Integral();
 
 		TH1 * h_data_scaling_clone = (TH1*)h_data_rebin->Clone("h_data_scaling_clone");
@@ -1591,6 +1611,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 		h_nc_pi0_rebin->Scale(integral_on_minus_off / integral_mc_ext);
 		h_other_mixed_rebin->Scale(integral_on_minus_off / integral_mc_ext);
 		h_unmatched_rebin->Scale(integral_on_minus_off / integral_mc_ext);
+		h_dirt_rebin->Scale(integral_on_minus_off / integral_mc_ext);
 
 		// h_nue_cc_rebin->Scale(integral_data / integral_mc_ext);
 		// h_nue_cc_mixed_rebin->Scale(integral_data / integral_mc_ext);
@@ -1614,6 +1635,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 		h_unmatched_rebin->Scale(1. / integral_data);
 		h_intime_rebin->Scale(1. / integral_data);
 		h_data_rebin->Scale(1. / integral_data);
+		h_dirt_rebin->Scale(1. / integral_data);
 
 	}
 
@@ -1626,6 +1648,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	stack->Add(h_nc_pi0_rebin);
 	stack->Add(h_other_mixed_rebin);
 	stack->Add(h_unmatched_rebin);
+	stack->Add(h_dirt);
 	stack->Add(h_intime_rebin);
 
 	const double y_maximum = std::max(h_data_rebin->GetMaximum(), stack->GetMaximum());
@@ -1647,6 +1670,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	h_error_hist->Add(h_other_mixed_rebin, 1);
 	h_error_hist->Add(h_cosmic_rebin, 1);
 	h_error_hist->Add(h_unmatched_rebin, 1);
+	h_error_hist->Add(h_dirt_rebin, 1);
 	h_error_hist->Add(h_intime_rebin, 1);
 
 	h_error_hist->SetFillColorAlpha(12, 0.15);
@@ -1664,6 +1688,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
 	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
+	leg_stack->AddEntry(h_dirt,            "Dirt",              "f");
 	leg_stack->AddEntry(h_intime,          "InTime",            "f");
 	leg_stack->Draw();
 
@@ -1753,6 +1778,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	h_mc_ext_sum->Add(h_nc_pi0_rebin,        1);
 	h_mc_ext_sum->Add(h_other_mixed_rebin,   1);
 	h_mc_ext_sum->Add(h_unmatched_rebin,     1);
+	h_mc_ext_sum->Add(h_dirt_rebin,          1);
 	h_mc_ext_sum->Add(h_intime_rebin,        1);
 
 	ratioPlot->GetXaxis()->SetLabelSize(12);
@@ -1786,6 +1812,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	delete h_other_mixed_rebin;
 	delete h_unmatched_rebin;
 	delete h_intime_rebin;
+	delete h_dirt_rebin;
 
 	delete h_error_hist;
 	delete h_last;
