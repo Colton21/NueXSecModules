@@ -212,6 +212,8 @@ static void PlotdEdxTheta(
         const char * print_name1, const char * print_name2, const char * print_name3
         );
 
+static void Plot2DdEdxMap(TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
+
 static std::vector<double> Chi2Calc(TH1 * h_mc_ext, TH1 * h_data, const bool area_norm, const double return_norm);
 
 };

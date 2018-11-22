@@ -282,6 +282,19 @@ void IsContainedPlotData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_c
                          std::vector<double> fv_boundary_v, TH1 * h_track_containment_data);
 //***************************************************************************
 //***************************************************************************
+void EvaluatedEdxMethodData(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco,
+        TH1D * dedx,
+        TH1D * dedx_cali,
+        TH1D * dedx_omit,
+        TH1D * dedx_omit_cali,
+        TH2D * dedx_yz_ratio_cali,
+        TH2D * dedx_yz_ratio_omit,
+        TH2D * dedx_yz_ratio_omit_cali
+        );
+//***************************************************************************
+//***************************************************************************
 };
 
 

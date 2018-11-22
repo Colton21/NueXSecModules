@@ -1540,7 +1540,29 @@ void EvaluatedEdxMethod(
         TH1D * dedx_omit_cali_nc_pi0,
         TH1D * dedx_omit_cali_cosmic,
         TH1D * dedx_omit_cali_other_mixed,
-        TH1D * dedx_omit_cali_unmatched
+        TH1D * dedx_omit_cali_unmatched,
+        TH2D * dedx_yz_ratio_cali,
+        TH2D * dedx_yz_ratio_omit,
+        TH2D * dedx_yz_ratio_omit_cali,
+        TH2D * dedx_yz_ratio_cali_nue,
+        TH2D * dedx_yz_ratio_omit_nue,
+        TH2D * dedx_yz_ratio_omit_cali_nue
+        );
+//***************************************************************************
+//***************************************************************************
+void EvaluatedEdxMethodInTime(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco,
+        TH1D * dedx,
+        TH1D * dedx_cali,
+        TH1D * dedx_omit,
+        TH1D * dedx_omit_cali,
+        TH2D * dedx_yz_ratio_cali,
+        TH2D * dedx_yz_ratio_omit,
+        TH2D * dedx_yz_ratio_omit_cali,
+        TH2D * dedx_yz_ratio_cali_intime,
+        TH2D * dedx_yz_ratio_omit_intime,
+        TH2D * dedx_yz_ratio_omit_cali_intime
         );
 //***************************************************************************
 //***************************************************************************

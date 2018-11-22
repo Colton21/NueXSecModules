@@ -2462,6 +2462,19 @@ void histogram_functions::OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, T
 	c1->Print(print_name);
 }
 
+void histogram_functions::Plot2DdEdxMap(TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+	TCanvas * c1 = new TCanvas();
+	c1->cd();
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetYaxis()->SetTitle(y_axis_name);
+	histogram->SetTitle(title);
+	histogram->SetStats(kFALSE);
+	histogram->Scale( 1. / histogram->Integral());
+	histogram->Draw("colz");
+	c1->Print(print_name);
+}
+
 std::vector <double> histogram_functions::Chi2Calc(TH1 * h_mc_ext, TH1 * h_data, const bool area_norm, const double return_norm){
 	const int n_bins = h_mc_ext->GetNbinsX();
 

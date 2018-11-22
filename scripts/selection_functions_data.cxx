@@ -1343,4 +1343,68 @@ void selection_functions_data::IsContainedPlotData(std::vector<xsecAna::TPCObjec
 }
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::EvaluatedEdxMethodData(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco,
+        TH1D * h_dedx,
+        TH1D * h_dedx_cali,
+        TH1D * h_dedx_omit,
+        TH1D * h_dedx_omit_cali,
+        TH2D * dedx_yz_ratio_cali,
+        TH2D * dedx_yz_ratio_omit,
+        TH2D * dedx_yz_ratio_omit_cali
+        )
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+
+		//multiple methods of getting the dE/dx
+		const double dedx = leading_shower.PfpdEdx().at(2);
+		const double dedx_cali = leading_shower.PfpdEdx_cali().at(2);
+		const double dedx_omit = leading_shower.PfpdEdxOmitFirst().at(2);
+		const double dedx_omit_cali = leading_shower.PfpdEdxOmitFirst_cali().at(2);
+
+		//const double leading_shower_x = leading_shower.pfpVtxX();
+		const double leading_shower_y = leading_shower.pfpVtxY();
+		const double leading_shower_z = leading_shower.pfpVtxZ();
+		const double ratio_cali = (dedx / dedx_cali);
+		const double ratio_omit = (dedx / dedx_omit);
+		const double ratio_omit_cali = (dedx_omit / dedx_omit_cali);
+
+		//fill these for all MC
+		dedx_yz_ratio_cali->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+		dedx_yz_ratio_omit->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+		dedx_yz_ratio_omit_cali->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
+
+		h_dedx->Fill(dedx);
+		h_dedx_cali->Fill(dedx_cali);
+		h_dedx_omit->Fill(dedx_omit);
+		h_dedx_omit_cali->Fill(dedx_omit_cali);
+	} //end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
+
+
 //end functions

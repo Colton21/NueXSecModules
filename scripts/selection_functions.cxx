@@ -6763,10 +6763,22 @@ void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, 
 			}
 		}
 	}
-	const double total_events_1_0 = signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec + bkg_events_1_0 + (intime_events_1_0 * intime_scale_factor / data_scale_factor);
-	const double total_events_2_0 = signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec + bkg_events_2_0 + (intime_events_2_0 * intime_scale_factor / data_scale_factor);
-	const double total_events_3_0 = signal_events_3_0_qe + signal_events_3_0_res + signal_events_3_0_dis + signal_events_3_0_coh + signal_events_3_0_mec + bkg_events_3_0 + (intime_events_3_0 * intime_scale_factor / data_scale_factor);
-	const double total_events_4_0 = signal_events_4_0_qe + signal_events_4_0_res + signal_events_4_0_dis + signal_events_4_0_coh + signal_events_4_0_mec + bkg_events_4_0 + (intime_events_4_0 * intime_scale_factor / data_scale_factor);
+	const double total_events_1_0 = signal_events_1_0_qe +
+	                                signal_events_1_0_res + signal_events_1_0_dis +
+	                                signal_events_1_0_coh + signal_events_1_0_mec +
+	                                bkg_events_1_0 + (intime_events_1_0 * intime_scale_factor / data_scale_factor);
+	const double total_events_2_0 = signal_events_2_0_qe +
+	                                signal_events_2_0_res + signal_events_2_0_dis +
+	                                signal_events_2_0_coh + signal_events_2_0_mec +
+	                                bkg_events_2_0 + (intime_events_2_0 * intime_scale_factor / data_scale_factor);
+	const double total_events_3_0 = signal_events_3_0_qe +
+	                                signal_events_3_0_res + signal_events_3_0_dis +
+	                                signal_events_3_0_coh + signal_events_3_0_mec +
+	                                bkg_events_3_0 + (intime_events_3_0 * intime_scale_factor / data_scale_factor);
+	const double total_events_4_0 = signal_events_4_0_qe +
+	                                signal_events_4_0_res + signal_events_4_0_dis +
+	                                signal_events_4_0_coh + signal_events_4_0_mec +
+	                                bkg_events_4_0 + (intime_events_4_0 * intime_scale_factor / data_scale_factor);
 
 	const double total_signal_events_1_0 = signal_events_1_0_qe + signal_events_1_0_res + signal_events_1_0_dis + signal_events_1_0_coh + signal_events_1_0_mec;
 	const double total_signal_events_2_0 = signal_events_2_0_qe + signal_events_2_0_res + signal_events_2_0_dis + signal_events_2_0_coh + signal_events_2_0_mec;
@@ -10046,7 +10058,13 @@ void selection_functions::EvaluatedEdxMethod(
         TH1D * dedx_omit_cali_nc_pi0,
         TH1D * dedx_omit_cali_cosmic,
         TH1D * dedx_omit_cali_other_mixed,
-        TH1D * dedx_omit_cali_unmatched
+        TH1D * dedx_omit_cali_unmatched,
+        TH2D * dedx_yz_ratio_cali,
+        TH2D * dedx_yz_ratio_omit,
+        TH2D * dedx_yz_ratio_omit_cali,
+        TH2D * dedx_yz_ratio_cali_nue,
+        TH2D * dedx_yz_ratio_omit_nue,
+        TH2D * dedx_yz_ratio_omit_cali_nue
         )
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -10064,12 +10082,27 @@ void selection_functions::EvaluatedEdxMethod(
 		const double dedx_omit = leading_shower.PfpdEdxOmitFirst().at(2);
 		const double dedx_omit_cali = leading_shower.PfpdEdxOmitFirst_cali().at(2);
 
+		//const double leading_shower_x = leading_shower.pfpVtxX();
+		const double leading_shower_y = leading_shower.pfpVtxY();
+		const double leading_shower_z = leading_shower.pfpVtxZ();
+		const double ratio_cali = (dedx / dedx_cali);
+		const double ratio_omit = (dedx / dedx_omit);
+		const double ratio_omit_cali = (dedx_omit / dedx_omit_cali);
+
+		//fill these for all MC
+		dedx_yz_ratio_cali->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+		dedx_yz_ratio_omit->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+		dedx_yz_ratio_omit_cali->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
+
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
 			dedx_nue->Fill(dedx);
 			dedx_cali_nue->Fill(dedx_cali);
 			dedx_omit_nue->Fill(dedx_omit);
 			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+			dedx_yz_ratio_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+			dedx_yz_ratio_omit_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+			dedx_yz_ratio_omit_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
@@ -10077,6 +10110,7 @@ void selection_functions::EvaluatedEdxMethod(
 			dedx_cali_nue_out_fv->Fill(dedx_cali);
 			dedx_omit_nue_out_fv->Fill(dedx_omit);
 			dedx_omit_cali_nue_out_fv->Fill(dedx_omit_cali);
+
 		}
 		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
 		{
@@ -10084,6 +10118,9 @@ void selection_functions::EvaluatedEdxMethod(
 			dedx_cali_nue->Fill(dedx_cali);
 			dedx_omit_nue->Fill(dedx_omit);
 			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+			dedx_yz_ratio_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+			dedx_yz_ratio_omit_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+			dedx_yz_ratio_omit_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
 		}
 		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
 		{
@@ -10091,6 +10128,9 @@ void selection_functions::EvaluatedEdxMethod(
 			dedx_cali_nue->Fill(dedx_cali);
 			dedx_omit_nue->Fill(dedx_omit);
 			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+			dedx_yz_ratio_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+			dedx_yz_ratio_omit_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+			dedx_yz_ratio_omit_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
 		}
 		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
 		{
@@ -10098,6 +10138,9 @@ void selection_functions::EvaluatedEdxMethod(
 			dedx_cali_nue->Fill(dedx_cali);
 			dedx_omit_nue->Fill(dedx_omit);
 			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+			dedx_yz_ratio_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+			dedx_yz_ratio_omit_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+			dedx_yz_ratio_omit_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
 		}
 		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
@@ -10105,6 +10148,9 @@ void selection_functions::EvaluatedEdxMethod(
 			dedx_cali_nue->Fill(dedx_cali);
 			dedx_omit_nue->Fill(dedx_omit);
 			dedx_omit_cali_nue->Fill(dedx_omit_cali);
+			dedx_yz_ratio_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+			dedx_yz_ratio_omit_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+			dedx_yz_ratio_omit_cali_nue->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
@@ -10192,9 +10238,76 @@ void selection_functions::EvaluatedEdxMethod(
 		}
 	}//end pfp loop
 }
-
 //***************************************************************************
 //***************************************************************************
+void selection_functions::EvaluatedEdxMethodInTime(
+        std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+        std::vector<std::pair<int, std::string> > * passed_tpco,
+        TH1D * h_dedx,
+        TH1D * h_dedx_cali,
+        TH1D * h_dedx_omit,
+        TH1D * h_dedx_omit_cali,
+        TH2D * dedx_yz_ratio_cali,
+        TH2D * dedx_yz_ratio_omit,
+        TH2D * dedx_yz_ratio_omit_cali,
+        TH2D * dedx_yz_ratio_cali_intime,
+        TH2D * dedx_yz_ratio_omit_intime,
+        TH2D * dedx_yz_ratio_omit_cali_intime
+        )
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 
+		//multiple methods of getting the dE/dx
+		const double dedx = leading_shower.PfpdEdx().at(2);
+		const double dedx_cali = leading_shower.PfpdEdx_cali().at(2);
+		const double dedx_omit = leading_shower.PfpdEdxOmitFirst().at(2);
+		const double dedx_omit_cali = leading_shower.PfpdEdxOmitFirst_cali().at(2);
+
+		//const double leading_shower_x = leading_shower.pfpVtxX();
+		const double leading_shower_y = leading_shower.pfpVtxY();
+		const double leading_shower_z = leading_shower.pfpVtxZ();
+		const double ratio_cali = (dedx / dedx_cali);
+		const double ratio_omit = (dedx / dedx_omit);
+		const double ratio_omit_cali = (dedx_omit / dedx_omit_cali);
+
+		//fill these for all MC
+		dedx_yz_ratio_cali->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+		dedx_yz_ratio_omit->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+		dedx_yz_ratio_omit_cali->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
+
+		dedx_yz_ratio_cali_intime->Fill(leading_shower_z, leading_shower_y, ratio_cali);
+		dedx_yz_ratio_omit_intime->Fill(leading_shower_z, leading_shower_y, ratio_omit);
+		dedx_yz_ratio_omit_cali_intime->Fill(leading_shower_z, leading_shower_y, ratio_omit_cali);
+
+		h_dedx->Fill(dedx);
+		h_dedx_cali->Fill(dedx_cali);
+		h_dedx_omit->Fill(dedx_omit);
+		h_dedx_omit_cali->Fill(dedx_omit_cali);
+	} //end pfp loop
+}
+//***************************************************************************
+//***************************************************************************
 
 //end functions

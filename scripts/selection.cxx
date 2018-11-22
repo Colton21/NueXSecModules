@@ -550,6 +550,10 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_pre_dedx_data, h_multiplicity_track_pre_dedx_data);
 
+			_data_functions_instance.selection_functions_data::EvaluatedEdxMethodData(data_tpc_object_container_v, passed_tpco_data,
+			                                                                          h_dedx_data, h_dedx_cali_data, h_dedx_omit_data, h_dedx_omit_cali_data,
+			                                                                          h_dedx_yz_ratio_cali_data, h_dedx_yz_ratio_omit_data, h_dedx_yz_ratio_omit_cali_data);
+
 			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
@@ -1126,6 +1130,11 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_1_zoom_dirt,
 			                                                                      h_dedx_slice_2_zoom_dirt,
 			                                                                      h_dedx_slice_3_zoom_dirt);
+
+			_functions_instance.selection_functions::EvaluatedEdxMethodInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+			                                                                  h_dedx_dirt, h_dedx_cali_dirt, h_dedx_omit_dirt, h_dedx_omit_cali_dirt,
+			                                                                  h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
+			                                                                  h_dedx_yz_ratio_cali_dirt, h_dedx_yz_ratio_omit_dirt, h_dedx_yz_ratio_omit_cali_dirt);
 
 			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
@@ -1729,6 +1738,11 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_1_zoom_intime,
 			                                                                      h_dedx_slice_2_zoom_intime,
 			                                                                      h_dedx_slice_3_zoom_intime);
+
+			_functions_instance.selection_functions::EvaluatedEdxMethodInTime(intime_tpc_object_container_v, passed_tpco_intime,
+			                                                                  h_dedx_intime, h_dedx_cali_intime, h_dedx_omit_intime, h_dedx_omit_cali_intime,
+			                                                                  h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
+			                                                                  h_dedx_yz_ratio_cali_intime, h_dedx_yz_ratio_omit_intime, h_dedx_yz_ratio_omit_cali_intime);
 
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
@@ -3432,7 +3446,13 @@ void selection::make_selection( const char * _file1,
 		                                                            h_dedx_omit_cali_nc_pi0,
 		                                                            h_dedx_omit_cali_cosmic,
 		                                                            h_dedx_omit_cali_other_mixed,
-		                                                            h_dedx_omit_cali_unmatched
+		                                                            h_dedx_omit_cali_unmatched,
+		                                                            h_dedx_yz_ratio_cali,
+		                                                            h_dedx_yz_ratio_omit,
+		                                                            h_dedx_yz_ratio_omit_cali,
+		                                                            h_dedx_yz_ratio_cali_nue,
+		                                                            h_dedx_yz_ratio_omit_nue,
+		                                                            h_dedx_yz_ratio_omit_cali_nue
 		                                                            );
 
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
@@ -8966,6 +8986,135 @@ void selection::make_selection( const char * _file1,
 	        h_ele_pfp_phi_2shwr_dirt, dirt_scale_factor,
 	        "", "Leading Shower Phi (TPCO w/ 2+ Showers) [Degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_phi_2shwr_data.pdf"));
+
+	//for the function to work also needs the numu_mixed -->
+	//these are folded into numu_cc histograms
+	TH1D * h_dummy = new TH1D("h_dummy", "h_dummy", 1, 0, 1);
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_nue,
+	        h_dedx_nue_mixed,
+	        h_dedx_nue_out_fv,
+	        h_dedx_numu,
+	        h_dummy,
+	        h_dedx_cosmic,
+	        h_dedx_nc,
+	        h_dedx_nc_pi0,
+	        h_dedx_other_mixed,
+	        h_dedx_unmatched,
+	        h_dedx_intime,
+	        intime_scale_factor,
+	        h_dedx_data,
+	        data_scale_factor,
+	        h_dedx_dirt, dirt_scale_factor,
+	        "", "Leading Shower dE/dx [MeV/cm]", "",
+	        Form("%s%s", file_locate_prefix, "leading_shower_dedx_data.pdf")
+	        );
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_cali_nue,
+	        h_dedx_cali_nue_mixed,
+	        h_dedx_cali_nue_out_fv,
+	        h_dedx_cali_numu,
+	        h_dummy,
+	        h_dedx_cali_cosmic,
+	        h_dedx_cali_nc,
+	        h_dedx_cali_nc_pi0,
+	        h_dedx_cali_other_mixed,
+	        h_dedx_cali_unmatched,
+	        h_dedx_cali_intime,
+	        intime_scale_factor,
+	        h_dedx_cali_data,
+	        data_scale_factor,
+	        h_dedx_cali_dirt, dirt_scale_factor,
+	        "", "Leading Shower dE/dx [MeV/cm]", "",
+	        Form("%s%s", file_locate_prefix, "leading_shower_dedx_cali_data.pdf")
+	        );
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_omit_nue,
+	        h_dedx_omit_nue_mixed,
+	        h_dedx_omit_nue_out_fv,
+	        h_dedx_omit_numu,
+	        h_dummy,
+	        h_dedx_omit_cosmic,
+	        h_dedx_omit_nc,
+	        h_dedx_omit_nc_pi0,
+	        h_dedx_omit_other_mixed,
+	        h_dedx_omit_unmatched,
+	        h_dedx_omit_intime,
+	        intime_scale_factor,
+	        h_dedx_omit_data,
+	        data_scale_factor,
+	        h_dedx_omit_dirt, dirt_scale_factor,
+	        "", "Leading Shower dE/dx [MeV/cm]", "",
+	        Form("%s%s", file_locate_prefix, "leading_shower_dedx_omit_data.pdf")
+	        );
+
+	histogram_functions::PlotSimpleStackData(
+	        h_dedx_omit_cali_nue,
+	        h_dedx_omit_cali_nue_mixed,
+	        h_dedx_omit_cali_nue_out_fv,
+	        h_dedx_omit_cali_numu,
+	        h_dummy,
+	        h_dedx_omit_cali_cosmic,
+	        h_dedx_omit_cali_nc,
+	        h_dedx_omit_cali_nc_pi0,
+	        h_dedx_omit_cali_other_mixed,
+	        h_dedx_omit_cali_unmatched,
+	        h_dedx_intime,
+	        intime_scale_factor,
+	        h_dedx_omit_cali_data,
+	        data_scale_factor,
+	        h_dedx_omit_cali_dirt, dirt_scale_factor,
+	        "", "Leading Shower dE/dx [MeV/cm]", "",
+	        Form("%s%s", file_locate_prefix, "leading_shower_dedx_omit_cali_data.pdf")
+	        );
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_cali, "dE/dx Ratio (Nom. / Cali.)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_cali.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit, "dE/dx Ratio (Nom. / Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_cali, "dE/dx Ratio (Omit 1st Point / Cali. Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_cali.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_cali_nue, "dE/dx Ratio Nue (Nom. / Cali.)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_cali_nue.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_nue, "dE/dx Ratio Nue (Nom. / Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_nue.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_cali_nue, "dE/dx Ratio Nue (Omit 1st Point / Cali. Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_cali_nue.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_cali_intime, "dE/dx Ratio InTime (Nom. / Cali.)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_cali_intime.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_intime, "dE/dx Ratio InTime (Nom. / Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_intime.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_cali_intime, "dE/dx Ratio InTime (Omit 1st Point / Cali. Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_cali_intime.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_cali_dirt, "dE/dx Ratio Dirt (Nom. / Cali.)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_cali_dirt.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_dirt, "dE/dx Ratio Dirt (Nom. / Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_cali_dirt, "dE/dx Ratio Dirt (Omit 1st Point / Cali. Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_cali_dirt.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_cali_data, "dE/dx Ratio Data (Nom. / Cali.)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_cali_data.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_data, "dE/dx Ratio Data (Nom. / Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_data.pdf"));
+
+	histogram_functions::Plot2DdEdxMap(h_dedx_yz_ratio_omit_cali_data, "dE/dx Ratio Data (Omit 1st Point / Cali. Omit 1st Point)", "Leading Shower Z [cm]", "Leading Shower Y [cm]",
+	                                   Form("%s%s", file_locate_prefix, "dedx_yz_ratio_omit_cali_data.pdf"));
 
 	TCanvas * failure_reason_stack_c1 = new TCanvas();
 	failure_reason_stack_c1->cd();
