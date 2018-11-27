@@ -318,8 +318,8 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 		                         cluster_start, cluster_axis, rectangle_points);
 
 		bool first_point;
-		if(omit_first_point){first_point = false;}
-		if(!omit_first_point){first_point = true;}
+		if(omit_first_point) {first_point = false; }
+		if(!omit_first_point) {first_point = true; }
 		shower_cluster_dqdx.at(cluster_num).resize(3);//the number of planes
 		std::vector<double> dqdx_plane0;
 		std::vector<double> dqdx_plane1;
@@ -354,41 +354,41 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 				//do xyz correction
 				if(use_xyz_calibration)
 				{
-    				  // get 2D distance of hit to vtx                                                                                                  
-    				  const double r2D = sqrt( ( (hit_position - shower_vtx.Z()) * (hit_position - shower_vtx.Z()) ) +
-							 ( (hit_ns - shower_vtx.X()) * (hit_ns - shower_vtx.X()) ) );
-    				  const double r3D = r2D/shower_dir[1];
-    				  auto xyz = shower_vtx + shower_dir * r3D;
+					// get 2D distance of hit to vtx
+					const double r2D = sqrt( ( (hit_position - shower_vtx.Z()) * (hit_position - shower_vtx.Z()) ) +
+					                         ( (hit_ns - shower_vtx.X()) * (hit_ns - shower_vtx.X()) ) );
+					const double r3D = r2D/shower_dir[1];
+					auto xyz = shower_vtx + shower_dir * r3D;
 
-				  const lariov::TPCEnergyCalibProvider& energyCalibProvider = art::ServiceHandle<lariov::TPCEnergyCalibService>()->GetProvider();;
-				  yzcorrection = energyCalibProvider.YZdqdxCorrection(cluster->Plane().Plane, xyz.Y(), xyz.Z());
-				  xcorrection  = energyCalibProvider.XdqdxCorrection(cluster->Plane().Plane,  xyz.X());
+					const lariov::TPCEnergyCalibProvider& energyCalibProvider = art::ServiceHandle<lariov::TPCEnergyCalibService>()->GetProvider();;
+					yzcorrection = energyCalibProvider.YZdqdxCorrection(cluster->Plane().Plane, xyz.Y(), xyz.Z());
+					xcorrection  = energyCalibProvider.XdqdxCorrection(cluster->Plane().Plane,  xyz.X());
 				}
-				  if(cluster->Plane().Plane == 0) 
-				  {
-				    dqdx_plane0.push_back(charge / wire_pitch * (yzcorrection * xcorrection));
-				    //Plane0Hits.push_back(hit);
-				  }
-				  if(cluster->Plane().Plane == 1) 
-				  {
-				    dqdx_plane1.push_back(charge / wire_pitch * (yzcorrection * xcorrection));
-				    //Plane1Hits.push_back(hit);
-				  }
-				  if(cluster->Plane().Plane == 2) 
-				  {
-				    dqdx_plane2.push_back(charge / wire_pitch * (yzcorrection * xcorrection));
-				    //Plane2Hits.push_back(hit);
-				    std::cout << "[Analyze] [Utility] [dQdx] Collection dQ/dx: " << charge / wire_pitch * (yzcorrection * xcorrection) << std::endl;
-				  }
-				  if(cluster->Plane().Plane == 0) {dq_plane0.push_back(charge); }
-				  if(cluster->Plane().Plane == 1) {dq_plane1.push_back(charge); }
-				  if(cluster->Plane().Plane == 2) {dq_plane2.push_back(charge); }
+				if(cluster->Plane().Plane == 0)
+				{
+					dqdx_plane0.push_back(charge / wire_pitch * (yzcorrection * xcorrection));
+					//Plane0Hits.push_back(hit);
+				}
+				if(cluster->Plane().Plane == 1)
+				{
+					dqdx_plane1.push_back(charge / wire_pitch * (yzcorrection * xcorrection));
+					//Plane1Hits.push_back(hit);
+				}
+				if(cluster->Plane().Plane == 2)
+				{
+					dqdx_plane2.push_back(charge / wire_pitch * (yzcorrection * xcorrection));
+					//Plane2Hits.push_back(hit);
+					std::cout << "[Analyze] [Utility] [dQdx] Collection dQ/dx: " << charge / wire_pitch * (yzcorrection * xcorrection) << std::endl;
+				}
+				if(cluster->Plane().Plane == 0) {dq_plane0.push_back(charge); }
+				if(cluster->Plane().Plane == 1) {dq_plane1.push_back(charge); }
+				if(cluster->Plane().Plane == 2) {dq_plane2.push_back(charge); }
 
-				  if(cluster->Plane().Plane == 0) {dx_plane0.push_back(wire_pitch); }
-				  if(cluster->Plane().Plane == 1) {dx_plane1.push_back(wire_pitch); }
-				  if(cluster->Plane().Plane == 2) {dx_plane2.push_back(wire_pitch); }
+				if(cluster->Plane().Plane == 0) {dx_plane0.push_back(wire_pitch); }
+				if(cluster->Plane().Plane == 1) {dx_plane1.push_back(wire_pitch); }
+				if(cluster->Plane().Plane == 2) {dx_plane2.push_back(wire_pitch); }
 			}//end if hit is in box
-			if(first_point == true) {first_point = false;}
+			if(first_point == true) {first_point = false; }
 		}//end looping hits
 
 		// Get the median
@@ -424,7 +424,7 @@ void utility::ConstructShowerdQdX(xsecAna::GeometryHelper geoHelper, bool is_dat
 	//if no hits on a wire plane - leaves vector empty
 	//to keep planes ordered correctly, fill with a dummy value
 	//if(Plane0Hits.size() == 0){Plane0Hits.push_back(0);}
-        //if(Plane1Hits.size() == 0){Plane1Hits.push_back(0);}
+	//if(Plane1Hits.size() == 0){Plane1Hits.push_back(0);}
 	//if(Plane2Hits.size() == 0){Plane2Hits.push_back(0);}
 
 	//push back list of hits for each cluster in 1 x 4 cm box
@@ -649,5 +649,35 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 	}//end looping clusters
 	std::cout << "[Analyze] [Utility] [dQdx] Finished Calculating dQdx" << std::endl;
 }//end function dqdx
+
+double utility::CorrectedPositionWeight(TH2D * EnergyAngleWeightMap, const double true_nu_energy,
+                                        const double true_nu_px, const double true_nu_py, const double true_nu_pyz)
+{
+	//momentum vector in the uB coordinates
+	const double ub_nu_p_mag = sqrt((true_nu_px * true_nu_px) +
+	                                (true_nu_py * true_nu_py) +
+	                                (true_nu_pz * true_nu_pz));
+	TVector3 ub_nu_p (true_nu_px / ub_nu_p_mag, true_nu_py / ub_nu_p_mag, true_nu_pz / ub_nu_p_mag);
+	//Reweighting map expects angles in terms of orthogonal plane between uB, target, and dump
+	//need to rotate numi_nu_p into new coordinates
+
+	//unit vector of new direction
+	//with the corrected location + matrix
+	//this is found using the NuMIFlux.cc code, used to produce gSimple files
+	const TVector3 ub_plane_orth (0.720298, -0.602981, -0.342905);
+
+	ub_nu_p.RotateUz(ub_plane_orth);
+	//this redefines the TVector3
+	//for clarity define new TVector3
+	const TVector3 orth_nu_p = ub_nu_p;
+
+	const double orth_nu_theta = acos(orth_nu_p.Z()) * (180.0 / 3.1415);
+	const double orth_nu_phi   = atan2(orth_nu_p.Y(), orth_nu_p.X()) * (180.0 / 3.1415);
+
+	//reweight map is built for the angle in the plane --> phi
+	const double weight = EnergyAngleWeightMap->GetBinContent(true_nu_energy, orth_nu_phi);
+
+	return weight;
+}
 
 }//end namespace

@@ -48,6 +48,8 @@
 //root includes
 #include "TTree.h"
 #include "TBranch.h"
+#include "TH1.h"
+#include "TH2.h"
 
 #ifndef ANAHELPER_H
 #define ANAHELPER_H
