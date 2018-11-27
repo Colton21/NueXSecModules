@@ -644,6 +644,7 @@ void selection_cuts::HitThresholdCollection(std::vector<xsecAna::TPCObjectContai
 			passed_tpco->at(i).first = 0;
 			passed_tpco->at(i).second = "HitThresholdW";
 		}
+		if(n_pfp_hits_w >= threshold) {std::cout << "[Collection Hit Threshold]" << '\t' << "Passed" << std::endl; }
 	}
 
 	//      bool over_threshold = false;
@@ -739,6 +740,8 @@ void selection_cuts::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 			passed_tpco->at(i).first = 0;
 			passed_tpco->at(i).second = "OpenAngle";
 		}
+		if(leading_open_angle <= tolerance_open_angle.at(1) && leading_open_angle >= tolerance_open_angle.at(0))
+		{std::cout << "[Open Angle]" << '\t' << "Passed" << std::endl; }
 	}//end loop tpc objects
 }//end open angle cut
 //***************************************************************************
@@ -774,6 +777,8 @@ void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 			passed_tpco->at(i).first = 0;
 			passed_tpco->at(i).second = "dEdX";
 		}
+		if(leading_dedx <= tolerance_dedx_max && leading_dedx >= tolerance_dedx_min)
+		{std::cout << "[dE/dx]" << '\t' << "Passed" << std::endl; }
 	}//end loop tpc objects
 }//end dedx cut
 //***************************************************************************
@@ -825,6 +830,8 @@ void selection_cuts::SecondaryShowersDistCut(std::vector<xsecAna::TPCObjectConta
 					if(_verbose) {std::cout << "[SecondaryDist] TPC Object Failed!" << std::endl; }
 					break;
 				}
+				if(distance <= dist_tolerance)
+				{std::cout << "[2nd Shower]" << '\t' << "Passed" << std::endl; }
 			}
 		}        //end loop pfp
 	}

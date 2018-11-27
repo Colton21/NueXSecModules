@@ -12,7 +12,7 @@ void selection::make_selection( const char * _file1,
 {
 
 	std::cout << "File Path: " << _file1 << std::endl;
-	const bool _verbose = false;
+	const bool _verbose = true;
 	const bool _post_cuts_verbose = false;
 	gErrorIgnoreLevel = kWarning;
 
@@ -305,11 +305,12 @@ void selection::make_selection( const char * _file1,
 			last_data_run = data_run;
 			last_data_subrun = data_subrun;
 
-			for(auto const tpc_obj : * data_tpc_object_container_v)
-			{
-				duplicate_test.push_back(std::make_tuple(tpc_obj.RunNumber(), tpc_obj.SubRunNumber(), tpc_obj.EventNumber()));
-				break;
-			}
+			//*** duplicate testing here *** //
+			// for(auto const tpc_obj : * data_tpc_object_container_v)
+			// {
+			//      duplicate_test.push_back(std::make_tuple(tpc_obj.RunNumber(), tpc_obj.SubRunNumber(), tpc_obj.EventNumber()));
+			//      break;
+			// }
 
 			//YZ Position of largest flash
 			std::vector < double > largest_flash_v = data_largest_flash_v_v->at(event);
@@ -456,22 +457,19 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::dEdxVsOpenAngleData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_dedx_open_angle_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, 0, 0, _verbose, h_ele_cos_theta_data);
-
 			_data_functions_instance.selection_functions_data::PostCutsLeadingMomentumData(data_tpc_object_container_v, passed_tpco_data,
 			                                                                               _verbose, h_ele_momentum_hit_cut_data);
-
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_hit_cut_data,
 			                                                                         h_multiplicity_track_hit_cut_data);
-
 			//***************************************//
 			//*** Collection Plane Hits Threshold ***//
 			//***************************************//
 			_data_functions_instance.selection_functions_data::LeadingPhiData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                  h_ele_pfp_phi_data);
+
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                    h_ele_pfp_theta_data);
-
 			_data_functions_instance.selection_functions_data::HitsPlots1DData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                   h_collection_hits_track_data,
 			                                                                   h_collection_hits_shower_data,
@@ -549,11 +547,11 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_pre_dedx_data, h_multiplicity_track_pre_dedx_data);
-
-			_data_functions_instance.selection_functions_data::EvaluatedEdxMethodData(data_tpc_object_container_v, passed_tpco_data,
-			                                                                          h_dedx_data, h_dedx_cali_data, h_dedx_omit_data, h_dedx_omit_cali_data,
-			                                                                          h_dedx_yz_ratio_cali_data, h_dedx_yz_ratio_omit_data, h_dedx_yz_ratio_omit_cali_data);
-
+/*
+                        _data_functions_instance.selection_functions_data::EvaluatedEdxMethodData(data_tpc_object_container_v, passed_tpco_data,
+                                                                                                  h_dedx_data, h_dedx_cali_data, h_dedx_omit_data, h_dedx_omit_cali_data,
+                                                                                                  h_dedx_yz_ratio_cali_data, h_dedx_yz_ratio_omit_data, h_dedx_yz_ratio_omit_cali_data);
+ */
 			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
@@ -1130,12 +1128,12 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_1_zoom_dirt,
 			                                                                      h_dedx_slice_2_zoom_dirt,
 			                                                                      h_dedx_slice_3_zoom_dirt);
-
-			_functions_instance.selection_functions::EvaluatedEdxMethodInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
-			                                                                  h_dedx_dirt, h_dedx_cali_dirt, h_dedx_omit_dirt, h_dedx_omit_cali_dirt,
-			                                                                  h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
-			                                                                  h_dedx_yz_ratio_cali_dirt, h_dedx_yz_ratio_omit_dirt, h_dedx_yz_ratio_omit_cali_dirt);
-
+/*
+                        _functions_instance.selection_functions::EvaluatedEdxMethodInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
+                                                                                          h_dedx_dirt, h_dedx_cali_dirt, h_dedx_omit_dirt, h_dedx_omit_cali_dirt,
+                                                                                          h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
+                                                                                          h_dedx_yz_ratio_cali_dirt, h_dedx_yz_ratio_omit_dirt, h_dedx_yz_ratio_omit_cali_dirt);
+ */
 			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
@@ -1738,12 +1736,12 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_1_zoom_intime,
 			                                                                      h_dedx_slice_2_zoom_intime,
 			                                                                      h_dedx_slice_3_zoom_intime);
-
-			_functions_instance.selection_functions::EvaluatedEdxMethodInTime(intime_tpc_object_container_v, passed_tpco_intime,
-			                                                                  h_dedx_intime, h_dedx_cali_intime, h_dedx_omit_intime, h_dedx_omit_cali_intime,
-			                                                                  h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
-			                                                                  h_dedx_yz_ratio_cali_intime, h_dedx_yz_ratio_omit_intime, h_dedx_yz_ratio_omit_cali_intime);
-
+/*
+                        _functions_instance.selection_functions::EvaluatedEdxMethodInTime(intime_tpc_object_container_v, passed_tpco_intime,
+                                                                                          h_dedx_intime, h_dedx_cali_intime, h_dedx_omit_intime, h_dedx_omit_cali_intime,
+                                                                                          h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
+                                                                                          h_dedx_yz_ratio_cali_intime, h_dedx_yz_ratio_omit_intime, h_dedx_yz_ratio_omit_cali_intime);
+ */
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
@@ -3408,53 +3406,53 @@ void selection::make_selection( const char * _file1,
 		                                                                h_dedx_slice_3_zoom_cosmic,
 		                                                                h_dedx_slice_3_zoom_other_mixed,
 		                                                                h_dedx_slice_3_zoom_unmatched);
-
-		//testing which method of dE/dx is best
-		_functions_instance.selection_functions::EvaluatedEdxMethod(tpc_object_container_v, passed_tpco, tpco_classifier_v,
-		                                                            h_dedx_nue,
-		                                                            h_dedx_nue_out_fv,
-		                                                            h_dedx_nue_mixed,
-		                                                            h_dedx_numu,
-		                                                            h_dedx_nc,
-		                                                            h_dedx_nc_pi0,
-		                                                            h_dedx_cosmic,
-		                                                            h_dedx_other_mixed,
-		                                                            h_dedx_unmatched,
-		                                                            h_dedx_cali_nue,
-		                                                            h_dedx_cali_nue_out_fv,
-		                                                            h_dedx_cali_nue_mixed,
-		                                                            h_dedx_cali_numu,
-		                                                            h_dedx_cali_nc,
-		                                                            h_dedx_cali_nc_pi0,
-		                                                            h_dedx_cali_cosmic,
-		                                                            h_dedx_cali_other_mixed,
-		                                                            h_dedx_cali_unmatched,
-		                                                            h_dedx_omit_nue,
-		                                                            h_dedx_omit_nue_out_fv,
-		                                                            h_dedx_omit_nue_mixed,
-		                                                            h_dedx_omit_numu,
-		                                                            h_dedx_omit_nc,
-		                                                            h_dedx_omit_nc_pi0,
-		                                                            h_dedx_omit_cosmic,
-		                                                            h_dedx_omit_other_mixed,
-		                                                            h_dedx_omit_unmatched,
-		                                                            h_dedx_omit_cali_nue,
-		                                                            h_dedx_omit_cali_nue_out_fv,
-		                                                            h_dedx_omit_cali_nue_mixed,
-		                                                            h_dedx_omit_cali_numu,
-		                                                            h_dedx_omit_cali_nc,
-		                                                            h_dedx_omit_cali_nc_pi0,
-		                                                            h_dedx_omit_cali_cosmic,
-		                                                            h_dedx_omit_cali_other_mixed,
-		                                                            h_dedx_omit_cali_unmatched,
-		                                                            h_dedx_yz_ratio_cali,
-		                                                            h_dedx_yz_ratio_omit,
-		                                                            h_dedx_yz_ratio_omit_cali,
-		                                                            h_dedx_yz_ratio_cali_nue,
-		                                                            h_dedx_yz_ratio_omit_nue,
-		                                                            h_dedx_yz_ratio_omit_cali_nue
-		                                                            );
-
+/*
+                //testing which method of dE/dx is best
+                _functions_instance.selection_functions::EvaluatedEdxMethod(tpc_object_container_v, passed_tpco, tpco_classifier_v,
+                                                                            h_dedx_nue,
+                                                                            h_dedx_nue_out_fv,
+                                                                            h_dedx_nue_mixed,
+                                                                            h_dedx_numu,
+                                                                            h_dedx_nc,
+                                                                            h_dedx_nc_pi0,
+                                                                            h_dedx_cosmic,
+                                                                            h_dedx_other_mixed,
+                                                                            h_dedx_unmatched,
+                                                                            h_dedx_cali_nue,
+                                                                            h_dedx_cali_nue_out_fv,
+                                                                            h_dedx_cali_nue_mixed,
+                                                                            h_dedx_cali_numu,
+                                                                            h_dedx_cali_nc,
+                                                                            h_dedx_cali_nc_pi0,
+                                                                            h_dedx_cali_cosmic,
+                                                                            h_dedx_cali_other_mixed,
+                                                                            h_dedx_cali_unmatched,
+                                                                            h_dedx_omit_nue,
+                                                                            h_dedx_omit_nue_out_fv,
+                                                                            h_dedx_omit_nue_mixed,
+                                                                            h_dedx_omit_numu,
+                                                                            h_dedx_omit_nc,
+                                                                            h_dedx_omit_nc_pi0,
+                                                                            h_dedx_omit_cosmic,
+                                                                            h_dedx_omit_other_mixed,
+                                                                            h_dedx_omit_unmatched,
+                                                                            h_dedx_omit_cali_nue,
+                                                                            h_dedx_omit_cali_nue_out_fv,
+                                                                            h_dedx_omit_cali_nue_mixed,
+                                                                            h_dedx_omit_cali_numu,
+                                                                            h_dedx_omit_cali_nc,
+                                                                            h_dedx_omit_cali_nc_pi0,
+                                                                            h_dedx_omit_cali_cosmic,
+                                                                            h_dedx_omit_cali_other_mixed,
+                                                                            h_dedx_omit_cali_unmatched,
+                                                                            h_dedx_yz_ratio_cali,
+                                                                            h_dedx_yz_ratio_omit,
+                                                                            h_dedx_yz_ratio_omit_cali,
+                                                                            h_dedx_yz_ratio_cali_nue,
+                                                                            h_dedx_yz_ratio_omit_nue,
+                                                                            h_dedx_yz_ratio_omit_cali_nue
+                                                                            );
+ */
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);

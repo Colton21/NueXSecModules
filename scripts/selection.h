@@ -145,10 +145,10 @@ const double genie_xsec_nue_bar = 2.24685e-39; //cm2
 // //const double data_scale_factor = 0.0556456;
 
 
-// const double theta_translation = 29.36 * (3.1415/180);
-// const double phi_translation = 8.121 * (3.1415/180);
-const double theta_translation = 0.0;
-const double phi_translation = 0.0;
+const double theta_translation = 29.36 * (3.1415/180);
+const double phi_translation = 8.121 * (3.1415/180);
+//const double theta_translation = 0.0;
+//const double phi_translation = 0.0;
 
 double _x1;
 double _x2;
