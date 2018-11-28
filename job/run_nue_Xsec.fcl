@@ -96,6 +96,11 @@ physics:
 
       Debug: "true"
       Verbose: "true"
+
+     
+      ReweighMapBool: "true"
+      ReweighMapPath: "../arXiv/NuMIFlux.root"
+
     }
   }
   analysis: [ AnalyzeTPCO ]

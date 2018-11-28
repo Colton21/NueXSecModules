@@ -94,6 +94,9 @@ bool _save_truth_info;
 bool _is_mc;
 bool _is_data;
 
+bool reweigh_position;
+const char * _map_path;
+
 TTree * myTree;
 std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v;
 
@@ -160,6 +163,20 @@ int fMCNumChargedParticles = 0;
 bool has_pi0 = false;
 double fMCNuTime = -1;
 
+std::vector<double> fEventWeight_v;
+std::vector<double> fMCNuVtxX_v;
+std::vector<double> fMCNuVtxY_v;
+std::vector<double> fMCNuVtxZ_v;
+std::vector<double> fMCNuEnergy_v;
+std::vector<double> fMCNuMomentum_v;
+std::vector<double> fMCNuDirX_v;
+std::vector<double> fMCNuDirY_v;
+std::vector<double> fMCNuDirZ_v;
+
+TH2D * EnergyAngleWeightMap_nue;
+TH2D * EnergyAngleWeightMap_anue;
+TH2D * EnergyAngleWeightMap_numu;
+TH2D * EnergyAngleWeightMap_anumu;
 
 TTree* _sr_tree;
 int _sr_run, _sr_subrun;
@@ -245,6 +262,16 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("has_pi0", &has_pi0, "has_pi0/O");
 	mctruth_counter_tree->Branch("fMCNuTime", &fMCNuTime, "fMCNuTime/D");
 	mctruth_counter_tree->Branch("fMCOrigin", &fMCOrigin, "fMCOrigin/I");
+	//these are not limited to 1 neutrino per event
+	mctruth_counter_tree->Branch("fEventWeight_v", &fEventWeight_v);
+        mctruth_counter_tree->Branch("fMCNuVtxX_v", &fMCNuVtxX_v);
+        mctruth_counter_tree->Branch("fMCNuVtxY_v", &fMCNuVtxY_v);
+        mctruth_counter_tree->Branch("fMCNuVtxZ_v", &fMCNuVtxZ_v);
+        mctruth_counter_tree->Branch("fMCNuEnergy_v", &fMCNuEnergy_v);
+        mctruth_counter_tree->Branch("fMCNuMomentum_v", &fMCNuMomentum_v);
+        mctruth_counter_tree->Branch("fMCNuDirX_v", &fMCNuDirX_v);
+        mctruth_counter_tree->Branch("fMCNuDirY_v", &fMCNuDirY_v);
+        mctruth_counter_tree->Branch("fMCNuDirZ_v", &fMCNuDirZ_v);
 
 	_sr_tree = fs->make<TTree>("pottree","");
 	_sr_tree->Branch("run",                &_sr_run,                "run/I");
@@ -277,6 +304,9 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	//Instead we just count the most important truth events.
 	_save_truth_info                = p.get<bool>("SaveTruthInfo", false);
 
+	reweigh_position                = p.get<bool>("ReweighMapBool", true);
+	_map_path			= p.get<const char *>("ReweighMapPath", "../arXiv/NuMIFlux.root");
+
 	std::cout << "[Analyze] End Setting fcl Parameters " << std::endl;
 
 }
@@ -294,6 +324,28 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	if(_is_data == true)     {std::cout << "[Analyze] Running with Data " << std::endl; }
 	if(_is_data == true)     {run_pot_counting = false; std::cout << "[Analyze] Do Not Count MC POT" << std::endl; }
 	if(_is_mc == true)       {run_pot_counting = true;  std::cout << "[Analyze] Count MC POT" << std::endl; }
+
+	if(reweigh_position)
+	{
+		try
+		{
+		  TFile * map_file = new TFile(_map_path);
+		  TH2D * _EnergyAngleWeightMap_nue   = (TH2D*)map_file->Get("nueFluxHistoEngPhi");
+		  TH2D * _EnergyAngleWeightMap_anue  = (TH2D*)map_file->Get("anueFluxHistoEngPhi");
+		  TH2D * _EnergyAngleWeightMap_numu  = (TH2D*)map_file->Get("numuFluxHistoEngPhi");
+		  TH2D * _EnergyAngleWeightMap_anumu = (TH2D*)map_file->Get("anumuFluxHistoEngPhi");
+
+		  EnergyAngleWeightMap_nue   = _EnergyAngleWeightMap_nue;
+		  EnergyAngleWeightMap_anue  = _EnergyAngleWeightMap_anue;
+		  EnergyAngleWeightMap_numu  = _EnergyAngleWeightMap_numu;
+		  EnergyAngleWeightMap_anumu = _EnergyAngleWeightMap_anumu;
+		}
+		catch(...)
+		{
+		  std::cout << "!! Unable to Open Instance of Reweighing Map !!" << std::endl;
+		  reweigh_position = false;
+		}
+	}
 
 	//there are so may mc particles -- why?
 	//these are not all final state particles we see
@@ -406,6 +458,8 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 				fMCPy = mcparticle.Py();
 				fMCPz = mcparticle.Pz();
 				mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
+				simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
+				const int fMCNuPdg = mc_nu.Nu().PdgCode();
 				if(mctruth->Origin() == simb::kBeamNeutrino && event_neutrino == false)
 				{
 					//mctruth = nue_xsec::recotruehelper::TrackIDToMCTruth(e, "largeant", mcparticle.TrackId());
@@ -413,9 +467,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					if(mctruth->Origin() == simb::kBeamNeutrino) {fMCOrigin = 0; }
 					if(mctruth->Origin() == simb::kCosmicRay)    {fMCOrigin = 1; }
 					if(mctruth->Origin() == simb::kUnknown)      {fMCOrigin = 2; }
-					simb::MCNeutrino mc_nu = mctruth->GetNeutrino();
 					bool fCCNC = mc_nu.CCNC(); //0 is CC, 1 is NC
-					int fMCNuPdg = mc_nu.Nu().PdgCode();
 					if(fMCNuPdg == 12  && fCCNC == 0) {mc_nue_cc_counter++;      fMCNuID = 1; }
 					if(fMCNuPdg == 14  && fCCNC == 0) {mc_numu_cc_counter++;     fMCNuID = 2; }
 					if(fMCNuPdg == 12  && fCCNC == 1) {mc_nue_nc_counter++;      fMCNuID = 3; }
@@ -442,6 +494,45 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					fMCEleMomentum = mc_nu.Lepton().P();
 					fMCNuTime      = mc_nu.Nu().Trajectory().T(0);
 					event_neutrino = true;
+				}
+				//sometimes we have more than 1 neutrino in an event
+				//this is particularly important for data
+				//try and save vectors of the variables
+				if(mctruth->Origin() == simb::kBeamNeutrino)
+				{
+                                        fMCNuVtxX_v     .push_back( mc_nu.Nu().Vx());
+                                        fMCNuVtxY_v     .push_back( mc_nu.Nu().Vy());
+                                        fMCNuVtxZ_v     .push_back( mc_nu.Nu().Vz());
+                                        fMCNuEnergy_v   .push_back( mc_nu.Nu().E());
+                                        fMCNuMomentum_v .push_back( mc_nu.Nu().P());
+                                        fMCNuDirX_v     .push_back( (mc_nu.Nu().Px() / mc_nu.Nu().P()));
+                                        fMCNuDirY_v     .push_back( (mc_nu.Nu().Py() / mc_nu.Nu().P()));
+                                        fMCNuDirZ_v     .push_back( (mc_nu.Nu().Pz() / mc_nu.Nu().P()));
+					//weight to correct for uB position
+					if(reweigh_position == true)
+					{
+                                          if(fMCNuPdg == 12)
+					  {
+					    fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_nue, 
+						fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+					  }
+                                          if(fMCNuPdg == -12)
+                                          {
+                                            fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_anue,
+                                                fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+                                          }
+                                          if(fMCNuPdg == 14)
+                                          {
+                                            fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_numu,
+                                                fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+                                          }
+                                          if(fMCNuPdg == -14)
+                                          {
+                                            fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_anumu,
+                                                fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+                                          }
+					}
+					if(reweigh_position == false){fEventWeight_v.push_back(1.0);}
 				}
 
 				//this should only give the stable final state particles
