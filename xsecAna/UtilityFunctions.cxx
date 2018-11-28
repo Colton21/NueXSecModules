@@ -651,7 +651,7 @@ void utility::ConstructShowerdQdXAlternative(xsecAna::GeometryHelper geoHelper, 
 }//end function dqdx
 
 double utility::CorrectedPositionWeight(TH2D * EnergyAngleWeightMap, const double true_nu_energy,
-                                        const double true_nu_px, const double true_nu_py, const double true_nu_pyz)
+                                        const double true_nu_px, const double true_nu_py, const double true_nu_pz)
 {
 	//momentum vector in the uB coordinates
 	const double ub_nu_p_mag = sqrt((true_nu_px * true_nu_px) +
@@ -671,7 +671,8 @@ double utility::CorrectedPositionWeight(TH2D * EnergyAngleWeightMap, const doubl
 	//for clarity define new TVector3
 	const TVector3 orth_nu_p = ub_nu_p;
 
-	const double orth_nu_theta = acos(orth_nu_p.Z()) * (180.0 / 3.1415);
+	//larsoft complains about unused variables - so comment out for now
+	//const double orth_nu_theta = acos(orth_nu_p.Z()) * (180.0 / 3.1415);
 	const double orth_nu_phi   = atan2(orth_nu_p.Y(), orth_nu_p.X()) * (180.0 / 3.1415);
 
 	//reweight map is built for the angle in the plane --> phi
