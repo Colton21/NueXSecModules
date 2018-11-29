@@ -99,7 +99,7 @@ physics:
 
      
       ReweighMapBool: "true"
-      ReweighMapPath: "../arXiv/NuMIFlux.root"
+      ReweighMapPath: '../arXiv/NuMIFlux_reweight_map.root'
 
     }
   }

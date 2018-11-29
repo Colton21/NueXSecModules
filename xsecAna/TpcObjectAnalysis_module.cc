@@ -95,7 +95,7 @@ bool _is_mc;
 bool _is_data;
 
 bool reweigh_position;
-const char * _map_path;
+std::string _map_path;
 
 TTree * myTree;
 std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v;
@@ -164,6 +164,7 @@ bool has_pi0 = false;
 double fMCNuTime = -1;
 
 std::vector<double> fEventWeight_v;
+std::vector<int>    fMCNuPdg_v;
 std::vector<double> fMCNuVtxX_v;
 std::vector<double> fMCNuVtxY_v;
 std::vector<double> fMCNuVtxZ_v;
@@ -263,6 +264,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	mctruth_counter_tree->Branch("fMCNuTime", &fMCNuTime, "fMCNuTime/D");
 	mctruth_counter_tree->Branch("fMCOrigin", &fMCOrigin, "fMCOrigin/I");
 	//these are not limited to 1 neutrino per event
+	mctruth_counter_tree->Branch("fMCNuPdg_v", &fMCNuPdg_v); 
 	mctruth_counter_tree->Branch("fEventWeight_v", &fEventWeight_v);
         mctruth_counter_tree->Branch("fMCNuVtxX_v", &fMCNuVtxX_v);
         mctruth_counter_tree->Branch("fMCNuVtxY_v", &fMCNuVtxY_v);
@@ -305,7 +307,7 @@ xsecAna::TpcObjectAnalysis::TpcObjectAnalysis(fhicl::ParameterSet const & p)
 	_save_truth_info                = p.get<bool>("SaveTruthInfo", false);
 
 	reweigh_position                = p.get<bool>("ReweighMapBool", true);
-	_map_path			= p.get<const char *>("ReweighMapPath", "../arXiv/NuMIFlux.root");
+	_map_path			= p.get<std::string>("ReweighMapPath", "../arXiv/NuMIFlux_reweight_map.root");
 
 	std::cout << "[Analyze] End Setting fcl Parameters " << std::endl;
 
@@ -329,7 +331,7 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	{
 		try
 		{
-		  TFile * map_file = new TFile(_map_path);
+		  TFile * map_file = new TFile(_map_path.c_str());
 		  TH2D * _EnergyAngleWeightMap_nue   = (TH2D*)map_file->Get("nueFluxHistoEngPhi");
 		  TH2D * _EnergyAngleWeightMap_anue  = (TH2D*)map_file->Get("anueFluxHistoEngPhi");
 		  TH2D * _EnergyAngleWeightMap_numu  = (TH2D*)map_file->Get("numuFluxHistoEngPhi");
@@ -356,6 +358,12 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 	{
 		e.getByLabel("largeant", MCParticleHandle);
 		if(!MCParticleHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] MCParticleHandle is not valid" << std::endl; exit(1); }
+	}
+	art::Handle < std::vector < simb::MCTruth > > MCTruthHandle;
+	if(_is_mc == true)
+	{
+		e.getByLabel("generator", MCTruthHandle);
+		if(!MCTruthHandle.isValid() && _cosmic_only == false) {std::cout << "[Analyze] MCTruthHandle is not valid" << std::endl; exit(1); }
 	}
 
 	//maybe make them filled at the same place as the other - so it's a per event
@@ -495,46 +503,6 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 					fMCNuTime      = mc_nu.Nu().Trajectory().T(0);
 					event_neutrino = true;
 				}
-				//sometimes we have more than 1 neutrino in an event
-				//this is particularly important for data
-				//try and save vectors of the variables
-				if(mctruth->Origin() == simb::kBeamNeutrino)
-				{
-                                        fMCNuVtxX_v     .push_back( mc_nu.Nu().Vx());
-                                        fMCNuVtxY_v     .push_back( mc_nu.Nu().Vy());
-                                        fMCNuVtxZ_v     .push_back( mc_nu.Nu().Vz());
-                                        fMCNuEnergy_v   .push_back( mc_nu.Nu().E());
-                                        fMCNuMomentum_v .push_back( mc_nu.Nu().P());
-                                        fMCNuDirX_v     .push_back( (mc_nu.Nu().Px() / mc_nu.Nu().P()));
-                                        fMCNuDirY_v     .push_back( (mc_nu.Nu().Py() / mc_nu.Nu().P()));
-                                        fMCNuDirZ_v     .push_back( (mc_nu.Nu().Pz() / mc_nu.Nu().P()));
-					//weight to correct for uB position
-					if(reweigh_position == true)
-					{
-                                          if(fMCNuPdg == 12)
-					  {
-					    fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_nue, 
-						fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
-					  }
-                                          if(fMCNuPdg == -12)
-                                          {
-                                            fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_anue,
-                                                fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
-                                          }
-                                          if(fMCNuPdg == 14)
-                                          {
-                                            fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_numu,
-                                                fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
-                                          }
-                                          if(fMCNuPdg == -14)
-                                          {
-                                            fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_anumu,
-                                                fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
-                                          }
-					}
-					if(reweigh_position == false){fEventWeight_v.push_back(1.0);}
-				}
-
 				//this should only give the stable final state particles
 				if(mctruth->Origin() == simb::kBeamNeutrino && mcparticle.StatusCode() == 1)
 				{
@@ -556,7 +524,65 @@ void xsecAna::TpcObjectAnalysis::analyze(art::Event const & e)
 		fMCNumParticles = mc_num_particles;
 		fMCNumChargedParticles = mc_num_charged_particles;
 		std::cout << "[Analyze] MC Num Particles: " << mc_num_particles << std::endl;
+		//mctruth object loop
+		for(auto const & mctruth : (*MCTruthHandle) )
+		{
+		//sometimes we have more than 1 neutrino in an event
+		//this is particularly important for data
+		//try and save vectors of the variables
+		  //const int mctruth_pdgcode = mctruth.GetParticle().PdgCode();
+		  const int mctruth_pdgcode = mctruth.GetNeutrino().Nu().PdgCode();
+		  bool is_mctruth_neutrino = false;
+		  if(mctruth_pdgcode == 12 || mctruth_pdgcode == -12 || mctruth_pdgcode == 14 || mctruth_pdgcode == -14){is_mctruth_neutrino = true;}
+		  if(mctruth.Origin() == simb::kBeamNeutrino && is_mctruth_neutrino == true)
+		  {
+		    fMCNuPdg_v      .push_back( mctruth_pdgcode);
+                    fMCNuVtxX_v     .push_back( mctruth.GetNeutrino().Nu().Vx());
+                    fMCNuVtxY_v     .push_back( mctruth.GetNeutrino().Nu().Vy());
+                    fMCNuVtxZ_v     .push_back( mctruth.GetNeutrino().Nu().Vz());
+                    fMCNuEnergy_v   .push_back( mctruth.GetNeutrino().Nu().E());
+                    fMCNuMomentum_v .push_back( mctruth.GetNeutrino().Nu().P());
+                    fMCNuDirX_v     .push_back( (mctruth.GetNeutrino().Nu().Px() / mctruth.GetNeutrino().Nu().P()));
+                    fMCNuDirY_v     .push_back( (mctruth.GetNeutrino().Nu().Py() / mctruth.GetNeutrino().Nu().P()));
+                    fMCNuDirZ_v     .push_back( (mctruth.GetNeutrino().Nu().Pz() / mctruth.GetNeutrino().Nu().P()));
+		    //weight to correct for uB position
+		    if(reweigh_position == true)
+		    {
+                      if(mctruth_pdgcode == 12)
+		      {
+			fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_nue, 
+						 fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+		      }
+                      if(mctruth_pdgcode == -12)
+                      {
+                        fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_anue,
+                                                 fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+                      }
+                      if(mctruth_pdgcode == 14)
+                      {
+                        fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_numu,
+                                                 fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+                      }
+                      if(mctruth_pdgcode == -14)
+                      {
+                        fEventWeight_v.push_back(utility::CorrectedPositionWeight(EnergyAngleWeightMap_anumu,
+                                                 fMCNuEnergy, fMCNuDirX, fMCNuDirY, fMCNuDirZ));
+                      }
+		    }//end if reweigh == true
+		    if(reweigh_position == false){fEventWeight_v.push_back(1.0);}
+		  }//end if mctruth->origin == kBeamNeutrino
+		}//end loop mctruth
 		mctruth_counter_tree->Fill();
+	        fMCNuPdg_v.clear();
+                fMCNuVtxX_v.clear();
+                fMCNuVtxY_v.clear();
+                fMCNuVtxZ_v.clear();
+                fMCNuEnergy_v.clear();
+                fMCNuMomentum_v.clear();
+                fMCNuDirX_v.clear();
+                fMCNuDirY_v.clear();
+                fMCNuDirZ_v.clear();
+		fEventWeight_v.clear();
 	}
 
 	// Implementation of required member function here.
