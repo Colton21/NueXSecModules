@@ -50,6 +50,7 @@
 #include "TBranch.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "TFile.h"
 
 #ifndef ANAHELPER_H
 #define ANAHELPER_H
