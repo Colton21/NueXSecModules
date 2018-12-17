@@ -107,4 +107,6 @@ const double pfp_hits_length_tolerance = 3; //hits/cm
 //tolerance for longest track length / leading shower length
 const double ratio_tolerance = 1;
 
+const bool detector_variations = false;
+
 #endif

@@ -94,7 +94,8 @@ int main(int argc, char *argv[]){
 	        tolerance_dedx_max,
 	        dist_tolerance,
 	        pfp_hits_length_tolerance,
-	        ratio_tolerance
+	        ratio_tolerance,
+	        detector_variations
 	        );
 
 	std::ifstream input_config_file;
@@ -147,13 +148,13 @@ int main(int argc, char *argv[]){
 	if(using_slim_version == false)
 	{
 		_selection_instance.xsecSelection::selection::make_selection(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
-		                                                             config, results_v, file_locate_prefix);
+		                                                             variation_file_path, config, results_v, file_locate_prefix);
 	}
 	//slim selection
 	if(using_slim_version == true)
 	{
 		_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
-		                                                                            config, results_v);
+		                                                                            variation_file_path, config, results_v);
 	}
 
 	//write results from selection to output file

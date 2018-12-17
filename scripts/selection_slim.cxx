@@ -5,6 +5,7 @@ void selection_slim::make_selection_slim( const char * _file1,
                                           const char * _file2,
                                           const char * _file3,
                                           const char * _file4,
+                                          const char * _file5,
                                           const std::vector<double> _config,
                                           std::vector<std::tuple<double, double, std::string> > * results_v
                                           )
@@ -1078,10 +1079,13 @@ void selection_slim::make_selection_slim( const char * _file1,
 			if(true_in_tpc == true) {break; }
 		}
 		//const bool true_in_tpc = true_in_tpc_v.at(event);
+		bool true_signal_in_event = false;
+		if(mc_nu_id == 1 || mc_nu_id == 5 || mc_nu_id == 3 || mc_nu_id == 7) {true_signal_in_event = true; }
 
 		//now we apply the classifier to all TPC Objects in this event
 		std::vector<std::pair<std::string, int> > * tpco_classifier_v = new std::vector<std::pair<std::string, int> >;
-		_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0, tpco_classifier_v);
+		_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0, tpco_classifier_v,
+		                                                        detector_variations, true_signal_in_event);
 
 		//XY Position of largest flash
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);

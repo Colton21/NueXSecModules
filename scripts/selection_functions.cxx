@@ -189,6 +189,7 @@ void selection_functions::PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjec
 		//loop over pfparticles in the TPCO
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
+		if(tpco_id == "filtered") {continue; }
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
@@ -297,6 +298,7 @@ void selection_functions::PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCO
 		//loop over pfparticles in the TPCO
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
+		if(tpco_id == "filtered") {continue; }
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
@@ -932,7 +934,10 @@ void selection_functions::PrintTopologyPurity(std::vector<int> * no_track, std::
 //***************************************************************************
 //this function performs a classification on a tpc object basis,
 //by looping over each pfparticle contained
-std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0, bool true_in_tpc)
+//
+//extended functionality to help with detector variation cases
+std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0, bool true_in_tpc,
+                                                                 bool do_variation_filter, bool true_signal_in_event)
 {
 	int part_nue_cc     = 0;
 	int part_nue_bar_cc = 0;
@@ -977,6 +982,8 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		if(part.Origin() == "kCosmicRay") { part_cosmic++;    }
 		if(part.Origin() == "kUnknown"  ) { part_unmatched++; }
 	}
+	//if running with the variation samples and signal event to be filtered
+	if(true_signal_in_event && do_variation_filter) {return std::make_pair("filtered", leading_index); }
 	//some tpc objects actually have 0 hits - crazy!
 	if(tpc_obj.NumPFPHits() == 0) {return std::make_pair("bad_reco", 0); }
 
@@ -1030,11 +1037,12 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 //***************************************************************************
 //***************************************************************************
 void selection_functions::FillTPCOClassV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, bool true_in_tpc, bool has_pi0,
-                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v)
+                                         std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                         bool do_variation_filter, bool true_signal_in_event)
 {
 	for(auto const tpc_obj : * tpc_object_container_v)
 	{
-		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, true_in_tpc);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier(tpc_obj, has_pi0, true_in_tpc, do_variation_filter, true_signal_in_event);
 		//int leading_index = tpco_class.second;
 		//std::string tpco_id = tpco_class.first;
 		tpco_classifier_v->push_back(tpco_class);
@@ -8612,6 +8620,7 @@ void selection_functions::PostCutsLeadingMomentumTrueParticle(std::vector<xsecAn
 		if(passed_tpco->at(i).first == 0) {continue; }
 		auto const tpc_obj = tpc_object_container_v->at(i);
 		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		if(tpco_id == "filtered") {continue; }
 		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_momentum = leading_shower.pfpMomentum();

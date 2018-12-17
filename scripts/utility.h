@@ -25,7 +25,8 @@ std::vector<double> configure_cuts ( double _x1,
                                      double tolerance_dedx_max,
                                      double dist_tolerance,
                                      double pfp_hits_length_tolerance,
-                                     double ratio_tolerance
+                                     double ratio_tolerance,
+                                     bool do_variations
                                      );
 }//end namespace
 

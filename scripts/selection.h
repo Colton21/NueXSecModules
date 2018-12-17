@@ -79,7 +79,9 @@ const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 
 
 //dirt scaling
-const double dirt_scale_factor = 0;
+//POT used for small sample: 4.05982e+19
+// scale factor is 2.369e+20 / 4.05982e+19 = 5.835
+const double dirt_scale_factor = 5.835;
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
@@ -171,6 +173,7 @@ double tolerance_dedx_max;
 double dist_tolerance;
 double pfp_hits_length_tolerance;
 double ratio_tolerance;
+bool detector_variations;
 
 int num_debug_events = 0;
 
@@ -185,6 +188,7 @@ void make_selection(
         const char * _file2,
         const char * _file3,
         const char * _file4,
+        const char * _file5,
         const std::vector<double> _config,
         std::vector<std::tuple<double, double, std::string> > * results_v,
         const char * file_locate_prefix

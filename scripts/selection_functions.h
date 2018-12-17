@@ -142,11 +142,13 @@ static void PrintTopologyPurity(std::vector<int> * no_track, std::vector<int> * 
                                 std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr);
 //***************************************************************************
 //***************************************************************************
-std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0, bool true_in_tpc);
+std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool has_pi0, bool true_in_tpc, bool do_variation_filter,
+                                            bool true_signal_in_event);
 //***************************************************************************
 //***************************************************************************
 void FillTPCOClassV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, bool true_in_tpc, bool has_pi0,
-                    std::vector<std::pair<std::string, int> > * tpco_classifier_v);
+                    std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                    bool do_variation_filter, bool true_signal_in_event);
 //***************************************************************************
 //***************************************************************************
 static double calcNumNucleons(const bool is_data, double _x1, double _x2, double _y1,

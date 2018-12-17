@@ -60,6 +60,7 @@ double tolerance_dedx_max;
 double dist_tolerance;
 double pfp_hits_length_tolerance;
 double ratio_tolerance;
+bool detector_variations;
 
 public:
 
@@ -70,6 +71,7 @@ void make_selection_slim(
         const char * _file2,
         const char * _file3,
         const char * _file4,
+        const char * _file5,
         const std::vector<double> _config,
         std::vector<std::tuple<double, double, std::string> > * results_v
         );

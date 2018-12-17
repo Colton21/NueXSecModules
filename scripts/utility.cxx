@@ -23,10 +23,12 @@ std::vector<double> configure_cuts(
         double tolerance_dedx_max,
         double dist_tolerance,
         double pfp_hits_length_tolerance,
-        double ratio_tolerance)
+        double ratio_tolerance,
+        bool do_variations
+        )
 {
 	std::vector<double> config;
-	config.resize(21,0);
+	config.resize(22,0);
 
 	config[0] = _x1;
 	config[1] = _x2;
@@ -49,6 +51,7 @@ std::vector<double> configure_cuts(
 	config[18] = dist_tolerance;
 	config[19] = pfp_hits_length_tolerance;
 	config[20] = ratio_tolerance;
+	config[21] = do_variations;
 
 	return config;
 }//end config function
