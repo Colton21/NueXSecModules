@@ -1266,7 +1266,7 @@ void selection_functions::XSecWork(double final_counter, double final_counter_nu
 	for(auto const energy : selected_energy_vector) {all_energy += energy; }
 	const double average_true_energy = all_energy / selected_energy_vector.size();
 	bool _verbose = false;
-	selection_functions::xsec_plot(_verbose, genie_xsec_nue, genie_xsec_nue_bar, genie_xsec_combined, xsec_cc_data, average_true_energy, xsec_cc_stat_data);
+	//selection_functions::xsec_plot(_verbose, genie_xsec_nue, genie_xsec_nue_bar, genie_xsec_combined, xsec_cc_data, average_true_energy, xsec_cc_stat_data);
 
 	const double data_xsec = xsec_cc_data;
 	const double mc_xsec = xsec_cc_nue_nue_bar_mc;
