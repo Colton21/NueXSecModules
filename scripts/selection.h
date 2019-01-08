@@ -79,9 +79,9 @@ const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 
 
 //dirt scaling
-//POT used for small sample: 4.05982e+19
-// scale factor is 2.369e+20 / 4.05982e+19 = 5.835
-const double dirt_scale_factor = 5.835;
+//POT used for small sample: 1.55287e+19
+// scale factor is 2.369e+20 / 1.55287e+19 = 15.256
+const double dirt_scale_factor = 15.256;
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2

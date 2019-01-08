@@ -858,7 +858,7 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 	std::cout << " Number of Other Mixed   : " << counter_other_mixed    << "\t \t " << double(counter_other_mixed    * data_scale_factor  ) << std::endl;
 	std::cout << " Number of InTime Cosmics: " << double(counter_intime_cosmics * (intime_scale_factor / data_scale_factor))
 	          << "\t \t " << double(counter_intime_cosmics * intime_scale_factor) << std::endl;
-	std::cout << "Number of Dirt           : " << double(counter_dirt * dirt_scale_factor / data_scale_factor)
+	std::cout << " Number of Dirt          : " << double(counter_dirt * dirt_scale_factor / data_scale_factor)
 	          << "\t \t" << double (counter_dirt * dirt_scale_factor)<< std::endl;
 	std::cout << "---------Unscaled----------" << std::endl;
 	std::cout << " Nue CC QE               : " << counter_nue_cc_qe   << std::endl;

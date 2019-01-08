@@ -351,9 +351,9 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 	c2->Print(print_name_2);
 }
 
-void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3,
-                                           const double data_scale_factor, const double intime_scale_factor,
-                                           const char * x_axis_name, const char * print_name)
+void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3, TH1 * histogram_4,
+                                           const double data_scale_factor, const double intime_scale_factor, const double dirt_scale_factor,
+                                           const char * x_axis_name, const char * print_name, const char * print_name2)
 {
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
@@ -361,14 +361,22 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	TH1 * h_1_clone = (TH1*)histogram_1->Clone("h_1_clone");
 	TH1 * h_2_clone = (TH1*)histogram_2->Clone("h_2_clone");
 	TH1 * h_3_clone = (TH1*)histogram_3->Clone("h_3_clone");
+	TH1 * h_4_clone = (TH1*)histogram_4->Clone("h_4_clone");
 
 	h_1_clone->Sumw2();
 	h_2_clone->Sumw2();
 	h_3_clone->Sumw2();
+	h_4_clone->Sumw2();
+
+	h_1_clone->SetFillColor(30);
+	h_2_clone->SetFillColor(9);
+	h_4_clone->SetFillColor(46);
 
 	h_1_clone->Scale(data_scale_factor);
 	h_2_clone->Scale(intime_scale_factor);
+	TH1 * h_3_clone_clone = (TH1*)h_3_clone->Clone("h_3_clone_clone");
 	h_3_clone->Add(h_2_clone, -1);
+	h_4_clone->Scale(dirt_scale_factor);
 
 	h_3_clone->GetXaxis()->SetTitle(x_axis_name);
 	h_3_clone->GetYaxis()->SetRangeUser(-3000, 3000);
@@ -378,6 +386,25 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	h_1_clone->Draw("hist same");
 
 	c1->Print(print_name);
+
+	TCanvas * c2 = new TCanvas();
+	c2->cd();
+
+	THStack * stack = new THStack();
+
+	stack->Add(h_2_clone);
+	stack->Add(h_4_clone);
+	stack->Add(h_1_clone);
+
+	stack->Draw("hist");
+
+	stack->GetXaxis()->SetTitle(x_axis_name);
+	stack->Draw("hist");
+
+	//we want this before the off-beam is subtracted
+	h_3_clone_clone->Draw("same");
+
+	c2->Print(print_name2);
 
 }
 
@@ -506,8 +533,8 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	c3b->Print("../scripts/plots/flash_time_data_divide.pdf");
 
 }
-void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, TH1 * h_flash_data,
-                                        const double intime_scale_factor, const double data_scale_factor,
+void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, TH1 * h_flash_data, TH1 * h_flash_dirt,
+                                        const double intime_scale_factor, const double data_scale_factor, const double dirt_scale_factor,
                                         const char * x_axis_name, const char * print_name)
 {
 	TCanvas * c1 = new TCanvas();
@@ -517,22 +544,27 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 	h_flash_mc->SetStats(kFALSE);
 	h_flash_intime->SetStats(kFALSE);
 	h_flash_data->SetStats(kFALSE);
+	h_flash_dirt->SetStats(kFALSE);
 
 	h_flash_mc->SetFillColor(49);
 	h_flash_intime->SetFillColor(41);
 	h_flash_intime->SetFillStyle(3345);
+	h_flash_dirt->SetFillColor(30);
 
 	TH1 * h_mc_clone       = (TH1*)h_flash_mc->Clone("h_mc_clone");
 	TH1 * h_intime_clone   = (TH1*)h_flash_intime->Clone("h_intime_clone");
+	TH1 * h_dirt_clone     = (TH1*)h_flash_dirt->Clone("h_dirt_clone");
 
 	const double y_maximum = std::max(h_flash_data->GetMaximum(), stack->GetMaximum());
 	stack->SetMaximum(y_maximum * 1.2);
 
 	h_mc_clone->Sumw2();
 	h_intime_clone->Sumw2();
+	h_dirt_clone->Sumw2();
 
 	h_mc_clone->Scale(data_scale_factor);
 	h_intime_clone->Scale(intime_scale_factor);
+	h_dirt_clone->Scale(dirt_scale_factor);
 
 	h_flash_data->SetMarkerStyle(20);
 	h_flash_data->SetMarkerSize(0.5);
@@ -540,6 +572,7 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 
 	stack->Add(h_mc_clone);
 	stack->Add(h_intime_clone);
+	stack->Add(h_dirt_clone);
 
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
@@ -547,6 +580,7 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 
 	TH1 * h_error_hist = (TH1*)h_mc_clone->Clone("h_error_hist");
 	h_error_hist->Add(h_intime_clone, 1);
+	h_error_hist->Add(h_dirt_clone, 1);
 
 	h_error_hist->SetFillColorAlpha(12, 0.15);
 	h_error_hist->Draw("e2 hist same");
@@ -554,6 +588,7 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 	TLegend * leg_stack = new TLegend(0.85,0.85,0.95,0.95);
 	leg_stack->AddEntry(h_flash_mc,      "MC",   "f");
 	leg_stack->AddEntry(h_flash_intime,  "EXT",  "f");
+	leg_stack->AddEntry(h_flash_dirt,    "Dirt", "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
 

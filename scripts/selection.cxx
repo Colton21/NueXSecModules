@@ -799,7 +799,7 @@ void selection::make_selection( const char * _file1,
 		dirt_passed_runs->resize(in_time_total_entries);
 
 		_cuts_instance.selection_cuts::loop_flashes(dirt_f, dirt_optree, flash_pe_threshold,
-		                                            flash_time_start, flash_time_end, dirt_passed_runs, dirt_flash_time, 1);
+		                                            flash_time_start, flash_time_end, dirt_passed_runs, dirt_flash_time, 2);
 		for(auto const run : * dirt_passed_runs)
 		{
 			if(run == 1) {run_sum++; }
@@ -7141,15 +7141,20 @@ void selection::make_selection( const char * _file1,
 	for(auto const flash_timing : * flash_time)        {h_flash_time->Fill(flash_timing.first);        }
 	for(auto const flash_timing : * data_flash_time)   {h_flash_time_data->Fill(flash_timing.first);   }
 	for(auto const flash_timing : * intime_flash_time) {h_flash_time_intime->Fill(flash_timing.first); }
+	for(auto const flash_timing : * dirt_flash_time)   {h_flash_time_dirt->Fill(flash_timing.first);   }
 	histogram_functions::Plot1DHistogram(h_flash_time,        "Flash Time [#mus]", Form("%s%s", file_locate_prefix, "flash_time.pdf"));
 	histogram_functions::Plot1DHistogram(h_flash_time_intime, "Flash Time [#mus]", Form("%s%s", file_locate_prefix, "flash_time_intime.pdf"));
 	histogram_functions::Plot1DHistogram(h_flash_time_data,   "Flash Time [#mus]", Form("%s%s", file_locate_prefix, "flash_time_data.pdf"));
 
-	histogram_functions::PlotFlashInfo(h_flash_z_mc, h_flash_z_intime, h_flash_z_mc, intime_scale_factor, data_scale_factor, "Largest Flash Z [cm]",
+	histogram_functions::PlotFlashInfo(h_flash_z_mc, h_flash_z_intime, h_flash_z_data, h_flash_z_dirt,
+	                                   intime_scale_factor, data_scale_factor, dirt_scale_factor, "Largest Flash Z [cm]",
 	                                   Form("%s%s", file_locate_prefix, "flash_z_data.pdf"));
 
-	histogram_functions::TimingHistograms(h_flash_time, h_flash_time_intime, h_flash_time_data, data_scale_factor, intime_scale_factor,
-	                                      "Flash Time [#mus]", Form("%s%s", file_locate_prefix, "flash_time_data_subtraction_mc.pdf"));
+	histogram_functions::TimingHistograms(h_flash_time, h_flash_time_intime, h_flash_time_data, h_flash_time_dirt,
+	                                      data_scale_factor, intime_scale_factor, dirt_scale_factor,
+	                                      "Flash Time [#mus]",
+	                                      Form("%s%s", file_locate_prefix, "flash_time_data_subtraction_mc.pdf"),
+	                                      Form("%s%s", file_locate_prefix, "flash_time_data_everything.pdf"));
 	histogram_functions::TimingHistogramsOverlay(data_flash_time, h_flash_time_intime, h_flash_time_data, intime_scale_factor, "Flash Time [#mus]",
 	                                             Form("%s%s", file_locate_prefix, "flash_time_data_overlay.pdf"),
 	                                             Form("%s%s", file_locate_prefix, "flash_time_data_subtraction.pdf"));
@@ -10896,7 +10901,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_multiplicity_track_2shwr_cut_data,
 	        data_scale_factor,
-	        h_multiplicity_track_2shwr_cut_data, dirt_scale_factor,
+	        h_multiplicity_track_2shwr_cut_dirt, dirt_scale_factor,
 	        "", "Selected Track Multiplicity", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_track_multiplicity_2shwr_cut_data.pdf"));
 
@@ -11098,7 +11103,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_slice_1_data,
 	        data_scale_factor,
-	        h_dedx_slice_1_data, dirt_scale_factor,
+	        h_dedx_slice_1_dirt, dirt_scale_factor,
 	        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_data.pdf"));
 

@@ -4,10 +4,10 @@
 #include "TFile.h"
 #include "TTree.h"
 
-int main()
+int main(int argc, char *argv[])
 {
 
-  const char * _file1 = "../potFinder/pot_extraction.root";
+  const char * _file1 = argv[1];
   std::cout << "File: " << _file1 << std::endl;
   //first we need to open the root file
   TFile * f = new TFile(_file1);
