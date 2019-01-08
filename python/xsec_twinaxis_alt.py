@@ -13,10 +13,20 @@ if(file1.IsOpen() == False):
 nue_flux = file1.Get("nueFluxHisto")
 anue_flux = file1.Get("anueFluxHisto")
 
+# down sample the flux to match with the xsec - xsec is 1000 bins from 0 to 125 GeV
+# flux is 400 bins from 0 to 20 GeV, need to get down to 160 bins
+nue_flux_rebin = TH1D("nue_flux_rebin", "nue_flux_rebin", 160, 0, 20)
+anue_flux_rebin = TH1D("anue_flux_rebin", "anue_flux_rebin", 160, 0, 20)
+
 nue_flux_list = []
 anue_flux_list = []
 bin_flux_list = []
 a_bin_flux_list = []
+
+nue_flux_list_rebin = []
+anue_flux_list_rebin = []
+bin_flux_list_rebin = []
+a_bin_flux_list_rebin = []
 
 nue_flux_bins = nue_flux.GetNbinsX()
 anue_flux_bins = anue_flux.GetNbinsX()
@@ -31,14 +41,33 @@ summed_flux.Add(anue_flux, 1)
 for bin in range(nue_flux_bins):
     nue_flux_list.append(nue_flux.GetBinContent(bin))
     bin_flux_list.append(nue_flux.GetBinCenter(bin))
+    nue_flux_rebin.Fill(nue_flux.GetBinCenter(bin),
+                        nue_flux.GetBinContent(bin))
     average_num = average_num + \
         (nue_flux.GetBinContent(bin) * nue_flux.GetBinCenter(bin))
+
+print 'Number of Bins (Nue Flux): ', nue_flux_bins, '\n'
+print 'Number of Bins (Rebin Nue): ', nue_flux_rebin.GetNbinsX(), '\n'
+
+for bin in range(nue_flux_rebin.GetNbinsX()):
+    nue_flux_list_rebin.append(nue_flux_rebin.GetBinContent(bin))
+    bin_flux_list_rebin.append(nue_flux_rebin.GetBinCenter(bin))
+    # print nue_flux_rebin.GetBinCenter(bin), ' ',
+    # nue_flux_rebin.GetBinContent(bin), '\n'
 
 for bin in range(anue_flux_bins):
     anue_flux_list.append(anue_flux.GetBinContent(bin))
     a_bin_flux_list.append(anue_flux.GetBinCenter(bin))
+    anue_flux_rebin.Fill(anue_flux.GetBinCenter(bin),
+                         anue_flux.GetBinContent(bin))
     average_num = average_num + \
         (anue_flux.GetBinContent(bin) * anue_flux.GetBinCenter(bin))
+
+for bin in range(anue_flux_rebin.GetNbinsX()):
+    anue_flux_list_rebin.append(anue_flux_rebin.GetBinContent(bin))
+    a_bin_flux_list_rebin.append(anue_flux_rebin.GetBinCenter(bin))
+
+print 'Number of Bins (NueBar Flux): ', anue_flux_bins, '\n'
 
 average = float(average_num) / float(average_den)
 print 'Average: ', average
@@ -64,7 +93,7 @@ for bin in range(average_bin, nue_flux_bins):
 min_sum = 0
 min_bin_val = 0
 for bin in range(average_bin, 0, -1):
-    print "Bin: ", bin
+    # print "Bin: ", bin
     min_sum = min_sum + summed_flux.GetBinContent(bin)
     if(min_sum / summed_flux_integral >= 0.34):
         min_bin_val = summed_flux.GetBinCenter(bin)
@@ -150,7 +179,229 @@ y_arr_anue = np.multiply(y_arr_anue, (1.0e-38))
 y_arr_nue = np.multiply(y_arr_nue, (1. / 40.))
 y_arr_anue = np.multiply(y_arr_anue, (1. / 40.))
 
+# bonus figures 0 and 01 and 001
+#############################################################################
+# flux times xsec
+prod_nue_flux_list = []
+prod_anue_flux_list = []
+
+# these lists are for forwarding to see how low energy flux increase
+# changes results
+prod_nue_flux_up_list = []
+prod_anue_flux_up_list = []
+low_eng_scale = 1.0  # 100% in this case
+
+j = 0
+for val in nue_flux_list_rebin:
+    if(bin_flux_list_rebin[j] <= 0.5):
+        prod_nue_flux_up_list.append(
+            (val + val * low_eng_scale) * y_arr_nue[j])
+    if(bin_flux_list_rebin[j] > 0.5):
+        prod_nue_flux_up_list.append(val * y_arr_nue[j])
+    prod_nue_flux_list.append(val * y_arr_nue[j])
+    j = j + 1
+
+j = 0
+for val in anue_flux_list_rebin:
+    if(bin_flux_list_rebin[j] <= 0.5):
+        prod_anue_flux_up_list.append(
+            (val + val * low_eng_scale) * y_arr_anue[j])
+    if(bin_flux_list_rebin[j] > 0.5):
+        prod_anue_flux_up_list.append(val * y_arr_anue[j])
+    prod_anue_flux_list.append(val * y_arr_anue[j])
+    j = j + 1
+
+fig0, ax0 = plt.subplots()
+
+line0a = ax0.plot(bin_flux_list_rebin,
+                  prod_nue_flux_list, 'goldenrod', linewidth=2.0, label=r'NuMI $\nu_{e}$ Flux $\times$ Cross Section')
+line0b = ax0.plot(a_bin_flux_list_rebin,
+                  prod_anue_flux_list, 'slategray', linewidth=2.0, label=r'NuMI $\bar{\nu}_{e}$ Flux $\times$ Cross Section')
+
+# these are the lines for the rebinned flux, not the products fyi
+# line0a = ax0.plot(bin_flux_list_rebin,
+#                  nue_flux_list_rebin, 'goldenrod', linewidth=2.0, label=r'NuMI $\nu_{e}$ Flux $\times$ Cross Section')
+# line0b = ax0.plot(a_bin_flux_list_rebin,
+# anue_flux_list_rebin, 'darkslategray', linewidth=2.0, label=r'NuMI
+# $\bar{\nu}_{e}$ Flux $\times$ Cross Section')
+
+ax0.fill_between(bin_flux_list_rebin, prod_nue_flux_list, 0,
+                 facecolor='darkgray', alpha=0.2)
+ax0.fill_between(a_bin_flux_list_rebin, prod_anue_flux_list,
+                 0, facecolor='darkgray', alpha=0.2)
+
+ax0.set_xlabel('Neutrino Energy [GeV]')
+ax0.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ / 6e20 POT')
+
+ax0b = ax0.twinx()
+
+line00a = ax0b.plot(x_arr_nue, y_arr_nue, 'goldenrod',
+                    linewidth=2.4, label=r'GENIE $\nu_{e}$ Cross Section', linestyle=':')
+line00b = ax0b.plot(x_arr_anue, y_arr_anue, 'slategray',
+                    linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
+ax0b.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
+
+lines0 = line0a + line0b + line00a + line00b
+labels0 = [l.get_label() for l in lines0]
+
+ax0.legend(lines0, labels0, loc=9, ncol=2)
+
+ax0b.set_ylim(0, 35e-39)
+ax0.set_ylim(0, 9.0e-30)
+plt.xlim(0.0, 4.0)
+plt.show()
+
+#############################################################################
+# figure01
+
+# manually grab values for the efficiency, this is probably easiest,
+# and we're not overly concerned with the exact values, just estiimates
+
+# this is for after all selection cuts are applied
+# binning is not uniform in energy, so giving binning scheme here
+energy_efficiency_bin_list = [0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 4.0]
+energy_efficiency_list = [0.005, 0.055, 0.085, 0.11, 0.105, 0.075]
+
+# now bring the flux * xsec into this binning scheme
+# rebinned flux * xsec has 160 bins for 0 to 20 GeV, meaning 125 MeV bins
+# nue_flux_list_rebin
+# anue_flux_list_rebin
+# bin_flux_list_rebin
+
+nue_rate_efficiency = [0] * 6
+anue_rate_efficiency = [0] * 6
+
+nue_rate_efficiency_up = [0] * 6
+anue_rate_efficiency_up = [0] * 6
+
+for n in range(6):
+    for m in range(160):
+        if(bin_flux_list_rebin[m] >= energy_efficiency_bin_list[n] and bin_flux_list_rebin[m] < energy_efficiency_bin_list[n + 1]):
+            # print "Bin: ", bin_flux_list_rebin[m], " , Range: ", energy_efficiency_bin_list[n], " , ", energy_efficiency_bin_list[n + 1], ", Efficiency: ", energy_efficiency_list[n]
+            # print "Rate: ", prod_nue_flux_list[m] * energy_efficiency_list[n]
+
+            nue_rate_efficiency[n] = nue_rate_efficiency[
+                n] + prod_nue_flux_list[m] * energy_efficiency_list[n]
+
+            anue_rate_efficiency[n] = anue_rate_efficiency[
+                n] + prod_anue_flux_list[m] * energy_efficiency_list[n]
+
+            # and the scaled up flux * xsec
+            nue_rate_efficiency_up[n] = nue_rate_efficiency_up[
+                n] + prod_nue_flux_up_list[m] * energy_efficiency_list[n]
+
+            anue_rate_efficiency_up[n] = anue_rate_efficiency_up[
+                n] + prod_anue_flux_up_list[m] * energy_efficiency_list[n]
+
+    # print nue_rate_efficiency[n]
+    # print '\n'
+
+# if we're multiplying by efficiency, also include num targets
+num_targets = 3.50191e+31
+nue_rate_efficiency = np.multiply(nue_rate_efficiency, num_targets)
+anue_rate_efficiency = np.multiply(anue_rate_efficiency, num_targets)
+
+nue_rate_efficiency_up = np.multiply(nue_rate_efficiency_up, num_targets)
+anue_rate_efficiency_up = np.multiply(anue_rate_efficiency_up, num_targets)
+
+#########
+fig, ax00 = plt.subplots()
+
+energy_efficiency_bin_position = [0.125, 0.375, 0.625, 0.875, 1.25, 2.75]
+
+# we want individual points for each value with errors, not a line
+efficiency_y_err = [0.015 / energy_efficiency_list[0], 0.02 / energy_efficiency_list[1], 0.02 / energy_efficiency_list[2],
+                    0.02 / energy_efficiency_list[3], 0.02 / energy_efficiency_list[4], 0.015 / energy_efficiency_list[5]]
+efficiency_x_err = [0.125, 0.125, 0.125, 0.125, 0.25, 1.25]
+
+efficiency_nue_y_err = [0] * 6
+
+efficiency_nue_y_err[0] = efficiency_y_err[0] * nue_rate_efficiency[0]
+efficiency_nue_y_err[1] = efficiency_y_err[1] * nue_rate_efficiency[1]
+efficiency_nue_y_err[2] = efficiency_y_err[2] * nue_rate_efficiency[2]
+efficiency_nue_y_err[3] = efficiency_y_err[3] * nue_rate_efficiency[3]
+efficiency_nue_y_err[4] = efficiency_y_err[4] * nue_rate_efficiency[4]
+efficiency_nue_y_err[5] = efficiency_y_err[5] * nue_rate_efficiency[5]
+
+efficiency_anue_y_err = [0] * 6
+
+efficiency_anue_y_err[0] = efficiency_y_err[0] * anue_rate_efficiency[0]
+efficiency_anue_y_err[1] = efficiency_y_err[1] * anue_rate_efficiency[1]
+efficiency_anue_y_err[2] = efficiency_y_err[2] * anue_rate_efficiency[2]
+efficiency_anue_y_err[3] = efficiency_y_err[3] * anue_rate_efficiency[3]
+efficiency_anue_y_err[4] = efficiency_y_err[4] * anue_rate_efficiency[4]
+efficiency_anue_y_err[5] = efficiency_y_err[5] * anue_rate_efficiency[5]
+
+line00a = ax00.errorbar(energy_efficiency_bin_position, nue_rate_efficiency,
+                        xerr=efficiency_x_err, yerr=efficiency_nue_y_err, fmt='o', color='goldenrod', ecolor='goldenrod', linewidth=2.0, markersize=6.0,
+                        capsize=5.0, markeredgewidth=2, label='xsec_point_2', markeredgecolor='goldenrod')
+
+
+line00b = ax00.errorbar(energy_efficiency_bin_position, anue_rate_efficiency,
+                        xerr=efficiency_x_err, yerr=efficiency_anue_y_err, fmt='o', color='slategray', ecolor='slategray', linewidth=2.0, markersize=6.0,
+                        capsize=5.0, markeredgewidth=2, label='xsec_point_2', markeredgecolor='slategray')
+
+ax00.legend((line00a, line00b),
+            (r'$\nu_{e}$ Selection Rate', r'$\bar{\nu}_{e}$ Selection Rate'), numpoints=1, fontsize=16.0)
+
+ax00.set_xlabel('Neutrino Energy [GeV]')
+ax00.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / 6e20 POT')
+plt.xlim(0.0, 4.1)
+ax00.set_ylim(0, 80)
+plt.show()
+
+#############################################################################
+# figure001 - as 01, but with fluctuated up low Energy flux
+
+efficiency_nue_up_y_err = [0] * 6
+
+efficiency_nue_up_y_err[0] = efficiency_y_err[0] * nue_rate_efficiency_up[0]
+efficiency_nue_up_y_err[1] = efficiency_y_err[1] * nue_rate_efficiency_up[1]
+efficiency_nue_up_y_err[2] = efficiency_y_err[2] * nue_rate_efficiency_up[2]
+efficiency_nue_up_y_err[3] = efficiency_y_err[3] * nue_rate_efficiency_up[3]
+efficiency_nue_up_y_err[4] = efficiency_y_err[4] * nue_rate_efficiency_up[4]
+efficiency_nue_up_y_err[5] = efficiency_y_err[5] * nue_rate_efficiency_up[5]
+
+efficiency_anue_up_y_err = [0] * 6
+
+efficiency_anue_up_y_err[0] = efficiency_y_err[0] * anue_rate_efficiency_up[0]
+efficiency_anue_up_y_err[1] = efficiency_y_err[1] * anue_rate_efficiency_up[1]
+efficiency_anue_up_y_err[2] = efficiency_y_err[2] * anue_rate_efficiency_up[2]
+efficiency_anue_up_y_err[3] = efficiency_y_err[3] * anue_rate_efficiency_up[3]
+efficiency_anue_up_y_err[4] = efficiency_y_err[4] * anue_rate_efficiency_up[4]
+efficiency_anue_up_y_err[5] = efficiency_y_err[5] * anue_rate_efficiency_up[5]
+
+fig, ax000 = plt.subplots()
+
+line000a = ax000.errorbar(energy_efficiency_bin_position, nue_rate_efficiency,
+                          xerr=efficiency_x_err, yerr=efficiency_nue_y_err, fmt='o', color='goldenrod', ecolor='goldenrod', linewidth=2.0, markersize=6.0,
+                          capsize=5.0, markeredgewidth=2, label='xsec_point_2', markeredgecolor='goldenrod')
+
+line000b = ax000.errorbar(energy_efficiency_bin_position, anue_rate_efficiency,
+                          xerr=efficiency_x_err, yerr=efficiency_anue_y_err, fmt='o', color='slategray', ecolor='slategray', linewidth=2.0, markersize=6.0,
+                          capsize=5.0, markeredgewidth=2, label='xsec_point_2', markeredgecolor='slategray')
+
+
+line000c = ax000.errorbar(energy_efficiency_bin_position, nue_rate_efficiency_up,
+                          xerr=efficiency_x_err, yerr=efficiency_nue_up_y_err, fmt='o', color='darkgoldenrod', ecolor='darkgoldenrod', linewidth=2.0, markersize=6.0,
+                          capsize=5.0, markeredgewidth=2, label='xsec_point_2', markeredgecolor='darkgoldenrod')
+
+line000d = ax000.errorbar(energy_efficiency_bin_position, anue_rate_efficiency_up,
+                          xerr=efficiency_x_err, yerr=efficiency_anue_up_y_err, fmt='o', color='darkslategray', ecolor='darkslategray', linewidth=2.0, markersize=6.0,
+                          capsize=5.0, markeredgewidth=2, label='xsec_point_2', markeredgecolor='darkslategray')
+
+
+ax000.legend((line000a, line000b, line000c, line000d),
+             (r'$\nu_{e}$ Selection Rate', r'$\bar{\nu}_{e}$ Selection Rate', r'$\nu_{e}$ Selection Rate Enhanced Low E', r'$\bar{\nu}_{e}$ Selection Rate Enhanced Low E'), numpoints=1, fontsize=16.0)
+
+ax000.set_xlabel('Neutrino Energy [GeV]')
+ax000.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / 6e20 POT')
+plt.xlim(0.0, 4.1)
+ax000.set_ylim(0, 80)
+plt.show()
+
 ##############################################################################
+# figure1
 
 fig, ax1 = plt.subplots()
 # line0 = ax1.plot(fine_flux_bins, fine_flux_list, 'black', linewidth=2.0)
@@ -204,9 +455,9 @@ ax3.legend(lines, labels, loc=9, ncol=2)
 
 ax2.set_ylim(0, 35e-39)
 plt.xlim(0.0, 3.0)
-
 plt.show()
 
+###################
 # figure 2
 fig2, ax_2 = plt.subplots()
 
@@ -273,9 +524,9 @@ ax_2.xaxis.label.set_size(0)
 ax_2.xaxis.set_ticklabels([])
 ax_2.xaxis.set_visible(False)
 
-#lines_2 = band_1a_lower + band_1b_lower + line_2a + line_2b + line_2c
+# lines_2 = band_1a_lower + band_1b_lower + line_2a + line_2b + line_2c
 lines_2 = (dummy_hist_1a, dummy_hist_1b, line_2a, line_2b, line_2c)
-#labels_2 = [l.get_label() for l in lines_2]
+# labels_2 = [l.get_label() for l in lines_2]
 # ax3.legend(lines, labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
 #           ncol=2, mode="expand", borderaxespad=0.)
 labels_list = (r'Expected Total Bound', r'Expected Stats Bound',
@@ -310,18 +561,18 @@ ax4.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
 # ax2.tick_params('y', colors='r')
 
 ax5 = ax4
-#genie_xsec_point = 4.83114e-39
+# genie_xsec_point = 4.83114e-39
 # for now we're taking the Stat from data
-#genie_xsec_point_stat_err = 0.703e-39
-#genie_xsec_point_sys_err = 0.25 * genie_xsec_point
+# genie_xsec_point_stat_err = 0.703e-39
+# genie_xsec_point_sys_err = 0.25 * genie_xsec_point
 # genie_xsec_point_total_err = np.sqrt(
 #    genie_xsec_point_stat_err**2 + genie_xsec_point_sys_err**2)
-#genie_xsec_energy = average
-#asymmetric_x_err = np.array([[average - min_bin_val, max_bin_val - average]]).T
+# genie_xsec_energy = average
+# asymmetric_x_err = np.array([[average - min_bin_val, max_bin_val - average]]).T
 # symmetric_y_err = np.array(
 #    [[genie_xsec_point_total_err, genie_xsec_point_total_err]]).T
 
-#genie_xsec_point_x_err = genie_xsec_energy * 0.2
+# genie_xsec_point_x_err = genie_xsec_energy * 0.2
 
 line5a = ax4.plot(genie_xsec_energy, genie_xsec_point,
                   'black', label=r'$\nu_e$ + $\bar{\nu}_{e}$ Data Cross Section', linewidth=2.0)
