@@ -2215,8 +2215,8 @@ void selection::make_selection( const char * _file1,
 		//else, run normally
 		bool true_signal_in_event = false;
 		if(mc_nu_id == 1 || mc_nu_id == 5 || mc_nu_id == 3 || mc_nu_id == 7) {true_signal_in_event = true; }
-		if(detector_variations) {_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0,
-			                                                                         tpco_classifier_v, detector_variations, true_signal_in_event); }
+		if(detector_variations)  {_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0,
+			                                                                          tpco_classifier_v, detector_variations, true_signal_in_event); }
 		if(!detector_variations) {_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0,
 			                                                                          tpco_classifier_v, detector_variations, true_signal_in_event); }
 
@@ -4623,7 +4623,7 @@ void selection::make_selection( const char * _file1,
 				//YZ Position of largest flash
 				std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
 				//control for poorly reco flashes
-				if(largest_flash_v.at(1) != 0) {h_flash_z_mc->Fill(largest_flash_v.at(1)); }
+				if(largest_flash_v.at(1) != 0) {h_flash_z_mc->Fill(largest_flash_v.at(1), var_scale_factor); }
 
 				//List of TPC Objects which pass the cuts
 				std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
@@ -4651,38 +4651,38 @@ void selection::make_selection( const char * _file1,
 				const double mc_ele_phi = atan2(mc_ele_dir_y, mc_ele_dir_x);
 				if(true_in_tpc == true)
 				{
-					h_all_true_energy_theta->Fill(mc_nu_energy, acos(mc_cos_theta) * (180 / 3.1415));
+					h_all_true_energy_theta->Fill(mc_nu_energy, acos(mc_cos_theta) * (180 / 3.1415), var_scale_factor);
 					if((mc_nu_id == 1 || mc_nu_id == 5) && detector_variations == false)
 					{
-						h_nue_true_energy_theta->Fill(mc_nu_energy, acos(mc_cos_theta) * (180 / 3.1415));
-						h_nue_true_energy_phi->Fill(mc_nu_energy, mc_phi * (180 / 3.1415));
-						h_ele_true_energy_theta->Fill(mc_ele_energy, acos(mc_ele_cos_theta) * (180 / 3.1415));
-						h_ele_true_energy_phi->Fill(mc_ele_energy, mc_ele_phi * (180 / 3.1415));
+						h_nue_true_energy_theta->Fill(mc_nu_energy, acos(mc_cos_theta) * (180 / 3.1415), var_scale_factor);
+						h_nue_true_energy_phi->Fill(mc_nu_energy, mc_phi * (180 / 3.1415), var_scale_factor);
+						h_ele_true_energy_theta->Fill(mc_ele_energy, acos(mc_ele_cos_theta) * (180 / 3.1415), var_scale_factor);
+						h_ele_true_energy_phi->Fill(mc_ele_energy, mc_ele_phi * (180 / 3.1415), var_scale_factor);
 					}
 				}
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
-					h_nue_eng_eff_den->Fill(mc_nu_energy);
-					h_ele_eng_eff_den->Fill(mc_ele_energy);
-					h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x);
-					h_nue_vtx_y_eff_den->Fill(mc_nu_vtx_y);
-					h_nue_vtx_z_eff_den->Fill(mc_nu_vtx_z);
-					h_nue_dir_x_eff_den->Fill(mc_nu_dir_x);
-					h_nue_dir_y_eff_den->Fill(mc_nu_dir_y);
-					h_nue_dir_z_eff_den->Fill(mc_nu_dir_z);
-					h_ele_dir_x_eff_den->Fill(mc_ele_dir_x);
-					h_ele_dir_y_eff_den->Fill(mc_ele_dir_y);
-					h_ele_dir_z_eff_den->Fill(mc_ele_dir_z);
-					h_ele_theta_eff_den->Fill(mc_ele_theta);
-					h_nue_num_part_eff_den->Fill(mc_nu_num_particles);
-					h_nue_num_chrg_part_eff_den->Fill(mc_nu_num_charged_particles);
-					h_nue_cos_theta_eff_den->Fill(mc_cos_theta);
-					h_nue_phi_eff_den->Fill(mc_phi * (180 / 3.1415));
-					h_ele_cos_theta_eff_den->Fill(mc_ele_cos_theta);
-					h_ele_phi_eff_den->Fill(mc_ele_phi * (180 / 3.1415));
-					h_nue_true_theta->Fill( acos(mc_cos_theta) * (180 / 3.1415));
-					h_nue_true_phi->Fill(mc_phi * (180 / 3.1415));
-					h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
+					h_nue_eng_eff_den->Fill(mc_nu_energy, var_scale_factor);
+					h_ele_eng_eff_den->Fill(mc_ele_energy, var_scale_factor);
+					h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x, var_scale_factor);
+					h_nue_vtx_y_eff_den->Fill(mc_nu_vtx_y, var_scale_factor);
+					h_nue_vtx_z_eff_den->Fill(mc_nu_vtx_z, var_scale_factor);
+					h_nue_dir_x_eff_den->Fill(mc_nu_dir_x, var_scale_factor);
+					h_nue_dir_y_eff_den->Fill(mc_nu_dir_y, var_scale_factor);
+					h_nue_dir_z_eff_den->Fill(mc_nu_dir_z, var_scale_factor);
+					h_ele_dir_x_eff_den->Fill(mc_ele_dir_x, var_scale_factor);
+					h_ele_dir_y_eff_den->Fill(mc_ele_dir_y, var_scale_factor);
+					h_ele_dir_z_eff_den->Fill(mc_ele_dir_z, var_scale_factor);
+					h_ele_theta_eff_den->Fill(mc_ele_theta, var_scale_factor);
+					h_nue_num_part_eff_den->Fill(mc_nu_num_particles, var_scale_factor);
+					h_nue_num_chrg_part_eff_den->Fill(mc_nu_num_charged_particles, var_scale_factor);
+					h_nue_cos_theta_eff_den->Fill(mc_cos_theta, var_scale_factor);
+					h_nue_phi_eff_den->Fill(mc_phi * (180 / 3.1415), var_scale_factor);
+					h_ele_cos_theta_eff_den->Fill(mc_ele_cos_theta, var_scale_factor);
+					h_ele_phi_eff_den->Fill(mc_ele_phi * (180 / 3.1415), var_scale_factor);
+					h_nue_true_theta->Fill( acos(mc_cos_theta) * (180 / 3.1415), var_scale_factor);
+					h_nue_true_phi->Fill(mc_phi * (180 / 3.1415), var_scale_factor);
+					h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415), var_scale_factor);
 				}
 				//********************************
 				//begin cuts!!!
@@ -4701,7 +4701,7 @@ void selection::make_selection( const char * _file1,
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut);
+				                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut, var_scale_factor);
 
 				_functions_instance.selection_functions::XYZPosition(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -4716,7 +4716,8 @@ void selection::make_selection( const char * _file1,
 				                                                     h_any_pfp_xyz_other_mixed,
 				                                                     h_any_pfp_xyz_unmatched,
 				                                                     h_pfp_zy_vtx_nue_cc,
-				                                                     h_pfp_zy_vtx_all, xyz_near_mc, xyz_far_mc);
+				                                                     h_pfp_zy_vtx_all, xyz_near_mc, xyz_far_mc,
+				                                                     var_scale_factor);
 
 				//temporary location for the first teff
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)

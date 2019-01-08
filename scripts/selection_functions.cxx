@@ -2934,12 +2934,25 @@ void selection_functions::SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_v
                                                     std::vector<int> * tabulated_origins, double mc_nu_energy,
                                                     double mc_ele_energy, TH1D * h_selected_nu_energy, TH1D * h_selected_ele_energy)
 {
+	selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+	                                               fv_boundary_v,
+	                                               tabulated_origins, mc_nu_energy,
+	                                               mc_ele_energy, h_selected_nu_energy, h_selected_ele_energy, 1.0);
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::SequentialTrueEnergyPlots(int mc_nu_id, double mc_nu_vtx_x, double mc_nu_vtx_y, double mc_nu_vtx_z,
+                                                    std::vector<double> fv_boundary_v,
+                                                    std::vector<int> * tabulated_origins, double mc_nu_energy,
+                                                    double mc_ele_energy, TH1D * h_selected_nu_energy, TH1D * h_selected_ele_energy,
+                                                    const double var_scale_factor)
+{
 	//this checks if there is a true nue/nue-bar CC event and a selected nue_cc signal event, true in FV
 	selection_cuts _functions_instance;
 	if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) == 1) {
 		if(_functions_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v) == true) {
-			h_selected_nu_energy->Fill(mc_nu_energy);
-			h_selected_ele_energy->Fill(mc_ele_energy);
+			h_selected_nu_energy->Fill(mc_nu_energy, var_scale_factor);
+			h_selected_ele_energy->Fill(mc_ele_energy, var_scale_factor);
 		}
 	}
 }
@@ -7128,6 +7141,43 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 {
 	TH2D * dummy = new TH2D();
 	double dummy_double = 0;
+	selection_functions::XYZPosition(tpc_object_container_v,
+	                                 passed_tpco, _verbose,
+	                                 tpco_classifier_v,
+	                                 mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+	                                 h_ele_pfp_xyz_nue_cc,
+	                                 h_ele_pfp_xyz_nue_cc_out_fv,
+	                                 h_ele_pfp_xyz_nue_cc_mixed,
+	                                 h_ele_pfp_xyz_numu_cc,
+	                                 h_ele_pfp_xyz_numu_cc_mixed,
+	                                 h_ele_pfp_xyz_nc,
+	                                 h_ele_pfp_xyz_nc_pi0,
+	                                 h_ele_pfp_xyz_cosmic,
+	                                 h_ele_pfp_xyz_other_mixed,
+	                                 h_ele_pfp_xyz_unmatched,
+	                                 dummy,
+	                                 dummy,
+	                                 dummy_double, dummy_double,
+	                                 1.0);
+}
+void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                      const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
+                                      const double var_scale_factor)
+{
+	TH2D * dummy = new TH2D();
+	double dummy_double = 0;
 	XYZPosition(tpc_object_container_v,
 	            passed_tpco, _verbose,
 	            tpco_classifier_v,
@@ -7144,7 +7194,8 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 	            h_ele_pfp_xyz_unmatched,
 	            dummy,
 	            dummy,
-	            dummy_double, dummy_double);
+	            dummy_double, dummy_double,
+	            var_scale_factor);
 }
 //***************************************************************************
 //***************************************************************************
@@ -7164,7 +7215,8 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
                                       std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
                                       TH2 * h_pfp_zy_vtx_nue_cc,
                                       TH2 * h_pfp_zy_vtx_all,
-                                      double & xyz_near, double & xyz_far)
+                                      double & xyz_near, double & xyz_far,
+                                      const double var_scale_factor)
 
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -7183,123 +7235,123 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 		if(tpco_vtx_x > 226 && tpco_vtx_y > 100 && tpco_vtx_z > 986) {xyz_far++; }
 
 
-		h_pfp_zy_vtx_all->Fill(tpco_vtx_z, tpco_vtx_y);
+		h_pfp_zy_vtx_all->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
 
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
-			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
-			h_ele_pfp_xyz_nue_cc_out_fv->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc_out_fv->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc_out_fv->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
-			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
-			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
-			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
-			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
+			h_pfp_zy_vtx_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_res")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_dis")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_coh")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_mec")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nc")
 		{
-			h_ele_pfp_xyz_nc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nc_pi0")
 		{
-			h_ele_pfp_xyz_nc_pi0->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nc_pi0->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nc_pi0->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nc_pi0->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nc_pi0->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nc_pi0->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
-			h_ele_pfp_xyz_nue_cc_mixed->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc_mixed->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc_mixed->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc_mixed->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_mixed->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_mixed->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
 			// h_ele_pfp_xyz_numu_cc_mixed->at(0)->Fill(tpco_vtx_x);
 			// h_ele_pfp_xyz_numu_cc_mixed->at(1)->Fill(tpco_vtx_y);
 			// h_ele_pfp_xyz_numu_cc_mixed->at(2)->Fill(tpco_vtx_z);
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "cosmic")
 		{
-			h_ele_pfp_xyz_cosmic->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_cosmic->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_cosmic->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_cosmic->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_cosmic->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_cosmic->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "other_mixed")
 		{
-			h_ele_pfp_xyz_other_mixed->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_other_mixed->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_other_mixed->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_other_mixed->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_other_mixed->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_other_mixed->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "unmatched")
 		{
-			h_ele_pfp_xyz_unmatched->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_unmatched->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_unmatched->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_unmatched->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_unmatched->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_unmatched->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 	}                                        //end pfp loop
 }
@@ -7338,6 +7390,74 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
                                       TH2 * h_mc_reco_vtx_y_nue_cc_out_fv,
                                       TH2 * h_mc_reco_vtx_z_nue_cc_out_fv)
 {
+	selection_functions::XYZPosition(tpc_object_container_v,
+	                                 passed_tpco, _verbose,
+	                                 tpco_classifier_v,
+	                                 mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+	                                 h_ele_pfp_xyz_nue_cc,
+	                                 h_ele_pfp_xyz_nue_cc_out_fv,
+	                                 h_ele_pfp_xyz_nue_cc_mixed,
+	                                 h_ele_pfp_xyz_numu_cc,
+	                                 h_ele_pfp_xyz_numu_cc_mixed,
+	                                 h_ele_pfp_xyz_nc,
+	                                 h_ele_pfp_xyz_nc_pi0,
+	                                 h_ele_pfp_xyz_cosmic,
+	                                 h_ele_pfp_xyz_other_mixed,
+	                                 h_ele_pfp_xyz_unmatched,
+	                                 h_mc_vtx_xy_nue_cc,
+	                                 h_mc_vtx_xz_nue_cc,
+	                                 h_mc_vtx_yz_nue_cc,
+	                                 h_reco_vtx_xy_nue_cc,
+	                                 h_reco_vtx_xz_nue_cc,
+	                                 h_reco_vtx_yz_nue_cc,
+	                                 h_mc_vtx_xy_nue_cc_out_fv,
+	                                 h_mc_vtx_xz_nue_cc_out_fv,
+	                                 h_mc_vtx_yz_nue_cc_out_fv,
+	                                 h_reco_vtx_xy_nue_cc_out_fv,
+	                                 h_reco_vtx_xz_nue_cc_out_fv,
+	                                 h_reco_vtx_yz_nue_cc_out_fv,
+	                                 h_mc_reco_vtx_x_nue_cc,
+	                                 h_mc_reco_vtx_y_nue_cc,
+	                                 h_mc_reco_vtx_z_nue_cc,
+	                                 h_mc_reco_vtx_x_nue_cc_out_fv,
+	                                 h_mc_reco_vtx_y_nue_cc_out_fv,
+	                                 h_mc_reco_vtx_z_nue_cc_out_fv,
+	                                 1.0);
+}
+void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                      const double mc_nu_vtx_x, const double mc_nu_vtx_y, const double mc_nu_vtx_z,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_out_fv,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nue_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_numu_cc_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_nc_pi0,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_cosmic,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_other_mixed,
+                                      std::vector<TH1 *> * h_ele_pfp_xyz_unmatched,
+                                      TH2 * h_mc_vtx_xy_nue_cc,
+                                      TH2 * h_mc_vtx_xz_nue_cc,
+                                      TH2 * h_mc_vtx_yz_nue_cc,
+                                      TH2 * h_reco_vtx_xy_nue_cc,
+                                      TH2 * h_reco_vtx_xz_nue_cc,
+                                      TH2 * h_reco_vtx_yz_nue_cc,
+                                      TH2 * h_mc_vtx_xy_nue_cc_out_fv,
+                                      TH2 * h_mc_vtx_xz_nue_cc_out_fv,
+                                      TH2 * h_mc_vtx_yz_nue_cc_out_fv,
+                                      TH2 * h_reco_vtx_xy_nue_cc_out_fv,
+                                      TH2 * h_reco_vtx_xz_nue_cc_out_fv,
+                                      TH2 * h_reco_vtx_yz_nue_cc_out_fv,
+                                      TH2 * h_mc_reco_vtx_x_nue_cc,
+                                      TH2 * h_mc_reco_vtx_y_nue_cc,
+                                      TH2 * h_mc_reco_vtx_z_nue_cc,
+                                      TH2 * h_mc_reco_vtx_x_nue_cc_out_fv,
+                                      TH2 * h_mc_reco_vtx_y_nue_cc_out_fv,
+                                      TH2 * h_mc_reco_vtx_z_nue_cc_out_fv,
+                                      const double var_scale_factor)
+{
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
 	{
@@ -7352,132 +7472,132 @@ void selection_functions::XYZPosition(std::vector<xsecAna::TPCObjectContainer> *
 
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
-			h_mc_vtx_xy_nue_cc->Fill(mc_nu_vtx_x, mc_nu_vtx_y);
-			h_mc_vtx_xz_nue_cc->Fill(mc_nu_vtx_x, mc_nu_vtx_z);
-			h_mc_vtx_yz_nue_cc->Fill(mc_nu_vtx_z, mc_nu_vtx_y);
-			h_reco_vtx_xy_nue_cc->Fill(tpco_vtx_x, tpco_vtx_y);
-			h_reco_vtx_xz_nue_cc->Fill(tpco_vtx_x, tpco_vtx_z);
-			h_reco_vtx_yz_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y);
-			h_mc_reco_vtx_x_nue_cc->Fill(mc_nu_vtx_x, tpco_vtx_x);
-			h_mc_reco_vtx_y_nue_cc->Fill(mc_nu_vtx_y, tpco_vtx_y);
-			h_mc_reco_vtx_z_nue_cc->Fill(mc_nu_vtx_z, tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
+			h_mc_vtx_xy_nue_cc->Fill(mc_nu_vtx_x, mc_nu_vtx_y, var_scale_factor);
+			h_mc_vtx_xz_nue_cc->Fill(mc_nu_vtx_x, mc_nu_vtx_z, var_scale_factor);
+			h_mc_vtx_yz_nue_cc->Fill(mc_nu_vtx_z, mc_nu_vtx_y, var_scale_factor);
+			h_reco_vtx_xy_nue_cc->Fill(tpco_vtx_x, tpco_vtx_y, var_scale_factor);
+			h_reco_vtx_xz_nue_cc->Fill(tpco_vtx_x, tpco_vtx_z, var_scale_factor);
+			h_reco_vtx_yz_nue_cc->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
+			h_mc_reco_vtx_x_nue_cc->Fill(mc_nu_vtx_x, tpco_vtx_x, var_scale_factor);
+			h_mc_reco_vtx_y_nue_cc->Fill(mc_nu_vtx_y, tpco_vtx_y, var_scale_factor);
+			h_mc_reco_vtx_z_nue_cc->Fill(mc_nu_vtx_z, tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_out_fv")
 		{
-			h_ele_pfp_xyz_nue_cc_out_fv->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc_out_fv->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc_out_fv->at(2)->Fill(tpco_vtx_z);
-			h_mc_vtx_xy_nue_cc_out_fv->Fill(mc_nu_vtx_x, mc_nu_vtx_y);
-			h_mc_vtx_xz_nue_cc_out_fv->Fill(mc_nu_vtx_x, mc_nu_vtx_z);
-			h_mc_vtx_yz_nue_cc_out_fv->Fill(mc_nu_vtx_z, mc_nu_vtx_y);
-			h_reco_vtx_xy_nue_cc_out_fv->Fill(tpco_vtx_x, tpco_vtx_y);
-			h_reco_vtx_xz_nue_cc_out_fv->Fill(tpco_vtx_x, tpco_vtx_z);
-			h_reco_vtx_yz_nue_cc_out_fv->Fill(tpco_vtx_z, tpco_vtx_y);
-			h_mc_reco_vtx_x_nue_cc_out_fv->Fill(mc_nu_vtx_x, tpco_vtx_x);
-			h_mc_reco_vtx_y_nue_cc_out_fv->Fill(mc_nu_vtx_y, tpco_vtx_y);
-			h_mc_reco_vtx_z_nue_cc_out_fv->Fill(mc_nu_vtx_z, tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_out_fv->at(2)->Fill(tpco_vtx_z, var_scale_factor);
+			h_mc_vtx_xy_nue_cc_out_fv->Fill(mc_nu_vtx_x, mc_nu_vtx_y, var_scale_factor);
+			h_mc_vtx_xz_nue_cc_out_fv->Fill(mc_nu_vtx_x, mc_nu_vtx_z, var_scale_factor);
+			h_mc_vtx_yz_nue_cc_out_fv->Fill(mc_nu_vtx_z, mc_nu_vtx_y, var_scale_factor);
+			h_reco_vtx_xy_nue_cc_out_fv->Fill(tpco_vtx_x, tpco_vtx_y, var_scale_factor);
+			h_reco_vtx_xz_nue_cc_out_fv->Fill(tpco_vtx_x, tpco_vtx_z, var_scale_factor);
+			h_reco_vtx_yz_nue_cc_out_fv->Fill(tpco_vtx_z, tpco_vtx_y, var_scale_factor);
+			h_mc_reco_vtx_x_nue_cc_out_fv->Fill(mc_nu_vtx_x, tpco_vtx_x, var_scale_factor);
+			h_mc_reco_vtx_y_nue_cc_out_fv->Fill(mc_nu_vtx_y, tpco_vtx_y, var_scale_factor);
+			h_mc_reco_vtx_z_nue_cc_out_fv->Fill(mc_nu_vtx_z, tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
-			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_qe")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_res")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_dis")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_coh")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_mec")
 		{
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nc")
 		{
-			h_ele_pfp_xyz_nc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nc_pi0")
 		{
-			h_ele_pfp_xyz_nc_pi0->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nc_pi0->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nc_pi0->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nc_pi0->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nc_pi0->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nc_pi0->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_mixed")
 		{
-			h_ele_pfp_xyz_nue_cc_mixed->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_nue_cc_mixed->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_nue_cc_mixed->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_nue_cc_mixed->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_mixed->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_nue_cc_mixed->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "numu_cc_mixed")
 		{
 			// h_ele_pfp_xyz_numu_cc_mixed->at(0)->Fill(tpco_vtx_x);
 			// h_ele_pfp_xyz_numu_cc_mixed->at(1)->Fill(tpco_vtx_y);
 			// h_ele_pfp_xyz_numu_cc_mixed->at(2)->Fill(tpco_vtx_z);
-			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_numu_cc->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_numu_cc->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "cosmic")
 		{
-			h_ele_pfp_xyz_cosmic->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_cosmic->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_cosmic->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_cosmic->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_cosmic->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_cosmic->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "other_mixed")
 		{
-			h_ele_pfp_xyz_other_mixed->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_other_mixed->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_other_mixed->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_other_mixed->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_other_mixed->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_other_mixed->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 		if(tpco_id == "unmatched")
 		{
-			h_ele_pfp_xyz_unmatched->at(0)->Fill(tpco_vtx_x);
-			h_ele_pfp_xyz_unmatched->at(1)->Fill(tpco_vtx_y);
-			h_ele_pfp_xyz_unmatched->at(2)->Fill(tpco_vtx_z);
+			h_ele_pfp_xyz_unmatched->at(0)->Fill(tpco_vtx_x, var_scale_factor);
+			h_ele_pfp_xyz_unmatched->at(1)->Fill(tpco_vtx_y, var_scale_factor);
+			h_ele_pfp_xyz_unmatched->at(2)->Fill(tpco_vtx_z, var_scale_factor);
 		}
 	}//end pfp loop
 }

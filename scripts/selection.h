@@ -96,6 +96,9 @@ const double scaling = scaling_nue + scaling_nue_bar;
 const double genie_xsec_nue = 6.34569e-39; //cm2
 const double genie_xsec_nue_bar = 2.24685e-39; //cm2
 
+//scaling factors for detector variations
+//ratio of var POT / MC POT, as MC POT scaling happens when hist is stacked
+const double var_scale_factor = 1.0;
 
 // older values used
 // const double POT = 1.82027e21;
