@@ -2316,7 +2316,8 @@ void selection::make_selection( const char * _file1,
 		                                                     h_any_pfp_xyz_other_mixed,
 		                                                     h_any_pfp_xyz_unmatched,
 		                                                     h_pfp_zy_vtx_nue_cc,
-		                                                     h_pfp_zy_vtx_all, xyz_near_mc, xyz_far_mc);
+		                                                     h_pfp_zy_vtx_all, xyz_near_mc, xyz_far_mc,
+		                                                     1.0);
 
 		//temporary location for the first teff
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
@@ -4697,7 +4698,7 @@ void selection::make_selection( const char * _file1,
 				}//false
 
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
@@ -4722,11 +4723,11 @@ void selection::make_selection( const char * _file1,
 				//temporary location for the first teff
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_num->Fill(mc_ele_energy);
+					h_ele_eng_eff_num->Fill(mc_ele_energy, var_scale_factor);
 				}
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_intime->Fill(mc_ele_energy);
+					h_ele_eng_eff_intime->Fill(mc_ele_energy, var_scale_factor);
 				}
 
 
@@ -4740,11 +4741,11 @@ void selection::make_selection( const char * _file1,
 					continue;
 				}
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_pe->Fill(mc_ele_energy);
+					h_ele_eng_eff_pe->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//****************************
 				// ****** reco nue cut *******
@@ -4752,15 +4753,15 @@ void selection::make_selection( const char * _file1,
 				_cuts_instance.selection_cuts::HasNue(var_tpc_object_container_v, passed_tpco, _verbose);
 
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue);
+				                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue, var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_1, h_reco_ele_e_1, h_mc_reco_ele_e_1);
+					                                                            h_mc_ele_e_1, h_reco_ele_e_1, h_mc_reco_ele_e_1, var_scale_factor);
 					// _functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, dummy_passed_tpco, tpco_classifier_v, mc_ele_energy,
 					//                                                             h_mc_ele_e_0, h_reco_ele_e_0, h_mc_reco_ele_e_0);
 				}
@@ -4812,7 +4813,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_nue_cut_nc_pi0,
 				                                                                 h_ele_momentum_nue_cut_cosmic,
 				                                                                 h_ele_momentum_nue_cut_other_mixed,
-				                                                                 h_ele_momentum_nue_cut_unmatched);
+				                                                                 h_ele_momentum_nue_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_nue_cut_electron,
@@ -4822,7 +4824,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_nue_cut_muon,
 				                                                                             h_leading_momentum_nue_cut_kaon,
 				                                                                             h_leading_momentum_nue_cut_neutron,
-				                                                                             h_leading_momentum_nue_cut_mc_unmatched);
+				                                                                             h_leading_momentum_nue_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_nue_cut_nue_cc,
@@ -4844,12 +4847,13 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_nue_cut_cosmic,
 				                                                           h_multiplicity_track_nue_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_nue_cut_other_mixed,
-				                                                           h_multiplicity_track_nue_cut_unmatched);
+				                                                           h_multiplicity_track_nue_cut_unmatched,
+				                                                           var_scale_factor);
 
 
 				//** Testing flash vs neutrino interaction for origin **
 				_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins,
-				                                                   fv_boundary_v, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,h_flash_t0_diff);
+				                                                   fv_boundary_v, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,h_flash_t0_diff, var_scale_factor);
 
 				//** Testing leading shower length vs hits **//
 				_functions_instance.selection_functions::ShowerLengthvsHits(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
@@ -4857,21 +4861,23 @@ void selection::make_selection( const char * _file1,
 				                                                            h_shwr_len_hits_nue_cc_mixed, h_shwr_len_hits_numu_cc,
 				                                                            h_shwr_len_hits_numu_cc_mixed, h_shwr_len_hits_nc,
 				                                                            h_shwr_len_hits_nc_pi0, h_shwr_len_hits_cosmic,
-				                                                            h_shwr_len_hits_other_mixed, h_shwr_len_hits_unmatched);
+				                                                            h_shwr_len_hits_other_mixed, h_shwr_len_hits_unmatched, var_scale_factor);
 
 				//pre most cuts hits
 				if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::PostCutHitThreshold(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 					                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng, h_shwr_hits_ele_eng,
-					                                                             h_shwr_collection_hits_nu_eng, h_shwr_collection_hits_ele_eng);
+					                                                             h_shwr_collection_hits_nu_eng, h_shwr_collection_hits_ele_eng, var_scale_factor);
 					_functions_instance.selection_functions::PostCutHitThreshold(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 					                                                             mc_nu_energy, mc_ele_energy, h_shwr_hits_nu_eng_zoom, h_shwr_hits_ele_eng_zoom,
-					                                                             h_shwr_collection_hits_nu_eng_zoom, h_shwr_collection_hits_ele_eng_zoom);
+					                                                             h_shwr_collection_hits_nu_eng_zoom, h_shwr_collection_hits_ele_eng_zoom,
+					                                                             var_scale_factor);
 
 					_functions_instance.selection_functions::TrueRecoEle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 					                                                     mc_ele_momentum, mc_ele_cos_theta,
-					                                                     h_true_reco_ele_momentum_pre, h_true_reco_ele_costheta_pre, h_true_num_e_pre);
+					                                                     h_true_reco_ele_momentum_pre, h_true_reco_ele_costheta_pre, h_true_num_e_pre,
+					                                                     var_scale_factor);
 				}
 
 				_functions_instance.selection_functions::TopologyPlots1(var_tpc_object_container_v, passed_tpco, tpco_classifier_v,
@@ -4910,7 +4916,8 @@ void selection::make_selection( const char * _file1,
 				                                                        h_pfp_shower_numu_cc_coh, h_pfp_shower_numu_cc_mec,
 				                                                        h_pfp_shower_nc_pi0, h_pfp_shower_nue_cc_mixed,
 				                                                        h_pfp_shower_numu_cc_mixed, h_pfp_shower_cosmic,
-				                                                        h_pfp_shower_other_mixed, h_pfp_shower_unmatched);
+				                                                        h_pfp_shower_other_mixed, h_pfp_shower_unmatched,
+				                                                        var_scale_factor);
 
 				_functions_instance.selection_functions::XYZPosition(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -4941,26 +4948,27 @@ void selection::make_selection( const char * _file1,
 				                                                     h_mc_reco_vtx_z_nue_cc,
 				                                                     h_mc_reco_vtx_x_nue_cc_out_fv,
 				                                                     h_mc_reco_vtx_y_nue_cc_out_fv,
-				                                                     h_mc_reco_vtx_z_nue_cc_out_fv);
+				                                                     h_mc_reco_vtx_z_nue_cc_out_fv,
+				                                                     var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_reco_nue->Fill(mc_ele_energy);
+					h_ele_eng_eff_reco_nue->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//************************
 				//******** in fv cut *****
 				//************************
 				_cuts_instance.selection_cuts::fiducial_volume_cut(var_tpc_object_container_v, fv_boundary_v, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_in_fv, h_selected_ele_energy_in_fv);
+				                                                                   h_selected_nu_energy_in_fv, h_selected_ele_energy_in_fv, var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_2, h_reco_ele_e_2, h_mc_reco_ele_e_2);
+					                                                            h_mc_ele_e_2, h_reco_ele_e_2, h_mc_reco_ele_e_2, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_fv_cut_nue_cc,
@@ -4972,7 +4980,7 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_fv_cut_nc_pi0,
 				                                                                 h_ele_momentum_fv_cut_cosmic,
 				                                                                 h_ele_momentum_fv_cut_other_mixed,
-				                                                                 h_ele_momentum_fv_cut_unmatched);
+				                                                                 h_ele_momentum_fv_cut_unmatched, var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_fv_cut_electron,
@@ -4982,7 +4990,7 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_fv_cut_muon,
 				                                                                             h_leading_momentum_fv_cut_kaon,
 				                                                                             h_leading_momentum_fv_cut_neutron,
-				                                                                             h_leading_momentum_fv_cut_mc_unmatched);
+				                                                                             h_leading_momentum_fv_cut_mc_unmatched, var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_fv_cut_nue_cc,
@@ -5004,17 +5012,17 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_fv_cut_cosmic,
 				                                                           h_multiplicity_track_fv_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_fv_cut_other_mixed,
-				                                                           h_multiplicity_track_fv_cut_unmatched);
+				                                                           h_multiplicity_track_fv_cut_unmatched, var_scale_factor);
 
 				//we also want to look at the cos(theta) and energy efficiency before we make selection cuts
 				if((mc_nu_id == 1 || mc_nu_id == 5) && tabulated_origins->at(0) >= 1 && true_in_tpc == true && detector_variations == false)
 				{
-					h_ele_eng_eff_num_pre_cuts->Fill(mc_ele_energy);
-					h_ele_cos_theta_eff_num_pre_cuts->Fill(mc_ele_cos_theta);
+					h_ele_eng_eff_num_pre_cuts->Fill(mc_ele_energy, var_scale_factor);
+					h_ele_cos_theta_eff_num_pre_cuts->Fill(mc_ele_cos_theta, var_scale_factor);
 				}
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_in_fv->Fill(mc_ele_energy);
+					h_ele_eng_eff_in_fv->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//*****************************
 				//**** vertex to flash cut ****
@@ -5024,33 +5032,36 @@ void selection::make_selection( const char * _file1,
 				                                                          h_vtx_flash_numu_cc, h_vtx_flash_nc,
 				                                                          h_vtx_flash_cosmic, h_vtx_flash_nc_pi0,
 				                                                          h_vtx_flash_numu_cc_mixed, h_vtx_flash_other_mixed,
-				                                                          h_vtx_flash_unmatched);
+				                                                          h_vtx_flash_unmatched, var_scale_factor);
 				_functions_instance.selection_functions::PostCutsVtxFlashUpstream(largest_flash_v, var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                  h_vtx_flash_upstream_nue_cc,        h_vtx_flash_upstream_nue_cc_out_fv,
 				                                                                  h_vtx_flash_upstream_nue_cc_mixed,
 				                                                                  h_vtx_flash_upstream_numu_cc,       h_vtx_flash_upstream_nc,
 				                                                                  h_vtx_flash_upstream_cosmic,        h_vtx_flash_upstream_nc_pi0,
 				                                                                  h_vtx_flash_upstream_numu_cc_mixed, h_vtx_flash_upstream_other_mixed,
-				                                                                  h_vtx_flash_upstream_unmatched);
+				                                                                  h_vtx_flash_upstream_unmatched,
+				                                                                  var_scale_factor);
 				_functions_instance.selection_functions::PostCutsVtxFlashDownstream(largest_flash_v, var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                    h_vtx_flash_downstream_nue_cc,        h_vtx_flash_downstream_nue_cc_out_fv,
 				                                                                    h_vtx_flash_downstream_nue_cc_mixed,
 				                                                                    h_vtx_flash_downstream_numu_cc,       h_vtx_flash_downstream_nc,
 				                                                                    h_vtx_flash_downstream_cosmic,        h_vtx_flash_downstream_nc_pi0,
 				                                                                    h_vtx_flash_downstream_numu_cc_mixed, h_vtx_flash_downstream_other_mixed,
-				                                                                    h_vtx_flash_downstream_unmatched);
+				                                                                    h_vtx_flash_downstream_unmatched,
+				                                                                    var_scale_factor);
 
 				_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, var_tpc_object_container_v, tolerance, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_vtx_flash, h_selected_ele_energy_vtx_flash);
+				                                                                   h_selected_nu_energy_vtx_flash, h_selected_ele_energy_vtx_flash,
+				                                                                   var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_3, h_reco_ele_e_3, h_mc_reco_ele_e_3);
+					                                                            h_mc_ele_e_3, h_reco_ele_e_3, h_mc_reco_ele_e_3, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_flash_vtx_cut_nue_cc,
@@ -5062,7 +5073,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_flash_vtx_cut_nc_pi0,
 				                                                                 h_ele_momentum_flash_vtx_cut_cosmic,
 				                                                                 h_ele_momentum_flash_vtx_cut_other_mixed,
-				                                                                 h_ele_momentum_flash_vtx_cut_unmatched);
+				                                                                 h_ele_momentum_flash_vtx_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_flash_vtx_electron,
@@ -5072,7 +5084,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_flash_vtx_muon,
 				                                                                             h_leading_momentum_flash_vtx_kaon,
 				                                                                             h_leading_momentum_flash_vtx_neutron,
-				                                                                             h_leading_momentum_flash_vtx_mc_unmatched);
+				                                                                             h_leading_momentum_flash_vtx_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_flash_vtx_cut_nue_cc,
@@ -5094,18 +5107,19 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_flash_vtx_cut_cosmic,
 				                                                           h_multiplicity_track_flash_vtx_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_flash_vtx_cut_other_mixed,
-				                                                           h_multiplicity_track_flash_vtx_cut_unmatched);
+				                                                           h_multiplicity_track_flash_vtx_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsVtxFlash(largest_flash_v, var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                          h_vtx_flash_nue_cc_after, h_vtx_flash_nue_cc_out_fv_after, h_vtx_flash_nue_cc_mixed_after,
 				                                                          h_vtx_flash_numu_cc_after, h_vtx_flash_nc_after,
 				                                                          h_vtx_flash_cosmic_after, h_vtx_flash_nc_pi0_after,
 				                                                          h_vtx_flash_numu_cc_mixed_after, h_vtx_flash_other_mixed_after,
-				                                                          h_vtx_flash_unmatched_after);
+				                                                          h_vtx_flash_unmatched_after, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_vtx_flash->Fill(mc_ele_energy);
+					h_ele_eng_eff_vtx_flash->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//******************************************************
 				//*** distance between pfp shower and nue object cut ***
@@ -5120,19 +5134,21 @@ void selection::make_selection( const char * _file1,
 				                                                         h_shwr_vtx_dist_nc_pi0,
 				                                                         h_shwr_vtx_dist_numu_cc_mixed,
 				                                                         h_shwr_vtx_dist_other_mixed,
-				                                                         h_shwr_vtx_dist_unmatched);
+				                                                         h_shwr_vtx_dist_unmatched, var_scale_factor);
 
 				_cuts_instance.selection_cuts::VtxNuDistance(var_tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins,  mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_shwr_vtx, h_selected_ele_energy_shwr_vtx);
+				                                                                   h_selected_nu_energy_shwr_vtx, h_selected_ele_energy_shwr_vtx,
+				                                                                   var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_4, h_reco_ele_e_4, h_mc_reco_ele_e_4);
+					                                                            h_mc_ele_e_4, h_reco_ele_e_4, h_mc_reco_ele_e_4,
+					                                                            var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_shwr_vtx_cut_nue_cc,
@@ -5144,7 +5160,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_shwr_vtx_cut_nc_pi0,
 				                                                                 h_ele_momentum_shwr_vtx_cut_cosmic,
 				                                                                 h_ele_momentum_shwr_vtx_cut_other_mixed,
-				                                                                 h_ele_momentum_shwr_vtx_cut_unmatched);
+				                                                                 h_ele_momentum_shwr_vtx_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_shwr_vtx_electron,
@@ -5154,7 +5171,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_shwr_vtx_muon,
 				                                                                             h_leading_momentum_shwr_vtx_kaon,
 				                                                                             h_leading_momentum_shwr_vtx_neutron,
-				                                                                             h_leading_momentum_shwr_vtx_mc_unmatched);
+				                                                                             h_leading_momentum_shwr_vtx_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_shwr_vtx_cut_nue_cc,
@@ -5176,7 +5194,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_shwr_vtx_cut_cosmic,
 				                                                           h_multiplicity_track_shwr_vtx_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_shwr_vtx_cut_other_mixed,
-				                                                           h_multiplicity_track_shwr_vtx_cut_unmatched);
+				                                                           h_multiplicity_track_shwr_vtx_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsShwrVtx(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                         h_shwr_vtx_dist_nue_cc_after,
@@ -5188,11 +5207,12 @@ void selection::make_selection( const char * _file1,
 				                                                         h_shwr_vtx_dist_nc_pi0_after,
 				                                                         h_shwr_vtx_dist_numu_cc_mixed_after,
 				                                                         h_shwr_vtx_dist_other_mixed_after,
-				                                                         h_shwr_vtx_dist_unmatched_after);
+				                                                         h_shwr_vtx_dist_unmatched_after,
+				                                                         var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_shwr_vtx->Fill(mc_ele_energy);
+					h_ele_eng_eff_shwr_vtx->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//******************************************************
 				// **** distance between pfp track and nue object cut **
@@ -5203,18 +5223,20 @@ void selection::make_selection( const char * _file1,
 				                                                       h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_nc,
 				                                                       h_trk_vtx_dist_cosmic, h_trk_vtx_dist_nc_pi0,
 				                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
-				                                                       h_trk_vtx_dist_unmatched);
+				                                                       h_trk_vtx_dist_unmatched, var_scale_factor);
 				_cuts_instance.selection_cuts::VtxTrackNuDistance(var_tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_trk_vtx, h_selected_ele_energy_trk_vtx);
+				                                                                   h_selected_nu_energy_trk_vtx, h_selected_ele_energy_trk_vtx,
+				                                                                   var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_5, h_reco_ele_e_5, h_mc_reco_ele_e_5);
+					                                                            h_mc_ele_e_5, h_reco_ele_e_5, h_mc_reco_ele_e_5,
+					                                                            var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_trk_vtx_cut_nue_cc,
@@ -5226,7 +5248,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_trk_vtx_cut_nc_pi0,
 				                                                                 h_ele_momentum_trk_vtx_cut_cosmic,
 				                                                                 h_ele_momentum_trk_vtx_cut_other_mixed,
-				                                                                 h_ele_momentum_trk_vtx_cut_unmatched);
+				                                                                 h_ele_momentum_trk_vtx_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_trk_vtx_electron,
@@ -5236,7 +5259,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_trk_vtx_muon,
 				                                                                             h_leading_momentum_trk_vtx_kaon,
 				                                                                             h_leading_momentum_trk_vtx_neutron,
-				                                                                             h_leading_momentum_trk_vtx_mc_unmatched);
+				                                                                             h_leading_momentum_trk_vtx_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_trk_vtx_cut_nue_cc,
@@ -5258,7 +5282,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_trk_vtx_cut_cosmic,
 				                                                           h_multiplicity_track_trk_vtx_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_trk_vtx_cut_other_mixed,
-				                                                           h_multiplicity_track_trk_vtx_cut_unmatched);
+				                                                           h_multiplicity_track_trk_vtx_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutTrkVtx(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                       h_trk_vtx_dist_nue_cc_after, h_trk_vtx_dist_nue_cc_out_fv_after,
@@ -5266,11 +5291,11 @@ void selection::make_selection( const char * _file1,
 				                                                       h_trk_vtx_dist_numu_cc_after, h_trk_vtx_dist_nc_after,
 				                                                       h_trk_vtx_dist_cosmic_after, h_trk_vtx_dist_nc_pi0_after,
 				                                                       h_trk_vtx_dist_numu_cc_mixed_after, h_trk_vtx_dist_other_mixed_after,
-				                                                       h_trk_vtx_dist_unmatched_after);
+				                                                       h_trk_vtx_dist_unmatched_after, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_trk_vtx->Fill(mc_ele_energy);
+					h_ele_eng_eff_trk_vtx->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//****************************************************
 				// ******** hit threshold for showers cut *************
@@ -5280,11 +5305,13 @@ void selection::make_selection( const char * _file1,
 					_functions_instance.selection_functions::PostCutHitThreshold(var_tpc_object_container_v, passed_tpco, _verbose,
 					                                                             tpco_classifier_v, mc_nu_energy, mc_ele_energy,
 					                                                             h_shwr_hits_nu_eng_last, h_shwr_hits_ele_eng_last,
-					                                                             h_shwr_collection_hits_nu_eng_last, h_shwr_collection_hits_ele_eng_last);
+					                                                             h_shwr_collection_hits_nu_eng_last, h_shwr_collection_hits_ele_eng_last,
+					                                                             var_scale_factor);
 					_functions_instance.selection_functions::PostCutHitThreshold(var_tpc_object_container_v, passed_tpco, _verbose,
 					                                                             tpco_classifier_v, mc_nu_energy, mc_ele_energy,
 					                                                             h_shwr_hits_nu_eng_zoom_last, h_shwr_hits_ele_eng_zoom_last,
-					                                                             h_shwr_collection_hits_nu_eng_zoom_last, h_shwr_collection_hits_ele_eng_zoom_last);
+					                                                             h_shwr_collection_hits_nu_eng_zoom_last, h_shwr_collection_hits_ele_eng_zoom_last,
+					                                                             var_scale_factor);
 				}
 
 				_functions_instance.selection_functions::HitsPlots1D(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
@@ -5327,19 +5354,21 @@ void selection::make_selection( const char * _file1,
 				                                                     h_pre_cut_total_hits_leading_shower_nc_pi0,
 				                                                     h_pre_cut_total_hits_leading_shower_cosmic,
 				                                                     h_pre_cut_total_hits_leading_shower_other_mixed,
-				                                                     h_pre_cut_total_hits_leading_shower_unmatched);
+				                                                     h_pre_cut_total_hits_leading_shower_unmatched,
+				                                                     var_scale_factor);
 
 				_cuts_instance.selection_cuts::HitThreshold(var_tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_hit_threshold, h_selected_ele_energy_hit_threshold);
+				                                                                   h_selected_nu_energy_hit_threshold, h_selected_ele_energy_hit_threshold,
+				                                                                   var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_6, h_reco_ele_e_6, h_mc_reco_ele_e_6);
+					                                                            h_mc_ele_e_6, h_reco_ele_e_6, h_mc_reco_ele_e_6, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_hit_cut_nue_cc,
@@ -5351,7 +5380,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_hit_cut_nc_pi0,
 				                                                                 h_ele_momentum_hit_cut_cosmic,
 				                                                                 h_ele_momentum_hit_cut_other_mixed,
-				                                                                 h_ele_momentum_hit_cut_unmatched);
+				                                                                 h_ele_momentum_hit_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_hit_cut_nue_cc,
@@ -5373,7 +5403,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_hit_cut_cosmic,
 				                                                           h_multiplicity_track_hit_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_hit_cut_other_mixed,
-				                                                           h_multiplicity_track_hit_cut_unmatched);
+				                                                           h_multiplicity_track_hit_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_hit_cut_electron,
@@ -5383,7 +5414,7 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_hit_cut_muon,
 				                                                                             h_leading_momentum_hit_cut_kaon,
 				                                                                             h_leading_momentum_hit_cut_neutron,
-				                                                                             h_leading_momentum_hit_cut_mc_unmatched);
+				                                                                             h_leading_momentum_hit_cut_mc_unmatched, var_scale_factor);
 
 				_functions_instance.selection_functions::PlaneHitsComparisonTrack(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                  h_collection_total_hits_track_nue_cc,
@@ -5395,7 +5426,8 @@ void selection::make_selection( const char * _file1,
 				                                                                  h_collection_total_hits_track_nc_pi0,
 				                                                                  h_collection_total_hits_track_cosmic,
 				                                                                  h_collection_total_hits_track_other_mixed,
-				                                                                  h_collection_total_hits_track_unmatched);
+				                                                                  h_collection_total_hits_track_unmatched,
+				                                                                  var_scale_factor);
 				_functions_instance.selection_functions::PlaneHitsComparisonShower(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                   h_collection_total_hits_shower_nue_cc,
 				                                                                   h_collection_total_hits_shower_nue_cc_out_fv,
@@ -5406,7 +5438,8 @@ void selection::make_selection( const char * _file1,
 				                                                                   h_collection_total_hits_shower_nc_pi0,
 				                                                                   h_collection_total_hits_shower_cosmic,
 				                                                                   h_collection_total_hits_shower_other_mixed,
-				                                                                   h_collection_total_hits_shower_unmatched);
+				                                                                   h_collection_total_hits_shower_unmatched,
+				                                                                   var_scale_factor);
 				_functions_instance.selection_functions::PlaneHitsComparisonLeadingShower(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                          h_collection_total_hits_leading_shower_nue_cc,
 				                                                                          h_collection_total_hits_leading_shower_nue_cc_out_fv,
@@ -5417,11 +5450,12 @@ void selection::make_selection( const char * _file1,
 				                                                                          h_collection_total_hits_leading_shower_nc_pi0,
 				                                                                          h_collection_total_hits_leading_shower_cosmic,
 				                                                                          h_collection_total_hits_leading_shower_other_mixed,
-				                                                                          h_collection_total_hits_leading_shower_unmatched);
+				                                                                          h_collection_total_hits_leading_shower_unmatched,
+				                                                                          var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_hit->Fill(mc_ele_energy);
+					h_ele_eng_eff_hit->Fill(mc_ele_energy, var_scale_factor);
 				}
 
 				//***************************************//
@@ -5437,7 +5471,7 @@ void selection::make_selection( const char * _file1,
 				                                                    h_ele_pfp_phi_nc_pi0,
 				                                                    h_ele_pfp_phi_cosmic,
 				                                                    h_ele_pfp_phi_other_mixed,
-				                                                    h_ele_pfp_phi_unmatched);
+				                                                    h_ele_pfp_phi_unmatched, var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingTheta(var_tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 				                                                      h_ele_pfp_theta_nue_cc,
@@ -5449,7 +5483,7 @@ void selection::make_selection( const char * _file1,
 				                                                      h_ele_pfp_theta_nc_pi0,
 				                                                      h_ele_pfp_theta_cosmic,
 				                                                      h_ele_pfp_theta_other_mixed,
-				                                                      h_ele_pfp_theta_unmatched);
+				                                                      h_ele_pfp_theta_unmatched, var_scale_factor);
 
 				_functions_instance.selection_functions::HitsPlots1D(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     h_collection_hits_track_nue_cc,
@@ -5491,16 +5525,17 @@ void selection::make_selection( const char * _file1,
 				                                                     h_total_hits_leading_shower_nc_pi0,
 				                                                     h_total_hits_leading_shower_cosmic,
 				                                                     h_total_hits_leading_shower_other_mixed,
-				                                                     h_total_hits_leading_shower_unmatched);
+				                                                     h_total_hits_leading_shower_unmatched,
+				                                                     var_scale_factor);
 
 				_cuts_instance.selection_cuts::HitThresholdCollection(var_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_7, h_reco_ele_e_7, h_mc_reco_ele_e_7);
+					                                                            h_mc_ele_e_7, h_reco_ele_e_7, h_mc_reco_ele_e_7, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_yhit_cut_nue_cc,
@@ -5512,7 +5547,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_yhit_cut_nc_pi0,
 				                                                                 h_ele_momentum_yhit_cut_cosmic,
 				                                                                 h_ele_momentum_yhit_cut_other_mixed,
-				                                                                 h_ele_momentum_yhit_cut_unmatched);
+				                                                                 h_ele_momentum_yhit_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_yhit_cut_electron,
@@ -5522,7 +5558,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_yhit_cut_muon,
 				                                                                             h_leading_momentum_yhit_cut_kaon,
 				                                                                             h_leading_momentum_yhit_cut_neutron,
-				                                                                             h_leading_momentum_yhit_cut_mc_unmatched);
+				                                                                             h_leading_momentum_yhit_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_yhit_cut_nue_cc,
@@ -5544,7 +5581,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_yhit_cut_cosmic,
 				                                                           h_multiplicity_track_yhit_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_yhit_cut_other_mixed,
-				                                                           h_multiplicity_track_yhit_cut_unmatched);
+				                                                           h_multiplicity_track_yhit_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::HitsPlots1D(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     h_collection_hits_track_nue_cc_after,
@@ -5586,11 +5624,12 @@ void selection::make_selection( const char * _file1,
 				                                                     h_total_hits_leading_shower_nc_pi0_after,
 				                                                     h_total_hits_leading_shower_cosmic_after,
 				                                                     h_total_hits_leading_shower_other_mixed_after,
-				                                                     h_total_hits_leading_shower_unmatched_after);
+				                                                     h_total_hits_leading_shower_unmatched_after,
+				                                                     var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_yhit->Fill(mc_ele_energy);
+					h_ele_eng_eff_yhit->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//*****************************************************
 				//****** open angle cut for the leading shower ********
@@ -5600,7 +5639,8 @@ void selection::make_selection( const char * _file1,
 				                                                         h_dedx_open_angle_nue_cc_mixed, h_dedx_open_angle_numu_cc,
 				                                                         h_dedx_open_angle_numu_cc_mixed, h_dedx_open_angle_nc,
 				                                                         h_dedx_open_angle_nc_pi0, h_dedx_open_angle_cosmic,
-				                                                         h_dedx_open_angle_other_mixed, h_dedx_open_angle_unmatched);
+				                                                         h_dedx_open_angle_other_mixed, h_dedx_open_angle_unmatched,
+				                                                         var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingCosTheta(var_tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 				                                                         h_ele_cos_theta_nue_cc,
@@ -5612,7 +5652,8 @@ void selection::make_selection( const char * _file1,
 				                                                         h_ele_cos_theta_nc_pi0,
 				                                                         h_ele_cos_theta_cosmic,
 				                                                         h_ele_cos_theta_other_mixed,
-				                                                         h_ele_cos_theta_unmatched);
+				                                                         h_ele_cos_theta_unmatched,
+				                                                         var_scale_factor);
 
 				_functions_instance.selection_functions::FillPostCutVector(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, post_open_angle_cuts_v);
 				_functions_instance.selection_functions::NumShowersOpenAngle(var_tpc_object_container_v, passed_tpco, tpco_classifier_v,
@@ -5633,22 +5674,24 @@ void selection::make_selection( const char * _file1,
 				                                                             h_pfp_shower_open_angle_numu_cc_mixed,
 				                                                             h_pfp_shower_open_angle_cosmic,
 				                                                             h_pfp_shower_open_angle_other_mixed,
-				                                                             h_pfp_shower_open_angle_unmatched
-				                                                             );
+				                                                             h_pfp_shower_open_angle_unmatched,
+				                                                             var_scale_factor);
 				_functions_instance.selection_functions::PostCutOpenAngle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                          h_leading_shower_open_angle_nue_cc, h_leading_shower_open_angle_nue_cc_out_fv,
 				                                                          h_leading_shower_open_angle_nue_cc_mixed,
 				                                                          h_leading_shower_open_angle_numu_cc, h_leading_shower_open_angle_nc,
 				                                                          h_leading_shower_open_angle_cosmic, h_leading_shower_open_angle_nc_pi0,
 				                                                          h_leading_shower_open_angle_numu_cc_mixed, h_leading_shower_open_angle_other_mixed,
-				                                                          h_leading_shower_open_angle_unmatched);
+				                                                          h_leading_shower_open_angle_unmatched,
+				                                                          var_scale_factor);
 				_functions_instance.selection_functions::PostCutOpenAngle1Shower(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_leading_shower_open_angle_1_nue_cc, h_leading_shower_open_angle_1_nue_cc_out_fv,
 				                                                                 h_leading_shower_open_angle_1_nue_cc_mixed,
 				                                                                 h_leading_shower_open_angle_1_numu_cc, h_leading_shower_open_angle_1_nc,
 				                                                                 h_leading_shower_open_angle_1_cosmic, h_leading_shower_open_angle_1_nc_pi0,
 				                                                                 h_leading_shower_open_angle_1_numu_cc_mixed, h_leading_shower_open_angle_1_other_mixed,
-				                                                                 h_leading_shower_open_angle_1_unmatched);
+				                                                                 h_leading_shower_open_angle_1_unmatched,
+				                                                                 var_scale_factor);
 				_functions_instance.selection_functions::PostCutOpenAngle2PlusShower(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                     h_leading_shower_open_angle_2plus_nue_cc,
 				                                                                     h_leading_shower_open_angle_2plus_nue_cc_out_fv,
@@ -5657,19 +5700,21 @@ void selection::make_selection( const char * _file1,
 				                                                                     h_leading_shower_open_angle_2plus_cosmic, h_leading_shower_open_angle_2plus_nc_pi0,
 				                                                                     h_leading_shower_open_angle_2plus_numu_cc_mixed,
 				                                                                     h_leading_shower_open_angle_2plus_other_mixed,
-				                                                                     h_leading_shower_open_angle_2plus_unmatched);
+				                                                                     h_leading_shower_open_angle_2plus_unmatched,
+				                                                                     var_scale_factor);
 				_cuts_instance.selection_cuts::OpenAngleCut(var_tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_open_angle, h_selected_ele_energy_open_angle);
+				                                                                   h_selected_nu_energy_open_angle, h_selected_ele_energy_open_angle,
+				                                                                   var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_8, h_reco_ele_e_8, h_mc_reco_ele_e_8);
+					                                                            h_mc_ele_e_8, h_reco_ele_e_8, h_mc_reco_ele_e_8, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_open_angle_cut_nue_cc,
@@ -5681,7 +5726,7 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_open_angle_cut_nc_pi0,
 				                                                                 h_ele_momentum_open_angle_cut_cosmic,
 				                                                                 h_ele_momentum_open_angle_cut_other_mixed,
-				                                                                 h_ele_momentum_open_angle_cut_unmatched);
+				                                                                 h_ele_momentum_open_angle_cut_unmatched, var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_open_angle_cut_electron,
@@ -5691,7 +5736,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_open_angle_cut_muon,
 				                                                                             h_leading_momentum_open_angle_cut_kaon,
 				                                                                             h_leading_momentum_open_angle_cut_neutron,
-				                                                                             h_leading_momentum_open_angle_cut_mc_unmatched);
+				                                                                             h_leading_momentum_open_angle_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_open_angle_cut_nue_cc,
@@ -5713,7 +5759,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_open_angle_cut_cosmic,
 				                                                           h_multiplicity_track_open_angle_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_open_angle_cut_other_mixed,
-				                                                           h_multiplicity_track_open_angle_cut_unmatched);
+				                                                           h_multiplicity_track_open_angle_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::NumShowersOpenAngle(var_tpc_object_container_v, passed_tpco, tpco_classifier_v,
 				                                                             h_pfp_shower_dedx_nue_cc_qe,
@@ -5733,7 +5780,8 @@ void selection::make_selection( const char * _file1,
 				                                                             h_pfp_shower_dedx_numu_cc_mixed,
 				                                                             h_pfp_shower_dedx_cosmic,
 				                                                             h_pfp_shower_dedx_other_mixed,
-				                                                             h_pfp_shower_dedx_unmatched);
+				                                                             h_pfp_shower_dedx_unmatched,
+				                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutOpenAngle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                          h_leading_shower_open_angle_nue_cc_after, h_leading_shower_open_angle_nue_cc_out_fv_after,
@@ -5741,12 +5789,12 @@ void selection::make_selection( const char * _file1,
 				                                                          h_leading_shower_open_angle_numu_cc_after, h_leading_shower_open_angle_nc_after,
 				                                                          h_leading_shower_open_angle_cosmic_after, h_leading_shower_open_angle_nc_pi0_after,
 				                                                          h_leading_shower_open_angle_numu_cc_mixed_after, h_leading_shower_open_angle_other_mixed_after,
-				                                                          h_leading_shower_open_angle_unmatched_after);
+				                                                          h_leading_shower_open_angle_unmatched_after, var_scale_factor);
 
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_open_angle->Fill(mc_ele_energy);
+					h_ele_eng_eff_open_angle->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//*****************************************************
 				//*********** dEdx cut for the leading shower *********
@@ -5757,7 +5805,8 @@ void selection::make_selection( const char * _file1,
 				                                                      h_dedx_cuts_numu_cc,       h_dedx_cuts_nc,
 				                                                      h_dedx_cuts_cosmic,        h_dedx_cuts_nc_pi0,
 				                                                      h_dedx_cuts_numu_cc_mixed, h_dedx_cuts_other_mixed,
-				                                                      h_dedx_cuts_unmatched);
+				                                                      h_dedx_cuts_unmatched,
+				                                                      var_scale_factor);
 
 				_functions_instance.selection_functions::dEdxCollectionAngle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                             h_dedx_collection_angle_nue_cc,        h_dedx_collection_angle_nue_cc_mixed,
@@ -5765,11 +5814,13 @@ void selection::make_selection( const char * _file1,
 				                                                             h_dedx_collection_angle_numu_cc,       h_dedx_collection_angle_nc,
 				                                                             h_dedx_collection_angle_cosmic,        h_dedx_collection_angle_nc_pi0,
 				                                                             h_dedx_collection_angle_numu_cc_mixed, h_dedx_collection_angle_other_mixed,
-				                                                             h_dedx_collection_angle_unmatched);
+				                                                             h_dedx_collection_angle_unmatched,
+				                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsdEdxTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                  h_dedx_cuts_electron, h_dedx_cuts_photon, h_dedx_cuts_proton, h_dedx_cuts_pion,
-				                                                                  h_dedx_cuts_muon, h_dedx_cuts_kaon, h_dedx_cuts_neutron, h_dedx_cuts_mc_unmatched);
+				                                                                  h_dedx_cuts_muon, h_dedx_cuts_kaon, h_dedx_cuts_neutron, h_dedx_cuts_mc_unmatched,
+				                                                                  var_scale_factor);
 				_functions_instance.selection_functions::PostCutsdEdxHitsTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                      h_dedx_cuts_hits_electron, h_dedx_cuts_hits_photon, h_dedx_cuts_hits_proton,
 				                                                                      h_dedx_cuts_hits_pion, h_dedx_cuts_hits_muon, h_dedx_cuts_hits_kaon,
@@ -5777,7 +5828,8 @@ void selection::make_selection( const char * _file1,
 				                                                                      h_dedx_cuts_collection_hits_electron, h_dedx_cuts_collection_hits_photon,
 				                                                                      h_dedx_cuts_collection_hits_proton, h_dedx_cuts_collection_hits_pion,
 				                                                                      h_dedx_cuts_collection_hits_muon, h_dedx_cuts_collection_hits_kaon,
-				                                                                      h_dedx_cuts_collection_hits_neutron, h_dedx_cuts_collection_hits_mc_unmatched);
+				                                                                      h_dedx_cuts_collection_hits_neutron, h_dedx_cuts_collection_hits_mc_unmatched,
+				                                                                      var_scale_factor);
 
 				_functions_instance.selection_functions::dEdxTheta(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                   h_dedx_theta_pre_cuts_nue_cc,        h_dedx_theta_pre_cuts_nue_cc_mixed,
@@ -5785,7 +5837,8 @@ void selection::make_selection( const char * _file1,
 				                                                   h_dedx_theta_pre_cuts_numu_cc,       h_dedx_theta_pre_cuts_nc,
 				                                                   h_dedx_theta_pre_cuts_cosmic,        h_dedx_theta_pre_cuts_nc_pi0,
 				                                                   h_dedx_theta_pre_cuts_numu_cc_mixed, h_dedx_theta_pre_cuts_other_mixed,
-				                                                   h_dedx_theta_pre_cuts_unmatched);
+				                                                   h_dedx_theta_pre_cuts_unmatched,
+				                                                   var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsdedxThetaSlice(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                h_dedx_slice_1_nue_cc,
@@ -5817,7 +5870,8 @@ void selection::make_selection( const char * _file1,
 				                                                                h_dedx_slice_3_nc_pi0,
 				                                                                h_dedx_slice_3_cosmic,
 				                                                                h_dedx_slice_3_other_mixed,
-				                                                                h_dedx_slice_3_unmatched);
+				                                                                h_dedx_slice_3_unmatched,
+				                                                                var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsdedxThetaSlice(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                h_dedx_slice_1_zoom_nue_cc,
@@ -5849,7 +5903,8 @@ void selection::make_selection( const char * _file1,
 				                                                                h_dedx_slice_3_zoom_nc_pi0,
 				                                                                h_dedx_slice_3_zoom_cosmic,
 				                                                                h_dedx_slice_3_zoom_other_mixed,
-				                                                                h_dedx_slice_3_zoom_unmatched);
+				                                                                h_dedx_slice_3_zoom_unmatched,
+				                                                                var_scale_factor);
 				/*
 				                //testing which method of dE/dx is best
 				                _functions_instance.selection_functions::EvaluatedEdxMethod(var_tpc_object_container_v, passed_tpco, tpco_classifier_v,
@@ -5899,16 +5954,16 @@ void selection::make_selection( const char * _file1,
 				 */
 				_cuts_instance.selection_cuts::dEdxCut(var_tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v, var_scale_factor);
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_dedx, h_selected_ele_energy_dedx);
+				                                                                   h_selected_nu_energy_dedx, h_selected_ele_energy_dedx, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_9, h_reco_ele_e_9, h_mc_reco_ele_e_9);
+					                                                            h_mc_ele_e_9, h_reco_ele_e_9, h_mc_reco_ele_e_9, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_dedx_cut_nue_cc,
@@ -5920,7 +5975,7 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_dedx_cut_nc_pi0,
 				                                                                 h_ele_momentum_dedx_cut_cosmic,
 				                                                                 h_ele_momentum_dedx_cut_other_mixed,
-				                                                                 h_ele_momentum_dedx_cut_unmatched);
+				                                                                 h_ele_momentum_dedx_cut_unmatched, var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_dedx_cut_electron,
@@ -5930,7 +5985,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_dedx_cut_muon,
 				                                                                             h_leading_momentum_dedx_cut_kaon,
 				                                                                             h_leading_momentum_dedx_cut_neutron,
-				                                                                             h_leading_momentum_dedx_cut_mc_unmatched);
+				                                                                             h_leading_momentum_dedx_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_dedx_cut_nue_cc,
@@ -5952,7 +6008,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_dedx_cut_cosmic,
 				                                                           h_multiplicity_track_dedx_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_dedx_cut_other_mixed,
-				                                                           h_multiplicity_track_dedx_cut_unmatched);
+				                                                           h_multiplicity_track_dedx_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsdEdx(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                      h_dedx_cuts_nue_cc_after, h_dedx_cuts_nue_cc_mixed_after,
@@ -5960,11 +6017,12 @@ void selection::make_selection( const char * _file1,
 				                                                      h_dedx_cuts_numu_cc_after, h_dedx_cuts_nc_after,
 				                                                      h_dedx_cuts_cosmic_after, h_dedx_cuts_nc_pi0_after,
 				                                                      h_dedx_cuts_numu_cc_mixed_after, h_dedx_cuts_other_mixed_after,
-				                                                      h_dedx_cuts_unmatched_after);
+				                                                      h_dedx_cuts_unmatched_after,
+				                                                      var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_dedx->Fill(mc_ele_energy);
+					h_ele_eng_eff_dedx->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//***************************************************************************
 				// ******* Secondary Showers Distance Cut *****************
@@ -5974,16 +6032,17 @@ void selection::make_selection( const char * _file1,
 				                                                              h_second_shwr_dist_nue_cc_mixed, h_second_shwr_dist_numu_cc,
 				                                                              h_second_shwr_dist_numu_cc_mixed, h_second_shwr_dist_nc,
 				                                                              h_second_shwr_dist_nc_pi0, h_second_shwr_dist_cosmic,
-				                                                              h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
+				                                                              h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched,
+				                                                              var_scale_factor);
 
 				_cuts_instance.selection_cuts::SecondaryShowersDistCut(var_tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_10, h_reco_ele_e_10, h_mc_reco_ele_e_10);
+					                                                            h_mc_ele_e_10, h_reco_ele_e_10, h_mc_reco_ele_e_10, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_2shwr_cut_nue_cc,
@@ -5995,7 +6054,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_2shwr_cut_nc_pi0,
 				                                                                 h_ele_momentum_2shwr_cut_cosmic,
 				                                                                 h_ele_momentum_2shwr_cut_other_mixed,
-				                                                                 h_ele_momentum_2shwr_cut_unmatched);
+				                                                                 h_ele_momentum_2shwr_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_2shwr_cut_electron,
@@ -6005,7 +6065,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_2shwr_cut_muon,
 				                                                                             h_leading_momentum_2shwr_cut_kaon,
 				                                                                             h_leading_momentum_2shwr_cut_neutron,
-				                                                                             h_leading_momentum_2shwr_cut_mc_unmatched);
+				                                                                             h_leading_momentum_2shwr_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_2shwr_cut_nue_cc,
@@ -6027,18 +6088,20 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_2shwr_cut_cosmic,
 				                                                           h_multiplicity_track_2shwr_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_2shwr_cut_other_mixed,
-				                                                           h_multiplicity_track_2shwr_cut_unmatched);
+				                                                           h_multiplicity_track_2shwr_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::SecondaryShowersDist(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                              h_second_shwr_dist_nue_cc_after, h_second_shwr_dist_nue_cc_out_fv_after,
 				                                                              h_second_shwr_dist_nue_cc_mixed_after, h_second_shwr_dist_numu_cc_after,
 				                                                              h_second_shwr_dist_numu_cc_mixed_after, h_second_shwr_dist_nc_after,
 				                                                              h_second_shwr_dist_nc_pi0_after, h_second_shwr_dist_cosmic_after,
-				                                                              h_second_shwr_dist_other_mixed_after, h_second_shwr_dist_unmatched_after);
+				                                                              h_second_shwr_dist_other_mixed_after, h_second_shwr_dist_unmatched_after,
+				                                                              var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_2shwr->Fill(mc_ele_energy);
+					h_ele_eng_eff_2shwr->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//******************************************************************************
 				// ********** Hit Length Ratio Cut *************
@@ -6053,16 +6116,17 @@ void selection::make_selection( const char * _file1,
 				                                                        h_hit_length_ratio_nc_pi0,
 				                                                        h_hit_length_ratio_cosmic,
 				                                                        h_hit_length_ratio_other_mixed,
-				                                                        h_hit_length_ratio_unmatched);
+				                                                        h_hit_length_ratio_unmatched,
+				                                                        var_scale_factor);
 
 				_cuts_instance.selection_cuts::HitLengthRatioCut(var_tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_11, h_reco_ele_e_11, h_mc_reco_ele_e_11);
+					                                                            h_mc_ele_e_11, h_reco_ele_e_11, h_mc_reco_ele_e_11, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_hit_length_cut_nue_cc,
@@ -6074,7 +6138,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_hit_length_cut_nc_pi0,
 				                                                                 h_ele_momentum_hit_length_cut_cosmic,
 				                                                                 h_ele_momentum_hit_length_cut_other_mixed,
-				                                                                 h_ele_momentum_hit_length_cut_unmatched);
+				                                                                 h_ele_momentum_hit_length_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_hit_length_cut_nue_cc,
@@ -6096,7 +6161,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_hit_length_cut_cosmic,
 				                                                           h_multiplicity_track_hit_length_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_hit_length_cut_other_mixed,
-				                                                           h_multiplicity_track_hit_length_cut_unmatched);
+				                                                           h_multiplicity_track_hit_length_cut_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_hit_length_cut_electron,
@@ -6106,7 +6172,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_hit_length_cut_muon,
 				                                                                             h_leading_momentum_hit_length_cut_kaon,
 				                                                                             h_leading_momentum_hit_length_cut_neutron,
-				                                                                             h_leading_momentum_hit_length_cut_mc_unmatched);
+				                                                                             h_leading_momentum_hit_length_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::HitLengthRatio(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                        h_hit_length_ratio_nue_cc_after,
@@ -6118,11 +6185,12 @@ void selection::make_selection( const char * _file1,
 				                                                        h_hit_length_ratio_nc_pi0_after,
 				                                                        h_hit_length_ratio_cosmic_after,
 				                                                        h_hit_length_ratio_other_mixed_after,
-				                                                        h_hit_length_ratio_unmatched_after);
+				                                                        h_hit_length_ratio_unmatched_after,
+				                                                        var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_hit_len->Fill(mc_ele_energy);
+					h_ele_eng_eff_hit_len->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//******************************************************************************
 				//*** cut for longest track / leading shower ratio *** //
@@ -6137,7 +6205,8 @@ void selection::make_selection( const char * _file1,
 				                                                             h_leading_shwr_length_nc_pi0,
 				                                                             h_leading_shwr_length_cosmic,
 				                                                             h_leading_shwr_length_other_mixed,
-				                                                             h_leading_shwr_length_unmatched);
+				                                                             h_leading_shwr_length_unmatched,
+				                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingShowerTrackLengths(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                   h_leading_shwr_trk_length_nue_cc,
@@ -6149,16 +6218,17 @@ void selection::make_selection( const char * _file1,
 				                                                                   h_leading_shwr_trk_length_nc_pi0,
 				                                                                   h_leading_shwr_trk_length_cosmic,
 				                                                                   h_leading_shwr_trk_length_other_mixed,
-				                                                                   h_leading_shwr_trk_length_unmatched);
+				                                                                   h_leading_shwr_trk_length_unmatched,
+				                                                                   var_scale_factor);
 
 				_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(var_tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v, var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_12, h_reco_ele_e_12, h_mc_reco_ele_e_12);
+					                                                            h_mc_ele_e_12, h_reco_ele_e_12, h_mc_reco_ele_e_12, var_scale_factor);
 				}
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_length_ratio_cut_nue_cc,
@@ -6170,7 +6240,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_length_ratio_cut_nc_pi0,
 				                                                                 h_ele_momentum_length_ratio_cut_cosmic,
 				                                                                 h_ele_momentum_length_ratio_cut_other_mixed,
-				                                                                 h_ele_momentum_length_ratio_cut_unmatched);
+				                                                                 h_ele_momentum_length_ratio_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_length_ratio_cut_electron,
@@ -6180,7 +6251,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_length_ratio_cut_muon,
 				                                                                             h_leading_momentum_length_ratio_cut_kaon,
 				                                                                             h_leading_momentum_length_ratio_cut_neutron,
-				                                                                             h_leading_momentum_length_ratio_cut_mc_unmatched);
+				                                                                             h_leading_momentum_length_ratio_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingShowerLength(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                             h_leading_shwr_length_nue_cc_after,
@@ -6192,7 +6264,8 @@ void selection::make_selection( const char * _file1,
 				                                                             h_leading_shwr_length_nc_pi0_after,
 				                                                             h_leading_shwr_length_cosmic_after,
 				                                                             h_leading_shwr_length_other_mixed_after,
-				                                                             h_leading_shwr_length_unmatched_after);
+				                                                             h_leading_shwr_length_unmatched_after,
+				                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingShowerTrackLengths(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                   h_leading_shwr_trk_length_nue_cc_after,
@@ -6204,7 +6277,8 @@ void selection::make_selection( const char * _file1,
 				                                                                   h_leading_shwr_trk_length_nc_pi0_after,
 				                                                                   h_leading_shwr_trk_length_cosmic_after,
 				                                                                   h_leading_shwr_trk_length_other_mixed_after,
-				                                                                   h_leading_shwr_trk_length_unmatched_after);
+				                                                                   h_leading_shwr_trk_length_unmatched_after,
+				                                                                   var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_length_ratio_cut_nue_cc,
@@ -6226,12 +6300,13 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_length_ratio_cut_cosmic,
 				                                                           h_multiplicity_track_length_ratio_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_length_ratio_cut_other_mixed,
-				                                                           h_multiplicity_track_length_ratio_cut_unmatched);
+				                                                           h_multiplicity_track_length_ratio_cut_unmatched,
+				                                                           var_scale_factor);
 
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 				{
-					h_ele_eng_eff_trk_shwr->Fill(mc_ele_energy);
+					h_ele_eng_eff_trk_shwr->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//******************************************************************************
 				//*** track containment -- all tracks need to be contained *** //
@@ -6246,11 +6321,12 @@ void selection::make_selection( const char * _file1,
 				                                                         h_track_containment_nc_pi0,
 				                                                         h_track_containment_cosmic,
 				                                                         h_track_containment_other_mixed,
-				                                                         h_track_containment_unmatched);
+				                                                         h_track_containment_unmatched,
+				                                                         var_scale_factor);
 
 				_cuts_instance.selection_cuts::ContainedTracksCut(var_tpc_object_container_v, passed_tpco, _verbose, fv_boundary_v, true);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
-				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, track_containment_counter_v);
+				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, track_containment_counter_v, var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_containment_cut_nue_cc,
@@ -6262,7 +6338,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_momentum_containment_cut_nc_pi0,
 				                                                                 h_ele_momentum_containment_cut_cosmic,
 				                                                                 h_ele_momentum_containment_cut_other_mixed,
-				                                                                 h_ele_momentum_containment_cut_unmatched);
+				                                                                 h_ele_momentum_containment_cut_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                             h_leading_momentum_containment_cut_electron,
@@ -6272,7 +6349,8 @@ void selection::make_selection( const char * _file1,
 				                                                                             h_leading_momentum_containment_cut_muon,
 				                                                                             h_leading_momentum_containment_cut_kaon,
 				                                                                             h_leading_momentum_containment_cut_neutron,
-				                                                                             h_leading_momentum_containment_cut_mc_unmatched);
+				                                                                             h_leading_momentum_containment_cut_mc_unmatched,
+				                                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::EventMultiplicity(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_multiplicity_shower_containment_cut_nue_cc,
@@ -6294,11 +6372,12 @@ void selection::make_selection( const char * _file1,
 				                                                           h_multiplicity_track_containment_cut_cosmic,
 				                                                           h_multiplicity_track_containment_cut_numu_cc_mixed,
 				                                                           h_multiplicity_track_containment_cut_other_mixed,
-				                                                           h_multiplicity_track_containment_cut_unmatched);
+				                                                           h_multiplicity_track_containment_cut_unmatched,
+				                                                           var_scale_factor);
 
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 & detector_variations == false)
 				{
-					h_ele_eng_eff_contain->Fill(mc_ele_energy);
+					h_ele_eng_eff_contain->Fill(mc_ele_energy, var_scale_factor);
 				}
 				//*************************************
 				// ******** End Selection Cuts! ******
@@ -6313,7 +6392,8 @@ void selection::make_selection( const char * _file1,
 				                                                    h_ele_pfp_phi_after_nc_pi0,
 				                                                    h_ele_pfp_phi_after_cosmic,
 				                                                    h_ele_pfp_phi_after_other_mixed,
-				                                                    h_ele_pfp_phi_after_unmatched);
+				                                                    h_ele_pfp_phi_after_unmatched,
+				                                                    var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingTheta(var_tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 				                                                      h_ele_pfp_theta_after_nue_cc,
@@ -6325,7 +6405,8 @@ void selection::make_selection( const char * _file1,
 				                                                      h_ele_pfp_theta_after_nc_pi0,
 				                                                      h_ele_pfp_theta_after_cosmic,
 				                                                      h_ele_pfp_theta_after_other_mixed,
-				                                                      h_ele_pfp_theta_after_unmatched);
+				                                                      h_ele_pfp_theta_after_unmatched,
+				                                                      var_scale_factor);
 
 				_functions_instance.selection_functions::XYZPosition(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -6338,7 +6419,8 @@ void selection::make_selection( const char * _file1,
 				                                                     h_any_pfp_xyz_last_nc_pi0,
 				                                                     h_any_pfp_xyz_last_cosmic,
 				                                                     h_any_pfp_xyz_last_other_mixed,
-				                                                     h_any_pfp_xyz_last_unmatched);
+				                                                     h_any_pfp_xyz_last_unmatched,
+				                                                     var_scale_factor);
 
 				_functions_instance.selection_functions::dEdxTheta(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                   h_dedx_theta_nue_cc,        h_dedx_theta_nue_cc_mixed,
@@ -6346,14 +6428,16 @@ void selection::make_selection( const char * _file1,
 				                                                   h_dedx_theta_numu_cc,       h_dedx_theta_nc,
 				                                                   h_dedx_theta_cosmic,        h_dedx_theta_nc_pi0,
 				                                                   h_dedx_theta_numu_cc_mixed, h_dedx_theta_other_mixed,
-				                                                   h_dedx_theta_unmatched);
+				                                                   h_dedx_theta_unmatched,
+				                                                   var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsdEdxTrueParticle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                  h_dedx_cuts_last_electron, h_dedx_cuts_last_photon,
 				                                                                  h_dedx_cuts_last_proton,   h_dedx_cuts_last_pion,
 				                                                                  h_dedx_cuts_last_muon,     h_dedx_cuts_last_kaon,
-				                                                                  h_dedx_cuts_last_neutron,  h_dedx_cuts_last_mc_unmatched);
-
+				                                                                  h_dedx_cuts_last_neutron,  h_dedx_cuts_last_mc_unmatched,
+				                                                                  var_scale_factor);
+//not really used anymore...
 				_functions_instance.selection_functions::FailureReason(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
 				                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
@@ -6368,39 +6452,42 @@ void selection::make_selection( const char * _file1,
 					// for(auto const passed_tpco_pair : * passed_tpco) {pass += passed_tpco_pair.first; }
 					// if(pass > 0)
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
-					                                                            h_mc_ele_e_13, h_reco_ele_e_13, h_mc_reco_ele_e_13);
+					                                                            h_mc_ele_e_13, h_reco_ele_e_13, h_mc_reco_ele_e_13, var_scale_factor);
 					if(tabulated_origins->at(0) >= 1)
 					{
 						selected_energy_vector.push_back(mc_nu_energy);
-						h_nue_eng_eff_num->Fill(mc_nu_energy);
+						h_nue_eng_eff_num->Fill(mc_nu_energy, var_scale_factor);
 						//h_ele_eng_eff_num->Fill(mc_ele_energy);
-						h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
-						h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
-						h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z);
-						h_nue_dir_x_eff_num->Fill(mc_nu_dir_x);
-						h_nue_dir_y_eff_num->Fill(mc_nu_dir_y);
-						h_nue_dir_z_eff_num->Fill(mc_nu_dir_z);
-						h_ele_dir_x_eff_num->Fill(mc_ele_dir_x);
-						h_ele_dir_y_eff_num->Fill(mc_ele_dir_y);
-						h_ele_dir_z_eff_num->Fill(mc_ele_dir_z);
-						h_ele_theta_eff_num->Fill(mc_ele_theta);
-						h_nue_num_part_eff_num->Fill(mc_nu_num_particles);
-						h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles);
-						h_nue_cos_theta_eff_num->Fill(mc_cos_theta);
-						h_nue_phi_eff_num->Fill(mc_phi);
-						h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
-						h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415));
+						h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x, var_scale_factor);
+						h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y, var_scale_factor);
+						h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z, var_scale_factor);
+						h_nue_dir_x_eff_num->Fill(mc_nu_dir_x, var_scale_factor);
+						h_nue_dir_y_eff_num->Fill(mc_nu_dir_y, var_scale_factor);
+						h_nue_dir_z_eff_num->Fill(mc_nu_dir_z, var_scale_factor);
+						h_ele_dir_x_eff_num->Fill(mc_ele_dir_x, var_scale_factor);
+						h_ele_dir_y_eff_num->Fill(mc_ele_dir_y, var_scale_factor);
+						h_ele_dir_z_eff_num->Fill(mc_ele_dir_z, var_scale_factor);
+						h_ele_theta_eff_num->Fill(mc_ele_theta, var_scale_factor);
+						h_nue_num_part_eff_num->Fill(mc_nu_num_particles, var_scale_factor);
+						h_nue_num_chrg_part_eff_num->Fill(mc_nu_num_charged_particles, var_scale_factor);
+						h_nue_cos_theta_eff_num->Fill(mc_cos_theta, var_scale_factor);
+						h_nue_phi_eff_num->Fill(mc_phi, var_scale_factor);
+						h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta, var_scale_factor);
+						h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415), var_scale_factor);
 						_functions_instance.selection_functions::EnergyHits(var_tpc_object_container_v, passed_tpco, _verbose,
 						                                                    tpco_classifier_v, mc_nu_energy, mc_ele_energy,
-						                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
+						                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits,
+						                                                    h_nu_eng_collection_hits,
+						                                                    var_scale_factor);
 						_functions_instance.selection_functions::TrueRecoEle(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v, mc_ele_momentum, mc_ele_cos_theta,
-						                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e);
+						                                                     h_true_reco_ele_momentum, h_true_reco_ele_costheta, h_true_num_e, var_scale_factor);
 						_functions_instance.selection_functions::TrueEleResolution(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 						                                                           mc_ele_momentum, mc_ele_phi  * (180/3.1415), mc_ele_theta,
 						                                                           mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z,
 						                                                           h_ele_resolution_momentum, h_ele_resolution_phi, h_ele_resolution_theta,
 						                                                           h_ele_resolution_dot_prod, h_ele_resolution_momentum_dot_prod,
-						                                                           h_ele_resolution_momentum_dot_prod_zoom_y);
+						                                                           h_ele_resolution_momentum_dot_prod_zoom_y,
+						                                                           var_scale_factor);
 					}
 				}
 
@@ -6440,7 +6527,8 @@ void selection::make_selection( const char * _file1,
 				                                                        h_pfp_shower_numu_cc_coh_last, h_pfp_shower_numu_cc_mec_last,
 				                                                        h_pfp_shower_nc_pi0_last, h_pfp_shower_nue_cc_mixed_last,
 				                                                        h_pfp_shower_numu_cc_mixed_last, h_pfp_shower_cosmic_last,
-				                                                        h_pfp_shower_other_mixed_last, h_pfp_shower_unmatched_last);
+				                                                        h_pfp_shower_other_mixed_last, h_pfp_shower_unmatched_last,
+				                                                        var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingKinematicsShowerTopology(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                         h_ele_pfp_momentum_1shwr_nue_cc,
@@ -6502,13 +6590,14 @@ void selection::make_selection( const char * _file1,
 				                                                                         h_ele_pfp_phi_2shwr_nc_pi0,
 				                                                                         h_ele_pfp_phi_2shwr_cosmic,
 				                                                                         h_ele_pfp_phi_2shwr_other_mixed,
-				                                                                         h_ele_pfp_phi_2shwr_unmatched);
+				                                                                         h_ele_pfp_phi_2shwr_unmatched,
+				                                                                         var_scale_factor);
 
 				_functions_instance.selection_functions::TopologyEfficiency(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-				                                                            no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
+				                                                            no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr, var_scale_factor);
 
 				_functions_instance.selection_functions::ChargeShare(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-				                                                     h_charge_share_nue_cc_mixed);
+				                                                     h_charge_share_nue_cc_mixed, var_scale_factor);
 
 				_functions_instance.selection_functions::FillPostCutVector(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v);
 
@@ -6522,7 +6611,8 @@ void selection::make_selection( const char * _file1,
 				                                                     h_trk_length_nc_pi0,
 				                                                     h_trk_length_cosmic,
 				                                                     h_trk_length_other_mixed,
-				                                                     h_trk_length_unmatched);
+				                                                     h_trk_length_unmatched,
+				                                                     var_scale_factor);
 				_functions_instance.selection_functions::LongestTrackLength(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                            h_longest_trk_length_nue_cc,
 				                                                            h_longest_trk_length_nue_cc_out_fv,
@@ -6533,7 +6623,8 @@ void selection::make_selection( const char * _file1,
 				                                                            h_longest_trk_length_nc_pi0,
 				                                                            h_longest_trk_length_cosmic,
 				                                                            h_longest_trk_length_other_mixed,
-				                                                            h_longest_trk_length_unmatched);
+				                                                            h_longest_trk_length_unmatched,
+				                                                            var_scale_factor);
 
 				_functions_instance.selection_functions::ShowerLength(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                      h_shwr_length_nue_cc,
@@ -6545,7 +6636,9 @@ void selection::make_selection( const char * _file1,
 				                                                      h_shwr_length_nc_pi0,
 				                                                      h_shwr_length_cosmic,
 				                                                      h_shwr_length_other_mixed,
-				                                                      h_shwr_length_unmatched);
+				                                                      h_shwr_length_unmatched,
+				                                                      var_scale_factor);
+
 				_functions_instance.selection_functions::LongestShowerLength(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                             h_longest_shwr_length_nue_cc,
 				                                                             h_longest_shwr_length_nue_cc_out_fv,
@@ -6556,7 +6649,8 @@ void selection::make_selection( const char * _file1,
 				                                                             h_longest_shwr_length_nc_pi0,
 				                                                             h_longest_shwr_length_cosmic,
 				                                                             h_longest_shwr_length_other_mixed,
-				                                                             h_longest_shwr_length_unmatched);
+				                                                             h_longest_shwr_length_unmatched,
+				                                                             var_scale_factor);
 
 				_functions_instance.selection_functions::LongestShowerTrackLengths(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                   h_longest_shwr_trk_length_nue_cc,
@@ -6568,7 +6662,8 @@ void selection::make_selection( const char * _file1,
 				                                                                   h_longest_shwr_trk_length_nc_pi0,
 				                                                                   h_longest_shwr_trk_length_cosmic,
 				                                                                   h_longest_shwr_trk_length_other_mixed,
-				                                                                   h_longest_shwr_trk_length_unmatched);
+				                                                                   h_longest_shwr_trk_length_unmatched,
+				                                                                   var_scale_factor);
 				_functions_instance.selection_functions::LeadingCosTheta(var_tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 				                                                         h_ele_cos_theta_last_nue_cc,
 				                                                         h_ele_cos_theta_last_nue_cc_out_fv,
@@ -6579,7 +6674,8 @@ void selection::make_selection( const char * _file1,
 				                                                         h_ele_cos_theta_last_nc_pi0,
 				                                                         h_ele_cos_theta_last_cosmic,
 				                                                         h_ele_cos_theta_last_other_mixed,
-				                                                         h_ele_cos_theta_last_unmatched);
+				                                                         h_ele_cos_theta_last_unmatched,
+				                                                         var_scale_factor);
 				_functions_instance.selection_functions::LeadingCosTheta(var_tpc_object_container_v, passed_tpco, theta_translation, phi_translation, _verbose, tpco_classifier_v,
 				                                                         h_ele_cos_theta_last_trans_nue_cc,
 				                                                         h_ele_cos_theta_last_trans_nue_cc_out_fv,
@@ -6590,7 +6686,8 @@ void selection::make_selection( const char * _file1,
 				                                                         h_ele_cos_theta_last_trans_nc_pi0,
 				                                                         h_ele_cos_theta_last_trans_cosmic,
 				                                                         h_ele_cos_theta_last_trans_other_mixed,
-				                                                         h_ele_cos_theta_last_trans_unmatched);
+				                                                         h_ele_cos_theta_last_trans_unmatched,
+				                                                         var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                         h_ele_pfp_momentum_nue_cc,
@@ -6602,7 +6699,8 @@ void selection::make_selection( const char * _file1,
 				                                                         h_ele_pfp_momentum_nc_pi0,
 				                                                         h_ele_pfp_momentum_cosmic,
 				                                                         h_ele_pfp_momentum_other_mixed,
-				                                                         h_ele_pfp_momentum_unmatched);
+				                                                         h_ele_pfp_momentum_unmatched,
+				                                                         var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingMomentumTrackTopology(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                      h_ele_pfp_momentum_no_track_nue_cc,
@@ -6624,7 +6722,8 @@ void selection::make_selection( const char * _file1,
 				                                                                      h_ele_pfp_momentum_has_track_nc_pi0,
 				                                                                      h_ele_pfp_momentum_has_track_cosmic,
 				                                                                      h_ele_pfp_momentum_has_track_other_mixed,
-				                                                                      h_ele_pfp_momentum_has_track_unmatched);
+				                                                                      h_ele_pfp_momentum_has_track_unmatched,
+				                                                                      var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingPhi(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                    h_ele_pfp_phi_last_nue_cc,
@@ -6636,7 +6735,8 @@ void selection::make_selection( const char * _file1,
 				                                                    h_ele_pfp_phi_last_nc_pi0,
 				                                                    h_ele_pfp_phi_last_cosmic,
 				                                                    h_ele_pfp_phi_last_other_mixed,
-				                                                    h_ele_pfp_phi_last_unmatched);
+				                                                    h_ele_pfp_phi_last_unmatched,
+				                                                    var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingPhiTrackTopology(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_pfp_phi_no_track_nue_cc,
@@ -6658,7 +6758,8 @@ void selection::make_selection( const char * _file1,
 				                                                                 h_ele_pfp_phi_has_track_nc_pi0,
 				                                                                 h_ele_pfp_phi_has_track_cosmic,
 				                                                                 h_ele_pfp_phi_has_track_other_mixed,
-				                                                                 h_ele_pfp_phi_has_track_unmatched);
+				                                                                 h_ele_pfp_phi_has_track_unmatched,
+				                                                                 var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingTheta(var_tpc_object_container_v, passed_tpco, theta_translation, phi_translation,
 				                                                      _verbose, tpco_classifier_v,
@@ -6671,7 +6772,8 @@ void selection::make_selection( const char * _file1,
 				                                                      h_ele_pfp_theta_last_nc_pi0,
 				                                                      h_ele_pfp_theta_last_cosmic,
 				                                                      h_ele_pfp_theta_last_other_mixed,
-				                                                      h_ele_pfp_theta_last_unmatched);
+				                                                      h_ele_pfp_theta_last_unmatched,
+				                                                      var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingThetaTrackTopology(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                   h_ele_pfp_theta_no_track_nue_cc,
@@ -6693,7 +6795,8 @@ void selection::make_selection( const char * _file1,
 				                                                                   h_ele_pfp_theta_has_track_nc_pi0,
 				                                                                   h_ele_pfp_theta_has_track_cosmic,
 				                                                                   h_ele_pfp_theta_has_track_other_mixed,
-				                                                                   h_ele_pfp_theta_has_track_unmatched);
+				                                                                   h_ele_pfp_theta_has_track_unmatched,
+				                                                                   var_scale_factor);
 
 				_functions_instance.selection_functions::Leading1Shwr2Shwr(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                           h_leading_shwr_length_1shwr_nue_cc,
@@ -6735,7 +6838,8 @@ void selection::make_selection( const char * _file1,
 				                                                           h_leading_shwr_hits_2shwr_nc_pi0,
 				                                                           h_leading_shwr_hits_2shwr_cosmic,
 				                                                           h_leading_shwr_hits_2shwr_other_mixed,
-				                                                           h_leading_shwr_hits_2shwr_unmatched);
+				                                                           h_leading_shwr_hits_2shwr_unmatched,
+				                                                           var_scale_factor);
 
 				_functions_instance.selection_functions::LeadingThetaPhi(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                         h_ele_theta_phi_nue_cc,
@@ -6747,7 +6851,8 @@ void selection::make_selection( const char * _file1,
 				                                                         h_ele_theta_phi_nc_pi0,
 				                                                         h_ele_theta_phi_cosmic,
 				                                                         h_ele_theta_phi_other_mixed,
-				                                                         h_ele_theta_phi_unmatched);
+				                                                         h_ele_theta_phi_unmatched,
+				                                                         var_scale_factor);
 
 				_functions_instance.selection_functions::EnergyCosTheta(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                        h_ele_eng_costheta_nue_cc,
@@ -6759,7 +6864,8 @@ void selection::make_selection( const char * _file1,
 				                                                        h_ele_eng_costheta_nc_pi0,
 				                                                        h_ele_eng_costheta_cosmic,
 				                                                        h_ele_eng_costheta_other_mixed,
-				                                                        h_ele_eng_costheta_unmatched);
+				                                                        h_ele_eng_costheta_unmatched,
+				                                                        var_scale_factor);
 
 				_functions_instance.selection_functions::PostCutsLeadingMomentumThetaSlice(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                           h_ele_momentum_slice_1_nue_cc,
@@ -6791,7 +6897,8 @@ void selection::make_selection( const char * _file1,
 				                                                                           h_ele_momentum_slice_3_nc_pi0,
 				                                                                           h_ele_momentum_slice_3_cosmic,
 				                                                                           h_ele_momentum_slice_3_other_mixed,
-				                                                                           h_ele_momentum_slice_3_unmatched);
+				                                                                           h_ele_momentum_slice_3_unmatched,
+				                                                                           var_scale_factor);
 
 				// _functions_instance.selection_functions::PostCutsdedxThetaSlice(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				//                                                                 h_dedx_slice_1_nue_cc,
@@ -6856,7 +6963,8 @@ void selection::make_selection( const char * _file1,
 				                                                              h_ele_eng_back_nc_pi0,
 				                                                              h_ele_eng_back_cosmic,
 				                                                              h_ele_eng_back_other_mixed,
-				                                                              h_ele_eng_back_unmatched);
+				                                                              h_ele_eng_back_unmatched,
+				                                                              var_scale_factor);
 				_functions_instance.selection_functions::EnergyCosThetaSlices(var_tpc_object_container_v, passed_tpco, _verbose,
 				                                                              theta_translation, phi_translation, tpco_classifier_v,
 				                                                              h_ele_eng_for_trans_nue_cc,
@@ -6888,7 +6996,8 @@ void selection::make_selection( const char * _file1,
 				                                                              h_ele_eng_back_trans_nc_pi0,
 				                                                              h_ele_eng_back_trans_cosmic,
 				                                                              h_ele_eng_back_trans_other_mixed,
-				                                                              h_ele_eng_back_trans_unmatched);
+				                                                              h_ele_eng_back_trans_unmatched,
+				                                                              var_scale_factor);
 
 				_functions_instance.selection_functions::DifferentialEnergySlices(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                  h_low_true_momentum, h_med_true_momentum, h_high_true_momentum);
@@ -7121,20 +7230,6 @@ void selection::make_selection( const char * _file1,
 	                                                              h_post_cuts_num_tracks_showers_signal_total,
 	                                                              h_post_cuts_num_tracks_showers_bkg_total,
 	                                                              h_post_cuts_num_tracks_showers_total_total);
-
-	std::cout << "*************************" << std::endl;
-	std::cout << "Dirt Test? (Scaled to On Beam)" << std::endl;
-	std::cout << "Near MC XYZ   : " << xyz_near_mc * data_scale_factor << std::endl;
-	std::cout << "Near EXT XYZ  : " << xyz_near_ext * intime_scale_factor << std::endl;
-	std::cout << "Total (MC+EXT): " << (xyz_near_mc + xyz_near_ext) << " | (" << xyz_near_mc << " , " << xyz_near_ext << ")" << std::endl;
-	std::cout << "Near Data XYZ : " << xyz_near_data << std::endl;
-	std::cout << "=========================" << std::endl;
-	std::cout << "Far MC XYZ    : "  << xyz_far_mc * data_scale_factor << std::endl;
-	std::cout << "Far EXT XYZ   : "  << xyz_far_ext * intime_scale_factor << std::endl;
-	std::cout << "Total (MC+EXT): "  << (xyz_far_mc + xyz_far_ext) << " | (" << xyz_far_mc << " , " << xyz_far_ext << ")" << std::endl;
-	std::cout << "Far Data XYZ  : "  << xyz_far_data << std::endl;
-	std::cout << "*************************" << std::endl;
-
 
 //********************//
 //**** Histograms ****//

@@ -7,6 +7,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <cstring>
 
 /*
 
@@ -33,6 +35,7 @@
 
 //this is the default place
 char * file_locate_prefix = (char*)"../scripts/plots/";
+std::string file_locate_prefix_2;
 
 //These values are the defaults and will run if no parameter list is given
 //The parameter list is generated when running any of the python scripts

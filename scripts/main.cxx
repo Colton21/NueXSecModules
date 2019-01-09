@@ -68,6 +68,12 @@ int main(int argc, char *argv[]){
 		{
 			variation_file = true;
 			variation_file_path = argv[i+1];
+			std::string variation_type = variation_file_path;
+			//std::string delimiter_1 = "var_";
+			std::string delimiter_2 = ".root";
+			std::string token = variation_type.substr(0, variation_type.find(delimiter_2));
+			file_locate_prefix_2 = token;
+			//const char * file_locate_prefix_2 = token.c_str();
 		}
 	}
 	if(argc < 2 )  { std::cout << " \n Please inclue the input file path \n " << std::endl; exit(1); }
@@ -147,8 +153,16 @@ int main(int argc, char *argv[]){
 	//default state
 	if(using_slim_version == false)
 	{
-		_selection_instance.xsecSelection::selection::make_selection(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
-		                                                             variation_file_path, config, results_v, file_locate_prefix);
+		if(variation_file == false)
+		{
+			_selection_instance.xsecSelection::selection::make_selection(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
+			                                                             variation_file_path, config, results_v, file_locate_prefix);
+		}
+		if(variation_file == true)
+		{
+			_selection_instance.xsecSelection::selection::make_selection(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
+			                                                             variation_file_path, config, results_v, file_locate_prefix_2.c_str());
+		}
 	}
 	//slim selection
 	if(using_slim_version == true)
@@ -156,7 +170,6 @@ int main(int argc, char *argv[]){
 		_selection_slim_instance.xsecSelection::selection_slim::make_selection_slim(monte_carlo_file_path, cosmic_file_path, data_file_path, dirt_file_path,
 		                                                                            variation_file_path, config, results_v);
 	}
-
 	//write results from selection to output file
 	//python script does most of the file managing, since script needs to be contained
 	std::ofstream output_file;
