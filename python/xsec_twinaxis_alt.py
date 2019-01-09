@@ -182,6 +182,7 @@ y_arr_anue = np.multiply(y_arr_anue, (1. / 40.))
 # bonus figures 0 and 01 and 001
 #############################################################################
 # flux times xsec
+# old arrays - not as good as prod_nue_flux_xsec_list
 prod_nue_flux_list = []
 prod_anue_flux_list = []
 
@@ -189,49 +190,69 @@ prod_anue_flux_list = []
 # changes results
 prod_nue_flux_up_list = []
 prod_anue_flux_up_list = []
+prod_nue_flux_xsec_up_list = []
+prod_anue_flux_xsec_up_list = []
 low_eng_scale = 1.0  # 100% in this case
 
+prod_nue_flux_xsec_list = []
+prod_anue_flux_xsec_list = []
+
+plotting_prod_nue_flux_xsec_list = []
+plotting_prod_anue_flux_xsec_list = []
+
+# better way of doing it - more bins and eval
 j = 0
-for val in nue_flux_list_rebin:
-    if(bin_flux_list_rebin[j] <= 0.5):
-        prod_nue_flux_up_list.append(
-            (val + val * low_eng_scale) * y_arr_nue[j])
-    if(bin_flux_list_rebin[j] > 0.5):
-        prod_nue_flux_up_list.append(val * y_arr_nue[j])
-    prod_nue_flux_list.append(val * y_arr_nue[j])
+for val in bin_flux_list:
+    xsec_value = nue_xsec.Eval(val) * 1.0e-38 / 40.
+    flux_value = nue_flux_list[j]
+    # if(xsec_value < 0):
+    if(j < 6):
+        print "Xsec (nue): ", xsec_value, " at: ", val
+        xsec_value = 0.0
+    if(val <= 0.5):
+        prod_nue_flux_xsec_up_list.append(
+            (flux_value + flux_value * low_eng_scale) * xsec_value)
+    if(val > 0.5):
+        prod_nue_flux_xsec_up_list.append(xsec_value * flux_value)
+    prod_nue_flux_xsec_list.append(xsec_value * flux_value)
+    plotting_prod_nue_flux_xsec_list.append(
+        xsec_value * flux_value / 0.005 * 3.50191e+31)
     j = j + 1
 
 j = 0
-for val in anue_flux_list_rebin:
-    if(bin_flux_list_rebin[j] <= 0.5):
-        prod_anue_flux_up_list.append(
-            (val + val * low_eng_scale) * y_arr_anue[j])
-    if(bin_flux_list_rebin[j] > 0.5):
-        prod_anue_flux_up_list.append(val * y_arr_anue[j])
-    prod_anue_flux_list.append(val * y_arr_anue[j])
+for val in bin_flux_list:
+    xsec_value = anue_xsec.Eval(val) * 1.0e-38 / 40.
+    flux_value = anue_flux_list[j]
+    if(xsec_value < 0):
+        # print "Xsec (anue): ", xsec_value, " at: ", val
+        xsec_value = 0.0
+    if(val <= 0.5):
+        prod_anue_flux_xsec_up_list.append(
+            (flux_value + flux_value * low_eng_scale) * xsec_value)
+    if(val > 0.5):
+        prod_anue_flux_xsec_up_list.append(xsec_value * flux_value)
+    prod_anue_flux_xsec_list.append(xsec_value * flux_value)
+    plotting_prod_anue_flux_xsec_list.append(
+        xsec_value * flux_value / 0.005 * 3.50191e+31)
     j = j + 1
+
+
+print "Integral: ", sum(plotting_prod_nue_flux_xsec_list) * 0.005
 
 fig0, ax0 = plt.subplots()
 
-line0a = ax0.plot(bin_flux_list_rebin,
-                  prod_nue_flux_list, 'goldenrod', linewidth=2.0, label=r'NuMI $\nu_{e}$ Flux $\times$ Cross Section')
-line0b = ax0.plot(a_bin_flux_list_rebin,
-                  prod_anue_flux_list, 'slategray', linewidth=2.0, label=r'NuMI $\bar{\nu}_{e}$ Flux $\times$ Cross Section')
+line0a = ax0.plot(bin_flux_list,
+                  plotting_prod_nue_flux_xsec_list, 'goldenrod', linewidth=2.0, label=r'NuMI $\nu_{e}$ Flux $\times$ Cross Section')
+line0b = ax0.plot(a_bin_flux_list,
+                  plotting_prod_anue_flux_xsec_list, 'slategray', linewidth=2.0, label=r'NuMI $\bar{\nu}_{e}$ Flux $\times$ Cross Section')
 
-# these are the lines for the rebinned flux, not the products fyi
-# line0a = ax0.plot(bin_flux_list_rebin,
-#                  nue_flux_list_rebin, 'goldenrod', linewidth=2.0, label=r'NuMI $\nu_{e}$ Flux $\times$ Cross Section')
-# line0b = ax0.plot(a_bin_flux_list_rebin,
-# anue_flux_list_rebin, 'darkslategray', linewidth=2.0, label=r'NuMI
-# $\bar{\nu}_{e}$ Flux $\times$ Cross Section')
-
-ax0.fill_between(bin_flux_list_rebin, prod_nue_flux_list, 0,
+ax0.fill_between(bin_flux_list, plotting_prod_nue_flux_xsec_list, 0,
                  facecolor='darkgray', alpha=0.2)
-ax0.fill_between(a_bin_flux_list_rebin, prod_anue_flux_list,
+ax0.fill_between(a_bin_flux_list, plotting_prod_anue_flux_xsec_list,
                  0, facecolor='darkgray', alpha=0.2)
 
 ax0.set_xlabel('Neutrino Energy [GeV]')
-ax0.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ / 6e20 POT')
+ax0.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ / GeV / 6e20 POT')
 
 ax0b = ax0.twinx()
 
@@ -247,7 +268,7 @@ labels0 = [l.get_label() for l in lines0]
 ax0.legend(lines0, labels0, loc=9, ncol=2)
 
 ax0b.set_ylim(0, 35e-39)
-ax0.set_ylim(0, 9.0e-30)
+#ax0.set_ylim(0, 1.0e9)
 plt.xlim(0.0, 4.0)
 plt.show()
 
@@ -263,11 +284,6 @@ energy_efficiency_bin_list = [0.0, 0.25, 0.5, 0.75, 1.0, 1.5, 4.0]
 energy_efficiency_list = [0.005, 0.055, 0.085, 0.11, 0.105, 0.075]
 
 # now bring the flux * xsec into this binning scheme
-# rebinned flux * xsec has 160 bins for 0 to 20 GeV, meaning 125 MeV bins
-# nue_flux_list_rebin
-# anue_flux_list_rebin
-# bin_flux_list_rebin
-
 nue_rate_efficiency = [0] * 6
 anue_rate_efficiency = [0] * 6
 
@@ -275,26 +291,36 @@ nue_rate_efficiency_up = [0] * 6
 anue_rate_efficiency_up = [0] * 6
 
 for n in range(6):
-    for m in range(160):
-        if(bin_flux_list_rebin[m] >= energy_efficiency_bin_list[n] and bin_flux_list_rebin[m] < energy_efficiency_bin_list[n + 1]):
-            # print "Bin: ", bin_flux_list_rebin[m], " , Range: ", energy_efficiency_bin_list[n], " , ", energy_efficiency_bin_list[n + 1], ", Efficiency: ", energy_efficiency_list[n]
-            # print "Rate: ", prod_nue_flux_list[m] * energy_efficiency_list[n]
+    bin_max = energy_efficiency_bin_list[n + 1]
+    bin_min = energy_efficiency_bin_list[n]
+    bin_width = bin_max - bin_min
 
-            nue_rate_efficiency[n] = nue_rate_efficiency[
-                n] + prod_nue_flux_list[m] * energy_efficiency_list[n]
+    av_prod_nue_flux_xsec_list = []
+    av_prod_anue_flux_xsec_list = []
+    av_prod_nue_flux_xsec_up_list = []
+    av_prod_anue_flux_xsec_up_list = []
+    for m in range(len(bin_flux_list)):
+        if(bin_flux_list[m] > energy_efficiency_bin_list[n + 1]):
+            break
+        if(bin_flux_list[m] >= energy_efficiency_bin_list[n] and bin_flux_list[m] < energy_efficiency_bin_list[n + 1]):
 
-            anue_rate_efficiency[n] = anue_rate_efficiency[
-                n] + prod_anue_flux_list[m] * energy_efficiency_list[n]
+            av_prod_nue_flux_xsec_list.append(prod_nue_flux_xsec_list[m])
+            av_prod_anue_flux_xsec_list.append(prod_anue_flux_xsec_list[m])
+            av_prod_nue_flux_xsec_up_list.append(prod_nue_flux_xsec_up_list[m])
+            av_prod_anue_flux_xsec_up_list.append(
+                prod_anue_flux_xsec_up_list[m])
 
-            # and the scaled up flux * xsec
-            nue_rate_efficiency_up[n] = nue_rate_efficiency_up[
-                n] + prod_nue_flux_up_list[m] * energy_efficiency_list[n]
+    av_prod_nue_flux_xsec = sum(av_prod_nue_flux_xsec_list)
+    av_prod_anue_flux_xsec = sum(av_prod_anue_flux_xsec_list)
+    av_prod_nue_flux_xsec_up = sum(av_prod_nue_flux_xsec_up_list)
+    av_prod_anue_flux_xsec_up = sum(av_prod_anue_flux_xsec_up_list)
 
-            anue_rate_efficiency_up[n] = anue_rate_efficiency_up[
-                n] + prod_anue_flux_up_list[m] * energy_efficiency_list[n]
+    eff = energy_efficiency_list[n]
 
-    # print nue_rate_efficiency[n]
-    # print '\n'
+    nue_rate_efficiency[n] = av_prod_nue_flux_xsec * eff / bin_width
+    anue_rate_efficiency[n] = av_prod_anue_flux_xsec * eff / bin_width
+    nue_rate_efficiency_up[n] = av_prod_nue_flux_xsec_up * eff / bin_width
+    anue_rate_efficiency_up[n] = av_prod_anue_flux_xsec_up * eff / bin_width
 
 # if we're multiplying by efficiency, also include num targets
 num_targets = 3.50191e+31
@@ -345,9 +371,9 @@ ax00.legend((line00a, line00b),
             (r'$\nu_{e}$ Selection Rate', r'$\bar{\nu}_{e}$ Selection Rate'), numpoints=1, fontsize=16.0)
 
 ax00.set_xlabel('Neutrino Energy [GeV]')
-ax00.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / 6e20 POT')
+ax00.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / GeV / 6e20 POT')
 plt.xlim(0.0, 4.1)
-ax00.set_ylim(0, 80)
+ax00.set_ylim(0, 250)
 plt.show()
 
 #############################################################################
@@ -395,9 +421,9 @@ ax000.legend((line000a, line000b, line000c, line000d),
              (r'$\nu_{e}$ Selection Rate', r'$\bar{\nu}_{e}$ Selection Rate', r'$\nu_{e}$ Selection Rate Enhanced Low E', r'$\bar{\nu}_{e}$ Selection Rate Enhanced Low E'), numpoints=1, fontsize=16.0)
 
 ax000.set_xlabel('Neutrino Energy [GeV]')
-ax000.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / 6e20 POT')
+ax000.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / GeV / 6e20 POT')
 plt.xlim(0.0, 4.1)
-ax000.set_ylim(0, 80)
+ax000.set_ylim(0, 250)
 plt.show()
 
 ##############################################################################
