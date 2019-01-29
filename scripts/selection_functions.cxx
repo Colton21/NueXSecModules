@@ -161,7 +161,7 @@ void selection_functions::PostCutsdEdxInTime(std::vector<xsecAna::TPCObjectConta
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_intime->Fill(leading_dedx);
+		h_dedx_cuts_intime->Fill(leading_dedx * dedx_scaling);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -192,7 +192,7 @@ void selection_functions::PostCutsdEdxAltScaleInTime(std::vector<xsecAna::TPCObj
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_intime->Fill(leading_dedx * alt_scale);
+		h_dedx_cuts_intime->Fill(leading_dedx * dedx_scaling * alt_scale);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -318,7 +318,7 @@ void selection_functions::PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TP
 		}
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		h_dedx_cuts_ext_unmatched->Fill(leading_dedx);
+		h_dedx_cuts_ext_unmatched->Fill(leading_dedx * dedx_scaling);
 	}//end loop tpc objects
 }
 //***************************************************************************
@@ -883,29 +883,29 @@ void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std
 }
 void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins, const double scaling_val)
 {
-	total_cut_origins->at(0)  += (tabulated_origins->at(0) * scaling_val);
-	total_cut_origins->at(1)  += (tabulated_origins->at(1) * scaling_val);
-	total_cut_origins->at(9)  += (tabulated_origins->at(9) * scaling_val);
-	total_cut_origins->at(2)  += (tabulated_origins->at(2) * scaling_val);
-	total_cut_origins->at(3)  += (tabulated_origins->at(3) * scaling_val);
-	total_cut_origins->at(4)  += (tabulated_origins->at(4) * scaling_val);
-	total_cut_origins->at(11) += (tabulated_origins->at(11) * scaling_val);
-	total_cut_origins->at(10) += (tabulated_origins->at(10) * scaling_val);
-	total_cut_origins->at(5)  += (tabulated_origins->at(5) * scaling_val);
-	total_cut_origins->at(6)  += (tabulated_origins->at(6) * scaling_val);
-	total_cut_origins->at(7)  += (tabulated_origins->at(7) * scaling_val);
-	total_cut_origins->at(12) += (tabulated_origins->at(12) * scaling_val);
-	total_cut_origins->at(13) += (tabulated_origins->at(13) * scaling_val);
-	total_cut_origins->at(14) += (tabulated_origins->at(14) * scaling_val);
-	total_cut_origins->at(15) += (tabulated_origins->at(15) * scaling_val);
-	total_cut_origins->at(16) += (tabulated_origins->at(16) * scaling_val);
-	total_cut_origins->at(17) += (tabulated_origins->at(17) * scaling_val);
-	total_cut_origins->at(18) += (tabulated_origins->at(18) * scaling_val);
-	total_cut_origins->at(19) += (tabulated_origins->at(19) * scaling_val);
-	total_cut_origins->at(20) += (tabulated_origins->at(20) * scaling_val);
-	total_cut_origins->at(21) += (tabulated_origins->at(21) * scaling_val);
-	total_cut_origins->at(22) += (tabulated_origins->at(22) * scaling_val);
-	total_cut_origins->at(23) += (tabulated_origins->at(23) * scaling_val);
+	total_cut_origins->at(0)  = total_cut_origins->at(0)  + (tabulated_origins->at(0) * scaling_val);
+	total_cut_origins->at(1)  = total_cut_origins->at(1)  + (tabulated_origins->at(1) * scaling_val);
+	total_cut_origins->at(9)  = total_cut_origins->at(9)  + (tabulated_origins->at(9) * scaling_val);
+	total_cut_origins->at(2)  = total_cut_origins->at(2)  + (tabulated_origins->at(2) * scaling_val);
+	total_cut_origins->at(3)  = total_cut_origins->at(3)  + (tabulated_origins->at(3) * scaling_val);
+	total_cut_origins->at(4)  = total_cut_origins->at(4)  + (tabulated_origins->at(4) * scaling_val);
+	total_cut_origins->at(11) = total_cut_origins->at(11) + (tabulated_origins->at(11) * scaling_val);
+	total_cut_origins->at(10) = total_cut_origins->at(10) + (tabulated_origins->at(10) * scaling_val);
+	total_cut_origins->at(5)  = total_cut_origins->at(5)  + (tabulated_origins->at(5) * scaling_val);
+	total_cut_origins->at(6)  = total_cut_origins->at(6)  + (tabulated_origins->at(6) * scaling_val);
+	total_cut_origins->at(7)  = total_cut_origins->at(7)  + (tabulated_origins->at(7) * scaling_val);
+	total_cut_origins->at(12) = total_cut_origins->at(12) + (tabulated_origins->at(12) * scaling_val);
+	total_cut_origins->at(13) = total_cut_origins->at(13) + (tabulated_origins->at(13) * scaling_val);
+	total_cut_origins->at(14) = total_cut_origins->at(14) + (tabulated_origins->at(14) * scaling_val);
+	total_cut_origins->at(15) = total_cut_origins->at(15) + (tabulated_origins->at(15) * scaling_val);
+	total_cut_origins->at(16) = total_cut_origins->at(16) + (tabulated_origins->at(16) * scaling_val);
+	total_cut_origins->at(17) = total_cut_origins->at(17) + (tabulated_origins->at(17) * scaling_val);
+	total_cut_origins->at(18) = total_cut_origins->at(18) + (tabulated_origins->at(18) * scaling_val);
+	total_cut_origins->at(19) = total_cut_origins->at(19) + (tabulated_origins->at(19) * scaling_val);
+	total_cut_origins->at(20) = total_cut_origins->at(20) + (tabulated_origins->at(20) * scaling_val);
+	total_cut_origins->at(21) = total_cut_origins->at(21) + (tabulated_origins->at(21) * scaling_val);
+	total_cut_origins->at(22) = total_cut_origins->at(22) + (tabulated_origins->at(22) * scaling_val);
+	total_cut_origins->at(23) = total_cut_origins->at(23) + (tabulated_origins->at(23) * scaling_val);
 }
 void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins)
 {
@@ -3804,7 +3804,7 @@ void selection_functions::dEdxVsOpenAngleInTime(std::vector<xsecAna::TPCObjectCo
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
-		h_dedx_open_angle_intime->Fill(leading_dedx, leading_open_angle);
+		h_dedx_open_angle_intime->Fill(leading_dedx * dedx_scaling, leading_open_angle);
 	}
 }
 //***************************************************************************
@@ -6153,7 +6153,8 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 //***************************************************************************
 void selection_functions::LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                 std::vector<std::pair<int, std::string> > * passed_tpco,
-                                                const double theta_translation, const double phi_translation, bool _verbose, TH1D * h_ele_cos_theta_intime)
+                                                const double theta_translation, const double phi_translation,
+                                                bool _verbose, TH1D * h_ele_cos_theta_intime)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -6322,7 +6323,8 @@ void selection_functions::LeadingMomentum(std::vector<xsecAna::TPCObjectContaine
 //***************************************************************************
 //***************************************************************************
 void selection_functions::LeadingMomentumInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_intime)
+                                                std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                bool _verbose, TH1D * h_ele_pfp_momentum_intime)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -10254,8 +10256,10 @@ void selection_functions::PostCutsVtxFlashUpstream(std::vector< double > largest
 }//end function
 //***************************************************************************
 //***************************************************************************
-void selection_functions::PostCutsVtxFlashUpstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                         std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime)
+void selection_functions::PostCutsVtxFlashUpstreamInTime(std::vector< double > largest_flash_v,
+                                                         std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                         std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                         bool _verbose, TH1D * h_vtx_flash_intime)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -10394,8 +10398,10 @@ void selection_functions::PostCutsVtxFlashDownstream(std::vector< double > large
 }//end function
 //***************************************************************************
 //***************************************************************************
-void selection_functions::PostCutsVtxFlashDownstreamInTime(std::vector< double > largest_flash_v, std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
-                                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_vtx_flash_intime)
+void selection_functions::PostCutsVtxFlashDownstreamInTime(std::vector< double > largest_flash_v,
+                                                           std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                           std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                           bool _verbose, TH1D * h_vtx_flash_intime)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -11323,9 +11329,9 @@ void selection_functions::PostCutsdedxThetaSliceInTime(std::vector<xsecAna::TPCO
 		TVector3 numi_vector;
 		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
-		if(leading_shower_theta >= 0 && leading_shower_theta < 60)     {h_dedx_1_intime->Fill(leading_dedx); }
-		if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_intime->Fill(leading_dedx); }
-		if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_intime->Fill(leading_dedx); }
+		if(leading_shower_theta >= 0 && leading_shower_theta < 60)     {h_dedx_1_intime->Fill(leading_dedx * dedx_scaling); }
+		if(leading_shower_theta >= 60 && leading_shower_theta < 120)   {h_dedx_2_intime->Fill(leading_dedx * dedx_scaling); }
+		if(leading_shower_theta >= 120 && leading_shower_theta <= 180) {h_dedx_3_intime->Fill(leading_dedx * dedx_scaling); }
 	}
 }
 //***************************************************************************
@@ -11495,7 +11501,7 @@ void selection_functions::dEdxThetaInTime(std::vector<xsecAna::TPCObjectContaine
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
-		h_dedx_theta_intime->Fill(leading_dedx, leading_shower_theta);
+		h_dedx_theta_intime->Fill(leading_dedx * dedx_scaling, leading_shower_theta);
 	}
 }
 //***************************************************************************

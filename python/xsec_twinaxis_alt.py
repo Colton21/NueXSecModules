@@ -453,7 +453,8 @@ ax2.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
 # ax2.tick_params('y', colors='r')
 
 ax3 = ax2
-genie_xsec_point = 4.83114e-39
+#genie_xsec_point = 4.83114e-39
+genie_xsec_point = 4.93656e-39
 # for now we're taking the Stat from data
 genie_xsec_point_stat_err = 0.703e-39
 genie_xsec_point_sys_err = 0.30 * genie_xsec_point
@@ -505,16 +506,25 @@ x_edge = (-0.9, 1.1)
 # point_1b = ax_2.errorbar(0.5, genie_xsec_point, yerr=symmetric_y_err,
 # fmt='--o', color='black', ecolor='black', linewidth=1.0, markersize=6.0)
 
-lower_1a = genie_xsec_point + (genie_xsec_point * 0.14)
-upper_1a = genie_xsec_point - (genie_xsec_point * 0.14)
+data_xsec_point_list = (4.84388e-39, 4.84388e-39)
+data_xsec_point = 4.84388e-39
+
+#lower_1a = genie_xsec_point + (genie_xsec_point * 0.14)
+#upper_1a = genie_xsec_point - (genie_xsec_point * 0.14)
+
+lower_1a = data_xsec_point + (data_xsec_point * 0.14)
+upper_1a = data_xsec_point - (data_xsec_point * 0.14)
 
 lower_1a_list = (lower_1a, lower_1a)
 upper_1a_list = (upper_1a, upper_1a)
 
 quadrature = np.sqrt(0.14**2 + 0.30**2)
 
-lower_1b = genie_xsec_point + (genie_xsec_point * quadrature)
-upper_1b = genie_xsec_point - (genie_xsec_point * quadrature)
+#lower_1b = genie_xsec_point + (genie_xsec_point * quadrature)
+#upper_1b = genie_xsec_point - (genie_xsec_point * quadrature)
+
+lower_1b = data_xsec_point + (data_xsec_point * quadrature)
+upper_1b = data_xsec_point - (data_xsec_point * quadrature)
 
 lower_1b_list = (lower_1b, lower_1b)
 upper_1b_list = (upper_1b, upper_1b)
@@ -560,6 +570,61 @@ labels_list = (r'Expected Total Bound', r'Expected Stats Bound',
 ax_2.legend(loc=9, ncol=2)
 
 plt.show()
+
+##############################################
+##############################################
+# figure 2b
+fig2b, ax_2b = plt.subplots()
+
+# these are to make the legend have a fill, rather than line
+dummy_hist_1a = ax_2b.hist(
+    (-1, -2), 1, fill=True, label=r'Expected Total Bound', color='darkgray', alpha=0.2)
+# ax.legend(markerscale=2,fontsize=20)
+dummy_hist_1b = ax_2b.hist(
+    (-1, -2), 1, fill=True, label=r'Expected Stats Bound', color='maroon', alpha=0.2)
+
+band_1a_lower = ax_2b.plot(x_edge, lower_1a_list,
+                           color='maroon')
+band_1a_upper = ax_2b.plot(x_edge, upper_1a_list, color='maroon')
+
+band_1b_lower = ax_2b.plot(x_edge, lower_1b_list,
+                           color='black')
+band_1b_upper = ax_2b.plot(x_edge, upper_1b_list, color='black')
+
+ax_2b.fill_between(x_edge, upper_1a_list, lower_1a_list, hatch='//',
+                   facecolor='maroon', alpha=0.2)
+
+ax_2b.fill_between(x_edge, upper_1b_list, lower_1b_list,
+                   facecolor='darkgray', alpha=0.2)
+
+line_2a = ax_2b.plot(x_edge, genie_xsec_point_nue,
+                     color='mediumblue', linewidth=1.5, label=r'Genie $\nu_{e}$ Cross Section', linestyle='--')
+line_2b = ax_2b.plot(x_edge, genie_xsec_point_nue_bar,
+                     color='darkgreen', linewidth=1.5, label=r'Genie $\bar{\nu}_{e}$ Cross Section', linestyle='--')
+line_2c = ax_2b.plot(x_edge, genie_xsec_point_list,
+                     color='cadetblue', linewidth=1.5, label=r'Genie $\nu_{e} + \bar{\nu}_{e}$ Cross Section', linestyle='--')
+
+line_2d = ax_2b.plot(x_edge, data_xsec_point_list, color='black', linewidth=1.8,
+                     label=r'Data $\nu_{e} + \bar{\nu}_{e}$ Cross Section')
+
+ax_2b.set_ylim(0, 10e-39)
+ax_2b.set_xlim(0, 1)
+ax_2b.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
+ax_2b.xaxis.label.set_size(0)
+ax_2b.xaxis.set_ticklabels([])
+ax_2b.xaxis.set_visible(False)
+
+# lines_2 = band_1a_lower + band_1b_lower + line_2a + line_2b + line_2c
+lines_list = (dummy_hist_1a, dummy_hist_1b, line_2a, line_2b, line_2c)
+# labels_2 = [l.get_label() for l in lines_2]
+# ax3.legend(lines, labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+#           ncol=2, mode="expand", borderaxespad=0.)
+labels_list = (r'Expected Total Bound', r'Expected Stats Bound',
+               r'Genie $\nu_{e}$ Cross Section', r'Genie $\bar{\nu}_{e}$ Cross Section', r'Genie $\nu_{e} + \bar{\nu}_{e}$ Cross Section')
+ax_2b.legend(loc=9, ncol=2)
+
+plt.show()
+
 
 ##############################################################################
 

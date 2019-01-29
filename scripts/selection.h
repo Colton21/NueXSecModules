@@ -98,7 +98,9 @@ const double genie_xsec_nue_bar = 2.24685e-39; //cm2
 
 //scaling factors for detector variations
 //ratio of var POT / MC POT, as MC POT scaling happens when hist is stacked
-const double var_scale_factor = 1.0;
+//MC POT: 1.82027e+21
+//DIC sample: 8.3951e+21, 4.612 = 1 / (0.216825)
+const double var_scale_factor = 0.216825;
 
 // older values used
 // const double POT = 1.82027e21;
@@ -213,9 +215,13 @@ int mc_numu_nc_counter_bar = 0;
 double mc_nu_energy = 0;
 double mc_nu_momentum = 0;
 int mc_nu_id = -1;
+int mc_nu_id_var = -1;
 double mc_nu_vtx_x = -999;
 double mc_nu_vtx_y = -999;
 double mc_nu_vtx_z = -999;
+double mc_nu_vtx_x_var = -999;
+double mc_nu_vtx_y_var = -999;
+double mc_nu_vtx_z_var = -999;
 
 double mc_nu_dir_x = -999;
 double mc_nu_dir_y = -999;

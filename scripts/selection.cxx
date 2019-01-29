@@ -11,13 +11,15 @@ void selection::make_selection( const char * _file1,
                                 const char * file_locate_prefix
                                 )
 {
-
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
 	const bool _post_cuts_verbose = false;
 	gErrorIgnoreLevel = kWarning;
 
 	//first we need to open the root files
+	TFile * f_var;
+	TTree * mctruth_counter_tree_var;
+
 	TFile * f = new TFile(_file1);
 	if(!f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 	TTree * mytree = (TTree*)f->Get("AnalyzeTPCO/tree");
@@ -93,6 +95,22 @@ void selection::make_selection( const char * _file1,
 	detector_variations = _config[21];
 	const std::vector<double> tolerance_open_angle {tolerance_open_angle_min, tolerance_open_angle_max};
 
+	//overwrite config file for variation setting
+	int total_mc_entries_var = 0;
+	if(strcmp(_file5, "empty") != 0)
+	{
+		detector_variations = true;
+		f_var = new TFile(_file5);
+		mctruth_counter_tree_var = (TTree*)f_var->Get("AnalyzeTPCO/mctruth_counter_tree");
+
+		mctruth_counter_tree_var->SetBranchAddress("fMCNuID", &mc_nu_id_var);
+		mctruth_counter_tree_var->SetBranchAddress("fMCNuVtxX", &mc_nu_vtx_x_var);
+		mctruth_counter_tree_var->SetBranchAddress("fMCNuVtxY", &mc_nu_vtx_y_var);
+		mctruth_counter_tree_var->SetBranchAddress("fMCNuVtxZ", &mc_nu_vtx_z_var);
+
+		total_mc_entries_var = mctruth_counter_tree_var->GetEntries();
+		std::cout << "(var) Total MC Entries: " << total_mc_entries_var << std::endl;
+	}
 
 	std::vector<double> fv_boundary_v = {_x1, _x2, _y1, _y2, _z1, _z2};
 
@@ -120,33 +138,72 @@ void selection::make_selection( const char * _file1,
 	for(int i = 0; i < total_mc_entries; i++)
 	{
 		mctruth_counter_tree->GetEntry(i);
-		if(mc_nu_id == 1) {_mc_nue_cc_counter++; }
-		if(mc_nu_id == 2) {_mc_numu_cc_counter++; }
-		if(mc_nu_id == 3) {_mc_nue_nc_counter++; }
-		if(mc_nu_id == 4) {_mc_numu_nc_counter++; }
-		if(mc_nu_id == 5) {_mc_nue_cc_counter_bar++; }
-		if(mc_nu_id == 6) {_mc_numu_cc_counter_bar++; }
-		if(mc_nu_id == 7) {_mc_nue_nc_counter_bar++; }
-		if(mc_nu_id == 8) {_mc_numu_nc_counter_bar++; }
 		const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
 		true_in_tpc_v.at(i) = true_in_tpc;
-		if(true_in_tpc == true && (mc_nu_id == 1)) {total_mc_entries_inFV_nue++; }
-		if(true_in_tpc == true && (mc_nu_id == 5)) {total_mc_entries_inFV_nue_bar++; }
+		if(detector_variations == false)
+		{
+			if(mc_nu_id == 1) {_mc_nue_cc_counter++; }
+			if(mc_nu_id == 3) {_mc_nue_nc_counter++; }
+			if(mc_nu_id == 5) {_mc_nue_cc_counter_bar++; }
+			if(mc_nu_id == 7) {_mc_nue_nc_counter_bar++; }
+
+			if(true_in_tpc == true && (mc_nu_id == 1)) {total_mc_entries_inFV_nue++; }
+			if(true_in_tpc == true && (mc_nu_id == 5)) {total_mc_entries_inFV_nue_bar++; }
+			if(true_in_tpc == true && (mc_nu_id == 3)) {total_mc_entries_inFV_nue_nc++; }
+			if(true_in_tpc == true && (mc_nu_id == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
+		}
+
+		if(mc_nu_id == 2) {_mc_numu_cc_counter++; }
+		if(mc_nu_id == 4) {_mc_numu_nc_counter++; }
+		if(mc_nu_id == 6) {_mc_numu_cc_counter_bar++; }
+		if(mc_nu_id == 8) {_mc_numu_nc_counter_bar++; }
+
 		if(true_in_tpc == true && (mc_nu_id == 2)) {total_mc_entries_inFV_numu_cc++; }
-		if(true_in_tpc == true && (mc_nu_id == 3)) {total_mc_entries_inFV_nue_nc++; }
 		if(true_in_tpc == true && (mc_nu_id == 4)) {total_mc_entries_inFV_numu_nc++; }
 		if(true_in_tpc == true && (mc_nu_id == 6)) {total_mc_entries_inFV_numu_cc_bar++; }
-		if(true_in_tpc == true && (mc_nu_id == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
 		if(true_in_tpc == true && (mc_nu_id == 8)) {total_mc_entries_inFV_numu_nc_bar++; }
 	}
+
+	std::vector<bool> true_in_tpc_var_v;
+	true_in_tpc_var_v.resize(total_mc_entries_var, false);
+	if(detector_variations == true)
+	{
+		for(int i = 0; i < total_mc_entries_var; i++)
+		{
+			mctruth_counter_tree_var->GetEntry(i);
+			const bool true_in_tpc = _cuts_instance.selection_cuts::in_fv(mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var, fv_boundary_v);
+			true_in_tpc_var_v.at(i) = true_in_tpc;
+			if(mc_nu_id_var == 1) {_mc_nue_cc_counter++; }
+			if(mc_nu_id_var == 3) {_mc_nue_nc_counter++; }
+			if(mc_nu_id_var == 5) {_mc_nue_cc_counter_bar++; }
+			if(mc_nu_id_var == 7) {_mc_nue_nc_counter_bar++; }
+			if(true_in_tpc == true && (mc_nu_id_var == 1)) {total_mc_entries_inFV_nue++; }
+			if(true_in_tpc == true && (mc_nu_id_var == 5)) {total_mc_entries_inFV_nue_bar++; }
+			if(true_in_tpc == true && (mc_nu_id_var == 3)) {total_mc_entries_inFV_nue_nc++; }
+			if(true_in_tpc == true && (mc_nu_id_var == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
+		}
+	}
+	total_mc_entries_inFV_nue = total_mc_entries_inFV_nue * var_scale_factor;
+	total_mc_entries_inFV_nue_bar = total_mc_entries_inFV_nue_bar * var_scale_factor;
+
 	int total_mc_entries_inFV = total_mc_entries_inFV_nue + total_mc_entries_inFV_nue_bar;
 
-	std::cout << "MC Nue CC Counter      --- " << _mc_nue_cc_counter << std::endl;
-	std::cout << "MC Nue NC Counter      --- " << _mc_nue_nc_counter << std::endl;
+	if(detector_variations == false)
+	{
+		std::cout << "MC Nue CC Counter      --- " << _mc_nue_cc_counter << std::endl;
+		std::cout << "MC Nue NC Counter      --- " << _mc_nue_nc_counter << std::endl;
+		std::cout << "MC Nue CC Counter Bar  --- " << _mc_nue_cc_counter_bar << std::endl;
+		std::cout << "MC Nue NC Counter Bar  --- " << _mc_nue_nc_counter_bar << std::endl;
+	}
+	if(detector_variations == true)
+	{
+		std::cout << "(var) MC Nue CC Counter      --- " << _mc_nue_cc_counter << std::endl;
+		std::cout << "(var) MC Nue NC Counter      --- " << _mc_nue_nc_counter << std::endl;
+		std::cout << "(var) MC Nue CC Counter Bar  --- " << _mc_nue_cc_counter_bar << std::endl;
+		std::cout << "(var) MC Nue NC Counter Bar  --- " << _mc_nue_nc_counter_bar << std::endl;
+	}
 	std::cout << "MC Numu CC Counter     --- " << _mc_numu_cc_counter << std::endl;
 	std::cout << "MC Numu NC Counter     --- " << _mc_numu_nc_counter << std::endl;
-	std::cout << "MC Nue CC Counter Bar  --- " << _mc_nue_cc_counter_bar << std::endl;
-	std::cout << "MC Nue NC Counter Bar  --- " << _mc_nue_nc_counter_bar << std::endl;
 	std::cout << "MC Numu CC Counter Bar --- " << _mc_numu_cc_counter_bar << std::endl;
 	std::cout << "MC Numu NC Counter Bar --- " << _mc_numu_nc_counter_bar << std::endl;
 
@@ -239,6 +296,26 @@ void selection::make_selection( const char * _file1,
 		int last_data_run = 0;
 		int last_data_subrun = 0;
 
+		//we have a few known duplicates, which do not occur immediately
+		//before/after one-another
+		/*
+		   5985 32
+		   5985 35
+		   5985 36
+		   6465 1
+		   6465 2
+		   6465 3
+		 */
+		//are events also identical in these sets?
+		//these will switch to true once we see one of these and skip duplicates
+		bool first_5985_32 = false;
+		bool first_5985_35 = false;
+		bool first_5985_36 = false;
+		bool first_6465_1  = false;
+		bool first_6465_2  = false;
+		bool first_6465_3  = false;
+
+
 		std::cout << "=====================" << std::endl;
 		std::cout << "======== Data =======" << std::endl;
 		std::cout << "=====================" << std::endl;
@@ -282,6 +359,32 @@ void selection::make_selection( const char * _file1,
 				std::cout << "----------------------" << std::endl;
 			}
 			data_tree->GetEntry(event);
+
+			//remove known duplicates
+			for(auto const tpc_obj : * data_tpc_object_container_v)
+			{
+				data_run    = tpc_obj.RunNumber();
+				data_subrun = tpc_obj.SubRunNumber();
+				const int data_event  = tpc_obj.EventNumber();
+				const int data_index = tpc_obj.Index();
+
+				//known runs with duplicates
+				if(data_run == 5985)
+				{
+					if(data_subrun == 32) {if(first_5985_32 == true) {continue; } first_5985_32 = true; }
+					if(data_subrun == 35) {if(first_5985_35 == true) {continue; } first_5985_35 = true; }
+					if(data_subrun == 36) {if(first_5985_36 == true) {continue; } first_5985_36 = true; }
+				}
+				if(data_run == 6465)
+				{
+					if(data_subrun == 1) {if(first_6465_1 == true) {continue; } first_6465_1 = true; }
+					if(data_subrun == 2) {if(first_6465_2 == true) {continue; } first_6465_2 = true; }
+					if(data_subrun == 3) {if(first_6465_3 == true) {continue; } first_6465_3 = true; }
+				}
+			}//end duplicate testing
+			last_data_run = data_run;
+			last_data_subrun = data_subrun;
+
 			//***********************************************************
 			//this is where the in-time optical cut actually takes effect
 			//***********************************************************
@@ -290,29 +393,6 @@ void selection::make_selection( const char * _file1,
 				if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 				continue;
 			}//false
-
-			//writing the run and subrun values to a text file -
-			//this can be used as a cross-check for POT counting
-			for(auto const tpc_obj : * data_tpc_object_container_v)
-			{
-				data_run    = tpc_obj.RunNumber();
-				data_subrun = tpc_obj.SubRunNumber();
-				const int data_event  = tpc_obj.EventNumber();
-				if(data_run != last_data_run && data_subrun != last_data_subrun)
-				{
-					run_subrun_file << data_run << " " << data_subrun << " " << data_event << "\n";
-					break;
-				}
-			}
-			last_data_run = data_run;
-			last_data_subrun = data_subrun;
-
-			//*** duplicate testing here *** //
-			// for(auto const tpc_obj : * data_tpc_object_container_v)
-			// {
-			//      duplicate_test.push_back(std::make_tuple(tpc_obj.RunNumber(), tpc_obj.SubRunNumber(), tpc_obj.EventNumber()));
-			//      break;
-			// }
 
 			//YZ Position of largest flash
 			std::vector < double > largest_flash_v = data_largest_flash_v_v->at(event);
@@ -2216,9 +2296,9 @@ void selection::make_selection( const char * _file1,
 		bool true_signal_in_event = false;
 		if(mc_nu_id == 1 || mc_nu_id == 5 || mc_nu_id == 3 || mc_nu_id == 7) {true_signal_in_event = true; }
 		if(detector_variations)  {_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0,
-			                                                                          tpco_classifier_v, detector_variations, true_signal_in_event); }
+			                                                                          tpco_classifier_v, true, true_signal_in_event); }
 		if(!detector_variations) {_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0,
-			                                                                          tpco_classifier_v, detector_variations, true_signal_in_event); }
+			                                                                          tpco_classifier_v, false, true_signal_in_event); }
 
 		//YZ Position of largest flash
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
@@ -4204,6 +4284,10 @@ void selection::make_selection( const char * _file1,
 		                                                         h_ele_pfp_momentum_other_mixed,
 		                                                         h_ele_pfp_momentum_unmatched);
 
+		// _functions_instance.selection_functions::TrueInfoLowEnergy(tpc_object_container_v, passed_tpco, tpco_classifier_v,
+		//
+		//                                                            );
+
 		_functions_instance.selection_functions::LeadingMomentumTrackTopology(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                      h_ele_pfp_momentum_no_track_nue_cc,
 		                                                                      h_ele_pfp_momentum_no_track_nue_cc_out_fv,
@@ -4510,17 +4594,17 @@ void selection::make_selection( const char * _file1,
 			std::cout << "================================" << std::endl;
 
 			//first we need to open the root files
-			TFile * f_var = new TFile(_file5);
+			//TFile * f_var = new TFile(_file5);
 			if(!f_var->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
-			TTree * variation_tree = (TTree*)f->Get("AnalyzeTPCO/tree");
-			TTree * variation_optree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
-			TTree * variation_mctruth_counter_tree = (TTree*)f->Get("AnalyzeTPCO/mctruth_counter_tree");
+			TTree * variation_tree = (TTree*)f_var->Get("AnalyzeTPCO/tree");
+			TTree * variation_optree = (TTree*)f_var->Get("AnalyzeTPCO/optical_tree");
+			TTree * variation_mctruth_counter_tree = (TTree*)f_var->Get("AnalyzeTPCO/mctruth_counter_tree");
 
 			std::vector<xsecAna::TPCObjectContainer> * var_tpc_object_container_v = nullptr;
 			variation_tree->SetBranchAddress("TpcObjectContainerV", &var_tpc_object_container_v);
 
 			const int total_entries_var = variation_tree->GetEntries();
-			std::cout << "Total Variation Events     : " << total_entries_var << std::endl;
+			std::cout << "Total Variation Events   : " << total_entries_var << std::endl;
 
 			std::vector<int> * passed_runs_var = new std::vector<int>;
 			//passed runs is filled with 0, 1, or 2
@@ -4570,9 +4654,9 @@ void selection::make_selection( const char * _file1,
 			int infv_test_mc_nue_nc_counter_bar = 0;
 			int infv_test_mc_numu_nc_counter_bar = 0;
 
-			//**********************************
-			//now let's do the cuts
-			//*********************************
+			//*******************************************
+			//now let's do the cuts for the variations
+			//*******************************************
 			for(int event = 0; event < total_entries_var; event++)
 			{
 				if(_verbose)
@@ -4587,7 +4671,7 @@ void selection::make_selection( const char * _file1,
 				//********************************
 				//before Any cuts!!!
 				//********************************
-				const bool true_in_tpc = true_in_tpc_v.at(event);
+				const bool true_in_tpc = true_in_tpc_var_v.at(event);
 
 				if(mc_nu_id == 1) {test_mc_nue_cc_counter++; }
 				if(mc_nu_id == 2) {test_mc_numu_cc_counter++; }
@@ -4702,7 +4786,8 @@ void selection::make_selection( const char * _file1,
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut, var_scale_factor);
+				                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut,
+				                                                                   var_scale_factor);
 
 				_functions_instance.selection_functions::XYZPosition(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -4757,7 +4842,8 @@ void selection::make_selection( const char * _file1,
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue, var_scale_factor);
+				                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue,
+				                                                                   var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
@@ -4964,7 +5050,8 @@ void selection::make_selection( const char * _file1,
 				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
-				                                                                   h_selected_nu_energy_in_fv, h_selected_ele_energy_in_fv, var_scale_factor);
+				                                                                   h_selected_nu_energy_in_fv, h_selected_ele_energy_in_fv,
+				                                                                   var_scale_factor);
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					_functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, mc_ele_energy,
@@ -7010,57 +7097,35 @@ void selection::make_selection( const char * _file1,
 	std::cout << " MC Nue          : " << total_mc_entries_inFV_nue << std::endl;
 	std::cout << " MC NueBar       : " << total_mc_entries_inFV_nue_bar << std::endl;
 	std::cout << " MC Entries in FV: " << total_mc_entries_inFV << std::endl;
-	std::cout << total_mc_entries_inFV_numu_cc << std::endl;
-	std::cout << total_mc_entries_inFV_nue_nc << std::endl;
-	std::cout << total_mc_entries_inFV_numu_nc << std::endl;
-	std::cout << total_mc_entries_inFV_numu_cc_bar << std::endl;
-	std::cout << total_mc_entries_inFV_nue_nc_bar << std::endl;
-	std::cout << total_mc_entries_inFV_numu_nc_bar << std::endl;
+	// std::cout << total_mc_entries_inFV_numu_cc << std::endl;
+	// std::cout << total_mc_entries_inFV_nue_nc << std::endl;
+	// std::cout << total_mc_entries_inFV_numu_nc << std::endl;
+	// std::cout << total_mc_entries_inFV_numu_cc_bar << std::endl;
+	// std::cout << total_mc_entries_inFV_nue_nc_bar << std::endl;
+	// std::cout << total_mc_entries_inFV_numu_nc_bar << std::endl;
 	std::cout << "------------------ " << std::endl;
 	std::cout << "------------------ " << std::endl;
 	std::cout << "  End Selection    " << std::endl;
 	std::cout << "------------------ " << std::endl;
 
 
-	std::cout << test_mc_nue_cc_counter << std::endl;
-	std::cout << test_mc_numu_cc_counter << std::endl;
-	std::cout << test_mc_nue_nc_counter << std::endl;
-	std::cout << test_mc_numu_nc_counter << std::endl;
-	std::cout << test_mc_nue_cc_counter_bar << std::endl;
-	std::cout << test_mc_numu_cc_counter_bar << std::endl;
-	std::cout << test_mc_nue_nc_counter_bar << std::endl;
-	std::cout << test_mc_numu_nc_counter_bar << std::endl;
-	std::cout << "--------------------------------------" << std::endl;
-	std::cout << infv_test_mc_nue_cc_counter << std::endl;
-	std::cout << infv_test_mc_numu_cc_counter << std::endl;
-	std::cout << infv_test_mc_nue_nc_counter << std::endl;
-	std::cout << infv_test_mc_numu_nc_counter << std::endl;
-	std::cout << infv_test_mc_nue_cc_counter_bar << std::endl;
-	std::cout << infv_test_mc_numu_cc_counter_bar << std::endl;
-	std::cout << infv_test_mc_nue_nc_counter_bar << std::endl;
-	std::cout << infv_test_mc_numu_nc_counter_bar << std::endl;
-
-	//duplicate test here
-	//first need to sort by the run number
-	// std::sort(begin(duplicate_test), end(duplicate_test), [](std::tuple<int, int, int> const &t1, std::tuple<int,int,int> const &t2) {
-	//              return std::get<0>(t1) < std::get<0>(t2);
-	//      });
-	//
-	// std::tuple<int, int, int> last_tuple (0,0,0);
-	// for(auto const tuple : duplicate_test)
-	// {
-	//      if(std::get<0>(tuple) == std::get<0>(last_tuple))
-	//      {
-	//              if(std::get<1>(tuple) == std::get<1>(last_tuple))
-	//              {
-	//                      if(std::get<2>(tuple) == std::get<2>(last_tuple))
-	//                      {
-	//                              std::cout << "Duplicate Events at Num: " << std::get<0>(tuple) << ", " << std::get<1>(tuple) << ", " << std::get<2>(tuple) << std::endl;
-	//                      }
-	//              }
-	//      }
-	//      last_tuple = tuple;
-	// }
+	// std::cout << test_mc_nue_cc_counter << std::endl;
+	// std::cout << test_mc_numu_cc_counter << std::endl;
+	// std::cout << test_mc_nue_nc_counter << std::endl;
+	// std::cout << test_mc_numu_nc_counter << std::endl;
+	// std::cout << test_mc_nue_cc_counter_bar << std::endl;
+	// std::cout << test_mc_numu_cc_counter_bar << std::endl;
+	// std::cout << test_mc_nue_nc_counter_bar << std::endl;
+	// std::cout << test_mc_numu_nc_counter_bar << std::endl;
+	// std::cout << "--------------------------------------" << std::endl;
+	// std::cout << infv_test_mc_nue_cc_counter << std::endl;
+	// std::cout << infv_test_mc_numu_cc_counter << std::endl;
+	// std::cout << infv_test_mc_nue_nc_counter << std::endl;
+	// std::cout << infv_test_mc_numu_nc_counter << std::endl;
+	// std::cout << infv_test_mc_nue_cc_counter_bar << std::endl;
+	// std::cout << infv_test_mc_numu_cc_counter_bar << std::endl;
+	// std::cout << infv_test_mc_nue_nc_counter_bar << std::endl;
+	// std::cout << infv_test_mc_numu_nc_counter_bar << std::endl;
 
 	//we also want some metrics to print at the end
 	//*************************************************************************************************************************
@@ -7176,33 +7241,35 @@ void selection::make_selection( const char * _file1,
 	}
 	std::ofstream selected_run_subrun_event_file;
 	selected_run_subrun_event_file.open("selected_run_subrun_event_list.txt");
-	for(auto const post_cuts : * post_cuts_v)
-	{
-		const int event_num = std::get<0>(post_cuts);
-		const int run_num = std::get<1>(post_cuts);
-		const int sub_run_num = std::get<2>(post_cuts);
-		const std::string tpco_classification = std::get<7>(post_cuts);
-		selected_run_subrun_event_file << tpco_classification << " " << run_num << " " << sub_run_num << " " << event_num << "\n";
-		if(run_num == 5280 && sub_run_num == 106 && event_num == 5302)
-		{
-			std::cout << "Energy: " << std::get<11>(post_cuts) << std::endl;
-		}
-	}
-	for(auto const post_cuts_data : * post_cuts_v_data)
-	{
-		const int event_num = std::get<0>(post_cuts_data);
-		const int run_num = std::get<1>(post_cuts_data);
-		const int sub_run_num = std::get<2>(post_cuts_data);
-		const double nu_x = std::get<3>(post_cuts_data);
-		const double nu_y = std::get<4>(post_cuts_data);
-		const double nu_z = std::get<5>(post_cuts_data);
-		if(run_num == 5280 && sub_run_num == 106 && event_num == 5302)
-		{
-			std::cout << "Energy: " << std::get<11>(post_cuts_data) << std::endl;
-		}
-		std::cout << "On Beam Data: " << " Run: " << run_num << " SubRun: " << sub_run_num << " Event: " << event_num
-		          << ", Z: " << nu_z << ", X: " << nu_x << std::endl;
-	}
+	//************************************************************************
+	//useful for the event display stuff
+	// for(auto const post_cuts : * post_cuts_v)
+	// {
+	//      const int event_num = std::get<0>(post_cuts);
+	//      const int run_num = std::get<1>(post_cuts);
+	//      const int sub_run_num = std::get<2>(post_cuts);
+	//      const std::string tpco_classification = std::get<7>(post_cuts);
+	//      selected_run_subrun_event_file << tpco_classification << " " << run_num << " " << sub_run_num << " " << event_num << "\n";
+	//      if(run_num == 5280 && sub_run_num == 106 && event_num == 5302)
+	//      {
+	//              std::cout << "Energy: " << std::get<11>(post_cuts) << std::endl;
+	//      }
+	// }
+	// for(auto const post_cuts_data : * post_cuts_v_data)
+	// {
+	//      const int event_num = std::get<0>(post_cuts_data);
+	//      const int run_num = std::get<1>(post_cuts_data);
+	//      const int sub_run_num = std::get<2>(post_cuts_data);
+	//      const double nu_x = std::get<3>(post_cuts_data);
+	//      const double nu_y = std::get<4>(post_cuts_data);
+	//      const double nu_z = std::get<5>(post_cuts_data);
+	//      if(run_num == 5280 && sub_run_num == 106 && event_num == 5302)
+	//      {
+	//              std::cout << "Energy: " << std::get<11>(post_cuts_data) << std::endl;
+	//      }
+	//      std::cout << "On Beam Data: " << " Run: " << run_num << " SubRun: " << sub_run_num << " Event: " << event_num
+	//                << ", Z: " << nu_z << ", X: " << nu_x << std::endl;
+	// }
 
 
 	selected_run_subrun_event_file.close();
@@ -7811,20 +7878,20 @@ void selection::make_selection( const char * _file1,
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_scaled_logy.pdf"));
 	}
 
-	int total_total = 0;
-	double bin_val_total = 0;
-	for(int i = 0; i < h_shwr_vtx_dist_nue_cc->GetNbinsX()+2; i++)
-	{
-		const double bin_val = h_shwr_vtx_dist_nue_cc->GetBinContent(i);
-		std::cout << "Distance: " << h_shwr_vtx_dist_nue_cc->GetBinLowEdge(i) << ", Num Signal: " <<  bin_val << std::endl;
-		if(h_shwr_vtx_dist_nue_cc->GetBinLowEdge(i) > 4)
-		{
-			bin_val_total += bin_val;
-		}
-		total_total += bin_val;
-	}
-	std::cout << "Num Signals: " << total_total << std::endl;
-	std::cout << "Removed: " << bin_val_total << std::endl;
+	// int total_total = 0;
+	// double bin_val_total = 0;
+	// for(int i = 0; i < h_shwr_vtx_dist_nue_cc->GetNbinsX()+2; i++)
+	// {
+	//      const double bin_val = h_shwr_vtx_dist_nue_cc->GetBinContent(i);
+	//      std::cout << "Distance: " << h_shwr_vtx_dist_nue_cc->GetBinLowEdge(i) << ", Num Signal: " <<  bin_val << std::endl;
+	//      if(h_shwr_vtx_dist_nue_cc->GetBinLowEdge(i) > 4)
+	//      {
+	//              bin_val_total += bin_val;
+	//      }
+	//      total_total += bin_val;
+	// }
+	// std::cout << "Num Signals: " << total_total << std::endl;
+	// std::cout << "Removed: " << bin_val_total << std::endl;
 
 	histogram_functions::PlotSimpleStackData (h_shwr_vtx_dist_nue_cc_after,  h_shwr_vtx_dist_nue_cc_mixed_after,
 	                                          h_shwr_vtx_dist_nue_cc_out_fv_after,
@@ -8978,20 +9045,20 @@ void selection::make_selection( const char * _file1,
 		                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_scaled_data.pdf"));
 	}
 
-	int total_total_hits = 0;
-	double bin_val_total_hits = 0;
-	for(int i = 0; i < h_pre_cut_total_hits_leading_shower_nue_cc->GetNbinsX()+2; i++)
-	{
-		const double bin_val = h_pre_cut_total_hits_leading_shower_nue_cc->GetBinContent(i);
-		std::cout << "Hits: " << h_pre_cut_total_hits_leading_shower_nue_cc->GetBinLowEdge(i) << ", Num Signal: " <<  bin_val << std::endl;
-		if(h_pre_cut_total_hits_leading_shower_nue_cc->GetBinLowEdge(i) < 200)
-		{
-			bin_val_total_hits += bin_val;
-		}
-		total_total_hits += bin_val;
-	}
-	std::cout << "Num Signals: " << total_total_hits << std::endl;
-	std::cout << "Removed: " << bin_val_total_hits << std::endl;
+	// int total_total_hits = 0;
+	// double bin_val_total_hits = 0;
+	// for(int i = 0; i < h_pre_cut_total_hits_leading_shower_nue_cc->GetNbinsX()+2; i++)
+	// {
+	//      const double bin_val = h_pre_cut_total_hits_leading_shower_nue_cc->GetBinContent(i);
+	//      std::cout << "Hits: " << h_pre_cut_total_hits_leading_shower_nue_cc->GetBinLowEdge(i) << ", Num Signal: " <<  bin_val << std::endl;
+	//      if(h_pre_cut_total_hits_leading_shower_nue_cc->GetBinLowEdge(i) < 200)
+	//      {
+	//              bin_val_total_hits += bin_val;
+	//      }
+	//      total_total_hits += bin_val;
+	// }
+	// std::cout << "Num Signals: " << total_total_hits << std::endl;
+	// std::cout << "Removed: " << bin_val_total_hits << std::endl;
 
 	histogram_functions::PlotSimpleStackData (h_pre_cut_total_hits_leading_shower_nue_cc,  h_pre_cut_total_hits_leading_shower_nue_cc_mixed,
 	                                          h_pre_cut_total_hits_leading_shower_nue_cc_out_fv,

@@ -104,6 +104,7 @@ void selection_functions_data::PostCutsdEdxData(std::vector<xsecAna::TPCObjectCo
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		h_dedx_cuts_data->Fill(leading_dedx * (242.72 / 196.979));
+		//h_dedx_cuts_data->Fill(leading_dedx);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -130,6 +131,7 @@ void selection_functions_data::PostCutsdEdxAltScaleData(std::vector<xsecAna::TPC
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		h_dedx_cuts_data->Fill(leading_dedx * (242.72 / 196.979) * alt_scale);
+		//h_dedx_cuts_data->Fill(leading_dedx * alt_scale);
 	}        //end loop tpc objects
 }
 //***************************************************************************
@@ -653,6 +655,7 @@ void selection_functions_data::dEdxVsOpenAngleData(std::vector<xsecAna::TPCObjec
 		if(tpco_id == "unmatched")
 		{
 			h_dedx_open_angle_data->Fill(leading_dedx * (242.72 / 196.979), leading_open_angle);
+			//h_dedx_open_angle_data->Fill(leading_dedx, leading_open_angle);
 		}
 	}
 }
@@ -1205,6 +1208,7 @@ void selection_functions_data::dEdxThetaData(std::vector<xsecAna::TPCObjectConta
 		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
 		h_dedx_theta_data->Fill(leading_dedx * (242.72 / 196.979), leading_shower_theta);
+		//h_dedx_theta_data->Fill(leading_dedx, leading_shower_theta);
 	}
 }
 //***************************************************************************

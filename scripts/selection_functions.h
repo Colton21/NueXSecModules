@@ -32,6 +32,9 @@
 
 class selection_functions {
 
+private:
+const double dedx_scaling = (242.72 / 196.979);
+
 public:
 
 selection_functions()=default;
