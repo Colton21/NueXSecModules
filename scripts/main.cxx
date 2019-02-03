@@ -21,6 +21,7 @@ int main(int argc, char *argv[]){
 	char * dirt_file_path = "empty";
 	char * variation_file_path = "empty";
 
+	bool variation_mode;
 
 	//start after name of .exe
 	for(int i =1; i < argc; i++)
@@ -74,8 +75,21 @@ int main(int argc, char *argv[]){
 			//std::string token = variation_type.substr(0, variation_type.find(delimiter_2));
 			//file_locate_prefix_2 = token;
 		}
+		if(strcmp(arg, "--var_mode") == 0)
+		{
+			variation_mode = true;
+		}
 	}
 	if(argc < 2 )  { std::cout << " \n Please inclue the input file path \n " << std::endl; exit(1); }
+
+	//variation mode
+	if(variation_mode == true)
+	{
+		variation_output _var_mode_instance;
+		// ./main.exe --var_mode file_name <"same">/""
+		_var_mode_instance.run_var(argv[2], argv[3]);
+		return 0;
+	}
 
 	std::vector<double> config;
 	std::vector<double> input_config;

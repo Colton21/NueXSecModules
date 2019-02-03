@@ -1,0 +1,24 @@
+File: files/filter_withDIC.root
+Total POT (Method 1): 8.3951e+21
+Total POT (Method 2): 8.3951e+21
+File: files/filter_EnhancedTPCVis.root
+Total POT (Method 1): 6.10999e+21
+Total POT (Method 2): 6.10999e+21
+File: files/filter_deadSaturatedChannels.root
+Total POT (Method 1): 6.7252e+21
+Total POT (Method 2): 6.7252e+21
+File: files/filter_numi_cosmic_v4.root
+Total POT (Method 1): 1.82027e+21
+Total POT (Method 2): 1.82027e+21
+File: files/filter_stretchResp.root
+Total POT (Method 1): 7.14407e+21
+Total POT (Method 2): 7.14407e+21
+File: files/filter_altDeadChannels.root
+Total POT (Method 1): 8.10415e+21
+Total POT (Method 2): 8.10415e+21
+File: files/filter_CV.root
+Total POT (Method 1): 8.26505e+21
+Total POT (Method 2): 8.26505e+21
+File: files/filter_squeezeResp.root
+Total POT (Method 1): 8.14288e+21
+Total POT (Method 2): 8.14288e+21

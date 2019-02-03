@@ -3,6 +3,7 @@
 
 #include "selection.h"
 #include "selection_slim.h"
+#include "variation_output.h"
 #include "utility.h"
 
 #include <iostream>
