@@ -3,26 +3,50 @@
 //***************************************************************************
 //***************************************************************************
 int variation_output::GetLeadingShowerIndex(const int n_pfp, int n_tpc_obj, xsecAna::TPCObjectContainer tpc_obj){
-    int leading_index{0};
-    int most_hits{0};
+	int leading_index{0};
+	int most_hits{0};
 	
-    // Loop over Particle Objects
-    for (int j = 0; j < n_pfp; j++) {
-        auto const pfp_obj = tpc_obj.GetParticle(j);
-        const int  pfp_pdg = pfp_obj.PFParticlePdgCode();
-        
-        if (pfp_pdg != 11) continue; // skip if not a shower
+	// Loop over Particle Objects
+	for (int j = 0; j < n_pfp; j++) {
+		auto const pfp_obj = tpc_obj.GetParticle(j);
+		const int  pfp_pdg = pfp_obj.PFParticlePdgCode();
+		
+		if (pfp_pdg != 11) continue; // skip if not a shower
 
-        const int n_pfp_hits = pfp_obj.NumPFPHits();
-        
-        // Compare for most hits
-        if (n_pfp_hits > most_hits) {
-            leading_index = j; 
-            most_hits = n_pfp_hits; 
-        }
-    }
+		const int n_pfp_hits = pfp_obj.NumPFPHits();
+		
+		// Compare for most hits
+		if (n_pfp_hits > most_hits) {
+			leading_index = j; 
+			most_hits = n_pfp_hits; 
+		}
+	}
 
-    return leading_index;
+	return leading_index;
+}
+//***************************************************************************
+//***************************************************************************
+double variation_output::GetLongestTrackLength(const int n_pfp, int n_tpc_obj, xsecAna::TPCObjectContainer tpc_obj){
+	double longest_track = 0;
+
+	// Loop over Particle Objects
+	for(int i = 0; i < n_pfp; i++) {
+
+		auto const pfp_obj = tpc_obj.GetParticle(i);
+		const int  pfp_pdg = pfp_obj.PFParticlePdgCode();
+		
+		// If it  is track like
+		if(pfp_pdg == 13) {
+			const double trk_length = pfp_obj.pfpLength();
+			
+			if(trk_length > longest_track) {
+
+				longest_track = trk_length;
+			}
+		}
+	}
+
+	return longest_track;
 }
 //***************************************************************************
 //***************************************************************************
@@ -49,7 +73,6 @@ void variation_output::DrawTH1D_SAME(TH1D* hist, std::string variation, TLegend*
 	if (histname == "h_total_hits"){
 		hist->SetTitle("Total Hits (All Planes);PFP Total Hits;Entries");
 		hist->GetYaxis()->SetRangeUser(0,4500);
-
 	}
 	else if (histname == "h_ldg_shwr_hits") {
 		hist->SetTitle("Leading Shower Hits (All Planes); Leading Shower Hits;Entries");
@@ -83,7 +106,22 @@ void variation_output::DrawTH1D_SAME(TH1D* hist, std::string variation, TLegend*
 		hist->SetTitle("Leading Shower cos(#theta);Leading Shower cos(#theta);Entries");
 		// hist->GetYaxis()->SetRangeUser(0,7000);
 	}
-	
+	else if (histname == "h_long_Track_ldg_shwr"){
+		hist->SetTitle("Longest Track Length / Leading Shower Length;Longest Track Length / Leading Shower Length;Entries");
+		hist->GetYaxis()->SetRangeUser(0,22000);
+	}
+	else if (histname == "h_tpc_obj_vtx_x"){
+		hist->SetTitle("TPC Object Vertex x;TPC Object Vertex x;Entries");
+		hist->GetYaxis()->SetRangeUser(0,2500);
+	}
+	else if (histname == "h_tpc_obj_vtx_y"){
+		hist->SetTitle("TPC Object Vertex y;TPC Object Vertex y;Entries");
+		hist->GetYaxis()->SetRangeUser(0,1200);
+	}
+	else if (histname == "h_tpc_obj_vtx_z"){
+		hist->SetTitle("TPC Object Vertex z;TPC Object Vertex z;Entries");
+		hist->GetYaxis()->SetRangeUser(0,1200);
+	}
 	else return;
 
 	// ----------------------
@@ -212,7 +250,7 @@ std::vector<std::string> variation_output::GrabDirs(TFile* f_var_out) {
 	std::cout << "\n=================================================" << std::endl;	
 	std::cout << "Getting variation modes:" << std::endl;	
   	while ( ( key =  (TKey*)nextkey()) ) { // Extra brackets to omit a warning 
-    	if (key->IsFolder()) {
+		if (key->IsFolder()) {
 			std::cout << key->GetName() << std::endl; // Print the variations
 			if (key->GetName() == same_plots ) continue; // Skip this
 			variations.push_back(key->GetName());
@@ -234,18 +272,19 @@ void variation_output::PlotVariatons(TFile* f_var_out){
 	
 	std::vector<std::string> histnames = {"h_total_hits","h_ldg_shwr_hits", "h_ldg_shwr_hits_WPlane",
 										 "h_ldg_shwr_Open_Angle", "h_ldg_shwr_dEdx_WPlane", "h_ldg_shwr_HitPerLen",
-										 "h_ldg_shwr_Phi", "h_ldg_shwr_Theta","h_ldg_shwr_CTheta"};
+										 "h_ldg_shwr_Phi", "h_ldg_shwr_Theta","h_ldg_shwr_CTheta",
+										  "h_long_Track_ldg_shwr", "h_tpc_obj_vtx_x", "h_tpc_obj_vtx_y", "h_tpc_obj_vtx_z"};
 
 	// Loop over the histograms
 	for (int j=0; j < histnames.size(); j++){
 		
 		// Canvas + Legend
 		TCanvas* c = new TCanvas();
-		// TLegend* legend = new TLegend(0.5, 0.65, 0.9, 0.9);
-		TLegend* legend =new TLegend(0.75, 0.60, 0.95, 0.95);
-		// legend->SetNColumns(2);
-		// legend->SetBorderSize(0);
-		// legend->SetFillStyle(0);
+		TLegend* legend;
+		if (histnames[j] == "h_ldg_shwr_CTheta") legend = new TLegend(0.15, 0.55, 0.35, 0.85); // Reposition
+		else if (histnames[j] == "h_tpc_obj_vtx_x" || histnames[j] == "h_tpc_obj_vtx_y" || histnames[j] == "h_tpc_obj_vtx_z" )
+				legend = new TLegend(0.15, 0.15, 0.35, 0.45); // Reposition
+		else legend = new TLegend(0.75, 0.65, 0.95, 0.95);
 
 		// Loop over variation directories
 		for (int i=0; i < variations.size(); i++){
@@ -288,7 +327,7 @@ void variation_output::run_var(const char * _file1, TString mode) {
 
 	gStyle->SetOptStat(0); // say no to stats box
 
-	//***************************************************************************
+	//*************************** SAME PLOT *************************************
 	// if bool true just run this function
 	if (mode == "same") PlotVar = true; 
 	else PlotVar = false; 
@@ -308,92 +347,101 @@ void variation_output::run_var(const char * _file1, TString mode) {
 	
 	// Check if the outfile opened successfully
 	if ( f_var_out->IsOpen() ) std::cout << "Variation File opened successfully\n" << std::endl;
-    
-    // Get Variation file TPCObj Tree 
-    TFile* inFile = new TFile(_file1);
-    TTree* TPCObjTree = (TTree*) inFile->Get("AnalyzeTPCO/tree");
-    
-    std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
-    TPCObjTree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
+	
+	// Get Variation file TPCObj Tree 
+	TFile* inFile = new TFile(_file1);
+	TTree* TPCObjTree = (TTree*) inFile->Get("AnalyzeTPCO/tree");
+	
+	std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
+	TPCObjTree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
 
-    // Num events in the tree
-    const int tree_total_entries = TPCObjTree->GetEntries();
-    std::cout << "Total Events: " << tree_total_entries << std::endl;
+	// Num events in the tree
+	const int tree_total_entries = TPCObjTree->GetEntries();
+	std::cout << "Total Events: " << tree_total_entries << std::endl;
 
-    // ----------------------
-    //      Event loop
-    // ----------------------
-    std::cout << "Starting Eventloop..." << std::endl;
-    for(int event = 0; event < tree_total_entries; event++){
-        
-        TPCObjTree->GetEntry(event);
-
-        int n_tpc_obj = tpc_object_container_v->size();
-        
-        // Loop over TPCObj
-        for(int i = 0; i < n_tpc_obj; i++){
-            auto const tpc_obj = tpc_object_container_v->at(i);
-
-            // TPC Obj vars
-            tpc_obj_vtx_y = tpc_obj.pfpVtxY();
-            tpc_obj_vtx_z = tpc_obj.pfpVtxZ();
-            tpc_obj_vtx_x = tpc_obj.pfpVtxX();
-           
-            const int tpc_obj_mode = tpc_obj.Mode(); 
-            const int n_pfp = tpc_obj.NumPFParticles();
-            const int leading_shower_index = GetLeadingShowerIndex(n_pfp, n_tpc_obj, tpc_obj);
-
-            // Loop over the Par Objects
-            for (int j = 0; j < n_pfp ; j++){
-
-                auto const pfp_obj = tpc_obj.GetParticle(j);
-
-                // PFP vars                
-                const std::string mc_origin = pfp_obj.Origin();
-                const int  pfp_pdg          = pfp_obj.PFParticlePdgCode();
-                const int  num_pfp_hits     = pfp_obj.NumPFPHits();
-                const int  mc_parent_pdg    = pfp_obj.MCParentPdg();
-                
-                const double pff_length     = pfp_obj.pfpLength();
-                const double pfp_open_angle = pfp_obj.pfpOpenAngle();
-
-                // CC && BeamNu 
-                if( pfp_obj.CCNC() == 0 && mc_origin == "kBeamNeutrino") {
-                       
-                    // Electron (Shower like) && (Nue || Nuebar)
-                    if ( pfp_pdg == 11 && (mc_parent_pdg == 12 || mc_parent_pdg == -12) ) {
-                        h_total_hits->Fill(num_pfp_hits);
-
-						// Leading shower
-						if (j == leading_shower_index){
-							const double leading_shower_phi = atan2(pfp_obj.pfpDirY(), pfp_obj.pfpDirX()) * 180 / 3.1415;
-							const double leading_shower_theta = acos(pfp_obj.pfpDirZ()) * 180 / 3.1415;
-
-							h_ldg_shwr_hits->Fill(num_pfp_hits);
-							h_ldg_shwr_hits_WPlane->Fill(pfp_obj.NumPFPHitsW()); // W Plane
-							h_ldg_shwr_Open_Angle->Fill(pfp_obj.pfpOpenAngle() * (180 / 3.1415) );
-							h_ldg_shwr_dEdx_WPlane->Fill( pfp_obj.PfpdEdx().at(2) ); // W Plane
-							h_ldg_shwr_HitPerLen->Fill( num_pfp_hits / pfp_obj.pfpLength() );
-							h_ldg_shwr_Phi->Fill(leading_shower_phi);
-							h_ldg_shwr_Theta->Fill(leading_shower_theta);
-							h_ldg_shwr_CTheta->Fill( cos(leading_shower_theta) );
-						}
-
-                    }
-                    
-                }     
-
-            } // END LOOP PAR OBJ
-
-        } // END LOOP TPCO
-
-    } // END EVENT LOOP
-    std::cout << "Finished Eventloop..." << std::endl;
-
-    
 	// ----------------------
-    //    Save to a file
-    // ----------------------
+	//      Event loop
+	// ----------------------
+	std::cout << "Starting Eventloop..." << std::endl;
+	for(int event = 0; event < tree_total_entries; event++){
+		
+		TPCObjTree->GetEntry(event);
+
+		int n_tpc_obj = tpc_object_container_v->size();
+		
+		// Loop over TPCObj
+		for(int i = 0; i < n_tpc_obj; i++){
+			auto const tpc_obj = tpc_object_container_v->at(i);
+
+			// TPC Obj vars
+			tpc_obj_vtx_x = tpc_obj.pfpVtxX();
+			tpc_obj_vtx_y = tpc_obj.pfpVtxY();
+			tpc_obj_vtx_z = tpc_obj.pfpVtxZ();
+		   
+			const int tpc_obj_mode = tpc_obj.Mode(); 
+			const int n_pfp = tpc_obj.NumPFParticles();
+			const int leading_shower_index = GetLeadingShowerIndex(n_pfp, n_tpc_obj, tpc_obj);
+
+			// Loop over the Par Objects
+			for (int j = 0; j < n_pfp ; j++){
+
+				auto const pfp_obj = tpc_obj.GetParticle(j);
+
+				// PFP vars                
+				const std::string mc_origin = pfp_obj.Origin();
+				const int  pfp_pdg          = pfp_obj.PFParticlePdgCode();
+				const int  num_pfp_hits     = pfp_obj.NumPFPHits();
+				const int  mc_parent_pdg    = pfp_obj.MCParentPdg();
+				
+				const double pff_length     = pfp_obj.pfpLength();
+				const double pfp_open_angle = pfp_obj.pfpOpenAngle();
+				
+				// CC && BeamNu 
+				if( pfp_obj.CCNC() == 0 && mc_origin == "kBeamNeutrino") {
+					   
+					// Electron (Shower like) && (Nue || Nuebar)
+					if ( pfp_pdg == 11 && (mc_parent_pdg == 12 || mc_parent_pdg == -12) ) {
+						h_total_hits->Fill(num_pfp_hits);
+
+						//  ------------ Leading shower ------------
+						if (j == leading_shower_index){
+							const double leading_shower_phi 	= atan2(pfp_obj.pfpDirY(), pfp_obj.pfpDirX()) * 180 / 3.1415;
+							const double leading_shower_theta 	= acos(pfp_obj.pfpDirZ()) * 180 / 3.1415;
+							
+							const double leading_shower_length 	= pfp_obj.pfpLength();
+							const double lonest_track_length 	= GetLongestTrackLength(n_pfp, n_tpc_obj, tpc_obj);
+
+							h_ldg_shwr_hits			->Fill(num_pfp_hits);
+							h_ldg_shwr_hits_WPlane	->Fill(pfp_obj.NumPFPHitsW()); 		// W Plane
+							h_ldg_shwr_Open_Angle	->Fill(pfp_obj.pfpOpenAngle() * (180 / 3.1415) );
+							h_ldg_shwr_dEdx_WPlane	->Fill(pfp_obj.PfpdEdx().at(2) ); 	// W Plane
+							h_ldg_shwr_HitPerLen	->Fill(num_pfp_hits / pfp_obj.pfpLength() );
+							h_ldg_shwr_Phi			->Fill(leading_shower_phi);
+							h_ldg_shwr_Theta		->Fill(leading_shower_theta);
+							h_ldg_shwr_CTheta		->Fill(cos(leading_shower_theta * 3.1414 / 180.));
+							h_long_Track_ldg_shwr	->Fill(lonest_track_length / leading_shower_length);
+
+							// Vertex Information - require a shower so fill once  when leading shower
+							h_tpc_obj_vtx_x->Fill(tpc_obj_vtx_x);
+							h_tpc_obj_vtx_y->Fill(tpc_obj_vtx_y);
+							h_tpc_obj_vtx_z->Fill(tpc_obj_vtx_z);
+						}
+			
+					}
+					
+				}     
+
+			} // END LOOP PAR OBJ
+
+		} // END LOOP TPCO
+
+	} // END EVENT LOOP
+	std::cout << "Finished Eventloop..." << std::endl;
+
+	
+	// ----------------------
+	//    Save to a file
+	// ----------------------
 	TDirectory* savedir = gDirectory; //  Create the directory
 	TDirectory* subdir;
 
@@ -424,9 +472,9 @@ void variation_output::run_var(const char * _file1, TString mode) {
 	subdir->cd();
 
 	// ----------------------
-    //    Draw Histograms
-    // ----------------------
-    DrawTH1D(h_total_hits, POT_Scaling);
+	//    Draw Histograms
+	// ----------------------
+	DrawTH1D(h_total_hits, POT_Scaling);
 	DrawTH1D(h_ldg_shwr_hits, POT_Scaling);
 	DrawTH1D(h_ldg_shwr_hits_WPlane, POT_Scaling);
 	DrawTH1D(h_ldg_shwr_Open_Angle, POT_Scaling);
@@ -435,11 +483,15 @@ void variation_output::run_var(const char * _file1, TString mode) {
 	DrawTH1D(h_ldg_shwr_Phi, POT_Scaling);
 	DrawTH1D(h_ldg_shwr_Theta, POT_Scaling);
 	DrawTH1D(h_ldg_shwr_CTheta, POT_Scaling);
+	DrawTH1D(h_long_Track_ldg_shwr, POT_Scaling);
+	DrawTH1D(h_tpc_obj_vtx_x, POT_Scaling);
+	DrawTH1D(h_tpc_obj_vtx_y, POT_Scaling);	
+	DrawTH1D(h_tpc_obj_vtx_z, POT_Scaling);		
 	// ----------------------
-    //   Write and close
+	//   Write and close
 	//   the TFile to new/updated
 	//   directory
-    // ----------------------
+	// ----------------------
 	h_total_hits->Write("",TObject::kOverwrite);
 	h_ldg_shwr_hits->Write("",TObject::kOverwrite);
 	h_ldg_shwr_hits_WPlane-> Write("",TObject::kOverwrite);
@@ -449,6 +501,10 @@ void variation_output::run_var(const char * _file1, TString mode) {
 	h_ldg_shwr_Phi->Write("", TObject::kOverwrite);
 	h_ldg_shwr_Theta->Write("", TObject::kOverwrite);
 	h_ldg_shwr_CTheta->Write("", TObject::kOverwrite);
+	h_long_Track_ldg_shwr->Write("", TObject::kOverwrite);
+	h_tpc_obj_vtx_x->Write("", TObject::kOverwrite);
+	h_tpc_obj_vtx_y->Write("", TObject::kOverwrite);
+	h_tpc_obj_vtx_z->Write("", TObject::kOverwrite);
 	
 	f_var_out->Close(); 
 

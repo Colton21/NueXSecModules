@@ -51,7 +51,8 @@ class variation_output {
 	// ----------------------
     //   Other Functions
     // ----------------------
-    int GetLeadingShowerIndex(const int n_pfp, int n_tpc_obj, xsecAna::TPCObjectContainer tpc_obj); // Returns the index of the leading shower
+    int GetLeadingShowerIndex(const int n_pfp, int n_tpc_obj, xsecAna::TPCObjectContainer tpc_obj);     // Returns the index of the leading shower
+	double GetLongestTrackLength(const int n_pfp, int n_tpc_obj, xsecAna::TPCObjectContainer tpc_obj);  // Returns the length of the longest track
 	void DrawTH1D(TH1D* h, double POT_Scaling); // Function that draws a TH1D histogram
 	double GetPOT(const char * _file1); 		// Gets the POT stored in an external file
 	void PlotVariatons(TFile* f_var_out); 		// Plots the variation files on the same plot
@@ -68,8 +69,9 @@ class variation_output {
 	double ldg_shwr_HitPerLen{0};		// Leading shower hits per length
 	double ldg_shwr_Phi{0};				// Leading shower phi
 	double ldg_shwr_Theta{0};			// Leading shower theta
-	double ldg_shwr_CTheta{0};			// Loading shower cos theta
+	double ldg_shwr_CTheta{0};			// Leading shower cos theta
 	double long_Track_ldg_shwr{0};		// Longest track / leading shower length
+	// Leading shower momentum
 	
 	double tpc_obj_vtx_x{0}, tpc_obj_vtx_y{0}, tpc_obj_vtx_z{0}; // TPCObj Vertex X, Y, Z
 	// Distance of nue vertex and shower vertex
@@ -87,12 +89,12 @@ class variation_output {
 	TH1D* h_ldg_shwr_Phi 			= new TH1D("h_ldg_shwr_Phi","ldg_shwr_Phi", 				 12, -180, 180);
 	TH1D* h_ldg_shwr_Theta 			= new TH1D("h_ldg_shwr_Theta","ldg_shwr_Theta", 			 12, 0, 180);
 	TH1D* h_ldg_shwr_CTheta 		= new TH1D("h_ldg_shwr_CTheta","ldg_shwr_CTheta", 			 16, -1, 1);
-	TH1D* h_long_Track_ldg_shwr 	= new TH1D("h_long_Track_ldg_shwr","long_Track_ldg_shwr",	500, 0, 100);
+	TH1D* h_long_Track_ldg_shwr 	= new TH1D("h_long_Track_ldg_shwr","long_Track_ldg_shwr",	 20, 0, 3);
 	
 	// TPC
-	TH1D* h_tpc_obj_vtx_x 			= new TH1D("h_tpc_obj_vtx_x","tpc_obj_vtx_x", 				500, 0, 100);
-	TH1D* h_tpc_obj_vtx_y 			= new TH1D("h_tpc_obj_vtx_y","tpc_obj_vtx_y", 				500, 0, 100);
-	TH1D* h_tpc_obj_vtx_z 			= new TH1D("h_tpc_obj_vtx_z","tpc_obj_vtx_z", 				500, 0, 100);
+	TH1D* h_tpc_obj_vtx_x 			= new TH1D("h_tpc_obj_vtx_x","tpc_obj_vtx_x", 				 21, 0, 260);
+	TH1D* h_tpc_obj_vtx_y 			= new TH1D("h_tpc_obj_vtx_y","tpc_obj_vtx_y", 				 19, 0, 115);
+	TH1D* h_tpc_obj_vtx_z 			= new TH1D("h_tpc_obj_vtx_z","tpc_obj_vtx_z", 				 39, 0, 1040);
 	
 	// Other
 	TH1D* h_total_hits 				= new TH1D("h_total_hits", "h_total_hits",	 				 50, 0, 600);
