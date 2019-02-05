@@ -360,7 +360,7 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 		// largest_flash_v.at(2) = current_event;
 		// largest_flash_v.at(3) = fOpFlashWidthZ;
 		largest_flash_v.at(4) = largest_flash_time;
-		largest_flash_v.at(5) = largest_flash;
+		largest_flash_v.at(5) = largest_flash; //PE
 		largest_flash_v_v->push_back(largest_flash_v);
 	}
 

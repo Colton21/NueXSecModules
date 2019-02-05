@@ -877,11 +877,11 @@ void selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContaine
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins)
+void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins)
 {
 	selection_functions::TotalOrigins(tabulated_origins, total_cut_origins, 1.0);
 }
-void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins, const double scaling_val)
+void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins, const double scaling_val)
 {
 	total_cut_origins->at(0)  = total_cut_origins->at(0)  + (tabulated_origins->at(0) * scaling_val);
 	total_cut_origins->at(1)  = total_cut_origins->at(1)  + (tabulated_origins->at(1) * scaling_val);
@@ -907,7 +907,7 @@ void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std
 	total_cut_origins->at(22) = total_cut_origins->at(22) + (tabulated_origins->at(22) * scaling_val);
 	total_cut_origins->at(23) = total_cut_origins->at(23) + (tabulated_origins->at(23) * scaling_val);
 }
-void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins)
+void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins)
 {
 	total_cut_origins->at(0)  += tabulated_origins->at(0);
 }
@@ -915,7 +915,7 @@ void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origin
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
+void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics,
                                     double intime_scale_factor, double data_scale_factor,
                                     int counter_dirt, double dirt_scale_factor, std::string cut_name)
 {
@@ -980,7 +980,7 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics, int counter_dirt,
+void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics, int counter_dirt,
                                                  double intime_scale_factor, double data_scale_factor, double dirt_scale_factor, std::string cut_name,
                                                  std::vector<std::tuple< double, double, std::string> > * results_v)
 {

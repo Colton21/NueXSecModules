@@ -173,18 +173,18 @@ void TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      std::vector<std::pair<std::string, int> > * tpco_classifier_v);
 //***************************************************************************
 //***************************************************************************
-void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins);
-void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins, const double scaling_val);
-void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins);
+void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins);
+void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins, const double scaling_val);
+void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins);
 //***************************************************************************
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int intime_counter,
+static void PrintInfo(int mc_nue_cc_counter, std::vector<double> * counter_v, int intime_counter,
                       double intime_scale_factor, double data_scale_factor, int dirt_counter, double dirt_scale_factor, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
-static void ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics, int counter_dirt,
+static void ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics, int counter_dirt,
                                    double intime_scale_factor, double data_scale_factor, double dirt_scale_factor, std::string cut_name,
                                    std::vector<std::tuple< double, double, std::string> > * results_v);
 //***************************************************************************

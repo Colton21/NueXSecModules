@@ -182,9 +182,10 @@ void selection::make_selection( const char * _file1,
 			if(true_in_tpc == true && (mc_nu_id_var == 3)) {total_mc_entries_inFV_nue_nc++; }
 			if(true_in_tpc == true && (mc_nu_id_var == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
 		}
+		total_mc_entries_inFV_nue = total_mc_entries_inFV_nue * var_scale_factor;
+		total_mc_entries_inFV_nue_bar = total_mc_entries_inFV_nue_bar * var_scale_factor;
 	}
-	total_mc_entries_inFV_nue = total_mc_entries_inFV_nue * var_scale_factor;
-	total_mc_entries_inFV_nue_bar = total_mc_entries_inFV_nue_bar * var_scale_factor;
+
 
 	int total_mc_entries_inFV = total_mc_entries_inFV_nue + total_mc_entries_inFV_nue_bar;
 
@@ -220,35 +221,35 @@ void selection::make_selection( const char * _file1,
 	//***** DATA *****
 	//*****************
 
-	std::vector<int> * data_in_time_counter_v = new std::vector<int>;
+	std::vector<double> * data_in_time_counter_v = new std::vector<double>;
 	data_in_time_counter_v->resize(24, 0);
-	std::vector<int> * data_pe_counter_v = new std::vector<int>;
+	std::vector<double> * data_pe_counter_v = new std::vector<double>;
 	data_pe_counter_v->resize(24, 0);
-	std::vector<int> * data_reco_nue_counter_v = new std::vector<int>;
+	std::vector<double> * data_reco_nue_counter_v = new std::vector<double>;
 	data_reco_nue_counter_v->resize(24, 0);
-	std::vector<int> * data_in_fv_counter_v = new std::vector<int>;
+	std::vector<double> * data_in_fv_counter_v = new std::vector<double>;
 	data_in_fv_counter_v->resize(24, 0);
-	std::vector<int> * data_vtx_flash_counter_v = new std::vector<int>;
+	std::vector<double> * data_vtx_flash_counter_v = new std::vector<double>;
 	data_vtx_flash_counter_v->resize(24, 0);
-	std::vector<int> * data_shwr_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * data_shwr_tpco_counter_v = new std::vector<double>;
 	data_shwr_tpco_counter_v->resize(24, 0);
-	std::vector<int> * data_trk_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * data_trk_tpco_counter_v = new std::vector<double>;
 	data_trk_tpco_counter_v->resize(24, 0);
-	std::vector<int> * data_hit_threshold_counter_v = new std::vector<int>;
+	std::vector<double> * data_hit_threshold_counter_v = new std::vector<double>;
 	data_hit_threshold_counter_v->resize(24, 0);
-	std::vector<int> * data_open_angle_counter_v = new std::vector<int>;
+	std::vector<double> * data_open_angle_counter_v = new std::vector<double>;
 	data_open_angle_counter_v->resize(24, 0);
-	std::vector<int> * data_dedx_counter_v = new std::vector<int>;
+	std::vector<double> * data_dedx_counter_v = new std::vector<double>;
 	data_dedx_counter_v->resize(24, 0);
-	std::vector<int> * data_secondary_shower_counter_v = new std::vector<int>;
+	std::vector<double> * data_secondary_shower_counter_v = new std::vector<double>;
 	data_secondary_shower_counter_v->resize(24, 0);
-	std::vector<int> * data_hit_lengthRatio_counter_v = new std::vector<int>;
+	std::vector<double> * data_hit_lengthRatio_counter_v = new std::vector<double>;
 	data_hit_lengthRatio_counter_v->resize(24, 0);
-	std::vector<int> * data_hit_threshold_collection_counter_v = new std::vector<int>;
+	std::vector<double> * data_hit_threshold_collection_counter_v = new std::vector<double>;
 	data_hit_threshold_collection_counter_v->resize(24, 0);
-	std::vector<int> * data_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	std::vector<double> * data_trk_len_shwr_len_ratio_counter_v = new std::vector<double>;
 	data_trk_len_shwr_len_ratio_counter_v->resize(24, 0);
-	std::vector<int> * data_track_containment_counter_v = new std::vector<int>;
+	std::vector<double> * data_track_containment_counter_v = new std::vector<double>;
 	data_track_containment_counter_v->resize(24, 0);
 
 	std::vector<std::pair<double, int> > * data_flash_time = new std::vector<std::pair<double, int> >;
@@ -792,35 +793,35 @@ void selection::make_selection( const char * _file1,
 //*********************************
 
 
-	std::vector<int> * dirt_in_time_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_in_time_counter_v = new std::vector<double>;
 	dirt_in_time_counter_v->resize(24, 0);
-	std::vector<int> * dirt_pe_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_pe_counter_v = new std::vector<double>;
 	dirt_pe_counter_v->resize(24, 0);
-	std::vector<int> * dirt_reco_nue_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_reco_nue_counter_v = new std::vector<double>;
 	dirt_reco_nue_counter_v->resize(24, 0);
-	std::vector<int> * dirt_in_fv_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_in_fv_counter_v = new std::vector<double>;
 	dirt_in_fv_counter_v->resize(24, 0);
-	std::vector<int> * dirt_vtx_flash_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_vtx_flash_counter_v = new std::vector<double>;
 	dirt_vtx_flash_counter_v->resize(24, 0);
-	std::vector<int> * dirt_shwr_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_shwr_tpco_counter_v = new std::vector<double>;
 	dirt_shwr_tpco_counter_v->resize(24, 0);
-	std::vector<int> * dirt_trk_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_trk_tpco_counter_v = new std::vector<double>;
 	dirt_trk_tpco_counter_v->resize(24, 0);
-	std::vector<int> * dirt_hit_threshold_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_hit_threshold_counter_v = new std::vector<double>;
 	dirt_hit_threshold_counter_v->resize(24, 0);
-	std::vector<int> * dirt_open_angle_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_open_angle_counter_v = new std::vector<double>;
 	dirt_open_angle_counter_v->resize(24, 0);
-	std::vector<int> * dirt_dedx_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_dedx_counter_v = new std::vector<double>;
 	dirt_dedx_counter_v->resize(24, 0);
-	std::vector<int> * dirt_secondary_shower_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_secondary_shower_counter_v = new std::vector<double>;
 	dirt_secondary_shower_counter_v->resize(24, 0);
-	std::vector<int> * dirt_hit_lengthRatio_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_hit_lengthRatio_counter_v = new std::vector<double>;
 	dirt_hit_lengthRatio_counter_v->resize(24, 0);
-	std::vector<int> * dirt_hit_threshold_collection_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_hit_threshold_collection_counter_v = new std::vector<double>;
 	dirt_hit_threshold_collection_counter_v->resize(24, 0);
-	std::vector<int> * dirt_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_trk_len_shwr_len_ratio_counter_v = new std::vector<double>;
 	dirt_trk_len_shwr_len_ratio_counter_v->resize(24, 0);
-	std::vector<int> * dirt_track_containment_counter_v = new std::vector<int>;
+	std::vector<double> * dirt_track_containment_counter_v = new std::vector<double>;
 	dirt_track_containment_counter_v->resize(24, 0);
 
 	std::vector<std::pair<double, int> > * dirt_flash_time = new std::vector<std::pair<double, int> >;
@@ -1400,35 +1401,35 @@ void selection::make_selection( const char * _file1,
 	//***********************************
 //***********************************
 
-	std::vector<int> * intime_in_time_counter_v = new std::vector<int>;
+	std::vector<double> * intime_in_time_counter_v = new std::vector<double>;
 	intime_in_time_counter_v->resize(24, 0);
-	std::vector<int> * intime_pe_counter_v = new std::vector<int>;
+	std::vector<double> * intime_pe_counter_v = new std::vector<double>;
 	intime_pe_counter_v->resize(24, 0);
-	std::vector<int> * intime_reco_nue_counter_v = new std::vector<int>;
+	std::vector<double> * intime_reco_nue_counter_v = new std::vector<double>;
 	intime_reco_nue_counter_v->resize(24, 0);
-	std::vector<int> * intime_in_fv_counter_v = new std::vector<int>;
+	std::vector<double> * intime_in_fv_counter_v = new std::vector<double>;
 	intime_in_fv_counter_v->resize(24, 0);
-	std::vector<int> * intime_vtx_flash_counter_v = new std::vector<int>;
+	std::vector<double> * intime_vtx_flash_counter_v = new std::vector<double>;
 	intime_vtx_flash_counter_v->resize(24, 0);
-	std::vector<int> * intime_shwr_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * intime_shwr_tpco_counter_v = new std::vector<double>;
 	intime_shwr_tpco_counter_v->resize(24, 0);
-	std::vector<int> * intime_trk_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * intime_trk_tpco_counter_v = new std::vector<double>;
 	intime_trk_tpco_counter_v->resize(24, 0);
-	std::vector<int> * intime_hit_threshold_counter_v = new std::vector<int>;
+	std::vector<double> * intime_hit_threshold_counter_v = new std::vector<double>;
 	intime_hit_threshold_counter_v->resize(24, 0);
-	std::vector<int> * intime_open_angle_counter_v = new std::vector<int>;
+	std::vector<double> * intime_open_angle_counter_v = new std::vector<double>;
 	intime_open_angle_counter_v->resize(24, 0);
-	std::vector<int> * intime_dedx_counter_v = new std::vector<int>;
+	std::vector<double> * intime_dedx_counter_v = new std::vector<double>;
 	intime_dedx_counter_v->resize(24, 0);
-	std::vector<int> * intime_secondary_shower_counter_v = new std::vector<int>;
+	std::vector<double> * intime_secondary_shower_counter_v = new std::vector<double>;
 	intime_secondary_shower_counter_v->resize(24, 0);
-	std::vector<int> * intime_hit_lengthRatio_counter_v = new std::vector<int>;
+	std::vector<double> * intime_hit_lengthRatio_counter_v = new std::vector<double>;
 	intime_hit_lengthRatio_counter_v->resize(24, 0);
-	std::vector<int> * intime_hit_threshold_collection_counter_v = new std::vector<int>;
+	std::vector<double> * intime_hit_threshold_collection_counter_v = new std::vector<double>;
 	intime_hit_threshold_collection_counter_v->resize(24, 0);
-	std::vector<int> * intime_trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	std::vector<double> * intime_trk_len_shwr_len_ratio_counter_v = new std::vector<double>;
 	intime_trk_len_shwr_len_ratio_counter_v->resize(24, 0);
-	std::vector<int> * intime_track_containment_counter_v = new std::vector<int>;
+	std::vector<double> * intime_track_containment_counter_v = new std::vector<double>;
 	intime_track_containment_counter_v->resize(24, 0);
 
 	std::vector<std::pair<double, int> > * intime_flash_time = new std::vector<std::pair<double, int> >;
@@ -2001,35 +2002,35 @@ void selection::make_selection( const char * _file1,
 	}//end in-time cosmic running
 //*********************************************************
 //*********************************************************
-	std::vector<int> * in_time_counter_v = new std::vector<int>;
+	std::vector<double> * in_time_counter_v = new std::vector<double>;
 	in_time_counter_v->resize(24, 0);
-	std::vector<int> * pe_counter_v = new std::vector<int>;
+	std::vector<double> * pe_counter_v = new std::vector<double>;
 	pe_counter_v->resize(24, 0);
-	std::vector<int> * reco_nue_counter_v = new std::vector<int>;
+	std::vector<double> * reco_nue_counter_v = new std::vector<double>;
 	reco_nue_counter_v->resize(24, 0);
-	std::vector<int> * in_fv_counter_v = new std::vector<int>;
+	std::vector<double> * in_fv_counter_v = new std::vector<double>;
 	in_fv_counter_v->resize(24, 0);
-	std::vector<int> * vtx_flash_counter_v = new std::vector<int>;
+	std::vector<double> * vtx_flash_counter_v = new std::vector<double>;
 	vtx_flash_counter_v->resize(24, 0);
-	std::vector<int> * shwr_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * shwr_tpco_counter_v = new std::vector<double>;
 	shwr_tpco_counter_v->resize(24, 0);
-	std::vector<int> * trk_tpco_counter_v = new std::vector<int>;
+	std::vector<double> * trk_tpco_counter_v = new std::vector<double>;
 	trk_tpco_counter_v->resize(24, 0);
-	std::vector<int> * hit_threshold_counter_v = new std::vector<int>;
+	std::vector<double> * hit_threshold_counter_v = new std::vector<double>;
 	hit_threshold_counter_v->resize(24, 0);
-	std::vector<int> * open_angle_counter_v = new std::vector<int>;
+	std::vector<double> * open_angle_counter_v = new std::vector<double>;
 	open_angle_counter_v->resize(24, 0);
-	std::vector<int> * dedx_counter_v = new std::vector<int>;
+	std::vector<double> * dedx_counter_v = new std::vector<double>;
 	dedx_counter_v->resize(24, 0);
-	std::vector<int> * secondary_shower_counter_v = new std::vector<int>;
+	std::vector<double> * secondary_shower_counter_v = new std::vector<double>;
 	secondary_shower_counter_v->resize(24, 0);
-	std::vector<int> * hit_lengthRatio_counter_v = new std::vector<int>;
+	std::vector<double> * hit_lengthRatio_counter_v = new std::vector<double>;
 	hit_lengthRatio_counter_v->resize(24, 0);
-	std::vector<int> * hit_threshold_collection_counter_v = new std::vector<int>;
+	std::vector<double> * hit_threshold_collection_counter_v = new std::vector<double>;
 	hit_threshold_collection_counter_v->resize(24, 0);
-	std::vector<int> * trk_len_shwr_len_ratio_counter_v = new std::vector<int>;
+	std::vector<double> * trk_len_shwr_len_ratio_counter_v = new std::vector<double>;
 	trk_len_shwr_len_ratio_counter_v->resize(24, 0);
-	std::vector<int> * track_containment_counter_v = new std::vector<int>;
+	std::vector<double> * track_containment_counter_v = new std::vector<double>;
 	track_containment_counter_v->resize(24, 0);
 
 	std::vector<std::pair<double, int> > * flash_time = new std::vector<std::pair<double, int> >;
