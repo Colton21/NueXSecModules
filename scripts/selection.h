@@ -75,7 +75,7 @@ private:
 //the median offset before the beam window is approx: 9.6% - let's apply this as a unique
 //scaling factor
 //march 2018 - mostly resolved by dirt introduction -- keeping for comparisons
-const bool use_alt_scaling = true;
+const bool use_alt_scaling = false;
 //const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 
 
