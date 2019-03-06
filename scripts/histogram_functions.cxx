@@ -325,11 +325,12 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 {
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
-	histogram_1->GetXaxis()->SetTitle(x_axis_name);
-	histogram_1->GetYaxis()->SetTitle(y_axis_name);
-	histogram_1->SetTitle(title_1);
-	histogram_1->SetStats(kFALSE);
-	histogram_1->Draw("colz");
+	TH2 * histogram_1_clone = (TH2*)histogram_1->Clone("histogram_1_clone");
+	histogram_1_clone->GetXaxis()->SetTitle(x_axis_name);
+	histogram_1_clone->GetYaxis()->SetTitle(y_axis_name);
+	histogram_1_clone->SetTitle(title_1);
+	histogram_1_clone->SetStats(kFALSE);
+	histogram_1_clone->Draw("colz");
 
 	TCanvas * c2 = new TCanvas();
 	c2->cd();
@@ -339,16 +340,19 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 	histogram_2->SetStats(kFALSE);
 	histogram_2->Draw("colz");
 
-	histogram_1->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
-	                                      histogram_2->GetMaximum());//GetBinLowEdge(histogram_2->GetNbinsZ()+1));
-	std::cout << "\t" << histogram_2->GetZaxis()->GetBinLowEdge(1) << ", " << histogram_2->GetZaxis()->GetBinLowEdge(histogram_2->GetNbinsZ()+1) << std::endl;
+	histogram_1_clone->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
+	                                            histogram_2->GetMaximum());//GetBinLowEdge(histogram_2->GetNbinsZ()+1));
 	c1->cd();
-	histogram_1->Draw("colz");
+	histogram_1_clone->Draw("colz");
 	c2->cd();
 	histogram_2->Draw("colz");
 
 	c1->Print(print_name_1);
 	c2->Print(print_name_2);
+
+	delete histogram_1_clone;
+	delete c1;
+	delete c2;
 }
 
 void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3, TH1 * histogram_4,
@@ -724,6 +728,7 @@ void histogram_functions::Plot2DHistogramLogZ (TH2 * histogram, const char * tit
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);
 	c1->Print(print_name);
+	delete c1;
 }
 void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
                                            const char * draw_option, const int x_divisions, const int y_divisions)
@@ -738,6 +743,7 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);
 	c1->Print(print_name);
+	delete c1;
 }
 
 void histogram_functions::Plot2DHistogramOffSet (TH2 * histogram, const double label_offset, const double title_offset, const char * title,
@@ -1201,7 +1207,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 	double integral_data = h_data_clone->Integral();
 
-	if(area_norm)
+	if(area_norm && integral_data != 0)
 	{
 		double integral_mc_ext = h_nue_cc_clone->Integral() +
 		                         h_nue_cc_mixed_clone->Integral() +
@@ -1217,7 +1223,13 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 		TH1 * h_data_scaling_clone = (TH1*)h_data->Clone("h_data_scaling_clone");
 		h_data_scaling_clone->Add(h_intime_clone, -1);
-		const double integral_on_minus_off = h_data_scaling_clone->Integral();
+		double integral_on_minus_off = h_data_scaling_clone->Integral();
+		if(integral_on_minus_off == 0)
+		{
+			std::cout << "unable to area normalise" << std::endl;
+			integral_on_minus_off = 1;
+		}
+		delete h_data_scaling_clone;
 
 		h_nue_cc_clone->Scale(integral_on_minus_off / integral_mc_ext);
 		h_nue_cc_mixed_clone->Scale(integral_on_minus_off / integral_mc_ext);
@@ -1586,7 +1598,6 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	//h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	h_data->Sumw2();
 
 	// TH1 * h_nue_cc_clone        = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
 	// TH1 * h_nue_cc_mixed_clone  = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");

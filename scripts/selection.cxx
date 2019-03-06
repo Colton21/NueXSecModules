@@ -7491,7 +7491,6 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_intime, intime_scale_factor,
 	                                          h_dedx_cuts_data, data_scale_factor, h_dedx_cuts_dirt, dirt_scale_factor, "",
 	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data.pdf"));
-	std::cout << "hiya1" << std::endl;
 
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
@@ -7503,8 +7502,6 @@ void selection::make_selection( const char * _file1,
 		                                          h_dedx_cuts_data, data_scale_factor, h_dedx_cuts_dirt, dirt_scale_factor, "",
 		                                          "Collection Plane dE/dx [MeV/cm] (Scaled)", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scaled_data.pdf"));
 	}
-
-	std::cout << "hiya2" << std::endl;
 
 	// histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
 	//                                           h_dedx_cuts_nue_cc_out_fv,
@@ -7524,7 +7521,6 @@ void selection::make_selection( const char * _file1,
 	//                                           h_dedx_cuts_scale_2_data, data_scale_factor, h_dedx_cuts_scale_2_dirt, dirt_scale_factor, "",
 	//                                           "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_2_data.pdf"));
 
-	std::cout << "hiya2" << std::endl;
 
 	// histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
 	//                                           h_dedx_cuts_nue_cc_out_fv,
@@ -7545,8 +7541,6 @@ void selection::make_selection( const char * _file1,
 	//                                           "Collection Plane dE/dx [MeV/cm (Scaled)]", "",
 	//                                           Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_scale_3_scaled_data.pdf"));
 
-	std::cout << "hiya2" << std::endl;
-///////////
 	// histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
 	//                                           h_dedx_cuts_nue_cc_out_fv,
 	//                                           h_dedx_cuts_numu_cc, h_dedx_cuts_numu_cc_mixed,
@@ -7567,8 +7561,6 @@ void selection::make_selection( const char * _file1,
 	//                                           h_dedx_cuts_data_after, data_scale_factor, h_dedx_cuts_dirt_after, dirt_scale_factor, "",
 	//                                           "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data_after.pdf"));
 
-	std::cout << "hiya2" << std::endl;
-
 	histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc,  h_vtx_flash_nue_cc_mixed,
 	                                          h_vtx_flash_nue_cc_out_fv,
 	                                          h_vtx_flash_numu_cc, h_vtx_flash_numu_cc_mixed,
@@ -7578,7 +7570,6 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_data, data_scale_factor, h_vtx_flash_dirt, dirt_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data.pdf"));
-	std::cout << "hiya1" << std::endl;
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc,  h_vtx_flash_nue_cc_mixed,
 		                                          h_vtx_flash_nue_cc_out_fv,
@@ -7708,7 +7699,6 @@ void selection::make_selection( const char * _file1,
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_logy.pdf"));
 	}
 
-	std::cout << "hiya1" << std::endl;
 	int tracks_num_signals = 0;
 	int tracks_num_total = 0;
 	for(int i = 0; i < h_trk_vtx_dist_nue_cc->GetNbinsX() + 1; i++)
@@ -7779,7 +7769,6 @@ void selection::make_selection( const char * _file1,
 		                                          "Shower to Nue Candidate Vertex Distance [cm] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_shower_to_vtx_data_scaled_logy.pdf"));
 	}
-	std::cout << "hiya1" << std::endl;
 	histogram_functions::PlotSimpleStackData (h_shwr_vtx_dist_nue_cc_after,  h_shwr_vtx_dist_nue_cc_mixed_after,
 	                                          h_shwr_vtx_dist_nue_cc_out_fv_after,
 	                                          h_shwr_vtx_dist_numu_cc_after, h_shwr_vtx_dist_numu_cc_mixed_after,
