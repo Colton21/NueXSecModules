@@ -513,9 +513,16 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	c3b->cd();
 	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
 	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
-	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.5);
+	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.3);
+	h_flash_time_data_divide->GetYaxis()->SetTitleSize(17);
+	h_flash_time_data_divide->GetYaxis()->SetTitleOffset(4);
+	h_flash_time_data_divide->GetXaxis()->SetTitleSize(17);
+	h_flash_time_data_divide->GetXaxis()->SetTitleOffset(10);
+	h_flash_time_data_divide->SetTitleSize(17);
+	h_flash_time_data_divide->SetTitleOffset(10);
 	h_flash_time_data_divide->GetXaxis()->SetTitle("Flash Time [#mus]");
-	h_flash_time_data_divide->GetYaxis()->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
+	h_flash_time_data_divide->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
+	h_flash_time_data_divide->GetYaxis()->SetTitle("Ratio Flashes 1st Half / 2nd Half");
 	h_flash_time_data_divide->SetStats(kFALSE);
 	h_flash_time_data_divide->Sumw2();
 	h_flash_time_data_divide->SetTitle("");
@@ -1190,7 +1197,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 		                         h_nc_pi0_clone->Integral() +
 		                         h_other_mixed_clone->Integral() +
 		                         h_unmatched_clone->Integral() +
-		                         h_dirt_clone->Integral();                                                                        // +
+		                         h_dirt_clone->Integral(); // +
 		//h_intime_clone->Integral();
 
 		TH1 * h_data_scaling_clone = (TH1*)h_data->Clone("h_data_scaling_clone");
@@ -1430,8 +1437,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetTitleSize(16);
-	ratioPlot->GetYaxis()->SetTitleFont(45);
+	ratioPlot->GetYaxis()->SetTitleSize(17);
+	ratioPlot->GetYaxis()->SetTitleFont(46);
 	ratioPlot->GetYaxis()->SetTitleOffset(2);
 	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
@@ -1683,7 +1690,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	stack->Add(h_nc_pi0_rebin);
 	stack->Add(h_other_mixed_rebin);
 	stack->Add(h_unmatched_rebin);
-	stack->Add(h_dirt);
+	stack->Add(h_dirt_rebin);
 	stack->Add(h_intime_rebin);
 
 	const double y_maximum = std::max(h_data_rebin->GetMaximum(), stack->GetMaximum());
@@ -1694,25 +1701,29 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
 	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
 	stack->GetXaxis()->SetLabelOffset(10);
+	stack->GetYaxis()->SetTitleSize(17);
+	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetTitleOffset(4);
+
 	h_data_rebin->Draw("same PE");
 
 	TH1 * h_error_hist = (TH1*)h_nue_cc_rebin->Clone("h_error_hist");
-	h_error_hist->Add(h_nue_cc_mixed_rebin, 1);
+	h_error_hist->Add(h_nue_cc_mixed_rebin,  1);
 	h_error_hist->Add(h_nue_cc_out_fv_rebin, 1);
-	h_error_hist->Add(h_numu_cc_rebin, 1);
-	h_error_hist->Add(h_nc_pi0_rebin, 1);
-	h_error_hist->Add(h_nc_rebin, 1);
-	h_error_hist->Add(h_other_mixed_rebin, 1);
-	h_error_hist->Add(h_cosmic_rebin, 1);
-	h_error_hist->Add(h_unmatched_rebin, 1);
-	h_error_hist->Add(h_dirt_rebin, 1);
-	h_error_hist->Add(h_intime_rebin, 1);
+	h_error_hist->Add(h_numu_cc_rebin,       1);
+	h_error_hist->Add(h_nc_pi0_rebin,        1);
+	h_error_hist->Add(h_nc_rebin,            1);
+	h_error_hist->Add(h_other_mixed_rebin,   1);
+	h_error_hist->Add(h_cosmic_rebin,        1);
+	h_error_hist->Add(h_unmatched_rebin,     1);
+	h_error_hist->Add(h_dirt_rebin,          1);
+	h_error_hist->Add(h_intime_rebin,        1);
 
 	h_error_hist->SetFillColorAlpha(12, 0.15);
 	h_error_hist->Draw("e2 hist same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.73, 0.98, 0.98, 0.50);
+	TLegend * leg_stack = new TLegend(0.75, 0.98, 0.98, 0.50);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");
 	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
@@ -1741,7 +1752,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt->AddText(chi2_string.c_str());
 	pt->SetFillStyle(0);
 	pt->SetBorderSize(0);
-	pt->Draw();
+	//pt->Draw();
 
 	//num events
 	TPaveText * pt2 = new TPaveText(.13,.80,.46,1.06, "NBNDC");
@@ -1763,7 +1774,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt2->AddText(chi2_string2.c_str());
 	pt2->SetFillStyle(0);
 	pt2->SetBorderSize(0);
-	pt2->Draw();
+	//pt2->Draw();
 
 	//degrees of freedom
 	TPaveText * pt3 = new TPaveText(.60,.80,.73,.973, "NBNDC");
@@ -1774,7 +1785,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt3->AddText(ndf_string.c_str());
 	pt3->SetFillStyle(0);
 	pt3->SetBorderSize(0);
-	pt3->Draw();
+	//pt3->Draw();
 
 	//p value
 	//optional
@@ -1824,16 +1835,39 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	ratioPlot->GetXaxis()->SetTitleSize(15);
 	ratioPlot->GetXaxis()->SetTitleFont(43);
 
+	ratioPlot->GetYaxis()->SetNdivisions(4, 0, 0, kFALSE);
+
 	ratioPlot->Add(h_mc_ext_sum, -1);
 	ratioPlot->Divide(h_mc_ext_sum);
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetTitleSize(11);
-	ratioPlot->GetYaxis()->SetTitleFont(43);
+	ratioPlot->GetYaxis()->SetTitleSize(17);
+	ratioPlot->GetYaxis()->SetTitleFont(46);
 	ratioPlot->GetYaxis()->SetTitleOffset(2);
 	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
+
+	//now doing this stuff on the bottom pad
+
+	//x_min, y_min, x_max, y_max
+	//reduced chi2
+	TPaveText * pt_bottom = new TPaveText(.12, .80, .30, .96, "NBNDC");
+	std::ostringstream o_string_bottom;
+	o_string_bottom.precision(3);
+	o_string_bottom << std::fixed;
+	o_string_bottom << float(chi2.at(0) * chi2.at(3));
+	std::string convert_string_bottom = o_string_bottom.str();
+
+	std::ostringstream o_string3_bottom;
+	o_string3_bottom << int(chi2.at(3));
+	std::string convert_string3_bottom = o_string3_bottom.str();
+
+	std::string chi2_string_bottom = "#chi_{Stat}^{2}/DOF=(" + convert_string_bottom + "/" + convert_string3_bottom + ")";
+	pt_bottom->AddText(chi2_string_bottom.c_str());
+	pt_bottom->SetFillStyle(0);
+	pt_bottom->SetBorderSize(0);
+	pt_bottom->Draw();
 
 	c1->Print(print_name);
 

@@ -12,7 +12,7 @@ void selection::make_selection( const char * _file1,
                                 )
 {
 	std::cout << "File Path: " << _file1 << std::endl;
-	const bool _verbose = false;
+	const bool _verbose = true;
 	const bool _post_cuts_verbose = false;
 	gErrorIgnoreLevel = kWarning;
 

@@ -39,10 +39,10 @@ private:
 //extra factor is a temporary measure for counting triggers and POT in data
 
 //as of applying DQM and removing aNuMI running
-const double POT = 1.82027e+21;
+//const double POT = 1.82027e+21;
 //scale MC down by this factor (i.e. should be less than 1)
 // 2.369e+20 / 1.82027e+21 = 0.13
-const double data_scale_factor = 0.13;
+//const double data_scale_factor = 0.13;
 
 //scale EXT down by this factor
 //(26749613 (ext) * 0.2064 (prescale)) = 5,521,120.1232 - per Run weighted
@@ -61,7 +61,7 @@ const double data_scale_factor = 0.13;
 // with prescale values: 6,311,670.5
 // 6,180,310 / 6,311,670.5 = 0.97918
 
-const double intime_scale_factor = 0.97918;
+//const double intime_scale_factor = 0.97918;
 
 //if I look only at the 4 individual samples of the ext and calculate the scale
 //factors for a temporary check
@@ -74,14 +74,15 @@ const double intime_scale_factor = 0.97918;
 //currently (sept 2018), we're still seeing an offset between the off and on beam sampels
 //the median offset before the beam window is approx: 9.6% - let's apply this as a unique
 //scaling factor
+//march 2018 - mostly resolved by dirt introduction -- keeping for comparisons
 const bool use_alt_scaling = true;
-const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
+//const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 
 
 //dirt scaling
 //POT used for small sample: 1.55287e+19
 // scale factor is 2.369e+20 / 1.55287e+19 = 15.256
-const double dirt_scale_factor = 15.256;
+//const double dirt_scale_factor = 15.256;
 
 //these are for the flux calculations
 const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
@@ -100,7 +101,8 @@ const double genie_xsec_nue_bar = 2.24685e-39; //cm2
 //ratio of var POT / MC POT, as MC POT scaling happens when hist is stacked
 //MC POT: 1.82027e+21
 //DIC sample: 8.3951e+21, 4.612 = 1 / (0.216825)
-const double var_scale_factor = 0.216825;
+//DT_down : 7.85459e+21 --> 0.231746
+//const double var_scale_factor = 0.216825;
 
 // older values used
 // const double POT = 1.82027e21;
@@ -150,6 +152,23 @@ const double var_scale_factor = 0.216825;
 //
 // //tor101_wcut for summing 1,2,3,4 samdef manually = 1.0129e20
 // //const double data_scale_factor = 0.0556456;
+
+
+//*********************************************************************
+// most up to date values for scaling factors:
+//as of applying DQM and removing aNuMI running
+const double POT = 1.82949e+21;
+//scale MC down by this factor (i.e. should be less than 1)
+const double data_scale_factor = 0.12758;
+const double intime_scale_factor = 1.0154;
+const double dirt_scale_factor = 0.16411;
+//*******************************
+//variation scaling - changes based on the variation used
+
+const double var_scale_factor = 0.216825;
+//********
+const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
+//*********************************************************************
 
 
 const double theta_translation = 29.36 * (3.1415/180);
