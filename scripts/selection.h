@@ -76,6 +76,7 @@ private:
 //scaling factor
 //march 2018 - mostly resolved by dirt introduction -- keeping for comparisons
 const bool use_alt_scaling = false;
+const bool run_with_log = false;
 //const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 
 

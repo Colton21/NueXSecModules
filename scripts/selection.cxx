@@ -7591,16 +7591,18 @@ void selection::make_selection( const char * _file1,
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_scaled_data.pdf"));
 	}
 
-	histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc,  h_vtx_flash_nue_cc_mixed,
-	                                          h_vtx_flash_nue_cc_out_fv,
-	                                          h_vtx_flash_numu_cc, h_vtx_flash_numu_cc_mixed,
-	                                          h_vtx_flash_cosmic,  h_vtx_flash_nc,
-	                                          h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
-	                                          h_vtx_flash_unmatched, h_vtx_flash_intime, intime_scale_factor,
-	                                          h_vtx_flash_data, data_scale_factor, h_vtx_flash_dirt, dirt_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
-	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data_logy.pdf"));
+	if(run_with_log) {
+		histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc,  h_vtx_flash_nue_cc_mixed,
+		                                          h_vtx_flash_nue_cc_out_fv,
+		                                          h_vtx_flash_numu_cc, h_vtx_flash_numu_cc_mixed,
+		                                          h_vtx_flash_cosmic,  h_vtx_flash_nc,
+		                                          h_vtx_flash_nc_pi0,  h_vtx_flash_other_mixed,
+		                                          h_vtx_flash_unmatched, h_vtx_flash_intime, intime_scale_factor,
+		                                          h_vtx_flash_data, data_scale_factor, h_vtx_flash_dirt, dirt_scale_factor,
+		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
+		                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_data_logy.pdf"));
+	}
 
 	histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
 	                                          h_vtx_flash_upstream_nue_cc_out_fv,
@@ -7621,51 +7623,49 @@ void selection::make_selection( const char * _file1,
 	                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor, "",
 	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_data.pdf"));
+	if(run_with_log) {
+		histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
+		                                          h_vtx_flash_upstream_nue_cc_out_fv,
+		                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
+		                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
+		                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
+		                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, scaled_intime_scale_factor,
+		                                          h_vtx_flash_upstream_data, data_scale_factor, h_vtx_flash_upstream_dirt, dirt_scale_factor,
+		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
+		                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_scaled_data_logy.pdf"));
+		histogram_functions::PlotSimpleStackData (h_vtx_flash_downstream_nue_cc,  h_vtx_flash_downstream_nue_cc_mixed,
+		                                          h_vtx_flash_downstream_nue_cc_out_fv,
+		                                          h_vtx_flash_downstream_numu_cc, h_vtx_flash_downstream_numu_cc_mixed,
+		                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
+		                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
+		                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, scaled_intime_scale_factor,
+		                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor,
+		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
+		                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_scaled_data_logy.pdf"));
+		histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
+		                                          h_vtx_flash_upstream_nue_cc_out_fv,
+		                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
+		                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
+		                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
+		                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, intime_scale_factor,
+		                                          h_vtx_flash_upstream_data, data_scale_factor, h_vtx_flash_upstream_dirt, dirt_scale_factor,
+		                                          0.73, 0.98, 0.98, 0.50, true, true, "",
+		                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_area_norm_data_logy.pdf"));
 
-	histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
-	                                          h_vtx_flash_upstream_nue_cc_out_fv,
-	                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
-	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
-	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
-	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, scaled_intime_scale_factor,
-	                                          h_vtx_flash_upstream_data, data_scale_factor, h_vtx_flash_upstream_dirt, dirt_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
-	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_scaled_data_logy.pdf"));
-	std::cout << "hiya1" << std::endl;
-	histogram_functions::PlotSimpleStackData (h_vtx_flash_downstream_nue_cc,  h_vtx_flash_downstream_nue_cc_mixed,
-	                                          h_vtx_flash_downstream_nue_cc_out_fv,
-	                                          h_vtx_flash_downstream_numu_cc, h_vtx_flash_downstream_numu_cc_mixed,
-	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
-	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
-	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, scaled_intime_scale_factor,
-	                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
-	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_scaled_data_logy.pdf"));
-
-	histogram_functions::PlotSimpleStackData (h_vtx_flash_upstream_nue_cc,  h_vtx_flash_upstream_nue_cc_mixed,
-	                                          h_vtx_flash_upstream_nue_cc_out_fv,
-	                                          h_vtx_flash_upstream_numu_cc, h_vtx_flash_upstream_numu_cc_mixed,
-	                                          h_vtx_flash_upstream_cosmic,  h_vtx_flash_upstream_nc,
-	                                          h_vtx_flash_upstream_nc_pi0,  h_vtx_flash_upstream_other_mixed,
-	                                          h_vtx_flash_upstream_unmatched, h_vtx_flash_upstream_intime, intime_scale_factor,
-	                                          h_vtx_flash_upstream_data, data_scale_factor, h_vtx_flash_upstream_dirt, dirt_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, true, "",
-	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_upstream_area_norm_data_logy.pdf"));
-
-	histogram_functions::PlotSimpleStackData (h_vtx_flash_downstream_nue_cc,  h_vtx_flash_downstream_nue_cc_mixed,
-	                                          h_vtx_flash_downstream_nue_cc_out_fv,
-	                                          h_vtx_flash_downstream_numu_cc, h_vtx_flash_downstream_numu_cc_mixed,
-	                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
-	                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
-	                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, intime_scale_factor,
-	                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, true, "",
-	                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_area_norm_data_logy.pdf"));
-
+		histogram_functions::PlotSimpleStackData (h_vtx_flash_downstream_nue_cc,  h_vtx_flash_downstream_nue_cc_mixed,
+		                                          h_vtx_flash_downstream_nue_cc_out_fv,
+		                                          h_vtx_flash_downstream_numu_cc, h_vtx_flash_downstream_numu_cc_mixed,
+		                                          h_vtx_flash_downstream_cosmic,  h_vtx_flash_downstream_nc,
+		                                          h_vtx_flash_downstream_nc_pi0,  h_vtx_flash_downstream_other_mixed,
+		                                          h_vtx_flash_downstream_unmatched, h_vtx_flash_downstream_intime, intime_scale_factor,
+		                                          h_vtx_flash_downstream_data, data_scale_factor, h_vtx_flash_downstream_dirt, dirt_scale_factor,
+		                                          0.73, 0.98, 0.98, 0.50, true, true, "",
+		                                          "2D Distance From Largest Flash to Reco Nu Vtx [cm]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_vtx_to_flash_distance_downstream_area_norm_data_logy.pdf"));
+	}
 
 	histogram_functions::PlotSimpleStackData (h_vtx_flash_nue_cc_after,  h_vtx_flash_nue_cc_mixed_after,
 	                                          h_vtx_flash_nue_cc_out_fv_after,
@@ -7694,17 +7694,19 @@ void selection::make_selection( const char * _file1,
 	                                          h_trk_vtx_dist_data, data_scale_factor, h_trk_vtx_dist_dirt, dirt_scale_factor, "",
 	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data.pdf"));
-
-	histogram_functions::PlotSimpleStackData (h_trk_vtx_dist_nue_cc,  h_trk_vtx_dist_nue_cc_mixed,
-	                                          h_trk_vtx_dist_nue_cc_out_fv,
-	                                          h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_numu_cc_mixed,
-	                                          h_trk_vtx_dist_cosmic,  h_trk_vtx_dist_nc,
-	                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
-	                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, intime_scale_factor,
-	                                          h_trk_vtx_dist_data, data_scale_factor, h_trk_vtx_dist_dirt, dirt_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, false, "",
-	                                          "Track to Nue Candidate Vertex Distance [cm]", "",
-	                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_logy.pdf"));
+	if(run_with_log)
+	{
+		histogram_functions::PlotSimpleStackData (h_trk_vtx_dist_nue_cc,  h_trk_vtx_dist_nue_cc_mixed,
+		                                          h_trk_vtx_dist_nue_cc_out_fv,
+		                                          h_trk_vtx_dist_numu_cc, h_trk_vtx_dist_numu_cc_mixed,
+		                                          h_trk_vtx_dist_cosmic,  h_trk_vtx_dist_nc,
+		                                          h_trk_vtx_dist_nc_pi0,  h_trk_vtx_dist_other_mixed,
+		                                          h_trk_vtx_dist_unmatched, h_trk_vtx_dist_intime, intime_scale_factor,
+		                                          h_trk_vtx_dist_data, data_scale_factor, h_trk_vtx_dist_dirt, dirt_scale_factor,
+		                                          0.73, 0.98, 0.98, 0.50, true, false, "",
+		                                          "Track to Nue Candidate Vertex Distance [cm]", "",
+		                                          Form("%s%s", file_locate_prefix, "post_cuts_track_to_vtx_data_logy.pdf"));
+	}
 
 	std::cout << "hiya1" << std::endl;
 	int tracks_num_signals = 0;
