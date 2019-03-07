@@ -165,8 +165,25 @@ const double intime_scale_factor = 1.0154;
 const double dirt_scale_factor = 0.16411;
 //*******************************
 //variation scaling - changes based on the variation used
-
-const double var_scale_factor = 0.216825;
+const double var_scale_factor_CV           = 0.22135; //Central Value
+const double var_scale_factor_dataSCE      = 0.22111; //dataSCE
+const double var_scale_factor_LArG4        = 0.22323; //LArG4BugFix
+const double var_scale_factor_DLup         = 0.24185; //DLup
+const double var_scale_factor_DLdown       = 0.24171; //DLdown
+const double var_scale_factor_DTup         = 0.23514; //DTup
+const double var_scale_factor_DTdown       = 0.23292; //DTdown
+const double var_scale_factor_noiseAmpUp   = 0.21890; //noiseAmpUp
+const double var_scale_factor_noiseAmpDown = 0.21970; //noiseAmpDown
+const double var_scale_factor_withDIC      = 0.21792; //withDIC
+const double var_scale_factor_squeezeResp  = 0.22467; //squeezeResp
+const double var_scale_factor_stretchResp  = 0.25609; //stretchResp
+const double var_scale_factor_altDead      = 0.22575; //deadChannels
+const double var_scale_factor_altSat       = 0.27204; //saturatedChannels
+const double var_scale_factor_Birks        = 0.22068; //BirksRecomb
+const double var_scale_factor_TPCVis       = 0.29943; //EnhancedTPCVis
+const double var_scale_factor_UpPEnoise    = 0.23371; //UpPEnoise
+const double var_scale_factor_DownPEnoise  = 0.22100; //DownPEnoise
+const double var_scale_factor = var_scale_factor_dataSCE;
 //********
 const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 //*********************************************************************

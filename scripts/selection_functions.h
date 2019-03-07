@@ -216,6 +216,7 @@ static void XSecWork(double final_counter, double final_counter_nue_cc, double f
                      double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
                      double final_counter_other_mixed, double final_counter_intime,
                      double intime_scale_factor, double final_counter_data, double data_scale_factor,
+                     double final_counter_dirt, double dirt_scale_factor,
                      std::vector<double> fv_boundary_v, double flux_nue, double flux_nue_bar,
                      std::vector<double> selected_energy_vector, double genie_xsec_nue, double genie_xsec_nue_bar,
                      const int total_mc_entries_inFV_nue, const int total_mc_entries_inFV_nue_bar);

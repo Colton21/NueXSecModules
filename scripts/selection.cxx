@@ -2295,7 +2295,7 @@ void selection::make_selection( const char * _file1,
 		//if yes - all signal events are set to "filtered"
 		//else, run normally
 		bool true_signal_in_event = false;
-		if(mc_nu_id == 1 || mc_nu_id == 5 || mc_nu_id == 3 || mc_nu_id == 7) {true_signal_in_event = true; }
+		if(mc_nu_id == 1 || mc_nu_id == 5) {true_signal_in_event = true; }
 		if(detector_variations)  {_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0,
 			                                                                          tpco_classifier_v, true, true_signal_in_event); }
 		if(!detector_variations) {_functions_instance.selection_functions::FillTPCOClassV(tpc_object_container_v, true_in_tpc, has_pi0,
@@ -4593,7 +4593,7 @@ void selection::make_selection( const char * _file1,
 			std::cout << "===============================" << std::endl;
 			std::cout << "== Begin Variation Selection ==" << std::endl;
 			std::cout << "================================" << std::endl;
-
+			std::cout << "==== Scale Factor: " << var_scale_factor << " ==== " << std::endl;
 			//first we need to open the root files
 			//TFile * f_var = new TFile(_file5);
 			if(!f_var->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
@@ -4695,16 +4695,11 @@ void selection::make_selection( const char * _file1,
 
 				//now we apply the classifier to all TPC Objects in this event
 				std::vector<std::pair<std::string, int> > * tpco_classifier_v = new std::vector<std::pair<std::string, int> >;
-				//check if running with detector variations
-				//if yes - all signal events are set to "filtered"
-				//else, run normally
-				bool true_signal_in_event = false;
+
 				//for variation loop - always configure this false, so classifier runs
-				//if(mc_nu_id == 1 || mc_nu_id == 5 || mc_nu_id == 3 || mc_nu_id == 7) {true_signal_in_event = true; }
-				if(detector_variations) {_functions_instance.selection_functions::FillTPCOClassV(var_tpc_object_container_v, true_in_tpc, has_pi0,
-					                                                                         tpco_classifier_v, detector_variations, true_signal_in_event); }
-				if(!detector_variations) {_functions_instance.selection_functions::FillTPCOClassV(var_tpc_object_container_v, true_in_tpc, has_pi0,
-					                                                                          tpco_classifier_v, detector_variations, true_signal_in_event); }
+				bool true_signal_in_event = false;
+				_functions_instance.selection_functions::FillTPCOClassV(var_tpc_object_container_v, true_in_tpc, has_pi0,
+				                                                        tpco_classifier_v, detector_variations, true_signal_in_event);
 
 				//YZ Position of largest flash
 				std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
@@ -4746,13 +4741,14 @@ void selection::make_selection( const char * _file1,
 						h_ele_true_energy_phi->Fill(mc_ele_energy, mc_ele_phi * (180 / 3.1415), var_scale_factor);
 					}
 				}
+				//****** known missing var versions for dir *** ////
 				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 				{
 					h_nue_eng_eff_den->Fill(mc_nu_energy, var_scale_factor);
 					h_ele_eng_eff_den->Fill(mc_ele_energy, var_scale_factor);
-					h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x, var_scale_factor);
-					h_nue_vtx_y_eff_den->Fill(mc_nu_vtx_y, var_scale_factor);
-					h_nue_vtx_z_eff_den->Fill(mc_nu_vtx_z, var_scale_factor);
+					h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x_var, var_scale_factor);
+					h_nue_vtx_y_eff_den->Fill(mc_nu_vtx_y_var, var_scale_factor);
+					h_nue_vtx_z_eff_den->Fill(mc_nu_vtx_z_var, var_scale_factor);
 					h_nue_dir_x_eff_den->Fill(mc_nu_dir_x, var_scale_factor);
 					h_nue_dir_y_eff_den->Fill(mc_nu_dir_y, var_scale_factor);
 					h_nue_dir_z_eff_den->Fill(mc_nu_dir_z, var_scale_factor);
@@ -4784,14 +4780,14 @@ void selection::make_selection( const char * _file1,
 
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_no_cut, h_selected_ele_energy_no_cut,
 				                                                                   var_scale_factor);
 
 				_functions_instance.selection_functions::XYZPosition(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-				                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				                                                     mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                     h_any_pfp_xyz_nue_cc,
 				                                                     h_any_pfp_xyz_nue_cc_out_fv,
 				                                                     h_any_pfp_xyz_nue_cc_mixed,
@@ -4805,17 +4801,6 @@ void selection::make_selection( const char * _file1,
 				                                                     h_pfp_zy_vtx_nue_cc,
 				                                                     h_pfp_zy_vtx_all, xyz_near_mc, xyz_far_mc,
 				                                                     var_scale_factor);
-
-				//temporary location for the first teff
-				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
-				{
-					h_ele_eng_eff_num->Fill(mc_ele_energy, var_scale_factor);
-				}
-				if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
-				{
-					h_ele_eng_eff_intime->Fill(mc_ele_energy, var_scale_factor);
-				}
-
 
 				//***********************************************************
 				//this is where the pe optical cut takes effect
@@ -4840,7 +4825,7 @@ void selection::make_selection( const char * _file1,
 
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_reco_nue, h_selected_ele_energy_reco_nue,
@@ -4852,44 +4837,7 @@ void selection::make_selection( const char * _file1,
 					// _functions_instance.selection_functions::FillTrueRecoEnergy(var_tpc_object_container_v, dummy_passed_tpco, tpco_classifier_v, mc_ele_energy,
 					//                                                             h_mc_ele_e_0, h_reco_ele_e_0, h_mc_reco_ele_e_0);
 				}
-				if((mc_nu_id == 1 || mc_nu_id == 5) && detector_variations == false) {
-					if(true_in_tpc == true)
-					{
-						int pass = 0;
-						bool case_1 = false;
-						bool case_2 = false;
-						for(auto const passed_tpco_pair : * passed_tpco) {pass += passed_tpco_pair.first; }
-						if(pass > 0) {case_1 = true; } //lets more pass?
-						if(tabulated_origins->at(0) >= 1) {case_2 = true; } //lets less pass, not reflected in printed values
-						// if(case_1 && !case_2)
-						// {
-						//      std::cout << "mc_nu_id: " << mc_nu_id << std::endl;
-						//      int num_tpc_obj = 0;
-						//      for(const auto tpco_classifier : * tpco_classifier_v)
-						//      {
-						//              auto const tpc_obj = var_tpc_object_container_v->at(num_tpc_obj);
-						//
-						//              if(tpco_classifier.first != "cosmic")
-						//              {
-						//                      std::cout << '\t' << "classifier_id: " << tpco_classifier.first;
-						//                      std::cout << ", Mode: " << tpc_obj.Mode() << ", PFP_PDG: " << tpc_obj.PFParticlePdgCode();
-						//                      std::cout << ", CCNC: " << tpc_obj.CCNC() << ", HasMCPi0: " << tpc_obj.HasMCPi0() << std::endl;
-						//                      const int n_pfp = tpc_obj.NumPFParticles();
-						//                      for(int j = 0; j < n_pfp; j++)
-						//                      {
-						//                              auto const part = tpc_obj.GetParticle(j);
-						//                              //const int n_pfp_hits = part.NumPFPHits();
-						//                              const int mc_parent_pdg = part.MCParentPdg();
-						//                              const int pfp_pdg = part.PFParticlePdgCode();
-						//                              std::cout << '\t' << '\t' << "MC Parent PDG: " << mc_parent_pdg << ", PFP PDG: " << pfp_pdg << std::endl;
-						//                      }
-						//              }
-						//              num_tpc_obj++;
-						//      }
-						//      num_debug_events++;
-						// }
-					}
-				}
+
 				_functions_instance.selection_functions::PostCutsLeadingMomentum(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                                 h_ele_momentum_nue_cut_nue_cc,
 				                                                                 h_ele_momentum_nue_cut_nue_cc_out_fv,
@@ -4940,7 +4888,7 @@ void selection::make_selection( const char * _file1,
 
 				//** Testing flash vs neutrino interaction for origin **
 				_functions_instance.selection_functions::FlashTot0(largest_flash_v, mc_nu_time, mc_nu_id, tabulated_origins,
-				                                                   fv_boundary_v, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,h_flash_t0_diff, var_scale_factor);
+				                                                   fv_boundary_v, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var, h_flash_t0_diff, var_scale_factor);
 
 				//** Testing leading shower length vs hits **//
 				_functions_instance.selection_functions::ShowerLengthvsHits(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
@@ -5007,7 +4955,7 @@ void selection::make_selection( const char * _file1,
 				                                                        var_scale_factor);
 
 				_functions_instance.selection_functions::XYZPosition(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-				                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				                                                     mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                     h_ele_pfp_xyz_nue_cc,
 				                                                     h_ele_pfp_xyz_nue_cc_out_fv,
 				                                                     h_ele_pfp_xyz_nue_cc_mixed,
@@ -5048,7 +4996,7 @@ void selection::make_selection( const char * _file1,
 				_cuts_instance.selection_cuts::fiducial_volume_cut(var_tpc_object_container_v, fv_boundary_v, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_in_fv, h_selected_ele_energy_in_fv,
@@ -5227,7 +5175,7 @@ void selection::make_selection( const char * _file1,
 				_cuts_instance.selection_cuts::VtxNuDistance(var_tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins,  mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_shwr_vtx, h_selected_ele_energy_shwr_vtx,
@@ -5315,7 +5263,7 @@ void selection::make_selection( const char * _file1,
 				_cuts_instance.selection_cuts::VtxTrackNuDistance(var_tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_trk_vtx, h_selected_ele_energy_trk_vtx,
@@ -5448,7 +5396,7 @@ void selection::make_selection( const char * _file1,
 				_cuts_instance.selection_cuts::HitThreshold(var_tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_hit_threshold, h_selected_ele_energy_hit_threshold,
@@ -5793,7 +5741,7 @@ void selection::make_selection( const char * _file1,
 				_cuts_instance.selection_cuts::OpenAngleCut(var_tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_open_angle, h_selected_ele_energy_open_angle,
@@ -6043,7 +5991,7 @@ void selection::make_selection( const char * _file1,
 				_cuts_instance.selection_cuts::dEdxCut(var_tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 				_functions_instance.selection_functions::TabulateOrigins(var_tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 				_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v, var_scale_factor);
-				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                                   fv_boundary_v,
 				                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 				                                                                   h_selected_nu_energy_dedx, h_selected_ele_energy_dedx, var_scale_factor);
@@ -6497,7 +6445,7 @@ void selection::make_selection( const char * _file1,
 				                                                      var_scale_factor);
 
 				_functions_instance.selection_functions::XYZPosition(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-				                                                     mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
+				                                                     mc_nu_vtx_x_var, mc_nu_vtx_y_var, mc_nu_vtx_z_var,
 				                                                     h_any_pfp_xyz_last_nue_cc,
 				                                                     h_any_pfp_xyz_last_nue_cc_out_fv,
 				                                                     h_any_pfp_xyz_last_nue_cc_mixed,
@@ -6546,9 +6494,9 @@ void selection::make_selection( const char * _file1,
 						selected_energy_vector.push_back(mc_nu_energy);
 						h_nue_eng_eff_num->Fill(mc_nu_energy, var_scale_factor);
 						//h_ele_eng_eff_num->Fill(mc_ele_energy);
-						h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x, var_scale_factor);
-						h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y, var_scale_factor);
-						h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z, var_scale_factor);
+						h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x_var, var_scale_factor);
+						h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y_var, var_scale_factor);
+						h_nue_vtx_z_eff_num->Fill(mc_nu_vtx_z_var, var_scale_factor);
 						h_nue_dir_x_eff_num->Fill(mc_nu_dir_x, var_scale_factor);
 						h_nue_dir_y_eff_num->Fill(mc_nu_dir_y, var_scale_factor);
 						h_nue_dir_z_eff_num->Fill(mc_nu_dir_z, var_scale_factor);
@@ -7224,6 +7172,7 @@ void selection::make_selection( const char * _file1,
 	                              track_containment_counter_v->at(11), track_containment_counter_v->at(10), track_containment_counter_v->at(5),
 	                              track_containment_counter_v->at(6), intime_track_containment_counter_v->at(0),
 	                              intime_scale_factor, data_track_containment_counter_v->at(0), data_scale_factor,
+	                              dirt_track_containment_counter_v->at(0), dirt_scale_factor,
 	                              fv_boundary_v, flux_nue, flux_nue_bar, selected_energy_vector, genie_xsec_nue, genie_xsec_nue_bar,
 	                              total_mc_entries_inFV_nue, total_mc_entries_inFV_nue_bar);
 	//*************************************************************************************************************************

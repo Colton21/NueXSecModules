@@ -1314,8 +1314,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
 	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
 
-	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetTitleFont(44);
 	stack->GetYaxis()->SetTitleSize(17);
+	stack->GetYaxis()->SetTitleOffset(1.45);
 	stack->GetXaxis()->SetLabelOffset(10);
 	h_data_clone->Draw("same PE");
 
@@ -1464,9 +1465,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetTitleSize(17);
-	ratioPlot->GetYaxis()->SetTitleFont(46);
-	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->GetYaxis()->SetTitleSize(13);
+	ratioPlot->GetYaxis()->SetTitleFont(44);
+	ratioPlot->GetYaxis()->SetTitleOffset(1.5);
 	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
 
@@ -1728,9 +1729,9 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
 	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
 	stack->GetXaxis()->SetLabelOffset(10);
-	stack->GetYaxis()->SetTitleSize(17);
+	stack->GetYaxis()->SetTitleSize(16);
 	stack->GetYaxis()->SetTitleFont(46);
-	stack->GetYaxis()->SetTitleOffset(4);
+	stack->GetYaxis()->SetTitleOffset(1.45);
 
 	h_data_rebin->Draw("same PE");
 
@@ -1869,9 +1870,9 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetTitleSize(17);
-	ratioPlot->GetYaxis()->SetTitleFont(46);
-	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->GetYaxis()->SetTitleSize(13);
+	ratioPlot->GetYaxis()->SetTitleFont(44);
+	ratioPlot->GetYaxis()->SetTitleOffset(1.5);
 	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
 

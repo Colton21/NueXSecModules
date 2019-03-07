@@ -1342,6 +1342,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 	                              track_containment_counter_v->at(11), track_containment_counter_v->at(10), track_containment_counter_v->at(5),
 	                              track_containment_counter_v->at(6), intime_track_containment_counter_v->at(0),
 	                              intime_scale_factor, data_track_containment_counter_v->at(0), data_scale_factor,
+				      dirt_track_containment_counter_v->at(0), dirt_scale_factor,
 	                              fv_boundary_v, flux_nue, flux_nue_bar, selected_energy_vector, genie_xsec_nue, genie_xsec_nue_bar,
 	                              total_mc_entries_inFV_nue, total_mc_entries_inFV_nue_bar);
 	//*************************************************************************************************************************
