@@ -158,9 +158,9 @@ const double genie_xsec_nue_bar = 2.24685e-39; //cm2
 //*********************************************************************
 // most up to date values for scaling factors:
 //as of applying DQM and removing aNuMI running
-const double POT = 1.82949e+21;
+const double POT = 1.82027e+21; //v6 value - 1.82949e+21;
 //scale MC down by this factor (i.e. should be less than 1)
-const double data_scale_factor = 0.12758;
+const double data_scale_factor = 0.1301; // v6 value - 0.12758;
 const double intime_scale_factor = 1.0154;
 const double dirt_scale_factor = 0.16411;
 //*******************************
@@ -183,7 +183,7 @@ const double var_scale_factor_Birks        = 0.22068; //BirksRecomb
 const double var_scale_factor_TPCVis       = 0.29943; //EnhancedTPCVis
 const double var_scale_factor_UpPEnoise    = 0.23371; //UpPEnoise
 const double var_scale_factor_DownPEnoise  = 0.22100; //DownPEnoise
-const double var_scale_factor = var_scale_factor_dataSCE;
+const double var_scale_factor = var_scale_factor_DownPEnoise;
 //********
 const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 //*********************************************************************

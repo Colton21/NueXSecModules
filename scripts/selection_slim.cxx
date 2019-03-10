@@ -173,8 +173,10 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_data
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                       double, double, double, double, int> > * post_cuts_v_data
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                                     double, double, double, double, int> >;
 
 	//check if a 3rd input parameter was given - if not skip the loop for data
 	if(strcmp(_file3, "empty") != 0)
@@ -452,8 +454,10 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * tabulated_origins_dirt = new std::vector<int>;
 	tabulated_origins_dirt->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_dirt
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                       double, double, double, double, int> > * post_cuts_v_dirt
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                                     double, double, double, double, int> >;
 
 	if(strcmp(_file4, "empty") != 0)
 	{
@@ -711,8 +715,10 @@ void selection_slim::make_selection_slim( const char * _file1,
 	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
 	tabulated_origins_intime->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                       double, double, double, double, int> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                                     double, double, double, double, int> >;
 
 	if(strcmp(_file2, "empty") != 0)
 	{
@@ -1235,7 +1241,8 @@ void selection_slim::make_selection_slim( const char * _file1,
 		_functions_instance.selection_functions::TopologyEfficiency(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                            no_track, has_track, _1_shwr, _2_shwr, _3_shwr, _4_shwr);
 
-		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v);
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v,
+		                                                           mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 
 	}//end event loop
 
@@ -1342,14 +1349,16 @@ void selection_slim::make_selection_slim( const char * _file1,
 	                              track_containment_counter_v->at(11), track_containment_counter_v->at(10), track_containment_counter_v->at(5),
 	                              track_containment_counter_v->at(6), intime_track_containment_counter_v->at(0),
 	                              intime_scale_factor, data_track_containment_counter_v->at(0), data_scale_factor,
-				      dirt_track_containment_counter_v->at(0), dirt_scale_factor,
+	                              dirt_track_containment_counter_v->at(0), dirt_scale_factor,
 	                              fv_boundary_v, flux_nue, flux_nue_bar, selected_energy_vector, genie_xsec_nue, genie_xsec_nue_bar,
 	                              total_mc_entries_inFV_nue, total_mc_entries_inFV_nue_bar);
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 
-	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v, _post_cuts_verbose); }
-	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_data, _post_cuts_verbose); }
+	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v, _post_cuts_verbose,
+		                                                                                    "selected_events_for_truth_script.txt"); }
+	if(_post_cuts_verbose == true) {_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_data, _post_cuts_verbose,
+		                                                                                    "selected_events_for_truth_script_data.txt"); }
 
 	gErrorIgnoreLevel = kWarning;
 

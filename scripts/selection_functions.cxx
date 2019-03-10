@@ -446,7 +446,10 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
                                             std::vector<std::pair<int, std::string> > * passed_tpco,
                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                             std::vector<std::tuple<int, int, int, double, double, double,
-                                                                   std::string, std::string, int, int, double, double> > * post_cuts_v)
+                                                                   std::string, std::string, int, int, double, double,
+                                                                   double, double, double, double, int> > * post_cuts_v,
+                                            const double mc_nu_dir_x, const double mc_nu_dir_y, const double mc_nu_dir_z, const double mc_nu_energy,
+                                            const int mc_nu_id)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -472,16 +475,18 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		const double opening_angle = leading_shower.pfpOpenAngle();
 		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
 
-		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> my_tuple =
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+		           double, double, double, double, int> my_tuple =
 		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
-		                        opening_angle, shower_energy);
+		                        opening_angle, shower_energy, mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                             std::vector<std::pair<int, std::string> > * passed_tpco,
                                             std::vector<std::tuple<int, int, int, double, double, double,
-                                                                   std::string, std::string, int, int, double, double> > * post_cuts_v)
+                                                                   std::string, std::string, int, int, double, double,
+                                                                   double, double, double, double, int> > * post_cuts_v)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -521,21 +526,28 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		const double opening_angle = leading_shower.pfpOpenAngle();
 		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
 
-		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> my_tuple =
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+		           double, double, double, double, int> my_tuple =
 		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
-		                        opening_angle, shower_energy);
+		                        opening_angle, shower_energy, 0, 0, 0, 0, 0);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,
-                                                                    std::string, std::string, int, int, double, double> > * post_cuts_v, bool _post_cuts_verbose)
+                                                                    std::string, std::string, int, int, double, double,
+                                                                    double, double, double, double, int> > * post_cuts_v, bool _post_cuts_verbose,
+                                             std::string file_name)
 {
 	const int passed_events = post_cuts_v->size();
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 	std::cout << "Total Passed Events: " << passed_events << std::endl;
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+
+	std::ofstream selected_events;
+	selected_events.open(file_name);
+
 	for(auto const my_tuple: * post_cuts_v)
 	{
 		const int event_num = std::get<0>(my_tuple);
@@ -550,26 +562,42 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 		const int num_showers = std::get<9>(my_tuple);
 		const double opening_angle = std::get<10>(my_tuple);
 		const double shower_energy = std::get<11>(my_tuple);
-		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
-		std::cout << "Event Type     : " << event_type << std::endl;
-		std::cout << "Event Number   : " << event_num << std::endl;
-		std::cout << "Run Number     : " << run_num << std::endl;
-		std::cout << "SubRun Number  : " << sub_run_num << std::endl;
-		std::cout << "Num PFP Tracks : " << num_tracks << std::endl;
-		std::cout << "Num PFP Showers: " << num_showers << std::endl;
-		std::cout << "Pfp Vtx X      : " << pfp_vtx_x << std::endl;
-		std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
-		std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
-		std::cout << "Opening Angle  : " << opening_angle * (180 / 3.1415) << std::endl;
-		std::cout << "Leading Energy : " << shower_energy << std::endl;
-		std::cout << "TPCO Reason    : " << reason << std::endl;
-		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+
+		const double mc_nu_dir_x  = std::get<12>(my_tuple);
+		const double mc_nu_dir_y  = std::get<13>(my_tuple);
+		const double mc_nu_dir_z  = std::get<14>(my_tuple);
+		const double mc_nu_energy = std::get<15>(my_tuple);
+		const double mc_nu_id     = std::get<16>(my_tuple);
+		if(_post_cuts_verbose == true)
+		{
+			std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+			std::cout << "Event Type     : " << event_type << std::endl;
+			std::cout << "Event Number   : " << event_num << std::endl;
+			std::cout << "Run Number     : " << run_num << std::endl;
+			std::cout << "SubRun Number  : " << sub_run_num << std::endl;
+			std::cout << "Num PFP Tracks : " << num_tracks << std::endl;
+			std::cout << "Num PFP Showers: " << num_showers << std::endl;
+			std::cout << "Pfp Vtx X      : " << pfp_vtx_x << std::endl;
+			std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
+			std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
+			std::cout << "Opening Angle  : " << opening_angle * (180 / 3.1415) << std::endl;
+			std::cout << "Leading Energy : " << shower_energy << std::endl;
+			std::cout << "TPCO Reason    : " << reason << std::endl;
+			std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+		}
+		if(event_type != "unmatched" && event_type != "cosmic")
+		{
+			selected_events << event_num << ", " << event_type << ", " << mc_nu_id
+			                << ", " << mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
+		}
 	}
+	selected_events.close();
 	std::cout << "   * * * END * * *   " << std::endl;
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 }
 void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string,
-                                                                    std::string, int, int, double, double> > * post_cuts_v,
+                                                                    std::string, int, int, double, double,
+                                                                    double, double, double, double, int> > * post_cuts_v,
                                              bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
                                              TH1 * post_cuts_num_showers_purity_res,
                                              TH1 * post_cuts_num_showers_purity_dis,
@@ -1002,6 +1030,7 @@ void selection_functions::PrintTopologyPurity(std::vector<int> * no_track, std::
                                               std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr)
 {
 	std::cout << "---------------------" << std::endl;
+	std::cout << "-- In MC Only --" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
 	std::cout << "No Track Bkg   : " << no_track->at(1) << std::endl;
 	std::cout << "Purity         : " << double(no_track->at(0)) / double(no_track->at(0) + no_track->at(1)) << std::endl;
@@ -1082,7 +1111,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		if(part.Origin() == "kUnknown"  ) { part_unmatched++; }
 	}
 	//if running with the variation samples and signal event to be filtered
-	if(true_signal_in_event && do_variation_filter) {return std::make_pair("filtered", leading_index); }
+	if(true_signal_in_event && do_variation_filter && true_in_tpc) {return std::make_pair("filtered", leading_index); }
 	//some tpc objects actually have 0 hits - crazy!
 	if(tpc_obj.NumPFPHits() == 0) {return std::make_pair("bad_reco", 0); }
 
@@ -8063,7 +8092,8 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double,
-                                                                      std::string, std::string, int, int, double, double> > * post_cuts_v,
+                                                                      std::string, std::string, int, int, double, double,
+                                                                      double, double, double, double, int> > * post_cuts_v,
                                                bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
                                                const int total_mc_entries_inFV,
                                                TH2 * post_cuts_num_tracks_showers_purity_qe,
