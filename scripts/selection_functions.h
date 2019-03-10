@@ -33,8 +33,8 @@
 class selection_functions {
 
 private:
-const double dedx_scaling = (242.72 / 196.979);
-
+//const double dedx_scaling = (242.72 / 196.979);
+const double dedx_scaling = 1.0;
 public:
 
 selection_functions()=default;
@@ -173,18 +173,18 @@ void TabulateOrigins(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
                      std::vector<std::pair<std::string, int> > * tpco_classifier_v);
 //***************************************************************************
 //***************************************************************************
-void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins);
-void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins, const double scaling_val);
-void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins);
+void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins);
+void TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins, const double scaling_val);
+void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins);
 //***************************************************************************
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-static void PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int intime_counter,
+static void PrintInfo(int mc_nue_cc_counter, std::vector<double> * counter_v, int intime_counter,
                       double intime_scale_factor, double data_scale_factor, int dirt_counter, double dirt_scale_factor, std::string cut_name);
 //***************************************************************************
 //***************************************************************************
-static void ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics, int counter_dirt,
+static void ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics, int counter_dirt,
                                    double intime_scale_factor, double data_scale_factor, double dirt_scale_factor, std::string cut_name,
                                    std::vector<std::tuple< double, double, std::string> > * results_v);
 //***************************************************************************
@@ -216,6 +216,7 @@ static void XSecWork(double final_counter, double final_counter_nue_cc, double f
                      double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
                      double final_counter_other_mixed, double final_counter_intime,
                      double intime_scale_factor, double final_counter_data, double data_scale_factor,
+                     double final_counter_dirt, double dirt_scale_factor,
                      std::vector<double> fv_boundary_v, double flux_nue, double flux_nue_bar,
                      std::vector<double> selected_energy_vector, double genie_xsec_nue, double genie_xsec_nue_bar,
                      const int total_mc_entries_inFV_nue, const int total_mc_entries_inFV_nue_bar);

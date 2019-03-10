@@ -877,11 +877,11 @@ void selection_functions::TabulateOrigins(std::vector<xsecAna::TPCObjectContaine
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins)
+void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins)
 {
 	selection_functions::TotalOrigins(tabulated_origins, total_cut_origins, 1.0);
 }
-void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins, const double scaling_val)
+void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins, const double scaling_val)
 {
 	total_cut_origins->at(0)  = total_cut_origins->at(0)  + (tabulated_origins->at(0) * scaling_val);
 	total_cut_origins->at(1)  = total_cut_origins->at(1)  + (tabulated_origins->at(1) * scaling_val);
@@ -907,7 +907,7 @@ void selection_functions::TotalOrigins(std::vector<int> * tabulated_origins, std
 	total_cut_origins->at(22) = total_cut_origins->at(22) + (tabulated_origins->at(22) * scaling_val);
 	total_cut_origins->at(23) = total_cut_origins->at(23) + (tabulated_origins->at(23) * scaling_val);
 }
-void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<int> * total_cut_origins)
+void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<double> * total_cut_origins)
 {
 	total_cut_origins->at(0)  += tabulated_origins->at(0);
 }
@@ -915,7 +915,7 @@ void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origin
 //***************************************************************************
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
-void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics,
+void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics,
                                     double intime_scale_factor, double data_scale_factor,
                                     int counter_dirt, double dirt_scale_factor, std::string cut_name)
 {
@@ -980,7 +980,7 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<int> * co
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<int> * counter_v, int counter_intime_cosmics, int counter_dirt,
+void selection_functions::ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics, int counter_dirt,
                                                  double intime_scale_factor, double data_scale_factor, double dirt_scale_factor, std::string cut_name,
                                                  std::vector<std::tuple< double, double, std::string> > * results_v)
 {
@@ -1217,22 +1217,44 @@ void selection_functions::calcXSec(const bool is_data, double _x1, double _x2, d
 }
 //***************************************************************************
 //***************************************************************************
-void selection_functions::XSecWork(double final_counter, double final_counter_nue_cc, double final_counter_nue_bar_cc, double final_counter_nue_cc_mixed,
-                                   double final_counter_nue_cc_out_fv, double final_counter_cosmic, double final_counter_nc, double final_counter_numu_cc,
-                                   double final_counter_numu_cc_mixed, double final_counter_nc_pi0, double final_counter_unmatched,
-                                   double final_counter_other_mixed, double final_counter_intime,
-                                   double intime_scale_factor, double final_counter_data, double data_scale_factor,
-                                   std::vector<double> fv_boundary_v, double flux_nue, double flux_nue_bar,
-                                   std::vector<double> selected_energy_vector, double genie_xsec_nue, double genie_xsec_nue_bar,
-                                   const int total_mc_entries_inFV_nue, const int total_mc_entries_inFV_nue_bar)
+void selection_functions::XSecWork(
+        double final_counter,
+        double final_counter_nue_cc,
+        double final_counter_nue_bar_cc,
+        double final_counter_nue_cc_mixed,
+        double final_counter_nue_cc_out_fv,
+        double final_counter_cosmic,
+        double final_counter_nc,
+        double final_counter_numu_cc,
+        double final_counter_numu_cc_mixed,
+        double final_counter_nc_pi0,
+        double final_counter_unmatched,
+        double final_counter_other_mixed,
+        double final_counter_intime,
+        double intime_scale_factor,
+        double final_counter_data,
+        double data_scale_factor,
+        double final_counter_dirt,
+        double dirt_scale_factor,
+        std::vector<double> fv_boundary_v,
+        double flux_nue,
+        double flux_nue_bar,
+        std::vector<double> selected_energy_vector,
+        double genie_xsec_nue,
+        double genie_xsec_nue_bar,
+        const int total_mc_entries_inFV_nue,
+        const int total_mc_entries_inFV_nue_bar)
 {
 	std::vector<double> * xsec_cc = new std::vector<double>;
-	const int n_bkg_mc = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nc
-	                      + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_nc_pi0 +
-	                      final_counter_unmatched + final_counter_other_mixed);
-	int n_bkg_intime = final_counter_intime;
-	const double n_bkg = n_bkg_mc + double(n_bkg_intime * (intime_scale_factor / data_scale_factor));
-	const double n_bkg_data = double(n_bkg_mc * data_scale_factor) + double(n_bkg_intime * intime_scale_factor);
+	const double n_bkg_mc = (final_counter_nue_cc_mixed + final_counter_nue_cc_out_fv + final_counter_cosmic + final_counter_nc
+	                         + final_counter_numu_cc + final_counter_numu_cc_mixed + final_counter_nc_pi0 +
+	                         final_counter_unmatched + final_counter_other_mixed);
+	const double n_bkg_intime = final_counter_intime;
+	const double n_bkg_dirt = final_counter_dirt;
+	const double n_bkg = n_bkg_mc +
+	                     double(n_bkg_intime * (intime_scale_factor / data_scale_factor)) +
+	                     double(n_bkg_dirt * (dirt_scale_factor / data_scale_factor));
+	const double n_bkg_data = n_bkg_mc * data_scale_factor + n_bkg_intime * intime_scale_factor + n_bkg_dirt * dirt_scale_factor;
 
 	const double flux_data = (flux_nue + flux_nue_bar) * data_scale_factor;
 	const double total_mc_entries_inFV = (total_mc_entries_inFV_nue + total_mc_entries_inFV_nue_bar);

@@ -62,3 +62,4 @@ python/config.txt
 *.rootmap
 scripts/post_cut_v_dump.txt
 flux_ana/*.root
+scripts/custom_run_subrun_list_data.txt

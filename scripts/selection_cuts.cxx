@@ -18,6 +18,12 @@ bool selection_cuts::flash_pe(int flash_pe, int flash_pe_threshold)
 	}
 	return false;//false
 }
+// Driver function to sort the vector elements
+// by second element of pairs
+bool selection_cuts::sortbysec(const std::tuple<int,int,int> &a, const std::tuple<int,int,int> &b)
+{
+	return (std::get<0>(a) < std::get<0>(b));
+}
 //***************************************************************************
 void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_threshold, double flash_time_start,
                                   double flash_time_end, std::vector<int> * _passed_runs, std::vector<std::pair<double, int> > * flash_time, const int stream)
@@ -25,11 +31,13 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 
 	int fRun = 0;
+	int fSubrun = 0;
 	int fEvent = 0;
 	int fOpFlashPE = 0;
 	double fOpFlashTime = 0;
 
 	optical_tree->SetBranchAddress("Run",              &fRun);
+	optical_tree->SetBranchAddress("SubRun",           &fSubrun);
 	optical_tree->SetBranchAddress("Event",            &fEvent);
 	optical_tree->SetBranchAddress("OpFlashPE",        &fOpFlashPE);
 	optical_tree->SetBranchAddress("OpFlashTime",      &fOpFlashTime);
@@ -41,8 +49,10 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 
 	int current_event = 0;
 	int current_run = 0;
+	int current_subrun = 0;
 	int last_event = 0;
 	int last_run = 0;
+	int last_subrun = 0;
 
 	//contains the entry number for a given OpFlash per event
 	std::vector<int> optical_list_pe;
@@ -52,6 +62,8 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 
 	std::cout << "Optical Entries: " << optical_entries << std::endl;
 
+	//std::vector<std::tuple<int, int, int> > temp_v;
+
 	for(int i = 0; i < optical_entries; i++)
 	{
 		optical_tree->GetEntry(i);
@@ -59,6 +71,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		//this function here is meant to construct a vector mapping to which
 		//events successfully pass this cut
 		current_run = fRun;
+		current_subrun = fSubrun;
 		current_event = fEvent;
 		double op_flash_time = fOpFlashTime;
 
@@ -78,8 +91,15 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		//based on comparisons, shift is ~1 us
 		if(stream == 2) {op_flash_time = op_flash_time + 1.0; }
 
-		auto const pair = std::make_pair(op_flash_time, current_run);
-		flash_time->push_back(pair);
+		auto const my_pair = std::make_pair(op_flash_time, current_run);
+		flash_time->push_back(my_pair);
+		// auto const tuple = std::make_tuple(current_run, current_subrun, current_event);
+		// temp_v.push_back(tuple);
+
+		///////////////////
+		// Using sort() function to sort by 2nd element
+		// of pair
+		//std::sort(flash_time->begin(), flash_time->end(), sortbysec);
 
 		//new event
 		if(current_event != last_event)
@@ -99,10 +119,23 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 		}
 		last_event = current_event;
 		last_run = current_run;
+		last_subrun = current_subrun;
+
 		optical_list_pe_v.push_back(optical_list_pe);
 		optical_list_time_v.push_back(optical_list_time);
 	}
 	std::cout << "Optical List Vector Size: " << optical_list_pe_v.size() << std::endl;
+	//
+	// std::sort(temp_v.begin(), temp_v.end(), sortbysec);
+	// const int last_run = 0;
+	//
+	// for(auto const tuple : temp_v)
+	// {
+	//      const int run = std::get<0>(tuple);
+	//      const int subrun = std::get<1>(tuple);
+	//      const int event = std::get<2>(tuple);
+	//      //std::cout << "Run: " << run << " Subrun: " << subrun << " Event: " << event << std::endl;
+	// }
 
 	std::vector<int> optical_pass_list_v;
 	int opt_list_counter = 0;
@@ -360,7 +393,7 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 		// largest_flash_v.at(2) = current_event;
 		// largest_flash_v.at(3) = fOpFlashWidthZ;
 		largest_flash_v.at(4) = largest_flash_time;
-		largest_flash_v.at(5) = largest_flash;
+		largest_flash_v.at(5) = largest_flash; //PE
 		largest_flash_v_v->push_back(largest_flash_v);
 	}
 

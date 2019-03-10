@@ -251,8 +251,9 @@ ax0.fill_between(bin_flux_list, plotting_prod_nue_flux_xsec_list, 0,
 ax0.fill_between(a_bin_flux_list, plotting_prod_anue_flux_xsec_list,
                  0, facecolor='darkgray', alpha=0.2)
 
-ax0.set_xlabel('Neutrino Energy [GeV]')
-ax0.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ / GeV / 6e20 POT')
+
+ax0.set_xlabel('Neutrino Energy [GeV]', fontsize=18)
+ax0.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ / GeV / 6e20 POT', fontsize=18)
 
 ax0b = ax0.twinx()
 
@@ -260,7 +261,7 @@ line00a = ax0b.plot(x_arr_nue, y_arr_nue, 'goldenrod',
                     linewidth=2.4, label=r'GENIE $\nu_{e}$ Cross Section', linestyle=':')
 line00b = ax0b.plot(x_arr_anue, y_arr_anue, 'slategray',
                     linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
-ax0b.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
+ax0b.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
 
 lines0 = line0a + line0b + line00a + line00b
 labels0 = [l.get_label() for l in lines0]

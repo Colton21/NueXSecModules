@@ -325,11 +325,12 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 {
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
-	histogram_1->GetXaxis()->SetTitle(x_axis_name);
-	histogram_1->GetYaxis()->SetTitle(y_axis_name);
-	histogram_1->SetTitle(title_1);
-	histogram_1->SetStats(kFALSE);
-	histogram_1->Draw("colz");
+	TH2 * histogram_1_clone = (TH2*)histogram_1->Clone("histogram_1_clone");
+	histogram_1_clone->GetXaxis()->SetTitle(x_axis_name);
+	histogram_1_clone->GetYaxis()->SetTitle(y_axis_name);
+	histogram_1_clone->SetTitle(title_1);
+	histogram_1_clone->SetStats(kFALSE);
+	histogram_1_clone->Draw("colz");
 
 	TCanvas * c2 = new TCanvas();
 	c2->cd();
@@ -339,16 +340,19 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 	histogram_2->SetStats(kFALSE);
 	histogram_2->Draw("colz");
 
-	histogram_1->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
-	                                      histogram_2->GetMaximum());//GetBinLowEdge(histogram_2->GetNbinsZ()+1));
-	std::cout << "\t" << histogram_2->GetZaxis()->GetBinLowEdge(1) << ", " << histogram_2->GetZaxis()->GetBinLowEdge(histogram_2->GetNbinsZ()+1) << std::endl;
+	histogram_1_clone->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
+	                                            histogram_2->GetMaximum());//GetBinLowEdge(histogram_2->GetNbinsZ()+1));
 	c1->cd();
-	histogram_1->Draw("colz");
+	histogram_1_clone->Draw("colz");
 	c2->cd();
 	histogram_2->Draw("colz");
 
 	c1->Print(print_name_1);
 	c2->Print(print_name_2);
+
+	delete histogram_1_clone;
+	delete c1;
+	delete c2;
 }
 
 void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3, TH1 * histogram_4,
@@ -513,9 +517,16 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	c3b->cd();
 	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
 	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
-	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.5);
+	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.3);
+	h_flash_time_data_divide->GetYaxis()->SetTitleSize(17);
+	h_flash_time_data_divide->GetYaxis()->SetTitleOffset(4);
+	h_flash_time_data_divide->GetXaxis()->SetTitleSize(17);
+	h_flash_time_data_divide->GetXaxis()->SetTitleOffset(10);
+	h_flash_time_data_divide->SetTitleSize(17);
+	h_flash_time_data_divide->SetTitleOffset(10);
 	h_flash_time_data_divide->GetXaxis()->SetTitle("Flash Time [#mus]");
-	h_flash_time_data_divide->GetYaxis()->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
+	h_flash_time_data_divide->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
+	h_flash_time_data_divide->GetYaxis()->SetTitle("Ratio Flashes 1st Half / 2nd Half");
 	h_flash_time_data_divide->SetStats(kFALSE);
 	h_flash_time_data_divide->Sumw2();
 	h_flash_time_data_divide->SetTitle("");
@@ -717,6 +728,7 @@ void histogram_functions::Plot2DHistogramLogZ (TH2 * histogram, const char * tit
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);
 	c1->Print(print_name);
+	delete c1;
 }
 void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name,
                                            const char * draw_option, const int x_divisions, const int y_divisions)
@@ -731,6 +743,7 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);
 	c1->Print(print_name);
+	delete c1;
 }
 
 void histogram_functions::Plot2DHistogramOffSet (TH2 * histogram, const double label_offset, const double title_offset, const char * title,
@@ -917,6 +930,17 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	leg_stack->AddEntry(h_unmatched_ext,   "EXT",        "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
+
+	delete h_electron_clone;
+	delete h_proton_clone;
+	delete h_photon_clone;
+	delete h_pion_clone;
+	delete h_kaon_clone;
+	delete h_muon_clone;
+	delete h_neutron_clone;
+	delete h_unmatched_clone;
+	delete h_unmatched_ext_clone;
+	delete stack;
 }
 
 void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
@@ -948,19 +972,6 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	//h_numu_cc_mixed->SetFillColor(28);
 	h_other_mixed->SetFillColor(42);
 	h_unmatched->SetFillColor(12);
-	stack->Add(h_nue_cc);
-	stack->Add(h_nue_cc_mixed);
-	stack->Add(h_nue_cc_out_fv);
-	stack->Add(h_cosmic);
-	//h_numu_cc->Add(h_numu_cc_mixed, 1);
-	stack->Add(h_numu_cc);
-	//stack->Add(h_numu_cc_mixed);
-	stack->Add(h_nc);
-	stack->Add(h_nc_pi0);
-	stack->Add(h_other_mixed);
-	stack->Add(h_unmatched);
-	stack->Draw();
-	stack->GetXaxis()->SetTitle(x_axis_name);
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
@@ -977,6 +988,9 @@ void histogram_functions::PlotSimpleStack(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, 
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",        "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
+
+	delete c1;
+	delete stack;
 }
 void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                                 TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
@@ -1074,6 +1088,19 @@ void histogram_functions::PlotSimpleStackInTime(TH1 * h_nue_cc, TH1 * h_nue_cc_m
 	leg_stack->AddEntry(h_intime,          "InTime",        "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
+
+	delete h_nue_cc_clone;
+	delete h_nue_cc_mixed_clone;
+	delete h_nue_cc_out_fv_clone;
+	delete h_cosmic_clone;
+	delete h_numu_cc_clone;
+	delete h_nc_clone;
+	delete h_nc_pi0_clone;
+	delete h_other_mixed_clone;
+	delete h_unmatched_clone;
+	delete h_intime_clone;
+	delete stack;
+	delete c1;
 }
 void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                               TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
@@ -1151,6 +1178,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	TH1 * h_unmatched_clone     = (TH1*)h_unmatched->Clone("h_unmatched_clone");
 	TH1 * h_intime_clone        = (TH1*)h_intime->Clone("h_intime_clone");
 	TH1 * h_dirt_clone          = (TH1*)h_dirt->Clone("h_dirt_clone");
+	TH1 * h_data_clone          = (TH1*)h_data->Clone("h_data_clone");
 
 	h_nue_cc_clone->Sumw2();
 	h_nue_cc_mixed_clone->Sumw2();
@@ -1163,7 +1191,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_unmatched_clone->Sumw2();
 	h_intime_clone->Sumw2();
 	h_dirt_clone->Sumw2();
-	h_data->Sumw2();
+	h_data_clone->Sumw2();
 
 	h_nue_cc_clone->Scale(data_scale_factor);
 	h_nue_cc_mixed_clone->Scale(data_scale_factor);
@@ -1177,9 +1205,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_intime_clone->Scale(intime_scale_factor);
 	h_dirt_clone->Scale(dirt_scale_factor);
 
-	double integral_data = h_data->Integral();
+	double integral_data = h_data_clone->Integral();
 
-	if(area_norm)
+	if(area_norm && integral_data != 0)
 	{
 		double integral_mc_ext = h_nue_cc_clone->Integral() +
 		                         h_nue_cc_mixed_clone->Integral() +
@@ -1190,12 +1218,18 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 		                         h_nc_pi0_clone->Integral() +
 		                         h_other_mixed_clone->Integral() +
 		                         h_unmatched_clone->Integral() +
-		                         h_dirt_clone->Integral();                                                                        // +
+		                         h_dirt_clone->Integral(); // +
 		//h_intime_clone->Integral();
 
 		TH1 * h_data_scaling_clone = (TH1*)h_data->Clone("h_data_scaling_clone");
 		h_data_scaling_clone->Add(h_intime_clone, -1);
-		const double integral_on_minus_off = h_data_scaling_clone->Integral();
+		double integral_on_minus_off = h_data_scaling_clone->Integral();
+		if(integral_on_minus_off == 0)
+		{
+			std::cout << "unable to area normalise" << std::endl;
+			integral_on_minus_off = 1;
+		}
+		delete h_data_scaling_clone;
 
 		h_nue_cc_clone->Scale(integral_on_minus_off / integral_mc_ext);
 		h_nue_cc_mixed_clone->Scale(integral_on_minus_off / integral_mc_ext);
@@ -1230,7 +1264,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 		h_unmatched_clone->Scale(1. / integral_data);
 		h_intime_clone->Scale(1. / integral_data);
 		h_dirt_clone->Scale(1. / integral_data);
-		h_data->Scale(1. / integral_data);
+		h_data_clone->Scale(1. / integral_data);
 
 	}
 
@@ -1247,12 +1281,12 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	stack->Add(h_dirt_clone);
 	stack->Add(h_intime_clone);
 
-	const double y_maximum = std::max(h_data->GetMaximum(), stack->GetMaximum());
+	const double y_maximum = std::max(h_data_clone->GetMaximum(), stack->GetMaximum());
 	//stack->SetMaximum(y_maximum * y_scale_factor);
 
 	if(logy == true)
 	{
-		TH1 * h_scale_axes = (TH1*)h_data->Clone("h_scale_axes");
+		TH1 * h_scale_axes = (TH1*)h_data_clone->Clone("h_scale_axes");
 		//h_scale_axes->GetYaxis()->SetRangeUser(0.1, y_maximum * (y_scale_factor * 100));
 		if(h_nue_cc_clone->GetMinimum() != 0.0) {h_scale_axes->SetMinimum(h_nue_cc_clone->GetMinimum() / 2.); }
 		if(h_nue_cc_clone->GetMinimum() == 0.0) {h_scale_axes->SetMinimum(h_nue_cc_clone->GetMinimum() + 0.0001 / 2.); }
@@ -1280,10 +1314,11 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
 	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
 
-	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetTitleFont(44);
 	stack->GetYaxis()->SetTitleSize(17);
+	stack->GetYaxis()->SetTitleOffset(1.45);
 	stack->GetXaxis()->SetLabelOffset(10);
-	h_data->Draw("same PE");
+	h_data_clone->Draw("same PE");
 
 	TH1 * h_error_hist = (TH1*)h_nue_cc_clone->Clone("h_error_hist");
 	h_error_hist->Add(h_nue_cc_mixed_clone,  1);
@@ -1324,7 +1359,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	}
 
 	TH1 * h_last = (TH1*) stack->GetStack()->Last();
-	std::vector <double> chi2  = Chi2Calc(h_last, h_data, area_norm, integral_data);
+	std::vector <double> chi2  = Chi2Calc(h_last, h_data_clone, area_norm, integral_data);
 	//chi2 : chi2/ndf, mc+ext, data
 
 	//x_min, y_min, x_max, y_max
@@ -1390,7 +1425,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	if(p_value) {pt4->Draw(); }
 
 	bottomPad->cd();
-	TH1 * ratioPlot = (TH1*)h_data->Clone("ratioPlot");
+	TH1 * ratioPlot = (TH1*)h_data_clone->Clone("ratioPlot");
 	// ratioPlot->Add(h_nue_cc_clone,        -1);
 	// ratioPlot->Add(h_nue_cc_mixed_clone,  -1);
 	// ratioPlot->Add(h_nue_cc_out_fv_clone, -1);
@@ -1430,9 +1465,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetTitleSize(16);
-	ratioPlot->GetYaxis()->SetTitleFont(45);
-	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->GetYaxis()->SetTitleSize(13);
+	ratioPlot->GetYaxis()->SetTitleFont(44);
+	ratioPlot->GetYaxis()->SetTitleOffset(1.5);
 	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
 
@@ -1469,7 +1504,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	// pt3->SetBorderSize(0);
 	// pt3->Draw();
 
-
+	std::cout << print_name << std::endl;
 	c1->Print(print_name);
 
 	delete h_nue_cc_clone;
@@ -1483,21 +1518,22 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	delete h_unmatched_clone;
 	delete h_intime_clone;
 	delete h_dirt_clone;
+	delete h_data_clone;
+
+	delete stack;
+	delete leg_stack;
+	delete pt;
+	delete pt2;
+	delete pt3;
+	delete pt4;
+	delete pt_bottom;
 
 	delete h_error_hist;
-	delete h_last;
-
 	delete ratioPlot;
 	delete h_mc_ext_sum;
-
+	delete topPad;
+	delete bottomPad;
 	delete c1;
-	// delete topPad;
-	// delete bottomPad;
-
-	//delete stack;
-	//delete leg_stack;
-	// delete pt;
-
 }
 
 void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
@@ -1563,7 +1599,6 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	//h_data->Scale(data_scale_factor);
 	h_data->SetMarkerStyle(20);
 	h_data->SetMarkerSize(0.5);
-	h_data->Sumw2();
 
 	// TH1 * h_nue_cc_clone        = (TH1*)h_nue_cc->Clone("h_nue_cc_clone");
 	// TH1 * h_nue_cc_mixed_clone  = (TH1*)h_nue_cc_mixed->Clone("h_nue_cc_mixed_clone");
@@ -1683,7 +1718,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	stack->Add(h_nc_pi0_rebin);
 	stack->Add(h_other_mixed_rebin);
 	stack->Add(h_unmatched_rebin);
-	stack->Add(h_dirt);
+	stack->Add(h_dirt_rebin);
 	stack->Add(h_intime_rebin);
 
 	const double y_maximum = std::max(h_data_rebin->GetMaximum(), stack->GetMaximum());
@@ -1694,25 +1729,29 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
 	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
 	stack->GetXaxis()->SetLabelOffset(10);
+	stack->GetYaxis()->SetTitleSize(16);
+	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetTitleOffset(1.45);
+
 	h_data_rebin->Draw("same PE");
 
 	TH1 * h_error_hist = (TH1*)h_nue_cc_rebin->Clone("h_error_hist");
-	h_error_hist->Add(h_nue_cc_mixed_rebin, 1);
+	h_error_hist->Add(h_nue_cc_mixed_rebin,  1);
 	h_error_hist->Add(h_nue_cc_out_fv_rebin, 1);
-	h_error_hist->Add(h_numu_cc_rebin, 1);
-	h_error_hist->Add(h_nc_pi0_rebin, 1);
-	h_error_hist->Add(h_nc_rebin, 1);
-	h_error_hist->Add(h_other_mixed_rebin, 1);
-	h_error_hist->Add(h_cosmic_rebin, 1);
-	h_error_hist->Add(h_unmatched_rebin, 1);
-	h_error_hist->Add(h_dirt_rebin, 1);
-	h_error_hist->Add(h_intime_rebin, 1);
+	h_error_hist->Add(h_numu_cc_rebin,       1);
+	h_error_hist->Add(h_nc_pi0_rebin,        1);
+	h_error_hist->Add(h_nc_rebin,            1);
+	h_error_hist->Add(h_other_mixed_rebin,   1);
+	h_error_hist->Add(h_cosmic_rebin,        1);
+	h_error_hist->Add(h_unmatched_rebin,     1);
+	h_error_hist->Add(h_dirt_rebin,          1);
+	h_error_hist->Add(h_intime_rebin,        1);
 
 	h_error_hist->SetFillColorAlpha(12, 0.15);
 	h_error_hist->Draw("e2 hist same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.73, 0.98, 0.98, 0.50);
+	TLegend * leg_stack = new TLegend(0.75, 0.98, 0.98, 0.50);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");
 	leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
@@ -1741,7 +1780,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt->AddText(chi2_string.c_str());
 	pt->SetFillStyle(0);
 	pt->SetBorderSize(0);
-	pt->Draw();
+	//pt->Draw();
 
 	//num events
 	TPaveText * pt2 = new TPaveText(.13,.80,.46,1.06, "NBNDC");
@@ -1763,7 +1802,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt2->AddText(chi2_string2.c_str());
 	pt2->SetFillStyle(0);
 	pt2->SetBorderSize(0);
-	pt2->Draw();
+	//pt2->Draw();
 
 	//degrees of freedom
 	TPaveText * pt3 = new TPaveText(.60,.80,.73,.973, "NBNDC");
@@ -1774,7 +1813,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	pt3->AddText(ndf_string.c_str());
 	pt3->SetFillStyle(0);
 	pt3->SetBorderSize(0);
-	pt3->Draw();
+	//pt3->Draw();
 
 	//p value
 	//optional
@@ -1824,16 +1863,39 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	ratioPlot->GetXaxis()->SetTitleSize(15);
 	ratioPlot->GetXaxis()->SetTitleFont(43);
 
+	ratioPlot->GetYaxis()->SetNdivisions(4, 0, 0, kFALSE);
+
 	ratioPlot->Add(h_mc_ext_sum, -1);
 	ratioPlot->Divide(h_mc_ext_sum);
 	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetTitleSize(11);
-	ratioPlot->GetYaxis()->SetTitleFont(43);
-	ratioPlot->GetYaxis()->SetTitleOffset(2);
+	ratioPlot->GetYaxis()->SetTitleSize(13);
+	ratioPlot->GetYaxis()->SetTitleFont(44);
+	ratioPlot->GetYaxis()->SetTitleOffset(1.5);
 	ratioPlot->SetTitle(" ");
 	ratioPlot->Draw();
+
+	//now doing this stuff on the bottom pad
+
+	//x_min, y_min, x_max, y_max
+	//reduced chi2
+	TPaveText * pt_bottom = new TPaveText(.12, .80, .30, .96, "NBNDC");
+	std::ostringstream o_string_bottom;
+	o_string_bottom.precision(3);
+	o_string_bottom << std::fixed;
+	o_string_bottom << float(chi2.at(0) * chi2.at(3));
+	std::string convert_string_bottom = o_string_bottom.str();
+
+	std::ostringstream o_string3_bottom;
+	o_string3_bottom << int(chi2.at(3));
+	std::string convert_string3_bottom = o_string3_bottom.str();
+
+	std::string chi2_string_bottom = "#chi_{Stat}^{2}/DOF=(" + convert_string_bottom + "/" + convert_string3_bottom + ")";
+	pt_bottom->AddText(chi2_string_bottom.c_str());
+	pt_bottom->SetFillStyle(0);
+	pt_bottom->SetBorderSize(0);
+	pt_bottom->Draw();
 
 	c1->Print(print_name);
 
@@ -1848,6 +1910,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	delete h_unmatched_rebin;
 	delete h_intime_rebin;
 	delete h_dirt_rebin;
+	delete h_data_rebin;
 
 	delete h_error_hist;
 	delete h_last;
@@ -1856,6 +1919,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	delete h_mc_ext_sum;
 
 	delete c1;
+	delete pt_bottom;
 }
 
 void histogram_functions::PlotdEdxTheta(
@@ -1931,6 +1995,20 @@ void histogram_functions::PlotdEdxTheta(
 	h_division->Draw("colz");
 	c3->Print(print_name3);
 
+	delete h_nue_cc_clone;
+	delete h_nue_cc_mixed_clone;
+	delete h_nue_cc_out_fv_clone;
+	delete h_cosmic_clone;
+	delete h_numu_cc_clone;
+	delete h_nc_clone;
+	delete h_nc_pi0_clone;
+	delete h_other_mixed_clone;
+	delete h_unmatched_clone;
+	delete h_intime_clone;
+
+	delete c1;
+	delete c2;
+	delete c3;
 
 }
 void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
@@ -2033,6 +2111,9 @@ void histogram_functions::PlotDetailStack(TH1 * h_nue_cc_qe,
 	leg_track_stack_l1->AddEntry(h_unmatched,      "Unmatched", "f");
 	leg_track_stack_l1->Draw();
 	c1->Print(print_name);
+
+	delete stack;
+	delete c1;
 
 }
 
@@ -2419,6 +2500,10 @@ void histogram_functions::PurityStack(TH1 * h_qe, TH1 * h_res, TH1 * h_dis, TH1 
 	leg_stack->AddEntry(h_mec,         "MEC", "f");
 	leg_stack->Draw();
 	c1->Print(print_name);
+
+	delete stack;
+	delete c1;
+
 }
 void histogram_functions::OverlayScatter(TH2 * h_nue_cc, TH2 * h_nue_cc_mixed, TH2 * h_nue_cc_out_fv, TH2 * h_numu_cc,
                                          TH2 * h_numu_cc_mixed, TH2 * h_cosmic, TH2 * h_nc,
