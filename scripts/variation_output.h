@@ -61,7 +61,8 @@ class variation_output {
 	void GetNumber_Track_Shower(const int n_pfp, int n_tpc_obj,
 									 xsecAna::TPCObjectContainer tpc_obj, int &n_showers, int &n_tracks,
 									 int &n_pfp_50Hits, int &n_tracks_50Hits, int &n_showers_50Hits); // Utility function to get the number of tracks and showers
-	
+	double pfp_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, double tpc_vtx_z,
+                                       double pfp_vtx_x, double pfp_vtx_y, double pfp_vtx_z); // Calculates the pfp to nu vertex distance
 	// Flash Functions
 	std::vector<std::vector<double>> GetLargestFlashVector(TFile* f); 				// Function to resize opical entries to same size of events and get largest flash vector
 	bool flash_in_time(double flash_time, double flash_start, double flash_end); 	// Decides whether flash is in time or not
@@ -123,12 +124,14 @@ class variation_output {
 	TH1D* h_track_phi 				= new TH1D("h_track_phi", "h_track_phi",					 12 , -180 ,180);
 	TH1D* h_shower_phi 				= new TH1D("h_shower_phi", "h_shower_phi",					 12 , -180 ,180); // Shower Phi
 
+	TH1D* h_shower_Nu_vtx_Dist		= new TH1D("h_shower_Nu_vtx_Dist","h_shower_Nu_vtx_Dist",	 20, 0, 20);
+	TH1D* h_track_Nu_vtx_Dist		= new TH1D("h_track_Nu_vtx_Dist","h_track_Nu_vtx_Dist",	 	 20, 0, 20);
+
 	// Largest Flash
 	TH1D* h_largest_flash_y			= new TH1D("h_largest_flash_y", "h_largest_flash_y", 		60, -40, 40);
 	TH1D* h_largest_flash_z			= new TH1D("h_largest_flash_z", "h_largest_flash_z", 		125, 0, 1000);
 	TH1D* h_largest_flash_time		= new TH1D("h_largest_flash_time", "h_largest_flash_time",	50, 0, 20);
 	TH1D* h_largest_flash_pe		= new TH1D("h_largest_flash_pe", "h_largest_flash_pe", 		30, 0, 6000);
-
 	TH1D* h_Flash_TPCObj_Dist		= new TH1D("h_Flash_TPCObj_Dist", "h_Flash_TPCObj_Dist", 	50, 0, 200); // Largest flash to TPC OBj Vtx Dist
 	// ----------------------
 	//      Other

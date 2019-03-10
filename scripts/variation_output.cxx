@@ -81,6 +81,14 @@ void variation_output::GetNumber_Track_Shower(const int n_pfp, int n_tpc_obj,
 }
 //***************************************************************************
 //***************************************************************************
+double variation_output::pfp_vtx_distance(double tpc_vtx_x, double tpc_vtx_y, double tpc_vtx_z,
+                                       double pfp_vtx_x, double pfp_vtx_y, double pfp_vtx_z) {
+	const double distance = sqrt(pow((tpc_vtx_x - pfp_vtx_x), 2) + pow((tpc_vtx_y - pfp_vtx_y), 2) + pow((tpc_vtx_z - pfp_vtx_z), 2) );
+
+	return distance;
+}
+//***************************************************************************
+//***************************************************************************
 void variation_output::DrawTH1D(TH1D* h, double POT_Scaling){
 	TCanvas* c = new TCanvas();
 	c->cd();
@@ -202,8 +210,16 @@ void variation_output::DrawTH1D_SAME(TH1D* hist, std::string variation, TLegend*
 		// hist->GetYaxis()->SetRangeUser(0,1200);
 	}
 	else if (histname == "h_Flash_TPCObj_Dist"){
-		hist->SetTitle("; 2D Distance from Largest Flash to Reco #nu Vertex [cm];Entries");
+		hist->SetTitle("; 2D Distance from Largest Flash to #nu Vertex [cm];Entries");
 		// hist->GetYaxis()->SetRangeUser(0,1200);
+	}
+	else if (histname == "h_shower_Nu_vtx_Dist"){
+		hist->SetTitle("; 3D Distance of Shower to #nu Vertex [cm];Entries");
+		// hist->GetYaxis()->SetRangeUser(0,1200);
+	}
+	else if (histname == "h_track_Nu_vtx_Dist"){
+		hist->SetTitle("; 3D Distance of Track to #nu Vertex [cm];Entries");
+		hist->GetYaxis()->SetRangeUser(0,18000);
 	}
 	else return;
 
@@ -292,6 +308,41 @@ void variation_output::DrawTH1D_SAME(TH1D* hist, std::string variation, TLegend*
 		hist->SetLineColor(kOrange+1);
 		hist->SetLineWidth(2);
 		legend->AddEntry(hist, "DT Down", "l");
+		hist->SetLineStyle(1);
+		hist->Draw("hist,same");
+	}
+	else if  (variation == "DTup"){
+		hist->SetLineColor(kMagenta-10);
+		hist->SetLineWidth(2);
+		legend->AddEntry(hist, "DT Up", "l");
+		hist->SetLineStyle(1);
+		hist->Draw("hist,same");
+	}
+	else if  (variation == "DLup"){
+		hist->SetLineColor(kMagenta);
+		hist->SetLineWidth(2);
+		legend->AddEntry(hist, "DL Up", "l");
+		hist->SetLineStyle(1);
+		hist->Draw("hist,same");
+	}
+	else if  (variation == "DLdown"){
+		hist->SetLineColor(kTeal+6);
+		hist->SetLineWidth(2);
+		legend->AddEntry(hist, "DL Down", "l");
+		hist->SetLineStyle(1);
+		hist->Draw("hist,same");
+	}
+	else if  (variation == "dataSCE"){
+		hist->SetLineColor(kYellow);
+		hist->SetLineWidth(2);
+		legend->AddEntry(hist, "SCE", "l");
+		hist->SetLineStyle(1);
+		hist->Draw("hist,same");
+	}
+	else if  (variation == "LArG4BugFix"){
+		hist->SetLineColor(kSpring-7);
+		hist->SetLineWidth(2);
+		legend->AddEntry(hist, "LArG4BugFix", "l");
 		hist->SetLineStyle(1);
 		hist->Draw("hist,same");
 	}
@@ -393,7 +444,8 @@ void variation_output::PlotVariatons(TFile* f_var_out){
 										  "h_long_Track_ldg_shwr", "h_tpc_obj_vtx_x", "h_tpc_obj_vtx_y", "h_tpc_obj_vtx_z",
 										  "h_n_pfp", "h_n_pfp_50Hits", "h_n_tracks", "h_n_tracks_50Hits", "h_n_showers",
 										  "h_n_showers_50Hits", "h_track_phi", "h_shower_phi", "h_largest_flash_y", "h_largest_flash_z",
-										  "h_largest_flash_time", "h_largest_flash_pe", "h_Flash_TPCObj_Dist" };
+										  "h_largest_flash_time", "h_largest_flash_pe", "h_Flash_TPCObj_Dist",
+										  "h_shower_Nu_vtx_Dist", "h_track_Nu_vtx_Dist" };
 
 	// Loop over the histograms
 	for (int j=0; j < histnames.size(); j++){
@@ -732,6 +784,12 @@ void variation_output::run_var(const char * _file1, TString mode) {
 				
 				const double pff_length     = pfp_obj.pfpLength();
 				const double pfp_open_angle = pfp_obj.pfpOpenAngle();
+
+				const double pfp_vtx_x =  pfp_obj.pfpVtxX();
+				const double pfp_vtx_y =  pfp_obj.pfpVtxY();
+				const double pfp_vtx_z =  pfp_obj.pfpVtxZ();
+
+				const double pfp_Nu_vtx_Dist =  pfp_vtx_distance(tpc_obj_vtx_x, tpc_obj_vtx_y, tpc_obj_vtx_z, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z);
 				
 				// CC && BeamNu 
 				if( pfp_obj.CCNC() == 0 && mc_origin == "kBeamNeutrino") {
@@ -742,6 +800,8 @@ void variation_output::run_var(const char * _file1, TString mode) {
 
 						const double shower_phi = atan2(pfp_obj.pfpDirY(), pfp_obj.pfpDirX()) * 180 / 3.1415;
 						h_shower_phi->Fill(shower_phi);
+
+						h_shower_Nu_vtx_Dist->Fill(pfp_Nu_vtx_Dist);
 
 						//  ------------ Leading shower ------------
 						if (j == leading_shower_index){
@@ -772,6 +832,7 @@ void variation_output::run_var(const char * _file1, TString mode) {
 					if ( pfp_pdg == 13 && (mc_parent_pdg == 12 || mc_parent_pdg == -12) ) {
 						const double track_phi 	= atan2(pfp_obj.pfpDirY(), pfp_obj.pfpDirX()) * 180 / 3.1415;
 						h_track_phi->Fill(track_phi);
+						h_track_Nu_vtx_Dist->Fill(pfp_Nu_vtx_Dist);
 					}
 					
 				}     
@@ -845,6 +906,8 @@ void variation_output::run_var(const char * _file1, TString mode) {
 	DrawTH1D(h_largest_flash_time, POT_Scaling);
 	DrawTH1D(h_largest_flash_pe, POT_Scaling);
 	DrawTH1D(h_Flash_TPCObj_Dist, POT_Scaling);
+	DrawTH1D(h_shower_Nu_vtx_Dist, POT_Scaling);
+	DrawTH1D(h_track_Nu_vtx_Dist, POT_Scaling);
 
 	// ----------------------
 	//   Write and close
@@ -877,21 +940,10 @@ void variation_output::run_var(const char * _file1, TString mode) {
 	h_largest_flash_time->Write("", TObject::kOverwrite);
 	h_largest_flash_pe->Write("", TObject::kOverwrite);
 	h_Flash_TPCObj_Dist->Write("", TObject::kOverwrite);
+	h_shower_Nu_vtx_Dist->Write("", TObject::kOverwrite);
+	h_track_Nu_vtx_Dist->Write("", TObject::kOverwrite);
 	
 	f_var_out->Close(); 
 
 } // END MAIN
-
-
-// Selection cuts--
-// loop_flashes
-// SetXYflashVector(
-
-// largest_flash_v.at(0) = largest_center_y; const double flash_pe = largest_flash_v.at(0)...
-// largest_flash_v.at(1) = largest_center_z;
-// largest_flash_v.at(2) = current_event;
-// largest_flash_v.at(3) = fOpFlashWidthZ;
-// largest_flash_v.at(4) = largest_flash_time;
-// largest_flash_v.at(5) = largest_flash;
-
 

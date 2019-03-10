@@ -22,3 +22,35 @@ Total POT (Method 2): 8.26505e+21
 File: files/filter_squeezeResp.root
 Total POT (Method 1): 8.14288e+21
 Total POT (Method 2): 8.14288e+21
+File: files/filter_upPEnoise.root
+Total POT (Method 1): 7.82788e+21
+Total POT (Method 2): 7.82788e+21
+File: files/filter_noiseAmpDown.root
+Total POT (Method 1): 8.32739e+21
+Total POT (Method 2): 8.32739e+21
+File: files/filter_downPEnoise.root
+Total POT (Method 1): 8.2784e+21
+Total POT (Method 2): 8.2784e+21
+File: files/filter_noiseAmpUp.root
+Total POT (Method 1): 8.35778e+21
+Total POT (Method 2): 8.35778e+21
+File: files/filter_DTdown.root
+Total POT (Method 1): 7.85459e+21
+Total POT (Method 2): 7.85459e+21
+File: files/filter_DTup.root
+Total POT (Method 1): 7.78057e+21
+Total POT (Method 2): 7.78057e+21
+File: files/filter_DLup.root
+Total POT (Method 1): 7.56441e+21
+Total POT (Method 2): 7.56441e+21
+File: filesfilter_DLdown.root
+Could not open file!
+File: files/filter_DLdown.root
+Total POT (Method 1): 7.56908e+21
+Total POT (Method 2): 7.56908e+21
+File: files/filter_dataSCE.root
+Total POT (Method 1): 8.27396e+21
+Total POT (Method 2): 8.27396e+21
+File: files/filter_LArG4BugFix.root
+Total POT (Method 1): 8.19563e+21
+Total POT (Method 2): 8.19563e+21
