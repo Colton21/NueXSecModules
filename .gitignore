@@ -64,3 +64,6 @@ scripts/post_cut_v_dump.txt
 flux_ana/*.root
 scripts/selected_events_for_truth_script.txt
 scripts/custom_run_subrun_list_data.txt
+scripts/neutrino_in_tpc_list.txt
+scripts/selected_events_for_truth_script_data.txt
+scripts/selected_events_for_truth_script_dirt.txt

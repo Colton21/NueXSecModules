@@ -517,13 +517,13 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	c3b->cd();
 	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
 	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
-	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.3);
+	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.85, 1.3);
 	h_flash_time_data_divide->GetYaxis()->SetTitleSize(17);
-	h_flash_time_data_divide->GetYaxis()->SetTitleOffset(4);
+	h_flash_time_data_divide->GetYaxis()->SetTitleOffset(1.2);
 	h_flash_time_data_divide->GetXaxis()->SetTitleSize(17);
-	h_flash_time_data_divide->GetXaxis()->SetTitleOffset(10);
+	h_flash_time_data_divide->GetXaxis()->SetTitleOffset(1.2);
 	h_flash_time_data_divide->SetTitleSize(17);
-	h_flash_time_data_divide->SetTitleOffset(10);
+	h_flash_time_data_divide->SetTitleOffset(4);
 	h_flash_time_data_divide->GetXaxis()->SetTitle("Flash Time [#mus]");
 	h_flash_time_data_divide->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
 	h_flash_time_data_divide->GetYaxis()->SetTitle("Ratio Flashes 1st Half / 2nd Half");
@@ -536,10 +536,10 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	line->SetLineColor(46);
 	line->Draw("same");
 
-	TLegend * leg3b = new TLegend(0.7, 0.85, 0.98, 0.98);
-	leg3b->AddEntry(h_flash_time_data_divide, "NuMI Run 1 1st-Half / 2nd-Half", "l");
+	//TLegend * leg3b = new TLegend(0.7, 0.85, 0.98, 0.98);
+	//leg3b->AddEntry(h_flash_time_data_divide, "NuMI Run 1 1st-Half / 2nd-Half", "l");
 	//leg3b->SetTextFont(132);
-	leg3b->Draw();
+	//leg3b->Draw();
 
 	c3b->Print("../scripts/plots/flash_time_data_divide.pdf");
 

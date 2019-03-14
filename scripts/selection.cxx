@@ -70,6 +70,9 @@ void selection::make_selection( const char * _file1,
 	mctruth_counter_tree->SetBranchAddress("has_pi0", &has_pi0);
 	mctruth_counter_tree->SetBranchAddress("fMCNuTime", &mc_nu_time);
 
+	std::ofstream neutrino_in_tpc_list;
+	neutrino_in_tpc_list.open("neutrino_in_tpc_list.txt");
+
 	//configure the externally configurable cut parameters
 	std::cout << "\n --- Configuring Parameters --- \n" << std::endl;
 	_x1 = _config[0];
@@ -152,6 +155,13 @@ void selection::make_selection( const char * _file1,
 			if(true_in_tpc == true && (mc_nu_id == 5)) {total_mc_entries_inFV_nue_bar++; }
 			if(true_in_tpc == true && (mc_nu_id == 3)) {total_mc_entries_inFV_nue_nc++; }
 			if(true_in_tpc == true && (mc_nu_id == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
+
+			if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5))
+			{
+				//0 for event number (not in the tree), 0 for classifier id (not relevant at truth level)
+				neutrino_in_tpc_list << 0 << ", " << 0 << ", " << mc_nu_id << ", " <<
+				        mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
+			}
 		}
 
 		if(mc_nu_id == 2) {_mc_numu_cc_counter++; }
@@ -164,6 +174,7 @@ void selection::make_selection( const char * _file1,
 		if(true_in_tpc == true && (mc_nu_id == 6)) {total_mc_entries_inFV_numu_cc_bar++; }
 		if(true_in_tpc == true && (mc_nu_id == 8)) {total_mc_entries_inFV_numu_nc_bar++; }
 	}
+	neutrino_in_tpc_list.close();
 
 	std::vector<bool> true_in_tpc_var_v;
 	true_in_tpc_var_v.resize(total_mc_entries_var, false);
@@ -860,6 +871,13 @@ void selection::make_selection( const char * _file1,
 		TTree * dirt_tree   = (TTree*)dirt_f->Get("AnalyzeTPCO/tree");
 		TTree * dirt_optree = (TTree*)dirt_f->Get("AnalyzeTPCO/optical_tree");
 
+		TTree * mctruth_counter_tree_dirt = (TTree*)dirt_f->Get("AnalyzeTPCO/mctruth_counter_tree");
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuDirX",   &mc_nu_dir_x_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuDirY",   &mc_nu_dir_y_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuDirZ",   &mc_nu_dir_z_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuEnergy", &mc_nu_energy_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuID",     &mc_nu_id_dirt);
+
 		std::vector<xsecAna::TPCObjectContainer> * dirt_tpc_object_container_v = new std::vector<xsecAna::TPCObjectContainer>;
 		dirt_tree->SetBranchAddress("TpcObjectContainerV", &dirt_tpc_object_container_v);
 
@@ -913,6 +931,7 @@ void selection::make_selection( const char * _file1,
 				std::cout << "----------------------" << std::endl;
 			}
 			dirt_tree->GetEntry(event);
+			mctruth_counter_tree_dirt->GetEntry(event);
 
 			//writing the run and subrun values to a text file -
 			//this can be used as a cross-check for POT counting
@@ -1385,7 +1404,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::XYZPositionInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_any_pfp_xyz_last_dirt);
 
-			_functions_instance.selection_functions::FillPostCutVector(dirt_tpc_object_container_v, passed_tpco_dirt, post_cuts_v_dirt);
+			_functions_instance.selection_functions::FillPostCutVectorDirt(dirt_tpc_object_container_v, passed_tpco_dirt, post_cuts_v_dirt,
+			                                                               mc_nu_dir_x_dirt, mc_nu_dir_y_dirt, mc_nu_dir_z_dirt,
+			                                                               mc_nu_energy_dirt, mc_nu_id_dirt);
 			_functions_instance.selection_functions::LeadingThetaPhiInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_theta_phi_dirt);
 
 			_functions_instance.selection_functions::LeadingKinematicsShowerTopologyInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
@@ -7197,6 +7218,7 @@ void selection::make_selection( const char * _file1,
 	{
 		std::cout << "Print Post Cuts MC: " << std::endl;
 		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v,  _post_cuts_verbose, "selected_events_for_truth_script.txt");
+		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_dirt,  _post_cuts_verbose, "selected_events_for_truth_script_dirt.txt");
 		//filling a file with all of the run subrun and event numbers
 	}
 	if(_write_post_cuts == true)

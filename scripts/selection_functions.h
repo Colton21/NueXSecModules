@@ -153,6 +153,12 @@ void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        std::vector<std::pair<int, std::string> > * passed_tpco,
                        std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
                                               double, double, double, double, int> > * post_cuts_v);
+void FillPostCutVectorDirt(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco,
+                           std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int,
+                                                  double, double, double, double, double, double, int> > * post_cuts_v,
+                           const double mc_nu_dir_x, const double mc_nu_dir_y, const double mc_nu_dir_z, const double mc_nu_energy,
+                           const int mc_nu_id);
 //***************************************************************************
 //***************************************************************************
 void PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,

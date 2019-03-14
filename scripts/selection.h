@@ -274,6 +274,12 @@ double mc_nu_time = -1;
 int mc_nu_num_particles = 0;
 int mc_nu_num_charged_particles = 0;
 
+double mc_nu_dir_x_dirt = -999;
+double mc_nu_dir_y_dirt = -999;
+double mc_nu_dir_z_dirt = -999;
+double mc_nu_energy_dirt = -999;
+int mc_nu_id_dirt = -1;
+
 int run_sum = 0;
 int out_of_time_sum = 0;
 int low_pe_sum = 0;

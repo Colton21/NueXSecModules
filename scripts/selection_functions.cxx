@@ -534,6 +534,60 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 	}
 }
 //***************************************************************************
+void selection_functions::FillPostCutVectorDirt(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                std::vector<std::tuple<int, int, int, double, double, double,
+                                                                       std::string, std::string, int, int, double, double,
+                                                                       double, double, double, double, int> > * post_cuts_v,
+                                                const double mc_nu_dir_x, const double mc_nu_dir_y, const double mc_nu_dir_z, const double mc_nu_energy,
+                                                const int mc_nu_id)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		const std::string reason = passed_tpco->at(i).second; //this should always return passed
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double pfp_vtx_x = tpc_obj.pfpVtxX();
+		const double pfp_vtx_y = tpc_obj.pfpVtxY();
+		const double pfp_vtx_z = tpc_obj.pfpVtxZ();
+		const int run_num = tpc_obj.RunNumber();
+		const int sub_run_num = tpc_obj.SubRunNumber();
+		const int event_num = tpc_obj.EventNumber();
+		const int num_tracks = tpc_obj.NPfpTracks();
+		const int num_showers = tpc_obj.NPfpShowers();
+
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		std::string tpco_id = "Dirt";
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double opening_angle = leading_shower.pfpOpenAngle();
+		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
+
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+		           double, double, double, double, int> my_tuple =
+		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
+		                        opening_angle, shower_energy, mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
+		post_cuts_v->push_back(my_tuple);
+	}
+}
+//***************************************************************************
 //***************************************************************************
 void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,
                                                                     std::string, std::string, int, int, double, double,
@@ -585,11 +639,8 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 			std::cout << "TPCO Reason    : " << reason << std::endl;
 			std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 		}
-		if(event_type != "unmatched" && event_type != "cosmic")
-		{
-			selected_events << event_num << ", " << event_type << ", " << mc_nu_id
-			                << ", " << mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
-		}
+		selected_events << event_num << ", " << event_type << ", " << mc_nu_id
+		                << ", " << mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
 	}
 	selected_events.close();
 	std::cout << "   * * * END * * *   " << std::endl;
