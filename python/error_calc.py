@@ -184,27 +184,34 @@ plt.show()
 ##########
 # statistical uncertainty
 
-n_mc_bkg = 329.
+n_mc_bkg = 356.
 n_mc_dirt = 30.
 n_ext = 81.
-n_data = 203.
+n_data = 214.
 
 # statistical_error = np.sqrt((np.sqrt(n_data) / n_data)**2 + (np.sqrt(n_mc_dirt) /
 # n_mc_dirt)**2 + (np.sqrt(n_ext) / n_ext)**2 + (np.sqrt(n_mc_bkg) /
 # n_mc_bkg)**2)
 
 statistical_error = np.sqrt(
-    n_data + n_ext + n_mc_bkg * (0.1301)**2 + n_mc_dirt * (0.16411)**2)
+    n_data + n_ext * (1.0154)**2 + n_mc_bkg * (0.1301)**2 + n_mc_dirt * (0.16411)**2)
 
-print 'N_data ', n_data, ' sqrt(N_data) ', np.sqrt(n_data)
-print 'N_ext ', n_ext, ' sqrt(N_ext) ', np.sqrt(n_ext)
+print 'N_data ', n_data, ' sqrt(N_data) ', np.sqrt(n_data), ' sqrt(N_data) / N_data ', np.sqrt(n_data) / n_data
+print 'N_ext ', n_ext, ' sqrt(N_ext) ', np.sqrt(n_ext), ' sqrt(N_ext) / N_ext ', np.sqrt(n_ext) / n_ext
+print 'N_dirt ', n_mc_dirt, ' sqrt(N_dirt) ', np.sqrt(n_mc_dirt), ' sqrt(N_dirt) / N_dirt ', np.sqrt(n_mc_dirt) / n_mc_dirt
+print 'N_bkg ', n_mc_bkg, ' sqrt(N_bkg) ', np.sqrt(n_mc_bkg), ' sqrt(N_mc_bkg) / N_mc_bkg ', np.sqrt(n_mc_bkg) / n_mc_bkg
+print 'Total Sats Error (alt): ', np.sqrt((np.sqrt(n_data) / n_data)**2 +
+                                          (np.sqrt(n_ext) / n_ext)**2 +
+                                          (np.sqrt(n_mc_dirt) / n_mc_dirt)**2 +
+                                          (np.sqrt(n_mc_bkg) / n_mc_bkg)**2)
+print '--------------------------'
 print 'sum ', np.sqrt(n_data + n_ext)
 print 'N_mc_bkg ', n_mc_bkg, ' and N_mc_bkg * scaling^2: ', n_mc_bkg * (0.1301)**2
 print 'N_mc_dirt ', n_mc_dirt, ' and N_mc_dirt * scaling^2: ', n_mc_dirt * (0.16411)**2
 
 print 'Number of events error for N-B: ', statistical_error
 
-statistical_error = statistical_error * 100. / 73.026  # from N - B
+statistical_error = statistical_error * 100. / 80.51  # from N - B
 print 'Statistical Error: ', statistical_error, '%'
 
 # efficiency error
@@ -289,56 +296,48 @@ if(beam_shift_x_plus_1mm > beam_shift_x_minus_1mm):
 if(beam_shift_x_plus_1mm < beam_shift_x_minus_1mm):
     beam_shift_x_1mm = beam_shift_x_minus_1mm
 
-
-beam_spot_1_1mm = (0.0 - nominal) / nominal
-beam_spot_1_5mm = (0.0 - nominal) / nominal
-horns_water_0mm = (0.0 - nominal) / nominal
-horns_water_2mm = (0.0 - nominal) / nominal
-old_horn = (0.0 - nominal) / nominal
-horn_2ka = 0.
-horn1_x_3mm = 0.
-horn1_y_3mm = 0.
-horn2_x_3mm = 0.
-horn2_y_3mm = 0.
-beam_shift_x_1mm = 0.
-
 beamline_error = np.sqrt(beam_spot_1_1mm**2 + beam_spot_1_5mm**2 + horns_water_0mm**2 + horns_water_2mm**2 +
                          old_horn**2 + horn_2ka**2 + horn1_x_3mm**2 + horn1_y_3mm**2 +
                          horn2_x_3mm**2 + horn2_y_3mm**2 + beam_shift_x_1mm**2)
 
 print 'Beamline Variation Uncertainty: ', beamline_error, '%'
 
-detector_error_list = (round(beam_spot_1_1mm, 2), round(beam_spot_1_5mm, 2), round(horns_water_0mm, 2), round(horns_water_2mm, 2),
-                       round(old_horn, 2), round(horn_2ka, 2), round(
-                           horn1_x_3mm, 2), round(horn1_y_3mm, 2),
-                       round(horn2_x_3mm, 2), round(horn2_y_3mm, 2), round(beam_shift_x_1mm, 2), round(beamline_error, 2))
+beamline_error_list = (round(beam_spot_1_1mm, 2), round(beam_spot_1_5mm, 2), round(horns_water_0mm, 2), round(horns_water_2mm, 2),
+                       round(old_horn, 2),
+                       round(horn_2ka, 2),
+                       round(horn1_x_3mm, 2),
+                       round(horn1_y_3mm, 2),
+                       round(horn2_x_3mm, 2),
+                       round(horn2_y_3mm, 2),
+                       round(beam_shift_x_1mm, 2),
+                       round(beamline_error, 2))
 
-bin_list = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-labels = ("Beam Spot 1mm", "Beam Spot 5mm", "Longitudinal Diffusion", "Transverse Diffusion", "Wire Noise",
-          "PE Noise", "Induced Charge", "Squeeze Resp.", "Stretch Resp.", "Dead Channels",
-          "Saturated Channels", "TPC Vis. Up", "Birks Recombination", "Total")
+beamline_bin_list = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+beamline_labels = ("Beam Spot 1mm", "Beam Spot 5mm", "Horn Water 0mm", "Horn Water 2mm", "Old Horn",
+                   "Horn 2kA", "Horn1 X 3mm", "Horn1 Y 3mm", "Horn2 X 3mm", "Horn2 Y 3mm",
+                   "Beam Shift X 1mm", "Total")
 
-fig0, ax0 = plt.subplots()
+fig2, ax2 = plt.subplots()
 
-line0a = ax0.bar(bin_list, detector_error_list,
-                 color='darkslategray', width=0.9)
+line2a = ax2.bar(beamline_bin_list, beamline_error_list,
+                 color='darkgray', width=0.9)
 
-for i, v in enumerate(detector_error_list):
-    ax0.text(i + 1.2, v / detector_error_list[i] + 0.005, detector_error_list[i],
+for i, v in enumerate(beamline_error_list):
+    ax2.text(i + 1.2, v / beamline_error_list[i] + 0.005, beamline_error_list[i],
              fontsize=16, color='salmon')
 
-plt.xticks(np.arange(1.5, 15.5, step=1.0), labels,
+plt.xticks(np.arange(1.5, 12.5, step=1.0), labels,
            rotation=90, horizontalalignment='center', fontsize=18)
 
 
 # ax0.fill_between(bin_flux_list, plotting_prod_nue_flux_xsec_list, 0,
 # facecolor='darkgray', alpha=0.2)
 
-ax0.set_xlabel('Detector Variation', fontsize=20, horizontalalignment='center')
+ax0.set_xlabel('Beamline Variation', fontsize=20, horizontalalignment='center')
 ax0.set_ylabel(
     r'$\sigma_{var}$ - $\sigma_{CV}$ / $\sigma_{CV}$ [%]', fontsize=20)
 
-ax0.set_ylim(0, 14.0)
+ax0.set_ylim(0, 20.0)
 # plt.xlim(0.0, 4.0)
 # ax0.align_xlabels()  # same as fig.align_xlabels(); fig.align_ylabels()
 

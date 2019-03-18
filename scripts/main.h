@@ -94,7 +94,7 @@ const double tolerance_open_angle_max = 15;
 
 //tolerance for dedx of leading shower
 //Roberto uses: 1.4 - 3 MeV / cm
-//standard is: 0, 3.5
+//standard is: 1.4, 3
 const double tolerance_dedx_min = 1.4;
 const double tolerance_dedx_max = 3;
 

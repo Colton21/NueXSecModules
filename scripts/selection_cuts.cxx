@@ -784,7 +784,7 @@ void selection_cuts::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 }//end open angle cut
 //***************************************************************************
 void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v, std::vector<std::pair<int, std::string> > * passed_tpco,
-                             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose, const bool is_ext)
+                             const double tolerance_dedx_min, const double tolerance_dedx_max, const bool _verbose, const bool use_calibration)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -809,7 +809,7 @@ void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
-		if(is_data && !is_ext) {leading_dedx = leading_dedx * (242.72 / 196.979); }
+		if(use_calibration == true) {leading_dedx = leading_dedx * (196.979 /242.72); }
 		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min)
 		{
 			passed_tpco->at(i).first = 0;

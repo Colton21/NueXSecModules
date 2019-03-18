@@ -1241,7 +1241,7 @@ void selection::make_selection( const char * _file1,
                                                                                           h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
                                                                                           h_dedx_yz_ratio_cali_dirt, h_dedx_yz_ratio_omit_dirt, h_dedx_yz_ratio_omit_cali_dirt);
  */
-			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
 
@@ -1853,7 +1853,7 @@ void selection::make_selection( const char * _file1,
                                                                                           h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
                                                                                           h_dedx_yz_ratio_cali_intime, h_dedx_yz_ratio_omit_intime, h_dedx_yz_ratio_omit_cali_intime);
  */
-			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
 
@@ -3609,7 +3609,7 @@ void selection::make_selection( const char * _file1,
                                                                             h_dedx_yz_ratio_omit_cali_nue
                                                                             );
  */
-		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
+		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -9161,6 +9161,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_pfp_y_unmatched, h_ele_pfp_y_intime, intime_scale_factor,
 	                                         h_ele_pfp_y_data, data_scale_factor,
 	                                         h_ele_pfp_y_dirt, dirt_scale_factor,
+	                                         0.15, 0.40, 0.98, 0.50, false, false,
 	                                         "", "Reco Vertex Y [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_y_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_ele_pfp_z_nue_cc, h_ele_pfp_z_nue_cc_mixed,

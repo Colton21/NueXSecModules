@@ -57,7 +57,7 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72); //just the collection plane!
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
 			h_dedx_cuts_nue_cc->Fill(leading_dedx, var_scale_factor);
@@ -245,7 +245,7 @@ void selection_functions::PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjec
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		if(tpco_id == "filtered") {continue; }
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
 		bool good_id = false;
 		if(leading_mc_pdg == 11 || leading_mc_pdg == -11)
@@ -395,7 +395,7 @@ void selection_functions::PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCO
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		if(tpco_id == "filtered") {continue; }
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
 		const int leading_shower_hits = leading_shower.NumPFPHits();
 		const int leading_shower_collection_hits = leading_shower.NumPFPHitsW();
@@ -3797,7 +3797,7 @@ void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContaine
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		int leading_index   = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
@@ -6170,7 +6170,7 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		if(theta_translation != 0 && phi_translation != 0)
 		{
 			leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
@@ -6286,7 +6286,7 @@ void selection_functions::LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectCo
 		const double leading_shower_x = leading_shower.pfpDirX();
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
 		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
 		h_ele_cos_theta_intime->Fill(leading_shower_cos_theta);
@@ -7513,7 +7513,7 @@ void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> 
 		const double leading_shower_x = leading_shower.pfpDirX();
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
 
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
@@ -7629,7 +7629,7 @@ void selection_functions::LeadingThetaInTime(std::vector<xsecAna::TPCObjectConta
 		const double leading_shower_x = leading_shower.pfpDirX();
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
 
 		h_ele_pfp_theta_intime->Fill(leading_shower_theta);
@@ -10120,7 +10120,7 @@ void selection_functions::dEdxCollectionAngle(std::vector<xsecAna::TPCObjectCont
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_dir_y = leading_shower.pfpDirY();
 		const double leading_dir_z = leading_shower.pfpDirZ();
 		const double leading_angle_collection = atan2(leading_dir_y, leading_dir_z);
@@ -11272,7 +11272,7 @@ void selection_functions::PostCutsdedxThetaSlice(std::vector<xsecAna::TPCObjectC
 		std::string tpco_id     = tpco_classifier_v->at(i).first;
 		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_shower_z = leading_shower.pfpDirZ();
 		const double leading_shower_y = leading_shower.pfpDirY();
 		const double leading_shower_x = leading_shower.pfpDirX();
@@ -11494,7 +11494,7 @@ void selection_functions::dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * t
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
