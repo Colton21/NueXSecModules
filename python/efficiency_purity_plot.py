@@ -14,14 +14,14 @@ eff_pur_list = []
 # should be size 15
 # this is purity without Off-Beam
 
-eff_list_short = (0.5489, 0.38, 0.315, 0.261, 0.125, 0.087)
-pur_list_short = (0.00806, 0.0382, 0.0448, 0.1583, 0.3022, 0.3973)
+eff_list_short = (0.5489, 0.38, 0.315, 0.261, 0.132, 0.0903)
+pur_list_short = (0.00736, 0.03569, 0.0418, 0.1514, 0.2928, 0.3973)
 num_list_edit = (1, 2, 3, 4, 5, 6)
 
-pur_nu_only_list = (0.04270, 0.1257, 0.1488, 0.2927, 0.4986, 0.6530)
+pur_nu_only_list = (0.1225, 0.1612, 0.1943, 0.3253, 0.5142, 0.6978)
 
-cut_list_edit = (r'Reco $\nu_{e}$ in FV', r'Vertex to Flash', r'Shower/Track to $\nu$',
-                 r'Hit Thresholds', r'dE/dx', r'Track Contained')
+cut_list_edit = (r'Simple Pre-Cuts (1)', r'Flash-Matching (2)', r'Reco. Vertex Quality (3)',
+                 r'Shower Hit Threshold (4)', r'Electron-like Shower (5)', r'Finalisation Cuts (6)')
 
 # pur_nu_only_list = (0.00329, 0.00338, 0.0244, 0.0427, 0.1257, 0.1451,
 # 0.1488, 0.272, 0.2927, 0.3375, 0.4986, 0.5765, 0.6091, 0.6259, 0.6530)

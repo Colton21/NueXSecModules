@@ -265,6 +265,7 @@ horn1_y_3mm = 0.
 horn2_x_3mm = 0.
 horn2_y_3mm = 0.
 beam_shift_x_1mm = 0.
+beam_spot = 0.
 
 if(horn_plus_2ka > horn_minus_2ka):
     horn_2ka = horn_plus_2ka
@@ -296,13 +297,18 @@ if(beam_shift_x_plus_1mm > beam_shift_x_minus_1mm):
 if(beam_shift_x_plus_1mm < beam_shift_x_minus_1mm):
     beam_shift_x_1mm = beam_shift_x_minus_1mm
 
-beamline_error = np.sqrt(beam_spot_1_1mm**2 + beam_spot_1_5mm**2 + horns_water_0mm**2 + horns_water_2mm**2 +
+if(beam_spot_1_1mm > beam_spot_1_5mm):
+    beam_spot = beam_spot_1_1mm
+if(beam_spot_1_5mm < beam_spot_1_5mm):
+    beam_spot = beam_spot_1_5mm
+
+beamline_error = np.sqrt(beam_spot**2 + horns_water_0mm**2 + horns_water_2mm**2 +
                          old_horn**2 + horn_2ka**2 + horn1_x_3mm**2 + horn1_y_3mm**2 +
                          horn2_x_3mm**2 + horn2_y_3mm**2 + beam_shift_x_1mm**2)
 
 print 'Beamline Variation Uncertainty: ', beamline_error, '%'
 
-beamline_error_list = (round(beam_spot_1_1mm, 2), round(beam_spot_1_5mm, 2), round(horns_water_0mm, 2), round(horns_water_2mm, 2),
+beamline_error_list = (round(beam_spot, 2), round(horns_water_0mm, 2), round(horns_water_2mm, 2),
                        round(old_horn, 2),
                        round(horn_2ka, 2),
                        round(horn1_x_3mm, 2),
@@ -312,8 +318,8 @@ beamline_error_list = (round(beam_spot_1_1mm, 2), round(beam_spot_1_5mm, 2), rou
                        round(beam_shift_x_1mm, 2),
                        round(beamline_error, 2))
 
-beamline_bin_list = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
-beamline_labels = ("Beam Spot 1mm", "Beam Spot 5mm", "Horn Water 0mm", "Horn Water 2mm", "Old Horn",
+beamline_bin_list = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
+beamline_labels = ("Beam Spot", "Horn Water 0mm", "Horn Water 2mm", "Old Horn",
                    "Horn 2kA", "Horn1 X 3mm", "Horn1 Y 3mm", "Horn2 X 3mm", "Horn2 Y 3mm",
                    "Beam Shift X 1mm", "Total")
 
