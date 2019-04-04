@@ -6,7 +6,17 @@ void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_
 	TCanvas * c1 = new TCanvas();
 	c1->cd();
 
+	histogram->SetTitle(" ");
 	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetYaxis()->SetTitle("Entries");
+	histogram->SetStats(kFALSE);
+	histogram->GetYaxis()->SetTitleSize(18);
+	histogram->GetYaxis()->SetTitleFont(47);
+	histogram->GetYaxis()->SetTitleOffset(1.45);
+	histogram->GetXaxis()->SetTitleSize(18);
+	histogram->GetXaxis()->SetTitleFont(47);
+	histogram->GetXaxis()->SetTitleOffset(1.45);
+
 	histogram->Draw();
 
 	c1->Print(print_name);
@@ -50,24 +60,15 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->SetMarkerStyle(20);
 		teff->SetMarkerSize(0.5);
 		teff->Draw("AP");
-		//std::cout << "----------" << std::endl;
-		// for(int i = 1; i < h_num_clone_rebin->GetNbinsX()+1; i++)
-		// {
-		//      std::cout << "Bin: " << i << " Value: " << h_num_clone_rebin->GetBinContent(i) / h_den_clone_rebin->GetBinContent(i) << std::endl;
-		// }
-		// std::cout << "----------" << std::endl;
 
+		// teff->GetPaintedGraph()->GetXaxis()->SetTitleSize(18);
+		// teff->GetPaintedGraph()->GetXaxis()->SetTitleFont(46);
+		// teff->GetPaintedGraph()->GetYaxis()->SetTitleSize(18);
+		// teff->GetPaintedGraph()->GetYaxis()->SetTitleFont(46);
+		efficiency_c1->Update();
 	}
 	if(!rebin)
 	{
-		// std::cout << h_num_clone->GetNbinsX()<< ", " << h_den_clone->GetNbinsX() << std::endl;
-		// // num
-		// std::cout << "[";
-		// for (int i(0); i< h_num_clone->GetSize(); i++) {std::cout << h_num_clone->GetBinContent(i) << ", "; }
-		// std::cout << "]" << std::endl;
-		// std::cout << "[";
-		// for (int i(0); i< h_den_clone->GetSize(); i++) {std::cout << h_den_clone->GetBinContent(i) << ", "; }
-		// std::cout << "]" << std::endl;
 		TEfficiency * teff = new TEfficiency(*h_num_clone, *h_den_clone);
 		teff->SetTitle(title);
 		teff->SetLineColor(kGreen+3);
@@ -75,7 +76,14 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->SetMarkerStyle(20);
 		teff->SetMarkerSize(0.5);
 		teff->Draw("AP");
+
+		// teff->GetPaintedGraph()->GetXaxis()->SetTitleSize(18);
+		// teff->GetPaintedGraph()->GetXaxis()->SetTitleFont(46);
+		// teff->GetPaintedGraph()->GetYaxis()->SetTitleSize(18);
+		// teff->GetPaintedGraph()->GetYaxis()->SetTitleFont(46);
+		efficiency_c1->Update();
 	}
+
 	efficiency_c1->Print(print_name);
 	std::cout << "Print Name: " << print_name << std::endl;
 }
@@ -254,27 +262,26 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		// gPad->Update();
 		efficiency_c1->Update();
 		teff_in_fv->GetPaintedGraph()->GetYaxis()->SetRangeUser(0, 0.80);
-		teff_in_fv->GetPaintedGraph()->GetXaxis()->SetLabelSize(12);
+		//teff_in_fv->GetPaintedGraph()->GetXaxis()->SetLabelSize(12);
 		// teff->GetPaintedGraph()->GetXaxis()->SetLabelFont(45); // Absolute font size in pixel (precision 3)
 		// teff->GetPaintedGraph()->GetYaxis()->SetLabelSize(11);
 		// teff->GetPaintedGraph()->GetYaxis()->SetLabelFont(45); // Absolute font size in pixel (precision 3)
 		// teff->GetPaintedGraph()->GetXaxis()->SetTitleOffset(3.6);
-		teff_in_fv->GetPaintedGraph()->GetXaxis()->SetTitleSize(16);
+		teff_in_fv->GetPaintedGraph()->GetXaxis()->SetTitle("True Electron Energy [GeV]");
+		teff_in_fv->GetPaintedGraph()->GetXaxis()->SetTitleSize(18);
 		teff_in_fv->GetPaintedGraph()->GetXaxis()->SetTitleFont(46);
-
-		teff_in_fv->GetPaintedGraph()->GetYaxis()->SetTitleSize(16);
+		teff_in_fv->GetPaintedGraph()->GetYaxis()->SetTitle("Efficiency");
+		teff_in_fv->GetPaintedGraph()->GetYaxis()->SetTitleSize(18);
 		teff_in_fv->GetPaintedGraph()->GetYaxis()->SetTitleFont(46);
 		efficiency_c1->Update();
 
-		TLegend * leg1 = new TLegend(0.75, 0.98, 0.98, 0.60);
-		leg1->AddEntry(teff_in_fv,           "Reco #nu_{e} in Fid. Vol.", "l");
-		//leg1->AddEntry(teff_reco_nue,  "Reco #nu_{e} InFV",  "l");
-		leg1->AddEntry(teff_vtx_flash, "Vertex-Flash",      "l");
-		leg1->AddEntry(teff_trk_vtx,   "Shower/Track to #nu", "l");
-		//leg1->AddEntry(teff_hit,       "Hit",           "l");
-		leg1->AddEntry(teff_yhit,      "Hit Threshold",          "l");
-		leg1->AddEntry(teff_dedx,       "dE/dx",        "l");
-		leg1->AddEntry(teff_contain,    "Track Contain",   "l");
+		TLegend * leg1 = new TLegend(0.75, 0.98, 0.98, 0.55);
+		leg1->AddEntry(teff_in_fv,      "Simple Cuts    (1)", "l");
+		leg1->AddEntry(teff_vtx_flash,  "Flash Matching (2)", "l");
+		leg1->AddEntry(teff_trk_vtx,    "Reco. Quality  (3)", "l");
+		leg1->AddEntry(teff_yhit,       "Shower Hits    (4)", "l");
+		leg1->AddEntry(teff_dedx,       "Electron-like  (5)", "l");
+		leg1->AddEntry(teff_contain,    "Final          (6)", "l");
 		leg1->Draw();
 
 	}
@@ -314,6 +321,12 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	c1->cd();
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
+	histogram->GetYaxis()->SetTitleSize(18);
+	histogram->GetYaxis()->SetTitleFont(47);
+	histogram->GetYaxis()->SetTitleOffset(1.15);
+	histogram->GetXaxis()->SetTitleSize(18);
+	histogram->GetXaxis()->SetTitleFont(47);
+	histogram->GetXaxis()->SetTitleOffset(1.15);
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
 	histogram->Draw("colz");
@@ -339,6 +352,13 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 	histogram_2->SetTitle(title_2);
 	histogram_2->SetStats(kFALSE);
 	histogram_2->Draw("colz");
+
+	histogram_2->GetYaxis()->SetTitleSize(18);
+	histogram_2->GetYaxis()->SetTitleFont(47);
+	histogram_2->GetYaxis()->SetTitleOffset(1.15);
+	histogram_2->GetXaxis()->SetTitleSize(18);
+	histogram_2->GetXaxis()->SetTitleFont(47);
+	histogram_2->GetXaxis()->SetTitleOffset(1.15);
 
 	histogram_1_clone->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
 	                                            histogram_2->GetMaximum());//GetBinLowEdge(histogram_2->GetNbinsZ()+1));
@@ -367,14 +387,21 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	TH1 * h_3_clone = (TH1*)histogram_3->Clone("h_3_clone");
 	TH1 * h_4_clone = (TH1*)histogram_4->Clone("h_4_clone");
 
+	h_1_clone->SetStats(kFALSE);
+	h_2_clone->SetStats(kFALSE);
+	h_3_clone->SetStats(kFALSE);
+	h_4_clone->SetStats(kFALSE);
+
 	h_1_clone->Sumw2();
 	h_2_clone->Sumw2();
 	h_3_clone->Sumw2();
 	h_4_clone->Sumw2();
 
 	h_1_clone->SetFillColor(30);
-	h_2_clone->SetFillColor(9);
+	h_2_clone->SetFillColor(41);
+	h_2_clone->SetFillStyle(3345);
 	h_4_clone->SetFillColor(46);
+	h_4_clone->SetFillStyle(3354);
 
 	h_1_clone->Scale(data_scale_factor);
 	h_2_clone->Scale(intime_scale_factor);
@@ -403,7 +430,23 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	stack->Draw("hist");
 
 	stack->GetXaxis()->SetTitle(x_axis_name);
+	stack->GetYaxis()->SetTitle("Flashes");
 	stack->Draw("hist");
+
+	stack->GetYaxis()->SetTitleSize(18);
+	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetTitleOffset(1.45);
+	stack->GetXaxis()->SetTitleSize(18);
+	stack->GetXaxis()->SetTitleFont(46);
+	stack->GetXaxis()->SetTitleOffset(1.45);
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack = new TLegend(0.75, 0.75, 0.95, 0.95);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	leg_stack->AddEntry(h_1_clone,   "Beam Monte Carlo",  "f");
+	leg_stack->AddEntry(h_4_clone,   "Dirt Monte Carlo",  "f");
+	leg_stack->AddEntry(h_2_clone,   "NuMI EXT",          "f");
+	leg_stack->Draw();
 
 	//we want this before the off-beam is subtracted
 	h_3_clone_clone->Draw("same");
@@ -517,13 +560,11 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	c3b->cd();
 	TH1 * h_flash_time_data_divide = (TH1*)h_flash_time_data_first_half->Clone("h_flash_time_data_divide");
 	h_flash_time_data_divide->Divide(h_flash_time_data_second_half);
-	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.8, 1.3);
-	h_flash_time_data_divide->GetYaxis()->SetTitleSize(17);
-	h_flash_time_data_divide->GetYaxis()->SetTitleOffset(4);
-	h_flash_time_data_divide->GetXaxis()->SetTitleSize(17);
-	h_flash_time_data_divide->GetXaxis()->SetTitleOffset(10);
-	h_flash_time_data_divide->SetTitleSize(17);
-	h_flash_time_data_divide->SetTitleOffset(10);
+	h_flash_time_data_divide->GetYaxis()->SetRangeUser(0.85, 1.3);
+	h_flash_time_data_divide->GetYaxis()->SetTitleSize(18);
+	h_flash_time_data_divide->GetYaxis()->SetTitleOffset(1.2);
+	h_flash_time_data_divide->GetXaxis()->SetTitleSize(18);
+	h_flash_time_data_divide->GetXaxis()->SetTitleOffset(1.2);
 	h_flash_time_data_divide->GetXaxis()->SetTitle("Flash Time [#mus]");
 	h_flash_time_data_divide->SetTitle("NuMI Run 1 On-Beam First Half / Second Half");
 	h_flash_time_data_divide->GetYaxis()->SetTitle("Ratio Flashes 1st Half / 2nd Half");
@@ -536,10 +577,10 @@ void histogram_functions::TimingHistogramsOverlay(std::vector<std::pair<double, 
 	line->SetLineColor(46);
 	line->Draw("same");
 
-	TLegend * leg3b = new TLegend(0.7, 0.85, 0.98, 0.98);
-	leg3b->AddEntry(h_flash_time_data_divide, "NuMI Run 1 1st-Half / 2nd-Half", "l");
+	//TLegend * leg3b = new TLegend(0.7, 0.85, 0.98, 0.98);
+	//leg3b->AddEntry(h_flash_time_data_divide, "NuMI Run 1 1st-Half / 2nd-Half", "l");
 	//leg3b->SetTextFont(132);
-	leg3b->Draw();
+	//leg3b->Draw();
 
 	c3b->Print("../scripts/plots/flash_time_data_divide.pdf");
 
@@ -557,10 +598,11 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 	h_flash_data->SetStats(kFALSE);
 	h_flash_dirt->SetStats(kFALSE);
 
-	h_flash_mc->SetFillColor(49);
+	h_flash_mc->SetFillColor(30);
 	h_flash_intime->SetFillColor(41);
 	h_flash_intime->SetFillStyle(3345);
-	h_flash_dirt->SetFillColor(30);
+	h_flash_dirt->SetFillColor(49);
+	h_flash_dirt->SetFillStyle(3354);
 
 	TH1 * h_mc_clone       = (TH1*)h_flash_mc->Clone("h_mc_clone");
 	TH1 * h_intime_clone   = (TH1*)h_flash_intime->Clone("h_intime_clone");
@@ -587,7 +629,15 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 
 	stack->Draw("hist");
 	stack->GetXaxis()->SetTitle(x_axis_name);
+	stack->GetYaxis()->SetTitle("Flashes");
 	h_flash_data->Draw("same PE");
+
+	stack->GetYaxis()->SetTitleSize(18);
+	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetTitleOffset(1.45);
+	stack->GetXaxis()->SetTitleSize(18);
+	stack->GetXaxis()->SetTitleFont(46);
+	stack->GetXaxis()->SetTitleOffset(1.45);
 
 	TH1 * h_error_hist = (TH1*)h_mc_clone->Clone("h_error_hist");
 	h_error_hist->Add(h_intime_clone, 1);
@@ -596,11 +646,12 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 	h_error_hist->SetFillColorAlpha(12, 0.15);
 	h_error_hist->Draw("e2 hist same");
 
-	TLegend * leg_stack = new TLegend(0.85,0.85,0.95,0.95);
+	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
 	leg_stack->AddEntry(h_flash_mc,      "MC",   "f");
 	leg_stack->AddEntry(h_flash_intime,  "EXT",  "f");
 	leg_stack->AddEntry(h_flash_dirt,    "Dirt", "f");
 	leg_stack->Draw();
+
 	c1->Print(print_name);
 
 }
@@ -711,6 +762,12 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	c1->cd();
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
+	histogram->GetYaxis()->SetTitleSize(18);
+	histogram->GetYaxis()->SetTitleFont(47);
+	histogram->GetYaxis()->SetTitleOffset(1.15);
+	histogram->GetXaxis()->SetTitleSize(18);
+	histogram->GetXaxis()->SetTitleFont(47);
+	histogram->GetXaxis()->SetTitleOffset(1.15);
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);
@@ -739,6 +796,15 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->GetXaxis()->SetNdivisions(x_divisions);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
 	histogram->GetYaxis()->SetNdivisions(y_divisions);
+	histogram->GetYaxis()->SetTitleSize(18);
+	histogram->GetYaxis()->SetTitleFont(47);
+	histogram->GetYaxis()->SetTitleOffset(1.15);
+	histogram->GetXaxis()->SetTitleSize(18);
+	histogram->GetXaxis()->SetTitleFont(47);
+	histogram->GetXaxis()->SetTitleOffset(1.15);
+	histogram->GetXaxis()->CenterLabels(1);
+	histogram->GetYaxis()->CenterLabels(1);
+	histogram->SetMarkerSize(2);
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
 	histogram->Draw(draw_option);

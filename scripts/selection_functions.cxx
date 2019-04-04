@@ -57,7 +57,7 @@ void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> 
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72); //just the collection plane!
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
 			h_dedx_cuts_nue_cc->Fill(leading_dedx, var_scale_factor);
@@ -245,7 +245,7 @@ void selection_functions::PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjec
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		if(tpco_id == "filtered") {continue; }
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
 		bool good_id = false;
 		if(leading_mc_pdg == 11 || leading_mc_pdg == -11)
@@ -395,7 +395,7 @@ void selection_functions::PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCO
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		if(tpco_id == "filtered") {continue; }
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_mc_pdg = leading_shower.MCPdgCode();
 		const int leading_shower_hits = leading_shower.NumPFPHits();
 		const int leading_shower_collection_hits = leading_shower.NumPFPHitsW();
@@ -446,7 +446,10 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
                                             std::vector<std::pair<int, std::string> > * passed_tpco,
                                             std::vector<std::pair<std::string, int> > * tpco_classifier_v,
                                             std::vector<std::tuple<int, int, int, double, double, double,
-                                                                   std::string, std::string, int, int, double, double> > * post_cuts_v)
+                                                                   std::string, std::string, int, int, double, double,
+                                                                   double, double, double, double, int> > * post_cuts_v,
+                                            const double mc_nu_dir_x, const double mc_nu_dir_y, const double mc_nu_dir_z, const double mc_nu_energy,
+                                            const int mc_nu_id)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -472,16 +475,18 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		const double opening_angle = leading_shower.pfpOpenAngle();
 		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
 
-		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> my_tuple =
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+		           double, double, double, double, int> my_tuple =
 		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
-		                        opening_angle, shower_energy);
+		                        opening_angle, shower_energy, mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                             std::vector<std::pair<int, std::string> > * passed_tpco,
                                             std::vector<std::tuple<int, int, int, double, double, double,
-                                                                   std::string, std::string, int, int, double, double> > * post_cuts_v)
+                                                                   std::string, std::string, int, int, double, double,
+                                                                   double, double, double, double, int> > * post_cuts_v)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
 	for(int i = 0; i < n_tpc_obj; i++)
@@ -521,21 +526,82 @@ void selection_functions::FillPostCutVector(std::vector<xsecAna::TPCObjectContai
 		const double opening_angle = leading_shower.pfpOpenAngle();
 		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
 
-		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> my_tuple =
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+		           double, double, double, double, int> my_tuple =
 		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
-		                        opening_angle, shower_energy);
+		                        opening_angle, shower_energy, 0, 0, 0, 0, 0);
+		post_cuts_v->push_back(my_tuple);
+	}
+}
+//***************************************************************************
+void selection_functions::FillPostCutVectorDirt(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                std::vector<std::tuple<int, int, int, double, double, double,
+                                                                       std::string, std::string, int, int, double, double,
+                                                                       double, double, double, double, int> > * post_cuts_v,
+                                                const double mc_nu_dir_x, const double mc_nu_dir_y, const double mc_nu_dir_z, const double mc_nu_energy,
+                                                const int mc_nu_id)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		const std::string reason = passed_tpco->at(i).second; //this should always return passed
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const double pfp_vtx_x = tpc_obj.pfpVtxX();
+		const double pfp_vtx_y = tpc_obj.pfpVtxY();
+		const double pfp_vtx_z = tpc_obj.pfpVtxZ();
+		const int run_num = tpc_obj.RunNumber();
+		const int sub_run_num = tpc_obj.SubRunNumber();
+		const int event_num = tpc_obj.EventNumber();
+		const int num_tracks = tpc_obj.NPfpTracks();
+		const int num_showers = tpc_obj.NPfpShowers();
+
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		std::string tpco_id = "Dirt";
+		int most_hits = 0;
+		int leading_index = 0;
+		for(int j = 0; j < n_pfp; j++)
+		{
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11)
+			{
+				if(n_pfp_hits > most_hits)
+				{
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double opening_angle = leading_shower.pfpOpenAngle();
+		const double shower_energy = (leading_shower.pfpMomentum() + 0.51); //electron-like assumption
+
+		std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+		           double, double, double, double, int> my_tuple =
+		        std::make_tuple(event_num, run_num, sub_run_num, pfp_vtx_x, pfp_vtx_y, pfp_vtx_z, reason, tpco_id, num_tracks, num_showers,
+		                        opening_angle, shower_energy, mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 		post_cuts_v->push_back(my_tuple);
 	}
 }
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,
-                                                                    std::string, std::string, int, int, double, double> > * post_cuts_v, bool _post_cuts_verbose)
+                                                                    std::string, std::string, int, int, double, double,
+                                                                    double, double, double, double, int> > * post_cuts_v, bool _post_cuts_verbose,
+                                             std::string file_name)
 {
 	const int passed_events = post_cuts_v->size();
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 	std::cout << "Total Passed Events: " << passed_events << std::endl;
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+
+	std::ofstream selected_events;
+	selected_events.open(file_name);
+
 	for(auto const my_tuple: * post_cuts_v)
 	{
 		const int event_num = std::get<0>(my_tuple);
@@ -550,26 +616,39 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 		const int num_showers = std::get<9>(my_tuple);
 		const double opening_angle = std::get<10>(my_tuple);
 		const double shower_energy = std::get<11>(my_tuple);
-		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
-		std::cout << "Event Type     : " << event_type << std::endl;
-		std::cout << "Event Number   : " << event_num << std::endl;
-		std::cout << "Run Number     : " << run_num << std::endl;
-		std::cout << "SubRun Number  : " << sub_run_num << std::endl;
-		std::cout << "Num PFP Tracks : " << num_tracks << std::endl;
-		std::cout << "Num PFP Showers: " << num_showers << std::endl;
-		std::cout << "Pfp Vtx X      : " << pfp_vtx_x << std::endl;
-		std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
-		std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
-		std::cout << "Opening Angle  : " << opening_angle * (180 / 3.1415) << std::endl;
-		std::cout << "Leading Energy : " << shower_energy << std::endl;
-		std::cout << "TPCO Reason    : " << reason << std::endl;
-		std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+
+		const double mc_nu_dir_x  = std::get<12>(my_tuple);
+		const double mc_nu_dir_y  = std::get<13>(my_tuple);
+		const double mc_nu_dir_z  = std::get<14>(my_tuple);
+		const double mc_nu_energy = std::get<15>(my_tuple);
+		const double mc_nu_id     = std::get<16>(my_tuple);
+		if(_post_cuts_verbose == true)
+		{
+			std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+			std::cout << "Event Type     : " << event_type << std::endl;
+			std::cout << "Event Number   : " << event_num << std::endl;
+			std::cout << "Run Number     : " << run_num << std::endl;
+			std::cout << "SubRun Number  : " << sub_run_num << std::endl;
+			std::cout << "Num PFP Tracks : " << num_tracks << std::endl;
+			std::cout << "Num PFP Showers: " << num_showers << std::endl;
+			std::cout << "Pfp Vtx X      : " << pfp_vtx_x << std::endl;
+			std::cout << "Pfp Vtx Y      : " << pfp_vtx_y << std::endl;
+			std::cout << "Pfp Vtx Z      : " << pfp_vtx_z << std::endl;
+			std::cout << "Opening Angle  : " << opening_angle * (180 / 3.1415) << std::endl;
+			std::cout << "Leading Energy : " << shower_energy << std::endl;
+			std::cout << "TPCO Reason    : " << reason << std::endl;
+			std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
+		}
+		selected_events << event_num << ", " << event_type << ", " << mc_nu_id
+		                << ", " << mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
 	}
+	selected_events.close();
 	std::cout << "   * * * END * * *   " << std::endl;
 	std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 }
 void selection_functions::PostCutVectorPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string,
-                                                                    std::string, int, int, double, double> > * post_cuts_v,
+                                                                    std::string, int, int, double, double,
+                                                                    double, double, double, double, int> > * post_cuts_v,
                                              bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
                                              TH1 * post_cuts_num_showers_purity_res,
                                              TH1 * post_cuts_num_showers_purity_dis,
@@ -1002,6 +1081,7 @@ void selection_functions::PrintTopologyPurity(std::vector<int> * no_track, std::
                                               std::vector<int> * _1_shwr, std::vector<int> * _2_shwr, std::vector<int> * _3_shwr, std::vector<int> * _4_shwr)
 {
 	std::cout << "---------------------" << std::endl;
+	std::cout << "-- In MC Only --" << std::endl;
 	std::cout << "No Track Signal: " << no_track->at(0) << std::endl;
 	std::cout << "No Track Bkg   : " << no_track->at(1) << std::endl;
 	std::cout << "Purity         : " << double(no_track->at(0)) / double(no_track->at(0) + no_track->at(1)) << std::endl;
@@ -1082,7 +1162,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		if(part.Origin() == "kUnknown"  ) { part_unmatched++; }
 	}
 	//if running with the variation samples and signal event to be filtered
-	if(true_signal_in_event && do_variation_filter) {return std::make_pair("filtered", leading_index); }
+	if(true_signal_in_event && do_variation_filter && true_in_tpc) {return std::make_pair("filtered", leading_index); }
 	//some tpc objects actually have 0 hits - crazy!
 	if(tpc_obj.NumPFPHits() == 0) {return std::make_pair("bad_reco", 0); }
 
@@ -3717,7 +3797,7 @@ void selection_functions::dEdxVsOpenAngle(std::vector<xsecAna::TPCObjectContaine
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		int leading_index   = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{
@@ -6090,7 +6170,7 @@ void selection_functions::LeadingCosTheta(std::vector<xsecAna::TPCObjectContaine
 
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		if(theta_translation != 0 && phi_translation != 0)
 		{
 			leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
@@ -6206,7 +6286,7 @@ void selection_functions::LeadingCosThetaInTime(std::vector<xsecAna::TPCObjectCo
 		const double leading_shower_x = leading_shower.pfpDirX();
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
 		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
 		h_ele_cos_theta_intime->Fill(leading_shower_cos_theta);
@@ -7433,7 +7513,7 @@ void selection_functions::LeadingTheta(std::vector<xsecAna::TPCObjectContainer> 
 		const double leading_shower_x = leading_shower.pfpDirX();
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
 
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
@@ -7549,7 +7629,7 @@ void selection_functions::LeadingThetaInTime(std::vector<xsecAna::TPCObjectConta
 		const double leading_shower_x = leading_shower.pfpDirX();
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
 
 		h_ele_pfp_theta_intime->Fill(leading_shower_theta);
@@ -8063,7 +8143,8 @@ void selection_functions::Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContai
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double,
-                                                                      std::string, std::string, int, int, double, double> > * post_cuts_v,
+                                                                      std::string, std::string, int, int, double, double,
+                                                                      double, double, double, double, int> > * post_cuts_v,
                                                bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
                                                const int total_mc_entries_inFV,
                                                TH2 * post_cuts_num_tracks_showers_purity_qe,
@@ -10039,7 +10120,7 @@ void selection_functions::dEdxCollectionAngle(std::vector<xsecAna::TPCObjectCont
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_dir_y = leading_shower.pfpDirY();
 		const double leading_dir_z = leading_shower.pfpDirZ();
 		const double leading_angle_collection = atan2(leading_dir_y, leading_dir_z);
@@ -11191,7 +11272,7 @@ void selection_functions::PostCutsdedxThetaSlice(std::vector<xsecAna::TPCObjectC
 		std::string tpco_id     = tpco_classifier_v->at(i).first;
 		const int leading_index = tpco_classifier_v->at(i).second;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_shower_z = leading_shower.pfpDirZ();
 		const double leading_shower_y = leading_shower.pfpDirY();
 		const double leading_shower_x = leading_shower.pfpDirX();
@@ -11413,7 +11494,7 @@ void selection_functions::dEdxTheta(std::vector<xsecAna::TPCObjectContainer> * t
 		int leading_index   = tpco_classifier_v->at(i).second;
 		std::string tpco_id = tpco_classifier_v->at(i).first;
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
-		const double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
 		const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * 180 / 3.1415;
 		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
 		{

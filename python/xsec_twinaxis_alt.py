@@ -261,7 +261,8 @@ line00a = ax0b.plot(x_arr_nue, y_arr_nue, 'goldenrod',
                     linewidth=2.4, label=r'GENIE $\nu_{e}$ Cross Section', linestyle=':')
 line00b = ax0b.plot(x_arr_anue, y_arr_anue, 'slategray',
                     linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
-ax0b.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
+ax0b.set_ylabel(
+    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
 
 lines0 = line0a + line0b + line00a + line00b
 labels0 = [l.get_label() for l in lines0]
@@ -269,7 +270,7 @@ labels0 = [l.get_label() for l in lines0]
 ax0.legend(lines0, labels0, loc=9, ncol=2)
 
 ax0b.set_ylim(0, 35e-39)
-#ax0.set_ylim(0, 1.0e9)
+# ax0.set_ylim(0, 1.0e9)
 plt.xlim(0.0, 4.0)
 plt.show()
 
@@ -440,9 +441,9 @@ line1b = ax1.plot(a_bin_flux_list, anue_flux_list, 'darkgreen',
                   linewidth=2.0, label=r'NuMI $\bar{\nu}_{e}$ Flux')
 ax1.fill_between(a_bin_flux_list, anue_flux_list,
                  0, facecolor='darkgray', alpha=0.2)
-ax1.set_xlabel('Neutrino Energy [GeV]')
+ax1.set_xlabel('Neutrino Energy [GeV]', fontsize=18)
 # Make the y-axis label, ticks and tick labels match the line color.
-ax1.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$  / cm$^{2}$ / 6e20 POT')
+ax1.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$  / cm$^{2}$ / 6e20 POT', fontsize=18)
 # ax1.tick_params('y', colors='b')
 
 ax2 = ax1.twinx()
@@ -450,38 +451,54 @@ line2a = ax2.plot(x_arr_nue, y_arr_nue, 'mediumblue',
                   linewidth=2.4, label=r'GENIE $\nu_{e}$ Cross Section', linestyle=':')
 line2b = ax2.plot(x_arr_anue, y_arr_anue, 'darkgreen',
                   linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
-ax2.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
+ax2.set_ylabel(
+    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
 # ax2.tick_params('y', colors='r')
 
 ax3 = ax2
-#genie_xsec_point = 4.83114e-39
-genie_xsec_point = 4.93656e-39
+genie_xsec_point = 4.83114e-39
+data_xsec_point = 4.67e-39
+# genie_xsec_point = 4.93656e-39
 # for now we're taking the Stat from data
-genie_xsec_point_stat_err = 0.703e-39
-genie_xsec_point_sys_err = 0.30 * genie_xsec_point
+genie_xsec_point_stat_err = 0.057e-39
+data_xsec_point_stat_err = 1.01e-39
+genie_xsec_point_sys_err = 0.0
+data_xsec_point_sys_err = 0.0
 genie_xsec_point_total_err = np.sqrt(
     genie_xsec_point_stat_err**2 + genie_xsec_point_sys_err**2)
+data_xsec_point_total_err = np.sqrt(
+    data_xsec_point_stat_err**2 + data_xsec_point_sys_err**2)
 genie_xsec_energy = average
+data_xsec_energy = average
 asymmetric_x_err = np.array([[average - min_bin_val, max_bin_val - average]]).T
-symmetric_y_err = np.array(
+genie_symmetric_y_err = np.array(
     [[genie_xsec_point_total_err, genie_xsec_point_total_err]]).T
+data_symmetric_y_err = np.array(
+    [[data_xsec_point_total_err, data_xsec_point_total_err]]).T
 
 genie_xsec_point_x_err = genie_xsec_energy * 0.2
 
 # line3a = ax3.plot(genie_xsec_energy, genie_xsec_point,
-#                  'black', label = r'MC Xsec')
+#                   '#AA66CC', label=r'MC \sigma_{\nu_{e} + \bar{\nu}_{e}}')
 # line3b = ax3.errorbar(genie_xsec_energy, genie_xsec_point,
-# xerr=asymmetric_x_err, yerr=symmetric_y_err, fmt='--o',
-# color = 'black', ecolor = 'black', linewidth = 1.0, markersize = 6.0,
-# label = 'xsec_point')
+#                       xerr=asymmetric_x_err, yerr=genie_symmetric_y_err, fmt='--o',
+#                       color='#AA66CC', ecolor='#AA66CC', linewidth=1.0, markersize=6.0,
+#                       label='mc_xsec_point')
 
-lines = line1a + line1b + line2a + line2b
+line3c = ax3.plot(data_xsec_energy, data_xsec_point,
+                  'black', label=r'Data $\sigma_{\nu_{e} + \bar{\nu}_{e}}$')
+line3d = ax3.errorbar(data_xsec_energy, data_xsec_point,
+                      xerr=asymmetric_x_err, yerr=data_symmetric_y_err, fmt='--o',
+                      color='black', ecolor='black', linewidth=1.0, markersize=6.0,
+                      label='data_xsec_point')
+
+lines = line1a + line1b + line3c + line2a + line2b
 labels = [l.get_label() for l in lines]
 # ax3.legend(lines, labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
 #           ncol=2, mode="expand", borderaxespad=0.)
-ax3.legend(lines, labels, loc=9, ncol=2)
+ax3.legend(lines, labels, loc=9, ncol=2, prop={'size': 16})
 
-ax2.set_ylim(0, 35e-39)
+ax2.set_ylim(0, 30e-39)
 plt.xlim(0.0, 3.0)
 plt.show()
 
@@ -498,7 +515,7 @@ dummy_hist_1b = ax_2.hist(
 
 genie_xsec_point_nue = (6.34569e-39, 6.34569e-39)
 genie_xsec_point_nue_bar = (2.24685e-39, 2.24685e-39)
-genie_xsec_point_nue_nue_bar = (5.15e-39, 5.15e-39)
+genie_xsec_point_nue_nue_bar = (4.83e-39, 4.83e-39)
 
 x_edge = (-0.9, 1.1)
 
@@ -507,22 +524,22 @@ x_edge = (-0.9, 1.1)
 # point_1b = ax_2.errorbar(0.5, genie_xsec_point, yerr=symmetric_y_err,
 # fmt='--o', color='black', ecolor='black', linewidth=1.0, markersize=6.0)
 
-data_xsec_point_list = (4.84388e-39, 4.84388e-39)
-data_xsec_point = 4.84388e-39
+data_xsec_point_list = (4.67e-39, 4.67e-39)
+data_xsec_point = 4.67e-39
 
-#lower_1a = genie_xsec_point + (genie_xsec_point * 0.14)
-#upper_1a = genie_xsec_point - (genie_xsec_point * 0.14)
+# lower_1a = genie_xsec_point + (genie_xsec_point * 0.14)
+# upper_1a = genie_xsec_point - (genie_xsec_point * 0.14)
 
-lower_1a = data_xsec_point + (data_xsec_point * 0.14)
-upper_1a = data_xsec_point - (data_xsec_point * 0.14)
+# stats uncertainty
+data_stat_err = 0.2167
+data_sys_err = 0.30
+lower_1a = data_xsec_point + (data_xsec_point * data_stat_err)
+upper_1a = data_xsec_point - (data_xsec_point * data_stat_err)
 
 lower_1a_list = (lower_1a, lower_1a)
 upper_1a_list = (upper_1a, upper_1a)
 
-quadrature = np.sqrt(0.14**2 + 0.30**2)
-
-#lower_1b = genie_xsec_point + (genie_xsec_point * quadrature)
-#upper_1b = genie_xsec_point - (genie_xsec_point * quadrature)
+quadrature = np.sqrt(data_stat_err**2 + data_sys_err**2)
 
 lower_1b = data_xsec_point + (data_xsec_point * quadrature)
 upper_1b = data_xsec_point - (data_xsec_point * quadrature)
@@ -579,10 +596,10 @@ fig2b, ax_2b = plt.subplots()
 
 # these are to make the legend have a fill, rather than line
 dummy_hist_1a = ax_2b.hist(
-    (-1, -2), 1, fill=True, label=r'Expected Total Bound', color='darkgray', alpha=0.2)
+    (-1, -2), 1, fill=True, label=r'Total Bound', color='darkgray', alpha=0.2)
 # ax.legend(markerscale=2,fontsize=20)
 dummy_hist_1b = ax_2b.hist(
-    (-1, -2), 1, fill=True, label=r'Expected Stats Bound', color='maroon', alpha=0.2)
+    (-1, -2), 1, fill=True, label=r'Stats Bound', color='maroon', alpha=0.2)
 
 band_1a_lower = ax_2b.plot(x_edge, lower_1a_list,
                            color='maroon')
@@ -610,18 +627,20 @@ line_2d = ax_2b.plot(x_edge, data_xsec_point_list, color='black', linewidth=1.8,
 
 ax_2b.set_ylim(0, 10e-39)
 ax_2b.set_xlim(0, 1)
-ax_2b.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
+ax_2b.set_ylabel(
+    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
 ax_2b.xaxis.label.set_size(0)
 ax_2b.xaxis.set_ticklabels([])
 ax_2b.xaxis.set_visible(False)
 
 # lines_2 = band_1a_lower + band_1b_lower + line_2a + line_2b + line_2c
-lines_list = (dummy_hist_1a, dummy_hist_1b, line_2a, line_2b, line_2c)
+# lines_list = (dummy_hist_1a, dummy_hist_1b, line_2a, line_2b, line_2c)
 # labels_2 = [l.get_label() for l in lines_2]
 # ax3.legend(lines, labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
 #           ncol=2, mode="expand", borderaxespad=0.)
-labels_list = (r'Expected Total Bound', r'Expected Stats Bound',
-               r'Genie $\nu_{e}$ Cross Section', r'Genie $\bar{\nu}_{e}$ Cross Section', r'Genie $\nu_{e} + \bar{\nu}_{e}$ Cross Section')
+# labels_list = (r'Expected Total Bound', r'Expected Stats Bound',
+# r'Genie $\nu_{e}$ Cross Section', r'Genie $\bar{\nu}_{e}$ Cross
+# Section', r'Genie $\nu_{e} + \bar{\nu}_{e}$ Cross Section')
 ax_2b.legend(loc=9, ncol=2)
 
 plt.show()
@@ -629,63 +648,63 @@ plt.show()
 
 ##############################################################################
 
-fig3, ax3 = plt.subplots()
-# line0 = ax1.plot(fine_flux_bins, fine_flux_list, 'black', linewidth=2.0)
-line3a = ax3.plot(bin_flux_list, nue_flux_list, 'mediumblue',
-                  linewidth=2.0, label=r'NuMI $\nu_{e}$ Flux')
-ax3.fill_between(bin_flux_list, nue_flux_list, 0,
-                 facecolor='darkgray', alpha=0.2)
-line3b = ax3.plot(a_bin_flux_list, anue_flux_list, 'darkgreen',
-                  linewidth=2.0, label=r'NuMI $\bar{\nu}_{e}$ Flux')
-ax3.fill_between(a_bin_flux_list, anue_flux_list,
-                 0, facecolor='darkgray', alpha=0.2)
-ax3.set_xlabel('Neutrino Energy [GeV]')
-# make the y-axis label, ticks and tick labels match the line color.
-ax3.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$  / cm$^{2}$ / 6e20 POT')
-# ax1.tick_params('y', colors='b')
-
-ax4 = ax3.twinx()
-line4a = ax4.plot(x_arr_nue, y_arr_nue, 'mediumblue',
-                  linewidth=2.4, label=r'GENIE $\nu_{e}$ Cross Section', linestyle=':')
-line4b = ax4.plot(x_arr_anue, y_arr_anue, 'darkgreen',
-                  linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
-ax4.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
-# ax2.tick_params('y', colors='r')
-
-ax5 = ax4
-# genie_xsec_point = 4.83114e-39
-# for now we're taking the Stat from data
-# genie_xsec_point_stat_err = 0.703e-39
-# genie_xsec_point_sys_err = 0.25 * genie_xsec_point
-# genie_xsec_point_total_err = np.sqrt(
-#    genie_xsec_point_stat_err**2 + genie_xsec_point_sys_err**2)
-# genie_xsec_energy = average
-# asymmetric_x_err = np.array([[average - min_bin_val, max_bin_val - average]]).T
-# symmetric_y_err = np.array(
-#    [[genie_xsec_point_total_err, genie_xsec_point_total_err]]).T
-
-# genie_xsec_point_x_err = genie_xsec_energy * 0.2
-
-line5a = ax4.plot(genie_xsec_energy, genie_xsec_point,
-                  'black', label=r'$\nu_e$ + $\bar{\nu}_{e}$ Data Cross Section', linewidth=2.0)
-line5b = ax4.errorbar(genie_xsec_energy, genie_xsec_point,
-                      xerr=asymmetric_x_err, yerr=symmetric_y_err, fmt='--o',
-                      color='black', ecolor='black', linewidth=2.0, markersize=6.0, capsize=5.0, markeredgewidth=2,
-                      label='xsec_point')
-
-symmetric_y_err_2 = np.array(
-    [[genie_xsec_point_stat_err, genie_xsec_point_stat_err]]).T
-line6a = ax4.errorbar(genie_xsec_energy, genie_xsec_point,
-                      xerr=asymmetric_x_err, yerr=symmetric_y_err_2, fmt='--o', color='black', ecolor='black', linewidth=2.0, markersize=6.0,
-                      capsize=5.0, markeredgewidth=2, label='xsec_point_2', linestyle='--')
-
-lines = line3a + line3b + line5a + line4a + line4b
-labels = [l.get_label() for l in lines]
-# ax3.legend(lines, labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
-#           ncol=2, mode="expand", borderaxespad=0.)
-ax5.legend(lines, labels, loc=9, ncol=2)
-
-ax4.set_ylim(0, 35e-39)
-plt.xlim(0.0, 3.0)
-
-plt.show()
+# fig3, ax3 = plt.subplots()
+# # line0 = ax1.plot(fine_flux_bins, fine_flux_list, 'black', linewidth=2.0)
+# line3a = ax3.plot(bin_flux_list, nue_flux_list, 'mediumblue',
+#                   linewidth=2.0, label=r'NuMI $\nu_{e}$ Flux')
+# ax3.fill_between(bin_flux_list, nue_flux_list, 0,
+#                  facecolor='darkgray', alpha=0.2)
+# line3b = ax3.plot(a_bin_flux_list, anue_flux_list, 'darkgreen',
+#                   linewidth=2.0, label=r'NuMI $\bar{\nu}_{e}$ Flux')
+# ax3.fill_between(a_bin_flux_list, anue_flux_list,
+#                  0, facecolor='darkgray', alpha=0.2)
+# ax3.set_xlabel('Neutrino Energy [GeV]')
+# # make the y-axis label, ticks and tick labels match the line color.
+# ax3.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$  / cm$^{2}$ / 6e20 POT')
+# # ax1.tick_params('y', colors='b')
+#
+# ax4 = ax3.twinx()
+# line4a = ax4.plot(x_arr_nue, y_arr_nue, 'mediumblue',
+#                   linewidth=2.4, label=r'GENIE $\nu_{e}$ Cross Section', linestyle=':')
+# line4b = ax4.plot(x_arr_anue, y_arr_anue, 'darkgreen',
+#                   linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
+# ax4.set_ylabel(r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]')
+# # ax2.tick_params('y', colors='r')
+#
+# ax5 = ax4
+# # genie_xsec_point = 4.83114e-39
+# # for now we're taking the Stat from data
+# # genie_xsec_point_stat_err = 0.703e-39
+# # genie_xsec_point_sys_err = 0.25 * genie_xsec_point
+# # genie_xsec_point_total_err = np.sqrt(
+# #    genie_xsec_point_stat_err**2 + genie_xsec_point_sys_err**2)
+# # genie_xsec_energy = average
+# # asymmetric_x_err = np.array([[average - min_bin_val, max_bin_val - average]]).T
+# # symmetric_y_err = np.array(
+# #    [[genie_xsec_point_total_err, genie_xsec_point_total_err]]).T
+#
+# # genie_xsec_point_x_err = genie_xsec_energy * 0.2
+#
+# line5a = ax4.plot(genie_xsec_energy, genie_xsec_point,
+#                   'black', label=r'$\nu_e$ + $\bar{\nu}_{e}$ MC Cross Section', linewidth=2.0)
+# line5b = ax4.errorbar(genie_xsec_energy, genie_xsec_point,
+#                       xerr=asymmetric_x_err, yerr=genie_symmetric_y_err, fmt='--o',
+#                       color='black', ecolor='black', linewidth=2.0, markersize=6.0, capsize=5.0, markeredgewidth=2,
+#                       label='xsec_point')
+#
+# symmetric_y_err_2 = np.array(
+#     [[genie_xsec_point_stat_err, genie_xsec_point_stat_err]]).T
+# line6a = ax4.errorbar(genie_xsec_energy, genie_xsec_point,
+#                       xerr=asymmetric_x_err, yerr=symmetric_y_err_2, fmt='--o', color='black', ecolor='black', linewidth=2.0, markersize=6.0,
+#                       capsize=5.0, markeredgewidth=2, label='xsec_point_2', linestyle='--')
+#
+# lines = line3a + line3b + line5a + line4a + line4b
+# labels = [l.get_label() for l in lines]
+# # ax3.legend(lines, labels, bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+# #           ncol=2, mode="expand", borderaxespad=0.)
+# ax5.legend(lines, labels, loc=9, ncol=2)
+#
+# ax4.set_ylim(0, 35e-39)
+# plt.xlim(0.0, 3.0)
+#
+# plt.show()

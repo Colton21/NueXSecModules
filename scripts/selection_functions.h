@@ -23,6 +23,7 @@
 #include "TLine.h"
 
 #include <iostream>
+#include <fstream>
 #include <vector>
 
 #include "../xsecAna/LinkDef.h"
@@ -144,17 +145,30 @@ void PostCutsdEdxHitsTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,
                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
-                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int,
+                                              double, double, double, double, double, double, int> > * post_cuts_v,
+                       const double mc_nu_dir_x, const double mc_nu_dir_y, const double mc_nu_dir_z, const double mc_nu_energy,
+                       const int mc_nu_id);
 void FillPostCutVector(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco,
-                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v);
+                       std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+                                              double, double, double, double, int> > * post_cuts_v);
+void FillPostCutVectorDirt(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                           std::vector<std::pair<int, std::string> > * passed_tpco,
+                           std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int,
+                                                  double, double, double, double, double, double, int> > * post_cuts_v,
+                           const double mc_nu_dir_x, const double mc_nu_dir_y, const double mc_nu_dir_z, const double mc_nu_energy,
+                           const int mc_nu_id);
 //***************************************************************************
 //***************************************************************************
 void PrintPostCutVector(std::vector<std::tuple<int, int, int, double, double, double,
-                                               std::string, std::string, int, int, double, double> > * post_cuts_v, bool _post_cuts_verbose);
+                                               std::string, std::string, int, int, double, double,
+                                               double, double, double, double, int> > * post_cuts_v, bool _post_cuts_verbose,
+                        std::string file_name);
 //***************************************************************************
 //***************************************************************************
-void PostCutVectorPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v,
+void PostCutVectorPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+                                               double, double, double, double, int> > * post_cuts_v,
                         bool _post_cuts_verbose, TH1 * post_cuts_num_showers_purity_qe,
                         TH1 * post_cuts_num_showers_purity_res,
                         TH1 * post_cuts_num_showers_purity_dis,
@@ -1706,7 +1720,8 @@ void Leading1Shwr2Shwr(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        TH1D * h_leading_shwr_hits_2shwr_unmatched);
 //***************************************************************************
 //***************************************************************************
-void PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v,
+void PostCutVector2DPlots(std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+                                                 double, double, double, double, int> > * post_cuts_v,
                           bool _post_cuts_verbose, const double intime_scale_factor, const double data_scale_factor,
                           const int total_mc_entries_inFV,
                           TH2 * post_cuts_num_tracks_showers_purity_qe,

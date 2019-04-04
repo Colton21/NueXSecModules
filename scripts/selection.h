@@ -76,7 +76,7 @@ private:
 //scaling factor
 //march 2018 - mostly resolved by dirt introduction -- keeping for comparisons
 const bool use_alt_scaling = false;
-const bool run_with_log = false;
+const bool run_with_log = true;
 //const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 
 
@@ -158,9 +158,9 @@ const double genie_xsec_nue_bar = 2.24685e-39; //cm2
 //*********************************************************************
 // most up to date values for scaling factors:
 //as of applying DQM and removing aNuMI running
-const double POT = 1.82949e+21;
+const double POT = 1.82027e+21; //v6 value - 1.82949e+21;
 //scale MC down by this factor (i.e. should be less than 1)
-const double data_scale_factor = 0.12758;
+const double data_scale_factor = 0.1301; // v6 value - 0.12758;
 const double intime_scale_factor = 1.0154;
 const double dirt_scale_factor = 0.16411;
 //*******************************
@@ -183,7 +183,7 @@ const double var_scale_factor_Birks        = 0.22068; //BirksRecomb
 const double var_scale_factor_TPCVis       = 0.29943; //EnhancedTPCVis
 const double var_scale_factor_UpPEnoise    = 0.23371; //UpPEnoise
 const double var_scale_factor_DownPEnoise  = 0.22100; //DownPEnoise
-const double var_scale_factor = var_scale_factor_dataSCE;
+const double var_scale_factor = var_scale_factor_DownPEnoise;
 //********
 const double scaled_intime_scale_factor = intime_scale_factor * 1.096;
 //*********************************************************************
@@ -273,6 +273,12 @@ double mc_nu_time = -1;
 
 int mc_nu_num_particles = 0;
 int mc_nu_num_charged_particles = 0;
+
+double mc_nu_dir_x_dirt = -999;
+double mc_nu_dir_y_dirt = -999;
+double mc_nu_dir_z_dirt = -999;
+double mc_nu_energy_dirt = -999;
+int mc_nu_id_dirt = -1;
 
 int run_sum = 0;
 int out_of_time_sum = 0;
@@ -1513,61 +1519,61 @@ TH1D * h_ele_pfp_momentum_has_track_intime         = new TH1D ("h_ele_pfp_moment
 TH1D * h_ele_pfp_momentum_has_track_dirt           = new TH1D ("h_ele_pfp_momentum_has_track_dirt",           "h_ele_pfp_momentum_has_track_dirt",           20, 0, 2);
 TH1D * h_ele_pfp_momentum_has_track_data           = new TH1D ("h_ele_pfp_momentum_has_track_data",           "h_ele_pfp_momentum_has_track_data",           20, 0, 2);
 
-TH1D * h_ele_pfp_phi_no_track_nue_cc         = new TH1D ("h_ele_pfp_phi_no_track_nue_cc",         "h_ele_pfp_phi_no_track_nue_cc",         20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_phi_no_track_nue_cc_out_fv",  "h_ele_pfp_phi_no_track_nue_cc_out_fv",  20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_phi_no_track_nue_cc_mixed",   "h_ele_pfp_phi_no_track_nue_cc_mixed",   20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_numu_cc        = new TH1D ("h_ele_pfp_phi_no_track_numu_cc",        "h_ele_pfp_phi_no_track_numu_cc",        20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_phi_no_track_numu_cc_mixed",  "h_ele_pfp_phi_no_track_numu_cc_mixed",  20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_nc             = new TH1D ("h_ele_pfp_phi_no_track_nc",             "h_ele_pfp_phi_no_track_nc",             20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_nc_pi0         = new TH1D ("h_ele_pfp_phi_no_track_nc_pi0",         "h_ele_pfp_phi_no_track_nc_pi0",         20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_cosmic         = new TH1D ("h_ele_pfp_phi_no_track_cosmic",         "h_ele_pfp_phi_no_track_cosmic",         20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_other_mixed    = new TH1D ("h_ele_pfp_phi_no_track_other_mixed",    "h_ele_pfp_phi_no_track_other_mixed",    20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_unmatched      = new TH1D ("h_ele_pfp_phi_no_track_unmatched",      "h_ele_pfp_phi_no_track_unmatched",      20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_intime         = new TH1D ("h_ele_pfp_phi_no_track_intime",         "h_ele_pfp_phi_no_track_intime",         20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_dirt           = new TH1D ("h_ele_pfp_phi_no_track_dirt",           "h_ele_pfp_phi_no_track_dirt",           20, -180, 180);
-TH1D * h_ele_pfp_phi_no_track_data           = new TH1D ("h_ele_pfp_phi_no_track_data",           "h_ele_pfp_phi_no_track_data",           20, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_nue_cc         = new TH1D ("h_ele_pfp_phi_no_track_nue_cc",         "h_ele_pfp_phi_no_track_nue_cc",         12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_phi_no_track_nue_cc_out_fv",  "h_ele_pfp_phi_no_track_nue_cc_out_fv",  12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_phi_no_track_nue_cc_mixed",   "h_ele_pfp_phi_no_track_nue_cc_mixed",   12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_numu_cc        = new TH1D ("h_ele_pfp_phi_no_track_numu_cc",        "h_ele_pfp_phi_no_track_numu_cc",        12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_phi_no_track_numu_cc_mixed",  "h_ele_pfp_phi_no_track_numu_cc_mixed",  12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_nc             = new TH1D ("h_ele_pfp_phi_no_track_nc",             "h_ele_pfp_phi_no_track_nc",             12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_nc_pi0         = new TH1D ("h_ele_pfp_phi_no_track_nc_pi0",         "h_ele_pfp_phi_no_track_nc_pi0",         12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_cosmic         = new TH1D ("h_ele_pfp_phi_no_track_cosmic",         "h_ele_pfp_phi_no_track_cosmic",         12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_other_mixed    = new TH1D ("h_ele_pfp_phi_no_track_other_mixed",    "h_ele_pfp_phi_no_track_other_mixed",    12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_unmatched      = new TH1D ("h_ele_pfp_phi_no_track_unmatched",      "h_ele_pfp_phi_no_track_unmatched",      12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_intime         = new TH1D ("h_ele_pfp_phi_no_track_intime",         "h_ele_pfp_phi_no_track_intime",         12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_dirt           = new TH1D ("h_ele_pfp_phi_no_track_dirt",           "h_ele_pfp_phi_no_track_dirt",           12, -180, 180);
+TH1D * h_ele_pfp_phi_no_track_data           = new TH1D ("h_ele_pfp_phi_no_track_data",           "h_ele_pfp_phi_no_track_data",           12, -180, 180);
 
-TH1D * h_ele_pfp_phi_has_track_nue_cc         = new TH1D ("h_ele_pfp_phi_has_track_nue_cc",         "h_ele_pfp_phi_has_track_nue_cc",         20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_phi_has_track_nue_cc_out_fv",  "h_ele_pfp_phi_has_track_nue_cc_out_fv",  20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_phi_has_track_nue_cc_mixed",   "h_ele_pfp_phi_has_track_nue_cc_mixed",   20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_numu_cc        = new TH1D ("h_ele_pfp_phi_has_track_numu_cc",        "h_ele_pfp_phi_has_track_numu_cc",        20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_phi_has_track_numu_cc_mixed",  "h_ele_pfp_phi_has_track_numu_cc_mixed",  20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_nc             = new TH1D ("h_ele_pfp_phi_has_track_nc",             "h_ele_pfp_phi_has_track_nc",             20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_nc_pi0         = new TH1D ("h_ele_pfp_phi_has_track_nc_pi0",         "h_ele_pfp_phi_has_track_nc_pi0",         20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_cosmic         = new TH1D ("h_ele_pfp_phi_has_track_cosmic",         "h_ele_pfp_phi_has_track_cosmic",         20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_other_mixed    = new TH1D ("h_ele_pfp_phi_has_track_other_mixed",    "h_ele_pfp_phi_has_track_other_mixed",    20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_unmatched      = new TH1D ("h_ele_pfp_phi_has_track_unmatched",      "h_ele_pfp_phi_has_track_unmatched",      20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_intime         = new TH1D ("h_ele_pfp_phi_has_track_intime",         "h_ele_pfp_phi_has_track_intime",         20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_dirt           = new TH1D ("h_ele_pfp_phi_has_track_dirt",           "h_ele_pfp_phi_has_track_dirt",           20, -180, 180);
-TH1D * h_ele_pfp_phi_has_track_data           = new TH1D ("h_ele_pfp_phi_has_track_data",           "h_ele_pfp_phi_has_track_data",           20, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_nue_cc         = new TH1D ("h_ele_pfp_phi_has_track_nue_cc",         "h_ele_pfp_phi_has_track_nue_cc",         12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_phi_has_track_nue_cc_out_fv",  "h_ele_pfp_phi_has_track_nue_cc_out_fv",  12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_phi_has_track_nue_cc_mixed",   "h_ele_pfp_phi_has_track_nue_cc_mixed",   12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_numu_cc        = new TH1D ("h_ele_pfp_phi_has_track_numu_cc",        "h_ele_pfp_phi_has_track_numu_cc",        12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_phi_has_track_numu_cc_mixed",  "h_ele_pfp_phi_has_track_numu_cc_mixed",  12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_nc             = new TH1D ("h_ele_pfp_phi_has_track_nc",             "h_ele_pfp_phi_has_track_nc",             12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_nc_pi0         = new TH1D ("h_ele_pfp_phi_has_track_nc_pi0",         "h_ele_pfp_phi_has_track_nc_pi0",         12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_cosmic         = new TH1D ("h_ele_pfp_phi_has_track_cosmic",         "h_ele_pfp_phi_has_track_cosmic",         12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_other_mixed    = new TH1D ("h_ele_pfp_phi_has_track_other_mixed",    "h_ele_pfp_phi_has_track_other_mixed",    12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_unmatched      = new TH1D ("h_ele_pfp_phi_has_track_unmatched",      "h_ele_pfp_phi_has_track_unmatched",      12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_intime         = new TH1D ("h_ele_pfp_phi_has_track_intime",         "h_ele_pfp_phi_has_track_intime",         12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_dirt           = new TH1D ("h_ele_pfp_phi_has_track_dirt",           "h_ele_pfp_phi_has_track_dirt",           12, -180, 180);
+TH1D * h_ele_pfp_phi_has_track_data           = new TH1D ("h_ele_pfp_phi_has_track_data",           "h_ele_pfp_phi_has_track_data",           12, -180, 180);
 
-TH1D * h_ele_pfp_theta_no_track_nue_cc         = new TH1D ("h_ele_pfp_theta_no_track_nue_cc",         "h_ele_pfp_theta_no_track_nue_cc",         20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_no_track_nue_cc_out_fv",  "h_ele_pfp_theta_no_track_nue_cc_out_fv",  20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_no_track_nue_cc_mixed",   "h_ele_pfp_theta_no_track_nue_cc_mixed",   20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_numu_cc        = new TH1D ("h_ele_pfp_theta_no_track_numu_cc",        "h_ele_pfp_theta_no_track_numu_cc",        20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_no_track_numu_cc_mixed",  "h_ele_pfp_theta_no_track_numu_cc_mixed",  20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_nc             = new TH1D ("h_ele_pfp_theta_no_track_nc",             "h_ele_pfp_theta_no_track_nc",             20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_nc_pi0         = new TH1D ("h_ele_pfp_theta_no_track_nc_pi0",         "h_ele_pfp_theta_no_track_nc_pi0",         20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_cosmic         = new TH1D ("h_ele_pfp_theta_no_track_cosmic",         "h_ele_pfp_theta_no_track_cosmic",         20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_other_mixed    = new TH1D ("h_ele_pfp_theta_no_track_other_mixed",    "h_ele_pfp_theta_no_track_other_mixed",    20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_unmatched      = new TH1D ("h_ele_pfp_theta_no_track_unmatched",      "h_ele_pfp_theta_no_track_unmatched",      20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_intime         = new TH1D ("h_ele_pfp_theta_no_track_intime",         "h_ele_pfp_theta_no_track_intime",         20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_dirt           = new TH1D ("h_ele_pfp_theta_no_track_dirt",           "h_ele_pfp_theta_no_track_dirt",           20, 0, 180);
-TH1D * h_ele_pfp_theta_no_track_data           = new TH1D ("h_ele_pfp_theta_no_track_data",           "h_ele_pfp_theta_no_track_data",           20, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_nue_cc         = new TH1D ("h_ele_pfp_theta_no_track_nue_cc",         "h_ele_pfp_theta_no_track_nue_cc",         12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_no_track_nue_cc_out_fv",  "h_ele_pfp_theta_no_track_nue_cc_out_fv",  12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_no_track_nue_cc_mixed",   "h_ele_pfp_theta_no_track_nue_cc_mixed",   12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_numu_cc        = new TH1D ("h_ele_pfp_theta_no_track_numu_cc",        "h_ele_pfp_theta_no_track_numu_cc",        12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_no_track_numu_cc_mixed",  "h_ele_pfp_theta_no_track_numu_cc_mixed",  12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_nc             = new TH1D ("h_ele_pfp_theta_no_track_nc",             "h_ele_pfp_theta_no_track_nc",             12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_nc_pi0         = new TH1D ("h_ele_pfp_theta_no_track_nc_pi0",         "h_ele_pfp_theta_no_track_nc_pi0",         12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_cosmic         = new TH1D ("h_ele_pfp_theta_no_track_cosmic",         "h_ele_pfp_theta_no_track_cosmic",         12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_other_mixed    = new TH1D ("h_ele_pfp_theta_no_track_other_mixed",    "h_ele_pfp_theta_no_track_other_mixed",    12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_unmatched      = new TH1D ("h_ele_pfp_theta_no_track_unmatched",      "h_ele_pfp_theta_no_track_unmatched",      12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_intime         = new TH1D ("h_ele_pfp_theta_no_track_intime",         "h_ele_pfp_theta_no_track_intime",         12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_dirt           = new TH1D ("h_ele_pfp_theta_no_track_dirt",           "h_ele_pfp_theta_no_track_dirt",           12, 0, 180);
+TH1D * h_ele_pfp_theta_no_track_data           = new TH1D ("h_ele_pfp_theta_no_track_data",           "h_ele_pfp_theta_no_track_data",           12, 0, 180);
 
-TH1D * h_ele_pfp_theta_has_track_nue_cc         = new TH1D ("h_ele_pfp_theta_has_track_nue_cc",         "h_ele_pfp_theta_has_track_nue_cc",         20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_has_track_nue_cc_out_fv",  "h_ele_pfp_theta_has_track_nue_cc_out_fv",  20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_has_track_nue_cc_mixed",   "h_ele_pfp_theta_has_track_nue_cc_mixed",   20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_numu_cc        = new TH1D ("h_ele_pfp_theta_has_track_numu_cc",        "h_ele_pfp_theta_has_track_numu_cc",        20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_has_track_numu_cc_mixed",  "h_ele_pfp_theta_has_track_numu_cc_mixed",  20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_nc             = new TH1D ("h_ele_pfp_theta_has_track_nc",             "h_ele_pfp_theta_has_track_nc",             20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_nc_pi0         = new TH1D ("h_ele_pfp_theta_has_track_nc_pi0",         "h_ele_pfp_theta_has_track_nc_pi0",         20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_cosmic         = new TH1D ("h_ele_pfp_theta_has_track_cosmic",         "h_ele_pfp_theta_has_track_cosmic",         20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_other_mixed    = new TH1D ("h_ele_pfp_theta_has_track_other_mixed",    "h_ele_pfp_theta_has_track_other_mixed",    20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_unmatched      = new TH1D ("h_ele_pfp_theta_has_track_unmatched",      "h_ele_pfp_theta_has_track_unmatched",      20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_intime         = new TH1D ("h_ele_pfp_theta_has_track_intime",         "h_ele_pfp_theta_has_track_intime",         20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_dirt           = new TH1D ("h_ele_pfp_theta_has_track_dirt",           "h_ele_pfp_theta_has_track_dirt",           20, 0, 180);
-TH1D * h_ele_pfp_theta_has_track_data           = new TH1D ("h_ele_pfp_theta_has_track_data",           "h_ele_pfp_theta_has_track_data",           20, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_nue_cc         = new TH1D ("h_ele_pfp_theta_has_track_nue_cc",         "h_ele_pfp_theta_has_track_nue_cc",         12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_has_track_nue_cc_out_fv",  "h_ele_pfp_theta_has_track_nue_cc_out_fv",  12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_has_track_nue_cc_mixed",   "h_ele_pfp_theta_has_track_nue_cc_mixed",   12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_numu_cc        = new TH1D ("h_ele_pfp_theta_has_track_numu_cc",        "h_ele_pfp_theta_has_track_numu_cc",        12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_has_track_numu_cc_mixed",  "h_ele_pfp_theta_has_track_numu_cc_mixed",  12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_nc             = new TH1D ("h_ele_pfp_theta_has_track_nc",             "h_ele_pfp_theta_has_track_nc",             12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_nc_pi0         = new TH1D ("h_ele_pfp_theta_has_track_nc_pi0",         "h_ele_pfp_theta_has_track_nc_pi0",         12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_cosmic         = new TH1D ("h_ele_pfp_theta_has_track_cosmic",         "h_ele_pfp_theta_has_track_cosmic",         12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_other_mixed    = new TH1D ("h_ele_pfp_theta_has_track_other_mixed",    "h_ele_pfp_theta_has_track_other_mixed",    12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_unmatched      = new TH1D ("h_ele_pfp_theta_has_track_unmatched",      "h_ele_pfp_theta_has_track_unmatched",      12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_intime         = new TH1D ("h_ele_pfp_theta_has_track_intime",         "h_ele_pfp_theta_has_track_intime",         12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_dirt           = new TH1D ("h_ele_pfp_theta_has_track_dirt",           "h_ele_pfp_theta_has_track_dirt",           12, 0, 180);
+TH1D * h_ele_pfp_theta_has_track_data           = new TH1D ("h_ele_pfp_theta_has_track_data",           "h_ele_pfp_theta_has_track_data",           12, 0, 180);
 
 TH1D * h_ele_pfp_theta_nue_cc         = new TH1D ("h_ele_pfp_theta_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
 TH1D * h_ele_pfp_theta_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
@@ -2414,33 +2420,33 @@ TH1D * h_dedx_slice_2_zoom_intime         = new TH1D ("h_dedx_slice_2_zoom_intim
 TH1D * h_dedx_slice_2_zoom_dirt           = new TH1D ("h_dedx_slice_2_zoom_dirt",            "h_dedx_slice_2_zoom_dirt",          20, 0, 4);
 TH1D * h_dedx_slice_2_zoom_data           = new TH1D ("h_dedx_slice_2_zoom_data",            "h_dedx_slice_2_zoom_data",          20, 0, 4);
 
-TH1D * h_dedx_slice_3_nue_cc         = new TH1D ("h_dedx_slice_3_nue_cc",          "h_dedx_slice_3_nue_cc",        20, 0, 10);
-TH1D * h_dedx_slice_3_nue_cc_out_fv  = new TH1D ("h_dedx_slice_3_nue_cc_out_fv",   "h_dedx_slice_3_nue_cc_out_fv", 20, 0, 10);
-TH1D * h_dedx_slice_3_nue_cc_mixed   = new TH1D ("h_dedx_slice_3_nue_cc_mixed",    "h_dedx_slice_3_nue_cc_mixed",  20, 0, 10);
-TH1D * h_dedx_slice_3_numu_cc        = new TH1D ("h_dedx_slice_3_numu_cc",         "h_dedx_slice_3_numu_cc",       20, 0, 10);
-TH1D * h_dedx_slice_3_numu_cc_mixed  = new TH1D ("h_dedx_slice_3_numu_cc_mixed",   "h_dedx_slice_3_numu_cc_mixed", 20, 0, 10);
-TH1D * h_dedx_slice_3_nc             = new TH1D ("h_dedx_slice_3_nc",              "h_dedx_slice_3_nc",            20, 0, 10);
-TH1D * h_dedx_slice_3_nc_pi0         = new TH1D ("h_dedx_slice_3_nc_pi0",          "h_dedx_slice_3_nc_pi0",        20, 0, 10);
-TH1D * h_dedx_slice_3_cosmic         = new TH1D ("h_dedx_slice_3_cosmic",          "h_dedx_slice_3_cosmic",        20, 0, 10);
-TH1D * h_dedx_slice_3_other_mixed    = new TH1D ("h_dedx_slice_3_other_mixed",     "h_dedx_slice_3_other_mixed",   20, 0, 10);
-TH1D * h_dedx_slice_3_unmatched      = new TH1D ("h_dedx_slice_3_unmatched",       "h_dedx_slice_3_unmatched",     20, 0, 10);
-TH1D * h_dedx_slice_3_intime         = new TH1D ("h_dedx_slice_3_intime",          "h_dedx_slice_3_intime",        20, 0, 10);
-TH1D * h_dedx_slice_3_dirt           = new TH1D ("h_dedx_slice_3_dirt",            "h_dedx_slice_3_dirt",          20, 0, 10);
-TH1D * h_dedx_slice_3_data           = new TH1D ("h_dedx_slice_3_data",            "h_dedx_slice_3_data",          20, 0, 10);
+TH1D * h_dedx_slice_3_nue_cc         = new TH1D ("h_dedx_slice_3_nue_cc",          "h_dedx_slice_3_nue_cc",        10, 0, 10);
+TH1D * h_dedx_slice_3_nue_cc_out_fv  = new TH1D ("h_dedx_slice_3_nue_cc_out_fv",   "h_dedx_slice_3_nue_cc_out_fv", 10, 0, 10);
+TH1D * h_dedx_slice_3_nue_cc_mixed   = new TH1D ("h_dedx_slice_3_nue_cc_mixed",    "h_dedx_slice_3_nue_cc_mixed",  10, 0, 10);
+TH1D * h_dedx_slice_3_numu_cc        = new TH1D ("h_dedx_slice_3_numu_cc",         "h_dedx_slice_3_numu_cc",       10, 0, 10);
+TH1D * h_dedx_slice_3_numu_cc_mixed  = new TH1D ("h_dedx_slice_3_numu_cc_mixed",   "h_dedx_slice_3_numu_cc_mixed", 10, 0, 10);
+TH1D * h_dedx_slice_3_nc             = new TH1D ("h_dedx_slice_3_nc",              "h_dedx_slice_3_nc",            10, 0, 10);
+TH1D * h_dedx_slice_3_nc_pi0         = new TH1D ("h_dedx_slice_3_nc_pi0",          "h_dedx_slice_3_nc_pi0",        10, 0, 10);
+TH1D * h_dedx_slice_3_cosmic         = new TH1D ("h_dedx_slice_3_cosmic",          "h_dedx_slice_3_cosmic",        10, 0, 10);
+TH1D * h_dedx_slice_3_other_mixed    = new TH1D ("h_dedx_slice_3_other_mixed",     "h_dedx_slice_3_other_mixed",   10, 0, 10);
+TH1D * h_dedx_slice_3_unmatched      = new TH1D ("h_dedx_slice_3_unmatched",       "h_dedx_slice_3_unmatched",     10, 0, 10);
+TH1D * h_dedx_slice_3_intime         = new TH1D ("h_dedx_slice_3_intime",          "h_dedx_slice_3_intime",        10, 0, 10);
+TH1D * h_dedx_slice_3_dirt           = new TH1D ("h_dedx_slice_3_dirt",            "h_dedx_slice_3_dirt",          10, 0, 10);
+TH1D * h_dedx_slice_3_data           = new TH1D ("h_dedx_slice_3_data",            "h_dedx_slice_3_data",          10, 0, 10);
 
-TH1D * h_dedx_slice_3_zoom_nue_cc         = new TH1D ("h_dedx_slice_3_zoom_nue_cc",          "h_dedx_slice_3_zoom_nue_cc",        20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_nue_cc_out_fv  = new TH1D ("h_dedx_slice_3_zoom_nue_cc_out_fv",   "h_dedx_slice_3_zoom_nue_cc_out_fv", 20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_nue_cc_mixed   = new TH1D ("h_dedx_slice_3_zoom_nue_cc_mixed",    "h_dedx_slice_3_zoom_nue_cc_mixed",  20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_numu_cc        = new TH1D ("h_dedx_slice_3_zoom_numu_cc",         "h_dedx_slice_3_zoom_numu_cc",       20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_numu_cc_mixed  = new TH1D ("h_dedx_slice_3_zoom_numu_cc_mixed",   "h_dedx_slice_3_zoom_numu_cc_mixed", 20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_nc             = new TH1D ("h_dedx_slice_3_zoom_nc",              "h_dedx_slice_3_zoom_nc",            20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_nc_pi0         = new TH1D ("h_dedx_slice_3_zoom_nc_pi0",          "h_dedx_slice_3_zoom_nc_pi0",        20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_cosmic         = new TH1D ("h_dedx_slice_3_zoom_cosmic",          "h_dedx_slice_3_zoom_cosmic",        20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_other_mixed    = new TH1D ("h_dedx_slice_3_zoom_other_mixed",     "h_dedx_slice_3_zoom_other_mixed",   20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_unmatched      = new TH1D ("h_dedx_slice_3_zoom_unmatched",       "h_dedx_slice_3_zoom_unmatched",     20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_intime         = new TH1D ("h_dedx_slice_3_zoom_intime",          "h_dedx_slice_3_zoom_intime",        20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_dirt           = new TH1D ("h_dedx_slice_3_zoom_dirt",            "h_dedx_slice_3_zoom_dirt",          20, 0, 4);
-TH1D * h_dedx_slice_3_zoom_data           = new TH1D ("h_dedx_slice_3_zoom_data",            "h_dedx_slice_3_zoom_data",          20, 0, 4);
+TH1D * h_dedx_slice_3_zoom_nue_cc         = new TH1D ("h_dedx_slice_3_zoom_nue_cc",          "h_dedx_slice_3_zoom_nue_cc",        10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_nue_cc_out_fv  = new TH1D ("h_dedx_slice_3_zoom_nue_cc_out_fv",   "h_dedx_slice_3_zoom_nue_cc_out_fv", 10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_nue_cc_mixed   = new TH1D ("h_dedx_slice_3_zoom_nue_cc_mixed",    "h_dedx_slice_3_zoom_nue_cc_mixed",  10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_numu_cc        = new TH1D ("h_dedx_slice_3_zoom_numu_cc",         "h_dedx_slice_3_zoom_numu_cc",       10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_numu_cc_mixed  = new TH1D ("h_dedx_slice_3_zoom_numu_cc_mixed",   "h_dedx_slice_3_zoom_numu_cc_mixed", 10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_nc             = new TH1D ("h_dedx_slice_3_zoom_nc",              "h_dedx_slice_3_zoom_nc",            10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_nc_pi0         = new TH1D ("h_dedx_slice_3_zoom_nc_pi0",          "h_dedx_slice_3_zoom_nc_pi0",        10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_cosmic         = new TH1D ("h_dedx_slice_3_zoom_cosmic",          "h_dedx_slice_3_zoom_cosmic",        10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_other_mixed    = new TH1D ("h_dedx_slice_3_zoom_other_mixed",     "h_dedx_slice_3_zoom_other_mixed",   10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_unmatched      = new TH1D ("h_dedx_slice_3_zoom_unmatched",       "h_dedx_slice_3_zoom_unmatched",     10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_intime         = new TH1D ("h_dedx_slice_3_zoom_intime",          "h_dedx_slice_3_zoom_intime",        10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_dirt           = new TH1D ("h_dedx_slice_3_zoom_dirt",            "h_dedx_slice_3_zoom_dirt",          10, 0, 4);
+TH1D * h_dedx_slice_3_zoom_data           = new TH1D ("h_dedx_slice_3_zoom_data",            "h_dedx_slice_3_zoom_data",          10, 0, 4);
 
 
 TH1D * h_multiplicity_shower_nue_cc         = new TH1D("h_multiplicity_shower_nue_cc",        "h_multiplicity_shower_nue_cc",        5, 1, 6);

@@ -748,7 +748,7 @@ void selection_functions_data::LeadingCosThetaData(std::vector<xsecAna::TPCObjec
 		const double leading_shower_x = leading_shower.pfpDirX();
 		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
 		TVector3 numi_vector;
-		numi_vector.SetMagThetaPhi(1, theta_translation, phi_translation);
+		numi_vector.SetMagThetaPhi(1, 0, 0);
 		double leading_shower_cos_theta = shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag());
 		if(theta_translation == 0 && phi_translation == 0) {leading_shower_cos_theta = leading_shower_z; }
 		h_ele_cos_theta_data->Fill(leading_shower_cos_theta);

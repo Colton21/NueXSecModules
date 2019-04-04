@@ -14,6 +14,7 @@ void selection::make_selection( const char * _file1,
 	std::cout << "File Path: " << _file1 << std::endl;
 	const bool _verbose = false;
 	const bool _post_cuts_verbose = false;
+	const bool _write_post_cuts = true;
 	gErrorIgnoreLevel = kWarning;
 
 	//first we need to open the root files
@@ -68,6 +69,9 @@ void selection::make_selection( const char * _file1,
 	mctruth_counter_tree->SetBranchAddress("fMCEleMomentum", &mc_ele_momentum);
 	mctruth_counter_tree->SetBranchAddress("has_pi0", &has_pi0);
 	mctruth_counter_tree->SetBranchAddress("fMCNuTime", &mc_nu_time);
+
+	std::ofstream neutrino_in_tpc_list;
+	neutrino_in_tpc_list.open("neutrino_in_tpc_list.txt");
 
 	//configure the externally configurable cut parameters
 	std::cout << "\n --- Configuring Parameters --- \n" << std::endl;
@@ -151,6 +155,13 @@ void selection::make_selection( const char * _file1,
 			if(true_in_tpc == true && (mc_nu_id == 5)) {total_mc_entries_inFV_nue_bar++; }
 			if(true_in_tpc == true && (mc_nu_id == 3)) {total_mc_entries_inFV_nue_nc++; }
 			if(true_in_tpc == true && (mc_nu_id == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
+
+			if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5))
+			{
+				//0 for event number (not in the tree), 0 for classifier id (not relevant at truth level)
+				neutrino_in_tpc_list << 0 << ", " << 0 << ", " << mc_nu_id << ", " <<
+				        mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
+			}
 		}
 
 		if(mc_nu_id == 2) {_mc_numu_cc_counter++; }
@@ -163,6 +174,7 @@ void selection::make_selection( const char * _file1,
 		if(true_in_tpc == true && (mc_nu_id == 6)) {total_mc_entries_inFV_numu_cc_bar++; }
 		if(true_in_tpc == true && (mc_nu_id == 8)) {total_mc_entries_inFV_numu_nc_bar++; }
 	}
+	neutrino_in_tpc_list.close();
 
 	std::vector<bool> true_in_tpc_var_v;
 	true_in_tpc_var_v.resize(total_mc_entries_var, false);
@@ -272,8 +284,10 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * tabulated_origins_data = new std::vector<int>;
 	tabulated_origins_data->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_data
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                       double, double, double, double, int> > * post_cuts_v_data
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                                     double, double, double, double, int> >;
 
 	std::vector<std::tuple<int, int, int> > duplicate_test;
 
@@ -844,8 +858,10 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * tabulated_origins_dirt = new std::vector<int>;
 	tabulated_origins_dirt->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v_dirt
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                       double, double, double, double, int> > * post_cuts_v_dirt
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                                     double, double, double, double, int> >;
 
 	if(strcmp(_file4, "empty") != 0)
 	{
@@ -854,6 +870,13 @@ void selection::make_selection( const char * _file1,
 		if(!dirt_f->IsOpen()) {std::cout << "Could not open file!" << std::endl; exit(1); }
 		TTree * dirt_tree   = (TTree*)dirt_f->Get("AnalyzeTPCO/tree");
 		TTree * dirt_optree = (TTree*)dirt_f->Get("AnalyzeTPCO/optical_tree");
+
+		TTree * mctruth_counter_tree_dirt = (TTree*)dirt_f->Get("AnalyzeTPCO/mctruth_counter_tree");
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuDirX",   &mc_nu_dir_x_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuDirY",   &mc_nu_dir_y_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuDirZ",   &mc_nu_dir_z_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuEnergy", &mc_nu_energy_dirt);
+		mctruth_counter_tree_dirt->SetBranchAddress("fMCNuID",     &mc_nu_id_dirt);
 
 		std::vector<xsecAna::TPCObjectContainer> * dirt_tpc_object_container_v = new std::vector<xsecAna::TPCObjectContainer>;
 		dirt_tree->SetBranchAddress("TpcObjectContainerV", &dirt_tpc_object_container_v);
@@ -908,6 +931,7 @@ void selection::make_selection( const char * _file1,
 				std::cout << "----------------------" << std::endl;
 			}
 			dirt_tree->GetEntry(event);
+			mctruth_counter_tree_dirt->GetEntry(event);
 
 			//writing the run and subrun values to a text file -
 			//this can be used as a cross-check for POT counting
@@ -1217,7 +1241,7 @@ void selection::make_selection( const char * _file1,
                                                                                           h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
                                                                                           h_dedx_yz_ratio_cali_dirt, h_dedx_yz_ratio_omit_dirt, h_dedx_yz_ratio_omit_cali_dirt);
  */
-			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
 
@@ -1380,7 +1404,9 @@ void selection::make_selection( const char * _file1,
 
 			_functions_instance.selection_functions::XYZPositionInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_any_pfp_xyz_last_dirt);
 
-			_functions_instance.selection_functions::FillPostCutVector(dirt_tpc_object_container_v, passed_tpco_dirt, post_cuts_v_dirt);
+			_functions_instance.selection_functions::FillPostCutVectorDirt(dirt_tpc_object_container_v, passed_tpco_dirt, post_cuts_v_dirt,
+			                                                               mc_nu_dir_x_dirt, mc_nu_dir_y_dirt, mc_nu_dir_z_dirt,
+			                                                               mc_nu_energy_dirt, mc_nu_id_dirt);
 			_functions_instance.selection_functions::LeadingThetaPhiInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_theta_phi_dirt);
 
 			_functions_instance.selection_functions::LeadingKinematicsShowerTopologyInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
@@ -1452,8 +1478,10 @@ void selection::make_selection( const char * _file1,
 	std::vector<int> * tabulated_origins_intime = new std::vector<int>;
 	tabulated_origins_intime->resize(24, 0);
 
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_cuts_v
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                       double, double, double, double, int> > * post_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double,
+	                                     double, double, double, double, double, int> >;
 
 	if(strcmp(_file2, "empty") != 0)
 	{
@@ -1825,7 +1853,7 @@ void selection::make_selection( const char * _file1,
                                                                                           h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
                                                                                           h_dedx_yz_ratio_cali_intime, h_dedx_yz_ratio_omit_intime, h_dedx_yz_ratio_omit_cali_intime);
  */
-			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
 
@@ -2174,8 +2202,10 @@ void selection::make_selection( const char * _file1,
 	//Event, Run, VtxX, VtxY, VtxZ, pass/fail reason
 	// std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> > * post_cuts_v
 	//         = new std::vector<std::tuple<int, int, double, double, double, std::string, std::string, int, int, double> >;
-	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> > * post_open_angle_cuts_v
-	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double> >;
+	std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                       double, double, double, double, int> > * post_open_angle_cuts_v
+	        = new std::vector<std::tuple<int, int, int, double, double, double, std::string, std::string, int, int, double, double,
+	                                     double, double, double, double, int> >;
 
 	std::cout << "========================" << std::endl;
 	std::cout << "== Begin MC Selection ==" << std::endl;
@@ -3295,7 +3325,8 @@ void selection::make_selection( const char * _file1,
 		                                                         h_ele_cos_theta_other_mixed,
 		                                                         h_ele_cos_theta_unmatched);
 
-		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_open_angle_cuts_v);
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_open_angle_cuts_v,
+		                                                           mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 		_functions_instance.selection_functions::NumShowersOpenAngle(tpc_object_container_v, passed_tpco, tpco_classifier_v,
 		                                                             h_pfp_shower_open_angle_nue_cc_qe,
 		                                                             h_pfp_shower_open_angle_nue_cc_out_fv,
@@ -3578,7 +3609,7 @@ void selection::make_selection( const char * _file1,
                                                                             h_dedx_yz_ratio_omit_cali_nue
                                                                             );
  */
-		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
+		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -4042,6 +4073,8 @@ void selection::make_selection( const char * _file1,
 		                                                       h_failure_reason_nc_pi0, h_failure_reason_cosmic,
 		                                                       h_failure_reason_other_mixed, h_failure_reason_unmatched);
 
+
+
 		//these are for the tefficiency plots, post all cuts
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 		{
@@ -4191,7 +4224,8 @@ void selection::make_selection( const char * _file1,
 		_functions_instance.selection_functions::ChargeShare(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_charge_share_nue_cc_mixed);
 
-		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v);
+		_functions_instance.selection_functions::FillPostCutVector(tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v,
+		                                                           mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 
 		_functions_instance.selection_functions::TrackLength(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_trk_length_nue_cc,
@@ -5691,7 +5725,8 @@ void selection::make_selection( const char * _file1,
 				                                                         h_ele_cos_theta_unmatched,
 				                                                         var_scale_factor);
 
-				_functions_instance.selection_functions::FillPostCutVector(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, post_open_angle_cuts_v);
+				_functions_instance.selection_functions::FillPostCutVector(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, post_open_angle_cuts_v,
+				                                                           mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 				_functions_instance.selection_functions::NumShowersOpenAngle(var_tpc_object_container_v, passed_tpco, tpco_classifier_v,
 				                                                             h_pfp_shower_open_angle_nue_cc_qe,
 				                                                             h_pfp_shower_open_angle_nue_cc_out_fv,
@@ -6635,7 +6670,8 @@ void selection::make_selection( const char * _file1,
 				_functions_instance.selection_functions::ChargeShare(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     h_charge_share_nue_cc_mixed, var_scale_factor);
 
-				_functions_instance.selection_functions::FillPostCutVector(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v);
+				_functions_instance.selection_functions::FillPostCutVector(var_tpc_object_container_v, passed_tpco, tpco_classifier_v, post_cuts_v,
+				                                                           mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z, mc_nu_energy, mc_nu_id);
 
 				_functions_instance.selection_functions::TrackLength(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                     h_trk_length_nue_cc,
@@ -7178,16 +7214,17 @@ void selection::make_selection( const char * _file1,
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 
-	if(_post_cuts_verbose == true)
+	if(_write_post_cuts == true)
 	{
 		std::cout << "Print Post Cuts MC: " << std::endl;
-		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v,  _post_cuts_verbose);
+		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v,  _post_cuts_verbose, "selected_events_for_truth_script.txt");
+		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_dirt,  _post_cuts_verbose, "selected_events_for_truth_script_dirt.txt");
 		//filling a file with all of the run subrun and event numbers
 	}
-	if(_post_cuts_verbose == true)
+	if(_write_post_cuts == true)
 	{
 		std::cout << "Print Post Cuts On-Beam Data: " << std::endl;
-		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_data, _post_cuts_verbose);
+		_functions_instance.selection_functions::PrintPostCutVector(post_cuts_v_data, _post_cuts_verbose, "selected_events_for_truth_script_data.txt");
 	}
 	std::ofstream selected_run_subrun_event_file;
 	selected_run_subrun_event_file.open("selected_run_subrun_event_list.txt");
@@ -9124,6 +9161,7 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_pfp_y_unmatched, h_ele_pfp_y_intime, intime_scale_factor,
 	                                         h_ele_pfp_y_data, data_scale_factor,
 	                                         h_ele_pfp_y_dirt, dirt_scale_factor,
+	                                         0.15, 0.40, 0.98, 0.50, false, false,
 	                                         "", "Reco Vertex Y [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_y_data.pdf"));
 	histogram_functions::PlotSimpleStackData(h_ele_pfp_z_nue_cc, h_ele_pfp_z_nue_cc_mixed,
