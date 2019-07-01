@@ -252,8 +252,8 @@ ax0.fill_between(a_bin_flux_list, plotting_prod_anue_flux_xsec_list,
                  0, facecolor='darkgray', alpha=0.2)
 
 
-ax0.set_xlabel('Neutrino Energy [GeV]', fontsize=18)
-ax0.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ / GeV / 6e20 POT', fontsize=18)
+ax0.set_xlabel('Neutrino Energy [GeV]', fontsize=22)
+ax0.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ / GeV / 6e20 POT', fontsize=22)
 
 ax0b = ax0.twinx()
 
@@ -262,7 +262,7 @@ line00a = ax0b.plot(x_arr_nue, y_arr_nue, 'goldenrod',
 line00b = ax0b.plot(x_arr_anue, y_arr_anue, 'slategray',
                     linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
 ax0b.set_ylabel(
-    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
+    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=22)
 
 lines0 = line0a + line0b + line00a + line00b
 labels0 = [l.get_label() for l in lines0]
@@ -372,8 +372,9 @@ line00b = ax00.errorbar(energy_efficiency_bin_position, anue_rate_efficiency,
 ax00.legend((line00a, line00b),
             (r'$\nu_{e}$ Selection Rate', r'$\bar{\nu}_{e}$ Selection Rate'), numpoints=1, fontsize=16.0)
 
-ax00.set_xlabel('Neutrino Energy [GeV]')
-ax00.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / GeV / 6e20 POT')
+ax00.set_xlabel('Neutrino Energy [GeV]', fontsize=22)
+ax00.set_ylabel(
+    r'$\nu_{e}/\bar{\nu_{e}}$ Selected / GeV / 6e20 POT', fontsize=22)
 plt.xlim(0.0, 4.1)
 ax00.set_ylim(0, 250)
 plt.show()
@@ -422,8 +423,9 @@ line000d = ax000.errorbar(energy_efficiency_bin_position, anue_rate_efficiency_u
 ax000.legend((line000a, line000b, line000c, line000d),
              (r'$\nu_{e}$ Selection Rate', r'$\bar{\nu}_{e}$ Selection Rate', r'$\nu_{e}$ Selection Rate Enhanced Low E', r'$\bar{\nu}_{e}$ Selection Rate Enhanced Low E'), numpoints=1, fontsize=16.0)
 
-ax000.set_xlabel('Neutrino Energy [GeV]')
-ax000.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$ Selected / GeV / 6e20 POT')
+ax000.set_xlabel('Neutrino Energy [GeV]', fontsize=22)
+ax000.set_ylabel(
+    r'$\nu_{e}/\bar{\nu_{e}}$ Selected / GeV / 6e20 POT', fontsize=22)
 plt.xlim(0.0, 4.1)
 ax000.set_ylim(0, 250)
 plt.show()
@@ -441,9 +443,9 @@ line1b = ax1.plot(a_bin_flux_list, anue_flux_list, 'darkgreen',
                   linewidth=2.0, label=r'NuMI $\bar{\nu}_{e}$ Flux')
 ax1.fill_between(a_bin_flux_list, anue_flux_list,
                  0, facecolor='darkgray', alpha=0.2)
-ax1.set_xlabel('Neutrino Energy [GeV]', fontsize=18)
+ax1.set_xlabel('Neutrino Energy [GeV]', fontsize=22)
 # Make the y-axis label, ticks and tick labels match the line color.
-ax1.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$  / cm$^{2}$ / 6e20 POT', fontsize=18)
+ax1.set_ylabel(r'$\nu_{e}/\bar{\nu_{e}}$  / cm$^{2}$ / 6e20 POT', fontsize=22)
 # ax1.tick_params('y', colors='b')
 
 ax2 = ax1.twinx()
@@ -452,7 +454,7 @@ line2a = ax2.plot(x_arr_nue, y_arr_nue, 'mediumblue',
 line2b = ax2.plot(x_arr_anue, y_arr_anue, 'darkgreen',
                   linewidth=2.4, label=r'GENIE $\bar{\nu}_{e}$ Cross Section', linestyle=':')
 ax2.set_ylabel(
-    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
+    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=22)
 # ax2.tick_params('y', colors='r')
 
 ax3 = ax2
@@ -463,7 +465,7 @@ data_xsec_point = 4.67e-39
 genie_xsec_point_stat_err = 0.057e-39
 data_xsec_point_stat_err = 1.01e-39
 genie_xsec_point_sys_err = 0.0
-data_xsec_point_sys_err = 0.0
+data_xsec_point_sys_err = (0.317 * data_xsec_point)
 genie_xsec_point_total_err = np.sqrt(
     genie_xsec_point_stat_err**2 + genie_xsec_point_sys_err**2)
 data_xsec_point_total_err = np.sqrt(
@@ -489,8 +491,8 @@ line3c = ax3.plot(data_xsec_energy, data_xsec_point,
                   'black', label=r'Data $\sigma_{\nu_{e} + \bar{\nu}_{e}}$')
 line3d = ax3.errorbar(data_xsec_energy, data_xsec_point,
                       xerr=asymmetric_x_err, yerr=data_symmetric_y_err, fmt='--o',
-                      color='black', ecolor='black', linewidth=1.0, markersize=6.0,
-                      label='data_xsec_point')
+                      color='black', ecolor='black', linewidth=3.0, markersize=9.0, marker='o',
+                      label='data_xsec_point', elinewidth=3.0, capsize=8.0, markeredgewidth=3.0)
 
 lines = line1a + line1b + line3c + line2a + line2b
 labels = [l.get_label() for l in lines]
@@ -532,7 +534,7 @@ data_xsec_point = 4.67e-39
 
 # stats uncertainty
 data_stat_err = 0.2167
-data_sys_err = 0.30
+data_sys_err = 0.317
 lower_1a = data_xsec_point + (data_xsec_point * data_stat_err)
 upper_1a = data_xsec_point - (data_xsec_point * data_stat_err)
 
@@ -628,7 +630,7 @@ line_2d = ax_2b.plot(x_edge, data_xsec_point_list, color='black', linewidth=1.8,
 ax_2b.set_ylim(0, 10e-39)
 ax_2b.set_xlim(0, 1)
 ax_2b.set_ylabel(
-    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=18)
+    r'$\nu_{e}/\bar{\nu}_{e}$ CC Cross Section [cm$^{2}$]', fontsize=22)
 ax_2b.xaxis.label.set_size(0)
 ax_2b.xaxis.set_ticklabels([])
 ax_2b.xaxis.set_visible(False)

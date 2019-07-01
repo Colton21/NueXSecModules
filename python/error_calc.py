@@ -86,7 +86,7 @@ plt.xticks(np.arange(1.5, 15.5, step=1.0), labels,
 
 ax0.set_xlabel('Detector Variation', fontsize=20, horizontalalignment='center')
 ax0.set_ylabel(
-    r'$\sigma_{var}$ - $\sigma_{CV}$ / $\sigma_{CV}$ [%]', fontsize=20)
+    r'$\sigma_{var}$ - $\sigma_{CV}$ / $\sigma_{CV}$ [%]', fontsize=24)
 
 ax0.set_ylim(0, 14.0)
 # plt.xlim(0.0, 4.0)
@@ -230,32 +230,40 @@ print 'Efficiency Error: ', efficiency_error, '%'
 
 beamline_error = 0.
 
-nominal = 0.0
+nominal = 6.04413e-39
 
 # errors are as a %
-beam_spot_1_1mm = (0.0 - nominal) / nominal
-beam_spot_1_5mm = (0.0 - nominal) / nominal
-horns_water_0mm = (0.0 - nominal) / nominal
-horns_water_2mm = (0.0 - nominal) / nominal
-old_horn = (0.0 - nominal) / nominal
+beam_spot_1_1mm = abs((6.67045e-39 - nominal) / nominal) * 100.
+beam_spot_1_5mm = abs((6.23823e-39 - nominal) / nominal) * 100.
 
-horn_plus_2ka = (0.0 - nominal) / nominal
-horn_minus_2ka = (0.0 - nominal) / nominal
+horns_water_0mm = abs((6.00911e-39 - nominal) / nominal) * 100.
+horns_water_2mm = abs((6.14757e-39 - nominal) / nominal) * 100.
 
-horn1_x_plus_3mm = (0.0 - nominal) / nominal
-horn1_x_minus_3mm = (0.0 - nominal) / nominal
+old_horn = abs((5.8442e-39 - nominal) / nominal) * 100.
 
-horn1_y_plus_3mm = (0.0 - nominal) / nominal
-horn1_y_minus_3mm = (0.0 - nominal) / nominal
+horn_plus_2ka = abs((6.13481e-39 - nominal) / nominal) * 100.
+horn_minus_2ka = abs((6.06206e-39 - nominal) / nominal) * 100.
 
-horn2_x_plus_3mm = (0.0 - nominal) / nominal
-horn2_x_minus_3mm = (0.0 - nominal) / nominal
+horn1_x_plus_3mm = abs((6.02979e-39 - nominal) / nominal) * 100.
+horn1_x_minus_3mm = abs((6.25546e-39 - nominal) / nominal) * 100.
 
-horn2_y_plus_3mm = (0.0 - nominal) / nominal
-horn2_y_minus_3mm = (0.0 - nominal) / nominal
+horn1_y_plus_3mm = abs((6.00517e-39 - nominal) / nominal) * 100.
+horn1_y_minus_3mm = abs((6.0024e-39 - nominal) / nominal) * 100.
 
-beam_shift_x_plus_1mm = (0.0 - nominal) / nominal
-beam_shift_x_minus_1mm = (0.0 - nominal) / nominal
+horn2_x_plus_3mm = abs((5.99126e-39 - nominal) / nominal) * 100.
+horn2_x_minus_3mm = abs((6.04437e-39 - nominal) / nominal) * 100.
+
+horn2_y_plus_3mm = abs((5.99812e-39 - nominal) / nominal) * 100.
+horn2_y_minus_3mm = abs((5.99442e-39 - nominal) / nominal) * 100.
+
+beam_shift_x_plus_1mm = abs((6.1976e-39 - nominal) / nominal) * 100.
+beam_shift_x_minus_1mm = abs((6.08526e-39 - nominal) / nominal) * 100.
+
+beam_shift_y_plus_1mm = abs((6.15016e-39 - nominal) / nominal) * 100.
+beam_shift_y_minus_1mm = abs((6.0071e-39 - nominal) / nominal) * 100.
+
+target_z_plus_7mm = abs((6.14371e-39 - nominal) / nominal) * 100.
+target_z_minus_7mm = abs((5.97854e-39 - nominal) / nominal) * 100.
 
 
 # calculate the detector error
@@ -265,7 +273,10 @@ horn1_y_3mm = 0.
 horn2_x_3mm = 0.
 horn2_y_3mm = 0.
 beam_shift_x_1mm = 0.
+beam_shift_y_1mm = 0.
 beam_spot = 0.
+horns_water = 0.
+target_z = 0.
 
 if(horn_plus_2ka > horn_minus_2ka):
     horn_2ka = horn_plus_2ka
@@ -297,18 +308,47 @@ if(beam_shift_x_plus_1mm > beam_shift_x_minus_1mm):
 if(beam_shift_x_plus_1mm < beam_shift_x_minus_1mm):
     beam_shift_x_1mm = beam_shift_x_minus_1mm
 
+if(beam_shift_y_plus_1mm > beam_shift_y_minus_1mm):
+    beam_shift_y_1mm = beam_shift_y_plus_1mm
+if(beam_shift_y_plus_1mm < beam_shift_y_minus_1mm):
+    beam_shift_y_1mm = beam_shift_y_minus_1mm
+
 if(beam_spot_1_1mm > beam_spot_1_5mm):
     beam_spot = beam_spot_1_1mm
 if(beam_spot_1_5mm < beam_spot_1_5mm):
     beam_spot = beam_spot_1_5mm
 
-beamline_error = np.sqrt(beam_spot**2 + horns_water_0mm**2 + horns_water_2mm**2 +
+if(horns_water_0mm > horns_water_2mm):
+    horns_water = horns_water_0mm
+if(horns_water_0mm < horns_water_2mm):
+    horns_water = horns_water_2mm
+
+if(target_z_plus_7mm > target_z_minus_7mm):
+    target_z = target_z_plus_7mm
+if(target_z_plus_7mm < target_z_minus_7mm):
+    target_z = target_z_minus_7mm
+
+beamline_error = np.sqrt(beam_spot**2 + horns_water**2 +
                          old_horn**2 + horn_2ka**2 + horn1_x_3mm**2 + horn1_y_3mm**2 +
-                         horn2_x_3mm**2 + horn2_y_3mm**2 + beam_shift_x_1mm**2)
+                         horn2_x_3mm**2 + horn2_y_3mm**2 + beam_shift_x_1mm**2 +
+                         beam_shift_y_1mm**2 + target_z**2)
+
+print '---------------------------------------'
+print 'Beam Spot: ', beam_spot
+print 'Horns Water: ', horns_water
+print 'Old Horn: ', old_horn
+print 'Horn 2 kA: ', horn_2ka
+print 'Horn 1 x 3mm: ', horn1_x_3mm
+print 'Horn 1 y 3mm: ', horn1_y_3mm
+print 'Horn 2 x 3mm: ', horn2_x_3mm
+print 'Horn 2 y 3mm: ', horn2_y_3mm
+print 'Beam Shift x 1mm: ', beam_shift_x_1mm
+print 'Beam Shift y 1mm: ', beam_shift_y_1mm
+print 'Target Z 7mm: ', target_z
 
 print 'Beamline Variation Uncertainty: ', beamline_error, '%'
 
-beamline_error_list = (round(beam_spot, 2), round(horns_water_0mm, 2), round(horns_water_2mm, 2),
+beamline_error_list = (round(beam_spot, 2), round(horns_water, 2),
                        round(old_horn, 2),
                        round(horn_2ka, 2),
                        round(horn1_x_3mm, 2),
@@ -316,34 +356,37 @@ beamline_error_list = (round(beam_spot, 2), round(horns_water_0mm, 2), round(hor
                        round(horn2_x_3mm, 2),
                        round(horn2_y_3mm, 2),
                        round(beam_shift_x_1mm, 2),
+                       round(beam_shift_y_1mm, 2),
+                       round(target_z, 2),
                        round(beamline_error, 2))
 
-beamline_bin_list = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11)
-beamline_labels = ("Beam Spot", "Horn Water 0mm", "Horn Water 2mm", "Old Horn",
+beamline_bin_list = (1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12)
+beamline_labels = ("Beam Spot", "Horn Water Layer", "Old Horn",
                    "Horn 2kA", "Horn1 X 3mm", "Horn1 Y 3mm", "Horn2 X 3mm", "Horn2 Y 3mm",
-                   "Beam Shift X 1mm", "Total")
+                   "Beam Shift X 1mm", "Beam Shift Y 1mm", "Target Z 7mm",
+                   "Total")
 
 fig2, ax2 = plt.subplots()
 
 line2a = ax2.bar(beamline_bin_list, beamline_error_list,
-                 color='darkgray', width=0.9)
+                 color='lightskyblue', width=0.9)
 
 for i, v in enumerate(beamline_error_list):
     ax2.text(i + 1.2, v / beamline_error_list[i] + 0.005, beamline_error_list[i],
-             fontsize=16, color='salmon')
+             fontsize=16, color='black')
 
-plt.xticks(np.arange(1.5, 12.5, step=1.0), labels,
+plt.xticks(np.arange(1.5, 13.5, step=1.0), beamline_labels,
            rotation=90, horizontalalignment='center', fontsize=18)
 
 
 # ax0.fill_between(bin_flux_list, plotting_prod_nue_flux_xsec_list, 0,
 # facecolor='darkgray', alpha=0.2)
 
-ax0.set_xlabel('Beamline Variation', fontsize=20, horizontalalignment='center')
-ax0.set_ylabel(
-    r'$\sigma_{var}$ - $\sigma_{CV}$ / $\sigma_{CV}$ [%]', fontsize=20)
+ax2.set_xlabel('Beamline Variation', fontsize=20, horizontalalignment='center')
+ax2.set_ylabel(
+    r'$\sigma_{var}$ - $\sigma_{CV}$ / $\sigma_{CV}$ [%]', fontsize=24)
 
-ax0.set_ylim(0, 20.0)
+ax2.set_ylim(0, 13.0)
 # plt.xlim(0.0, 4.0)
 # ax0.align_xlabels()  # same as fig.align_xlabels(); fig.align_ylabels()
 

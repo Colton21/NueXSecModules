@@ -2,6 +2,51 @@
 #include "selection_cuts.h"
 
 //***************************************************************************
+void selection_functions::LeadingShowerID(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                          std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                          std::vector<std::pair<int, int> > * leading_shower_id)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		//loop over pfparticles in the TPCO
+		int leading_index   = tpco_classifier_v->at(i).second;
+		std::string tpco_id = tpco_classifier_v->at(i).first;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int mc_pdg_code = leading_shower.MCPdgCode();
+		const int mc_nu_pdg_code = leading_shower.MCNuPdgCode();
+		if(tpco_id == "nue_cc_qe" || tpco_id == "nue_bar_cc_qe")
+		{
+			leading_shower_id->push_back(std::make_pair(mc_pdg_code, mc_nu_pdg_code));
+		}
+		if(tpco_id == "nue_cc_out_fv")
+		{
+			leading_shower_id->push_back(std::make_pair(mc_pdg_code, mc_nu_pdg_code));
+		}
+		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
+		{
+			leading_shower_id->push_back(std::make_pair(mc_pdg_code, mc_nu_pdg_code));
+		}
+		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
+		{
+			leading_shower_id->push_back(std::make_pair(mc_pdg_code, mc_nu_pdg_code));
+		}
+		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
+		{
+			leading_shower_id->push_back(std::make_pair(mc_pdg_code, mc_nu_pdg_code));
+		}
+		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
+		{
+			leading_shower_id->push_back(std::make_pair(mc_pdg_code, mc_nu_pdg_code));
+		}
+	}
+}
+//***************************************************************************
 void selection_functions::PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                        std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -11816,7 +11861,9 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
                                             const double mc_ele_dir_x, const double mc_ele_dir_y, const double mc_ele_dir_z,
                                             TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta,
                                             TH1D * h_ele_resolution_dot_prod, TH2D * h_ele_resolution_momentum_dot_prod,
-                                            TH2D * h_ele_resolution_momentum_dot_prod_zoom_y)
+                                            TH2D * h_ele_resolution_momentum_dot_prod_zoom_y,
+                                            TH2D * h_ele_true_reco_phi,
+                                            TH2D * h_ele_true_reco_theta)
 {
 	selection_functions::TrueEleResolution(tpc_object_container_v,
 	                                       passed_tpco, _verbose,
@@ -11825,7 +11872,9 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
 	                                       mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z,
 	                                       h_ele_resolution_momentum, h_ele_resolution_phi, h_ele_resolution_theta,
 	                                       h_ele_resolution_dot_prod, h_ele_resolution_momentum_dot_prod,
-	                                       h_ele_resolution_momentum_dot_prod_zoom_y, 1.0);
+	                                       h_ele_resolution_momentum_dot_prod_zoom_y,
+	                                       h_ele_true_reco_phi,
+	                                       h_ele_true_reco_theta, 1.0);
 }
 void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
@@ -11835,6 +11884,8 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
                                             TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta,
                                             TH1D * h_ele_resolution_dot_prod, TH2D * h_ele_resolution_momentum_dot_prod,
                                             TH2D * h_ele_resolution_momentum_dot_prod_zoom_y,
+                                            TH2D * h_ele_true_reco_phi,
+                                            TH2D * h_ele_true_reco_theta,
                                             const double var_scale_factor)
 {
 	int n_tpc_obj = tpc_object_container_v->size();
@@ -11866,6 +11917,8 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
 			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod_zoom_y->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
+			h_ele_true_reco_phi->Fill(mc_ele_phi, leading_shower_phi, var_scale_factor);
+			h_ele_true_reco_theta->Fill(mc_ele_theta, leading_shower_theta, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_res" || tpco_id == "nue_bar_cc_res")
 		{
@@ -11875,6 +11928,8 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
 			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod_zoom_y->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
+			h_ele_true_reco_phi->Fill(mc_ele_phi, leading_shower_phi, var_scale_factor);
+			h_ele_true_reco_theta->Fill(mc_ele_theta, leading_shower_theta, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_dis" || tpco_id == "nue_bar_cc_dis")
 		{
@@ -11884,6 +11939,8 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
 			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod_zoom_y->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
+			h_ele_true_reco_phi->Fill(mc_ele_phi, leading_shower_phi, var_scale_factor);
+			h_ele_true_reco_theta->Fill(mc_ele_theta, leading_shower_theta, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_coh" || tpco_id == "nue_bar_cc_coh")
 		{
@@ -11893,6 +11950,8 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
 			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod_zoom_y->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
+			h_ele_true_reco_phi->Fill(mc_ele_phi, leading_shower_phi, var_scale_factor);
+			h_ele_true_reco_theta->Fill(mc_ele_theta, leading_shower_theta, var_scale_factor);
 		}
 		if(tpco_id == "nue_cc_mec" || tpco_id == "nue_bar_cc_mec")
 		{
@@ -11902,6 +11961,8 @@ void selection_functions::TrueEleResolution(std::vector<xsecAna::TPCObjectContai
 			h_ele_resolution_dot_prod->Fill(mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
 			h_ele_resolution_momentum_dot_prod_zoom_y->Fill(mc_ele_momentum, mc_reco_dot_prod, var_scale_factor);
+			h_ele_true_reco_phi->Fill(mc_ele_phi, leading_shower_phi, var_scale_factor);
+			h_ele_true_reco_theta->Fill(mc_ele_theta, leading_shower_theta, var_scale_factor);
 		}
 	}
 }
