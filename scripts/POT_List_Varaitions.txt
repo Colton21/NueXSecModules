@@ -56,3 +56,6 @@ Total POT (Method 2): 8.19563e+21
 File: files/filter_BirksRecomb.root
 Total POT (Method 1): 8.29012e+21
 Total POT (Method 2): 8.29012e+21
+File: files/filter_BNBwithDIC.root
+Total POT (Method 1): 1.96741e+20
+Total POT (Method 2): 1.96741e+20

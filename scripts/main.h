@@ -4,6 +4,7 @@
 #include "selection.h"
 #include "selection_slim.h"
 #include "variation_output.h"
+#include "variation_output_bkg.h"
 #include "utility.h"
 
 #include <iostream>

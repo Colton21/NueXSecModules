@@ -22,6 +22,7 @@ int main(int argc, char *argv[]){
 	char * variation_file_path = "empty";
 
 	bool variation_mode;
+	bool variation_mode_bkg = false;
 
 	//start after name of .exe
 	for(int i =1; i < argc; i++)
@@ -79,6 +80,10 @@ int main(int argc, char *argv[]){
 		{
 			variation_mode = true;
 		}
+		if(strcmp(arg, "--var_mode_bkg") == 0)
+		{
+			variation_mode_bkg = true;
+		}
 	}
 	if(argc < 2 )  { std::cout << " \n Please inclue the input file path \n " << std::endl; exit(1); }
 
@@ -90,6 +95,7 @@ int main(int argc, char *argv[]){
 		_var_mode_instance.run_var(argv[2], argv[3]);
 		return 0;
 	}
+	
 
 	std::vector<double> config;
 	std::vector<double> input_config;
@@ -162,6 +168,17 @@ int main(int argc, char *argv[]){
 	// if(using_slim_version == true)    {_argc = _argc - 1; }//this is to account for the "--slim"
 	// if(using_default_config == false) {_argc = _argc - 2; }//this is to account for the "-c" and "config_file"
 	// if(using_dynamic_file_prefix == true) { _argc = _argc - 2; } // this is to account for the "-f" and "path"
+
+
+	//variation mode for backgrounds
+	if(variation_mode_bkg == true)
+	{
+		variation_output_bkg _var_mode_instance_bkg;
+		// ./main.exe --var_mode_bkg file_name <"same">/""
+		_var_mode_instance_bkg.run_var(argv[2], argv[3], config);
+		return 0;
+	}
+
 
 	//default state
 	if(using_slim_version == false)
