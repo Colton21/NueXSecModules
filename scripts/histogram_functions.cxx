@@ -10,12 +10,12 @@ void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle("Entries");
 	histogram->SetStats(kFALSE);
-	histogram->GetYaxis()->SetTitleSize(18);
-	histogram->GetYaxis()->SetTitleFont(47);
-	histogram->GetYaxis()->SetTitleOffset(1.45);
-	histogram->GetXaxis()->SetTitleSize(18);
-	histogram->GetXaxis()->SetTitleFont(47);
-	histogram->GetXaxis()->SetTitleOffset(1.45);
+	histogram->GetYaxis()->SetTitleSize(19);
+	histogram->GetYaxis()->SetTitleFont(49);
+	histogram->GetYaxis()->SetTitleOffset(1.15);
+	histogram->GetXaxis()->SetTitleSize(19);
+	histogram->GetXaxis()->SetTitleFont(49);
+	histogram->GetXaxis()->SetTitleOffset(1.15);
 
 	histogram->Draw();
 
@@ -321,11 +321,11 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	c1->cd();
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
-	histogram->GetYaxis()->SetTitleSize(18);
-	histogram->GetYaxis()->SetTitleFont(47);
+	histogram->GetYaxis()->SetTitleSize(19);
+	histogram->GetYaxis()->SetTitleFont(49);
 	histogram->GetYaxis()->SetTitleOffset(1.15);
-	histogram->GetXaxis()->SetTitleSize(18);
-	histogram->GetXaxis()->SetTitleFont(47);
+	histogram->GetXaxis()->SetTitleSize(19);
+	histogram->GetXaxis()->SetTitleFont(49);
 	histogram->GetXaxis()->SetTitleOffset(1.15);
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
@@ -353,11 +353,11 @@ void histogram_functions::Plot2DHistogramNormZ (TH2 * histogram_1, TH2 * histogr
 	histogram_2->SetStats(kFALSE);
 	histogram_2->Draw("colz");
 
-	histogram_2->GetYaxis()->SetTitleSize(18);
-	histogram_2->GetYaxis()->SetTitleFont(47);
+	histogram_2->GetYaxis()->SetTitleSize(19);
+	histogram_2->GetYaxis()->SetTitleFont(49);
 	histogram_2->GetYaxis()->SetTitleOffset(1.15);
-	histogram_2->GetXaxis()->SetTitleSize(18);
-	histogram_2->GetXaxis()->SetTitleFont(47);
+	histogram_2->GetXaxis()->SetTitleSize(19);
+	histogram_2->GetXaxis()->SetTitleFont(49);
 	histogram_2->GetXaxis()->SetTitleOffset(1.15);
 
 	histogram_1_clone->GetZaxis()->SetRangeUser(histogram_2->GetMinimum(),//GetBinLowEdge(1),
@@ -637,7 +637,7 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 	stack->GetYaxis()->SetTitleOffset(1.45);
 	stack->GetXaxis()->SetTitleSize(18);
 	stack->GetXaxis()->SetTitleFont(46);
-	stack->GetXaxis()->SetTitleOffset(1.45);
+	stack->GetXaxis()->SetTitleOffset(1.35);
 
 	TH1 * h_error_hist = (TH1*)h_mc_clone->Clone("h_error_hist");
 	h_error_hist->Add(h_intime_clone, 1);
@@ -762,11 +762,11 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	c1->cd();
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
-	histogram->GetYaxis()->SetTitleSize(18);
-	histogram->GetYaxis()->SetTitleFont(47);
+	histogram->GetYaxis()->SetTitleSize(19);
+	histogram->GetYaxis()->SetTitleFont(49);
 	histogram->GetYaxis()->SetTitleOffset(1.15);
-	histogram->GetXaxis()->SetTitleSize(18);
-	histogram->GetXaxis()->SetTitleFont(47);
+	histogram->GetXaxis()->SetTitleSize(19);
+	histogram->GetXaxis()->SetTitleFont(49);
 	histogram->GetXaxis()->SetTitleOffset(1.15);
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
@@ -796,11 +796,11 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->GetXaxis()->SetNdivisions(x_divisions);
 	histogram->GetYaxis()->SetTitle(y_axis_name);
 	histogram->GetYaxis()->SetNdivisions(y_divisions);
-	histogram->GetYaxis()->SetTitleSize(18);
-	histogram->GetYaxis()->SetTitleFont(47);
+	histogram->GetYaxis()->SetTitleSize(19);
+	histogram->GetYaxis()->SetTitleFont(49);
 	histogram->GetYaxis()->SetTitleOffset(1.15);
-	histogram->GetXaxis()->SetTitleSize(18);
-	histogram->GetXaxis()->SetTitleFont(47);
+	histogram->GetXaxis()->SetTitleSize(19);
+	histogram->GetXaxis()->SetTitleFont(49);
 	histogram->GetXaxis()->SetTitleOffset(1.15);
 	histogram->GetXaxis()->CenterLabels(1);
 	histogram->GetYaxis()->CenterLabels(1);
@@ -1380,9 +1380,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
 	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
 
-	stack->GetYaxis()->SetTitleFont(44);
-	stack->GetYaxis()->SetTitleSize(17);
-	stack->GetYaxis()->SetTitleOffset(1.45);
+	stack->GetYaxis()->SetTitleFont(45);
+	stack->GetYaxis()->SetTitleSize(18);
+	stack->GetYaxis()->SetTitleOffset(1.30);
 	stack->GetXaxis()->SetLabelOffset(10);
 	h_data_clone->Draw("same PE");
 
@@ -1521,8 +1521,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	ratioPlot->GetYaxis()->SetLabelSize(11);
 	ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	ratioPlot->GetXaxis()->SetTitleOffset(3.0);
-	ratioPlot->GetXaxis()->SetTitleSize(16);
-	ratioPlot->GetXaxis()->SetTitleFont(45);
+	ratioPlot->GetXaxis()->SetTitleSize(17);
+	ratioPlot->GetXaxis()->SetTitleFont(46);
 
 	ratioPlot->GetYaxis()->SetNdivisions(4, 0, 0, kFALSE);
 

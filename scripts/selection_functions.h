@@ -41,6 +41,11 @@ public:
 selection_functions()=default;
 
 //***************************************************************************
+void LeadingShowerID(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                     std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                     std::vector<std::pair<int, int> > * leading_shower_id);
+//***************************************************************************
 void PostCutsdEdx(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                   std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                   std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -2489,6 +2494,8 @@ void TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta,
                        TH1D * h_ele_resolution_dot_prod, TH2D * h_ele_resolution_momentum_dot_prod,
                        TH2D * h_ele_resolution_momentum_dot_prod_zoom_y,
+                       TH2D * h_ele_true_reco_phi,
+                       TH2D * h_ele_true_reco_theta,
                        const double var_scale_factor);
 void TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                        std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
@@ -2497,7 +2504,9 @@ void TrueEleResolution(std::vector<xsecAna::TPCObjectContainer> * tpc_object_con
                        const double mc_ele_dir_x, const double mc_ele_dir_y, const double mc_ele_dir_z,
                        TH1D * h_ele_resolution_momentum, TH1D * h_ele_resolution_phi, TH1D * h_ele_resolution_theta,
                        TH1D * h_ele_resolution_dot_prod, TH2D * h_ele_resolution_momentum_dot_prod,
-                       TH2D * h_ele_resolution_momentum_dot_prod_zoom_y);
+                       TH2D * h_ele_resolution_momentum_dot_prod_zoom_y,
+                       TH2D * h_ele_true_reco_phi,
+                       TH2D * h_ele_true_reco_theta);
 //***************************************************************************
 //***************************************************************************
 void LeadingKinematicsShowerTopology(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

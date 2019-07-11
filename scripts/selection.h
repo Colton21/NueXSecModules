@@ -2905,6 +2905,8 @@ TH1D * h_ele_resolution_theta    = new TH1D("h_ele_resolution_theta",    "h_ele_
 TH1D * h_ele_resolution_dot_prod = new TH1D("h_ele_resolution_dot_prod", "h_ele_resolution_dot_prod", 20, -1, 1);
 TH2D * h_ele_resolution_momentum_dot_prod = new TH2D("h_ele_resolution_momentum_dot_prod", "h_ele_resolution_momentum_dot_prod", 30, 0, 5, 30, -1, 1);
 TH2D * h_ele_resolution_momentum_dot_prod_zoom_y = new TH2D("h_ele_resolution_momentum_dot_prod_zoom_y", "h_ele_resolution_momentum_dot_prod_zoom_y", 30, 0, 5, 30, 0.8, 1);
+TH2D * h_ele_true_reco_phi = new TH2D ("h_ele_true_reco_phi", "h_ele_true_reco_phi", 30, -180, 180, 30, -180, 180);
+TH2D * h_ele_true_reco_theta = new TH2D("h_ele_true_reco_theta", "h_ele_true_reco_theta", 30, 0, 180, 30, 0, 180);
 
 TH1D * h_ele_pfp_momentum_1shwr_nue_cc        = new TH1D("h_ele_pfp_momentum_1shwr_nue_cc",        "h_ele_pfp_momentum_1shwr_nue_cc",        30, 0, 3);
 TH1D * h_ele_pfp_momentum_1shwr_nue_cc_out_fv = new TH1D("h_ele_pfp_momentum_1shwr_nue_cc_out_fv", "h_ele_pfp_momentum_1shwr_nue_cc_out_fv", 30, 0, 3);

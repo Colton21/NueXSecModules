@@ -50,9 +50,9 @@ line1a = ax1.plot(num_list_edit, eff_list_short, 'darkcyan',
 line1b = ax1.plot(num_list_edit, pur_list_short, 'royalblue',
                   linewidth=2.0, label=r'Purity')
 
-ax1.set_xlabel('Selection Cut')
+ax1.set_xlabel('Selection Cut', fontsize=20)
 # Make the y-axis label, ticks and tick labels match the line color.
-ax1.set_ylabel(r'Selection Performance')
+ax1.set_ylabel(r'Selection Performance', fontsize=20)
 # ax1.tick_params('y', colors='b')
 
 #ax2 = ax1.twinx()
@@ -79,7 +79,7 @@ ax1.set_ylim(0, 1.0)
 #    tick.set_rotation(45)
 
 ax1.set_xticks(num_list_edit)
-ax1.set_xticklabels(cut_list_edit, rotation=40, ha='right')
+ax1.set_xticklabels(cut_list_edit, rotation=40, ha='right', fontsize=18)
 
 plt.grid(True)
 plt.show()

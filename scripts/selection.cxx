@@ -2030,6 +2030,8 @@ void selection::make_selection( const char * _file1,
 	}//end in-time cosmic running
 //*********************************************************
 //*********************************************************
+	std::vector<std::pair< int, int> > * leading_shower_id = new std::vector<std::pair< int, int> >;
+
 	std::vector<double> * in_time_counter_v = new std::vector<double>;
 	in_time_counter_v->resize(24, 0);
 	std::vector<double> * pe_counter_v = new std::vector<double>;
@@ -2601,6 +2603,13 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::TrueRecoEle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 			                                                     mc_ele_momentum, mc_ele_cos_theta,
 			                                                     h_true_reco_ele_momentum_pre, h_true_reco_ele_costheta_pre, h_true_num_e_pre);
+
+		}
+
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
+		{
+			_functions_instance.selection_functions::LeadingShowerID(tpc_object_container_v, passed_tpco, _verbose,
+			                                                         tpco_classifier_v, leading_shower_id);
 		}
 
 		_functions_instance.selection_functions::TopologyPlots1(tpc_object_container_v, passed_tpco, tpco_classifier_v,
@@ -4132,7 +4141,8 @@ void selection::make_selection( const char * _file1,
 				                                                           mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z,
 				                                                           h_ele_resolution_momentum, h_ele_resolution_phi, h_ele_resolution_theta,
 				                                                           h_ele_resolution_dot_prod, h_ele_resolution_momentum_dot_prod,
-				                                                           h_ele_resolution_momentum_dot_prod_zoom_y);
+				                                                           h_ele_resolution_momentum_dot_prod_zoom_y,
+				                                                           h_ele_true_reco_phi, h_ele_true_reco_theta);
 			}
 		}
 
@@ -6576,6 +6586,7 @@ void selection::make_selection( const char * _file1,
 						                                                           h_ele_resolution_momentum, h_ele_resolution_phi, h_ele_resolution_theta,
 						                                                           h_ele_resolution_dot_prod, h_ele_resolution_momentum_dot_prod,
 						                                                           h_ele_resolution_momentum_dot_prod_zoom_y,
+						                                                           h_ele_true_reco_phi, h_ele_true_reco_theta,
 						                                                           var_scale_factor);
 					}
 				}
@@ -7302,6 +7313,19 @@ void selection::make_selection( const char * _file1,
 	                                                              h_post_cuts_num_tracks_showers_signal_total,
 	                                                              h_post_cuts_num_tracks_showers_bkg_total,
 	                                                              h_post_cuts_num_tracks_showers_total_total);
+
+	int leading_shower_mc_pdg_electron = 0;
+	int leading_shower_id_size = leading_shower_id->size();
+	for(int i = 0; i < leading_shower_id_size; i++)
+	{
+		const int leading_shower_mc_pdg = leading_shower_id->at(i).first;
+		const int leading_shower_mc_nu_pdg = leading_shower_id->at(i).second;
+		if(leading_shower_mc_pdg == 11) {leading_shower_mc_pdg_electron++; }
+	}
+	std::cout << "--------------------------------------------------------------------------" << std::endl;
+	std::cout << "Fraction of leading showers as electrons (from after nue selection cut): " << std::endl;
+	std::cout << leading_shower_mc_pdg_electron << " / " << leading_shower_id_size << std::endl;
+	std::cout << "--------------------------------------------------------------------------" << std::endl;
 
 //********************//
 //**** Histograms ****//
@@ -9173,6 +9197,20 @@ void selection::make_selection( const char * _file1,
 	                                         h_ele_pfp_x_dirt, dirt_scale_factor,
 	                                         "", "Reco Vertex X [cm]", "",
 	                                         Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_x_data.pdf"));
+
+	histogram_functions::Plot1DHistogram(h_ele_pfp_x_cosmic, "Reco Vertex X [cm]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_x_cosmic.pdf"));
+	histogram_functions::Plot1DHistogram(h_ele_pfp_x_intime, "Reco Vertex X [cm]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_x_intime.pdf"));
+	histogram_functions::Plot1DHistogram(h_ele_pfp_y_cosmic, "Reco Vertex Y [cm]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_y_cosmic.pdf"));
+	histogram_functions::Plot1DHistogram(h_ele_pfp_y_intime, "Reco Vertex Y [cm]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_y_intime.pdf"));
+	histogram_functions::Plot1DHistogram(h_ele_pfp_z_cosmic, "Reco Vertex Z [cm]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_z_cosmic.pdf"));
+	histogram_functions::Plot1DHistogram(h_ele_pfp_z_intime, "Reco Vertex Z [cm]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_leading_pfp_z_intime.pdf"));
+
 	histogram_functions::PlotSimpleStackData(h_ele_pfp_y_nue_cc, h_ele_pfp_y_nue_cc_mixed,
 	                                         h_ele_pfp_y_nue_cc_out_fv, h_ele_pfp_y_numu_cc, h_ele_pfp_y_numu_cc_mixed,
 	                                         h_ele_pfp_y_cosmic, h_ele_pfp_y_nc, h_ele_pfp_y_nc_pi0, h_ele_pfp_y_other_mixed,
@@ -10997,6 +11035,10 @@ void selection::make_selection( const char * _file1,
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod.pdf"));
 	histogram_functions::Plot2DHistogram(h_ele_resolution_momentum_dot_prod_zoom_y, " ", "True Electron Momentum [GeV]", "True.Reco Shower Direction",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod_zoom_y.pdf"));
+	histogram_functions::Plot2DHistogram(h_ele_true_reco_phi, " ", "True Electron Phi [Degrees]", "Reco. Electron Phi [Degrees]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_true_reco_phi.pdf"));
+	histogram_functions::Plot2DHistogram(h_ele_true_reco_theta, " ", "True Electron Theta [Degrees]", "Reco. Electron Theta [Degrees]",
+	                                     Form("%s%s", file_locate_prefix, "post_cuts_true_reco_theta.pdf"));
 
 	histogram_functions::PlotSimpleStackDataMomentumRebin(
 	        h_ele_pfp_momentum_1shwr_nue_cc,
