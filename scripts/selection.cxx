@@ -2267,6 +2267,12 @@ void selection::make_selection( const char * _file1,
 	//**********************************
 	//now let's do the cuts
 	//*********************************
+	// Create an outfile with the event num, run and subrun for GenEvents in TPC
+	std::ofstream Gen_events_in_TPC_list;
+	Gen_events_in_TPC_list.open("Gen_events_in_TPC_list.txt");
+	int Gen_evt{0}, Gen_run{0}, Gen_subrun{0};
+
+
 	for(int event = 0; event < total_entries; event++)
 	{
 		if(_verbose)
@@ -2369,6 +2375,18 @@ void selection::make_selection( const char * _file1,
 				h_nue_true_energy_phi->Fill(mc_nu_energy, mc_phi * (180 / 3.1415));
 				h_ele_true_energy_theta->Fill(mc_ele_energy, acos(mc_ele_cos_theta) * (180 / 3.1415));
 				h_ele_true_energy_phi->Fill(mc_ele_energy, mc_ele_phi * (180 / 3.1415));
+
+				if (tpc_object_container_v->size() != 0 ){
+					auto const tpc_object_container = tpc_object_container_v->at(0);
+					Gen_evt     = tpc_object_container.EventNumber();
+					Gen_run     = tpc_object_container.RunNumber();
+					Gen_subrun  = tpc_object_container.SubRunNumber();
+					Gen_events_in_TPC_list << Gen_run << " " << Gen_subrun << " " << Gen_evt << std::endl;
+				} 
+				else std::cout << "Got a TPCObj of size zero!" << std::endl;
+
+				
+
 			}
 		}
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)

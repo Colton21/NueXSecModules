@@ -346,6 +346,13 @@ void variation_output::DrawTH1D_SAME(TH1D* hist, std::string variation, TLegend*
 		hist->SetLineStyle(1);
 		hist->Draw("hist,same");
 	}
+    else if  (variation == "BirksRecomb"){
+        hist->SetLineColor(kRed+1);
+        hist->SetLineWidth(2);
+        legend->AddEntry(hist, "Birks Recomb.","l");
+        hist->SetLineStyle(1);
+        hist->Draw("hist,same");
+    }
 	else return;
 }
 //***************************************************************************

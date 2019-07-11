@@ -44,7 +44,6 @@ File: files/filter_DLup.root
 Total POT (Method 1): 7.56441e+21
 Total POT (Method 2): 7.56441e+21
 File: filesfilter_DLdown.root
-Could not open file!
 File: files/filter_DLdown.root
 Total POT (Method 1): 7.56908e+21
 Total POT (Method 2): 7.56908e+21
@@ -54,3 +53,6 @@ Total POT (Method 2): 8.27396e+21
 File: files/filter_LArG4BugFix.root
 Total POT (Method 1): 8.19563e+21
 Total POT (Method 2): 8.19563e+21
+File: files/filter_BirksRecomb.root
+Total POT (Method 1): 8.29012e+21
+Total POT (Method 2): 8.29012e+21

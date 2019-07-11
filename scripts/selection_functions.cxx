@@ -639,8 +639,12 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 			std::cout << "TPCO Reason    : " << reason << std::endl;
 			std::cout << "* * * * * * * * * * * * * * * * *" << std::endl;
 		}
-		selected_events << event_num << ", " << event_type << ", " << mc_nu_id
-		                << ", " << mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
+		 //selected_events << event_num << ", " << event_type << ", " << mc_nu_id
+		 //                << ", " << mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
+
+          selected_events << event_num << " " << event_type << " " << mc_nu_id << '\n'; // for analyser
+
+		//selected_events << run_num << " " << sub_run_num << " " << event_num << '\n'; // for event filter
 	}
 	selected_events.close();
 	std::cout << "   * * * END * * *   " << std::endl;

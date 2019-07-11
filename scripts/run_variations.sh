@@ -25,6 +25,7 @@ run './main.exe --var_mode files/filter_DLdown.root "";'
 run './main.exe --var_mode files/filter_DLup.root "";'
 run './main.exe --var_mode files/filter_dataSCE.root "";'
 run './main.exe --var_mode files/filter_LArG4BugFix.root "";'
+run './main.exe --var_mode files/filter_BirksRecomb.root "";'
 
 # run this again for saving the plot
 run './main.exe --var_mode files/filter_EnhancedTPCVis.root "same";'
