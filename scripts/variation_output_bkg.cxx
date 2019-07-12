@@ -698,7 +698,7 @@ double variation_output_bkg::Flash_TPCObj_vtx_Dist(double tpc_vtx_y, double tpc_
 //by looping over each pfparticle contained
 //
 //extended functionality to help with detector variation cases
-std::pair<std::string, int> variation_output_bkg::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool true_in_tpc) {
+std::pair<std::string, int> variation_output_bkg::TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool true_in_tpc, bool has_pi0) {
 	int part_nue_cc     = 0;
 	int part_nue_bar_cc = 0;
 	int part_cosmic     = 0;
@@ -947,7 +947,20 @@ void variation_output_bkg::run_var(const char * _file1, TString mode, const std:
 			const bool true_in_tpc = in_fv(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z, fv_boundary_v);
 
 			// Classify the event  
-			std::pair<std::string, int> tpc_classification = TPCO_Classifier(tpc_obj, true_in_tpc);
+			std::pair<std::string, int> tpc_classification = TPCO_Classifier(tpc_obj, true_in_tpc, has_pi0);
+
+			// Checks the classification for Signal
+			bool bool_sig{false}; 
+			for (unsigned int k=0; k < signal_modes.size(); k++){
+				if (signal_modes.at(k).find(tpc_classification.first) != std::string::npos) {
+					sig_counter++;
+					bool_sig = true;
+				}
+			}
+			// Background event
+			if (!bool_sig) {
+				bkg_counter++;
+			}
 
 			// TPC Obj vars
 			tpc_obj_vtx_x = tpc_obj.pfpVtxX();
@@ -996,7 +1009,7 @@ void variation_output_bkg::run_var(const char * _file1, TString mode, const std:
 				
 				// CC && BeamNu 
 				if( pfp_obj.CCNC() == 0 && mc_origin == "kBeamNeutrino") {
-					   
+					
 					// Electron (Shower like) && (Nue || Nuebar)
 					if ( pfp_pdg == 11 && (mc_parent_pdg == 12 || mc_parent_pdg == -12) ) {
 						nue_cc_counter++;
@@ -1036,6 +1049,7 @@ void variation_output_bkg::run_var(const char * _file1, TString mode, const std:
 					else if (pfp_pdg == 11 && (mc_parent_pdg == 14 || mc_parent_pdg == -14)){
 						numu_cc_counter++;
 					}
+
 					// Track like && (Nue || Nuebar)
 					if ( pfp_pdg == 13 && (mc_parent_pdg == 12 || mc_parent_pdg == -12) ) {
 						const double track_phi 	= atan2(pfp_obj.pfpDirY(), pfp_obj.pfpDirX()) * 180 / 3.1415;
@@ -1043,7 +1057,12 @@ void variation_output_bkg::run_var(const char * _file1, TString mode, const std:
 						h_track_Nu_vtx_Dist->Fill(pfp_Nu_vtx_Dist);
 					}
 					
-				}     
+				}
+				// Anything not CC or beam origin
+				else {
+					other_counter++;
+				}
+				
 
 			} // END LOOP PAR OBJ
 
@@ -1067,6 +1086,10 @@ void variation_output_bkg::run_var(const char * _file1, TString mode, const std:
 	std::cout << "(Requiring shower like and (nue/nuebar or numu/numubar))" << std::endl;
 	std::cout << "RECO Nue CC Counter      --- " << nue_cc_counter << std::endl;
 	std::cout << "RECO Numu CC Counter     --- " << numu_cc_counter << std::endl;
+	std::cout << "RECO Other Counter       --- " << other_counter << std::endl;
+	std::cout << "---------------------------------------------------" << std::endl;
+	std::cout << "RECO Signal Counter      --- " << sig_counter << std::endl;
+	std::cout << "RECO Background Counter  --- " << bkg_counter << std::endl;
 	std::cout << "---------------------------------------------------" << std::endl;
 	
 	// ----------------------

@@ -1261,6 +1261,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	//this never happens :)
 	std::cout << "HELP HELP HELP END OF TPCO CLASSIFIER AND NO CLASSIFICATION!" << std::endl;
 	//return the string for the tpco id
+	return std::make_pair("non_match", 0);
 }//end function
 //***************************************************************************
 //***************************************************************************

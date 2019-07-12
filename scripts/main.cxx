@@ -15,11 +15,11 @@ int main(int argc, char *argv[]){
 	bool dirt_file = false;
 	bool variation_file = false;
 
-	char * monte_carlo_file_path = "empty";
-	char * cosmic_file_path = "empty";
-	char * data_file_path = "empty";
-	char * dirt_file_path = "empty";
-	char * variation_file_path = "empty";
+	char * monte_carlo_file_path = (char *)"empty";
+	char * cosmic_file_path = (char *)"empty";
+	char * data_file_path = (char *)"empty";
+	char * dirt_file_path = (char *)"empty";
+	char * variation_file_path = (char *)"empty";
 
 	bool variation_mode;
 	bool variation_mode_bkg = false;

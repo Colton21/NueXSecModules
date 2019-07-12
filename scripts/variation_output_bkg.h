@@ -29,6 +29,7 @@
 #include "TPad.h"
 #include "TString.h"
 #include "TStyle.h"
+#include "TKey.h"
 
 // C++ includes
 #include <iostream>
@@ -65,7 +66,7 @@ class variation_output_bkg {
                                        double pfp_vtx_x, double pfp_vtx_y, double pfp_vtx_z); // Calculates the pfp to nu vertex distance
 	
 	bool in_fv(double x, double y, double z, std::vector<double> fv_boundary_v);
-	std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool true_in_tpc);
+	std::pair<std::string, int> TPCO_Classifier(xsecAna::TPCObjectContainer tpc_obj, bool true_in_tpc, bool has_pi0);
 
 	// Flash Functions
 	std::vector<std::vector<double>> GetLargestFlashVector(TFile* f); 				// Function to resize opical entries to same size of events and get largest flash vector
@@ -93,8 +94,11 @@ class variation_output_bkg {
 	int n_showers{0};				// Number of Showers in TPC Obj
 	int n_showers_50Hits{0};		// Number of showers in TPC Obj with > 50 Hits
 	double track_phi{0};			// Track Phi
-	int nue_cc_counter{0};        // Number of reco nue + nuebar
-	int numu_cc_counter{0};      // Number of reco numu + numubar
+	int nue_cc_counter{0};			// Number of reco nue + nuebar
+	int numu_cc_counter{0};			// Number of reco numu + numubar
+	int other_counter{0};			// Counter for not numu/nue
+	int sig_counter{0};				// Number reco signal events
+	int bkg_counter{0};				// Number reco background events
 	
 	
 	double tpc_obj_vtx_x{0}, tpc_obj_vtx_y{0}, tpc_obj_vtx_z{0}; // TPCObj Vertex X, Y, Z
@@ -161,6 +165,13 @@ class variation_output_bkg {
 	double mc_nu_time = -1;
 	int mc_nu_num_particles = 0;
 	int mc_nu_num_charged_particles = 0;
+
+	// ----------------------
+	//     Other Variables
+	// ----------------------
+	// vector containing all the signal type events
+	std::vector<std::string> signal_modes = {"nue_cc_qe",     "nue_cc_res",     "nue_cc_dis",     "nue_cc_coh",     "nue_cc_mec",
+											 "nue_bar_cc_qe", "nue_bar_cc_res", "nue_bar_cc_dis", "nue_bar_cc_coh", "nue_bar_cc_mec" };
 
 	// ----------------------
 	//      Histograms
