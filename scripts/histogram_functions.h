@@ -31,6 +31,8 @@ public:
 
 histogram_functions()=default;
 
+static void PlotEfficiencyFlash(TH1D* h_eff_flash_time);
+
 static void Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name);
 static void Plot1DHistogramGausFit (TH1 * histogram, const char * x_axis_name, const char * print_name);
 static void PlotTEfficiency (TH1 *h_num, TH1 *h_den, const char * title, const char * print_name);
@@ -69,6 +71,14 @@ static void PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_proton, TH1 * h_ph
                                     const double intime_scale_factor, const double data_scale_factor,
                                     const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
                                     const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
+
+static void PlotSimpleStackParticle_withratio(TH1 * h_electron, TH1 * h_photon, TH1 * h_proton,  TH1 * h_pion,
+                                                  TH1 * h_muon, TH1 * h_kaon, TH1 * h_neutron, TH1 * h_ext, TH1 *h_dirt, TH1 * h_data,
+                                                  const double intime_scale_factor, const double dirt_scale_factor, const double data_scale_factor,
+												  const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                                  const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
+
+
 static void PlotSimpleStack (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc, TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
                              TH1 * h_nc_pi0, TH1 * h_other_mixed, TH1 * h_unmatched, const char * title,
                              const char * x_axis_name, const char * y_axis_name, const char * print_name);
@@ -88,6 +98,10 @@ static void PlotSimpleStackData (TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_n
 static void TimingHistograms(TH1 * histogram_1, TH1 * histogram_2, TH1 * histogram_3, TH1 * histogram_4,
                              const double data_scale_factor, const double intime_scale_factor, const double dirt_scale_factor,
                              const char * x_axis_name, const char* print_name, const char * print_name2);
+
+static void TimingHistogramsv2(TH1 * h_mc, TH1 * h_intime, TH1 * h_data, TH1 * h_dirt,
+                             const double data_scale_factor, const double intime_scale_factor, const double dirt_scale_factor,
+                             const char * x_axis_name, const char* print_name);
 static void TimingHistogramsOverlay(std::vector<std::pair<double, int> > * data_flash_time, TH1 * histogram_1, TH1 * histogram_2,
                                     const double intime_scale_factor, const char * x_axis_name,
                                     const char * print_name1, const char * print_name2);

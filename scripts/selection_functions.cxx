@@ -2,6 +2,12 @@
 #include "selection_cuts.h"
 
 //***************************************************************************
+void selection_functions::FillEfficiencyFlashTime(TH1D * h_eff_flash_time, double efficiency, double largest_flash_time){
+
+	if (largest_flash_time )h_eff_flash_time->Fill(efficiency);
+
+}
+//***************************************************************************
 void selection_functions::LeadingShowerID(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                           std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                           std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -334,6 +340,112 @@ void selection_functions::PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjec
 		}
 	}        //end loop tpc objects
 }
+
+void selection_functions::PostCutsdEdxTrueParticle_slice(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                   TH1D * h_dedx_cuts_electron,
+                                                   TH1D * h_dedx_cuts_photon,
+                                                   TH1D * h_dedx_cuts_proton,
+                                                   TH1D * h_dedx_cuts_pion,
+                                                   TH1D * h_dedx_cuts_muon,
+                                                   TH1D * h_dedx_cuts_kaon,
+                                                   TH1D * h_dedx_cuts_neutron,
+                                                   TH1D * h_dedx_cuts_ext,
+                                                   TH1D * h_dedx_cuts_dirt,
+												   TH1D * h_dedx_cuts_data,
+												   std::string type){
+	
+	int n_tpc_obj = tpc_object_container_v->size();
+	
+	for (int i = 0; i < n_tpc_obj; i++) {
+
+		if(passed_tpco->at(i).first == 0) {continue; }
+
+
+		// now we have the leading shower index, lets fill the histograms
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int tpc_obj_mode = tpc_obj.Mode();
+		const int n_pfp = tpc_obj.NumPFParticles();
+		int most_hits = 0;
+		int leading_index = 0;
+
+		// First get the leading shower index
+		for (int j = 0; j < n_pfp; j++) {
+			auto const part = tpc_obj.GetParticle(j);
+			const int n_pfp_hits = part.NumPFPHits();
+			const int pfp_pdg = part.PFParticlePdgCode();
+			if(pfp_pdg == 11) {
+				
+				if(n_pfp_hits > most_hits) {
+					leading_index = j;
+					most_hits = n_pfp_hits;
+				}
+			}
+		}
+
+
+		//loop over pfparticles in the TPCO
+
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const double leading_dedx = leading_shower.PfpdEdx().at(2) * (196.979 /242.72);//just the collection plane!
+	
+		// Get the theta
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		TVector3 numi_vector;
+		numi_vector.SetMagThetaPhi(1, 0, 0);
+		const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+
+		if (type == "data"){
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_data ->Fill(leading_shower.PfpdEdx().at(2) );
+			return;
+		}
+		if (type == "ext"){
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_ext->Fill(leading_shower.PfpdEdx().at(2));
+			return;
+		}
+		if (type == "dirt"){
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_dirt->Fill(leading_dedx);
+			return;
+		}
+
+		const double leading_mc_pdg = leading_shower.MCPdgCode();
+
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11)
+		{
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_electron->Fill(leading_dedx);
+		}
+		if(leading_mc_pdg == 13 || leading_mc_pdg == -13)
+		{
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_muon->Fill(leading_dedx);
+		}
+		if(leading_mc_pdg == 22)
+		{
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_photon->Fill(leading_dedx);
+		}
+		if(leading_mc_pdg == 2212)
+		{
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_proton->Fill(leading_dedx);
+		}
+		if(leading_mc_pdg == 211 || leading_mc_pdg == -211)
+		{
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_pion->Fill(leading_dedx);
+		}
+		if(leading_mc_pdg == 2112)
+		{
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_neutron->Fill(leading_dedx);
+		}
+		if(leading_mc_pdg == 130 || leading_mc_pdg == 310 || leading_mc_pdg == 311 || leading_mc_pdg == 321 || leading_mc_pdg == -321)
+		{
+			if (leading_shower_theta >= 0 && leading_shower_theta < 60) h_dedx_cuts_kaon->Fill(leading_dedx);
+		}
+	}        //end loop tpc objects
+}
+
+
+
 void selection_functions::PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                          std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                                          TH1 * h_dedx_cuts_ext_unmatched)
@@ -687,9 +799,9 @@ void selection_functions::PrintPostCutVector(std::vector<std::tuple<int, int, in
 		 //selected_events << event_num << ", " << event_type << ", " << mc_nu_id
 		 //                << ", " << mc_nu_dir_x << ", " << mc_nu_dir_y << ", " << mc_nu_dir_z << ", " << mc_nu_energy << '\n';
 
-          selected_events << event_num << " " << event_type << " " << mc_nu_id << '\n'; // for analyser
+        //   selected_events << event_num << " " << event_type << " " << mc_nu_id << '\n'; // for analyser
 
-		//selected_events << run_num << " " << sub_run_num << " " << event_num << '\n'; // for event filter
+		selected_events << run_num << " " << sub_run_num << " " << event_num << '\n'; // for event filter
 	}
 	selected_events.close();
 	std::cout << "   * * * END * * *   " << std::endl;
@@ -1069,6 +1181,8 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<double> *
 	int counter_numu_cc_coh    = counter_v->at(20);
 	int counter_numu_cc_mec    = counter_v->at(21);
 
+	double counter_beam_only = counter + (counter_dirt * (dirt_scale_factor / data_scale_factor));
+
 	counter = counter + (counter_intime_cosmics * (intime_scale_factor / data_scale_factor)) + (counter_dirt * (dirt_scale_factor / data_scale_factor));
 
 	std::cout << " <" << cut_name << "> " << std::endl;
@@ -1103,6 +1217,7 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<double> *
 	const double purity = double(counter_nue_cc) / double(counter);
 	std::cout << " Efficiency       : " << "( " << counter_nue_cc << " / " << mc_nue_cc_counter << " ) = " << efficiency << std::endl;
 	std::cout << " Purity           : " << purity << std::endl;
+	std::cout << " Purity Beam Only : " <<  double(counter_nue_cc) / counter_beam_only << std::endl;
 	std::cout << "------------------------" << std::endl;
 	std::cout << "------------------------" << std::endl;
 }
@@ -1223,16 +1338,16 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	//now to catagorise the tpco
 	if(part_cosmic > 0)
 	{
-		if(part_nue_cc  > 0 || part_nue_bar_cc > 0)  { return std::make_pair("nue_cc_mixed",  leading_index); }
-		if(part_numu_cc > 0 )                        { return std::make_pair("numu_cc_mixed", leading_index); }
-		if(part_nc  > 0 || part_nc_pi0 > 0)          { return std::make_pair("other_mixed",   leading_index); }
+		if(part_nue_cc  > 0 || part_nue_bar_cc > 0)  { return std::make_pair("nue_cc_qe",leading_index); } // Switch this to signal category to see effect on the cross sec. was nue_cc_mixed
+		if(part_numu_cc > 0 )                        { return std::make_pair("numu_cc_qe", leading_index); }
+		if(part_nc  > 0 || part_nc_pi0 > 0)          { return std::make_pair("nc",   leading_index); }
 		return std::make_pair("cosmic", leading_index);
 	}
 	//this uses the true neutrino vertex for this specific event
 	//not the true vtx per tpc object - maybe this can be fixed in the future...
 	//but using the true nu vtx only matters for the pure signal events,
 	//where the neutrino vertex IS the true tpc object vertex
-	if(part_cosmic == 0)
+	else if (part_cosmic == 0)
 	{
 		if(part_nue_cc      > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
 		if(part_nue_bar_cc  > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }

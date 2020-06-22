@@ -41,6 +41,8 @@ public:
 selection_functions()=default;
 
 //***************************************************************************
+void FillEfficiencyFlashTime(TH1D * h_eff_flash_time, double efficiency, double largest_flash_time);
+//***************************************************************************
 void LeadingShowerID(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -103,6 +105,22 @@ void PostCutsdEdxTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_obj
                               TH1D * h_dedx_cuts_kaon,
                               TH1D * h_dedx_cuts_neutron,
                               TH1D * h_dedx_cuts_unmatched);
+
+
+void PostCutsdEdxTrueParticle_slice(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                   std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                   TH1D * h_dedx_cuts_electron,
+                                                   TH1D * h_dedx_cuts_photon,
+                                                   TH1D * h_dedx_cuts_proton,
+                                                   TH1D * h_dedx_cuts_pion,
+                                                   TH1D * h_dedx_cuts_muon,
+                                                   TH1D * h_dedx_cuts_kaon,
+                                                   TH1D * h_dedx_cuts_neutron,
+                                                   TH1D * h_dedx_cuts_ext,
+                                                   TH1D * h_dedx_cuts_dirt,
+                                                   TH1D * h_dedx_cuts_data,
+                                                   std::string type);
+
 void PostCutsdEdxTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                     std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                     TH1 * h_dedx_cuts_ext_unmatched);

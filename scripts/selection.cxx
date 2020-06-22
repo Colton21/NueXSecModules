@@ -17,6 +17,8 @@ void selection::make_selection( const char * _file1,
 	const bool _write_post_cuts = true;
 	gErrorIgnoreLevel = kWarning;
 
+	int event_to_process = 10000000;
+
 	//first we need to open the root files
 	TFile * f_var;
 	TTree * mctruth_counter_tree_var;
@@ -39,6 +41,10 @@ void selection::make_selection( const char * _file1,
 	const double flux_nue = POT * scaling_nue;
 	const double flux_nue_bar = POT * scaling_nue_bar;
 	const double flux = flux_nue + flux_nue_bar;
+
+	// resize the effiency vectors sorted by flash time
+	eff_flash_vec_gen.resize(5, 0);
+	eff_flash_vec_sel.resize(5, 0);
 
 
 	std::vector<double> selected_energy_vector;
@@ -304,8 +310,8 @@ void selection::make_selection( const char * _file1,
 		data_tree->SetBranchAddress("TpcObjectContainerV", &data_tpc_object_container_v);
 
 		//need a text file with the run, subrun output
-		std::ofstream run_subrun_file;
-		run_subrun_file.open("run_subrun_list_data.txt");
+		std::ofstream run_subrun_file_data;
+		run_subrun_file_data.open("run_subrun_list_data.txt");
 		int data_run = 0;
 		int data_subrun = 0;
 		int last_data_run = 0;
@@ -345,6 +351,8 @@ void selection::make_selection( const char * _file1,
 		// 2 = in-time, but not enough PE -- this counts against my efficiency
 		data_passed_runs->resize(data_total_entries);
 
+		
+
 		_cuts_instance.selection_cuts::loop_flashes(data_f, data_optree, flash_pe_threshold, flash_time_start, flash_time_end,
 		                                            data_passed_runs, data_flash_time, 0);
 		for(auto const run : * data_passed_runs)
@@ -374,6 +382,8 @@ void selection::make_selection( const char * _file1,
 				std::cout << "----------------------" << std::endl;
 			}
 			data_tree->GetEntry(event);
+
+			if (event > event_to_process) break;
 
 			//remove known duplicates
 			for(auto const tpc_obj : * data_tpc_object_container_v)
@@ -644,11 +654,20 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_pre_dedx_data, h_multiplicity_track_pre_dedx_data);
-/*
-                        _data_functions_instance.selection_functions_data::EvaluatedEdxMethodData(data_tpc_object_container_v, passed_tpco_data,
-                                                                                                  h_dedx_data, h_dedx_cali_data, h_dedx_omit_data, h_dedx_omit_cali_data,
-                                                                                                  h_dedx_yz_ratio_cali_data, h_dedx_yz_ratio_omit_data, h_dedx_yz_ratio_omit_cali_data);
- */
+			
+			_functions_instance.selection_functions::PostCutsdEdxTrueParticle_slice(data_tpc_object_container_v, passed_tpco_data,
+                                                    h_dedx_cuts_electron_slice1,
+                                                    h_dedx_cuts_photon_slice1,
+                                                    h_dedx_cuts_proton_slice1,
+                                                    h_dedx_cuts_pion_slice1,
+                                                    h_dedx_cuts_muon_slice1,
+                                                    h_dedx_cuts_kaon_slice1,
+                                                    h_dedx_cuts_neutron_slice1,
+													h_dedx_cuts_ext_slice1,
+                                                    h_dedx_cuts_dirt_slice1,
+												    h_dedx_cuts_data_slice1,
+												    "data");
+
 			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
@@ -679,6 +698,8 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_2shwr_cut_data,
 			                                                                         h_multiplicity_track_2shwr_cut_data);
+
+			
 
 			//******************************************************************************
 			// ********** Hit Length Ratio Cut *************
@@ -745,6 +766,7 @@ void selection::make_selection( const char * _file1,
 			                                                                         h_multiplicity_shower_containment_cut_data,
 			                                                                         h_multiplicity_track_containment_cut_data);
 
+
 			//*********** Data *********
 			_functions_instance.selection_functions::FillPostCutVector(data_tpc_object_container_v, passed_tpco_data, post_cuts_v_data);
 			//*************************************
@@ -792,9 +814,30 @@ void selection::make_selection( const char * _file1,
 			                                                                                       h_ele_pfp_momentum_1shwr_data, h_ele_pfp_momentum_2shwr_data,
 			                                                                                       h_ele_pfp_theta_1shwr_data, h_ele_pfp_theta_2shwr_data,
 			                                                                                       h_ele_pfp_phi_1shwr_data, h_ele_pfp_phi_2shwr_data);
+
+
+
+			// Write the data run subruns to a file
+			for(unsigned int y = 0; y < data_tpc_object_container_v->size(); y++){
+
+				if(passed_tpco_data->at(y).first == 0) {continue; }
+
+				// Add the selected events to the file
+				int k_data_run    = data_tpc_object_container_v->at(y).RunNumber();
+				int k_data_subrun = data_tpc_object_container_v->at(y).SubRunNumber();
+				int k_data_event  = data_tpc_object_container_v->at(y).EventNumber();
+				run_subrun_file_data << k_data_run << " " << k_data_subrun << " " << k_data_event << "\n";
+
+
+     		}
+
+
+
 			//delete at the very end!
 			delete passed_tpco_data;
 		}
+
+		run_subrun_file_data.close();
 	}//end data running
 	 //****************************
 	 //*** END Data Calculation ***
@@ -933,6 +976,8 @@ void selection::make_selection( const char * _file1,
 			dirt_tree->GetEntry(event);
 			mctruth_counter_tree_dirt->GetEntry(event);
 
+			if (event > event_to_process) break;
+
 			//writing the run and subrun values to a text file -
 			//this can be used as a cross-check for POT counting
 
@@ -1066,6 +1111,7 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
 			                                                                 h_multiplicity_shower_flash_vtx_cut_dirt,
 			                                                                 h_multiplicity_track_flash_vtx_cut_dirt);
+			
 			//******************************************************
 			//*** distance between pfp shower and nue object cut ***
 			//******************************************************
@@ -1087,6 +1133,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
 			                                                                 h_multiplicity_shower_shwr_vtx_cut_dirt,
 			                                                                 h_multiplicity_track_shwr_vtx_cut_dirt);
+
+
+
 
 			//******************************************************
 			// **** distance between pfp track and nue object cut **
@@ -1226,6 +1275,19 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
 			                                                                        _verbose, h_dedx_cuts_ext_unmatched);
 
+			_functions_instance.selection_functions::PostCutsdEdxTrueParticle_slice(dirt_tpc_object_container_v, passed_tpco_dirt,
+                                                    h_dedx_cuts_electron_slice1,
+                                                    h_dedx_cuts_photon_slice1,
+                                                    h_dedx_cuts_proton_slice1,
+                                                    h_dedx_cuts_pion_slice1,
+                                                    h_dedx_cuts_muon_slice1,
+                                                    h_dedx_cuts_kaon_slice1,
+                                                    h_dedx_cuts_neutron_slice1,
+													h_dedx_cuts_ext_slice1,
+                                                    h_dedx_cuts_dirt_slice1,
+												    h_dedx_cuts_data_slice1,
+												    "dirt");
+
 			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
 			                                                                      h_dedx_slice_1_dirt,
 			                                                                      h_dedx_slice_2_dirt,
@@ -1235,12 +1297,7 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_1_zoom_dirt,
 			                                                                      h_dedx_slice_2_zoom_dirt,
 			                                                                      h_dedx_slice_3_zoom_dirt);
-/*
-                        _functions_instance.selection_functions::EvaluatedEdxMethodInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
-                                                                                          h_dedx_dirt, h_dedx_cali_dirt, h_dedx_omit_dirt, h_dedx_omit_cali_dirt,
-                                                                                          h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
-                                                                                          h_dedx_yz_ratio_cali_dirt, h_dedx_yz_ratio_omit_dirt, h_dedx_yz_ratio_omit_cali_dirt);
- */
+
 			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
@@ -1257,6 +1314,8 @@ void selection::make_selection( const char * _file1,
 			                                                                 h_multiplicity_shower_dedx_cut_dirt,
 			                                                                 h_multiplicity_track_dedx_cut_dirt);
 
+
+			
 			//***************************************************************************
 			// ******* Secondary Showers Distance Cut *****************
 			//***************************************************************************
@@ -1278,6 +1337,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
 			                                                                 h_multiplicity_shower_2shwr_cut_dirt,
 			                                                                 h_multiplicity_track_2shwr_cut_dirt);
+
+			
 
 			//******************************************************************************
 			// ********** Hit Length Ratio Cut *************
@@ -1357,6 +1418,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose,
 			                                                                 h_multiplicity_shower_containment_cut_dirt,
 			                                                                 h_multiplicity_track_containment_cut_dirt);
+			
+			
 
 			//*********** Dirt *********
 			//*************************************
@@ -1545,6 +1608,8 @@ void selection::make_selection( const char * _file1,
 			}
 			intime_tree->GetEntry(event);
 
+			if (event > event_to_process) break;
+
 			//writing the run and subrun values to a text file -
 			//this can be used as a cross-check for POT counting
 
@@ -1678,6 +1743,9 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                 h_multiplicity_shower_flash_vtx_cut_intime,
 			                                                                 h_multiplicity_track_flash_vtx_cut_intime);
+			
+
+
 			//******************************************************
 			//*** distance between pfp shower and nue object cut ***
 			//******************************************************
@@ -1838,6 +1906,19 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::PostCutsdEdxTrueParticleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                        _verbose, h_dedx_cuts_ext_unmatched);
 
+			_functions_instance.selection_functions::PostCutsdEdxTrueParticle_slice(intime_tpc_object_container_v, passed_tpco_intime,
+                                                    h_dedx_cuts_electron_slice1,
+                                                    h_dedx_cuts_photon_slice1,
+                                                    h_dedx_cuts_proton_slice1,
+                                                    h_dedx_cuts_pion_slice1,
+                                                    h_dedx_cuts_muon_slice1,
+                                                    h_dedx_cuts_kaon_slice1,
+                                                    h_dedx_cuts_neutron_slice1,
+													h_dedx_cuts_ext_slice1,
+                                                    h_dedx_cuts_dirt_slice1,
+												    h_dedx_cuts_data_slice1,
+												    "ext");
+
 			_functions_instance.selection_functions::PostCutsdedxThetaSliceInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                      h_dedx_slice_1_intime,
 			                                                                      h_dedx_slice_2_intime,
@@ -1847,12 +1928,7 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_1_zoom_intime,
 			                                                                      h_dedx_slice_2_zoom_intime,
 			                                                                      h_dedx_slice_3_zoom_intime);
-/*
-                        _functions_instance.selection_functions::EvaluatedEdxMethodInTime(intime_tpc_object_container_v, passed_tpco_intime,
-                                                                                          h_dedx_intime, h_dedx_cali_intime, h_dedx_omit_intime, h_dedx_omit_cali_intime,
-                                                                                          h_dedx_yz_ratio_cali, h_dedx_yz_ratio_omit, h_dedx_yz_ratio_omit_cali,
-                                                                                          h_dedx_yz_ratio_cali_intime, h_dedx_yz_ratio_omit_intime, h_dedx_yz_ratio_omit_cali_intime);
- */
+
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
@@ -1868,6 +1944,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                 h_multiplicity_shower_dedx_cut_intime,
 			                                                                 h_multiplicity_track_dedx_cut_intime);
+
+			
 
 			//***************************************************************************
 			// ******* Secondary Showers Distance Cut *****************
@@ -1890,6 +1968,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                 h_multiplicity_shower_2shwr_cut_intime,
 			                                                                 h_multiplicity_track_2shwr_cut_intime);
+
+			
 
 			//******************************************************************************
 			// ********** Hit Length Ratio Cut *************
@@ -1969,6 +2049,8 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::EventMultiplicityInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose,
 			                                                                 h_multiplicity_shower_containment_cut_intime,
 			                                                                 h_multiplicity_track_containment_cut_intime);
+
+			
 
 			//*********** In-time Cosmics *********
 			//*************************************
@@ -2286,6 +2368,8 @@ void selection::make_selection( const char * _file1,
 		mytree->GetEntry(event);
 		mctruth_counter_tree->GetEntry(event);
 
+		if (event > event_to_process) break;
+
 		//********************************
 		//before Any cuts!!!
 		//********************************
@@ -2343,6 +2427,14 @@ void selection::make_selection( const char * _file1,
 		std::vector < double > largest_flash_v = largest_flash_v_v->at(event);
 		//control for poorly reco flashes
 		if(largest_flash_v.at(1) != 0) {h_flash_z_mc->Fill(largest_flash_v.at(1)); }
+
+		// Get the events in the FV but broken down by flash zones
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 5.62     && largest_flash_v.at(4)+1.0 < 8.04) )      eff_flash_vec_gen.at(0)++; 
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 8.04     && largest_flash_v.at(4)+1.0 < 10.42) )     eff_flash_vec_gen.at(1)++; 
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 10.42    && largest_flash_v.at(4)+1.0 < 12.82) )     eff_flash_vec_gen.at(2)++; 
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 12.82    && largest_flash_v.at(4)+1.0 < 15.22) )     eff_flash_vec_gen.at(3)++; 
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 < 5.62      || largest_flash_v.at(4)+1.0 >= 15.22) )    eff_flash_vec_gen.at(4)++; 
+
 
 		//List of TPC Objects which pass the cuts
 		std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
@@ -2845,6 +2937,7 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_vtx_flash->Fill(mc_ele_energy);
 		}
+
 		//******************************************************
 		//*** distance between pfp shower and nue object cut ***
 		//******************************************************
@@ -2932,6 +3025,8 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_shwr_vtx->Fill(mc_ele_energy);
 		}
+
+		
 		//******************************************************
 		// **** distance between pfp track and nue object cut **
 		//******************************************************
@@ -3487,6 +3582,8 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_open_angle->Fill(mc_ele_energy);
 		}
+		
+
 		//*****************************************************
 		//*********** dEdx cut for the leading shower *********
 		//******************************************************
@@ -3517,6 +3614,19 @@ void selection::make_selection( const char * _file1,
 		                                                                      h_dedx_cuts_collection_hits_proton, h_dedx_cuts_collection_hits_pion,
 		                                                                      h_dedx_cuts_collection_hits_muon, h_dedx_cuts_collection_hits_kaon,
 		                                                                      h_dedx_cuts_collection_hits_neutron, h_dedx_cuts_collection_hits_mc_unmatched);
+
+		_functions_instance.selection_functions::PostCutsdEdxTrueParticle_slice(tpc_object_container_v, passed_tpco,
+                                                    h_dedx_cuts_electron_slice1,
+                                                    h_dedx_cuts_photon_slice1,
+                                                    h_dedx_cuts_proton_slice1,
+                                                    h_dedx_cuts_pion_slice1,
+                                                    h_dedx_cuts_muon_slice1,
+                                                    h_dedx_cuts_kaon_slice1,
+                                                    h_dedx_cuts_neutron_slice1,
+													h_dedx_cuts_ext_slice1,
+                                                    h_dedx_cuts_dirt_slice1,
+												    h_dedx_cuts_data_slice1,
+												    "mc");
 
 		_functions_instance.selection_functions::dEdxTheta(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                   h_dedx_theta_pre_cuts_nue_cc,        h_dedx_theta_pre_cuts_nue_cc_mixed,
@@ -3705,6 +3815,8 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_dedx->Fill(mc_ele_energy);
 		}
+
+		
 		//***************************************************************************
 		// ******* Secondary Showers Distance Cut *****************
 		//***************************************************************************
@@ -3779,6 +3891,7 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_2shwr->Fill(mc_ele_energy);
 		}
+		
 		//******************************************************************************
 		// ********** Hit Length Ratio Cut *************
 		//******************************************************************************
@@ -4039,9 +4152,29 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_contain->Fill(mc_ele_energy);
 		}
+		
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
+		// Make the plot of flash time vs efficiency
+
+		int n_tpc_obj = tpc_object_container_v->size();
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 5.62     && largest_flash_v.at(4)+1.0 < 8.04) )      eff_flash_vec_sel.at(0)++; 
+				if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 8.04     && largest_flash_v.at(4)+1.0 < 10.42) )     eff_flash_vec_sel.at(1)++; 
+				if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 10.42    && largest_flash_v.at(4)+1.0 < 12.82) )     eff_flash_vec_sel.at(2)++; 
+				if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 12.82    && largest_flash_v.at(4)+1.0 < 15.22) )     eff_flash_vec_sel.at(3)++; 
+				if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 < 5.62      || largest_flash_v.at(4)+1.0 >= 15.22) )    eff_flash_vec_sel.at(4)++; 
+				break;
+			}
+		}
+
+
+		
+
+
+
 		_functions_instance.selection_functions::LeadingPhi(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                    h_ele_pfp_phi_after_nue_cc,
 		                                                    h_ele_pfp_phi_after_nue_cc_out_fv,
@@ -6536,7 +6669,7 @@ void selection::make_selection( const char * _file1,
 				                                                                  h_dedx_cuts_last_muon,     h_dedx_cuts_last_kaon,
 				                                                                  h_dedx_cuts_last_neutron,  h_dedx_cuts_last_mc_unmatched,
 				                                                                  var_scale_factor);
-//not really used anymore...
+				//not really used anymore...
 				_functions_instance.selection_functions::FailureReason(var_tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 				                                                       h_failure_reason_nue_cc, h_failure_reason_nue_cc_out_fv,
 				                                                       h_failure_reason_nue_cc_mixed, h_failure_reason_numu_cc,
@@ -7142,6 +7275,28 @@ void selection::make_selection( const char * _file1,
 	// std::cout << infv_test_mc_numu_nc_counter_bar << std::endl;
 
 	//we also want some metrics to print at the end
+
+	// Spit out how many events we got in each category
+	std::cout << "Efficiency flash Bin 1: " << eff_flash_vec_sel.at(0)  << "\n" <<
+	"Efficiency flash Bin 2: " << eff_flash_vec_sel.at(1) << "\n" <<
+	"Efficiency flash Bin 3: " << eff_flash_vec_sel.at(2) << "\n" <<
+	"Efficiency flash Bin 4: " << eff_flash_vec_sel.at(3) << "\n" <<
+	"Efficiency flash Bin 5: " << eff_flash_vec_sel.at(4) << "\n" << std::endl;
+
+	std::cout << "Efficiency flash Bin 1: " << eff_flash_vec_gen.at(0)  << "\n" <<
+	"Efficiency flash Bin 2: " << eff_flash_vec_gen.at(1) << "\n" <<
+	"Efficiency flash Bin 3: " << eff_flash_vec_gen.at(2) << "\n" <<
+	"Efficiency flash Bin 4: " << eff_flash_vec_gen.at(3) << "\n" <<
+	"Efficiency flash Bin 5: " << eff_flash_vec_gen.at(4) << "\n" << std::endl;
+
+
+
+	std::cout << "Efficiency flash Bin 1: " << eff_flash_vec_sel.at(0) / eff_flash_vec_gen.at(0) << "\n" <<
+	"Efficiency flash Bin 2: " << eff_flash_vec_sel.at(1) / eff_flash_vec_gen.at(1) << "\n" <<
+	"Efficiency flash Bin 3: " << eff_flash_vec_sel.at(2) / eff_flash_vec_gen.at(2) << "\n" <<
+	"Efficiency flash Bin 4: " << eff_flash_vec_sel.at(3) / eff_flash_vec_gen.at(3) << "\n" << std::endl;
+
+
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 	selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
@@ -7334,6 +7489,7 @@ void selection::make_selection( const char * _file1,
 	for(auto const flash_timing : * data_flash_time)   {h_flash_time_data->Fill(flash_timing.first);   }
 	for(auto const flash_timing : * intime_flash_time) {h_flash_time_intime->Fill(flash_timing.first); }
 	for(auto const flash_timing : * dirt_flash_time)   {h_flash_time_dirt->Fill(flash_timing.first);   }
+
 	histogram_functions::Plot1DHistogram(h_flash_time,        "Flash Time [#mus]", Form("%s%s", file_locate_prefix, "flash_time.pdf"));
 	histogram_functions::Plot1DHistogram(h_flash_time_intime, "Flash Time [#mus]", Form("%s%s", file_locate_prefix, "flash_time_intime.pdf"));
 	histogram_functions::Plot1DHistogram(h_flash_time_data,   "Flash Time [#mus]", Form("%s%s", file_locate_prefix, "flash_time_data.pdf"));
@@ -7347,6 +7503,13 @@ void selection::make_selection( const char * _file1,
 	                                      "Flash Time [#mus]",
 	                                      Form("%s%s", file_locate_prefix, "flash_time_data_subtraction_mc.pdf"),
 	                                      Form("%s%s", file_locate_prefix, "flash_time_data_everything.pdf"));
+
+	histogram_functions::TimingHistogramsv2(h_flash_time, h_flash_time_intime, h_flash_time_data, h_flash_time_dirt,
+	                                      data_scale_factor, intime_scale_factor, dirt_scale_factor,
+	                                      "Flash Time [#mus]",
+	                                      Form("%s%s", file_locate_prefix, "flash_time_data_everything_v2.pdf"));
+
+
 	histogram_functions::TimingHistogramsOverlay(data_flash_time, h_flash_time_intime, h_flash_time_data, intime_scale_factor, "Flash Time [#mus]",
 	                                             Form("%s%s", file_locate_prefix, "flash_time_data_overlay.pdf"),
 	                                             Form("%s%s", file_locate_prefix, "flash_time_data_subtraction.pdf"));
@@ -7476,7 +7639,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
 	                                          h_leading_shower_open_angle_unmatched, h_leading_shower_open_angle_intime, intime_scale_factor,
 	                                          h_leading_shower_open_angle_data, data_scale_factor, h_leading_shower_open_angle_dirt, dirt_scale_factor,
-	                                          "", "Shower Opening Angle [Degrees]", "",
+	                                          "", "Leading Shower Opening Angle [Degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_leading_shower_open_angle_nue_cc,  h_leading_shower_open_angle_nue_cc_mixed,
@@ -7518,7 +7681,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_dedx_cuts_nc_pi0,  h_dedx_cuts_other_mixed,
 	                                          h_dedx_cuts_unmatched, h_dedx_cuts_intime, intime_scale_factor,
 	                                          h_dedx_cuts_data, data_scale_factor, h_dedx_cuts_dirt, dirt_scale_factor, "",
-	                                          "Collection Plane dE/dx [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data.pdf"));
+	                                          "Leading Shower dE/dx (Collection Plane) [MeV/cm]", "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_cuts_data.pdf"));
 
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
@@ -8380,7 +8543,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shwr_trk_length_nc_pi0,  h_leading_shwr_trk_length_other_mixed,
 	                                          h_leading_shwr_trk_length_unmatched, h_leading_shwr_trk_length_intime, intime_scale_factor,
 	                                          h_leading_shwr_trk_length_data, data_scale_factor, h_leading_shwr_trk_length_dirt, dirt_scale_factor, "",
-	                                          "Longest Track / Leading Shower Lengths", "",
+	                                          "Longest Track / Leading Shower Length", "",
 	                                          Form("%s%s", file_locate_prefix, "post_leading_shower_trk_lengths_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_leading_shwr_trk_length_nue_cc,  h_leading_shwr_trk_length_nue_cc_mixed,
@@ -8513,7 +8676,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_leading_shower_intime, intime_scale_factor,
 	                                          h_collection_hits_leading_shower_data, data_scale_factor,
 	                                          h_collection_hits_leading_shower_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Hits - Collection Plane", "",
+	                                          "", "Leading Shower Hits (Collection Plane)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_collection_hits_leading_shower_nue_cc,  h_collection_hits_leading_shower_nue_cc_mixed,
@@ -8537,7 +8700,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_total_hits_leading_shower_unmatched, h_total_hits_leading_shower_intime, intime_scale_factor,
 	                                          h_total_hits_leading_shower_data, data_scale_factor,
 	                                          h_total_hits_leading_shower_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Hits - All Planes", "",
+	                                          "", "Leading Shower Hits (All Planes)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_total_hits_leading_shower_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_collection_hits_leading_shower_nue_cc,  h_collection_hits_leading_shower_nue_cc_mixed,
@@ -8672,8 +8835,8 @@ void selection::make_selection( const char * _file1,
 	                                          h_pre_cut_total_hits_leading_shower_intime,intime_scale_factor,
 	                                          h_pre_cut_total_hits_leading_shower_data, data_scale_factor,
 	                                          h_pre_cut_total_hits_leading_shower_dirt, dirt_scale_factor,
-	                                          0.73, 0.98, 0.98, 0.50, true, false,
-	                                          "", "Leading Shower Hits - All Planes", "",
+	                                          0.74, 0.98, 0.98, 0.49, true, false,
+	                                          "", "Leading Shower Hits (All Planes)", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_hit_cut_total_hits_leading_shower_data_logy.pdf"));
 
 	histogram_functions::Plot1DHistogram (h_pre_cut_total_hits_leading_shower_nue_cc, "Signal Events Leading Shower Hits - All Planes",
@@ -9522,6 +9685,20 @@ void selection::make_selection( const char * _file1,
 	                                             h_dedx_cuts_last_ext_unmatched, intime_scale_factor, data_scale_factor, 0.73, 0.98, 0.98, 0.50,
 	                                             "True Particle Type - Reco dE/dx", "Leading Shower dE/dx [MeV/cm]",
 	                                             "", Form("%s%s", file_locate_prefix, "post_cuts_dedx_true_particle_last.pdf"));
+
+	histogram_functions::PlotSimpleStackParticle_withratio(h_dedx_cuts_electron_slice1,
+														   h_dedx_cuts_photon_slice1,
+														   h_dedx_cuts_proton_slice1,
+														   h_dedx_cuts_pion_slice1,
+														   h_dedx_cuts_muon_slice1,
+														   h_dedx_cuts_kaon_slice1,
+														   h_dedx_cuts_neutron_slice1,
+														   h_dedx_cuts_ext_slice1,
+														   h_dedx_cuts_dirt_slice1,
+														   h_dedx_cuts_data_slice1,
+                                                           intime_scale_factor, dirt_scale_factor, data_scale_factor,
+												           0.73, 0.98, 0.98, 0.50,
+                                                           "True Particle type dEdx slice 1", "Leading Shower dE/dx (Collection Plane) [MeV/cm]", "Entries", Form("%s%s", file_locate_prefix, "post_cuts_dedx_true_particle_slice1.pdf"));
 
 
 	histogram_functions::PlotSimpleStackInTime (h_track_containment_nue_cc,
@@ -10808,7 +10985,7 @@ void selection::make_selection( const char * _file1,
 	        h_dedx_slice_1_data,
 	        data_scale_factor,
 	        h_dedx_slice_1_dirt, dirt_scale_factor,
-	        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "Theta Slice (0 - 60)", "Leading Shower dE/dx (Collection Plane) [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
@@ -10827,7 +11004,7 @@ void selection::make_selection( const char * _file1,
 	        h_dedx_slice_1_zoom_data,
 	        data_scale_factor,
 	        h_dedx_slice_1_zoom_dirt, dirt_scale_factor,
-	        "Theta Slice (0 - 60)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "Theta Slice (0 - 60)", "Shower dE/dx [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_1_zoom_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
@@ -10846,7 +11023,7 @@ void selection::make_selection( const char * _file1,
 	        h_dedx_slice_2_data,
 	        data_scale_factor,
 	        h_dedx_slice_2_dirt, dirt_scale_factor,
-	        "Theta Slice (60 - 120)", "Leading Shower dE/dx [MeV/cm]", "",
+	        "Theta Slice (60 - 120)", "Shower dE/dx (Collection Plane) [MeV/cm]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dedx_theta_slice_2_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(

@@ -82,7 +82,7 @@ void selection_cuts::loop_flashes(TFile * f, TTree * optical_tree, int flash_pe_
 
 		//Note: EXT and On-Beam triggers are shifted
 		//this shifts the EXT to the On-Beam timing
-		if(stream == 1) {op_flash_time = op_flash_time - 0.343; }
+		if(stream == 1) {op_flash_time = op_flash_time - 0.343 ; } // 0.343 is old value 0.359375 is new test
 		//if(ext) {op_flash_time = op_flash_time - 0.406; }
 
 		//in this case the MC is shifted compared to the on-beam data
