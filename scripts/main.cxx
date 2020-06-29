@@ -15,6 +15,7 @@ int main(int argc, char *argv[]){
 	bool dirt_file = false;
 	bool variation_file = false;
 
+
 	char * monte_carlo_file_path = (char *)"empty";
 	char * cosmic_file_path = (char *)"empty";
 	char * data_file_path = (char *)"empty";
@@ -23,6 +24,8 @@ int main(int argc, char *argv[]){
 
 	bool variation_mode;
 	bool variation_mode_bkg = false;
+
+	bool mc_truth_mode = false;
 
 	//start after name of .exe
 	for(int i =1; i < argc; i++)
@@ -83,6 +86,10 @@ int main(int argc, char *argv[]){
 		if(strcmp(arg, "--var_mode_bkg") == 0)
 		{
 			variation_mode_bkg = true;
+		}
+		if(strcmp(arg, "--mc_truth") == 0)
+		{
+			mc_truth_mode = true;
 		}
 	}
 	if(argc < 2 )  { std::cout << " \n Please inclue the input file path \n " << std::endl; exit(1); }
@@ -175,7 +182,14 @@ int main(int argc, char *argv[]){
 	{
 		variation_output_bkg _var_mode_instance_bkg;
 		// ./main.exe --var_mode_bkg file_name <"same">/""
-		_var_mode_instance_bkg.run_var(argv[2], argv[3], config);
+		_var_mode_instance_bkg.run_var(argv[2], argv[3], config, argv[4]);
+		return 0;
+	}
+
+	//variation mode for backgrounds
+	if(mc_truth_mode == true) {
+	    mc_truth _mc_truth_instance;
+		_mc_truth_instance.run_var(argv[2], config);
 		return 0;
 	}
 

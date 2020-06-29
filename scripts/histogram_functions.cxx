@@ -490,6 +490,7 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	stack->GetXaxis()->SetTitleOffset(1.0);
 	stack->GetXaxis()->SetTitleSize(17);
 	stack->GetXaxis()->SetTitleFont(46);
+	stack->GetXaxis()->SetRangeUser(3,19);
 
 	TPaveText *pt;
 

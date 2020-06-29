@@ -5,6 +5,7 @@
 #include "selection_slim.h"
 #include "variation_output.h"
 #include "variation_output_bkg.h"
+#include "mc_truth.h"
 #include "utility.h"
 
 #include <iostream>
@@ -113,5 +114,6 @@ const double pfp_hits_length_tolerance = 3; //hits/cm
 const double ratio_tolerance = 1;
 
 const bool detector_variations = false;
+
 
 #endif
