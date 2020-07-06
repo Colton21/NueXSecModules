@@ -17,6 +17,12 @@ void mc_truth::run_var(const char * _file1, const std::vector<double> _config) {
         return;
     }
 
+    // Set this to true to make the histograms 
+    if (true){
+        runweightmode();
+        return;
+    }
+
     gStyle->SetOptStat(0); // say no to stats box
 
     TString mode = "numi";
@@ -129,6 +135,10 @@ void mc_truth::run_var(const char * _file1, const std::vector<double> _config) {
         mctruth_counter_tree->SetBranchAddress("fMCEleMomentum", &mc_ele_momentum);
         mctruth_counter_tree->SetBranchAddress("has_pi0", &has_pi0);
         mctruth_counter_tree->SetBranchAddress("fMCNuTime", &mc_nu_time);
+        if (infile == "files/mc_truth_tree_out.root") {
+            mctruth_counter_tree->SetBranchAddress("ccqe_weights", &ccqe_weights);
+            mctruth_counter_tree->SetBranchAddress("ccmec_weights", &ccmec_weights);
+        }
 
         // Output tree stuff
         mc_tree_out->Branch("run",    &run);
@@ -152,6 +162,8 @@ void mc_truth::run_var(const char * _file1, const std::vector<double> _config) {
         mc_tree_out->Branch("has_pi0",   &has_pi0);
         mc_tree_out->Branch("fMCNuTime", &mc_nu_time);
         mc_tree_out->Branch("TpcObjectContainerV", &tpc_object_container_v_copy);
+        mc_tree_out->Branch("passed_selection", &passed_selection);
+        mc_tree_out->Branch("tpc_object_pass", &tpc_object_pass);
     }
 
     // Define the FV
@@ -164,7 +176,12 @@ void mc_truth::run_var(const char * _file1, const std::vector<double> _config) {
     // ----------------------
     std::cout << "Starting Eventloop..." << std::endl;
     for(int event = 0; event < tree_total_entries; event++){
-        fill_tree = true;
+
+        if (gen_event || passed_selection){
+            mc_tree_out->Fill();
+        }
+
+        passed_selection = false;
 
         if (event % 100000 == 0) std::cout << "On entry " << event/100000.0 <<"00k" << std::endl;
         
@@ -189,12 +206,12 @@ void mc_truth::run_var(const char * _file1, const std::vector<double> _config) {
                 evt  = tpc_object_container.EventNumber();
                 run    = tpc_object_container.RunNumber();
                 subrun = tpc_object_container.SubRunNumber();
-                
-                // std::cout << run << " " << subrun << " " << evt << std::endl;
-                mc_tree_out->Fill();
-                fill_tree = false; // already filled the tree
+                gen_event = true;
 
             }
+        }
+        else {
+            gen_event = false;
         }
 
         // --------------- MC Counters ---------------
@@ -222,11 +239,12 @@ void mc_truth::run_var(const char * _file1, const std::vector<double> _config) {
         
         // -------------------------------------------------
 
+        tpc_object_pass.clear();
+        tpc_object_pass.resize(n_tpc_obj, 0);
+
         // Loop over TPCObj
         for (int i = 0; i < n_tpc_obj; i++){
             auto const tpc_obj = tpc_object_container_v->at(i);
-
-            
 
             // Classify the event  
             std::pair<std::string, int> tpc_classification;
@@ -414,7 +432,8 @@ void mc_truth::run_var(const char * _file1, const std::vector<double> _config) {
             if (tpc_classification.first == "unmatched" || tpc_classification.first == "other_mixed") continue;
             //***************************************************************************************************
 
-            if (fill_tree) mc_tree_out->Fill();
+            passed_selection = true;
+            tpc_object_pass.at(i) = 1;
 
             if (type != "mc") counter_ext++;
 
@@ -1508,5 +1527,481 @@ void mc_truth::merge_weights_into_tree(){
     
     outFile_root->cd();
     mctruth_counter_tree->Write("",TObject::kOverwrite);
+
+}
+//***************************************************************************
+//***************************************************************************
+void mc_truth::runweightmode(){
+
+    gStyle->SetOptStat(0);
+
+    // Get the main file
+    TFile *outFile_root = TFile::Open("files/mc_truth_tree_out.root", "READ");
+    TTree *mctruth_counter_tree = (TTree*) outFile_root->Get("mc_tree_out");
+    mctruth_counter_tree->SetDirectory(outFile_root);
+
+    mctruth_counter_tree->SetBranchAddress("run", &run);
+    mctruth_counter_tree->SetBranchAddress("subrun", &subrun);
+    mctruth_counter_tree->SetBranchAddress("evt", &evt);
+    mctruth_counter_tree->SetBranchAddress("ccqe_weights", &ccqe_weights);
+    mctruth_counter_tree->SetBranchAddress("ccmec_weights", &ccmec_weights);
+    mctruth_counter_tree->SetBranchAddress("TpcObjectContainerV", &tpc_object_container_v);
+    mctruth_counter_tree->SetBranchAddress("passed_selection", &passed_selection);
+    mctruth_counter_tree->SetBranchAddress("fMCNuID", &mc_nu_id);
+    mctruth_counter_tree->SetBranchAddress("fMCNuEnergy", &mc_nu_energy);
+    mctruth_counter_tree->SetBranchAddress("fMCEleEnergy",   &mc_ele_energy);
+    mctruth_counter_tree->SetBranchAddress("fMCNumChargedParticles", &mc_nu_num_charged_particles);
+    mctruth_counter_tree->SetBranchAddress("fMCNuDirX",   &mc_nu_dir_x);
+    mctruth_counter_tree->SetBranchAddress("fMCNuDirY",   &mc_nu_dir_y);
+    mctruth_counter_tree->SetBranchAddress("fMCNuDirZ",   &mc_nu_dir_z);
+    mctruth_counter_tree->SetBranchAddress("fMCEleDirX", &mc_ele_dir_x);
+    mctruth_counter_tree->SetBranchAddress("fMCEleDirY", &mc_ele_dir_y);
+    mctruth_counter_tree->SetBranchAddress("fMCEleDirZ", &mc_ele_dir_z);
+    mctruth_counter_tree->SetBranchAddress("tpc_object_pass", &tpc_object_pass_temp);
+
+    const int tree_total_entries = mctruth_counter_tree->GetEntries();
+
+    // Lets define our histograms first index of vector is reweightor type
+    std::vector<std::vector<TH1D*>> h_proton_num; // proton efficiency numerator
+    std::vector<std::vector<TH1D*>> h_proton_den; // proton efficiency denomiator
+
+    std::vector<std::vector<TH1D*>> h_electron_num; // electron efficiency numerator
+    std::vector<std::vector<TH1D*>> h_electron_den; // electron efficiency denomiator
+
+    TH1D* h_proton_num_cv = new TH1D("h_proton_num_CV", "",10, 0, 1.2 );
+    TH1D* h_proton_den_cv = new TH1D("h_proton_den_CV", "",10, 0, 1.2 );
+
+    TH1D* h_electron_num_cv = new TH1D("h_electron_num_CV", "",10, 0, 2 );
+    TH1D* h_electron_den_cv = new TH1D("h_electron_den_CV", "",10, 0, 2 );
+
+    TH1D* h_E_transfer_CV_den = new TH1D("h_E_transfer_CV_den", ";Energy Transfer [GeV]; Entries",10, 0, 2 );
+    TH1D* h_P_transfer_CV_den = new TH1D("h_P_transfer_CV_den", ";Momentum Transfer [GeV/c]; Entries",10, 0, 2 );
+    TH1D* h_NumCharged_CV_den = new TH1D("h_NumCharged_CV_den", ";Number of Charged Particles; Entries",10, 0, 10 );
+
+    TH1D* h_E_transfer_CV_num = new TH1D("h_E_transfer_CV_num", ";Energy Transfer [GeV]; Entries",10, 0, 2 );
+    TH1D* h_P_transfer_CV_num = new TH1D("h_P_transfer_CV_num", ";Momentum Transfer [GeV/c]; Entries",10, 0, 2 );
+    TH1D* h_NumCharged_CV_num = new TH1D("h_NumCharged_CV_num", ";Number of Charged Particles; Entries",10, 0, 10 );
+
+    // Energy/P Transfer and Num charged particles
+    std::vector<std::vector<TH1D*>> h_E_transfer_den_v;
+    std::vector<std::vector<TH1D*>> h_P_transfer_den_v;
+    std::vector<std::vector<TH1D*>> h_NumCharged_den_v;
+
+    h_proton_num.resize(2);
+    h_proton_den.resize(2);
+    h_electron_num.resize(2);
+    h_electron_den.resize(2);
+    h_E_transfer_den_v.resize(2);
+    h_P_transfer_den_v.resize(2);
+    h_NumCharged_den_v.resize(2);
+
+    // Resize to the number of universes
+    for (unsigned int k = 0; k < h_proton_num.size(); k++){
+        h_proton_num.at(k).resize(1000);
+        h_proton_den.at(k).resize(1000);
+        h_electron_num.at(k).resize(1000);
+        h_electron_den.at(k).resize(1000);
+        h_E_transfer_den_v.at(k).resize(1000);
+        h_P_transfer_den_v.at(k).resize(1000);
+        h_NumCharged_den_v.at(k).resize(1000);
+    }
+
+    // Loop over the histograms and create the histograms
+    for (unsigned int l = 0; l < h_proton_num.size(); l++){
+        for (unsigned int p = 0; p< h_proton_num.at(l).size(); p++){
+            h_proton_num.at(l).at(p) = new TH1D(Form("h_proton_num_%i_%i",l, p), ";Proton Momentum [GeV/c];Entries", 10, 0, 1.2);
+            h_proton_den.at(l).at(p) = new TH1D(Form("h_proton_den_%i_%i",l, p), ";Proton Momentum [GeV/c];Entries", 10, 0, 1.2);
+            h_electron_num.at(l).at(p) = new TH1D(Form("h_electron_num_%i_%i",l, p), ";Electron Energy [GeV];Entries", 10, 0, 2);
+            h_electron_den.at(l).at(p) = new TH1D(Form("h_electron_den_%i_%i",l, p), ";Electron Energy [GeV];Entries", 10, 0, 2);
+            h_E_transfer_den_v.at(l).at(p) = new TH1D(Form("h_E_transfer_den_v_%i_%i",l, p), ";Energy Transfer [GeV];Entries", 10, 0, 2);
+            h_P_transfer_den_v.at(l).at(p) = new TH1D(Form("h_P_transfer_den_v_%i_%i",l, p), ";Momentum Transfer [GeV/c];Entries", 10, 0, 2);
+            h_NumCharged_den_v.at(l).at(p) = new TH1D(Form("h_NumCharged_den_v_%i_%i",l, p), ";Number of CHarged Particles;Entries", 10, 0, 10);
+        }
+    }
+
+
+    for (int event = 0; event < tree_total_entries; event++){
+
+        if (event % 1000 == 0) std::cout << "On entry " << event/1000.0 <<"k" << std::endl;
+
+        mctruth_counter_tree->GetEntry(event);
+
+        // Only looking at signal events for now, so skip the numus
+        if (mc_nu_id == 2 || mc_nu_id == 4 || mc_nu_id == 6 || mc_nu_id == 8) continue;
+
+
+        int n_tpc_obj = tpc_object_container_v->size();
+
+
+        // Fill the MC Truth histograms
+        if (mc_nu_id == 1 || mc_nu_id == 5){
+
+            // Calculate the momentum transfer
+            TVector3 v_nu(mc_nu_dir_x, mc_nu_dir_y, mc_nu_dir_z);
+            TVector3 v_ele(mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z);
+
+            double angle = v_nu.Dot(v_ele);
+
+            double p_ele = std::sqrt(mc_ele_energy*mc_ele_energy - 0.511e-3*0.511e-3 );
+
+            double p_transfer = std::sqrt( mc_nu_energy*mc_nu_energy + p_ele*p_ele - 2 * mc_nu_energy * p_ele * std::cos(angle) );
+
+            h_E_transfer_CV_den->Fill(mc_nu_energy - mc_ele_energy);
+            h_P_transfer_CV_den->Fill(p_transfer);
+            h_NumCharged_CV_den->Fill(mc_nu_num_charged_particles);
+
+            if (passed_selection){
+                h_E_transfer_CV_num->Fill(mc_nu_energy - mc_ele_energy);
+                h_P_transfer_CV_num->Fill(p_transfer);
+                h_NumCharged_CV_num->Fill(mc_nu_num_charged_particles);
+            }
+
+            for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+                h_E_transfer_den_v.at(0).at(t)->Fill(mc_nu_energy - mc_ele_energy, ccqe_weights->at(t));
+                h_E_transfer_den_v.at(1).at(t)->Fill(mc_nu_energy - mc_ele_energy, ccmec_weights->at(t));
+
+                h_P_transfer_den_v.at(0).at(t)->Fill(p_transfer, ccqe_weights->at(t));
+                h_P_transfer_den_v.at(1).at(t)->Fill(p_transfer, ccmec_weights->at(t));
+
+                h_NumCharged_den_v.at(0).at(t)->Fill(mc_nu_num_charged_particles, ccqe_weights->at(t));
+                h_NumCharged_den_v.at(1).at(t)->Fill(mc_nu_num_charged_particles, ccmec_weights->at(t));
+            }
+
+
+        }
+
+        // Loop over TPCObj
+        for (int i = 0; i < n_tpc_obj; i++){
+            // if (tpc_object_pass_temp->at(i) == 0) continue;
+
+            auto const tpc_obj = tpc_object_container_v->at(i);
+
+            n_pfp = tpc_obj.NumPFParticles();
+
+            int leading_proton_index{0};
+            int leading_electron_index{0};
+
+            double proton_mom{0.0};
+            double electron_energy{0.0};
+
+            // Loop over the Par Objects -- get the leading proton and leading electron
+            // Leading defined as the the pfp with the most energy
+            for (int j = 0; j < n_pfp ; j++){
+
+                auto const pfp_obj = tpc_obj.GetParticle(j);
+
+                int mc_pdg       = pfp_obj.MCPdgCode();
+                double mc_Energy = pfp_obj.mcEnergy();
+                double mc_Mom    = pfp_obj.mcMomentum();
+
+                // Take a look at protons
+                if (mc_pdg == 2212) {
+                    if (mc_Mom > proton_mom){
+                        proton_mom = mc_Mom;
+                        leading_proton_index = j;
+                        
+
+                    } 
+                }
+
+                // Take a look at electrons
+                if (mc_pdg == 11){
+                    if (mc_Energy > electron_energy){
+                        electron_energy = mc_Energy;
+                        leading_electron_index =j;
+                    } 
+                }
+
+            } // END loop over pfp
+
+
+            // std::cout << proton_energy<< std::endl;
+
+            for (int j = 0; j < n_pfp ; j++){
+                auto const pfp_obj = tpc_obj.GetParticle(j);
+
+
+                // Leading proton
+                if (j == leading_proton_index){
+
+                    if (proton_mom == 0.0) continue;
+                    
+                    // Passed the selection so numerator
+                    if (tpc_object_pass_temp->at(i) == 1){
+                        for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+                            h_proton_num.at(0).at(t)->Fill(proton_mom, ccqe_weights->at(t));
+                            h_proton_num.at(1).at(t)->Fill(proton_mom, ccmec_weights->at(t));
+                            h_proton_num_cv->Fill(proton_mom);
+                        }
+
+                    }
+                    // Failed the selection so denominator
+                    else {
+                        for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+                            h_proton_den.at(0).at(t)->Fill(proton_mom, ccqe_weights->at(t));
+                            h_proton_den.at(1).at(t)->Fill(proton_mom, ccmec_weights->at(t));
+                            h_proton_den_cv->Fill(proton_mom);
+                        }
+
+                    }
+                } // end if proton
+
+                // Leading electron
+                if (j == leading_electron_index){
+
+                    if (electron_energy == 0.0) continue;
+
+                    // Passed the selection so numerator
+                    if (tpc_object_pass_temp->at(i) == 1){
+                        for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+                            h_electron_num.at(0).at(t)->Fill(electron_energy, ccqe_weights->at(t));
+                            h_electron_num.at(1).at(t)->Fill(electron_energy, ccmec_weights->at(t));
+                            h_electron_num_cv->Fill(electron_energy);
+                        }
+
+                    }
+                    // Failed the selection so denominator
+                    else {
+                        for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+                            h_electron_den.at(0).at(t)->Fill(electron_energy, ccqe_weights->at(t));
+                            h_electron_den.at(1).at(t)->Fill(electron_energy, ccmec_weights->at(t));
+                            h_electron_den_cv->Fill(electron_energy);
+                        }
+
+                    }
+
+                } // end if electron
+
+            } // END loop over pfp
+
+        
+        }// End loop over tpc objects
+
+
+    } // END loop over the entires
+
+   draw_weight_hists(h_proton_num.at(0), 0, 1500, "plots/h_ccqe_proton_num.pdf");
+   draw_weight_hists(h_proton_num.at(1), 0, 1500, "plots/h_ccmec_proton_num.pdf");
+
+   draw_weight_hists(h_proton_den.at(0), 0, 1500, "plots/h_ccqe_proton_den.pdf");
+   draw_weight_hists(h_proton_den.at(1), 0, 1500, "plots/h_ccmec_proton_den.pdf");
+
+   draw_weight_hists(h_electron_num.at(0), 0, 2000, "plots/h_ccqe_electron_num.pdf");
+   draw_weight_hists(h_electron_num.at(1), 0, 2000, "plots/h_ccmec_electron_num.pdf");
+
+   draw_weight_hists(h_electron_den.at(0), 0, 2000, "plots/h_ccqe_electron_den.pdf");
+   draw_weight_hists(h_electron_den.at(1), 0, 2000, "plots/h_ccmec_electron_den.pdf");
+
+    // Now lets take the ratio and plot that
+    for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+        h_proton_num.at(0).at(t)->Divide(h_proton_den.at(0).at(t));
+        h_proton_num.at(1).at(t)->Divide(h_proton_den.at(1).at(t));
+        h_electron_num.at(0).at(t)->Divide(h_electron_den.at(0).at(t));
+        h_electron_num.at(1).at(t)->Divide(h_electron_den.at(1).at(t));
+
+        h_proton_num.at(0).at(t)->SetTitle(";Proton Momentum [GeV/c];Efficiency");
+        h_proton_num.at(1).at(t)->SetTitle(";Proton Momentum [GeV/c];Efficiency");
+        
+        h_electron_num.at(0).at(t)->SetTitle(";Electron Energy [GeV];Efficiency");
+        h_electron_num.at(1).at(t)->SetTitle(";Electron Energy [GeV];Efficiency");
+    }
+
+    // h_proton_num_cv  ->Divide(h_proton_cv_den);
+    // h_electron_num_cv->Divide(h_electron_cv_den);
+
+
+    draw_weight_hists(h_proton_num.at(0), 0, 0.3, "plots/h_ccqe_proton_eff.pdf");
+    draw_weight_hists(h_proton_num.at(1), 0, 0.3, "plots/h_ccmec_proton_eff.pdf");
+
+    draw_weight_hists(h_electron_num.at(0), 0, 0.2, "plots/h_ccqe_electron_eff.pdf");
+    draw_weight_hists(h_electron_num.at(1), 0, 0.2, "plots/h_ccmec_electron_eff.pdf");
+
+
+    // Divide the by the denominator to get the CV efficiency
+    h_E_transfer_CV_num->Divide(h_E_transfer_CV_den);
+    h_P_transfer_CV_num->Divide(h_P_transfer_CV_den);
+    h_NumCharged_CV_num->Divide(h_NumCharged_CV_den);
+
+
+    // For the energy transfer histograms we need to normalise them to the CV first
+    double int_E_transfer_CV = h_E_transfer_CV_den->Integral();
+    double int_P_transfer_CV = h_P_transfer_CV_den->Integral();
+    double int_NumCharged_CV = h_NumCharged_CV_den->Integral();
+    for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+        
+        double E_transfer_v_0_sf = int_E_transfer_CV / h_E_transfer_den_v.at(0).at(t)->Integral();
+        double E_transfer_v_1_sf = int_E_transfer_CV / h_E_transfer_den_v.at(1).at(t)->Integral();
+
+        double P_transfer_v_0_sf = int_P_transfer_CV / h_P_transfer_den_v.at(0).at(t)->Integral();
+        double P_transfer_v_1_sf = int_P_transfer_CV / h_P_transfer_den_v.at(1).at(t)->Integral();
+
+        double NumCharged_v_0_sf = int_NumCharged_CV / h_NumCharged_den_v.at(0).at(t)->Integral();
+        double NumCharged_v_1_sf = int_NumCharged_CV / h_NumCharged_den_v.at(1).at(t)->Integral();
+        
+        h_E_transfer_den_v.at(0).at(t)->Scale(E_transfer_v_0_sf);
+        h_E_transfer_den_v.at(1).at(t)->Scale(E_transfer_v_1_sf);
+
+        h_P_transfer_den_v.at(0).at(t)->Scale(P_transfer_v_0_sf);
+        h_P_transfer_den_v.at(1).at(t)->Scale(P_transfer_v_1_sf);
+
+        h_NumCharged_den_v.at(0).at(t)->Scale(NumCharged_v_0_sf);
+        h_NumCharged_den_v.at(1).at(t)->Scale(NumCharged_v_1_sf);
+    }
+
+    std::vector<std::vector<double>> E_transfer_std;
+    std::vector<std::vector<double>> P_transfer_std;
+    std::vector<std::vector<double>> NumCharged_std;
+    E_transfer_std.resize(2);
+    P_transfer_std.resize(2);
+    NumCharged_std.resize(2);
+
+    E_transfer_std.at(0).resize(h_E_transfer_CV_den->GetNbinsX()+1,0);
+    E_transfer_std.at(1).resize(h_E_transfer_CV_den->GetNbinsX()+1,0);
+
+    P_transfer_std.at(0).resize(h_P_transfer_CV_den->GetNbinsX()+1,0);
+    P_transfer_std.at(1).resize(h_P_transfer_CV_den->GetNbinsX()+1,0);
+
+    NumCharged_std.at(0).resize(h_NumCharged_CV_den->GetNbinsX()+1,0);
+    NumCharged_std.at(1).resize(h_NumCharged_CV_den->GetNbinsX()+1,0);
+
+
+
+
+    for (unsigned int t =0 ; t < ccqe_weights->size(); t++){
+        
+        // Energy Transfer
+        for (unsigned int j = 1; j < h_E_transfer_CV_den->GetNbinsX()+1; j++){
+            E_transfer_std.at(0).at(j - 1) += ( (h_E_transfer_den_v.at(0).at(t)->GetBinContent(j) - h_E_transfer_CV_den->GetBinContent(j)) * (h_E_transfer_den_v.at(0).at(t)->GetBinContent(j) - h_E_transfer_CV_den->GetBinContent(j)) );
+            E_transfer_std.at(1).at(j - 1) += ( (h_E_transfer_den_v.at(1).at(t)->GetBinContent(j) - h_E_transfer_CV_den->GetBinContent(j)) * (h_E_transfer_den_v.at(1).at(t)->GetBinContent(j) - h_E_transfer_CV_den->GetBinContent(j)) );
+
+        }
+
+        // P Transfer
+        for (unsigned int j = 1; j < h_P_transfer_CV_den->GetNbinsX()+1; j++){
+            P_transfer_std.at(0).at(j - 1) += ( (h_P_transfer_den_v.at(0).at(t)->GetBinContent(j) - h_P_transfer_CV_den->GetBinContent(j)) * (h_P_transfer_den_v.at(0).at(t)->GetBinContent(j) - h_P_transfer_CV_den->GetBinContent(j)) );
+            P_transfer_std.at(1).at(j - 1) += ( (h_P_transfer_den_v.at(1).at(t)->GetBinContent(j) - h_P_transfer_CV_den->GetBinContent(j)) * (h_P_transfer_den_v.at(1).at(t)->GetBinContent(j) - h_P_transfer_CV_den->GetBinContent(j)) );
+
+        }    
+
+        // Num Charged
+        for (unsigned int j = 1; j < h_NumCharged_CV_den->GetNbinsX()+1; j++){
+            NumCharged_std.at(0).at(j - 1) += ( (h_NumCharged_den_v.at(0).at(t)->GetBinContent(j) - h_NumCharged_CV_den->GetBinContent(j)) * (h_NumCharged_den_v.at(0).at(t)->GetBinContent(j) - h_NumCharged_CV_den->GetBinContent(j)) );
+            NumCharged_std.at(1).at(j - 1) += ( (h_NumCharged_den_v.at(1).at(t)->GetBinContent(j) - h_NumCharged_CV_den->GetBinContent(j)) * (h_NumCharged_den_v.at(1).at(t)->GetBinContent(j) - h_NumCharged_CV_den->GetBinContent(j)) );
+
+        }    
+    }
+
+    // Energy Transfer
+    for (unsigned int j = 1; j < h_E_transfer_CV_den->GetNbinsX()+1; j++){
+        E_transfer_std.at(0).at(j - 1) = std::sqrt(E_transfer_std.at(0).at(j - 1)/1000);
+        E_transfer_std.at(1).at(j - 1) = std::sqrt(E_transfer_std.at(1).at(j - 1)/1000);
+
+        h_E_transfer_CV_den->SetBinError(j, E_transfer_std.at(0).at(j - 1) );
+
+    }
+
+    
+
+    // P Transfer
+    for (unsigned int j = 1; j < h_P_transfer_CV_den->GetNbinsX()+1; j++){
+        P_transfer_std.at(0).at(j - 1) = std::sqrt(P_transfer_std.at(0).at(j - 1)/1000);
+        P_transfer_std.at(1).at(j - 1) = std::sqrt(P_transfer_std.at(1).at(j - 1)/1000);
+
+        h_P_transfer_CV_den->SetBinError(j, P_transfer_std.at(0).at(j - 1) );
+
+    } 
+
+    // Energy Transfer
+    for (unsigned int j = 1; j < h_NumCharged_CV_den->GetNbinsX()+1; j++){
+        NumCharged_std.at(0).at(j - 1) = std::sqrt(NumCharged_std.at(0).at(j - 1)/1000);
+        NumCharged_std.at(1).at(j - 1) = std::sqrt(NumCharged_std.at(1).at(j - 1)/1000);
+
+        h_NumCharged_CV_den->SetBinError(j, NumCharged_std.at(0).at(j - 1) );
+
+    } 
+
+
+    draw_standard_hists(h_E_transfer_CV_den, h_E_transfer_CV_num, "plots/h_E_transfer_CV_den_ccqe.pdf");
+    draw_standard_hists(h_P_transfer_CV_den, h_P_transfer_CV_num, "plots/h_P_transfer_CV_den_ccqe.pdf");
+    draw_standard_hists(h_NumCharged_CV_den, h_NumCharged_CV_num, "plots/h_NumCharged_CV_den_ccqe.pdf");
+
+
+    for (unsigned int j = 1; j < h_E_transfer_CV_den->GetNbinsX()+1; j++){
+        h_E_transfer_CV_den->SetBinError(j, E_transfer_std.at(1).at(j - 1) );
+    }
+
+    for (unsigned int j = 1; j < h_P_transfer_CV_den->GetNbinsX()+1; j++){
+        h_P_transfer_CV_den->SetBinError(j, P_transfer_std.at(1).at(j - 1) );
+    }
+
+    for (unsigned int j = 1; j < h_NumCharged_CV_den->GetNbinsX()+1; j++){
+        h_NumCharged_CV_den->SetBinError(j, NumCharged_std.at(1).at(j - 1) );
+    }
+
+    draw_standard_hists(h_E_transfer_CV_den, h_E_transfer_CV_num, "plots/h_E_transfer_CV_den_ccmec.pdf");
+    draw_standard_hists(h_P_transfer_CV_den, h_P_transfer_CV_num, "plots/h_P_transfer_CV_den_ccmec.pdf");
+    draw_standard_hists(h_NumCharged_CV_den, h_NumCharged_CV_num, "plots/h_NumCharged_CV_den_ccmec.pdf");
+
+}
+//***************************************************************************
+//***************************************************************************
+void mc_truth::draw_weight_hists(std::vector<TH1D*> hist_v, double y1, double y2, const char*  printname){
+
+
+     TCanvas *c = new TCanvas();
+
+    for (unsigned int t =0 ; t < hist_v.size(); t++){
+        hist_v.at(t)->GetYaxis()->SetRangeUser(y1, y2);
+        hist_v.at(t)->Draw("hist,same");
+    }
+
+    c->Print(printname);
+
+}
+//***************************************************************************
+//***************************************************************************
+void mc_truth::draw_standard_hists(TH1D* hist, TH1D* h_eff, const char*  printname){
+
+    TH1D *h_eff_clone = (TH1D *)h_eff->Clone("h_clone");
+
+
+    TCanvas *c = new TCanvas();
+    hist->SetLineColor(kBlack);
+    hist->SetLineWidth(2);
+    hist->Draw("hist,E");
+
+    // Now draw the efficiency on top
+    gPad->SetRightMargin(0.17);
+
+    c->Update();
+    
+    Float_t rightmax = 1.1 * h_eff_clone->GetMaximum();
+    Float_t scale = gPad->GetUymax() / rightmax;
+    h_eff_clone->SetLineColor(kAzure - 6);
+    h_eff_clone->SetLineWidth(2);
+    h_eff_clone->Scale(scale);
+    h_eff_clone->Draw("hist,same");
+
+    
+
+    TGaxis *axis = new TGaxis(gPad->GetUxmax(), gPad->GetUymin(), gPad->GetUxmax(), gPad->GetUymax(), 0, rightmax, 510, "+L");
+    axis->SetTitle("Efficiency");
+    axis->SetTitleOffset(1.1);
+    axis->SetLineColor(kAzure - 6);
+    axis->SetLabelColor(kAzure - 6);
+    axis->SetTitleColor(kAzure - 6);
+    axis->SetTextFont(42);
+    axis->SetLabelFont(42);
+
+    axis->Draw();
+
+    hist->Draw("hist,E,same");
+    
+    
+    
+    c->Print(printname);
+
+    delete c;
+    delete h_eff_clone;
 
 }

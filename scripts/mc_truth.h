@@ -28,6 +28,7 @@
 #include "TKey.h"
 #include "TLine.h"
 #include "TVector3.h"
+#include "TGaxis.h"
 
 // C++ includes
 #include <iostream>
@@ -86,6 +87,10 @@ class mc_truth {
     void FillHistogramCuts( xsecAna::TPCObjectContainer tpc_obj, std::string histname, bool bool_sig); // Function to fill histograms before and after selection cuts
 
     void merge_weights_into_tree();
+    void runweightmode(); // Mode to reweight events
+
+    void draw_weight_hists(std::vector<TH1D*> hist_v, double y1, double y2, const char*  printname);
+    void draw_standard_hists(TH1D* hist, TH1D* h_eff, const char*  printname);
 
     // ----------------------
     // Flash Functions
@@ -139,6 +144,12 @@ class mc_truth {
 
     std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v = nullptr;
     std::vector<xsecAna::TPCObjectContainer> tpc_object_container_v_copy;
+
+    std::vector<double> * ccqe_weights  = nullptr;
+    std::vector<double> * ccmec_weights = nullptr;
+
+    std::vector<int> tpc_object_pass; // vector to see if tpc object has passed the selection
+    std::vector<int> *tpc_object_pass_temp = nullptr;
 
     // ----------------------
     //    Cut Variables
@@ -236,9 +247,9 @@ class mc_truth {
     TH2D* h_shr_dEdx_shr_dist_ext_good = new TH2D( "h_reco_shr_dEdx_shr_dist_ext_good","0 < #theta < 60;Leading Shower dEdx (Collection Plane) [MeV/cm];Leading Shower to Vertex Distance [cm]", 20, 0, 6, 10, 0, 20);
 
     
-    
-    bool fill_tree{false}; // Decide if to fill the tree
     bool write_tree{true};
+    bool passed_selection{false}; // Save whether the event has passed the selection or not
+    bool gen_event{false}; // Decide if to fill the tree
 
 
     private:
