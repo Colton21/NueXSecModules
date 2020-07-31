@@ -771,6 +771,24 @@ void selection_cuts::OpenAngleCut(std::vector<xsecAna::TPCObjectContainer> * tpc
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
+		// // Also get theta to apply an anglular cut
+		// const double leading_shower_z = leading_shower.pfpDirZ();
+		// const double leading_shower_y = leading_shower.pfpDirY();
+		// const double leading_shower_x = leading_shower.pfpDirX();
+		// TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		// TVector3 numi_vector;
+		// numi_vector.SetMagThetaPhi(1, 0, 0);
+		// const double leading_shower_theta = acos(shower_vector.Dot(numi_vector) / (shower_vector.Mag() * numi_vector.Mag())) * (180/3.1415);
+
+		// // Require that theta is within a specific angular range, otherwise fail it
+		// if (leading_shower_theta < 0 || leading_shower_theta > 60){
+		// 	passed_tpco->at(i).first = 0;
+		// 	passed_tpco->at(i).second = "OpenAngle";
+		// 	return;
+		// }
+
+
 		if(leading_open_angle > tolerance_open_angle.at(1) || leading_open_angle < tolerance_open_angle.at(0))
 		{
 			passed_tpco->at(i).first = 0;
@@ -809,6 +827,7 @@ void selection_cuts::dEdxCut(std::vector<xsecAna::TPCObjectContainer> * tpc_obje
 		}//end loop pfparticles
 		auto const leading_shower = tpc_obj.GetParticle(leading_index);
 		double leading_dedx = leading_shower.PfpdEdx().at(2);//just the collection plane!
+
 		if(use_calibration == true) {leading_dedx = leading_dedx * (196.979 /242.72); }
 		if(leading_dedx > tolerance_dedx_max || leading_dedx < tolerance_dedx_min)
 		{

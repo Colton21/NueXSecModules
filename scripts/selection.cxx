@@ -157,12 +157,12 @@ void selection::make_selection( const char * _file1,
 			if(mc_nu_id == 5) {_mc_nue_cc_counter_bar++; }
 			if(mc_nu_id == 7) {_mc_nue_nc_counter_bar++; }
 
-			if(true_in_tpc == true && (mc_nu_id == 1)) {total_mc_entries_inFV_nue++; }
-			if(true_in_tpc == true && (mc_nu_id == 5)) {total_mc_entries_inFV_nue_bar++; }
-			if(true_in_tpc == true && (mc_nu_id == 3)) {total_mc_entries_inFV_nue_nc++; }
-			if(true_in_tpc == true && (mc_nu_id == 7)) {total_mc_entries_inFV_nue_nc_bar++; }
+			if(true_in_tpc == true && (mc_nu_id == 1) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue++; }
+			if(true_in_tpc == true && (mc_nu_id == 5) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue_bar++; }
+			if(true_in_tpc == true && (mc_nu_id == 3) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue_nc++; }
+			if(true_in_tpc == true && (mc_nu_id == 7) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue_nc_bar++; }
 
-			if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5))
+			if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) && mc_nu_energy > threshold)
 			{
 				//0 for event number (not in the tree), 0 for classifier id (not relevant at truth level)
 				neutrino_in_tpc_list << 0 << ", " << 0 << ", " << mc_nu_id << ", " <<
@@ -583,6 +583,35 @@ void selection::make_selection( const char * _file1,
 			                                                                   h_collection_hits_leading_shower_data,
 			                                                                   h_total_hits_leading_shower_data);
 
+
+			std::vector<std::pair<std::string, int> > *tpco_classifier_v;
+			_functions_instance.selection_functions::HitsPlots1D_UV(data_tpc_object_container_v, passed_tpco_data, _verbose, tpco_classifier_v,
+							"data",
+							h_u_hits_shower_data,
+							h_u_hits_shower_ext,
+							h_u_hits_shower_dirt,
+							h_u_hits_shower_nue_cc,
+							h_u_hits_shower_nue_cc_out_fv,
+							h_u_hits_shower_numu_cc,
+							h_u_hits_shower_nc,
+							h_u_hits_shower_nc_pi0,
+							h_u_hits_shower_cosmic,
+							h_v_hits_shower_data,
+							h_v_hits_shower_ext,
+							h_v_hits_shower_dirt,
+							h_v_hits_shower_nue_cc,
+							h_v_hits_shower_nue_cc_out_fv,
+							h_v_hits_shower_numu_cc,
+							h_v_hits_shower_nc,
+							h_v_hits_shower_nc_pi0,
+							h_v_hits_shower_cosmic,
+							h_u_hits_tot,
+						    h_v_hits_tot,
+						    h_y_hits_tot,
+						    h_tot_hits_u_plane,
+						    h_tot_hits_v_plane,
+						    h_tot_hits_y_plane);
+
 			_cuts_instance.selection_cuts::HitThresholdCollection(data_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco_data, _verbose);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_hit_threshold_collection_counter_v);
@@ -765,6 +794,17 @@ void selection::make_selection( const char * _file1,
 			_data_functions_instance.selection_functions_data::EventMultiplicityData(data_tpc_object_container_v, passed_tpco_data, _verbose,
 			                                                                         h_multiplicity_shower_containment_cut_data,
 			                                                                         h_multiplicity_track_containment_cut_data);
+
+			
+
+
+			
+
+
+			
+
+
+
 
 
 			//*********** Data *********
@@ -1136,7 +1176,6 @@ void selection::make_selection( const char * _file1,
 
 
 
-
 			//******************************************************
 			// **** distance between pfp track and nue object cut **
 			//******************************************************
@@ -1201,6 +1240,35 @@ void selection::make_selection( const char * _file1,
 			                                                           h_collection_hits_shower_dirt,
 			                                                           h_collection_hits_leading_shower_dirt,
 			                                                           h_total_hits_leading_shower_dirt);
+
+
+			std::vector<std::pair<std::string, int> > *tpco_classifier_v;
+			_functions_instance.selection_functions::HitsPlots1D_UV(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, tpco_classifier_v,
+							"dirt",
+							h_u_hits_shower_data,
+							h_u_hits_shower_ext,
+							h_u_hits_shower_dirt,
+							h_u_hits_shower_nue_cc,
+							h_u_hits_shower_nue_cc_out_fv,
+							h_u_hits_shower_numu_cc,
+							h_u_hits_shower_nc,
+							h_u_hits_shower_nc_pi0,
+							h_u_hits_shower_cosmic,
+							h_v_hits_shower_data,
+							h_v_hits_shower_ext,
+							h_v_hits_shower_dirt,
+							h_v_hits_shower_nue_cc,
+							h_v_hits_shower_nue_cc_out_fv,
+							h_v_hits_shower_numu_cc,
+							h_v_hits_shower_nc,
+							h_v_hits_shower_nc_pi0,
+							h_v_hits_shower_cosmic,
+							h_u_hits_tot,
+						    h_v_hits_tot,
+						    h_y_hits_tot,
+						    h_tot_hits_u_plane,
+						    h_tot_hits_v_plane,
+						    h_tot_hits_y_plane);
 
 			_cuts_instance.selection_cuts::HitThresholdCollection(dirt_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco_dirt, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
@@ -1419,6 +1487,14 @@ void selection::make_selection( const char * _file1,
 			                                                                 h_multiplicity_shower_containment_cut_dirt,
 			                                                                 h_multiplicity_track_containment_cut_dirt);
 			
+
+			
+
+
+			
+
+			
+			
 			
 
 			//*********** Dirt *********
@@ -1482,13 +1558,13 @@ void selection::make_selection( const char * _file1,
 		}
 	}//end string compare for dirt file
 
-//end Dirt
+    //end Dirt
 
-//***********************************
+    //***********************************
 	//***********************************
 	//*** In-time Cosmics Calculation ***
 	//***********************************
-//***********************************
+    //***********************************
 
 	std::vector<double> * intime_in_time_counter_v = new std::vector<double>;
 	intime_in_time_counter_v->resize(24, 0);
@@ -1832,6 +1908,38 @@ void selection::make_selection( const char * _file1,
 			                                                           h_collection_hits_shower_intime,
 			                                                           h_collection_hits_leading_shower_intime,
 			                                                           h_total_hits_leading_shower_intime);
+															
+			
+
+			std::vector<std::pair<std::string, int> > *tpco_classifier_v;
+			_functions_instance.selection_functions::HitsPlots1D_UV(intime_tpc_object_container_v, passed_tpco_intime, _verbose, tpco_classifier_v,
+									  "ext",
+									  h_u_hits_shower_data,
+									  h_u_hits_shower_ext,
+									  h_u_hits_shower_dirt,
+                                      h_u_hits_shower_nue_cc,
+                                      h_u_hits_shower_nue_cc_out_fv,
+                                      h_u_hits_shower_numu_cc,
+                                      h_u_hits_shower_nc,
+                                      h_u_hits_shower_nc_pi0,
+                                      h_u_hits_shower_cosmic,
+									  h_v_hits_shower_data,
+									  h_v_hits_shower_ext,
+									  h_v_hits_shower_dirt,
+									  h_v_hits_shower_nue_cc,
+                                      h_v_hits_shower_nue_cc_out_fv,
+                                      h_v_hits_shower_numu_cc,
+                                      h_v_hits_shower_nc,
+                                      h_v_hits_shower_nc_pi0,
+                                      h_v_hits_shower_cosmic,
+							          h_u_hits_tot,
+						              h_v_hits_tot,
+						              h_y_hits_tot,
+						              h_tot_hits_u_plane,
+						              h_tot_hits_v_plane,
+						              h_tot_hits_y_plane);
+
+
 
 			_cuts_instance.selection_cuts::HitThresholdCollection(intime_tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco_intime, _verbose);
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
@@ -2051,6 +2159,14 @@ void selection::make_selection( const char * _file1,
 			                                                                 h_multiplicity_track_containment_cut_intime);
 
 			
+			
+
+
+
+
+
+			
+			
 
 			//*********** In-time Cosmics *********
 			//*************************************
@@ -2110,8 +2226,9 @@ void selection::make_selection( const char * _file1,
 			delete passed_tpco_intime;
 		}
 	}//end in-time cosmic running
-//*********************************************************
-//*********************************************************
+    
+	//*********************************************************
+    //*********************************************************
 	std::vector<std::pair< int, int> > * leading_shower_id = new std::vector<std::pair< int, int> >;
 
 	std::vector<double> * in_time_counter_v = new std::vector<double>;
@@ -2356,6 +2473,8 @@ void selection::make_selection( const char * _file1,
 	Gen_events_in_TPC_list.open("Gen_events_in_TPC_list.txt");
 	int Gen_evt{0}, Gen_run{0}, Gen_subrun{0};
 
+	eff_num_counters.resize(k_cuts_MAX, 0);
+
 
 	for(int event = 0; event < total_entries; event++)
 	{
@@ -2369,6 +2488,8 @@ void selection::make_selection( const char * _file1,
 		mctruth_counter_tree->GetEntry(event);
 
 		if (event > event_to_process) break;
+
+		
 
 		//********************************
 		//before Any cuts!!!
@@ -2391,6 +2512,9 @@ void selection::make_selection( const char * _file1,
 		//      if(true_in_tpc == true) {break; }
 		// }
 		const bool true_in_tpc = true_in_tpc_v.at(event);
+
+		// Skip nue's that are below threshold in efficiency definition
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) && mc_nu_energy < threshold) continue; 
 
 		if(mc_nu_id == 1) {test_mc_nue_cc_counter++; }
 		if(mc_nu_id == 2) {test_mc_numu_cc_counter++; }
@@ -2510,6 +2634,15 @@ void selection::make_selection( const char * _file1,
 		//********************************
 		//begin cuts!!!
 		//********************************
+
+		int n_tpc_obj = tpc_object_container_v->size();
+		
+		// Skip tpc objects that have size zero
+		if (n_tpc_obj == 0) continue;
+
+		// if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) && mc_nu_energy < 0.250 ) std::cout << "Generated nue in KDAR peak with E: " << mc_nu_energy << std::endl;
+
+
 		//***********************************************************
 		//this is where the in-time optical cut actually takes effect
 		//***********************************************************
@@ -2518,6 +2651,8 @@ void selection::make_selection( const char * _file1,
 			if(_verbose) std::cout << "[Failed In-Time Cut]" << std::endl;
 			continue;
 		}//false
+
+		if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)) eff_num_counters.at(k_intime)+=1.0;
 
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_time_counter_v);
@@ -2562,6 +2697,10 @@ void selection::make_selection( const char * _file1,
 			if(_verbose) std::cout << "[Passed In-Time Cut] [Failed PE Threshold] " << std::endl;
 			continue;
 		}
+
+
+		if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_flash_pe)+=1.0;
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, pe_counter_v);
 
@@ -2573,6 +2712,14 @@ void selection::make_selection( const char * _file1,
 		// ****** reco nue cut *******
 		//****************************
 		_cuts_instance.selection_cuts::HasNue(tpc_object_container_v, passed_tpco, _verbose);
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_reco_nue)+=1.0;
+				break;
+			}
+		}
 
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, reco_nue_counter_v);
@@ -2781,6 +2928,16 @@ void selection::make_selection( const char * _file1,
 		//******** in fv cut *****
 		//************************
 		_cuts_instance.selection_cuts::fiducial_volume_cut(tpc_object_container_v, fv_boundary_v, passed_tpco, _verbose);
+
+		
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_infv)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, in_fv_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -2871,6 +3028,15 @@ void selection::make_selection( const char * _file1,
 		                                                                    h_vtx_flash_downstream_unmatched);
 
 		_cuts_instance.selection_cuts::flashRecoVtxDist(largest_flash_v, tpc_object_container_v, tolerance, passed_tpco, _verbose);
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_vtx_to_flash)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, vtx_flash_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -2954,6 +3120,14 @@ void selection::make_selection( const char * _file1,
 		                                                         h_shwr_vtx_dist_unmatched);
 
 		_cuts_instance.selection_cuts::VtxNuDistance(tpc_object_container_v, shwr_nue_tolerance, passed_tpco, _verbose);
+
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_shr_vtx_dist)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, shwr_tpco_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -3025,6 +3199,9 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_shwr_vtx->Fill(mc_ele_energy);
 		}
+		
+		// Set counters for the truth leading shower
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, tpco_classifier_v, counter_ele_shrvtx, counter_gamma_shrvtx, counter_other_shrvtx);
 
 		
 		//******************************************************
@@ -3038,6 +3215,16 @@ void selection::make_selection( const char * _file1,
 		                                                       h_trk_vtx_dist_numu_cc_mixed, h_trk_vtx_dist_other_mixed,
 		                                                       h_trk_vtx_dist_unmatched);
 		_cuts_instance.selection_cuts::VtxTrackNuDistance(tpc_object_container_v, trk_nue_tolerance, passed_tpco, _verbose);
+
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_track_to_tpco)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_tpco_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -3120,6 +3307,14 @@ void selection::make_selection( const char * _file1,
 			                                                             h_shwr_collection_hits_nu_eng_zoom_last, h_shwr_collection_hits_ele_eng_zoom_last);
 		}
 
+		_functions_instance.selection_functions::HitsPlots1D_All(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+							          h_u_hits_tot,
+						              h_v_hits_tot,
+						              h_y_hits_tot,
+						              h_tot_hits_u_plane,
+						              h_tot_hits_v_plane,
+						              h_tot_hits_y_plane);
+
 		_functions_instance.selection_functions::HitsPlots1D(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                     h_pre_cut_collection_hits_track_nue_cc,
 		                                                     h_pre_cut_collection_hits_track_nue_cc_out_fv,
@@ -3163,6 +3358,15 @@ void selection::make_selection( const char * _file1,
 		                                                     h_pre_cut_total_hits_leading_shower_unmatched);
 
 		_cuts_instance.selection_cuts::HitThreshold(tpc_object_container_v, shwr_hit_threshold, passed_tpco, _verbose);
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_hit_thresh)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -3326,7 +3530,52 @@ void selection::make_selection( const char * _file1,
 		                                                     h_total_hits_leading_shower_other_mixed,
 		                                                     h_total_hits_leading_shower_unmatched);
 
+		_functions_instance.selection_functions::HitsPlots1D_UV(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+									  "mc",
+									  h_u_hits_shower_data,
+									  h_u_hits_shower_ext,
+									  h_u_hits_shower_dirt,
+                                      h_u_hits_shower_nue_cc,
+                                      h_u_hits_shower_nue_cc_out_fv,
+                                      h_u_hits_shower_numu_cc,
+                                      h_u_hits_shower_nc,
+                                      h_u_hits_shower_nc_pi0,
+                                      h_u_hits_shower_cosmic,
+									  h_v_hits_shower_data,
+									  h_v_hits_shower_ext,
+									  h_v_hits_shower_dirt,
+									  h_v_hits_shower_nue_cc,
+                                      h_v_hits_shower_nue_cc_out_fv,
+                                      h_v_hits_shower_numu_cc,
+                                      h_v_hits_shower_nc,
+                                      h_v_hits_shower_nc_pi0,
+                                      h_v_hits_shower_cosmic,
+							          h_u_hits_tot,
+						              h_v_hits_tot,
+						              h_y_hits_tot,
+						              h_tot_hits_u_plane,
+						              h_tot_hits_v_plane,
+						              h_tot_hits_y_plane);
+
+			_functions_instance.selection_functions::HitsPlots1D_All(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
+							          h_u_hits_tot_after,
+						              h_v_hits_tot_after,
+						              h_y_hits_tot_after,
+						              h_tot_hits_u_plane_after,
+						              h_tot_hits_v_plane_after,
+						              h_tot_hits_y_plane_after);
+
+
 		_cuts_instance.selection_cuts::HitThresholdCollection(tpc_object_container_v, shwr_hit_threshold_collection, passed_tpco, _verbose);
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_hit_thresh_y)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_threshold_collection_counter_v);
 
@@ -3493,6 +3742,16 @@ void selection::make_selection( const char * _file1,
 		                                                                     h_leading_shower_open_angle_2plus_other_mixed,
 		                                                                     h_leading_shower_open_angle_2plus_unmatched);
 		_cuts_instance.selection_cuts::OpenAngleCut(tpc_object_container_v, passed_tpco, tolerance_open_angle, _verbose);
+
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_open_angle)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, open_angle_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
@@ -3699,7 +3958,7 @@ void selection::make_selection( const char * _file1,
 		                                                                h_dedx_slice_3_zoom_cosmic,
 		                                                                h_dedx_slice_3_zoom_other_mixed,
 		                                                                h_dedx_slice_3_zoom_unmatched);
-/*
+        /*
                 //testing which method of dE/dx is best
                 _functions_instance.selection_functions::EvaluatedEdxMethod(tpc_object_container_v, passed_tpco, tpco_classifier_v,
                                                                             h_dedx_nue,
@@ -3745,14 +4004,28 @@ void selection::make_selection( const char * _file1,
                                                                             h_dedx_yz_ratio_omit_nue,
                                                                             h_dedx_yz_ratio_omit_cali_nue
                                                                             );
- */
+        */
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+
+		
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_dedx)+=1.0;
+				break;
+			}
+		}
+
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, dedx_counter_v);
 		_functions_instance.selection_functions::SequentialTrueEnergyPlots(mc_nu_id, mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z,
 		                                                                   fv_boundary_v,
 		                                                                   tabulated_origins, mc_nu_energy, mc_ele_energy,
 		                                                                   h_selected_nu_energy_dedx, h_selected_ele_energy_dedx);
+		
+		// Set counters for the truth leading shower
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, tpco_classifier_v, counter_ele_dEdx, counter_gamma_dEdx, counter_other_dEdx);
 
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 		{
@@ -3828,6 +4101,15 @@ void selection::make_selection( const char * _file1,
 		                                                              h_second_shwr_dist_other_mixed, h_second_shwr_dist_unmatched);
 
 		_cuts_instance.selection_cuts::SecondaryShowersDistCut(tpc_object_container_v, passed_tpco, _verbose, dist_tolerance);
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_2nd_shr_vtx_dist)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, secondary_shower_counter_v);
 
@@ -3908,6 +4190,15 @@ void selection::make_selection( const char * _file1,
 		                                                        h_hit_length_ratio_unmatched);
 
 		_cuts_instance.selection_cuts::HitLengthRatioCut(tpc_object_container_v, passed_tpco, _verbose, pfp_hits_length_tolerance);
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_hit_length_ratio)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, hit_lengthRatio_counter_v);
 
@@ -4004,6 +4295,16 @@ void selection::make_selection( const char * _file1,
 		                                                                   h_leading_shwr_trk_length_unmatched);
 
 		_cuts_instance.selection_cuts::LongestTrackLeadingShowerCut(tpc_object_container_v, passed_tpco, _verbose, ratio_tolerance);
+
+		
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_trk_shr_len_ratio)+=1.0;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, trk_len_shwr_len_ratio_counter_v);
 
@@ -4101,6 +4402,20 @@ void selection::make_selection( const char * _file1,
 		                                                         h_track_containment_unmatched);
 
 		_cuts_instance.selection_cuts::ContainedTracksCut(tpc_object_container_v, passed_tpco, _verbose, fv_boundary_v, true);
+
+		
+
+		// Counters for efficiency numerator
+		for(int i = 0; i < n_tpc_obj; i++) {
+			if(passed_tpco->at(i).first == 1){
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_trk_containment)+=1.0;
+				if( true_in_tpc == true && mc_nu_id == 1 ) nue_counter   +=1;
+				if( true_in_tpc == true && mc_nu_id == 5 ) nuebar_counter+=1;
+				if( true_in_tpc == true && mc_nu_energy < 0.25 ) std::cout << "Selected nue in KDAR peak with E: " << mc_nu_energy << "  nu id: "<< mc_nu_id << std::endl;
+				break;
+			}
+		}
+
 		_functions_instance.selection_functions::TabulateOrigins(tpc_object_container_v, passed_tpco, tabulated_origins, tpco_classifier_v);
 		_functions_instance.selection_functions::TotalOrigins(tabulated_origins, track_containment_counter_v);
 
@@ -4152,13 +4467,30 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_contain->Fill(mc_ele_energy);
 		}
+
+		// Set counters for the truth leading shower
+		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, tpco_classifier_v, counter_ele_pre, counter_gamma_pre, counter_other_pre);
+
+
 		
+
+
+		
+
+		
+
+
+		
+
+		
+
+
 		//*************************************
 		// ******** End Selection Cuts! ******
 		//*************************************
 		// Make the plot of flash time vs efficiency
 
-		int n_tpc_obj = tpc_object_container_v->size();
+		
 		for(int i = 0; i < n_tpc_obj; i++) {
 			if(passed_tpco->at(i).first == 1){
 				if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 5.62     && largest_flash_v.at(4)+1.0 < 8.04) )      eff_flash_vec_sel.at(0)++; 
@@ -7296,55 +7628,75 @@ void selection::make_selection( const char * _file1,
 	"Efficiency flash Bin 3: " << eff_flash_vec_sel.at(2) / eff_flash_vec_gen.at(2) << "\n" <<
 	"Efficiency flash Bin 4: " << eff_flash_vec_sel.at(3) / eff_flash_vec_gen.at(3) << "\n" << std::endl;
 
+	std::cout << "Printing the efficiency numerators"<< std::endl;
+	for (unsigned int k =0; k < eff_num_counters.size(); k++){
+
+		std::cout << eff_num_counters.at(k) << std::endl;
+	}
+
 
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 	selection_functions::PrintInfo( total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_in_time_counter_v->at(0), dirt_scale_factor, "In Time");
+	                                intime_scale_factor, data_scale_factor, dirt_in_time_counter_v->at(0), dirt_scale_factor, "In Time", eff_num_counters.at(k_intime));
 	selection_functions_data::PrintInfoData(1 * data_in_time_counter_v->at(0),                                                "In Time");
 	selection_functions::PrintInfo( total_mc_entries_inFV, pe_counter_v, intime_pe_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_pe_counter_v->at(0), dirt_scale_factor, "PE Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_pe_counter_v->at(0), dirt_scale_factor, "PE Threshold", eff_num_counters.at(k_flash_pe));
 	selection_functions_data::PrintInfoData(1 * data_pe_counter_v->at(0),                                                "PE Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, reco_nue_counter_v, intime_reco_nue_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_reco_nue_counter_v->at(0), dirt_scale_factor, "Reco Nue");
+	                                intime_scale_factor, data_scale_factor, dirt_reco_nue_counter_v->at(0), dirt_scale_factor, "Reco Nue", eff_num_counters.at(k_reco_nue));
 	selection_functions_data::PrintInfoData(1 * data_reco_nue_counter_v->at(0),                                                "Reco Nue");
 	selection_functions::PrintInfo( total_mc_entries_inFV, in_fv_counter_v, intime_in_fv_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_in_fv_counter_v->at(0), dirt_scale_factor, "In FV");
+	                                intime_scale_factor, data_scale_factor, dirt_in_fv_counter_v->at(0), dirt_scale_factor, "In FV", eff_num_counters.at(k_infv));
 	selection_functions_data::PrintInfoData(1 * data_in_fv_counter_v->at(0),                                                "In FV");
 	selection_functions::PrintInfo( total_mc_entries_inFV, vtx_flash_counter_v, intime_vtx_flash_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_vtx_flash_counter_v->at(0), dirt_scale_factor, "Vtx-to-Flash");
+	                                intime_scale_factor, data_scale_factor, dirt_vtx_flash_counter_v->at(0), dirt_scale_factor, "Vtx-to-Flash", eff_num_counters.at(k_vtx_to_flash));
 	selection_functions_data::PrintInfoData(1 * data_vtx_flash_counter_v->at(0),                                                "Vtx-to-Flash");
+	
 	selection_functions::PrintInfo( total_mc_entries_inFV, shwr_tpco_counter_v, intime_shwr_tpco_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_shwr_tpco_counter_v->at(0), dirt_scale_factor, "Shower-to-TPCO");
+	                                intime_scale_factor, data_scale_factor, dirt_shwr_tpco_counter_v->at(0), dirt_scale_factor, "Shower-to-TPCO", eff_num_counters.at(k_shr_vtx_dist));
 	selection_functions_data::PrintInfoData(1 * data_shwr_tpco_counter_v->at(0),                                                "Shower-to-TPCO");
+	
 	selection_functions::PrintInfo( total_mc_entries_inFV, trk_tpco_counter_v, intime_trk_tpco_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_trk_tpco_counter_v->at(0), dirt_scale_factor, "Track-to-TPCO");
+	                                intime_scale_factor, data_scale_factor, dirt_trk_tpco_counter_v->at(0), dirt_scale_factor, "Track-to-TPCO", eff_num_counters.at(k_track_to_tpco));
 	selection_functions_data::PrintInfoData(1 * data_trk_tpco_counter_v->at(0),                                                "Track-to-TPCO");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_counter_v, intime_hit_threshold_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_counter_v->at(0), dirt_scale_factor, "Hit Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_counter_v->at(0), dirt_scale_factor, "Hit Threshold", eff_num_counters.at(k_hit_thresh));
 	selection_functions_data::PrintInfoData(1 * data_hit_threshold_counter_v->at(0),                                                "Hit Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_threshold_collection_counter_v, intime_hit_threshold_collection_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_collection_counter_v->at(0), dirt_scale_factor, "YPlane Hit Threshold");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_threshold_collection_counter_v->at(0), dirt_scale_factor, "YPlane Hit Threshold", eff_num_counters.at(k_hit_thresh_y));
 	selection_functions_data::PrintInfoData(1 * data_hit_threshold_collection_counter_v->at(0),                                                "YPlane hit Threshold");
 	selection_functions::PrintInfo( total_mc_entries_inFV, open_angle_counter_v, intime_open_angle_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_open_angle_counter_v->at(0), dirt_scale_factor, "Open Angle");
+	                                intime_scale_factor, data_scale_factor, dirt_open_angle_counter_v->at(0), dirt_scale_factor, "Open Angle", eff_num_counters.at(k_open_angle));
 	selection_functions_data::PrintInfoData(1 * data_open_angle_counter_v->at(0),                                                "Open Angle");
+	
 	selection_functions::PrintInfo( total_mc_entries_inFV, dedx_counter_v, intime_dedx_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_dedx_counter_v->at(0), dirt_scale_factor, " dE / dx ");
+	                                intime_scale_factor, data_scale_factor, dirt_dedx_counter_v->at(0), dirt_scale_factor, " dE / dx ", eff_num_counters.at(k_dedx));
 	selection_functions_data::PrintInfoData(1 * data_dedx_counter_v->at(0),                                                " dE / dx ");
+	
 	selection_functions::PrintInfo( total_mc_entries_inFV, secondary_shower_counter_v, intime_secondary_shower_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_secondary_shower_counter_v->at(0), dirt_scale_factor, ">1 Shower TPCO Dist");
+	                                intime_scale_factor, data_scale_factor, dirt_secondary_shower_counter_v->at(0), dirt_scale_factor, ">1 Shower TPCO Dist", eff_num_counters.at(k_2nd_shr_vtx_dist));
 	selection_functions_data::PrintInfoData(1 * data_secondary_shower_counter_v->at(0),                                                ">1 Shower TPCO Dist");
 	selection_functions::PrintInfo( total_mc_entries_inFV, hit_lengthRatio_counter_v, intime_hit_lengthRatio_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_hit_lengthRatio_counter_v->at(0), dirt_scale_factor, "Hit Length Ratio");
+	                                intime_scale_factor, data_scale_factor, dirt_hit_lengthRatio_counter_v->at(0), dirt_scale_factor, "Hit Length Ratio", eff_num_counters.at(k_hit_length_ratio));
 	selection_functions_data::PrintInfoData(1 * data_hit_lengthRatio_counter_v->at(0),                                                "Hit Length Ratio");
 	selection_functions::PrintInfo( total_mc_entries_inFV, trk_len_shwr_len_ratio_counter_v, intime_trk_len_shwr_len_ratio_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_trk_len_shwr_len_ratio_counter_v->at(0), dirt_scale_factor, "TrkLen/ShwrLen Ratio");
+	                                intime_scale_factor, data_scale_factor, dirt_trk_len_shwr_len_ratio_counter_v->at(0), dirt_scale_factor, "TrkLen/ShwrLen Ratio", eff_num_counters.at(k_trk_shr_len_ratio));
 	selection_functions_data::PrintInfoData(1 * data_trk_len_shwr_len_ratio_counter_v->at(0),                                                "TrkLen/ShwrLen Ratio");
 	selection_functions::PrintInfo( total_mc_entries_inFV, track_containment_counter_v, intime_track_containment_counter_v->at(0),
-	                                intime_scale_factor, data_scale_factor, dirt_track_containment_counter_v->at(0), dirt_scale_factor, "Track Containment");
+	                                intime_scale_factor, data_scale_factor, dirt_track_containment_counter_v->at(0), dirt_scale_factor, "Track Containment", eff_num_counters.at(k_trk_containment));
 	selection_functions_data::PrintInfoData(1 * data_track_containment_counter_v->at(0),                                                "Track Containment");
 
+	std::cout << "Tot ele as ldg shower: " << counter_ele_pre << "  Tot gamma as ldg shower: " << counter_gamma_pre << "  Tot other as ldg shower: " << counter_other_pre << std::endl;
+
+
+	std::cout << "Tot ele as ldg shower: " << counter_ele_dEdx << "  Tot gamma as ldg shower: " << counter_gamma_dEdx << "  Tot other as ldg shower: " << counter_other_dEdx<< std::endl;
+
+	
+
+	std::cout << "Tot ele as ldg shower: " << counter_ele_shrvtx << "  Tot gamma as ldg shower: " << counter_gamma_shrvtx << "  Tot other as ldg shower: " << counter_other_shrvtx << std::endl;
+
+	
 	//***********************************************************************************************************************
 	selection_functions::ExportEfficiencyPurity(total_mc_entries_inFV, in_time_counter_v, intime_in_time_counter_v->at(0), dirt_in_time_counter_v->at(0),
 	                                            intime_scale_factor, data_scale_factor, dirt_scale_factor, "In Time", results_v);
@@ -7386,7 +7738,7 @@ void selection::make_selection( const char * _file1,
 	//*************************************************************************************************************************
 	//*************************************************************************************************************************
 	selection_functions::XSecWork(track_containment_counter_v->at(7),
-	                              track_containment_counter_v->at(22), track_containment_counter_v->at(23), track_containment_counter_v->at(1),
+	                              nue_counter, nuebar_counter, track_containment_counter_v->at(1),
 	                              track_containment_counter_v->at(9), track_containment_counter_v->at(2),
 	                              track_containment_counter_v->at(3), track_containment_counter_v->at(4),
 	                              track_containment_counter_v->at(11), track_containment_counter_v->at(10), track_containment_counter_v->at(5),
@@ -8274,12 +8626,34 @@ void selection::make_selection( const char * _file1,
 
 	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng, "", "True Neutrino Energy [GeV]", "Signal Electron Shower Hits",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_nu_eng.pdf"));
-	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng, "", "True Electron Energy [GeV]", "Signal Electron Shower Hits",
+	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng, "", "True Electron Energy [GeV]", "Leading Shower Hits (All Planes)",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_ele_eng.pdf"));
 	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng_zoom, "", "True Neutrino Energy [GeV]", "Signal Electron Shower Hits",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_nu_eng_zoom.pdf"));
 	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng_zoom, "", "True Electron Energy [GeV]", "Signal Electron Shower Hits",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_ele_eng_zoom.pdf"));
+
+    // 2d plot of shr hits all planes vs each plane
+	histogram_functions::Plot2DHistogram (h_tot_hits_u_plane, "", "Leading Shower Hits (All Planes)", "Leading Shower Hits (U Plane)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_hits_all_planes_u_plane.pdf"));
+
+	histogram_functions::Plot2DHistogram (h_tot_hits_v_plane, "", "Leading Shower Hits (All Planes)", "Leading Shower Hits (V Plane)",
+	Form("%s%s", file_locate_prefix, "shwr_hits_all_planes_v_plane.pdf"));
+
+	histogram_functions::Plot2DHistogram (h_tot_hits_y_plane, "", "Leading Shower Hits (All Planes)", "Leading Shower Hits (Y Plane)",
+	Form("%s%s", file_locate_prefix, "shwr_hits_all_planes_y_plane.pdf"));
+
+
+	histogram_functions::Plot2DHistogram (h_tot_hits_u_plane_after, "", "Leading Shower Hits (All Planes)", "Leading Shower Hits (U Plane)",
+	                                      Form("%s%s", file_locate_prefix, "shwr_hits_all_planes_u_plane_after.pdf"));
+
+	histogram_functions::Plot2DHistogram (h_tot_hits_v_plane_after, "", "Leading Shower Hits (All Planes)", "Leading Shower Hits (V Plane)",
+	Form("%s%s", file_locate_prefix, "shwr_hits_all_planes_v_plane_after.pdf"));
+
+	histogram_functions::Plot2DHistogram (h_tot_hits_y_plane_after, "", "Leading Shower Hits (All Planes)", "Leading Shower Hits (Y Plane)",
+	Form("%s%s", file_locate_prefix, "shwr_hits_all_planes_y_plane_after.pdf"));
+
+
 
 	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng_last, "", "True Neutrino Energy [GeV]", "Signal Electron Shower Hits",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_nu_eng_last.pdf"));
@@ -8678,6 +9052,30 @@ void selection::make_selection( const char * _file1,
 	                                          h_collection_hits_leading_shower_dirt, dirt_scale_factor,
 	                                          "", "Leading Shower Hits (Collection Plane)", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_collection_hits_leading_shower_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_u_hits_shower_nue_cc,  h_u_hits_shower_nue_cc_mixed,
+	                                          h_u_hits_shower_nue_cc_out_fv,
+	                                          h_u_hits_shower_numu_cc, h_u_hits_shower_numu_cc_mixed,
+	                                          h_u_hits_shower_cosmic,  h_u_hits_shower_nc,
+	                                          h_u_hits_shower_nc_pi0,  h_u_hits_shower_other_mixed,
+	                                          h_u_hits_shower_unmatched,
+	                                          h_u_hits_shower_ext, intime_scale_factor,
+	                                          h_u_hits_shower_data, data_scale_factor,
+	                                          h_u_hits_shower_dirt, dirt_scale_factor,
+	                                          "", "Leading Shower Hits (U Plane)", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_u_hits_leading_shower_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_v_hits_shower_nue_cc,  h_v_hits_shower_nue_cc_mixed,
+	                                          h_v_hits_shower_nue_cc_out_fv,
+	                                          h_v_hits_shower_numu_cc, h_v_hits_shower_numu_cc_mixed,
+	                                          h_v_hits_shower_cosmic,  h_v_hits_shower_nc,
+	                                          h_v_hits_shower_nc_pi0,  h_v_hits_shower_other_mixed,
+	                                          h_v_hits_shower_unmatched,
+	                                          h_v_hits_shower_ext, intime_scale_factor,
+	                                          h_v_hits_shower_data, data_scale_factor,
+	                                          h_v_hits_shower_dirt, dirt_scale_factor,
+	                                          "", "Leading Shower Hits (V Plane)", "",
+	                                          Form("%s%s", file_locate_prefix, "post_cuts_v_hits_leading_shower_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_collection_hits_leading_shower_nue_cc,  h_collection_hits_leading_shower_nue_cc_mixed,
 	                                          h_collection_hits_leading_shower_nue_cc_out_fv,
@@ -10405,6 +10803,38 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot2DHistogramNormZ(h_pfp_zy_vtx_all, h_pfp_zy_vtx_data, "All", "Data", "Reco Pfp Vtx Z [cm]", "Reco pfp Vtx Y [cm]",
 	                                          Form("%s%s", file_locate_prefix, "pfp_zy_vtx_all_norm_z.pdf"),
 	                                          Form("%s%s", file_locate_prefix, "pfp_zy_vtx_data_norm_z.pdf"));
+
+	// Stacked histogram broken down by plane type
+	histogram_functions::PlotSimpleStackPlanes(
+	        h_u_hits_tot,
+	        h_v_hits_tot,
+	        h_y_hits_tot,
+	        h_pre_cut_total_hits_leading_shower_intime,
+	        intime_scale_factor,
+	        h_pre_cut_total_hits_leading_shower_data,
+	        data_scale_factor,
+	        h_pre_cut_total_hits_leading_shower_dirt, dirt_scale_factor,
+			0.74, 0.98, 0.98, 0.49, false, false,
+            1.0,
+	        "", "Leading Shower Hits", "",
+	        Form("%s%s", file_locate_prefix, "leading_shower_hits_plane_stack.pdf"));
+
+	// Stacked histogram broken down by plane type after the cut on all planes
+	histogram_functions::PlotSimpleStackPlanes(
+	        h_u_hits_tot_after,
+	        h_v_hits_tot_after,
+	        h_y_hits_tot_after,
+	        h_total_hits_leading_shower_intime,
+	        intime_scale_factor,
+	        h_total_hits_leading_shower_data,
+	        data_scale_factor,
+	        h_total_hits_leading_shower_dirt, dirt_scale_factor,
+			0.74, 0.98, 0.98, 0.49, false, false,
+            1.0,
+	        "", "Leading Shower Hits", "",
+	        Form("%s%s", file_locate_prefix, "leading_shower_hits_plane_stack_after.pdf"));
+
+
 
 	histogram_functions::PlotSimpleStackData(
 	        h_multiplicity_shower_nue_cut_nue_cc,

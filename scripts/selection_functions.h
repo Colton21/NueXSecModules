@@ -40,6 +40,51 @@ public:
 
 selection_functions()=default;
 
+void HitsPlots1D_UV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                      std::string type,
+                                      TH1D * h_u_hits_shower_data,
+                                      TH1D * h_u_hits_shower_ext,
+                                      TH1D * h_u_hits_shower_dirt,
+                                      TH1D * h_u_hits_shower_nue_cc,
+                                      TH1D * h_u_hits_shower_nue_cc_out_fv,
+                                      TH1D * h_u_hits_shower_numu_cc,
+                                      TH1D * h_u_hits_shower_nc,
+                                      TH1D * h_u_hits_shower_nc_pi0,
+                                      TH1D * h_u_hits_shower_cosmic,
+                                      TH1D * h_v_hits_shower_data,
+                                      TH1D * h_v_hits_shower_ext,
+                                      TH1D * h_v_hits_shower_dirt,
+                                      TH1D * h_v_hits_shower_nue_cc,
+                                      TH1D * h_v_hits_shower_nue_cc_out_fv,
+                                      TH1D * h_v_hits_shower_numu_cc,
+                                      TH1D * h_v_hits_shower_nc,
+                                      TH1D * h_v_hits_shower_nc_pi0,
+                                      TH1D * h_v_hits_shower_cosmic,
+                                      TH1D * h_u_hits_tot,
+                                      TH1D * h_v_hits_tot,
+                                      TH1D * h_y_hits_tot,
+                                      TH2D * h_tot_hits_u_plane,
+                                      TH2D * h_tot_hits_v_plane,
+                                      TH2D * h_tot_hits_y_plane
+                                      );
+//***************************************************************************
+void HitsPlots1D_All(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+									  TH1D * h_u_hits_tot,
+									  TH1D * h_v_hits_tot,
+									  TH1D * h_y_hits_tot,
+									  TH2D * h_tot_hits_u_plane,
+									  TH2D * h_tot_hits_v_plane,
+									  TH2D * h_tot_hits_y_plane
+                                      );
+//***************************************************************************
+// Function to count if the leading shower is an electron or a photon
+void PostCutsLeadingMomentumTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                              std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v, int &counter_ele, int &counter_gamma, int &counter_other);
 //***************************************************************************
 void FillEfficiencyFlashTime(TH1D * h_eff_flash_time, double efficiency, double largest_flash_time);
 //***************************************************************************
@@ -218,7 +263,7 @@ void TotalOriginsInTime(std::vector<int> * tabulated_origins, std::vector<double
 //modify this so it takes a string of the cut name so I only pass it a few variable at a time,
 //then I can call this function several times later at the bottom
 static void PrintInfo(int mc_nue_cc_counter, std::vector<double> * counter_v, int intime_counter,
-                      double intime_scale_factor, double data_scale_factor, int dirt_counter, double dirt_scale_factor, std::string cut_name);
+                      double intime_scale_factor, double data_scale_factor, int dirt_counter, double dirt_scale_factor, std::string cut_name, double eff_num);
 //***************************************************************************
 //***************************************************************************
 static void ExportEfficiencyPurity(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics, int counter_dirt,

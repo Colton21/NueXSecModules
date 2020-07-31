@@ -16,6 +16,8 @@ class selection {
 
 private:
 
+double threshold = 0.250; // Energy threshold of nue
+
 //newest values (July 2018):
 // Run1 On-Beam Data:
 // 3.22250e20 POT (tor101_wcut)
@@ -85,10 +87,29 @@ const bool run_with_log = true;
 // scale factor is 2.369e+20 / 1.55287e+19 = 15.256
 //const double dirt_scale_factor = 15.256;
 
-//these are for the flux calculations
-const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
-const double scaling_nue_bar = 7.77111e-12;    //anues / POT / cm^2
+//these are for the flux calculations -- CV with no threhsold
+// const double scaling_nue = 1.52938e-11;        //nues  / POT / cm^2
+// const double scaling_nue_bar = 7.77111e-12;    //anues / POT / cm^2
+// const double scaling = scaling_nue + scaling_nue_bar;
+
+// These are the flux calculations with thresholds-- krishan
+
+// Threshold 125 MeV
+// const double scaling_nue = 1.3121167e-11;        //nues  / POT / cm^2
+// const double scaling_nue_bar = 7.1638333e-12;    //anues / POT / cm^2
+// const double scaling = scaling_nue + scaling_nue_bar;
+
+// Threshold 154.875 MeV
+// const double scaling_nue = 1.2137167e-11;        //nues  / POT / cm^2
+// const double scaling_nue_bar = 6.8575167e-12;    //anues / POT / cm^2
+// const double scaling = scaling_nue + scaling_nue_bar;
+
+// Threshold 250 MeV
+const double scaling_nue = 9.6631e-12;        //nues  / POT / cm^2
+const double scaling_nue_bar = 5.92185e-12;    //anues / POT / cm^2
 const double scaling = scaling_nue + scaling_nue_bar;
+
+
 
 //these values come from GENIE file - no MEC!
 // const double genie_xsec_nue = 5.63067e-39;   //cm^2
@@ -286,6 +307,44 @@ int mc_nu_id_dirt = -1;
 int run_sum = 0;
 int out_of_time_sum = 0;
 int low_pe_sum = 0;
+
+// Counters
+int counter_ele_pre{0};
+int counter_gamma_pre{0};
+int counter_other_pre{0};
+
+int counter_ele_shrvtx{0};
+int counter_gamma_shrvtx{0};
+int counter_other_shrvtx{0};
+
+int counter_ele_dEdx{0};
+int counter_gamma_dEdx{0};
+int counter_other_dEdx{0};
+
+
+ enum enum_cut_dirs {
+        k_intime,
+        k_flash_pe,
+        k_reco_nue,
+        k_infv,
+        k_vtx_to_flash,
+        k_track_to_tpco,
+        k_hit_thresh,
+        k_hit_thresh_y,
+        k_open_angle,
+        k_2nd_shr_vtx_dist,
+        k_hit_length_ratio,
+        k_trk_shr_len_ratio,
+        k_trk_containment,
+        k_dedx,
+        k_shr_vtx_dist,
+        k_cuts_MAX
+        }; 
+
+std::vector<double> eff_num_counters;
+double nue_counter{0}; // total number of nue selected
+double nuebar_counter{0}; // total number of nuebar selected
+
 
 std::vector<int> tabulated_origins;
 
@@ -1296,6 +1355,56 @@ TH1D * h_collection_hits_shower_unmatched      = new TH1D ("h_collection_hits_sh
 TH1D * h_collection_hits_shower_intime         = new TH1D ("h_collection_hits_shower_intime",         "h_collection_hits_shower_intime",         20, 0, 250);
 TH1D * h_collection_hits_shower_dirt           = new TH1D ("h_collection_hits_shower_dirt",           "h_collection_hits_shower_dirt",           20, 0, 250);
 TH1D * h_collection_hits_shower_data           = new TH1D ("h_collection_hits_shower_data",           "h_collection_hits_shower_data",           20, 0, 250);
+
+TH1D * h_u_hits_shower_nue_cc         = new TH1D ("h_u_hits_shower_nue_cc",         "h_u_hits_shower_nue_cc",         15, 0, 500);
+TH1D * h_u_hits_shower_nue_cc_out_fv  = new TH1D ("h_u_hits_shower_nue_cc_out_fv",  "h_u_hits_shower_nue_cc_out_fv",  15, 0, 500);
+TH1D * h_u_hits_shower_numu_cc        = new TH1D ("h_u_hits_shower_numu_cc",        "h_u_hits_shower_numu_cc",        15, 0, 500);
+TH1D * h_u_hits_shower_nc             = new TH1D ("h_u_hits_shower_nc",             "h_u_hits_shower_nc",             15, 0, 500);
+TH1D * h_u_hits_shower_nc_pi0         = new TH1D ("h_u_hits_shower_nc_pi0",         "h_u_hits_shower_nc_pi0",         15, 0, 500);
+TH1D * h_u_hits_shower_cosmic         = new TH1D ("h_u_hits_shower_cosmic",         "h_u_hits_shower_cosmic",         15, 0, 500);
+TH1D * h_u_hits_shower_ext            = new TH1D ("h_u_hits_shower_ext",            "h_u_hits_shower_ext",            15, 0, 500);
+TH1D * h_u_hits_shower_dirt           = new TH1D ("h_u_hits_shower_dirt",           "h_u_hits_shower_dirt",           15, 0, 500);
+TH1D * h_u_hits_shower_data           = new TH1D ("h_u_hits_shower_data",           "h_u_hits_shower_data",           15, 0, 500);
+
+TH1D * h_u_hits_shower_other_mixed    = new TH1D ("h_u_hits_shower_other_mixed",    "h_u_hits_shower_other_mixed",    15, 0, 500);
+TH1D * h_u_hits_shower_unmatched      = new TH1D ("h_u_hits_shower_unmatched",      "h_u_hits_shower_unmatched",      15, 0, 500);
+TH1D * h_u_hits_shower_numu_cc_mixed  = new TH1D ("h_u_hits_shower_numu_cc_mixed",  "h_u_hits_shower_numu_cc_mixed",  15, 0, 500);
+TH1D * h_u_hits_shower_nue_cc_mixed   = new TH1D ("h_u_hits_shower_nue_cc_mixed",   "h_u_hits_shower_nue_cc_mixed",   15, 0, 500);
+
+TH1D * h_v_hits_shower_nue_cc         = new TH1D ("h_v_hits_shower_nue_cc",         "h_v_hits_shower_nue_cc",         15, 0, 500);
+TH1D * h_v_hits_shower_nue_cc_out_fv  = new TH1D ("h_v_hits_shower_nue_cc_out_fv",  "h_v_hits_shower_nue_cc_out_fv",  15, 0, 500);
+TH1D * h_v_hits_shower_numu_cc        = new TH1D ("h_v_hits_shower_numu_cc",        "h_v_hits_shower_numu_cc",        15, 0, 500);
+TH1D * h_v_hits_shower_nc             = new TH1D ("h_v_hits_shower_nc",             "h_v_hits_shower_nc",             15, 0, 500);
+TH1D * h_v_hits_shower_nc_pi0         = new TH1D ("h_v_hits_shower_nc_pi0",         "h_v_hits_shower_nc_pi0",         15, 0, 500);
+TH1D * h_v_hits_shower_cosmic         = new TH1D ("h_v_hits_shower_cosmic",         "h_v_hits_shower_cosmic",         15, 0, 500);
+TH1D * h_v_hits_shower_ext            = new TH1D ("h_v_hits_shower_ext",            "h_v_hits_shower_ext",            15, 0, 500);
+TH1D * h_v_hits_shower_dirt           = new TH1D ("h_v_hits_shower_dirt",           "h_v_hits_shower_dirt",           15, 0, 500);
+TH1D * h_v_hits_shower_data           = new TH1D ("h_v_hits_shower_data",           "h_v_hits_shower_data",           15, 0, 500);
+
+TH1D * h_v_hits_shower_other_mixed    = new TH1D ("h_v_hits_shower_other_mixed",    "h_v_hits_shower_other_mixed",    15, 0, 500);
+TH1D * h_v_hits_shower_unmatched      = new TH1D ("h_v_hits_shower_unmatched",      "h_v_hits_shower_unmatched",      15, 0, 500);
+TH1D * h_v_hits_shower_numu_cc_mixed  = new TH1D ("h_v_hits_shower_numu_cc_mixed",  "h_v_hits_shower_numu_cc_mixed",  15, 0, 500);
+TH1D * h_v_hits_shower_nue_cc_mixed   = new TH1D ("h_v_hits_shower_nue_cc_mixed",   "h_v_hits_shower_nue_cc_mixed",   15, 0, 500);
+
+// Fro stacked plot of shower hits in each plane
+TH1D * h_u_hits_tot    = new TH1D ("h_u_hits_tot",    "h_u_hits_tot",    30, 0, 600);
+TH1D * h_v_hits_tot    = new TH1D ("h_v_hits_tot",    "h_v_hits_tot",    30, 0, 600);
+TH1D * h_y_hits_tot    = new TH1D ("h_y_hits_tot",    "h_y_hits_tot",    30, 0, 600);
+
+// After the cut on hits in all planes
+TH1D * h_u_hits_tot_after    = new TH1D ("h_u_hits_tot_after",    "h_u_hits_tot_after",    30, 0, 600);
+TH1D * h_v_hits_tot_after    = new TH1D ("h_v_hits_tot_after",    "h_v_hits_tot_after",    30, 0, 600);
+TH1D * h_y_hits_tot_after    = new TH1D ("h_y_hits_tot_after",    "h_y_hits_tot_after",    30, 0, 600);
+
+// For 2D histogram of total hits vs hits in each plane
+TH2D * h_tot_hits_u_plane       = new TH2D ("h_tot_hits_u_plane",       "h_tot_hits_u_plane", 30, 200, 300, 30, 0, 500);
+TH2D * h_tot_hits_v_plane       = new TH2D ("h_tot_hits_v_plane",       "h_tot_hits_v_plane", 30, 200, 300, 30, 0, 500);
+TH2D * h_tot_hits_y_plane       = new TH2D ("h_tot_hits_y_plane",       "h_tot_hits_y_plane", 30, 200, 300, 30, 0, 500);
+
+TH2D * h_tot_hits_u_plane_after       = new TH2D ("h_tot_hits_u_plane_after",       "h_tot_hits_u_plane_after", 30, 200, 300, 30, 0, 500);
+TH2D * h_tot_hits_v_plane_after       = new TH2D ("h_tot_hits_v_plane_after",       "h_tot_hits_v_plane_after", 30, 200, 300, 30, 0, 500);
+TH2D * h_tot_hits_y_plane_after       = new TH2D ("h_tot_hits_y_plane_after",       "h_tot_hits_y_plane_after", 30, 200, 300, 30, 0, 500);
+
 
 TH1D * h_collection_hits_shower_nue_cc_after         = new TH1D ("h_collection_hits_shower_nue_cc_after",         "h_collection_hits_shower_nue_cc_after",         20, 0, 250);
 TH1D * h_collection_hits_shower_nue_cc_out_fv_after  = new TH1D ("h_collection_hits_shower_nue_cc_out_fv_after",  "h_collection_hits_shower_nue_cc_out_fv_after",  20, 0, 250);

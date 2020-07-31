@@ -1157,7 +1157,7 @@ void selection_functions::TotalOriginsInTime(std::vector<int> * tabulated_origin
 //then I can call this function several times later at the bottom
 void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<double> * counter_v, int counter_intime_cosmics,
                                     double intime_scale_factor, double data_scale_factor,
-                                    int counter_dirt, double dirt_scale_factor, std::string cut_name)
+                                    int counter_dirt, double dirt_scale_factor, std::string cut_name, double eff_num)
 {
 	int counter                = counter_v->at(7);
 	int counter_nue_cc         = counter_v->at(0);
@@ -1213,11 +1213,11 @@ void selection_functions::PrintInfo(int mc_nue_cc_counter, std::vector<double> *
 	std::cout << " Numu CC COH             : " << counter_numu_cc_coh << std::endl;
 	std::cout << " Numu CC MEC             : " << counter_numu_cc_mec << std::endl;
 	std::cout << "---------------------------" << std::endl;
-	const double efficiency = double(counter_nue_cc) / double(mc_nue_cc_counter);
-	const double purity = double(counter_nue_cc) / double(counter);
-	std::cout << " Efficiency       : " << "( " << counter_nue_cc << " / " << mc_nue_cc_counter << " ) = " << efficiency << std::endl;
+	const double efficiency = double(eff_num) / double(mc_nue_cc_counter);
+	const double purity = double(eff_num) / double(counter);
+	std::cout << " Efficiency       : " << "( " << eff_num << " / " << mc_nue_cc_counter << " ) = " << efficiency << std::endl;
 	std::cout << " Purity           : " << purity << std::endl;
-	std::cout << " Purity Beam Only : " <<  double(counter_nue_cc) / counter_beam_only << std::endl;
+	std::cout << " Purity Beam Only : " <<  double(eff_num) / counter_beam_only << std::endl;
 	std::cout << "------------------------" << std::endl;
 	std::cout << "------------------------" << std::endl;
 }
@@ -6053,6 +6053,188 @@ void selection_functions::HitsPlots1D(std::vector<xsecAna::TPCObjectContainer> *
 }//end function
 //***************************************************************************
 //***************************************************************************
+void selection_functions::HitsPlots1D_UV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+									  std::string type,
+									  TH1D * h_u_hits_shower_data,
+									  TH1D * h_u_hits_shower_ext,
+									  TH1D * h_u_hits_shower_dirt,
+                                      TH1D * h_u_hits_shower_nue_cc,
+                                      TH1D * h_u_hits_shower_nue_cc_out_fv,
+                                      TH1D * h_u_hits_shower_numu_cc,
+                                      TH1D * h_u_hits_shower_nc,
+                                      TH1D * h_u_hits_shower_nc_pi0,
+                                      TH1D * h_u_hits_shower_cosmic,
+									  TH1D * h_v_hits_shower_data,
+									  TH1D * h_v_hits_shower_ext,
+									  TH1D * h_v_hits_shower_dirt,
+									  TH1D * h_v_hits_shower_nue_cc,
+                                      TH1D * h_v_hits_shower_nue_cc_out_fv,
+                                      TH1D * h_v_hits_shower_numu_cc,
+                                      TH1D * h_v_hits_shower_nc,
+                                      TH1D * h_v_hits_shower_nc_pi0,
+                                      TH1D * h_v_hits_shower_cosmic,
+									  TH1D * h_u_hits_tot,
+									  TH1D * h_v_hits_tot,
+									  TH1D * h_y_hits_tot,
+									  TH2D * h_tot_hits_u_plane,
+									  TH2D * h_tot_hits_v_plane,
+									  TH2D * h_tot_hits_y_plane
+                                      ) {
+	int n_tpc_obj = tpc_object_container_v->size();
+
+	int n_pfp_hits_u_leading_shower = 0;
+	int n_pfp_hits_v_leading_shower = 0;
+	int n_pfp_hits_y_leading_shower = 0;
+	std::string tpco_id;
+
+	for(int i = 0; i < n_tpc_obj; i++) {
+		
+		if(passed_tpco->at(i).first == 0) {continue; }
+		
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		
+		int leading_index = 0;
+		int most_hits = 0;
+		
+		if (type == "mc"){
+			tpco_id= tpco_classifier_v->at(i).first;
+			leading_index= tpco_classifier_v->at(i).second;
+		}
+		// We need to get the leading index
+		else {
+			for(int j = 0; j < n_pfp; j++)
+			{
+				auto const part = tpc_obj.GetParticle(j);
+				const int n_pfp_hits = part.NumPFPHits();
+				const int pfp_pdg = part.PFParticlePdgCode();
+				if(pfp_pdg == 13)
+				{
+					if(n_pfp_hits > most_hits)
+					{
+						leading_index = j;
+						most_hits = n_pfp_hits;
+					}
+				}
+			}
+		}
+		
+		
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		n_pfp_hits_u_leading_shower = leading_shower.NumPFPHitsU();
+		n_pfp_hits_v_leading_shower = leading_shower.NumPFPHitsV();
+		n_pfp_hits_y_leading_shower = leading_shower.NumPFPHitsW();
+	
+	
+		if (type == "data"){
+			h_u_hits_shower_data->Fill(n_pfp_hits_u_leading_shower);
+			h_v_hits_shower_data->Fill(n_pfp_hits_v_leading_shower);
+			// return;
+		}
+		
+		if (type == "ext"){
+			h_u_hits_shower_ext->Fill(n_pfp_hits_u_leading_shower);
+			h_v_hits_shower_ext->Fill(n_pfp_hits_v_leading_shower);
+			// return;
+		}
+		
+		if (type == "dirt"){
+			h_u_hits_shower_dirt->Fill(n_pfp_hits_u_leading_shower);
+			h_v_hits_shower_dirt->Fill(n_pfp_hits_v_leading_shower);
+			// return;
+		}
+
+		if (type == "mc"){
+
+			if(tpco_id == "nue_cc_qe" || tpco_id == "nue_cc_res" || tpco_id == "nue_cc_dis" || tpco_id == "nue_cc_coh" || tpco_id == "nue_cc_mec" ||
+			tpco_id == "nue_bar_cc_qe" || tpco_id == "nue_bar_cc_res" || tpco_id == "nue_bar_cc_dis" || tpco_id == "nue_bar_cc_coh" || tpco_id == "nue_bar_cc_mec") {
+				h_u_hits_shower_nue_cc->Fill(n_pfp_hits_u_leading_shower);
+				h_v_hits_shower_nue_cc->Fill(n_pfp_hits_v_leading_shower);
+			}
+
+
+			if(tpco_id == "nue_cc_out_fv")  {
+				h_u_hits_shower_nue_cc_out_fv->Fill(n_pfp_hits_u_leading_shower);
+				h_v_hits_shower_nue_cc_out_fv->Fill(n_pfp_hits_v_leading_shower);
+			}
+			
+			if(tpco_id == "numu_cc_qe" || tpco_id == "numu_cc_res" || tpco_id == "numu_cc_dis" || tpco_id == "numu_cc_coh" || tpco_id == "numu_cc_mec")     {
+				h_u_hits_shower_numu_cc->Fill(n_pfp_hits_u_leading_shower);
+				h_v_hits_shower_numu_cc->Fill(n_pfp_hits_v_leading_shower);
+			}
+			
+			if(tpco_id == "nc")             {
+				h_u_hits_shower_nc->Fill(n_pfp_hits_u_leading_shower);
+				h_v_hits_shower_nc->Fill(n_pfp_hits_v_leading_shower);
+			}
+			if(tpco_id == "nc_pi0")         {
+				h_u_hits_shower_nc_pi0->Fill(n_pfp_hits_u_leading_shower);
+				h_v_hits_shower_nc_pi0->Fill(n_pfp_hits_v_leading_shower);
+			}
+			if(tpco_id == "cosmic")         {
+				h_u_hits_shower_cosmic->Fill(n_pfp_hits_u_leading_shower);
+				h_v_hits_shower_cosmic->Fill(n_pfp_hits_v_leading_shower);
+			}
+		}
+	
+	}
+}
+//***************************************************************************
+//***************************************************************************
+void selection_functions::HitsPlots1D_All(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                      std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
+                                      std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+									  TH1D * h_u_hits_tot,
+									  TH1D * h_v_hits_tot,
+									  TH1D * h_y_hits_tot,
+									  TH2D * h_tot_hits_u_plane,
+									  TH2D * h_tot_hits_v_plane,
+									  TH2D * h_tot_hits_y_plane
+                                      ) {
+	int n_tpc_obj = tpc_object_container_v->size();
+
+	int n_pfp_hits_u_leading_shower = 0;
+	int n_pfp_hits_v_leading_shower = 0;
+	int n_pfp_hits_y_leading_shower = 0;
+	std::string tpco_id;
+
+	for(int i = 0; i < n_tpc_obj; i++) {
+		
+		if(passed_tpco->at(i).first == 0) {continue; }
+		
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		const int n_pfp = tpc_obj.NumPFParticles();
+		const int n_pfp_showers = tpc_obj.NPfpShowers();
+		
+		int leading_index = 0;
+		int most_hits = 0;
+		
+		tpco_id= tpco_classifier_v->at(i).first;
+		leading_index= tpco_classifier_v->at(i).second;
+		
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		n_pfp_hits_u_leading_shower = leading_shower.NumPFPHitsU();
+		n_pfp_hits_v_leading_shower = leading_shower.NumPFPHitsV();
+		n_pfp_hits_y_leading_shower = leading_shower.NumPFPHitsW();
+
+		double tot_hits = n_pfp_hits_u_leading_shower + n_pfp_hits_v_leading_shower + n_pfp_hits_y_leading_shower;
+
+		h_u_hits_tot->Fill(n_pfp_hits_u_leading_shower);
+		h_v_hits_tot->Fill(n_pfp_hits_v_leading_shower);
+		h_y_hits_tot->Fill(n_pfp_hits_y_leading_shower);
+		
+		h_tot_hits_u_plane->Fill(tot_hits, n_pfp_hits_u_leading_shower);
+		h_tot_hits_v_plane->Fill(tot_hits, n_pfp_hits_v_leading_shower);
+		h_tot_hits_y_plane->Fill(tot_hits, n_pfp_hits_y_leading_shower);
+			
+	
+	}
+}
+//***************************************************************************
+//***************************************************************************
 void selection_functions::HitsPlots1DInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                             std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                             TH1D * h_collection_hits_track_intime,
@@ -10847,6 +11029,45 @@ void selection_functions::PostCutsLeadingMomentumTrueParticle(std::vector<xsecAn
 		}
 	}
 }
+//***************************************************************************
+//***************************************************************************
+void selection_functions::PostCutsLeadingMomentumTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                              std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v, int &counter_ele, int &counter_gamma, int &counter_other){
+
+
+	int n_tpc_obj = tpc_object_container_v->size();
+	
+	// Loop over the TPC Objects
+	for(int i = 0; i < n_tpc_obj; i++) {
+		if(passed_tpco->at(i).first == 0) {continue; }
+		
+		auto const tpc_obj      = tpc_object_container_v->at(i);
+		std::string tpco_id     = tpco_classifier_v->at(i).first;
+		if (tpco_id == "filtered") {continue; }
+		
+		const int leading_index = tpco_classifier_v->at(i).second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		const int leading_mc_pdg = leading_shower.MCPdgCode();
+
+		if(leading_mc_pdg == 11 || leading_mc_pdg == -11) {
+			counter_ele++;
+			break;
+		}
+		else if(leading_mc_pdg == 22) {
+			counter_gamma++;
+			break;
+		}
+		else{
+			counter_other++;
+			break;
+		}
+	}
+
+}
+
+
+
 //***************************************************************************
 //***************************************************************************
 void selection_functions::PostCutsLeadingMomentumTrueParticleInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

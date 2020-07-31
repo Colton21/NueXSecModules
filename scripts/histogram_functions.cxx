@@ -272,7 +272,7 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		// graph->SetMaximum(0.80);
 		// gPad->Update();
 		efficiency_c1->Update();
-		teff_in_fv->GetPaintedGraph()->GetYaxis()->SetRangeUser(0, 0.80);
+		teff_in_fv->GetPaintedGraph()->GetYaxis()->SetRangeUser(0, 1.0);
 		//teff_in_fv->GetPaintedGraph()->GetXaxis()->SetLabelSize(12);
 		// teff->GetPaintedGraph()->GetXaxis()->SetLabelFont(45); // Absolute font size in pixel (precision 3)
 		// teff->GetPaintedGraph()->GetYaxis()->SetLabelSize(11);
@@ -334,14 +334,14 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->GetYaxis()->SetTitle(y_axis_name);
 	histogram->SetTitle(title);
 	histogram->SetStats(kFALSE);
-	histogram->GetYaxis()->SetLabelSize(12);
-	histogram->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	histogram->GetYaxis()->SetLabelSize(0.035);
+	// histogram->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	histogram->GetYaxis()->SetTitleSize(17);
 	histogram->GetYaxis()->SetTitleFont(46);
 	histogram->GetYaxis()->SetTitleOffset(1.7);
 
-	histogram->GetXaxis()->SetLabelSize(12);
-	histogram->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	histogram->GetXaxis()->SetLabelSize(0.035);
+	// histogram->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	histogram->GetXaxis()->SetTitleOffset(1.0);
 	histogram->GetXaxis()->SetTitleSize(17);
 	histogram->GetXaxis()->SetTitleFont(46);
@@ -353,13 +353,13 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 
 	TPaveText *pt;
 
-    pt = new TPaveText(0.27, 0.92, 0.27, 0.92,"NDC");
-    pt->AddText("MicroBooNE");
+    pt = new TPaveText(0.33, 0.88, 0.33, 0.88,"NDC");
+    pt->AddText("MicroBooNE Simulation");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
     pt->SetFillColor(0);
     pt->SetFillStyle(0);
-    pt->SetTextSize(0.04);
+    pt->SetTextSize(0.03);
     pt->Draw();
 
 
@@ -461,6 +461,8 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	TCanvas * c2 = new TCanvas();
 	c2->cd();
 
+	c2->SetLeftMargin(0.13);
+
 	THStack * stack = new THStack();
 
 	stack->Add(h_2_clone);
@@ -479,23 +481,25 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	h_3_clone_clone->SetMarkerStyle(20);
 	h_3_clone_clone->SetMarkerSize(0.5);
 
-	stack->GetYaxis()->SetLabelSize(12);
-	stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-	stack->GetYaxis()->SetTitleSize(17);
+	stack->GetYaxis()->SetLabelSize(0.04);
+	// stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	stack->GetYaxis()->SetTitleSize(20);
 	stack->GetYaxis()->SetTitleFont(46);
-	stack->GetYaxis()->SetTitleOffset(1.1);
+	stack->GetYaxis()->SetTitleOffset(1.4);
 
-	stack->GetXaxis()->SetLabelSize(12);
-	stack->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	stack->GetXaxis()->SetLabelSize(0.04);
+	// stack->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	stack->GetXaxis()->SetTitleOffset(1.0);
-	stack->GetXaxis()->SetTitleSize(17);
+	stack->GetXaxis()->SetTitleSize(20);
 	stack->GetXaxis()->SetTitleFont(46);
 	stack->GetXaxis()->SetRangeUser(3,19);
+	stack->SetMaximum(13500);
+	stack->SetMinimum(0);
 
 	TPaveText *pt;
 
-    pt = new TPaveText(0.27, 0.92, 0.27, 0.92,"NDC");
-    pt->AddText("MicroBooNE");
+    pt = new TPaveText(0.42, 0.875, 0.42, 0.875,"NDC");
+    pt->AddText("MicroBooNE: NuMI Data 2.4#times10^{20} POT");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
     pt->SetFillColor(0);
@@ -504,12 +508,14 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
     pt->Draw();
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.75, 0.75, 0.95, 0.95);
+	TLegend * leg_stack = new TLegend(0.73, 0.7, 0.9, 0.90);
+	leg_stack->SetBorderSize(0);
+    leg_stack->SetFillStyle(0);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_3_clone,   "On-Beam Data",  "lep");
+	leg_stack->AddEntry(h_3_clone,   "Beam-On Data",  "lep");
 	leg_stack->AddEntry(h_1_clone,   "MC",  "f");
-	leg_stack->AddEntry(h_4_clone,   "Dirt",  "f");
-	leg_stack->AddEntry(h_2_clone,   "Off-Beam Data",          "f");
+	leg_stack->AddEntry(h_4_clone,   "Out-of-Cryostat",  "f");
+	leg_stack->AddEntry(h_2_clone,   "Beam-Off Data",          "f");
 	leg_stack->Draw();
 
 	//we want this before the off-beam is subtracted
@@ -603,10 +609,10 @@ void histogram_functions::TimingHistogramsv2(TH1 * h_mc, TH1 * h_intime, TH1 * h
     leg_stack->SetBorderSize(0);
     leg_stack->SetFillStyle(0);
 
-	leg_stack->AddEntry(h_data_clone,   "On-Beam Data",  "lep");
+	leg_stack->AddEntry(h_data_clone,   "Beam-On Data",  "lep");
 	leg_stack->AddEntry(h_mc_clone,   "MC",  "f");
-	leg_stack->AddEntry(h_dirt_clone,   "Dirt",  "f");
-	leg_stack->AddEntry(h_intime_clone,   "Off-Beam Data",          "f");
+	leg_stack->AddEntry(h_dirt_clone,   "Out-of-Cryostat",  "f");
+	leg_stack->AddEntry(h_intime_clone,   "Beam-Off Data",          "f");
 	leg_stack->Draw();
 
     bottomPad->cd();
@@ -839,9 +845,11 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 
 	stack->GetYaxis()->SetTitleSize(18);
 	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetLabelSize(0.05);
 	stack->GetYaxis()->SetTitleOffset(1.45);
 	stack->GetXaxis()->SetTitleSize(18);
 	stack->GetXaxis()->SetTitleFont(46);
+	stack->GetXaxis()->SetLabelSize(0.05);
 	stack->GetXaxis()->SetTitleOffset(1.35);
 
 	TH1 * h_error_hist = (TH1*)h_mc_clone->Clone("h_error_hist");
@@ -854,7 +862,7 @@ void histogram_functions::PlotFlashInfo(TH1 * h_flash_mc, TH1 * h_flash_intime, 
 	TLegend * leg_stack = new TLegend(0.75,0.75,0.95,0.95);
 	leg_stack->AddEntry(h_flash_mc,      "MC",   "f");
 	leg_stack->AddEntry(h_flash_intime,  "EXT",  "f");
-	leg_stack->AddEntry(h_flash_dirt,    "Dirt", "f");
+	leg_stack->AddEntry(h_flash_dirt,    "Out-of-Cryostat", "f");
 	leg_stack->Draw();
 
 	c1->Print(print_name);
@@ -980,7 +988,7 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 
 	TPaveText *pt;
 
-    pt = new TPaveText(0.27, 0.92, 0.27, 0.92,"NDC");
+    pt = new TPaveText(0.21, 0.88, 0.21, 0.88,"NDC");
     pt->AddText("MicroBooNE");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
@@ -1010,7 +1018,7 @@ void histogram_functions::Plot2DHistogramLogZ (TH2 * histogram, const char * tit
 
 	TPaveText *pt;
 
-    pt = new TPaveText(0.27, 0.92, 0.27, 0.92,"NDC");
+    pt = new TPaveText(0.21, 0.88, 0.21, 0.88,"NDC");
     pt->AddText("MicroBooNE");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
@@ -1234,10 +1242,14 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 	h_error_hist->Draw("e2, same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	TLegend * leg_stack;
+	// leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	leg_stack = new TLegend(0.64, 0.90, 0.89, 0.40);
+	leg_stack->SetBorderSize(0);
+    leg_stack->SetFillStyle(0);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	
-	leg_stack->AddEntry(h_unmatched_ext,   "Off-Beam Data",        "f");
+	leg_stack->AddEntry(h_unmatched_ext,   "Beam-Off Data",        "f");
 	// leg_stack->AddEntry(h_unmatched,       "Unmatched",  "f");
 	leg_stack->AddEntry(h_neutron,         "Neutron",    "f");
 	leg_stack->AddEntry(h_muon,            "Muon",       "f");
@@ -1250,7 +1262,7 @@ void histogram_functions::PlotSimpleStackParticle(TH1 * h_electron, TH1 * h_prot
 
 	TPaveText *pt;
 
-    pt = new TPaveText(0.27, 0.92, 0.27, 0.92,"NDC");
+    pt = new TPaveText(0.21, 0.88, 0.21, 0.88,"NDC");
     pt->AddText("MicroBooNE");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
@@ -1287,7 +1299,7 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 
 	topPad->SetBottomMargin(0.05);
 	bottomPad->SetTopMargin(0.04);
-	bottomPad->SetBottomMargin(0.25);
+	bottomPad->SetBottomMargin(0.27);
 	bottomPad->SetGridy();
 	topPad->Draw();
 	bottomPad->Draw();
@@ -1365,18 +1377,20 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	stack->Add(h_ext_clone);
 	stack->Add(h_dirt_clone);
 	stack->Draw("hist");
+	stack->SetMinimum(0);
+	stack->SetMaximum(100);
 	stack->GetXaxis()->SetTitle("");
-	stack->GetYaxis()->SetLabelSize(12);
-	stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	stack->GetYaxis()->SetLabelSize(0.05);
+	// stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	stack->GetYaxis()->SetTitleSize(17);
 	stack->GetYaxis()->SetTitleFont(46);
-	stack->GetYaxis()->SetTitleOffset(1.1);
+	stack->GetYaxis()->SetTitleOffset(1.3);
 	stack->GetYaxis()->SetTitle("Entries");
 	stack->GetXaxis()->SetLabelSize(0);
 	stack->GetXaxis()->SetLabelFont(0); // Absolute font size in pixel (precision 3)
-	stack->Draw("hist,same");
+	// stack->Draw("hist,same");
 	h_data_clone->Draw("same PE");
-
+	
 	TH1 * h_error_hist = (TH1*)h_electron_clone->Clone("h_error_hist");
 	h_error_hist->Add(h_proton_clone, 1);
 	h_error_hist->Add(h_photon_clone, 1);
@@ -1387,13 +1401,28 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	h_error_hist->Add(h_ext_clone, 1);
 	h_error_hist->Add(h_dirt_clone, 1);
 
+	// Here we add in the total systematic uncertainty of 34% to the error bars
+	for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
+		double sys_error  = h_error_hist ->GetBinContent(bin) - h_ext_clone->GetBinContent(bin); // subtract off the ext component since the sys uncertainty is 34% on the MC nto MC + EXT
+		sys_error*=0.34;
+		double stat_error = h_error_hist ->GetBinError(bin);
+		double tot_error  = std::sqrt(sys_error*sys_error + stat_error*stat_error );
+		// std::cout << "stat: "<< stat_error << "  sys: " << sys_error << "   tot: " <<  tot_error << std::endl;
+		h_error_hist->SetBinError(bin, tot_error);
+	}
+
+	// h_error_hist->GetYaxis()->SetRangeUser(0,100);
 	h_error_hist->SetFillColorAlpha(12, 0.15);
 	h_error_hist->Draw("e2, same");
 
-	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
-	leg_stack->AddEntry(h_data,            "On-Beam Data",  "lep");
-	leg_stack->AddEntry(h_dirt,            "Dirt",  "f");
-	leg_stack->AddEntry(h_ext,             "Off-Beam Data",        "f");
+	TLegend * leg_stack;
+	// leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	leg_stack = new TLegend(0.64, 0.90, 0.89, 0.40);
+	leg_stack->SetBorderSize(0);
+    leg_stack->SetFillStyle(0);
+	leg_stack->AddEntry(h_data,            "Beam-On Data",  "lep");
+	leg_stack->AddEntry(h_dirt,            "Out-of-Cryostat",  "f");
+	leg_stack->AddEntry(h_ext,             "Beam-Off Data",        "f");
 	leg_stack->AddEntry(h_neutron,         "Neutron",    "f");
 	leg_stack->AddEntry(h_muon,            "Muon",       "f");
 	leg_stack->AddEntry(h_kaon,            "Kaon",       "f");
@@ -1416,9 +1445,9 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	h_mc_ext_sum->Add(h_dirt_clone,     1);
 
 	// X axis of ratio plot
-	ratioPlot->GetXaxis()->SetLabelSize(12);
-	ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-	ratioPlot->GetXaxis()->SetTitleOffset(3.0);
+	ratioPlot->GetXaxis()->SetLabelSize(0.13);
+	// ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetXaxis()->SetTitleOffset(3.3);
 	ratioPlot->GetXaxis()->SetTitleSize(17);
 	ratioPlot->GetXaxis()->SetTitleFont(46);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
@@ -1427,8 +1456,8 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	// Y Axis of Ratio Plot
 	ratioPlot->GetYaxis()->SetNdivisions(4, 0, 0, kFALSE);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetLabelSize(11);
-	ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetYaxis()->SetLabelSize(0.1);
+	// ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	ratioPlot->GetYaxis()->SetTitleSize(13);
 	ratioPlot->GetYaxis()->SetTitleFont(44);
 	ratioPlot->GetYaxis()->CenterTitle();
@@ -1444,8 +1473,8 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 
 	TPaveText *pt;
 	topPad->cd();
-    pt = new TPaveText(0.27, 0.92, 0.27, 0.92,"NDC");
-    pt->AddText("MicroBooNE");
+    pt = new TPaveText(0.33, 0.88, 0.33, 0.88,"NDC");
+    pt->AddText("MicroBooNE: NuMI Data 2.4#times10^{20} POT");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
     pt->SetFillColor(0);
@@ -1453,6 +1482,7 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
     pt->SetTextSize(0.04);
     pt->Draw();
 
+	topPad->Update();
 
 	c1->Print(print_name);
 
@@ -1662,7 +1692,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	//bottomPad->SetTopMargin(0.0);
 	//bottomPad->SetBottomMargin(0.12);
 	bottomPad->SetTopMargin(0.04);
-	bottomPad->SetBottomMargin(0.25);
+	bottomPad->SetBottomMargin(0.27);
 	bottomPad->SetGridy();
 	topPad->Draw();
 	bottomPad->Draw();
@@ -1852,11 +1882,11 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
 	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
 
-	stack->GetYaxis()->SetLabelSize(12);
-	stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	stack->GetYaxis()->SetLabelSize(0.05);
+	// stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	stack->GetYaxis()->SetTitleSize(17);
 	stack->GetYaxis()->SetTitleFont(46);
-	stack->GetYaxis()->SetTitleOffset(1.1);
+	stack->GetYaxis()->SetTitleOffset(1.3);
 	stack->GetXaxis()->SetLabelSize(0);
 	stack->GetXaxis()->SetLabelFont(0);
 	h_data_clone->Draw("same PE");
@@ -1873,23 +1903,39 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_error_hist->Add(h_dirt_clone,          1);
 	h_error_hist->Add(h_intime_clone,        1);
 
+
+	// Here we add in the detector systematic uncertainty of 23% to the error bars
+	for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
+		double sys_error  = h_error_hist ->GetBinContent(bin) - h_intime_clone->GetBinContent(bin); // subtract off the ext component since the sys uncertainty is 23% on the MC nto MC + EXT
+		sys_error*=0.34;
+		double stat_error = h_error_hist ->GetBinError(bin);
+		double tot_error  = std::sqrt(sys_error*sys_error + stat_error*stat_error );
+		// std::cout << "stat: "<< stat_error << "  sys: " << sys_error << "   tot: " <<  tot_error << std::endl;
+		h_error_hist->SetBinError(bin, tot_error);
+	}
+
+
 	h_error_hist->SetFillColorAlpha(12, 0.15);
 	h_error_hist->Draw("e2,same");
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	TLegend * leg_stack;
+	// leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	leg_stack = new TLegend(0.64, 0.90, 0.89, 0.40);
+	leg_stack->SetBorderSize(0);
+    leg_stack->SetFillStyle(0);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	
-	leg_stack->AddEntry(h_data,            "On-Beam Data",            "lep");
-	leg_stack->AddEntry(h_intime,          "Off-Beam Data",            "f");
-	leg_stack->AddEntry(h_dirt,            "Dirt",              "f");
+	leg_stack->AddEntry(h_data,            "Beam-On Data",            "lep");
+	leg_stack->AddEntry(h_intime,          "Beam-Off Data",            "f");
+	leg_stack->AddEntry(h_dirt,            "Out-of-Cryostat",              "f");
 	// leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
 	// leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
 	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
 	leg_stack->AddEntry(h_nc,              "NC",                "f");
 	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",      "f");
 	leg_stack->AddEntry(h_cosmic,          "Cosmic",            "f");
-	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC OutFV",  "f");
+	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC Out-FV",  "f");
 	// leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
 	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");	
 	leg_stack->Draw();
@@ -1994,9 +2040,9 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	h_mc_ext_sum->Add(h_intime_clone,        1);
 
 	// X axis of ratio plot
-	ratioPlot->GetXaxis()->SetLabelSize(12);
-	ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
-	ratioPlot->GetXaxis()->SetTitleOffset(3.0);
+	ratioPlot->GetXaxis()->SetLabelSize(0.13);
+	// ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetXaxis()->SetTitleOffset(3.3);
 	ratioPlot->GetXaxis()->SetTitleSize(17);
 	ratioPlot->GetXaxis()->SetTitleFont(46);
 	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
@@ -2005,8 +2051,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	// Y Axis of Ratio Plot
 	ratioPlot->GetYaxis()->SetNdivisions(4, 0, 0, kFALSE);
 	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
-	ratioPlot->GetYaxis()->SetLabelSize(11);
-	ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetYaxis()->SetLabelSize(0.1);
+	// ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	ratioPlot->GetYaxis()->SetTitleSize(13);
 	ratioPlot->GetYaxis()->SetTitleFont(44);
 	ratioPlot->GetYaxis()->CenterTitle();
@@ -2054,8 +2100,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	TPaveText *pt11;
 	topPad->cd();
 
-    pt11 = new TPaveText(0.27, 0.92, 0.27, 0.92,"NDC");
-    pt11->AddText("MicroBooNE");
+    pt11 = new TPaveText(0.33, 0.88, 0.33, 0.88,"NDC");
+    pt11->AddText("MicroBooNE: NuMI Data 2.4#times10^{20} POT");
     pt11->SetTextColor(kBlack);
     pt11->SetBorderSize(0);
     pt11->SetFillColor(0);
@@ -2094,6 +2140,256 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	delete bottomPad;
 	delete c1;
 }
+
+void histogram_functions::PlotSimpleStackPlanes(TH1 * h_u_plane, TH1 * h_v_plane, TH1 * h_y_plane, TH1 * h_intime, const double intime_scale_factor,
+                                              TH1 * h_data, const double data_scale_factor, TH1 * h_dirt, const double dirt_scale_factor,
+                                              const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                              const bool logy, const bool area_norm,
+                                              const double y_scale_factor,
+                                              const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name)
+{
+
+	const bool p_value = false;
+
+	TCanvas * c1 = new TCanvas(title, title, 500, 500);
+	c1->cd();
+
+	//TPad *pad2 = new TPad("pad2", "pad2", 0, 0.3, 1, 1.0);
+	//TPad *pad2_2 = new TPad("pad2_2", "pad2_2", 0, 0.05, 1, 0.3);
+
+	//TPad *topPad = new TPad("topPad", "", 0.005, 0.32, 0.995, 0.995);
+	//TPad *bottomPad = new TPad("bottomPad", "", 0.005, 0.005, 0.995, 0.28);
+	TPad * topPad = new TPad("topPad", "", 0, 0.3, 1, 1.0);
+	TPad * bottomPad = new TPad("bottomPad", "", 0, 0.05, 1, 0.3);
+	//was 0.01
+	topPad->SetBottomMargin(0.05);
+	//bottomPad->SetTopMargin(0.0);
+	//bottomPad->SetBottomMargin(0.12);
+	bottomPad->SetTopMargin(0.04);
+	bottomPad->SetBottomMargin(0.27);
+	bottomPad->SetGridy();
+	topPad->Draw();
+	bottomPad->Draw();
+	topPad->cd();
+
+	THStack * stack = new THStack();
+	gStyle->SetOptStat(0);
+	h_u_plane->SetFillColor(30);
+	h_v_plane->SetFillColor(38);
+	h_y_plane->SetFillColor(28);
+	h_intime->SetFillColor(41);
+	h_intime->SetFillStyle(3345);
+
+	h_dirt->SetFillColor(2);
+	h_dirt->SetFillStyle(3354);
+
+	//h_data->Scale(data_scale_factor);
+	h_data->SetMarkerStyle(20);
+	h_data->SetMarkerSize(0.5);
+	//h_data->Sumw2();
+
+	TH1 * h_u_plane_clone        = (TH1*)h_u_plane->Clone("h_u_plane_clone");
+	TH1 * h_v_plane_clone        = (TH1*)h_v_plane->Clone("h_v_plane_clone");
+	TH1 * h_y_plane_clone        = (TH1*)h_y_plane->Clone("h_y_plane_clone");
+	TH1 * h_intime_clone         = (TH1*)h_intime->Clone("h_intime_clone");
+	TH1 * h_dirt_clone           = (TH1*)h_dirt->Clone("h_dirt_clone");
+	TH1 * h_data_clone           = (TH1*)h_data->Clone("h_data_clone");
+
+	h_u_plane_clone->Sumw2();
+	h_v_plane_clone->Sumw2();
+	h_y_plane_clone->Sumw2();
+	h_intime_clone->Sumw2();
+	h_dirt_clone->Sumw2();
+	h_data_clone->Sumw2();
+
+	h_u_plane_clone->Scale(data_scale_factor);
+	h_v_plane_clone->Scale(data_scale_factor);
+	h_y_plane_clone->Scale(data_scale_factor);
+	h_intime_clone->Scale(intime_scale_factor);
+	h_dirt_clone->Scale(dirt_scale_factor);
+
+	double integral_data = h_data_clone->Integral();
+
+	if(area_norm && integral_data != 0)
+	{
+		double integral_mc_ext = h_u_plane_clone->Integral() +
+		                         h_v_plane_clone->Integral() +
+		                         h_y_plane_clone->Integral() +
+		                         h_dirt_clone->Integral(); // +
+		//h_intime_clone->Integral();
+
+		TH1 * h_data_scaling_clone = (TH1*)h_data->Clone("h_data_scaling_clone");
+		h_data_scaling_clone->Add(h_intime_clone, -1);
+		double integral_on_minus_off = h_data_scaling_clone->Integral();
+		if(integral_on_minus_off == 0)
+		{
+			std::cout << "unable to area normalise" << std::endl;
+			integral_on_minus_off = 1;
+		}
+		delete h_data_scaling_clone;
+
+		h_u_plane_clone->Scale(integral_on_minus_off / integral_mc_ext);
+		h_v_plane_clone->Scale(integral_on_minus_off / integral_mc_ext);
+		h_y_plane_clone->Scale(integral_on_minus_off / integral_mc_ext);
+		h_dirt_clone->Scale(integral_on_minus_off / integral_mc_ext);
+
+		h_u_plane_clone->Scale(1. / integral_data);
+		h_v_plane_clone->Scale(1. / integral_data);
+		h_y_plane_clone->Scale(1. / integral_data);
+		h_intime_clone->Scale(1. / integral_data);
+		h_dirt_clone->Scale(1. / integral_data);
+		h_data_clone->Scale(1. / integral_data);
+
+	}
+
+
+	stack->Add(h_u_plane_clone);
+	stack->Add(h_v_plane_clone);
+	stack->Add(h_y_plane_clone);
+	stack->Add(h_dirt_clone);
+	stack->Add(h_intime_clone);
+
+	const double y_maximum = std::max(h_data_clone->GetMaximum(), stack->GetMaximum());
+	//stack->SetMaximum(y_maximum * y_scale_factor);
+
+	if(logy == true)
+	{
+		TH1 * h_scale_axes = (TH1*)h_data_clone->Clone("h_scale_axes");
+		//h_scale_axes->GetYaxis()->SetRangeUser(0.1, y_maximum * (y_scale_factor * 100));
+		if(h_u_plane_clone->GetMinimum() != 0.0) {h_scale_axes->SetMinimum(h_u_plane_clone->GetMinimum() / 2.); }
+		if(h_u_plane_clone->GetMinimum() == 0.0) {h_scale_axes->SetMinimum(h_u_plane_clone->GetMinimum() + 0.0001 / 2.); }
+		h_scale_axes->SetMaximum(y_maximum * (y_scale_factor * 500));
+		h_scale_axes->SetLineColor(0);
+		h_scale_axes->SetFillColor(0);
+		h_scale_axes->GetYaxis()->SetTitle("Entries");
+		h_scale_axes->SetTitle(" ");
+		h_scale_axes->GetXaxis()->SetTitle(" ");
+		h_scale_axes->GetXaxis()->SetLabelSize(0);
+		h_scale_axes->GetXaxis()->SetLabelFont(0);
+		h_scale_axes->GetYaxis()->SetLabelSize(12);
+		h_scale_axes->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+		h_scale_axes->GetYaxis()->SetTitleSize(17);
+		h_scale_axes->GetYaxis()->SetTitleFont(46);
+		
+		h_scale_axes->Draw();
+		stack->Draw("same hist");
+
+		h_scale_axes->GetYaxis()->SetTitle("Entries");
+	}
+
+	if(!logy)
+	{
+		stack->SetMinimum(0);
+		stack->SetMaximum(y_maximum * y_scale_factor);
+		stack->Draw("hist");
+	}
+	//stack->GetXaxis()->SetTitle(x_axis_name);
+	if(!area_norm) {stack->GetYaxis()->SetTitle("Entries"); }
+	if(area_norm) {stack->GetYaxis()->SetTitle("Entries [A.U.]"); }
+
+	stack->GetYaxis()->SetLabelSize(0.05);
+	// stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	stack->GetYaxis()->SetTitleSize(17);
+	stack->GetYaxis()->SetTitleFont(46);
+	stack->GetYaxis()->SetTitleOffset(1.3);
+	stack->GetXaxis()->SetLabelSize(0);
+	stack->GetXaxis()->SetLabelFont(0);
+	h_data_clone->Draw("same PE");
+
+	TH1 * h_error_hist = (TH1*)h_u_plane_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_v_plane_clone, 1);
+	h_error_hist->Add(h_y_plane_clone,       1);
+	h_error_hist->Add(h_dirt_clone,          1);
+	h_error_hist->Add(h_intime_clone,        1);
+
+
+	// Here we add in the detector systematic uncertainty of 23% to the error bars
+	for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
+		double sys_error  = h_error_hist ->GetBinContent(bin) - h_intime_clone->GetBinContent(bin); // subtract off the ext component since the sys uncertainty is 23% on the MC nto MC + EXT
+		sys_error*=0.34;
+		double stat_error = h_error_hist ->GetBinError(bin);
+		double tot_error  = std::sqrt(sys_error*sys_error + stat_error*stat_error );
+		// std::cout << "stat: "<< stat_error << "  sys: " << sys_error << "   tot: " <<  tot_error << std::endl;
+		h_error_hist->SetBinError(bin, tot_error);
+	}
+
+
+	h_error_hist->SetFillColorAlpha(12, 0.15);
+	h_error_hist->Draw("e2,same");
+
+	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
+	TLegend * leg_stack;
+	// leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
+	leg_stack = new TLegend(0.64, 0.90, 0.89, 0.40);
+	leg_stack->SetBorderSize(0);
+    leg_stack->SetFillStyle(0);
+	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
+	
+	leg_stack->AddEntry(h_data,          "Beam-On Data",   "lep");
+	leg_stack->AddEntry(h_intime,        "Beam-Off Data",  "f");
+	leg_stack->AddEntry(h_dirt,          "Out-of-Cryostat","f");
+	leg_stack->AddEntry(h_y_plane_clone, "U Plane",        "f");
+	leg_stack->AddEntry(h_v_plane_clone, "V Plane",        "f");
+	leg_stack->AddEntry(h_u_plane_clone, "Y Plane",        "f");
+	leg_stack->Draw();
+
+	if(!logy) {stack->GetYaxis()->SetRangeUser(0, y_maximum * y_scale_factor); }
+	if(logy == true)
+	{
+		topPad->SetLogy();
+		//stack->GetYaxis()->SetRangeUser(h_nue_cc_clone->GetMinimum(), y_maximum * y_scale_factor);
+	}
+
+	bottomPad->cd();
+	TH1 * ratioPlot = (TH1*)h_data_clone->Clone("ratioPlot");
+	TH1 * h_mc_ext_sum = (TH1*)h_u_plane_clone->Clone("h_mc_ext_sum");
+	h_mc_ext_sum->Add(h_v_plane_clone, 1);
+	h_mc_ext_sum->Add(h_y_plane_clone,        1);
+	h_mc_ext_sum->Add(h_dirt_clone,          1);
+	h_mc_ext_sum->Add(h_intime_clone,        1);
+
+	// X axis of ratio plot
+	ratioPlot->GetXaxis()->SetLabelSize(0.13);
+	// ratioPlot->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetXaxis()->SetTitleOffset(3.3);
+	ratioPlot->GetXaxis()->SetTitleSize(17);
+	ratioPlot->GetXaxis()->SetTitleFont(46);
+	ratioPlot->GetXaxis()->SetTitle(x_axis_name);
+	ratioPlot->SetTitle(" ");
+
+	// Y Axis of Ratio Plot
+	ratioPlot->GetYaxis()->SetNdivisions(4, 0, 0, kFALSE);
+	ratioPlot->GetYaxis()->SetTitle("(Data - MC) / MC ");
+	ratioPlot->GetYaxis()->SetLabelSize(0.1);
+	// ratioPlot->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
+	ratioPlot->GetYaxis()->SetTitleSize(13);
+	ratioPlot->GetYaxis()->SetTitleFont(44);
+	ratioPlot->GetYaxis()->CenterTitle();
+	ratioPlot->GetYaxis()->SetTitleOffset(1.5); 
+
+	ratioPlot->Add(h_mc_ext_sum, -1);
+	ratioPlot->Divide(h_mc_ext_sum);
+	ratioPlot->GetYaxis()->SetRangeUser(-1,1);
+	
+	ratioPlot->Draw();
+
+	TPaveText *pt11;
+	topPad->cd();
+
+    pt11 = new TPaveText(0.33, 0.88, 0.33, 0.88,"NDC");
+    pt11->AddText("MicroBooNE: NuMI Data 2.4#times10^{20} POT");
+    pt11->SetTextColor(kBlack);
+    pt11->SetBorderSize(0);
+    pt11->SetFillColor(0);
+    pt11->SetFillStyle(0);
+    pt11->SetTextSize(0.04);
+    pt11->Draw();
+
+	std::cout << print_name << std::endl;
+	c1->Print(print_name);
+
+}
+
 
 void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 * h_nue_cc_mixed, TH1 * h_nue_cc_out_fv, TH1 * h_numu_cc,
                                                            TH1 * h_numu_cc_mixed, TH1 * h_cosmic, TH1 * h_nc,
@@ -2321,7 +2617,7 @@ void histogram_functions::PlotSimpleStackDataMomentumRebin(TH1 * h_nue_cc, TH1 *
 	leg_stack->AddEntry(h_nc_pi0,          "NC #pi^{0}",        "f");
 	leg_stack->AddEntry(h_other_mixed,     "NC Mixed",          "f");
 	leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
-	leg_stack->AddEntry(h_dirt,            "Dirt",              "f");
+	leg_stack->AddEntry(h_dirt,            "Out-of-Cryostat",              "f");
 	leg_stack->AddEntry(h_intime,          "InTime",            "f");
 	leg_stack->Draw();
 

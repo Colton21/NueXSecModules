@@ -20,6 +20,7 @@
 #include "TPaveText.h"
 #include "TMath.h"
 #include "TGraphAsymmErrors.h"
+#include "TStyle.h"
 
 #include <iostream>
 #include <string>
@@ -32,6 +33,13 @@ public:
 histogram_functions()=default;
 
 static void PlotEfficiencyFlash(TH1D* h_eff_flash_time);
+
+static void PlotSimpleStackPlanes(TH1 * h_u_plane, TH1 * h_v_plane, TH1 * h_y_plane, TH1 * h_intime, const double intime_scale_factor,
+                                              TH1 * h_data, const double data_scale_factor, TH1 * h_dirt, const double dirt_scale_factor,
+                                              const double leg_x1, const double leg_x2, const double leg_y1, const double leg_y2,
+                                              const bool logy, const bool area_norm,
+                                              const double y_scale_factor,
+                                              const char * title, const char * x_axis_name, const char * y_axis_name, const char * print_name);
 
 static void Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name);
 static void Plot1DHistogramGausFit (TH1 * histogram, const char * x_axis_name, const char * print_name);

@@ -7,6 +7,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TBranch.h"
+#include "TVector3.h"
 
 #include <iostream>
 #include <vector>
