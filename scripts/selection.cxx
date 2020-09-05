@@ -17,7 +17,7 @@ void selection::make_selection( const char * _file1,
 	const bool _write_post_cuts = true;
 	gErrorIgnoreLevel = kWarning;
 
-	int event_to_process = 10000000;
+	int event_to_process = 100000000;
 
 	//first we need to open the root files
 	TFile * f_var;

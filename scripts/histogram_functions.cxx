@@ -346,6 +346,10 @@ void histogram_functions::Plot2DHistogram (TH2 * histogram, const char * title, 
 	histogram->GetXaxis()->SetTitleSize(17);
 	histogram->GetXaxis()->SetTitleFont(46);
 
+	histogram->GetZaxis()->SetTitleOffset(1.5);
+	histogram->GetZaxis()->SetTitle("Entries");
+
+
 	gPad->SetLeftMargin(0.15);
 	gPad->SetRightMargin(0.15);
 
@@ -458,10 +462,10 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 
 	delete c1;
 
-	TCanvas * c2 = new TCanvas();
+	TCanvas * c2 = new TCanvas("c", "c", 500, 500);
 	c2->cd();
 
-	c2->SetLeftMargin(0.13);
+	c2->SetLeftMargin(0.15);
 
 	THStack * stack = new THStack();
 
@@ -485,30 +489,30 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	// stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	stack->GetYaxis()->SetTitleSize(20);
 	stack->GetYaxis()->SetTitleFont(46);
-	stack->GetYaxis()->SetTitleOffset(1.4);
+	stack->GetYaxis()->SetTitleOffset(1.9);
 
 	stack->GetXaxis()->SetLabelSize(0.04);
 	// stack->GetXaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	stack->GetXaxis()->SetTitleOffset(1.0);
 	stack->GetXaxis()->SetTitleSize(20);
 	stack->GetXaxis()->SetTitleFont(46);
-	stack->GetXaxis()->SetRangeUser(3,19);
+	stack->GetXaxis()->SetRangeUser(3,20);
 	stack->SetMaximum(13500);
 	stack->SetMinimum(0);
 
 	TPaveText *pt;
 
     pt = new TPaveText(0.42, 0.875, 0.42, 0.875,"NDC");
-    pt->AddText("MicroBooNE: NuMI Data 2.4#times10^{20} POT");
+    pt->AddText("MicroBooNE NuMI Data 2.4#times10^{20} POT");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
     pt->SetFillColor(0);
     pt->SetFillStyle(0);
-    pt->SetTextSize(0.04);
+    pt->SetTextSize(0.03);
     pt->Draw();
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.73, 0.7, 0.9, 0.90);
+	TLegend * leg_stack = new TLegend(0.70, 0.67, 0.89, 0.90);
 	leg_stack->SetBorderSize(0);
     leg_stack->SetFillStyle(0);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
@@ -1402,14 +1406,14 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	h_error_hist->Add(h_dirt_clone, 1);
 
 	// Here we add in the total systematic uncertainty of 34% to the error bars
-	for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
-		double sys_error  = h_error_hist ->GetBinContent(bin) - h_ext_clone->GetBinContent(bin); // subtract off the ext component since the sys uncertainty is 34% on the MC nto MC + EXT
-		sys_error*=0.34;
-		double stat_error = h_error_hist ->GetBinError(bin);
-		double tot_error  = std::sqrt(sys_error*sys_error + stat_error*stat_error );
-		// std::cout << "stat: "<< stat_error << "  sys: " << sys_error << "   tot: " <<  tot_error << std::endl;
-		h_error_hist->SetBinError(bin, tot_error);
-	}
+	// for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
+	// 	double sys_error  = h_error_hist ->GetBinContent(bin) - h_ext_clone->GetBinContent(bin); // subtract off the ext component since the sys uncertainty is 34% on the MC nto MC + EXT
+	// 	sys_error*=0.34;
+	// 	double stat_error = h_error_hist ->GetBinError(bin);
+	// 	double tot_error  = std::sqrt(sys_error*sys_error + stat_error*stat_error );
+	// 	// std::cout << "stat: "<< stat_error << "  sys: " << sys_error << "   tot: " <<  tot_error << std::endl;
+	// 	h_error_hist->SetBinError(bin, tot_error);
+	// }
 
 	// h_error_hist->GetYaxis()->SetRangeUser(0,100);
 	h_error_hist->SetFillColorAlpha(12, 0.15);
@@ -1473,8 +1477,8 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 
 	TPaveText *pt;
 	topPad->cd();
-    pt = new TPaveText(0.33, 0.88, 0.33, 0.88,"NDC");
-    pt->AddText("MicroBooNE: NuMI Data 2.4#times10^{20} POT");
+    pt = new TPaveText(0.36, 0.875, 0.36, 0.875,"NDC");
+    pt->AddText("MicroBooNE NuMI Data 2.4#times10^{20} POT");
     pt->SetTextColor(kBlack);
     pt->SetBorderSize(0);
     pt->SetFillColor(0);
@@ -1905,14 +1909,14 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 
 
 	// Here we add in the detector systematic uncertainty of 23% to the error bars
-	for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
-		double sys_error  = h_error_hist ->GetBinContent(bin) - h_intime_clone->GetBinContent(bin); // subtract off the ext component since the sys uncertainty is 23% on the MC nto MC + EXT
-		sys_error*=0.34;
-		double stat_error = h_error_hist ->GetBinError(bin);
-		double tot_error  = std::sqrt(sys_error*sys_error + stat_error*stat_error );
-		// std::cout << "stat: "<< stat_error << "  sys: " << sys_error << "   tot: " <<  tot_error << std::endl;
-		h_error_hist->SetBinError(bin, tot_error);
-	}
+	// for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
+	// 	double sys_error  = h_error_hist ->GetBinContent(bin) - h_intime_clone->GetBinContent(bin); // subtract off the ext component since the sys uncertainty is 23% on the MC nto MC + EXT
+	// 	sys_error*=0.34;
+	// 	double stat_error = h_error_hist ->GetBinError(bin);
+	// 	double tot_error  = std::sqrt(sys_error*sys_error + stat_error*stat_error );
+	// 	// std::cout << "stat: "<< stat_error << "  sys: " << sys_error << "   tot: " <<  tot_error << std::endl;
+	// 	h_error_hist->SetBinError(bin, tot_error);
+	// }
 
 
 	h_error_hist->SetFillColorAlpha(12, 0.15);
@@ -2100,8 +2104,8 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	TPaveText *pt11;
 	topPad->cd();
 
-    pt11 = new TPaveText(0.33, 0.88, 0.33, 0.88,"NDC");
-    pt11->AddText("MicroBooNE: NuMI Data 2.4#times10^{20} POT");
+    pt11 = new TPaveText(0.36, 0.875, 0.36, 0.875,"NDC");
+    pt11->AddText("MicroBooNE NuMI Data 2.4#times10^{20} POT");
     pt11->SetTextColor(kBlack);
     pt11->SetBorderSize(0);
     pt11->SetFillColor(0);
