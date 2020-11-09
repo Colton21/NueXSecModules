@@ -1714,6 +1714,34 @@ TH1D * h_ele_pfp_theta_intime         = new TH1D ("h_ele_pfp_theta_intime",     
 TH1D * h_ele_pfp_theta_dirt           = new TH1D ("h_ele_pfp_theta_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
 TH1D * h_ele_pfp_theta_data           = new TH1D ("h_ele_pfp_theta_data",           "h_ele_pfp_theta_data",           20, 0, 180);
 
+TH1D * h_ele_pfp_theta_pre_dedx_nue_cc         = new TH1D ("h_ele_pfp_theta_pre_dedx_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_pre_dedx_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_pre_dedx_nue_cc_mixed",   "h_ele_pfp_theta_nue_cc_mixed",   20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_numu_cc        = new TH1D ("h_ele_pfp_theta_pre_dedx_numu_cc",        "h_ele_pfp_theta_numu_cc",        20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_pre_dedx_numu_cc_mixed",  "h_ele_pfp_theta_numu_cc_mixed",  20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_nc             = new TH1D ("h_ele_pfp_theta_pre_dedx_nc",             "h_ele_pfp_theta_nc",             20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_nc_pi0         = new TH1D ("h_ele_pfp_theta_pre_dedx_nc_pi0",         "h_ele_pfp_theta_nc_pi0",         20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_cosmic         = new TH1D ("h_ele_pfp_theta_pre_dedx_cosmic",         "h_ele_pfp_theta_cosmic",         20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_other_mixed    = new TH1D ("h_ele_pfp_theta_pre_dedx_other_mixed",    "h_ele_pfp_theta_other_mixed",    20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_unmatched      = new TH1D ("h_ele_pfp_theta_pre_dedx_unmatched",      "h_ele_pfp_theta_unmatched",      20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_intime         = new TH1D ("h_ele_pfp_theta_pre_dedx_intime",         "h_ele_pfp_theta_intime",         20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_dirt           = new TH1D ("h_ele_pfp_theta_pre_dedx_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
+TH1D * h_ele_pfp_theta_pre_dedx_data           = new TH1D ("h_ele_pfp_theta_pre_dedx_data",           "h_ele_pfp_theta_data",           20, 0, 180);
+
+TH1D * h_ele_pfp_theta_post_dedx_nue_cc         = new TH1D ("h_ele_pfp_theta_post_dedx_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_post_dedx_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_post_dedx_nue_cc_mixed",   "h_ele_pfp_theta_nue_cc_mixed",   20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_numu_cc        = new TH1D ("h_ele_pfp_theta_post_dedx_numu_cc",        "h_ele_pfp_theta_numu_cc",        20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_numu_cc_mixed  = new TH1D ("h_ele_pfp_theta_post_dedx_numu_cc_mixed",  "h_ele_pfp_theta_numu_cc_mixed",  20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_nc             = new TH1D ("h_ele_pfp_theta_post_dedx_nc",             "h_ele_pfp_theta_nc",             20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_nc_pi0         = new TH1D ("h_ele_pfp_theta_post_dedx_nc_pi0",         "h_ele_pfp_theta_nc_pi0",         20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_cosmic         = new TH1D ("h_ele_pfp_theta_post_dedx_cosmic",         "h_ele_pfp_theta_cosmic",         20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_other_mixed    = new TH1D ("h_ele_pfp_theta_post_dedx_other_mixed",    "h_ele_pfp_theta_other_mixed",    20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_unmatched      = new TH1D ("h_ele_pfp_theta_post_dedx_unmatched",      "h_ele_pfp_theta_unmatched",      20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_intime         = new TH1D ("h_ele_pfp_theta_post_dedx_intime",         "h_ele_pfp_theta_intime",         20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_dirt           = new TH1D ("h_ele_pfp_theta_post_dedx_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
+TH1D * h_ele_pfp_theta_post_dedx_data           = new TH1D ("h_ele_pfp_theta_post_dedx_data",           "h_ele_pfp_theta_data",           20, 0, 180);
+
 TH1D * h_ele_pfp_theta_after_nue_cc         = new TH1D ("h_ele_pfp_theta_after_nue_cc",         "h_ele_pfp_theta_after_nue_cc",         20, 0, 180);
 TH1D * h_ele_pfp_theta_after_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_after_nue_cc_out_fv",  "h_ele_pfp_theta_after_nue_cc_out_fv",  20, 0, 180);
 TH1D * h_ele_pfp_theta_after_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_after_nue_cc_mixed",   "h_ele_pfp_theta_after_nue_cc_mixed",   20, 0, 180);

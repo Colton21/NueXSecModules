@@ -17,7 +17,7 @@ void selection::make_selection( const char * _file1,
 	const bool _write_post_cuts = true;
 	gErrorIgnoreLevel = kWarning;
 
-	int event_to_process = 100000000;
+	int event_to_process = 1000000000;
 
 	//first we need to open the root files
 	TFile * f_var;
@@ -697,7 +697,9 @@ void selection::make_selection( const char * _file1,
 												    h_dedx_cuts_data_slice1,
 												    "data");
 
+			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_pre_dedx_data);
 			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
+			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_post_dedx_data);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
 
@@ -1366,7 +1368,14 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_2_zoom_dirt,
 			                                                                      h_dedx_slice_3_zoom_dirt);
 
+			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, 0, 0, _verbose,
+			                                                            h_ele_pfp_theta_pre_dedx_dirt);
+
 			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
+
+			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, 0, 0, _verbose,
+			                                                            h_ele_pfp_theta_post_dedx_dirt);
+
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
 
@@ -2037,7 +2046,14 @@ void selection::make_selection( const char * _file1,
 			                                                                      h_dedx_slice_2_zoom_intime,
 			                                                                      h_dedx_slice_3_zoom_intime);
 
+			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0, _verbose,
+			                                                            h_ele_pfp_theta_pre_dedx_intime);
+
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
+
+			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0, _verbose,
+			                                                            h_ele_pfp_theta_post_dedx_intime);
+
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
 
@@ -4005,7 +4021,33 @@ void selection::make_selection( const char * _file1,
                                                                             h_dedx_yz_ratio_omit_cali_nue
                                                                             );
         */
+
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
+		                                                      h_ele_pfp_theta_pre_dedx_nue_cc,
+		                                                      h_ele_pfp_theta_pre_dedx_nue_cc_out_fv,
+		                                                      h_ele_pfp_theta_pre_dedx_nue_cc_mixed,
+		                                                      h_ele_pfp_theta_pre_dedx_numu_cc,
+		                                                      h_ele_pfp_theta_pre_dedx_numu_cc_mixed,
+		                                                      h_ele_pfp_theta_pre_dedx_nc,
+		                                                      h_ele_pfp_theta_pre_dedx_nc_pi0,
+		                                                      h_ele_pfp_theta_pre_dedx_cosmic,
+		                                                      h_ele_pfp_theta_pre_dedx_other_mixed,
+		                                                      h_ele_pfp_theta_pre_dedx_unmatched);
+
+
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
+
+		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
+		                                                      h_ele_pfp_theta_post_dedx_nue_cc,
+		                                                      h_ele_pfp_theta_post_dedx_nue_cc_out_fv,
+		                                                      h_ele_pfp_theta_post_dedx_nue_cc_mixed,
+		                                                      h_ele_pfp_theta_post_dedx_numu_cc,
+		                                                      h_ele_pfp_theta_post_dedx_numu_cc_mixed,
+		                                                      h_ele_pfp_theta_post_dedx_nc,
+		                                                      h_ele_pfp_theta_post_dedx_nc_pi0,
+		                                                      h_ele_pfp_theta_post_dedx_cosmic,
+		                                                      h_ele_pfp_theta_post_dedx_other_mixed,
+		                                                      h_ele_pfp_theta_post_dedx_unmatched);
 
 		
 		// Counters for efficiency numerator
@@ -7876,32 +7918,32 @@ void selection::make_selection( const char * _file1,
 	                                      Form("%s%s", file_locate_prefix, "all_true_neutrino_num_charged_particles.pdf"));
 	histogram_functions::Plot1DHistogram (h_nue_num_chrg_part_eff_num, "Selected Charged True Particle Multiplicity",
 	                                      Form("%s%s", file_locate_prefix, "selected_true_neutrino_num_charged_particles.pdf"));
-	histogram_functions::Plot1DHistogram(h_nue_true_theta, "True Neutrino Theta [Degrees]", Form("%s%s", file_locate_prefix, "true_nue_theta.pdf"));
-	histogram_functions::Plot1DHistogram(h_nue_true_phi,   "True Neutrino Phi [Degrees]",   Form("%s%s", file_locate_prefix, "true_nue_phi.pdf"));
-	histogram_functions::Plot2DHistogramLogZ(h_nue_true_theta_phi, "True #nu_e / #nu_e-bar CC", "Phi [Degrees]", "Theta [Degrees]",
+	histogram_functions::Plot1DHistogram(h_nue_true_theta, "True Neutrino Theta [degrees]", Form("%s%s", file_locate_prefix, "true_nue_theta.pdf"));
+	histogram_functions::Plot1DHistogram(h_nue_true_phi,   "True Neutrino Phi [degrees]",   Form("%s%s", file_locate_prefix, "true_nue_phi.pdf"));
+	histogram_functions::Plot2DHistogramLogZ(h_nue_true_theta_phi, "True #nu_e / #nu_e-bar CC", "Phi [degrees]", "Theta [degrees]",
 	                                         Form("%s%s", file_locate_prefix, "true_nue_theta_phi.pdf"), "colz");
-	histogram_functions::Plot2DHistogram(h_all_true_energy_theta, "True All Neutrino Flavours", "True Neutrino Energy [GeV]", "True Neutrino Theta [Degrees]",
+	histogram_functions::Plot2DHistogram(h_all_true_energy_theta, "True All Neutrino Flavours", "True Neutrino Energy [GeV]", "True Neutrino Theta [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_all_energy_theta.pdf"));
-	histogram_functions::Plot2DHistogram(h_nue_true_energy_theta, "True Nue/Nue-bar CC", "True Neutrino Energy [GeV]", "True Neutrino Theta [Degrees]",
+	histogram_functions::Plot2DHistogram(h_nue_true_energy_theta, "True Nue/Nue-bar CC", "True Neutrino Energy [GeV]", "True Neutrino Theta [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_nue_energy_theta.pdf"));
-	histogram_functions::Plot2DHistogram(h_nue_true_energy_phi, "True Nue/Nue-bar CC", "True Neutrino Energy [GeV]", "True Neutrino Phi [Degrees]",
+	histogram_functions::Plot2DHistogram(h_nue_true_energy_phi, "True Nue/Nue-bar CC", "True Neutrino Energy [GeV]", "True Neutrino Phi [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_nue_energy_phi.pdf"));
-	histogram_functions::Plot2DHistogram(h_ele_true_energy_theta, "True Electron", "True Electron Energy [GeV]", "True Electron Theta [Degrees]",
+	histogram_functions::Plot2DHistogram(h_ele_true_energy_theta, "True Electron", "True Electron Energy [GeV]", "True Electron Theta [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_ele_energy_theta.pdf"));
-	histogram_functions::Plot2DHistogram(h_ele_true_energy_phi, "True Electron", "True Electron Energy [GeV]", "True Electron Phi [Degrees]",
+	histogram_functions::Plot2DHistogram(h_ele_true_energy_phi, "True Electron", "True Electron Energy [GeV]", "True Electron Phi [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_ele_energy_phi.pdf"));
 
-	histogram_functions::Plot1DHistogram(h_ele_phi_eff_num, "Selected True Electron Phi [Degrees]",
+	histogram_functions::Plot1DHistogram(h_ele_phi_eff_num, "Selected True Electron Phi [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "selected_true_electron_phi.pdf"));
-	histogram_functions::Plot1DHistogram(h_ele_phi_eff_den, "True Electron Phi [Degrees]",
+	histogram_functions::Plot1DHistogram(h_ele_phi_eff_den, "True Electron Phi [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_electron_phi.pdf"));
 	histogram_functions::Plot1DHistogram(h_ele_cos_theta_eff_num, "Selected True Electron Cos(#theta)",
 	                                     Form("%s%s", file_locate_prefix, "selected_true_electron_cos_theta.pdf"));
 	histogram_functions::Plot1DHistogram(h_ele_cos_theta_eff_den, "True Electron Cos(#theta)",
 	                                     Form("%s%s", file_locate_prefix, "true_electron_cos_theta.pdf"));
-	histogram_functions::Plot1DHistogram(h_ele_theta_eff_num, "Selected True Electron Theta [Degrees]",
+	histogram_functions::Plot1DHistogram(h_ele_theta_eff_num, "Selected True Electron Theta [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "selected_true_electron_theta.pdf"));
-	histogram_functions::Plot1DHistogram(h_ele_theta_eff_den, "True Electron Theta [Degrees]",
+	histogram_functions::Plot1DHistogram(h_ele_theta_eff_den, "True Electron Theta [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_electron_theta.pdf"));
 
 	histogram_functions::PlotTEfficiency (h_nue_eng_eff_num, h_nue_eng_eff_den,
@@ -7991,7 +8033,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
 	                                          h_leading_shower_open_angle_unmatched, h_leading_shower_open_angle_intime, intime_scale_factor,
 	                                          h_leading_shower_open_angle_data, data_scale_factor, h_leading_shower_open_angle_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Opening Angle [Degrees]", "",
+	                                          "", "Leading Shower Opening Angle [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_leading_shower_open_angle_nue_cc,  h_leading_shower_open_angle_nue_cc_mixed,
@@ -8001,7 +8043,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
 		                                          h_leading_shower_open_angle_unmatched, h_leading_shower_open_angle_intime, scaled_intime_scale_factor,
 		                                          h_leading_shower_open_angle_data, data_scale_factor, h_leading_shower_open_angle_dirt, dirt_scale_factor,
-		                                          "", "Shower Opening Angle [Degrees] (Scaled)", "",
+		                                          "", "Shower Opening Angle [degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_scaled_data.pdf"));
 	}
 
@@ -8012,7 +8054,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_nc_pi0_after,  h_leading_shower_open_angle_other_mixed_after,
 	                                          h_leading_shower_open_angle_unmatched_after, h_leading_shower_open_angle_intime_after, intime_scale_factor,
 	                                          h_leading_shower_open_angle_data_after, data_scale_factor, h_leading_shower_open_angle_dirt_after, dirt_scale_factor,
-	                                          "", "Shower Opening Angle [Degrees]", "",
+	                                          "", "Shower Opening Angle [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_data_after.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_leading_shower_open_angle_2plus_nue_cc,  h_leading_shower_open_angle_2plus_nue_cc_mixed,
@@ -8023,7 +8065,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_2plus_unmatched, h_leading_shower_open_angle_2plus_intime,
 	                                          intime_scale_factor, h_leading_shower_open_angle_2plus_data, data_scale_factor,
 	                                          h_leading_shower_open_angle_2plus_dirt, dirt_scale_factor,
-	                                          "", "Shower Opening Angle [Degrees]", "",
+	                                          "", "Shower Opening Angle [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_2plus_showers_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_dedx_cuts_nue_cc,  h_dedx_cuts_nue_cc_mixed,
@@ -8730,27 +8772,27 @@ void selection::make_selection( const char * _file1,
 	                                      Form("%s%s", file_locate_prefix, "flash_t0_diff.pdf"));
 
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc_out_fv, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc_out_fv.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc_out_fv.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc_mixed, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc_mixed.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc_mixed.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nue_cc, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nue_cc.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_numu_cc, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_numu_cc.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_numu_cc.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_numu_cc_mixed, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_numu_cc_mixed.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_numu_cc_mixed.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nc, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nc.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nc.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_nc_pi0, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nc_pi0.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_nc_pi0.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_cosmic, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_cosmic.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_cosmic.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_other_mixed, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_other_mixed.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_other_mixed.pdf"));
 	histogram_functions::Plot2DHistogram (h_dedx_open_angle_unmatched, "", "Leading Shower dEdx [MeV/cm]",
-	                                      "Leading Shower Open Angle [Degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_unmatched.pdf"));
+	                                      "Leading Shower Open Angle [degrees]", Form("%s%s", file_locate_prefix, "dedx_open_angle_unmatched.pdf"));
 
 	histogram_functions::Plot2DHistogram (h_shwr_len_hits_nue_cc, "", "Leading Shower Length [cm]",
 	                                      "Leading Shower Hits", Form("%s%s", file_locate_prefix, "shwr_len_hits_nue_cc.pdf"));
@@ -9412,7 +9454,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_no_track_data, data_scale_factor,
 	                                          h_ele_pfp_phi_no_track_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
-	                                          "", "Leading Shower Phi [Degrees]", "",
+	                                          "", "Leading Shower Phi [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_no_track_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_has_track_nue_cc,  h_ele_pfp_phi_has_track_nue_cc_mixed,
@@ -9424,7 +9466,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_has_track_data, data_scale_factor,
 	                                          h_ele_pfp_phi_has_track_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
-	                                          "", "Leading Shower Phi [Degrees]", "",
+	                                          "", "Leading Shower Phi [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_has_track_data.pdf"));
 //
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_no_track_nue_cc,  h_ele_pfp_theta_no_track_nue_cc_mixed,
@@ -9435,7 +9477,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_no_track_unmatched, h_ele_pfp_theta_no_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_no_track_data, data_scale_factor,
 	                                          h_ele_pfp_theta_no_track_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Theta [Degrees]", "",
+	                                          "", "Leading Shower Theta [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_no_track_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_has_track_nue_cc,  h_ele_pfp_theta_has_track_nue_cc_mixed,
@@ -9446,7 +9488,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_has_track_unmatched, h_ele_pfp_theta_has_track_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_has_track_data, data_scale_factor,
 	                                          h_ele_pfp_theta_has_track_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Theta [Degrees]", "",
+	                                          "", "Leading Shower Theta [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_has_track_data.pdf"));
 
 
@@ -9456,7 +9498,7 @@ void selection::make_selection( const char * _file1,
 	                                      h_ele_pfp_theta_cosmic,  h_ele_pfp_theta_nc,
 	                                      h_ele_pfp_theta_nc_pi0,  h_ele_pfp_theta_other_mixed,
 	                                      h_ele_pfp_theta_unmatched, "",
-	                                      "Leading Shower Theta [Degrees]", "",
+	                                      "Leading Shower Theta [degrees]", "",
 	                                      Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_theta.pdf"));
 	histogram_functions::PlotSimpleStackInTime (h_ele_pfp_theta_nue_cc,  h_ele_pfp_theta_nue_cc_mixed,
 	                                            h_ele_pfp_theta_nue_cc_out_fv,
@@ -9465,7 +9507,7 @@ void selection::make_selection( const char * _file1,
 	                                            h_ele_pfp_theta_nc_pi0,  h_ele_pfp_theta_other_mixed,
 	                                            h_ele_pfp_theta_unmatched, h_ele_pfp_theta_intime,
 	                                            intime_scale_factor, data_scale_factor, "",
-	                                            "Leading Shower Theta [Degrees]", "",
+	                                            "Leading Shower Theta [degrees]", "",
 	                                            Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_theta_intime.pdf"));
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_nue_cc,  h_ele_pfp_theta_nue_cc_mixed,
 	                                          h_ele_pfp_theta_nue_cc_out_fv,
@@ -9475,8 +9517,30 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_unmatched, h_ele_pfp_theta_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_data, data_scale_factor,
 	                                          h_ele_pfp_theta_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Theta [Degrees]", "",
+	                                          "", "Leading Shower Theta [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_theta_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_pre_dedx_nue_cc,  h_ele_pfp_theta_pre_dedx_nue_cc_mixed,
+											h_ele_pfp_theta_pre_dedx_nue_cc_out_fv,
+											h_ele_pfp_theta_pre_dedx_numu_cc, h_ele_pfp_theta_pre_dedx_numu_cc_mixed,
+											h_ele_pfp_theta_pre_dedx_cosmic,  h_ele_pfp_theta_pre_dedx_nc,
+											h_ele_pfp_theta_pre_dedx_nc_pi0,  h_ele_pfp_theta_pre_dedx_other_mixed,
+											h_ele_pfp_theta_pre_dedx_unmatched, h_ele_pfp_theta_pre_dedx_intime, intime_scale_factor,
+											h_ele_pfp_theta_pre_dedx_data, data_scale_factor,
+											h_ele_pfp_theta_pre_dedx_dirt, dirt_scale_factor,
+											"", "Leading Shower Theta [degrees]", "",
+											Form("%s%s", file_locate_prefix, "pre_dedx_cut_leading_theta_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_post_dedx_nue_cc,  h_ele_pfp_theta_post_dedx_nue_cc_mixed,
+											h_ele_pfp_theta_post_dedx_nue_cc_out_fv,
+											h_ele_pfp_theta_post_dedx_numu_cc, h_ele_pfp_theta_post_dedx_numu_cc_mixed,
+											h_ele_pfp_theta_post_dedx_cosmic,  h_ele_pfp_theta_post_dedx_nc,
+											h_ele_pfp_theta_post_dedx_nc_pi0,  h_ele_pfp_theta_post_dedx_other_mixed,
+											h_ele_pfp_theta_post_dedx_unmatched, h_ele_pfp_theta_post_dedx_intime, intime_scale_factor,
+											h_ele_pfp_theta_post_dedx_data, data_scale_factor,
+											h_ele_pfp_theta_post_dedx_dirt, dirt_scale_factor,
+											"", "Leading Shower Theta [degrees]", "",
+											Form("%s%s", file_locate_prefix, "post_dedx_cut_leading_theta_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_after_nue_cc,  h_ele_pfp_theta_after_nue_cc_mixed,
 	                                      h_ele_pfp_theta_after_nue_cc_out_fv,
@@ -9484,7 +9548,7 @@ void selection::make_selection( const char * _file1,
 	                                      h_ele_pfp_theta_after_cosmic,  h_ele_pfp_theta_after_nc,
 	                                      h_ele_pfp_theta_after_nc_pi0,  h_ele_pfp_theta_after_other_mixed,
 	                                      h_ele_pfp_theta_after_unmatched, "",
-	                                      "Leading Shower Theta [Degrees]", "",
+	                                      "Leading Shower Theta [degrees]", "",
 	                                      Form("%s%s", file_locate_prefix, "post_collection_cut_leading_theta.pdf"));
 	histogram_functions::PlotSimpleStackInTime (h_ele_pfp_theta_after_nue_cc,  h_ele_pfp_theta_after_nue_cc_mixed,
 	                                            h_ele_pfp_theta_after_nue_cc_out_fv,
@@ -9493,7 +9557,7 @@ void selection::make_selection( const char * _file1,
 	                                            h_ele_pfp_theta_after_nc_pi0,  h_ele_pfp_theta_after_other_mixed,
 	                                            h_ele_pfp_theta_after_unmatched, h_ele_pfp_theta_after_intime,
 	                                            intime_scale_factor, data_scale_factor, "",
-	                                            "Leading Shower Theta [Degrees]", "",
+	                                            "Leading Shower Theta [degrees]", "",
 	                                            Form("%s%s", file_locate_prefix, "post_collection_cut_leading_theta_intime.pdf"));
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_after_nue_cc,  h_ele_pfp_theta_after_nue_cc_mixed,
 	                                          h_ele_pfp_theta_after_nue_cc_out_fv,
@@ -9503,7 +9567,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_after_unmatched, h_ele_pfp_theta_after_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_after_data, data_scale_factor,
 	                                          h_ele_pfp_theta_after_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Theta [Degrees]", "",
+	                                          "", "Leading Shower Theta [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_collection_cut_leading_theta_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_last_nue_cc,  h_ele_pfp_theta_last_nue_cc_mixed,
@@ -9512,7 +9576,7 @@ void selection::make_selection( const char * _file1,
 	                                      h_ele_pfp_theta_last_cosmic,  h_ele_pfp_theta_last_nc,
 	                                      h_ele_pfp_theta_last_nc_pi0,  h_ele_pfp_theta_last_other_mixed,
 	                                      h_ele_pfp_theta_last_unmatched, "",
-	                                      "Leading Shower Theta [Degrees]", "",
+	                                      "Leading Shower Theta [degrees]", "",
 	                                      Form("%s%s", file_locate_prefix, "post_cuts_leading_theta.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_last_nue_cc,  h_ele_pfp_theta_last_nue_cc_mixed,
@@ -9523,7 +9587,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_theta_last_unmatched, h_ele_pfp_theta_last_intime, intime_scale_factor,
 	                                          h_ele_pfp_theta_last_data, data_scale_factor,
 	                                          h_ele_pfp_theta_last_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Theta [Degrees]", "",
+	                                          "", "Leading Shower Theta [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_last_nue_cc,  h_ele_pfp_theta_last_nue_cc_mixed,
@@ -9534,7 +9598,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_theta_last_unmatched, h_ele_pfp_theta_last_intime, scaled_intime_scale_factor,
 		                                          h_ele_pfp_theta_last_data, data_scale_factor,
 		                                          h_ele_pfp_theta_last_dirt, dirt_scale_factor,
-		                                          "", "Leading Shower Theta [Degrees] (Scaled)", "",
+		                                          "", "Leading Shower Theta [degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_scaled_data.pdf"));
 
 		histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_last_nue_cc,  h_ele_pfp_theta_last_nue_cc_mixed,
@@ -9546,7 +9610,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_theta_last_data, data_scale_factor,
 		                                          h_ele_pfp_theta_last_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 0.98, 0.50, false, true,
-		                                          "", "Leading Shower Theta [Degrees]", "",
+		                                          "", "Leading Shower Theta [degrees]", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_theta_last_area_norm_data.pdf"));
 	}
 
@@ -9556,7 +9620,7 @@ void selection::make_selection( const char * _file1,
 	                                      h_ele_pfp_phi_cosmic,  h_ele_pfp_phi_nc,
 	                                      h_ele_pfp_phi_nc_pi0,  h_ele_pfp_phi_other_mixed,
 	                                      h_ele_pfp_phi_unmatched, "",
-	                                      "Leading Shower Phi [Degrees]", "",
+	                                      "Leading Shower Phi [degrees]", "",
 	                                      Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_phi.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_nue_cc,  h_ele_pfp_phi_nue_cc_mixed,
@@ -9568,7 +9632,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_data, data_scale_factor,
 	                                          h_ele_pfp_phi_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
-	                                          "", "Leading Shower Phi [Degrees]", "",
+	                                          "", "Leading Shower Phi [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_phi_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_phi_after_nue_cc,  h_ele_pfp_phi_after_nue_cc_mixed,
@@ -9577,7 +9641,7 @@ void selection::make_selection( const char * _file1,
 	                                      h_ele_pfp_phi_after_cosmic,  h_ele_pfp_phi_after_nc,
 	                                      h_ele_pfp_phi_after_nc_pi0,  h_ele_pfp_phi_after_other_mixed,
 	                                      h_ele_pfp_phi_after_unmatched, "",
-	                                      "Leading Shower Phi [Degrees]", "",
+	                                      "Leading Shower Phi [degrees]", "",
 	                                      Form("%s%s", file_locate_prefix, "post_collection_cut_leading_phi.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_after_nue_cc,  h_ele_pfp_phi_after_nue_cc_mixed,
@@ -9589,7 +9653,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_after_data, data_scale_factor,
 	                                          h_ele_pfp_phi_after_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
-	                                          "", "Leading Shower Phi [Degrees]", "",
+	                                          "", "Leading Shower Phi [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_collection_cut_leading_phi_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_phi_last_nue_cc,  h_ele_pfp_phi_last_nue_cc_mixed,
@@ -9598,7 +9662,7 @@ void selection::make_selection( const char * _file1,
 	                                      h_ele_pfp_phi_last_cosmic,  h_ele_pfp_phi_last_nc,
 	                                      h_ele_pfp_phi_last_nc_pi0,  h_ele_pfp_phi_last_other_mixed,
 	                                      h_ele_pfp_phi_last_unmatched, "",
-	                                      "Leading Shower Phi [Degrees]", "",
+	                                      "Leading Shower Phi [degrees]", "",
 	                                      Form("%s%s", file_locate_prefix, "post_cuts_leading_phi.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_last_nue_cc,  h_ele_pfp_phi_last_nue_cc_mixed,
@@ -9610,7 +9674,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_ele_pfp_phi_last_data, data_scale_factor,
 	                                          h_ele_pfp_phi_last_dirt, dirt_scale_factor,
 	                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
-	                                          "", "Leading Shower Phi [Degrees]", "",
+	                                          "", "Leading Shower Phi [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_last_nue_cc,  h_ele_pfp_phi_last_nue_cc_mixed,
@@ -9622,7 +9686,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_phi_last_data, data_scale_factor,
 		                                          h_ele_pfp_phi_last_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 1.0, 0.60, false, false, 1.5,
-		                                          "", "Leading Shower Phi [Degrees] (Scaled)", "",
+		                                          "", "Leading Shower Phi [degrees] (Scaled)", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_scaled_data.pdf"));
 
 		histogram_functions::PlotSimpleStackData (h_ele_pfp_phi_last_nue_cc,  h_ele_pfp_phi_last_nue_cc_mixed,
@@ -9634,7 +9698,7 @@ void selection::make_selection( const char * _file1,
 		                                          h_ele_pfp_phi_last_data, data_scale_factor,
 		                                          h_ele_pfp_phi_last_dirt, dirt_scale_factor,
 		                                          0.73, 0.98, 1.0, 0.60, false, true, 1.5,
-		                                          "", "Leading Shower Phi [Degrees]", "",
+		                                          "", "Leading Shower Phi [degrees]", "",
 		                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_phi_last_area_norm_data.pdf"));
 	}
 
@@ -9913,12 +9977,12 @@ void selection::make_selection( const char * _file1,
 	                                      Form("%s%s", file_locate_prefix, "post_cuts_showers_tracks_purity_total.pdf"), "colz text", 3, 2);
 
 	histogram_functions::Plot2DHistogram (h_ele_theta_phi_intime, "Post Cuts - Theta Phi - In Time",
-	                                      "Phi [Degrees]", "Theta [Degrees]", Form("%s%s", file_locate_prefix, "post_cuts_theta_phi_intime.pdf"));
+	                                      "Phi [degrees]", "Theta [degrees]", Form("%s%s", file_locate_prefix, "post_cuts_theta_phi_intime.pdf"));
 
 	histogram_functions::OverlayScatter(h_ele_theta_phi_nue_cc, h_ele_theta_phi_nue_cc_mixed, h_ele_theta_phi_nue_cc_out_fv, h_ele_theta_phi_numu_cc,
 	                                    h_ele_theta_phi_numu_cc_mixed, h_ele_theta_phi_cosmic, h_ele_theta_phi_nc,
 	                                    h_ele_theta_phi_nc_pi0, h_ele_theta_phi_other_mixed, h_ele_theta_phi_unmatched,
-	                                    0.15, 0.35, 0.65, 0.90, "", "Phi [Degrees]", "Theta [Degrees]",
+	                                    0.15, 0.35, 0.65, 0.90, "", "Phi [degrees]", "Theta [degrees]",
 	                                    Form("%s%s", file_locate_prefix, "post_cuts_theta_phi_scatter.pdf"));
 
 	histogram_functions::Plot2DHistogram(h_ele_eng_costheta_nue_cc, "", "Reco Electron Momentum [GeV]", "Reco Electron Cos(#theta)",
@@ -10764,7 +10828,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_theta_data,
 	        data_scale_factor,
-	        "", "Leading Shower dE/dx [MeV/cm]", "Leading Shower Theta [Degrees]",
+	        "", "Leading Shower dE/dx [MeV/cm]", "Leading Shower Theta [degrees]",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_mc_ext.pdf"),
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_data.pdf"),
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_diff.pdf"));
@@ -10784,7 +10848,7 @@ void selection::make_selection( const char * _file1,
 	        intime_scale_factor,
 	        h_dedx_theta_pre_cuts_data,
 	        data_scale_factor,
-	        "", "Leading Shower dE/dx [MeV/cm]", "Leading Shower Theta [Degrees]",
+	        "", "Leading Shower dE/dx [MeV/cm]", "Leading Shower Theta [degrees]",
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_pre_cuts_mc_ext.pdf"),
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_pre_cuts_data.pdf"),
 	        Form("%s%s", file_locate_prefix, "post_cuts_dEdx_theta_pre_cuts_diff.pdf"));
@@ -11642,9 +11706,9 @@ void selection::make_selection( const char * _file1,
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod.pdf"));
 	histogram_functions::Plot2DHistogram(h_ele_resolution_momentum_dot_prod_zoom_y, " ", "True Electron Momentum [GeV]", "True.Reco Shower Direction",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_resolution_momentum_dot_prod_zoom_y.pdf"));
-	histogram_functions::Plot2DHistogram(h_ele_true_reco_phi, " ", "True Electron Phi [Degrees]", "Reco. Electron Phi [Degrees]",
+	histogram_functions::Plot2DHistogram(h_ele_true_reco_phi, " ", "True Electron Phi [degrees]", "Reco. Electron Phi [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_true_reco_phi.pdf"));
-	histogram_functions::Plot2DHistogram(h_ele_true_reco_theta, " ", "True Electron Theta [Degrees]", "Reco. Electron Theta [Degrees]",
+	histogram_functions::Plot2DHistogram(h_ele_true_reco_theta, " ", "True Electron Theta [degrees]", "Reco. Electron Theta [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "post_cuts_true_reco_theta.pdf"));
 
 	histogram_functions::PlotSimpleStackDataMomentumRebin(
@@ -11704,7 +11768,7 @@ void selection::make_selection( const char * _file1,
 	        h_ele_pfp_theta_1shwr_data,
 	        data_scale_factor,
 	        h_ele_pfp_theta_1shwr_dirt, dirt_scale_factor,
-	        "", "Leading Shower Theta (TPCO w/ 1 Shower) [Degrees]", "",
+	        "", "Leading Shower Theta (TPCO w/ 1 Shower) [degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_theta_1shwr_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
@@ -11723,7 +11787,7 @@ void selection::make_selection( const char * _file1,
 	        h_ele_pfp_theta_2shwr_data,
 	        data_scale_factor,
 	        h_ele_pfp_theta_2shwr_dirt, dirt_scale_factor,
-	        "", "Leading Shower Theta (TPCO w/ 2+ Showers) [Degrees]", "",
+	        "", "Leading Shower Theta (TPCO w/ 2+ Showers) [degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_theta_2shwr_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
@@ -11742,7 +11806,7 @@ void selection::make_selection( const char * _file1,
 	        h_ele_pfp_phi_1shwr_data,
 	        data_scale_factor,
 	        h_ele_pfp_phi_1shwr_dirt, dirt_scale_factor,
-	        "", "Leading Shower Phi (TPCO w/ 1 Shower) [Degrees]", "",
+	        "", "Leading Shower Phi (TPCO w/ 1 Shower) [degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_phi_1shwr_data.pdf"));
 
 	histogram_functions::PlotSimpleStackData(
@@ -11761,7 +11825,7 @@ void selection::make_selection( const char * _file1,
 	        h_ele_pfp_phi_2shwr_data,
 	        data_scale_factor,
 	        h_ele_pfp_phi_2shwr_dirt, dirt_scale_factor,
-	        "", "Leading Shower Phi (TPCO w/ 2+ Showers) [Degrees]", "",
+	        "", "Leading Shower Phi (TPCO w/ 2+ Showers) [degrees]", "",
 	        Form("%s%s", file_locate_prefix, "post_cuts_pfp_phi_2shwr_data.pdf"));
 
 	//for the function to work also needs the numu_mixed -->

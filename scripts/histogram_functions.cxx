@@ -485,6 +485,15 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	h_3_clone_clone->SetMarkerStyle(20);
 	h_3_clone_clone->SetMarkerSize(0.5);
 
+	TH1D *h_error_hist = (TH1D *)h_1_clone->Clone("h_error_hist");
+	h_error_hist->Add(h_4_clone, 1);
+    h_error_hist->Add(h_2_clone, 1);
+
+	// h_error_hist->SetFillStyle(0);
+    h_error_hist->SetFillColorAlpha(12, 0.15);
+    h_error_hist->SetLineWidth(0);
+    h_error_hist->Draw("e2, same");
+
 	stack->GetYaxis()->SetLabelSize(0.04);
 	// stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
 	stack->GetYaxis()->SetTitleSize(20);
@@ -1940,7 +1949,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	leg_stack->AddEntry(h_numu_cc,         "#nu_{#mu} CC",      "f");
 	leg_stack->AddEntry(h_cosmic,          "Cosmic",            "f");
 	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC Out-FV",  "f");
-	// leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC Mixed",  "f");
+	// leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC #pi^{0}",  "f");
 	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");	
 	leg_stack->Draw();
 

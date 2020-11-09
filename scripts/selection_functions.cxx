@@ -1338,6 +1338,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 	//now to catagorise the tpco
 	if(part_cosmic > 0)
 	{
+		// if((part_nue_cc  > 0 || part_nue_bar_cc > 0) && has_pi0)  { return std::make_pair("nue_cc_mixed",leading_index); }
 		if(part_nue_cc  > 0 || part_nue_bar_cc > 0)  { return std::make_pair("nue_cc_qe",leading_index); } // Switch this to signal category to see effect on the cross sec. was nue_cc_mixed
 		if(part_numu_cc > 0 )                        { return std::make_pair("numu_cc_qe", leading_index); }
 		if(part_nc  > 0 || part_nc_pi0 > 0)          { return std::make_pair("nc",   leading_index); }
@@ -1352,6 +1353,7 @@ std::pair<std::string, int> selection_functions::TPCO_Classifier(xsecAna::TPCObj
 		if(part_nue_cc      > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
 		if(part_nue_bar_cc  > 0 && true_in_tpc == false) { return std::make_pair("nue_cc_out_fv", leading_index);   }
 
+		// if((part_nue_cc  > 0 || part_nue_bar_cc > 0) && has_pi0)  { return std::make_pair("nue_cc_mixed",leading_index); }
 		if(part_nue_cc    > 0 && tpc_obj_mode == 0   ) { return std::make_pair("nue_cc_qe",     leading_index);   }
 		if(part_nue_cc    > 0 && tpc_obj_mode == 1   ) { return std::make_pair("nue_cc_res",    leading_index);   }
 		if(part_nue_cc    > 0 && tpc_obj_mode == 2   ) { return std::make_pair("nue_cc_dis",    leading_index);   }
