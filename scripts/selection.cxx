@@ -17,7 +17,7 @@ void selection::make_selection( const char * _file1,
 	const bool _write_post_cuts = true;
 	gErrorIgnoreLevel = kWarning;
 
-	int event_to_process = 1000000000;
+	int event_to_process = 10000000;
 
 	//first we need to open the root files
 	TFile * f_var;
@@ -157,12 +157,25 @@ void selection::make_selection( const char * _file1,
 			if(mc_nu_id == 5) {_mc_nue_cc_counter_bar++; }
 			if(mc_nu_id == 7) {_mc_nue_nc_counter_bar++; }
 
-			if(true_in_tpc == true && (mc_nu_id == 1) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue++; }
-			if(true_in_tpc == true && (mc_nu_id == 5) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue_bar++; }
-			if(true_in_tpc == true && (mc_nu_id == 3) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue_nc++; }
-			if(true_in_tpc == true && (mc_nu_id == 7) && mc_nu_energy > threshold) {total_mc_entries_inFV_nue_nc_bar++; }
+			if(true_in_tpc == true && (mc_nu_id == 1) && mc_nu_energy > threshold) {
+				if (mc_ele_energy > elec_th)
+					total_mc_entries_inFV_nue++;
+			}
+			if(true_in_tpc == true && (mc_nu_id == 5) && mc_nu_energy > threshold) {
+				if (mc_ele_energy > elec_th)
+					total_mc_entries_inFV_nue_bar++;
+			}
+			if(true_in_tpc == true && (mc_nu_id == 3) && mc_nu_energy > threshold) {
+				if (mc_ele_energy > elec_th)
+					total_mc_entries_inFV_nue_nc++; 
+			}
+			if(true_in_tpc == true && (mc_nu_id == 7) && mc_nu_energy > threshold) {
+				if (mc_ele_energy > elec_th)
+					total_mc_entries_inFV_nue_nc_bar++;
+			}
+		
 
-			if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) && mc_nu_energy > threshold)
+			if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) &&  mc_nu_energy < threshold)
 			{
 				//0 for event number (not in the tree), 0 for classifier id (not relevant at truth level)
 				neutrino_in_tpc_list << 0 << ", " << 0 << ", " << mc_nu_id << ", " <<
@@ -206,6 +219,7 @@ void selection::make_selection( const char * _file1,
 
 
 	int total_mc_entries_inFV = total_mc_entries_inFV_nue + total_mc_entries_inFV_nue_bar;
+	std::cout  << "Eff denom: " << total_mc_entries_inFV<< std::endl;
 
 	if(detector_variations == false)
 	{
@@ -312,6 +326,9 @@ void selection::make_selection( const char * _file1,
 		//need a text file with the run, subrun output
 		std::ofstream run_subrun_file_data;
 		run_subrun_file_data.open("run_subrun_list_data.txt");
+
+		std::ofstream run_subrun_file_data_open_ang;
+		run_subrun_file_data_open_ang.open("list_open_ang_data.txt");
 		int data_run = 0;
 		int data_subrun = 0;
 		int last_data_run = 0;
@@ -370,7 +387,7 @@ void selection::make_selection( const char * _file1,
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * data_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(data_f, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		_cuts_instance.selection_cuts::SetXYflashVector(data_f, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 0);
 		std::cout << "[Data] Largest Flash Vector Size: " << data_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < data_total_entries; event++)
@@ -636,6 +653,38 @@ void selection::make_selection( const char * _file1,
 			//*****************************************************
 			//****** open angle cut for the leading shower ********
 			//******************************************************
+			// Write the data run subruns to a file
+			for(unsigned int y = 0; y < data_tpc_object_container_v->size(); y++){
+
+				if(passed_tpco_data->at(y).first == 0) {continue; }
+
+				auto const tpc_obj = data_tpc_object_container_v->at(y);
+				const int n_pfp = tpc_obj.NumPFParticles();
+				int leading_index = 0;
+				int leading_hits  = 0;
+				for(int j = 0; j < n_pfp; j++)
+				{
+					auto const part = tpc_obj.GetParticle(j);
+					const int pfp_pdg = part.PFParticlePdgCode();
+					const int n_pfp_hits = part.NumPFPHits();
+					if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+					{
+						leading_hits = n_pfp_hits;
+						leading_index = j;
+					}
+				}//end loop pfparticles
+				auto const leading_shower = tpc_obj.GetParticle(leading_index);
+				const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
+				// Add the selected events to the file
+				int k_data_run    = data_tpc_object_container_v->at(y).RunNumber();
+				int k_data_subrun = data_tpc_object_container_v->at(y).SubRunNumber();
+				int k_data_event  = data_tpc_object_container_v->at(y).EventNumber();
+				if (leading_open_angle >18 && leading_open_angle < 30) run_subrun_file_data_open_ang << k_data_run << " " << k_data_subrun << " " << k_data_event << "\n";
+     		}
+
+
+
 			_data_functions_instance.selection_functions_data::NumShowersOpenAngleData(data_tpc_object_container_v, passed_tpco_data, h_pfp_shower_open_angle_data);
 			_data_functions_instance.selection_functions_data::PostCutOpenAngleData(data_tpc_object_container_v, passed_tpco_data,
 			                                                                        _verbose, h_leading_shower_open_angle_data);
@@ -698,8 +747,10 @@ void selection::make_selection( const char * _file1,
 												    "data");
 
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_pre_dedx_data);
+			_data_functions_instance.selection_functions_data::LeadingEffAngData(data_tpc_object_container_v, passed_tpco_data, h_ele_pfp_effective_ang_pre_dedx_data);
 			_cuts_instance.selection_cuts::dEdxCut(data_tpc_object_container_v, passed_tpco_data, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_post_dedx_data);
+			_data_functions_instance.selection_functions_data::LeadingEffAngData(data_tpc_object_container_v, passed_tpco_data, h_ele_pfp_effective_ang_post_dedx_data);
 			_data_functions_instance.selection_functions_data::TabulateOriginsData(data_tpc_object_container_v, passed_tpco_data, tabulated_origins_data);
 			_functions_instance.selection_functions::TotalOrigins(tabulated_origins_data, data_dedx_counter_v);
 
@@ -826,6 +877,7 @@ void selection::make_selection( const char * _file1,
 
 			_data_functions_instance.selection_functions_data::LeadingPhiData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_phi_last_data);
 			_data_functions_instance.selection_functions_data::LeadingThetaData(data_tpc_object_container_v, passed_tpco_data, _verbose, h_ele_pfp_theta_last_data);
+			_data_functions_instance.selection_functions_data::LeadingEffAngData(data_tpc_object_container_v, passed_tpco_data, h_ele_pfp_effective_ang_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, theta_translation, phi_translation,
 			                                                                       _verbose, h_ele_cos_theta_last_trans_data);
 			_data_functions_instance.selection_functions_data::LeadingCosThetaData(data_tpc_object_container_v, passed_tpco_data, 0, 0,
@@ -973,6 +1025,9 @@ void selection::make_selection( const char * _file1,
 		int last_data_run = 0;
 		int last_data_subrun = 0;
 
+		std::ofstream run_subrun_file_dirt_open_ang;
+		run_subrun_file_dirt_open_ang.open("list_open_ang_dirt.txt");
+
 		std::cout << "=====================" << std::endl;
 		std::cout << "== Dirt Background ==" << std::endl;
 		std::cout << "=====================" << std::endl;
@@ -1004,7 +1059,7 @@ void selection::make_selection( const char * _file1,
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * dirt_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(dirt_f, dirt_optree, dirt_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		_cuts_instance.selection_cuts::SetXYflashVector(dirt_f, dirt_optree, dirt_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 2);
 		std::cout << "Largest Flash Vector Size: " << dirt_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < in_time_total_entries; event++)
@@ -1299,6 +1354,37 @@ void selection::make_selection( const char * _file1,
 			//*****************************************************
 			//****** open angle cut for the leading shower ********
 			//******************************************************
+			// Write the data run subruns to a file
+			for(unsigned int y = 0; y < dirt_tpc_object_container_v->size(); y++){
+
+				if(passed_tpco_dirt->at(y).first == 0) {continue; }
+
+				auto const tpc_obj = dirt_tpc_object_container_v->at(y);
+				const int n_pfp = tpc_obj.NumPFParticles();
+				int leading_index = 0;
+				int leading_hits  = 0;
+				for(int j = 0; j < n_pfp; j++)
+				{
+					auto const part = tpc_obj.GetParticle(j);
+					const int pfp_pdg = part.PFParticlePdgCode();
+					const int n_pfp_hits = part.NumPFPHits();
+					if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+					{
+						leading_hits = n_pfp_hits;
+						leading_index = j;
+					}
+				}//end loop pfparticles
+				auto const leading_shower = tpc_obj.GetParticle(leading_index);
+				const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
+				// Add the selected events to the file
+				int k_dirt_run    = dirt_tpc_object_container_v->at(y).RunNumber();
+				int k_dirt_subrun = dirt_tpc_object_container_v->at(y).SubRunNumber();
+				int k_dirt_event  = dirt_tpc_object_container_v->at(y).EventNumber();
+				if (leading_open_angle >18 && leading_open_angle < 30)run_subrun_file_dirt_open_ang << k_dirt_run << " " << k_dirt_subrun << " " << k_dirt_event << "\n";
+
+     		}
+
 			_functions_instance.selection_functions::NumShowersOpenAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt, h_pfp_shower_open_angle_dirt);
 			_functions_instance.selection_functions::PostCutOpenAngleInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
 			                                                                _verbose, h_leading_shower_open_angle_dirt);
@@ -1371,10 +1457,14 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, 0, 0, _verbose,
 			                                                            h_ele_pfp_theta_pre_dedx_dirt);
 
+			_functions_instance.selection_functions::LeadingEffAngInTime(dirt_tpc_object_container_v, passed_tpco_dirt, h_ele_pfp_effective_ang_pre_dedx_dirt);
+
 			_cuts_instance.selection_cuts::dEdxCut(dirt_tpc_object_container_v, passed_tpco_dirt, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 
 			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt, 0, 0, _verbose,
 			                                                            h_ele_pfp_theta_post_dedx_dirt);
+
+			_functions_instance.selection_functions::LeadingEffAngInTime(dirt_tpc_object_container_v, passed_tpco_dirt, h_ele_pfp_effective_ang_post_dedx_dirt);
 
 			_functions_instance.selection_functions::TabulateOriginsInTime(dirt_tpc_object_container_v, passed_tpco_dirt, tabulated_origins_dirt);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_dirt, dirt_dedx_counter_v);
@@ -1526,6 +1616,7 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::LeadingPhiInTime(dirt_tpc_object_container_v, passed_tpco_dirt, _verbose, h_ele_pfp_phi_last_dirt);
 			_functions_instance.selection_functions::LeadingThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
 			                                                            theta_translation, phi_translation, _verbose, h_ele_pfp_theta_last_dirt);
+			_functions_instance.selection_functions::LeadingEffAngInTime(dirt_tpc_object_container_v, passed_tpco_dirt, h_ele_pfp_effective_ang_dirt);
 			_functions_instance.selection_functions::LeadingCosThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
 			                                                               0, 0, _verbose, h_ele_cos_theta_last_dirt);
 			_functions_instance.selection_functions::LeadingCosThetaInTime(dirt_tpc_object_container_v, passed_tpco_dirt,
@@ -1649,6 +1740,9 @@ void selection::make_selection( const char * _file1,
 		int last_data_run = 0;
 		int last_data_subrun = 0;
 
+		std::ofstream run_subrun_file_intime_open_ang;
+		run_subrun_file_intime_open_ang.open("list_open_ang_intime.txt");
+
 		std::cout << "=====================" << std::endl;
 		std::cout << "== In-Time Cosmics ==" << std::endl;
 		std::cout << "=====================" << std::endl;
@@ -1680,7 +1774,7 @@ void selection::make_selection( const char * _file1,
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * intime_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(intime_f, intime_optree, intime_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		_cuts_instance.selection_cuts::SetXYflashVector(intime_f, intime_optree, intime_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 1);
 		std::cout << "Largest Flash Vector Size: " << intime_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < in_time_total_entries; event++)
@@ -1977,6 +2071,38 @@ void selection::make_selection( const char * _file1,
 			//*****************************************************
 			//****** open angle cut for the leading shower ********
 			//******************************************************
+			// Write the data run subruns to a file
+			for(unsigned int y = 0; y < intime_tpc_object_container_v->size(); y++){
+
+				if(passed_tpco_intime->at(y).first == 0) {continue; }
+
+				auto const tpc_obj = intime_tpc_object_container_v->at(y);
+				const int n_pfp = tpc_obj.NumPFParticles();
+				int leading_index = 0;
+				int leading_hits  = 0;
+				for(int j = 0; j < n_pfp; j++)
+				{
+					auto const part = tpc_obj.GetParticle(j);
+					const int pfp_pdg = part.PFParticlePdgCode();
+					const int n_pfp_hits = part.NumPFPHits();
+					if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+					{
+						leading_hits = n_pfp_hits;
+						leading_index = j;
+					}
+				}//end loop pfparticles
+				auto const leading_shower = tpc_obj.GetParticle(leading_index);
+				const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
+				// Add the selected events to the file
+				int k_intime_run    = intime_tpc_object_container_v->at(y).RunNumber();
+				int k_intime_subrun = intime_tpc_object_container_v->at(y).SubRunNumber();
+				int k_intime_event  = intime_tpc_object_container_v->at(y).EventNumber();
+				if (leading_open_angle >18 && leading_open_angle < 30) run_subrun_file_intime_open_ang << k_intime_run << " " << k_intime_subrun << " " << k_intime_event << "\n";
+
+
+     		}
+
 			_functions_instance.selection_functions::NumShowersOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime, h_pfp_shower_open_angle_intime);
 			_functions_instance.selection_functions::PostCutOpenAngleInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                                _verbose, h_leading_shower_open_angle_intime);
@@ -2049,10 +2175,14 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0, _verbose,
 			                                                            h_ele_pfp_theta_pre_dedx_intime);
 
+			_functions_instance.selection_functions::LeadingEffAngInTime(intime_tpc_object_container_v, passed_tpco_intime, h_ele_pfp_effective_ang_pre_dedx_intime);
+
 			_cuts_instance.selection_cuts::dEdxCut(intime_tpc_object_container_v, passed_tpco_intime, tolerance_dedx_min, tolerance_dedx_max, _verbose, false);
 
 			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime, 0, 0, _verbose,
 			                                                            h_ele_pfp_theta_post_dedx_intime);
+
+			_functions_instance.selection_functions::LeadingEffAngInTime(intime_tpc_object_container_v, passed_tpco_intime, h_ele_pfp_effective_ang_post_dedx_intime);
 
 			_functions_instance.selection_functions::TabulateOriginsInTime(intime_tpc_object_container_v, passed_tpco_intime, tabulated_origins_intime);
 			_functions_instance.selection_functions::TotalOriginsInTime(tabulated_origins_intime, intime_dedx_counter_v);
@@ -2204,6 +2334,7 @@ void selection::make_selection( const char * _file1,
 			_functions_instance.selection_functions::LeadingPhiInTime(intime_tpc_object_container_v, passed_tpco_intime, _verbose, h_ele_pfp_phi_last_intime);
 			_functions_instance.selection_functions::LeadingThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                            theta_translation, phi_translation, _verbose, h_ele_pfp_theta_last_intime);
+			_functions_instance.selection_functions::LeadingEffAngInTime(intime_tpc_object_container_v, passed_tpco_intime, h_ele_pfp_effective_ang_intime);
 			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
 			                                                               0, 0, _verbose, h_ele_cos_theta_last_intime);
 			_functions_instance.selection_functions::LeadingCosThetaInTime(intime_tpc_object_container_v, passed_tpco_intime,
@@ -2435,6 +2566,10 @@ void selection::make_selection( const char * _file1,
 	std::cout << "Total Events     : " << total_entries << std::endl;
 	std::cout << "Total Events (MC): " << mctruth_counter_tree->GetEntries() << std::endl;
 
+
+	std::ofstream run_subrun_file_mc_open_ang;
+	run_subrun_file_mc_open_ang.open("list_open_ang_mc.txt");
+
 	std::vector<int> * passed_runs = new std::vector<int>;
 	//passed runs is filled with 0, 1, or 2
 	//0 = not in time
@@ -2461,7 +2596,7 @@ void selection::make_selection( const char * _file1,
 
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
-	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 2);
 
 	int test_mc_nue_cc_counter = 0;
 	int test_mc_numu_cc_counter = 0;
@@ -2530,7 +2665,17 @@ void selection::make_selection( const char * _file1,
 		const bool true_in_tpc = true_in_tpc_v.at(event);
 
 		// Skip nue's that are below threshold in efficiency definition
-		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) && mc_nu_energy < threshold) continue; 
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) && (mc_nu_energy < threshold)) continue; 
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) && (mc_ele_energy < elec_th)) continue; 
+
+		// counters for by efficiency by label
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)){
+
+
+		}
+
+
+
 
 		if(mc_nu_id == 1) {test_mc_nue_cc_counter++; }
 		if(mc_nu_id == 2) {test_mc_numu_cc_counter++; }
@@ -2575,6 +2720,9 @@ void selection::make_selection( const char * _file1,
 		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 >= 12.82    && largest_flash_v.at(4)+1.0 < 15.22) )     eff_flash_vec_gen.at(3)++; 
 		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)  &&  (largest_flash_v.at(4)+1.0 < 5.62      || largest_flash_v.at(4)+1.0 >= 15.22) )    eff_flash_vec_gen.at(4)++; 
 
+		if(true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5)){
+			if (has_pi0) tot_nue_cc_pi0_den++;
+		}
 
 		//List of TPC Objects which pass the cuts
 		std::vector<std::pair<int, std::string> > * passed_tpco = new std::vector<std::pair<int, std::string> >;
@@ -2625,6 +2773,17 @@ void selection::make_selection( const char * _file1,
 		}
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
 		{
+
+			// Calculate the true effective angle for the efficiency
+			TVector3 shower_vector(mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z);
+			shower_vector.Unit();
+			
+			TVector3 v_targ_uboone(-31387.58422, -3316.402543, -60100.2414);
+			TVector3 v_nu_vtx(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+			TVector3 v_targ_to_vtx = (-1*v_targ_uboone + v_nu_vtx).Unit();
+
+			double effective_angle = shower_vector.Angle(v_targ_to_vtx) * 180 / 3.14159;
+
 			h_nue_eng_eff_den->Fill(mc_nu_energy);
 			h_ele_eng_eff_den->Fill(mc_ele_energy);
 			h_nue_vtx_x_eff_den->Fill(mc_nu_vtx_x);
@@ -2646,6 +2805,9 @@ void selection::make_selection( const char * _file1,
 			h_nue_true_theta->Fill( acos(mc_cos_theta) * (180 / 3.1415));
 			h_nue_true_phi->Fill(mc_phi * (180 / 3.1415));
 			h_nue_true_theta_phi->Fill(mc_phi * (180 / 3.1415), acos(mc_cos_theta) * (180 / 3.1415));
+			h_ele_effective_ang_eff_den->Fill(effective_angle);
+
+			h_nu_eng_eff_den->Fill(mc_nu_energy);
 		}
 		//********************************
 		//begin cuts!!!
@@ -2696,6 +2858,7 @@ void selection::make_selection( const char * _file1,
 		//temporary location for the first teff
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
+			
 			h_ele_eng_eff_num->Fill(mc_ele_energy);
 		}
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
@@ -3014,10 +3177,14 @@ void selection::make_selection( const char * _file1,
 		{
 			h_ele_eng_eff_num_pre_cuts->Fill(mc_ele_energy);
 			h_ele_cos_theta_eff_num_pre_cuts->Fill(mc_ele_cos_theta);
+
 		}
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
 			h_ele_eng_eff_in_fv->Fill(mc_ele_energy);
+			h_nu_eng_eff_in_fv->Fill(mc_nu_energy);
+			h_ele_phi_eff_in_fv->Fill(mc_ele_phi* (180 / 3.1415));
+			h_ele_theta_eff_in_fv->Fill(mc_ele_theta);
 		}
 		//*****************************
 		//**** vertex to flash cut ****
@@ -3118,6 +3285,9 @@ void selection::make_selection( const char * _file1,
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
 			h_ele_eng_eff_vtx_flash->Fill(mc_ele_energy);
+			h_nu_eng_eff_vtx_flash->Fill(mc_nu_energy);
+			h_ele_phi_eff_vtx_flash->Fill(mc_ele_phi* (180 / 3.1415));
+			h_ele_theta_eff_vtx_flash->Fill(mc_ele_theta);
 		}
 
 		//******************************************************
@@ -3219,6 +3389,7 @@ void selection::make_selection( const char * _file1,
 		// Set counters for the truth leading shower
 		_functions_instance.selection_functions::PostCutsLeadingMomentumTrueParticle(tpc_object_container_v, passed_tpco, tpco_classifier_v, counter_ele_shrvtx, counter_gamma_shrvtx, counter_other_shrvtx);
 
+
 		
 		//******************************************************
 		// **** distance between pfp track and nue object cut **
@@ -3306,7 +3477,30 @@ void selection::make_selection( const char * _file1,
 
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
+			double mc_ele_theta = acos(mc_ele_dir_z) * (180/3.1415);
+			double mc_ele_phi = atan2(mc_ele_dir_y, mc_ele_dir_x) * (180/3.1415) ;
+
+			h_ele_phi_eff_num_shrhits_pre->Fill(mc_ele_phi);
+			h_ele_theta_eff_num_shrhits_pre->Fill(mc_ele_theta);
+
+			// Calculate the true effective angle for the efficiency
+			TVector3 shower_vector(mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z);
+			shower_vector.Unit();
+
+
+			TVector3 v_targ_uboone(-31387.58422, -3316.402543, -60100.2414);
+			TVector3 v_nu_vtx(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+			TVector3 v_targ_to_vtx = (-1*v_targ_uboone + v_nu_vtx).Unit();
+			double effective_angle = shower_vector.Angle(v_targ_to_vtx) * 180 / 3.14159;
+
+			// std::cout << effective_angle << std::endl;
+
+			h_ele_effective_ang_eff_num_shrhits_pre->Fill(effective_angle);
+
 			h_ele_eng_eff_trk_vtx->Fill(mc_ele_energy);
+			h_nu_eng_eff_trk_vtx->Fill(mc_nu_energy);
+			h_ele_phi_eff_trk_vtx->Fill(mc_ele_phi);
+			h_ele_theta_eff_trk_vtx->Fill(mc_ele_theta);
 		}
 		//****************************************************
 		// ******** hit threshold for showers cut *************
@@ -3474,7 +3668,23 @@ void selection::make_selection( const char * _file1,
 
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
+			double mc_ele_theta = acos(mc_ele_dir_z) * (180/3.1415);
+			double mc_ele_phi = atan2(mc_ele_dir_y, mc_ele_dir_x) * (180/3.1415) ;
+
+			// Calculate the true effective angle for the efficiency
+			TVector3 shower_vector(mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z);
+			shower_vector.Unit();
+
+			TVector3 v_targ_uboone(-31387.58422, -3316.402543, -60100.2414);
+			TVector3 v_nu_vtx(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+			TVector3 v_targ_to_vtx = (-1*v_targ_uboone + v_nu_vtx).Unit();
+			double effective_angle = shower_vector.Angle(v_targ_to_vtx) * 180 / 3.14159;
+
+			h_ele_effective_ang_eff_num_shrhits->Fill(effective_angle);
+
 			h_ele_eng_eff_hit->Fill(mc_ele_energy);
+			h_ele_phi_eff_num_shrhits->Fill(mc_ele_phi);
+			h_ele_theta_eff_num_shrhits->Fill(mc_ele_theta);
 		}
 
 		//***************************************//
@@ -3689,10 +3899,45 @@ void selection::make_selection( const char * _file1,
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
 			h_ele_eng_eff_yhit->Fill(mc_ele_energy);
+			h_nu_eng_eff_yhit->Fill(mc_nu_energy);
+			h_ele_phi_eff_yhit->Fill(mc_ele_phi* (180 / 3.1415));
+			h_ele_theta_eff_yhit->Fill(mc_ele_theta);
 		}
 		//*****************************************************
 		//****** open angle cut for the leading shower ********
 		//******************************************************
+		// Write the data run subruns to a file
+			for(unsigned int y = 0; y < tpc_object_container_v->size(); y++){
+
+				if(passed_tpco->at(y).first == 0) {continue; }
+
+				auto const tpc_obj = tpc_object_container_v->at(y);
+				const int n_pfp = tpc_obj.NumPFParticles();
+				int leading_index = 0;
+				int leading_hits  = 0;
+				for(int j = 0; j < n_pfp; j++)
+				{
+					auto const part = tpc_obj.GetParticle(j);
+					const int pfp_pdg = part.PFParticlePdgCode();
+					const int n_pfp_hits = part.NumPFPHits();
+					if(pfp_pdg == 11 && n_pfp_hits > leading_hits)
+					{
+						leading_hits = n_pfp_hits;
+						leading_index = j;
+					}
+				}//end loop pfparticles
+				auto const leading_shower = tpc_obj.GetParticle(leading_index);
+				const double leading_open_angle = leading_shower.pfpOpenAngle() * (180 / 3.1415);
+
+				// Add the selected events to the file
+				int k_mc_run    = tpc_object_container_v->at(y).RunNumber();
+				int k_mc_subrun = tpc_object_container_v->at(y).SubRunNumber();
+				int k_mc_event  = tpc_object_container_v->at(y).EventNumber();
+				if (leading_open_angle >18 && leading_open_angle < 30) run_subrun_file_mc_open_ang << k_mc_run << " " << k_mc_subrun << " " << k_mc_event << "\n";
+				// if (mc_ele_energy < 0.1) std::cout << "Interesting event: " <<k_mc_run << " " << k_mc_subrun << " " << k_mc_event << "  " << mc_ele_energy<<  "\n";
+     		}
+
+
 		_functions_instance.selection_functions::dEdxVsOpenAngle(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                         h_dedx_open_angle_nue_cc, h_dedx_open_angle_nue_cc_out_fv,
 		                                                         h_dedx_open_angle_nue_cc_mixed, h_dedx_open_angle_numu_cc,
@@ -3856,6 +4101,18 @@ void selection::make_selection( const char * _file1,
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
 			h_ele_eng_eff_open_angle->Fill(mc_ele_energy);
+
+			// Calculate the true effective angle for the efficiency
+			TVector3 shower_vector(mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z);
+			shower_vector.Unit();
+
+
+			TVector3 v_targ_uboone(-31387.58422, -3316.402543, -60100.2414);
+			TVector3 v_nu_vtx(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+			TVector3 v_targ_to_vtx = (-1*v_targ_uboone + v_nu_vtx).Unit();
+			double effective_angle = shower_vector.Angle(v_targ_to_vtx) * 180 / 3.14159;
+
+			h_ele_effective_ang_eff_num_dedx_pre->Fill(effective_angle);
 		}
 		
 
@@ -3974,53 +4231,6 @@ void selection::make_selection( const char * _file1,
 		                                                                h_dedx_slice_3_zoom_cosmic,
 		                                                                h_dedx_slice_3_zoom_other_mixed,
 		                                                                h_dedx_slice_3_zoom_unmatched);
-        /*
-                //testing which method of dE/dx is best
-                _functions_instance.selection_functions::EvaluatedEdxMethod(tpc_object_container_v, passed_tpco, tpco_classifier_v,
-                                                                            h_dedx_nue,
-                                                                            h_dedx_nue_out_fv,
-                                                                            h_dedx_nue_mixed,
-                                                                            h_dedx_numu,
-                                                                            h_dedx_nc,
-                                                                            h_dedx_nc_pi0,
-                                                                            h_dedx_cosmic,
-                                                                            h_dedx_other_mixed,
-                                                                            h_dedx_unmatched,
-                                                                            h_dedx_cali_nue,
-                                                                            h_dedx_cali_nue_out_fv,
-                                                                            h_dedx_cali_nue_mixed,
-                                                                            h_dedx_cali_numu,
-                                                                            h_dedx_cali_nc,
-                                                                            h_dedx_cali_nc_pi0,
-                                                                            h_dedx_cali_cosmic,
-                                                                            h_dedx_cali_other_mixed,
-                                                                            h_dedx_cali_unmatched,
-                                                                            h_dedx_omit_nue,
-                                                                            h_dedx_omit_nue_out_fv,
-                                                                            h_dedx_omit_nue_mixed,
-                                                                            h_dedx_omit_numu,
-                                                                            h_dedx_omit_nc,
-                                                                            h_dedx_omit_nc_pi0,
-                                                                            h_dedx_omit_cosmic,
-                                                                            h_dedx_omit_other_mixed,
-                                                                            h_dedx_omit_unmatched,
-                                                                            h_dedx_omit_cali_nue,
-                                                                            h_dedx_omit_cali_nue_out_fv,
-                                                                            h_dedx_omit_cali_nue_mixed,
-                                                                            h_dedx_omit_cali_numu,
-                                                                            h_dedx_omit_cali_nc,
-                                                                            h_dedx_omit_cali_nc_pi0,
-                                                                            h_dedx_omit_cali_cosmic,
-                                                                            h_dedx_omit_cali_other_mixed,
-                                                                            h_dedx_omit_cali_unmatched,
-                                                                            h_dedx_yz_ratio_cali,
-                                                                            h_dedx_yz_ratio_omit,
-                                                                            h_dedx_yz_ratio_omit_cali,
-                                                                            h_dedx_yz_ratio_cali_nue,
-                                                                            h_dedx_yz_ratio_omit_nue,
-                                                                            h_dedx_yz_ratio_omit_cali_nue
-                                                                            );
-        */
 
 		_functions_instance.selection_functions::LeadingTheta(tpc_object_container_v, passed_tpco, 0, 0, _verbose, tpco_classifier_v,
 		                                                      h_ele_pfp_theta_pre_dedx_nue_cc,
@@ -4033,6 +4243,18 @@ void selection::make_selection( const char * _file1,
 		                                                      h_ele_pfp_theta_pre_dedx_cosmic,
 		                                                      h_ele_pfp_theta_pre_dedx_other_mixed,
 		                                                      h_ele_pfp_theta_pre_dedx_unmatched);
+
+		_functions_instance.selection_functions::LeadingEffAng(tpc_object_container_v, passed_tpco, tpco_classifier_v,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_nue_cc,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_nue_cc_out_fv,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_nue_cc_mixed,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_numu_cc,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_numu_cc_mixed,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_nc,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_nc_pi0,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_cosmic,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_other_mixed,
+		                                                      h_ele_pfp_effective_ang_pre_dedx_unmatched);
 
 
 		_cuts_instance.selection_cuts::dEdxCut(tpc_object_container_v, passed_tpco, tolerance_dedx_min, tolerance_dedx_max, _verbose, true);
@@ -4049,11 +4271,26 @@ void selection::make_selection( const char * _file1,
 		                                                      h_ele_pfp_theta_post_dedx_other_mixed,
 		                                                      h_ele_pfp_theta_post_dedx_unmatched);
 
+		_functions_instance.selection_functions::LeadingEffAng(tpc_object_container_v, passed_tpco, tpco_classifier_v,
+														h_ele_pfp_effective_ang_post_dedx_nue_cc,
+														h_ele_pfp_effective_ang_post_dedx_nue_cc_out_fv,
+														h_ele_pfp_effective_ang_post_dedx_nue_cc_mixed,
+														h_ele_pfp_effective_ang_post_dedx_numu_cc,
+														h_ele_pfp_effective_ang_post_dedx_numu_cc_mixed,
+														h_ele_pfp_effective_ang_post_dedx_nc,
+														h_ele_pfp_effective_ang_post_dedx_nc_pi0,
+														h_ele_pfp_effective_ang_post_dedx_cosmic,
+														h_ele_pfp_effective_ang_post_dedx_other_mixed,
+														h_ele_pfp_effective_ang_post_dedx_unmatched);
+
 		
 		// Counters for efficiency numerator
 		for(int i = 0; i < n_tpc_obj; i++) {
 			if(passed_tpco->at(i).first == 1){
-				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_dedx)+=1.0;
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) {
+					eff_num_counters.at(k_dedx)+=1.0;
+					if (has_pi0)tot_nue_cc_pi0_pre_shrdistcut++;
+				}
 				break;
 			}
 		}
@@ -4129,9 +4366,22 @@ void selection::make_selection( const char * _file1,
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 && detector_variations == false)
 		{
 			h_ele_eng_eff_dedx->Fill(mc_ele_energy);
-		}
+			h_nu_eng_eff_dedx->Fill(mc_nu_energy);
+			h_ele_phi_eff_dedx->Fill(mc_ele_phi* (180 / 3.1415));
+			h_ele_theta_eff_dedx->Fill(mc_ele_theta);
 
-		
+			// Calculate the true effective angle for the efficiency
+			TVector3 shower_vector(mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z);
+			shower_vector.Unit();
+
+
+			TVector3 v_targ_uboone(-31387.58422, -3316.402543, -60100.2414);
+			TVector3 v_nu_vtx(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+			TVector3 v_targ_to_vtx = (-1*v_targ_uboone + v_nu_vtx).Unit();
+			double effective_angle = shower_vector.Angle(v_targ_to_vtx) * 180 / 3.14159;
+
+			h_ele_effective_ang_eff_num_dedx->Fill(effective_angle);
+		}		
 		//***************************************************************************
 		// ******* Secondary Showers Distance Cut *****************
 		//***************************************************************************
@@ -4147,7 +4397,10 @@ void selection::make_selection( const char * _file1,
 		// Counters for efficiency numerator
 		for(int i = 0; i < n_tpc_obj; i++) {
 			if(passed_tpco->at(i).first == 1){
-				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) eff_num_counters.at(k_2nd_shr_vtx_dist)+=1.0;
+				if( true_in_tpc == true && (mc_nu_id == 1 || mc_nu_id == 5) ) {
+					eff_num_counters.at(k_2nd_shr_vtx_dist)+=1.0;
+					if (has_pi0) tot_nue_cc_pi0_post_shrdistcut++;
+				}
 				break;
 			}
 		}
@@ -4219,6 +4472,10 @@ void selection::make_selection( const char * _file1,
 		//******************************************************************************
 		// ********** Hit Length Ratio Cut *************
 		//******************************************************************************
+		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && detector_variations == false)
+			_functions_instance.selection_functions::TrueHitDensityStudy(tpc_object_container_v, passed_tpco, tpco_classifier_v, h_shr_hit_density_true_energy, mc_ele_energy, h_shr_hit_density_true_energy_nu, mc_nu_energy);
+
+
 		_functions_instance.selection_functions::HitLengthRatio(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                        h_hit_length_ratio_nue_cc,
 		                                                        h_hit_length_ratio_nue_cc_out_fv,
@@ -4507,7 +4764,12 @@ void selection::make_selection( const char * _file1,
 
 		if((mc_nu_id == 1 || mc_nu_id == 5) && true_in_tpc == true && tabulated_origins->at(0) >= 1 & detector_variations == false)
 		{
+			if (mc_nu_energy < .3) std::cout  << mc_ele_energy <<" " << mc_nu_energy << std::endl;
 			h_ele_eng_eff_contain->Fill(mc_ele_energy);
+			h_nu_eng_eff_contain->Fill(mc_nu_energy);
+			h_ele_phi_eff_contain->Fill(mc_ele_phi* (180 / 3.1415));
+			h_ele_theta_eff_contain->Fill(mc_ele_theta);
+
 		}
 
 		// Set counters for the truth leading shower
@@ -4520,12 +4782,6 @@ void selection::make_selection( const char * _file1,
 		
 
 		
-
-
-		
-
-		
-
 
 		//*************************************
 		// ******** End Selection Cuts! ******
@@ -4619,8 +4875,23 @@ void selection::make_selection( const char * _file1,
 			                                                            h_mc_ele_e_13, h_reco_ele_e_13, h_mc_reco_ele_e_13);
 			if(tabulated_origins->at(0) >= 1)
 			{
+
+				if (has_pi0) tot_nue_cc_pi0_num++;
+
+				// Calculate the true effective angle for the efficiency
+				TVector3 shower_vector(mc_ele_dir_x, mc_ele_dir_y, mc_ele_dir_z);
+				shower_vector.Unit();
+				
+				TVector3 v_targ_uboone(-31387.58422, -3316.402543, -60100.2414);
+				TVector3 v_nu_vtx(mc_nu_vtx_x, mc_nu_vtx_y, mc_nu_vtx_z);
+				TVector3 v_targ_to_vtx = (-1*v_targ_uboone + v_nu_vtx).Unit();
+				double effective_angle = shower_vector.Angle(v_targ_to_vtx) * 180 / 3.14159;
+
+
 				selected_energy_vector.push_back(mc_nu_energy);
 				h_nue_eng_eff_num->Fill(mc_nu_energy);
+				h_nue_elec_true_energy->Fill(mc_nu_energy, mc_ele_energy);
+				h_nue_eng_eff_num_fewer_bins->Fill(mc_nu_energy, data_scale_factor);
 				//h_ele_eng_eff_num->Fill(mc_ele_energy);
 				h_nue_vtx_x_eff_num->Fill(mc_nu_vtx_x);
 				h_nue_vtx_y_eff_num->Fill(mc_nu_vtx_y);
@@ -4638,6 +4909,8 @@ void selection::make_selection( const char * _file1,
 				h_nue_phi_eff_num->Fill(mc_phi);
 				h_ele_cos_theta_eff_num->Fill(mc_ele_cos_theta);
 				h_ele_phi_eff_num->Fill(mc_ele_phi * (180/3.1415));
+				h_ele_effective_ang_eff_num->Fill(effective_angle);
+
 				_functions_instance.selection_functions::EnergyHits(tpc_object_container_v, passed_tpco, _verbose,
 				                                                    tpco_classifier_v, mc_nu_energy, mc_ele_energy,
 				                                                    h_ele_eng_total_hits, h_ele_eng_colleciton_hits, h_nu_eng_total_hits, h_nu_eng_collection_hits);
@@ -4926,6 +5199,18 @@ void selection::make_selection( const char * _file1,
 		                                                      h_ele_pfp_theta_last_cosmic,
 		                                                      h_ele_pfp_theta_last_other_mixed,
 		                                                      h_ele_pfp_theta_last_unmatched);
+		
+		_functions_instance.selection_functions::LeadingEffAng(tpc_object_container_v, passed_tpco, tpco_classifier_v,
+		                                                      h_ele_pfp_effective_ang_nue_cc,
+		                                                      h_ele_pfp_effective_ang_nue_cc_out_fv,
+		                                                      h_ele_pfp_effective_ang_nue_cc_mixed,
+		                                                      h_ele_pfp_effective_ang_numu_cc,
+		                                                      h_ele_pfp_effective_ang_numu_cc_mixed,
+		                                                      h_ele_pfp_effective_ang_nc,
+		                                                      h_ele_pfp_effective_ang_nc_pi0,
+		                                                      h_ele_pfp_effective_ang_cosmic,
+		                                                      h_ele_pfp_effective_ang_other_mixed,
+		                                                      h_ele_pfp_effective_ang_unmatched);
 
 		_functions_instance.selection_functions::LeadingThetaTrackTopology(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
 		                                                                   h_ele_pfp_theta_no_track_nue_cc,
@@ -5046,38 +5331,6 @@ void selection::make_selection( const char * _file1,
 		                                                                           h_ele_momentum_slice_3_cosmic,
 		                                                                           h_ele_momentum_slice_3_other_mixed,
 		                                                                           h_ele_momentum_slice_3_unmatched);
-
-		// _functions_instance.selection_functions::PostCutsdedxThetaSlice(tpc_object_container_v, passed_tpco, _verbose, tpco_classifier_v,
-		//                                                                 h_dedx_slice_1_nue_cc,
-		//                                                                 h_dedx_slice_1_nue_cc_out_fv,
-		//                                                                 h_dedx_slice_1_nue_cc_mixed,
-		//                                                                 h_dedx_slice_1_numu_cc,
-		//                                                                 h_dedx_slice_1_numu_cc_mixed,
-		//                                                                 h_dedx_slice_1_nc,
-		//                                                                 h_dedx_slice_1_nc_pi0,
-		//                                                                 h_dedx_slice_1_cosmic,
-		//                                                                 h_dedx_slice_1_other_mixed,
-		//                                                                 h_dedx_slice_1_unmatched,
-		//                                                                 h_dedx_slice_2_nue_cc,
-		//                                                                 h_dedx_slice_2_nue_cc_out_fv,
-		//                                                                 h_dedx_slice_2_nue_cc_mixed,
-		//                                                                 h_dedx_slice_2_numu_cc,
-		//                                                                 h_dedx_slice_2_numu_cc_mixed,
-		//                                                                 h_dedx_slice_2_nc,
-		//                                                                 h_dedx_slice_2_nc_pi0,
-		//                                                                 h_dedx_slice_2_cosmic,
-		//                                                                 h_dedx_slice_2_other_mixed,
-		//                                                                 h_dedx_slice_2_unmatched,
-		//                                                                 h_dedx_slice_3_nue_cc,
-		//                                                                 h_dedx_slice_3_nue_cc_out_fv,
-		//                                                                 h_dedx_slice_3_nue_cc_mixed,
-		//                                                                 h_dedx_slice_3_numu_cc,
-		//                                                                 h_dedx_slice_3_numu_cc_mixed,
-		//                                                                 h_dedx_slice_3_nc,
-		//                                                                 h_dedx_slice_3_nc_pi0,
-		//                                                                 h_dedx_slice_3_cosmic,
-		//                                                                 h_dedx_slice_3_other_mixed,
-		//                                                                 h_dedx_slice_3_unmatched);
 
 		_functions_instance.selection_functions::EnergyCosThetaSlices(tpc_object_container_v, passed_tpco, _verbose,
 		                                                              0, 0, tpco_classifier_v,
@@ -5204,7 +5457,7 @@ void selection::make_selection( const char * _file1,
 
 			//get vector with largest flashes y,z positions
 			std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
-			_cuts_instance.selection_cuts::SetXYflashVector(f_var, variation_optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+			_cuts_instance.selection_cuts::SetXYflashVector(f_var, variation_optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 2);
 
 			int test_mc_nue_cc_counter = 0;
 			int test_mc_numu_cc_counter = 0;
@@ -7670,6 +7923,14 @@ void selection::make_selection( const char * _file1,
 	"Efficiency flash Bin 3: " << eff_flash_vec_sel.at(2) / eff_flash_vec_gen.at(2) << "\n" <<
 	"Efficiency flash Bin 4: " << eff_flash_vec_sel.at(3) / eff_flash_vec_gen.at(3) << "\n" << std::endl;
 
+	std::cout << "\n"<<
+	"Printing the nue cc pi0 efficiency numbers:\n" <<
+	"Tot Nue CC pi0 (den): " << tot_nue_cc_pi0_den << "\n"  << 
+	"Tot Nue CC pi0 (num): " << tot_nue_cc_pi0_num << "\n"  << 
+	"Tot Nue CC pi0 (pre): " << tot_nue_cc_pi0_pre_shrdistcut << "\n"  << 
+	"Tot Nue CC pi0 (pst): " << tot_nue_cc_pi0_post_shrdistcut << "\n"  << std::endl;
+
+
 	std::cout << "Printing the efficiency numerators"<< std::endl;
 	for (unsigned int k =0; k < eff_num_counters.size(); k++){
 
@@ -7909,6 +8170,7 @@ void selection::make_selection( const char * _file1,
 	                                             Form("%s%s", file_locate_prefix, "flash_time_data_subtraction.pdf"));
 
 	histogram_functions::Plot1DHistogram (h_nue_eng_eff_num, "True Neutrino Energy [GeV]", Form("%s%s", file_locate_prefix, "selected_true_neutrino_energy.pdf"));
+	histogram_functions::Plot1DHistogram (h_nue_eng_eff_num_fewer_bins, "True #nu_{e} + #bar{#nu}_{e} Energy [GeV]", Form("%s%s", file_locate_prefix, "selected_true_neutrino_energy_fewer_bins.pdf"));
 	histogram_functions::Plot1DHistogram (h_nue_eng_eff_den, "True Neutrino Energy [GeV]", Form("%s%s", file_locate_prefix, "all_true_neutrino_energy.pdf"));
 	histogram_functions::Plot1DHistogram (h_nue_num_part_eff_den, "True Particle Multiplicity",
 	                                      Form("%s%s", file_locate_prefix, "all_true_neutrino_num_particles.pdf"));
@@ -7946,10 +8208,19 @@ void selection::make_selection( const char * _file1,
 	histogram_functions::Plot1DHistogram(h_ele_theta_eff_den, "True Electron Theta [degrees]",
 	                                     Form("%s%s", file_locate_prefix, "true_electron_theta.pdf"));
 
+	histogram_functions::PlotTEfficiency (h_ele_effective_ang_eff_num, h_ele_effective_ang_eff_den, "Efficiency Effective Nu Angle ", Form("%s%s", file_locate_prefix, "signal_selection_nu_effective_angle_efficiency.pdf"));
+
+
 	histogram_functions::PlotTEfficiency (h_nue_eng_eff_num, h_nue_eng_eff_den,
 	                                      ";True Neutrino Energy [GeV];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_nu_energy_efficiency.pdf"));
 	histogram_functions::PlotTEfficiency (h_nue_eng_eff_num, h_nue_eng_eff_den, true,
 	                                      ";True Neutrino Energy [GeV];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_nu_energy_efficiency_rebin.pdf"));
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_contain, h_ele_eng_eff_den,
+	                                      ";Electron Energy [GeV];Efficiency", Form("%s%s", file_locate_prefix, "selection_efficiency_elec_end.pdf"));
+	
+
+	h_ele_phi_eff_den->SetTitle(";True Electron Phi [deg];Efficiency");
+	h_ele_theta_eff_den->SetTitle(";True Electron Theta [deg];Efficiency");
 	histogram_functions::PlotTEfficiencyOverlay(h_ele_eng_eff_num,
 	                                            h_ele_eng_eff_intime,
 	                                            h_ele_eng_eff_pe,
@@ -7968,6 +8239,63 @@ void selection::make_selection( const char * _file1,
 	                                            h_ele_eng_eff_contain,
 	                                            h_ele_eng_eff_den, true, ";True Electron Energy [GeV];Efficiency",
 	                                            Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency_stack_rebin.pdf"));
+
+
+
+
+	histogram_functions::PlotTEfficiencyOverlay_v2(h_nu_eng_eff_num,
+													h_nu_eng_eff_intime,
+													h_nu_eng_eff_pe,
+													h_nu_eng_eff_reco_nue,
+													h_nu_eng_eff_in_fv,
+													h_nu_eng_eff_vtx_flash,
+													h_nu_eng_eff_shwr_vtx,
+													h_nu_eng_eff_trk_vtx,
+													h_nu_eng_eff_hit,
+													h_nu_eng_eff_yhit,
+													h_nu_eng_eff_open_angle,
+													h_nu_eng_eff_dedx,
+													h_nu_eng_eff_2shwr,
+													h_nu_eng_eff_hit_len,
+													h_nu_eng_eff_trk_shwr,
+													h_nu_eng_eff_contain,
+													h_nu_eng_eff_den, ";True Neutrino Energy [GeV];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_nu_energy_efficiency_stack.pdf"));
+
+	histogram_functions::PlotTEfficiencyOverlay_v2(h_ele_phi_eff_num,
+													h_ele_phi_eff_intime,
+													h_ele_phi_eff_pe,
+													h_ele_phi_eff_reco_nue,
+													h_ele_phi_eff_in_fv,
+													h_ele_phi_eff_vtx_flash,
+													h_ele_phi_eff_shwr_vtx,
+													h_ele_phi_eff_trk_vtx,
+													h_ele_phi_eff_hit,
+													h_ele_phi_eff_yhit,
+													h_ele_phi_eff_open_angle,
+													h_ele_phi_eff_dedx,
+													h_ele_phi_eff_2shwr,
+													h_ele_phi_eff_hit_len,
+													h_ele_phi_eff_trk_shwr,
+													h_ele_phi_eff_contain,
+													h_ele_phi_eff_den, ";True Electron Phi [deg];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_elec_phi_efficiency_stack.pdf"));
+
+	histogram_functions::PlotTEfficiencyOverlay_v2(h_ele_theta_eff_num,
+													h_ele_theta_eff_intime,
+													h_ele_theta_eff_pe,
+													h_ele_theta_eff_reco_nue,
+													h_ele_theta_eff_in_fv,
+													h_ele_theta_eff_vtx_flash,
+													h_ele_theta_eff_shwr_vtx,
+													h_ele_theta_eff_trk_vtx,
+													h_ele_theta_eff_hit,
+													h_ele_theta_eff_yhit,
+													h_ele_theta_eff_open_angle,
+													h_ele_theta_eff_dedx,
+													h_ele_theta_eff_2shwr,
+													h_ele_theta_eff_hit_len,
+													h_ele_theta_eff_trk_shwr,
+													h_ele_theta_eff_contain,
+													h_ele_theta_eff_den, ";True Electron Theta [deg];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_elec_theta_efficiency_stack.pdf"));
 
 	histogram_functions::PlotTEfficiency (h_nue_vtx_x_eff_num, h_nue_vtx_x_eff_den,
 	                                      ";True Neutrino Vtx X [cm];Efficiency", Form("%s%s", file_locate_prefix, "signal_selection_nu_vtx_x_efficiency.pdf"));
@@ -8018,6 +8346,43 @@ void selection::make_selection( const char * _file1,
 	                                      ";True Electron Energy [GeV];Efficiency",
 	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency_rebin.pdf"));
 
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_hit, h_ele_eng_eff_den, true,
+	                                      ";True Electron Energy [GeV];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency_rebin_shrhits.pdf"));
+
+	histogram_functions::PlotTEfficiency (h_ele_eng_eff_trk_vtx, h_ele_eng_eff_den, true,
+	                                      ";True Electron Energy [GeV];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_energy_efficiency_rebin_shrhits_pre.pdf"));
+	
+	histogram_functions::PlotTEfficiency (h_ele_theta_eff_num_shrhits_pre, h_ele_theta_eff_den,
+	                                      ";True Electron Theta [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_theta_efficiency_shrhits_pre.pdf"));
+	histogram_functions::PlotTEfficiency (h_ele_phi_eff_num_shrhits_pre, h_ele_phi_eff_den,
+	                                      ";True Electron Phi [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_phi_efficiency_shrhits_pre.pdf"));
+
+	histogram_functions::PlotTEfficiency (h_ele_effective_ang_eff_num_shrhits_pre, h_ele_effective_ang_eff_den,
+	                                      ";Effective Angle [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_eff_ang_efficiency_shrhits_pre.pdf"));
+	histogram_functions::PlotTEfficiency (h_ele_effective_ang_eff_num_shrhits, h_ele_effective_ang_eff_den,
+	                                      ";Effective Angle [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_eff_ang_efficiency_shrhits.pdf"));
+
+	histogram_functions::PlotTEfficiency (h_ele_effective_ang_eff_num_dedx_pre, h_ele_effective_ang_eff_den,
+	                                      ";Effective Angle [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_eff_ang_efficiency_dedx_pre.pdf"));
+	histogram_functions::PlotTEfficiency (h_ele_effective_ang_eff_num_dedx, h_ele_effective_ang_eff_den,
+	                                      ";Effective Angle [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_eff_ang_efficiency_dedx.pdf"));
+
+
+	histogram_functions::PlotTEfficiency (h_ele_theta_eff_num_shrhits, h_ele_theta_eff_den,
+	                                      ";True Electron Theta [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_theta_efficiency_shrhits.pdf"));
+	histogram_functions::PlotTEfficiency (h_ele_phi_eff_num_shrhits, h_ele_phi_eff_den,
+	                                      ";True Electron Phi [deg];Efficiency",
+	                                      Form("%s%s", file_locate_prefix, "signal_selection_ele_phi_efficiency_shrhits.pdf"));
+
 
 	histogram_functions::Plot2DHistogram (h_tracks_showers, "Post Cuts - Showers/Tracks per Candidate Nue TPC Object",
 	                                      "Reco Tracks", "Reco Showers", Form("%s%s", file_locate_prefix, "post_cuts_showers_tracks.pdf"));
@@ -8033,7 +8398,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_leading_shower_open_angle_nc_pi0,  h_leading_shower_open_angle_other_mixed,
 	                                          h_leading_shower_open_angle_unmatched, h_leading_shower_open_angle_intime, intime_scale_factor,
 	                                          h_leading_shower_open_angle_data, data_scale_factor, h_leading_shower_open_angle_dirt, dirt_scale_factor,
-	                                          "", "Leading Shower Opening Angle [degrees]", "",
+	                                          "", "Leading Shower Opening Angle [deg]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_cuts_leading_shower_open_angle_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_leading_shower_open_angle_nue_cc,  h_leading_shower_open_angle_nue_cc_mixed,
@@ -8670,6 +9035,12 @@ void selection::make_selection( const char * _file1,
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_nu_eng.pdf"));
 	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng, "", "True Electron Energy [GeV]", "Leading Shower Hits (All Planes)",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_ele_eng.pdf"));
+	histogram_functions::Plot2DHistogram (h_shr_hit_density_true_energy, "", "True Electron Energy [GeV]", "Leading Shower Hit Density [cm^{-1}]",
+	                                      Form("%s%s", file_locate_prefix, "shwr_hit_density_ele_energy.pdf"));
+	histogram_functions::Plot2DHistogram (h_shr_hit_density_true_energy_nu, "", "True Neutrino Energy [GeV]", "Leading Shower Hit Density [cm^{-1}]",
+	                                      Form("%s%s", file_locate_prefix, "shwr_hit_density_nu_energy.pdf"));
+	histogram_functions::Plot2DHistogram (h_nue_elec_true_energy, "", "True Neutrino Energy [GeV]", "True Electron Energy [GeV]",
+	                                      Form("%s%s", file_locate_prefix, "nue_elec_energy.pdf"));
 	histogram_functions::Plot2DHistogram (h_shwr_hits_nu_eng_zoom, "", "True Neutrino Energy [GeV]", "Signal Electron Shower Hits",
 	                                      Form("%s%s", file_locate_prefix, "shwr_hits_nu_eng_zoom.pdf"));
 	histogram_functions::Plot2DHistogram (h_shwr_hits_ele_eng_zoom, "", "True Electron Energy [GeV]", "Signal Electron Shower Hits",
@@ -8885,7 +9256,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_hit_length_ratio_nc_pi0,  h_hit_length_ratio_other_mixed,
 	                                          h_hit_length_ratio_unmatched, h_hit_length_ratio_intime, intime_scale_factor,
 	                                          h_hit_length_ratio_data, data_scale_factor, h_hit_length_ratio_dirt, dirt_scale_factor, "",
-	                                          "Leading Shower (Hits / Length) [cm^-1]", "",
+	                                          "Leading Shower (Hits / Length) [cm^{#lower[0.1]{-1}}]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_hit_length_ratio_data.pdf"));
 	if(use_alt_scaling) {
 		histogram_functions::PlotSimpleStackData (h_hit_length_ratio_nue_cc,  h_hit_length_ratio_nue_cc_mixed,
@@ -8906,7 +9277,7 @@ void selection::make_selection( const char * _file1,
 	                                          h_hit_length_ratio_nc_pi0_after,  h_hit_length_ratio_other_mixed_after,
 	                                          h_hit_length_ratio_unmatched_after, h_hit_length_ratio_intime_after, intime_scale_factor,
 	                                          h_hit_length_ratio_data_after, data_scale_factor, h_hit_length_ratio_dirt_after, dirt_scale_factor, "",
-	                                          "Leading Shower (Hits / Length) [cm^-1]", "",
+	                                          "Leading Shower (Hits / Length) [cm^{-1}]", "",
 	                                          Form("%s%s", file_locate_prefix, "post_hit_length_ratio_data_after.pdf"));
 
 	histogram_functions::PlotSimpleStackData (h_trk_length_nue_cc,  h_trk_length_nue_cc_mixed,
@@ -9520,6 +9891,22 @@ void selection::make_selection( const char * _file1,
 	                                          "", "Leading Shower Theta [degrees]", "",
 	                                          Form("%s%s", file_locate_prefix, "pre_collection_cut_leading_theta_data.pdf"));
 
+	// Plot the ratio of the signal in the effective angle variable vefore and after the cut
+	histogram_functions::PlotHistogramRatio(h_ele_pfp_effective_ang_post_dedx_nue_cc, h_ele_pfp_effective_ang_pre_dedx_nue_cc, "Leading Shower Effective Angle [deg]",
+	 Form("%s%s", file_locate_prefix, "ratio_effective_ang_reco_signal_dedx_cut.pdf"));
+
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_effective_ang_nue_cc,  h_ele_pfp_effective_ang_nue_cc_mixed,
+	                                          h_ele_pfp_effective_ang_nue_cc_out_fv,
+	                                          h_ele_pfp_effective_ang_numu_cc, h_ele_pfp_effective_ang_numu_cc_mixed,
+	                                          h_ele_pfp_effective_ang_cosmic,  h_ele_pfp_effective_ang_nc,
+	                                          h_ele_pfp_effective_ang_nc_pi0,  h_ele_pfp_effective_ang_other_mixed,
+	                                          h_ele_pfp_effective_ang_unmatched, h_ele_pfp_effective_ang_intime, intime_scale_factor,
+	                                          h_ele_pfp_effective_ang_data, data_scale_factor,
+	                                          h_ele_pfp_effective_ang_dirt, dirt_scale_factor,
+	                                          "", "Leading Shower Effective Angle [deg]", "",
+	                                          Form("%s%s", file_locate_prefix, "post_selection_leading_effective_angle_data.pdf"));
+
 	histogram_functions::PlotSimpleStackData (h_ele_pfp_theta_pre_dedx_nue_cc,  h_ele_pfp_theta_pre_dedx_nue_cc_mixed,
 											h_ele_pfp_theta_pre_dedx_nue_cc_out_fv,
 											h_ele_pfp_theta_pre_dedx_numu_cc, h_ele_pfp_theta_pre_dedx_numu_cc_mixed,
@@ -9541,6 +9928,28 @@ void selection::make_selection( const char * _file1,
 											h_ele_pfp_theta_post_dedx_dirt, dirt_scale_factor,
 											"", "Leading Shower Theta [degrees]", "",
 											Form("%s%s", file_locate_prefix, "post_dedx_cut_leading_theta_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_effective_ang_pre_dedx_nue_cc,  h_ele_pfp_effective_ang_pre_dedx_nue_cc_mixed,
+											h_ele_pfp_effective_ang_pre_dedx_nue_cc_out_fv,
+											h_ele_pfp_effective_ang_pre_dedx_numu_cc, h_ele_pfp_effective_ang_pre_dedx_numu_cc_mixed,
+											h_ele_pfp_effective_ang_pre_dedx_cosmic,  h_ele_pfp_effective_ang_pre_dedx_nc,
+											h_ele_pfp_effective_ang_pre_dedx_nc_pi0,  h_ele_pfp_effective_ang_pre_dedx_other_mixed,
+											h_ele_pfp_effective_ang_pre_dedx_unmatched, h_ele_pfp_effective_ang_pre_dedx_intime, intime_scale_factor,
+											h_ele_pfp_effective_ang_pre_dedx_data, data_scale_factor,
+											h_ele_pfp_effective_ang_pre_dedx_dirt, dirt_scale_factor,
+											"", "Leading Shower Effective Angle [deg]", "",
+											Form("%s%s", file_locate_prefix, "pre_dedx_cut_leading_effective_angle_data.pdf"));
+
+	histogram_functions::PlotSimpleStackData (h_ele_pfp_effective_ang_post_dedx_nue_cc,  h_ele_pfp_effective_ang_post_dedx_nue_cc_mixed,
+											h_ele_pfp_effective_ang_post_dedx_nue_cc_out_fv,
+											h_ele_pfp_effective_ang_post_dedx_numu_cc, h_ele_pfp_effective_ang_post_dedx_numu_cc_mixed,
+											h_ele_pfp_effective_ang_post_dedx_cosmic,  h_ele_pfp_effective_ang_post_dedx_nc,
+											h_ele_pfp_effective_ang_post_dedx_nc_pi0,  h_ele_pfp_effective_ang_post_dedx_other_mixed,
+											h_ele_pfp_effective_ang_post_dedx_unmatched, h_ele_pfp_effective_ang_post_dedx_intime, intime_scale_factor,
+											h_ele_pfp_effective_ang_post_dedx_data, data_scale_factor,
+											h_ele_pfp_effective_ang_post_dedx_dirt, dirt_scale_factor,
+											"", "Leading Shower Effective Angle [deg]", "",
+											Form("%s%s", file_locate_prefix, "post_dedx_cut_leading_effective_angle_data.pdf"));
 
 	histogram_functions::PlotSimpleStack (h_ele_pfp_theta_after_nue_cc,  h_ele_pfp_theta_after_nue_cc_mixed,
 	                                      h_ele_pfp_theta_after_nue_cc_out_fv,

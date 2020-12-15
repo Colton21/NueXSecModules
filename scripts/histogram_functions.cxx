@@ -11,13 +11,44 @@ void histogram_functions::PlotEfficiencyFlash(TH1D* h_eff_flash_time){
 }
 
 
+void histogram_functions::PlotHistogramRatio(TH1D* h_num, TH1D* h_den , const char * x_axis_name, const char * print_name){
+
+	TCanvas * c1 = new TCanvas("c", "c", 500, 500);
+	c1->cd();
+
+	TH1D* histogram = (TH1D*)h_num->Clone();
+	histogram->Divide(h_den);
+
+	histogram->SetTitle(" ");
+	// histogram->SetLineColor(kBlack);
+	// histogram->SetLineWidth(2);
+	// histogram->SetFillColorAlpha(32, 0.6);
+	histogram->GetXaxis()->SetTitle(x_axis_name);
+	histogram->GetYaxis()->SetTitle("Ratio");
+	histogram->SetStats(kFALSE);
+	histogram->GetYaxis()->SetTitleSize(19);
+	histogram->GetYaxis()->SetTitleFont(49);
+	histogram->GetYaxis()->SetTitleOffset(1.15);
+	histogram->GetXaxis()->SetTitleSize(19);
+	histogram->GetXaxis()->SetTitleFont(49);
+	histogram->GetXaxis()->SetTitleOffset(1.15);
+
+	histogram->Draw("hist");
+
+	c1->Print(print_name);
+}
+
+
 //void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name)
 void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_name, const char * print_name)
 {
-	TCanvas * c1 = new TCanvas();
+	TCanvas * c1 = new TCanvas("c", "c", 500, 500);
 	c1->cd();
 
 	histogram->SetTitle(" ");
+	// histogram->SetLineColor(kBlack);
+	histogram->SetLineWidth(2);
+	histogram->SetFillColorAlpha(32, 0.6);
 	histogram->GetXaxis()->SetTitle(x_axis_name);
 	histogram->GetYaxis()->SetTitle("Entries");
 	histogram->SetStats(kFALSE);
@@ -28,7 +59,16 @@ void histogram_functions::Plot1DHistogram (TH1 * histogram, const char * x_axis_
 	histogram->GetXaxis()->SetTitleFont(49);
 	histogram->GetXaxis()->SetTitleOffset(1.15);
 
-	histogram->Draw();
+	histogram->Draw("hist,E");
+
+	TPaveText *pt = new TPaveText(0.73, 0.88, 0.73, 0.88,"NDC");
+    pt->AddText("MicroBooNE Simulation");
+    pt->SetTextColor(kBlack);
+    pt->SetBorderSize(0);
+    pt->SetFillColor(0);
+    pt->SetFillStyle(0);
+    pt->SetTextSize(0.03);
+    pt->Draw();
 
 	c1->Print(print_name);
 }
@@ -87,6 +127,11 @@ void histogram_functions::PlotTEfficiency (TH1 *h_num, TH1 *h_den, const bool re
 		teff->SetMarkerStyle(20);
 		teff->SetMarkerSize(0.5);
 		teff->Draw("AP");
+		gPad->Update(); 
+		auto graph = teff->GetPaintedGraph(); 
+		graph->SetMinimum(0);
+		graph->SetMaximum(0.5); 
+		gPad->Update(); 
 
 		// teff->GetPaintedGraph()->GetXaxis()->SetTitleSize(18);
 		// teff->GetPaintedGraph()->GetXaxis()->SetTitleFont(46);
@@ -287,7 +332,7 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 		efficiency_c1->Update();
 
 		TLegend * leg1 = new TLegend(0.75, 0.98, 0.98, 0.55);
-		leg1->AddEntry(teff_in_fv,      "Simple Cuts    (1)", "l");
+		leg1->AddEntry(teff_in_fv,      "Pre-Selection  (1)", "l");
 		leg1->AddEntry(teff_vtx_flash,  "Flash Matching (2)", "l");
 		leg1->AddEntry(teff_trk_vtx,    "Reco. Quality  (3)", "l");
 		leg1->AddEntry(teff_yhit,       "Shower Hits    (4)", "l");
@@ -298,6 +343,165 @@ void histogram_functions::PlotTEfficiencyOverlay(TH1 * h_num,
 	}
 	efficiency_c1->Print(print_name);
 }
+
+void histogram_functions::PlotTEfficiencyOverlay_v2(TH1 * h_num,
+                                                 TH1 * h_intime,
+                                                 TH1 * h_pe,
+                                                 TH1 * h_reco_nue,
+                                                 TH1 * h_in_fv,
+                                                 TH1 * h_vtx_flash,
+                                                 TH1 * h_shwr_vtx,
+                                                 TH1 * h_trk_vtx,
+                                                 TH1 * h_hit,
+                                                 TH1 * h_yhit,
+                                                 TH1 * h_open_angle,
+                                                 TH1 * h_dedx,
+                                                 TH1 * h_2shwr,
+                                                 TH1 * h_hit_len,
+                                                 TH1 * h_trk_shwr,
+                                                 TH1 * h_contain,
+                                                 TH1 * h_den, const char * title, const char * print_name)
+{
+	TCanvas * efficiency_c1 = new TCanvas();
+	efficiency_c1->cd();
+	TH1 * h_num_clone                    = (TH1*)h_num->Clone("h_num_clone");
+	TH1 * h_nue_eng_eff_intime_clone     = (TH1*)h_intime->Clone("h_intime_clone");
+	TH1 * h_nue_eng_eff_pe_clone         = (TH1*)h_pe->Clone("h_pe_clone");
+	TH1 * h_nue_eng_eff_reco_nue_clone   = (TH1*)h_reco_nue->Clone("h_reco_nue_clone");
+	TH1 * h_nue_eng_eff_in_fv_clone      = (TH1*)h_in_fv->Clone("h_in_fv_clone");
+	TH1 * h_nue_eng_eff_vtx_flash_clone  = (TH1*)h_vtx_flash->Clone("h_vtx_flash_clone");
+	TH1 * h_nue_eng_eff_shwr_vtx_clone   = (TH1*)h_shwr_vtx->Clone("h_shwr_vtx_clone");
+	TH1 * h_nue_eng_eff_trk_vtx_clone    = (TH1*)h_trk_vtx->Clone("h_trk_vtx_clone");
+	TH1 * h_nue_eng_eff_hit_clone        = (TH1*)h_hit->Clone("h_hit_clone");
+	TH1 * h_nue_eng_eff_yhit_clone       = (TH1*)h_yhit->Clone("h_yhit_clone");
+	TH1 * h_nue_eng_eff_open_angle_clone = (TH1*)h_open_angle->Clone("h_open_angle_clone");
+	TH1 * h_nue_eng_eff_dedx_clone       = (TH1*)h_dedx->Clone("h_dedx_clone");
+	TH1 * h_nue_eng_eff_2shwr_clone      = (TH1*)h_2shwr->Clone("h_2shwr_clone");
+	TH1 * h_nue_eng_eff_hit_len_clone    = (TH1*)h_hit_len->Clone("h_hit_len_clone");
+	TH1 * h_nue_eng_eff_trk_shwr_clone   = (TH1*)h_trk_shwr->Clone("h_trk_shwr_clone");
+	TH1 * h_nue_eng_eff_contain_clone    = (TH1*)h_contain->Clone("h_contain_clone");
+	TH1 * h_den_clone                    = (TH1*)h_den->Clone("h_den_clone");
+
+
+	TEfficiency * teff            = new TEfficiency(*h_num_clone,                     *h_den_clone);
+	TEfficiency * teff_reco_nue   = new TEfficiency(*h_nue_eng_eff_reco_nue_clone,    *h_den_clone);
+	TEfficiency * teff_intime     = new TEfficiency(*h_nue_eng_eff_intime_clone,      *h_den_clone);
+	TEfficiency * teff_pe         = new TEfficiency(*h_nue_eng_eff_pe_clone,          *h_den_clone);
+	TEfficiency * teff_in_fv      = new TEfficiency(*h_nue_eng_eff_in_fv_clone,       *h_den_clone);
+	TEfficiency * teff_vtx_flash  = new TEfficiency(*h_nue_eng_eff_vtx_flash_clone,   *h_den_clone);
+	TEfficiency * teff_shwr_vtx   = new TEfficiency(*h_nue_eng_eff_shwr_vtx_clone,    *h_den_clone);
+	TEfficiency * teff_trk_vtx    = new TEfficiency(*h_nue_eng_eff_trk_vtx_clone,     *h_den_clone);
+	TEfficiency * teff_hit        = new TEfficiency(*h_nue_eng_eff_hit_clone,         *h_den_clone);
+	TEfficiency * teff_yhit       = new TEfficiency(*h_nue_eng_eff_yhit_clone,        *h_den_clone);
+	TEfficiency * teff_open_angle = new TEfficiency(*h_nue_eng_eff_open_angle_clone,  *h_den_clone);
+	TEfficiency * teff_dedx       = new TEfficiency(*h_nue_eng_eff_dedx_clone,        *h_den_clone);
+	TEfficiency * teff_2shwr      = new TEfficiency(*h_nue_eng_eff_2shwr_clone,       *h_den_clone);
+	TEfficiency * teff_hit_len    = new TEfficiency(*h_nue_eng_eff_hit_len_clone,     *h_den_clone);
+	TEfficiency * teff_trk_shwr   = new TEfficiency(*h_nue_eng_eff_trk_shwr_clone,    *h_den_clone);
+	TEfficiency * teff_contain    = new TEfficiency(*h_nue_eng_eff_contain_clone,     *h_den_clone);
+
+	teff->SetTitle(title);
+	//teff->SetLineColor(kGreen+3);
+	//teff->SetMarkerColor(kGreen+3);
+	teff->SetMarkerStyle(20);
+	teff->SetMarkerSize(0.5);
+	teff_in_fv->SetMarkerStyle(20);
+	teff_vtx_flash->SetMarkerStyle(20);
+	teff_shwr_vtx->SetMarkerStyle(20);
+	teff_trk_vtx->SetMarkerStyle(20);
+	teff_hit->SetMarkerStyle(20);
+	teff_yhit->SetMarkerStyle(20);
+	teff_open_angle->SetMarkerStyle(20);
+	teff_dedx->SetMarkerStyle(20);
+	teff_2shwr->SetMarkerStyle(20);
+	teff_hit_len->SetMarkerStyle(20);
+	teff_trk_shwr->SetMarkerStyle(20);
+	teff_contain->SetMarkerStyle(20);
+
+
+	teff_in_fv->SetMarkerSize(0.5);
+	teff_vtx_flash->SetMarkerSize(0.5);
+	teff_shwr_vtx->SetMarkerSize(0.5);
+	teff_trk_vtx->SetMarkerSize(0.5);
+	teff_hit->SetMarkerSize(0.5);
+	teff_yhit->SetMarkerSize(0.5);
+	teff_open_angle->SetMarkerSize(0.5);
+	teff_dedx->SetMarkerSize(0.5);
+	teff_2shwr->SetMarkerSize(0.5);
+	teff_hit_len->SetMarkerSize(0.5);
+	teff_trk_shwr->SetMarkerSize(0.5);
+	teff_contain->SetMarkerSize(0.5);
+
+	teff->SetMarkerColor(30);
+	teff_in_fv->SetMarkerColor(38);
+	teff_vtx_flash->SetMarkerColor(43);
+	teff_shwr_vtx->SetMarkerColor(9);
+	teff_trk_vtx->SetMarkerColor(34);
+	teff_hit->SetMarkerColor(8);
+	teff_yhit->SetMarkerColor(49);
+	teff_open_angle->SetMarkerColor(7);
+	teff_dedx->SetMarkerColor(6);
+	teff_2shwr->SetMarkerColor(41);
+	teff_hit_len->SetMarkerColor(40);
+	teff_trk_shwr->SetMarkerColor(46);
+	teff_contain->SetMarkerColor(1);
+
+	teff->SetLineColor(30);
+	teff_in_fv->SetLineColor(38);
+	teff_vtx_flash->SetLineColor(43);
+	teff_shwr_vtx->SetLineColor(9);
+	teff_trk_vtx->SetLineColor(34);
+	teff_hit->SetLineColor(8);
+	teff_yhit->SetLineColor(49);
+	teff_open_angle->SetLineColor(7);
+	teff_dedx->SetLineColor(6);
+	teff_2shwr->SetLineColor(41);
+	teff_hit_len->SetLineColor(40);
+	teff_trk_shwr->SetLineColor(46);
+	teff_contain->SetLineColor(1);
+
+	//teff->Draw("AP");
+	teff_in_fv->Draw("AP");
+	teff_vtx_flash->Draw("PSAME");
+	//teff_shwr_vtx->Draw("PSAME");
+	teff_trk_vtx->Draw("PSAME");
+	//teff_hit->Draw("PSAME");
+	teff_yhit->Draw("PSAME");
+	//teff_open_angle->Draw("PSAME");
+	teff_dedx->Draw("PSAME");
+	// teff_2shwr->Draw("PSAME");
+	// teff_hit_len->Draw("PSAME");
+	// teff_trk_shwr->Draw("PSAME");
+	teff_contain->Draw("PSAME");
+
+	gPad->Update(); 
+	auto graph = teff_in_fv->GetPaintedGraph(); 
+	graph->SetMinimum(0);
+	graph->SetMaximum(1.0); 
+	gPad->Update(); 
+
+	TLegend * leg1 = new TLegend(0.75, 0.98, 0.98, 0.55);
+	leg1->AddEntry(teff_in_fv,      "Pre-Selection  (1)", "l");
+	leg1->AddEntry(teff_vtx_flash,  "Flash Matching (2)", "l");
+	leg1->AddEntry(teff_trk_vtx,    "Reco. Quality  (3)", "l");
+	leg1->AddEntry(teff_yhit,       "Shower Hits    (4)", "l");
+	leg1->AddEntry(teff_dedx,       "Electron-like  (5)", "l");
+	leg1->AddEntry(teff_contain,    "Final          (6)", "l");
+	leg1->Draw();
+
+	efficiency_c1->Print(print_name);
+}
+
+
+
+
+
+
+
+
+
+
+
 
 void histogram_functions::PlotTEfficiency (TH2 *h_num, TH2 *h_den, const char * title, const char * print_name)
 {
@@ -432,6 +636,16 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	h_3_clone->SetStats(kFALSE);
 	h_4_clone->SetStats(kFALSE);
 
+	h_1_clone->SetLineWidth(1);
+	h_2_clone->SetLineWidth(1);
+	h_3_clone->SetLineWidth(1);
+	h_4_clone->SetLineWidth(1);
+
+	// h_1_clone->SetLineColor(kBlack);
+	// h_2_clone->SetLineColor(kBlack);
+	// h_3_clone->SetLineColor(kBlack);
+	// h_4_clone->SetLineColor(kBlack);
+
 	h_1_clone->Sumw2();
 	h_2_clone->Sumw2();
 	h_3_clone->Sumw2();
@@ -506,7 +720,7 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
 	stack->GetXaxis()->SetTitleSize(20);
 	stack->GetXaxis()->SetTitleFont(46);
 	stack->GetXaxis()->SetRangeUser(3,20);
-	stack->SetMaximum(13500);
+	stack->SetMaximum(17000);
 	stack->SetMinimum(0);
 
 	TPaveText *pt;
@@ -521,14 +735,15 @@ void histogram_functions::TimingHistograms(TH1 * histogram_1, TH1 * histogram_2,
     pt->Draw();
 
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
-	TLegend * leg_stack = new TLegend(0.70, 0.67, 0.89, 0.90);
+	TLegend * leg_stack = new TLegend(0.18, 0.70, 0.68, 0.85);
 	leg_stack->SetBorderSize(0);
     leg_stack->SetFillStyle(0);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
-	leg_stack->AddEntry(h_3_clone,   "Beam-On Data",  "lep");
+	leg_stack->AddEntry(h_3_clone,   "Beam-On Data (Stat.)",  "lep");
 	leg_stack->AddEntry(h_1_clone,   "MC",  "f");
 	leg_stack->AddEntry(h_4_clone,   "Out-of-Cryostat",  "f");
 	leg_stack->AddEntry(h_2_clone,   "Beam-Off Data",          "f");
+	leg_stack->SetNColumns(2);
 	leg_stack->Draw();
 
 	//we want this before the off-beam is subtracted
@@ -1391,7 +1606,7 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	stack->Add(h_dirt_clone);
 	stack->Draw("hist");
 	stack->SetMinimum(0);
-	stack->SetMaximum(100);
+	stack->SetMaximum(75);
 	stack->GetXaxis()->SetTitle("");
 	stack->GetYaxis()->SetLabelSize(0.05);
 	// stack->GetYaxis()->SetLabelFont(43); // Absolute font size in pixel (precision 3)
@@ -1413,6 +1628,7 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	h_error_hist->Add(h_neutron_clone, 1);
 	h_error_hist->Add(h_ext_clone, 1);
 	h_error_hist->Add(h_dirt_clone, 1);
+	h_error_hist->SetLineWidth(0);
 
 	// Here we add in the total systematic uncertainty of 34% to the error bars
 	// for (unsigned int bin = 1; bin <h_error_hist->GetNbinsX()+1; bin ++){
@@ -1430,10 +1646,10 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 
 	TLegend * leg_stack;
 	// leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
-	leg_stack = new TLegend(0.64, 0.90, 0.89, 0.40);
+	leg_stack = new TLegend(0.60, 0.90, 0.89, 0.40);
 	leg_stack->SetBorderSize(0);
     leg_stack->SetFillStyle(0);
-	leg_stack->AddEntry(h_data,            "Beam-On Data",  "lep");
+	leg_stack->AddEntry(h_data,            "Beam-On Data (Stat.)",  "lep");
 	leg_stack->AddEntry(h_dirt,            "Out-of-Cryostat",  "f");
 	leg_stack->AddEntry(h_ext,             "Beam-Off Data",        "f");
 	leg_stack->AddEntry(h_neutron,         "Neutron",    "f");
@@ -1443,6 +1659,7 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
 	leg_stack->AddEntry(h_photon,          "Photon",     "f");
 	leg_stack->AddEntry(h_proton,          "Proton",     "f");
 	leg_stack->AddEntry(h_electron,        "Electron",   "f");
+	leg_stack->AddEntry(h_error_hist, "#lower[0.2]{#splitline{MC + Beam-Off}{Stat. Uncertainty}}", "f");
 	leg_stack->Draw();
 
 	bottomPad->cd();
@@ -1494,6 +1711,17 @@ void histogram_functions::PlotSimpleStackParticle_withratio(TH1 * h_electron, TH
     pt->SetFillStyle(0);
     pt->SetTextSize(0.04);
     pt->Draw();
+
+	TPaveText *pt2;
+	topPad->cd();
+    pt2 = new TPaveText(0.60, 0.33, 0.89, 0.33,"NDC");
+    pt2->AddText("0^{#lower[0.6]{o}} < #theta < 60^{#lower[0.6]{o}}");
+    pt2->SetTextColor(kBlack);
+    pt2->SetBorderSize(0);
+    pt2->SetFillColor(0);
+    pt2->SetFillStyle(0);
+    pt2->SetTextSize(0.04);
+    pt2->Draw();
 
 	topPad->Update();
 
@@ -1881,6 +2109,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 		
 		h_scale_axes->Draw();
 		stack->Draw("same hist");
+		gPad->RedrawAxis();
 
 		h_scale_axes->GetYaxis()->SetTitle("Entries");
 	}
@@ -1915,6 +2144,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	// h_error_hist->Add(h_unmatched_clone,     1);
 	h_error_hist->Add(h_dirt_clone,          1);
 	h_error_hist->Add(h_intime_clone,        1);
+	h_error_hist->SetLineWidth(0);
 
 
 	// Here we add in the detector systematic uncertainty of 23% to the error bars
@@ -1934,12 +2164,12 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	//gPad->BuildLegend(0.75,0.75,0.95,0.95,"");
 	TLegend * leg_stack;
 	// leg_stack = new TLegend(leg_x1,leg_y1,leg_x2,leg_y2);
-	leg_stack = new TLegend(0.64, 0.90, 0.89, 0.40);
+	leg_stack = new TLegend(0.60, 0.90, 0.89, 0.40);
 	leg_stack->SetBorderSize(0);
     leg_stack->SetFillStyle(0);
 	//leg->SetHeader("The Legend Title","C"); // option "C" allows to center the header
 	
-	leg_stack->AddEntry(h_data,            "Beam-On Data",            "lep");
+	leg_stack->AddEntry(h_data,            "Beam-On Data (Stat.)",            "lep");
 	leg_stack->AddEntry(h_intime,          "Beam-Off Data",            "f");
 	leg_stack->AddEntry(h_dirt,            "Out-of-Cryostat",              "f");
 	// leg_stack->AddEntry(h_unmatched,       "Unmatched",         "f");
@@ -1951,6 +2181,7 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
 	leg_stack->AddEntry(h_nue_cc_out_fv,   "#nu_{e} CC Out-FV",  "f");
 	// leg_stack->AddEntry(h_nue_cc_mixed,    "#nu_{e} CC #pi^{0}",  "f");
 	leg_stack->AddEntry(h_nue_cc,          "#nu_{e} CC",        "f");	
+	leg_stack->AddEntry(h_error_hist, "#lower[0.2]{#splitline{MC + Beam-Off}{Stat. Uncertainty}}", "f");
 	leg_stack->Draw();
 
 	if(!logy) {stack->GetYaxis()->SetRangeUser(0, y_maximum * y_scale_factor); }
@@ -2121,6 +2352,19 @@ void histogram_functions::PlotSimpleStackData(TH1 * h_nue_cc, TH1 * h_nue_cc_mix
     pt11->SetFillStyle(0);
     pt11->SetTextSize(0.04);
     pt11->Draw();
+
+
+	TPaveText *pt223;
+	topPad->cd();
+    pt223 = new TPaveText(0.60, 0.33, 0.89, 0.33,"NDC");
+    pt223->AddText("0^{#lower[0.6]{o}} < #theta < 60^{#lower[0.6]{o}}");
+    pt223->SetTextColor(kBlack);
+    pt223->SetBorderSize(0);
+    pt223->SetFillColor(0);
+    pt223->SetFillStyle(0);
+    pt223->SetTextSize(0.04);
+    if (std::string(print_name)== "../scripts/plots/post_cuts_dedx_theta_slice_1_data.pdf") pt223->Draw();
+
 
 	std::cout << print_name << std::endl;
 	c1->Print(print_name);

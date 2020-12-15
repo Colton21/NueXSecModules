@@ -32,7 +32,27 @@ public:
 
 histogram_functions()=default;
 
+static void PlotTEfficiencyOverlay_v2(TH1 * h_num,
+                                                 TH1 * h_intime,
+                                                 TH1 * h_pe,
+                                                 TH1 * h_reco_nue,
+                                                 TH1 * h_in_fv,
+                                                 TH1 * h_vtx_flash,
+                                                 TH1 * h_shwr_vtx,
+                                                 TH1 * h_trk_vtx,
+                                                 TH1 * h_hit,
+                                                 TH1 * h_yhit,
+                                                 TH1 * h_open_angle,
+                                                 TH1 * h_dedx,
+                                                 TH1 * h_2shwr,
+                                                 TH1 * h_hit_len,
+                                                 TH1 * h_trk_shwr,
+                                                 TH1 * h_contain,
+                                                 TH1 * h_den, const char * title, const char * print_name);
+
 static void PlotEfficiencyFlash(TH1D* h_eff_flash_time);
+
+static void PlotHistogramRatio(TH1D* h_num, TH1D* h_den, const char * x_axis_name, const char * print_name);
 
 static void PlotSimpleStackPlanes(TH1 * h_u_plane, TH1 * h_v_plane, TH1 * h_y_plane, TH1 * h_intime, const double intime_scale_factor,
                                               TH1 * h_data, const double data_scale_factor, TH1 * h_dirt, const double dirt_scale_factor,

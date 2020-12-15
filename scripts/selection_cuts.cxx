@@ -242,7 +242,7 @@ bool selection_cuts::opt_vtx_distance_width(double tpc_vtx_y, double tpc_vtx_z, 
 }
 //***************************************************************************
 void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vector< std::vector< double> > * largest_flash_v_v,
-                                      double flash_time_start, double flash_time_end, double flash_pe_threshold)
+                                      double flash_time_start, double flash_time_end, double flash_pe_threshold, const int stream)
 {
 	optical_tree = (TTree*)f->Get("AnalyzeTPCO/optical_tree");
 	int fRun = 0;
@@ -366,7 +366,11 @@ void selection_cuts::SetXYflashVector(TFile * f, TTree * optical_tree, std::vect
 
 		for(int j = 0; j < optical_list_pe_v.at(i).size(); j++)
 		{
-			auto const opt_time         = opt_time_v.at(j);
+			auto opt_time         = opt_time_v.at(j);
+			// if(stream == 1) {opt_time = opt_time - 0.359 ; } // 0.343 is old value 0.359375 is new test
+			// if(stream == 2) {opt_time = opt_time + 1.0; }
+
+
 			auto const opt_pe           = opt_pe_v.at(j);
 			const double opt_center_y   = optical_list_flash_center_y_v.at(i).at(j);
 			const double opt_center_z   = optical_list_flash_center_z_v.at(i).at(j);
@@ -534,7 +538,7 @@ void selection_cuts::VtxNuDistance(std::vector<xsecAna::TPCObjectContainer> * tp
 		const double tpc_vtx_z = tpc_obj.pfpVtxZ();
 		//loop over pfparticles in the TPCO
 		const int n_tracks = tpc_obj.NPfpTracks();
-		//if(n_tracks == 0) {continue; } //this is here for testing how the cut responds when I only cut for !=0 tracks
+		// if(n_tracks == 0) {continue; } //this is here for testing how the cut responds when I only cut for !=0 tracks
 		for(int j = 0; j < n_pfp; j++)
 		{
 			auto const part = tpc_obj.GetParticle(j);

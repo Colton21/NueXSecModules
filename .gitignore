@@ -67,3 +67,4 @@ scripts/custom_run_subrun_list_data.txt
 scripts/neutrino_in_tpc_list.txt
 scripts/selected_events_for_truth_script_data.txt
 scripts/selected_events_for_truth_script_dirt.txt
+scripts/Gen_events_in_TPC_list.txt

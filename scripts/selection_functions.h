@@ -40,6 +40,11 @@ public:
 
 selection_functions()=default;
 
+void TrueHitDensityStudy(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                              std::vector<std::pair<int, std::string> > * passed_tpco,
+                                              std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                              TH2D * hist, double mc_ele_energy, TH2D * hist_nu, double mc_nu_energy);
+
 void HitsPlots1D_UV(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                       std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose,
                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
@@ -80,6 +85,26 @@ void HitsPlots1D_All(std::vector<xsecAna::TPCObjectContainer> * tpc_object_conta
 									  TH2D * h_tot_hits_v_plane,
 									  TH2D * h_tot_hits_y_plane
                                       );
+//***************************************************************************
+void LeadingEffAng(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                       std::vector<std::pair<int, std::string> > * passed_tpco,
+                                       std::vector<std::pair<std::string, int> > * tpco_classifier_v,
+                                       TH1D * h_ele_pfp_theta_nue_cc,
+                                       TH1D * h_ele_pfp_theta_nue_cc_out_fv,
+                                       TH1D * h_ele_pfp_theta_nue_cc_mixed,
+                                       TH1D * h_ele_pfp_theta_numu_cc,
+                                       TH1D * h_ele_pfp_theta_numu_cc_mixed,
+                                       TH1D * h_ele_pfp_theta_nc,
+                                       TH1D * h_ele_pfp_theta_nc_pi0,
+                                       TH1D * h_ele_pfp_theta_cosmic,
+                                       TH1D * h_ele_pfp_theta_other_mixed,
+                                       TH1D * h_ele_pfp_theta_unmatched);
+//***************************************************************************
+void LeadingEffAngInTime(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                             std::vector<std::pair<int, std::string> > * passed_tpco,
+                                             TH1D * h_ele_pfp_theta_intime);
+//***************************************************************************
+                        
 //***************************************************************************
 // Function to count if the leading shower is an electron or a photon
 void PostCutsLeadingMomentumTrueParticle(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,

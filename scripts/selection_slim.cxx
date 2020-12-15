@@ -229,7 +229,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * data_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(data_f, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		_cuts_instance.selection_cuts::SetXYflashVector(data_f, data_optree, data_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 0);
 		std::cout << "[Data] Largest Flash Vector Size: " << data_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < data_total_entries; event++)
@@ -508,7 +508,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * dirt_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(dirt_f, dirt_optree, dirt_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		_cuts_instance.selection_cuts::SetXYflashVector(dirt_f, dirt_optree, dirt_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 2);
 		std::cout << "Largest Flash Vector Size: " << dirt_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < in_time_total_entries; event++)
@@ -769,7 +769,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 
 		//get vector with largest flashes y,z positions
 		std::vector< std::vector< double> > * intime_largest_flash_v_v = new std::vector < std::vector < double > >;
-		_cuts_instance.selection_cuts::SetXYflashVector(intime_f, intime_optree, intime_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+		_cuts_instance.selection_cuts::SetXYflashVector(intime_f, intime_optree, intime_largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 1);
 		std::cout << "Largest Flash Vector Size: " << intime_largest_flash_v_v->size() << std::endl;
 
 		for(int event = 0; event < in_time_total_entries; event++)
@@ -1044,7 +1044,7 @@ void selection_slim::make_selection_slim( const char * _file1,
 
 	//get vector with largest flashes y,z positions
 	std::vector< std::vector< double> > * largest_flash_v_v = new std::vector < std::vector < double > >;
-	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold);
+	_cuts_instance.selection_cuts::SetXYflashVector(f, optree, largest_flash_v_v, flash_time_start, flash_time_end, flash_pe_threshold, 2);
 
 	//**********************************
 	//now let's do the TPCO related cuts

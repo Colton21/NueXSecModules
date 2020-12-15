@@ -17,6 +17,7 @@ class selection {
 private:
 
 double threshold = 0.250; // Energy threshold of nue
+double elec_th = 0.0;
 
 //newest values (July 2018):
 // Run1 On-Beam Data:
@@ -105,8 +106,22 @@ const bool run_with_log = true;
 // const double scaling = scaling_nue + scaling_nue_bar;
 
 // Threshold 250 MeV
-const double scaling_nue = 9.6631e-12;        //nues  / POT / cm^2
-const double scaling_nue_bar = 5.92185e-12;    //anues / POT / cm^2
+// const double scaling_nue = 9.6631e-12;        //nues  / POT / cm^2
+// const double scaling_nue_bar = 5.92185e-12;    //anues / POT / cm^2
+
+// Threshold 250 MeV and using old uboone position
+const double scaling_nue =  9.42476e-12;        //nues  / POT / cm^2
+const double scaling_nue_bar = 5.77869e-12;    //anues / POT / cm^2
+
+// Threshold 250 MeV and using old uboone position and FV 
+// const double scaling_nue =  9.42092e-12;        //nues  / POT / cm^2
+// const double scaling_nue_bar = 5.77784e-12;    //anues / POT / cm^2
+
+
+// Threshold 250 MeV and using new uboone position and FV 
+// const double scaling_nue =  9.66746e-12;        //nues  / POT / cm^2
+// const double scaling_nue_bar = 9.66746e-12;    //anues / POT / cm^2
+
 const double scaling = scaling_nue + scaling_nue_bar;
 
 
@@ -184,6 +199,11 @@ const double POT = 1.82027e+21; //v6 value - 1.82949e+21;
 const double data_scale_factor = 0.1301; // v6 value - 0.12758;
 const double intime_scale_factor = 1.0154;
 const double dirt_scale_factor = 0.16411;
+
+// For Total NuMI DIC sample 
+// const double data_scale_factor = 0.13316; //;
+
+
 //*******************************
 //variation scaling - changes based on the variation used
 const double var_scale_factor_CV           = 0.22135; //Central Value
@@ -242,6 +262,29 @@ double ratio_tolerance;
 bool detector_variations;
 
 int num_debug_events = 0;
+
+int tot_nue_cc_pi0_den = 0;
+int tot_nue_cc_pi0_num = 0;
+int tot_nue_cc_pi0_pre_shrdistcut = 0;
+int tot_nue_cc_pi0_post_shrdistcut = 0;
+
+
+int tot_nue_cc_qe_den = 0;
+int tot_nue_cc_qe_num = 0;
+
+int tot_nue_cc_res_den = 0;
+int tot_nue_cc_res_num = 0;
+
+int tot_nue_cc_dic_den = 0;
+int tot_nue_cc_dic_num = 0;
+
+int tot_nue_cc_coh_den = 0;
+int tot_nue_cc_coh_num = 0;
+
+int tot_nue_cc_mec_den = 0;
+int tot_nue_cc_mec_num = 0;
+
+
 
 //char * file_locate_prefix = (char*)"../scripts/plots/";
 
@@ -349,29 +392,85 @@ double nuebar_counter{0}; // total number of nuebar selected
 std::vector<int> tabulated_origins;
 
 //TEfficiency histograms
-TH1D * h_nue_eng_eff_den           = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 40, 0, 4);
-TH1D * h_nue_eng_eff_num           = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 40, 0, 4);
+TH1D * h_nue_eng_eff_den            = new TH1D("h_nue_eng_eff_den", "h_nue_eng_eff_den", 40, 0, 4);
+TH1D * h_nue_eng_eff_num            = new TH1D("h_nue_eng_eff_num", "h_nue_eng_eff_num", 40, 0, 4);
+TH1D * h_nue_eng_eff_num_fewer_bins = new TH1D("h_nue_eng_eff_num_fewer_bins", "h_nue_eng_eff_num", 15, 0.25, 4);
 
 TH1D* h_eff_flash_time              = new TH1D("h_eff_flash_time", ";Flash Time [#mus]; Efficiency", 4, 6, 15);
 
-TH1D * h_ele_eng_eff_den            = new TH1D ("h_ele_eng_eff_den",            "h_ele_eng_eff_den",        40, 0, 4);
-TH1D * h_ele_eng_eff_num            = new TH1D ("h_ele_eng_eff_num",            "h_ele_eng_eff_num",        40, 0, 4);
-TH1D * h_ele_eng_eff_intime         = new TH1D ("h_ele_eng_eff_intime",         "h_ele_eng_eff_intime",     40, 0, 4);
-TH1D * h_ele_eng_eff_dirt           = new TH1D ("h_ele_eng_eff_dirt",           "h_ele_eng_eff_dirt",       40, 0, 4);
-TH1D * h_ele_eng_eff_pe             = new TH1D ("h_ele_eng_eff_pe",             "h_ele_eng_eff_pe",         40, 0, 4);
-TH1D * h_ele_eng_eff_reco_nue       = new TH1D ("h_ele_eng_eff_reco_nue",       "h_ele_eng_eff_reco_nue",   40, 0, 4);
-TH1D * h_ele_eng_eff_in_fv          = new TH1D ("h_ele_eng_eff_in_fv",          "h_ele_eng_eff_in_fv",      40, 0, 4);
-TH1D * h_ele_eng_eff_vtx_flash      = new TH1D ("h_ele_eng_eff_vtx_flash",      "h_ele_eng_eff_vtx_flash",  40, 0, 4);
-TH1D * h_ele_eng_eff_shwr_vtx       = new TH1D ("h_ele_eng_eff_shwr_vtx",       "h_ele_eng_eff_shwr_vtx",   40, 0, 4);
-TH1D * h_ele_eng_eff_trk_vtx        = new TH1D ("h_ele_eng_eff_trk_vtx",        "h_ele_eng_eff_trk_vtx",    40, 0, 4);
-TH1D * h_ele_eng_eff_hit            = new TH1D ("h_ele_eng_eff_hit",            "h_ele_eng_eff_hit",        40, 0, 4);
-TH1D * h_ele_eng_eff_yhit           = new TH1D ("h_ele_eng_eff_yhit",           "h_ele_eng_eff_yhit",       40, 0, 4);
-TH1D * h_ele_eng_eff_open_angle     = new TH1D ("h_ele_eng_eff_open_angle",     "h_ele_eng_eff_open_angle", 40, 0, 4);
-TH1D * h_ele_eng_eff_dedx           = new TH1D ("h_ele_eng_eff_dedx",           "h_ele_eng_eff_dedx",       40, 0, 4);
-TH1D * h_ele_eng_eff_2shwr          = new TH1D ("h_ele_eng_eff_2shwr",          "h_ele_eng_eff_2shwr",      40, 0, 4);
-TH1D * h_ele_eng_eff_hit_len        = new TH1D ("h_ele_eng_eff_hit_len",        "h_ele_eng_eff_hit_len",    40, 0, 4);
-TH1D * h_ele_eng_eff_trk_shwr       = new TH1D ("h_ele_eng_eff_trk_shwr",       "h_ele_eng_eff_trk_shwr",   40, 0, 4);
-TH1D * h_ele_eng_eff_contain        = new TH1D ("h_ele_eng_eff_contain",        "h_ele_eng_eff_contain",    40, 0, 4);
+TH1D * h_ele_eng_eff_den            = new TH1D ("h_ele_eng_eff_den",            ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_num            = new TH1D ("h_ele_eng_eff_num",            ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_intime         = new TH1D ("h_ele_eng_eff_intime",         ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_dirt           = new TH1D ("h_ele_eng_eff_dirt",           ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_pe             = new TH1D ("h_ele_eng_eff_pe",             ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_reco_nue       = new TH1D ("h_ele_eng_eff_reco_nue",       ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_in_fv          = new TH1D ("h_ele_eng_eff_in_fv",          ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_vtx_flash      = new TH1D ("h_ele_eng_eff_vtx_flash",      ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_shwr_vtx       = new TH1D ("h_ele_eng_eff_shwr_vtx",       ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_trk_vtx        = new TH1D ("h_ele_eng_eff_trk_vtx",        ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_hit            = new TH1D ("h_ele_eng_eff_hit",            ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_yhit           = new TH1D ("h_ele_eng_eff_yhit",           ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_open_angle     = new TH1D ("h_ele_eng_eff_open_angle",     ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_dedx           = new TH1D ("h_ele_eng_eff_dedx",           ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_2shwr          = new TH1D ("h_ele_eng_eff_2shwr",          ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_hit_len        = new TH1D ("h_ele_eng_eff_hit_len",        ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_trk_shwr       = new TH1D ("h_ele_eng_eff_trk_shwr",       ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+TH1D * h_ele_eng_eff_contain        = new TH1D ("h_ele_eng_eff_contain",        ";True Electron Energy [GeV];Efficiency",  40, 0, 4);
+
+TH1D * h_nu_eng_eff_den            = new TH1D ("h_nu_eng_eff_den",            ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_num            = new TH1D ("h_nu_eng_eff_num",            ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_intime         = new TH1D ("h_nu_eng_eff_intime",         ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_dirt           = new TH1D ("h_nu_eng_eff_dirt",           ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_pe             = new TH1D ("h_nu_eng_eff_pe",             ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_reco_nue       = new TH1D ("h_nu_eng_eff_reco_nue",       ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_in_fv          = new TH1D ("h_nu_eng_eff_in_fv",          ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_vtx_flash      = new TH1D ("h_nu_eng_eff_vtx_flash",      ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_shwr_vtx       = new TH1D ("h_nu_eng_eff_shwr_vtx",       ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_trk_vtx        = new TH1D ("h_nu_eng_eff_trk_vtx",        ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_hit            = new TH1D ("h_nu_eng_eff_hit",            ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_yhit           = new TH1D ("h_nu_eng_eff_yhit",           ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_open_angle     = new TH1D ("h_nu_eng_eff_open_angle",     ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_dedx           = new TH1D ("h_nu_eng_eff_dedx",           ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_2shwr          = new TH1D ("h_nu_eng_eff_2shwr",          ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_hit_len        = new TH1D ("h_nu_eng_eff_hit_len",        ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_trk_shwr       = new TH1D ("h_nu_eng_eff_trk_shwr",       ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+TH1D * h_nu_eng_eff_contain        = new TH1D ("h_nu_eng_eff_contain",        ";True Neutrino Energy [GeV];Efficiency",  10, 0, 2.5);
+
+TH1D * h_ele_phi_eff_intime         = new TH1D ("h_ele_phi_eff_intime",         ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_dirt           = new TH1D ("h_ele_phi_eff_dirt",           ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_pe             = new TH1D ("h_ele_phi_eff_pe",             ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_reco_nue       = new TH1D ("h_ele_phi_eff_reco_nue",       ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_in_fv          = new TH1D ("h_ele_phi_eff_in_fv",          ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_vtx_flash      = new TH1D ("h_ele_phi_eff_vtx_flash",      ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_shwr_vtx       = new TH1D ("h_ele_phi_eff_shwr_vtx",       ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_trk_vtx        = new TH1D ("h_ele_phi_eff_trk_vtx",        ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_hit            = new TH1D ("h_ele_phi_eff_hit",            ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_yhit           = new TH1D ("h_ele_phi_eff_yhit",           ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_open_angle     = new TH1D ("h_ele_phi_eff_open_angle",     ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_dedx           = new TH1D ("h_ele_phi_eff_dedx",           ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_2shwr          = new TH1D ("h_ele_phi_eff_2shwr",          ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_hit_len        = new TH1D ("h_ele_phi_eff_hit_len",        ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_trk_shwr       = new TH1D ("h_ele_phi_eff_trk_shwr",       ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+TH1D * h_ele_phi_eff_contain        = new TH1D ("h_ele_phi_eff_contain",        ";True Electron Phi [deg];Efficiency",  10, -180, 180);
+
+TH1D * h_ele_theta_eff_intime         = new TH1D ("h_ele_theta_eff_intime",         ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_dirt           = new TH1D ("h_ele_theta_eff_dirt",           ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_pe             = new TH1D ("h_ele_theta_eff_pe",             ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_reco_nue       = new TH1D ("h_ele_theta_eff_reco_nue",       ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_in_fv          = new TH1D ("h_ele_theta_eff_in_fv",          ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_vtx_flash      = new TH1D ("h_ele_theta_eff_vtx_flash",      ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_shwr_vtx       = new TH1D ("h_ele_theta_eff_shwr_vtx",       ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_trk_vtx        = new TH1D ("h_ele_theta_eff_trk_vtx",        ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_hit            = new TH1D ("h_ele_theta_eff_hit",            ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_yhit           = new TH1D ("h_ele_theta_eff_yhit",           ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_open_angle     = new TH1D ("h_ele_theta_eff_open_angle",     ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_dedx           = new TH1D ("h_ele_theta_eff_dedx",           ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_2shwr          = new TH1D ("h_ele_theta_eff_2shwr",          ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_hit_len        = new TH1D ("h_ele_theta_eff_hit_len",        ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_trk_shwr       = new TH1D ("h_ele_theta_eff_trk_shwr",       ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+TH1D * h_ele_theta_eff_contain        = new TH1D ("h_ele_theta_eff_contain",        ";True Electron Theta [deg];Efficiency",  10, 0, 180);
+
+
 
 TH1D * h_ele_eng_eff_num_pre_cuts  = new TH1D("h_ele_eng_eff_num_pre_cuts", "h_ele_eng_eff_num_pre_cuts", 40, 0, 4);
 TH1D * h_nue_vtx_x_eff_den         = new TH1D("h_nue_vtx_x_eff_den", "h_nue_vtx_x_eff_den", 6, 0, 256.35);
@@ -403,10 +502,22 @@ TH1D * h_nue_phi_eff_num           = new TH1D("h_nue_phi_eff_num", "h_nue_phi_ef
 TH1D * h_ele_cos_theta_eff_den     = new TH1D("h_ele_cos_theta_eff_den", "h_ele_cos_theta_eff_den", 6, -1, 1);
 TH1D * h_ele_cos_theta_eff_num     = new TH1D("h_ele_cos_theta_eff_num", "h_ele_cos_theta_eff_num", 6, -1, 1);
 TH1D * h_ele_cos_theta_eff_num_pre_cuts = new TH1D ("h_ele_cos_theta_eff_num_pre_cuts", "h_ele_cos_theta_eff_num_pre_cuts", 6, -1, 1);
-TH1D * h_ele_phi_eff_den           = new TH1D("h_ele_phi_eff_den", "h_ele_phi_eff_den", 10, -180, 180);
-TH1D * h_ele_phi_eff_num           = new TH1D("h_ele_phi_eff_num", "h_ele_phi_eff_num", 10, -180, 180);
-TH1D * h_ele_theta_eff_num         = new TH1D("h_ele_theta_eff_num", "h_ele_theta_eff_num", 10, 0, 180);
-TH1D * h_ele_theta_eff_den         = new TH1D("h_ele_theta_eff_den", "h_ele_theta_eff_den", 10, 0, 180);
+TH1D * h_ele_phi_eff_den           = new TH1D("h_ele_phi_eff_den", ";True Electron Phi [deg];Efficiency", 10, -180, 180);
+TH1D * h_ele_phi_eff_num           = new TH1D("h_ele_phi_eff_num", ";True Electron Phi [deg];Efficiency", 10, -180, 180);
+TH1D * h_ele_theta_eff_num         = new TH1D("h_ele_theta_eff_num", ";True Electron Theta [deg];Efficiency", 10, 0, 180);
+TH1D * h_ele_theta_eff_den         = new TH1D("h_ele_theta_eff_den", ";True Electron Theta [deg];Efficiency", 10, 0, 180);
+TH1D * h_ele_effective_ang_eff_num         = new TH1D("h_ele_effective_ang_eff_num", "h_ele_effective_ang_eff_num", 10, 0, 180);
+TH1D * h_ele_effective_ang_eff_den         = new TH1D("h_ele_effective_ang_eff_den", "h_ele_effective_ang_eff_den", 10, 0, 180);
+TH1D * h_ele_phi_eff_num_shrhits_pre           = new TH1D("h_ele_phi_eff_num_shrhits_pre", "h_ele_phi_eff_num_shrhits_pre", 10, -180, 180);  // efficiency before the shower hits cut
+TH1D * h_ele_theta_eff_num_shrhits_pre         = new TH1D("h_ele_theta_eff_num_shrhits_pre", "h_ele_theta_eff_num_shrhits_pre", 10, 0, 180); // efficiency before the shower hits cut
+TH1D * h_ele_phi_eff_num_shrhits           = new TH1D("h_ele_phi_eff_num_shrhits", "h_ele_phi_eff_num_shrhits", 10, -180, 180);  // efficiency after the shower hits cut
+TH1D * h_ele_theta_eff_num_shrhits         = new TH1D("h_ele_theta_eff_num_shrhits", "h_ele_theta_eff_num_shrhits", 10, 0, 180); // efficiency after the shower hits cut
+TH1D * h_ele_effective_ang_eff_num_shrhits_pre         = new TH1D("h_ele_effective_ang_eff_num_shrhits_pre", ";True Electron Effective Angle [deg]; Efficiency", 10, 0, 180);
+TH1D * h_ele_effective_ang_eff_num_shrhits         = new TH1D("h_ele_effective_ang_eff_num_shrhits", ";True Electron Effective Angle [deg]; Efficiency", 10, 0, 180);
+
+TH1D * h_ele_effective_ang_eff_num_dedx_pre         = new TH1D("h_ele_effective_ang_eff_num_dedx_pre", ";True Electron Effective Angle [deg]; Efficiency", 10, 0, 180);
+TH1D * h_ele_effective_ang_eff_num_dedx             = new TH1D("h_ele_effective_ang_eff_num_dedx", ";True Electron Effective Angle [deg]; Efficiency", 10, 0, 180);
+
 //
 
 TH1D * h_flash_time        = new TH1D ("h_flash_time",        "h_flash_time",        80, 0, 20);
@@ -1021,6 +1132,8 @@ TH2D * h_shwr_hits_nu_eng_zoom  = new TH2D ("h_shwr_hits_nu_eng_zoom",  "h_shwr_
 TH2D * h_shwr_hits_ele_eng_zoom = new TH2D ("h_shwr_hits_ele_eng_zoom", "h_shwr_hits_ele_eng_zoom", 20, 0, 2, 20, 0, 500);
 TH2D * h_shwr_hits_nu_eng       = new TH2D ("h_shwr_hits_nu_eng",       "h_shwr_hits_nu_eng", 20, 0, 4, 20, 0, 5000);
 TH2D * h_shwr_hits_ele_eng      = new TH2D ("h_shwr_hits_ele_eng",      "h_shwr_hits_ele_eng", 20, 0, 2, 12, 0, 2400);
+TH2D * h_shr_hit_density_true_energy      = new TH2D ("h_shr_hit_density_true_energy",      "h_shr_hit_density_true_energy", 15, 0, 2, 20, 0, 20);
+TH2D * h_shr_hit_density_true_energy_nu      = new TH2D ("h_shr_hit_density_true_energy_nu",      "h_shr_hit_density_true_energy_nu", 15, 0, 2, 20, 0, 20);
 
 TH2D * h_shwr_hits_nu_eng_zoom_last  = new TH2D ("h_shwr_hits_nu_eng_zoom_last",  "h_shwr_hits_nu_eng_zoom_last", 20, 0, 4, 20, 0, 500);
 TH2D * h_shwr_hits_ele_eng_zoom_last = new TH2D ("h_shwr_hits_ele_eng_zoom_last", "h_shwr_hits_ele_eng_zoom_last", 20, 0, 2, 20, 0, 500);
@@ -1714,6 +1827,20 @@ TH1D * h_ele_pfp_theta_intime         = new TH1D ("h_ele_pfp_theta_intime",     
 TH1D * h_ele_pfp_theta_dirt           = new TH1D ("h_ele_pfp_theta_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
 TH1D * h_ele_pfp_theta_data           = new TH1D ("h_ele_pfp_theta_data",           "h_ele_pfp_theta_data",           20, 0, 180);
 
+TH1D * h_ele_pfp_effective_ang_nue_cc         = new TH1D ("h_ele_pfp_effective_ang_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_nue_cc_out_fv  = new TH1D ("h_ele_pfp_effective_ang_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_nue_cc_mixed   = new TH1D ("h_ele_pfp_effective_ang_nue_cc_mixed",   "h_ele_pfp_theta_nue_cc_mixed",   20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_numu_cc        = new TH1D ("h_ele_pfp_effective_ang_numu_cc",        "h_ele_pfp_theta_numu_cc",        20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_numu_cc_mixed  = new TH1D ("h_ele_pfp_effective_ang_numu_cc_mixed",  "h_ele_pfp_theta_numu_cc_mixed",  20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_nc             = new TH1D ("h_ele_pfp_effective_ang_nc",             "h_ele_pfp_theta_nc",             20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_nc_pi0         = new TH1D ("h_ele_pfp_effective_ang_nc_pi0",         "h_ele_pfp_theta_nc_pi0",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_cosmic         = new TH1D ("h_ele_pfp_effective_ang_cosmic",         "h_ele_pfp_theta_cosmic",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_other_mixed    = new TH1D ("h_ele_pfp_effective_ang_other_mixed",    "h_ele_pfp_theta_other_mixed",    20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_unmatched      = new TH1D ("h_ele_pfp_effective_ang_unmatched",      "h_ele_pfp_theta_unmatched",      20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_intime         = new TH1D ("h_ele_pfp_effective_ang_intime",         "h_ele_pfp_theta_intime",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_dirt           = new TH1D ("h_ele_pfp_effective_ang_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_data           = new TH1D ("h_ele_pfp_effective_ang_data",           "h_ele_pfp_theta_data",           20, 0, 180);
+
 TH1D * h_ele_pfp_theta_pre_dedx_nue_cc         = new TH1D ("h_ele_pfp_theta_pre_dedx_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
 TH1D * h_ele_pfp_theta_pre_dedx_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_pre_dedx_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
 TH1D * h_ele_pfp_theta_pre_dedx_nue_cc_mixed   = new TH1D ("h_ele_pfp_theta_pre_dedx_nue_cc_mixed",   "h_ele_pfp_theta_nue_cc_mixed",   20, 0, 180);
@@ -1741,6 +1868,34 @@ TH1D * h_ele_pfp_theta_post_dedx_unmatched      = new TH1D ("h_ele_pfp_theta_pos
 TH1D * h_ele_pfp_theta_post_dedx_intime         = new TH1D ("h_ele_pfp_theta_post_dedx_intime",         "h_ele_pfp_theta_intime",         20, 0, 180);
 TH1D * h_ele_pfp_theta_post_dedx_dirt           = new TH1D ("h_ele_pfp_theta_post_dedx_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
 TH1D * h_ele_pfp_theta_post_dedx_data           = new TH1D ("h_ele_pfp_theta_post_dedx_data",           "h_ele_pfp_theta_data",           20, 0, 180);
+
+TH1D * h_ele_pfp_effective_ang_pre_dedx_nue_cc         = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_nue_cc_out_fv  = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_nue_cc_mixed   = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_nue_cc_mixed",   "h_ele_pfp_theta_nue_cc_mixed",   20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_numu_cc        = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_numu_cc",        "h_ele_pfp_theta_numu_cc",        20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_numu_cc_mixed  = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_numu_cc_mixed",  "h_ele_pfp_theta_numu_cc_mixed",  20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_nc             = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_nc",             "h_ele_pfp_theta_nc",             20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_nc_pi0         = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_nc_pi0",         "h_ele_pfp_theta_nc_pi0",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_cosmic         = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_cosmic",         "h_ele_pfp_theta_cosmic",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_other_mixed    = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_other_mixed",    "h_ele_pfp_theta_other_mixed",    20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_unmatched      = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_unmatched",      "h_ele_pfp_theta_unmatched",      20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_intime         = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_intime",         "h_ele_pfp_theta_intime",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_dirt           = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_pre_dedx_data           = new TH1D ("h_ele_pfp_effective_ang_pre_dedx_data",           "h_ele_pfp_theta_data",           20, 0, 180);
+
+TH1D * h_ele_pfp_effective_ang_post_dedx_nue_cc         = new TH1D ("h_ele_pfp_effective_ang_post_dedx_nue_cc",         "h_ele_pfp_theta_nue_cc",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_nue_cc_out_fv  = new TH1D ("h_ele_pfp_effective_ang_post_dedx_nue_cc_out_fv",  "h_ele_pfp_theta_nue_cc_out_fv",  20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_nue_cc_mixed   = new TH1D ("h_ele_pfp_effective_ang_post_dedx_nue_cc_mixed",   "h_ele_pfp_theta_nue_cc_mixed",   20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_numu_cc        = new TH1D ("h_ele_pfp_effective_ang_post_dedx_numu_cc",        "h_ele_pfp_theta_numu_cc",        20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_numu_cc_mixed  = new TH1D ("h_ele_pfp_effective_ang_post_dedx_numu_cc_mixed",  "h_ele_pfp_theta_numu_cc_mixed",  20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_nc             = new TH1D ("h_ele_pfp_effective_ang_post_dedx_nc",             "h_ele_pfp_theta_nc",             20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_nc_pi0         = new TH1D ("h_ele_pfp_effective_ang_post_dedx_nc_pi0",         "h_ele_pfp_theta_nc_pi0",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_cosmic         = new TH1D ("h_ele_pfp_effective_ang_post_dedx_cosmic",         "h_ele_pfp_theta_cosmic",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_other_mixed    = new TH1D ("h_ele_pfp_effective_ang_post_dedx_other_mixed",    "h_ele_pfp_theta_other_mixed",    20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_unmatched      = new TH1D ("h_ele_pfp_effective_ang_post_dedx_unmatched",      "h_ele_pfp_theta_unmatched",      20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_intime         = new TH1D ("h_ele_pfp_effective_ang_post_dedx_intime",         "h_ele_pfp_theta_intime",         20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_dirt           = new TH1D ("h_ele_pfp_effective_ang_post_dedx_dirt",           "h_ele_pfp_theta_dirt",           20, 0, 180);
+TH1D * h_ele_pfp_effective_ang_post_dedx_data           = new TH1D ("h_ele_pfp_effective_ang_post_dedx_data",           "h_ele_pfp_theta_data",           20, 0, 180);
 
 TH1D * h_ele_pfp_theta_after_nue_cc         = new TH1D ("h_ele_pfp_theta_after_nue_cc",         "h_ele_pfp_theta_after_nue_cc",         20, 0, 180);
 TH1D * h_ele_pfp_theta_after_nue_cc_out_fv  = new TH1D ("h_ele_pfp_theta_after_nue_cc_out_fv",  "h_ele_pfp_theta_after_nue_cc_out_fv",  20, 0, 180);
@@ -2037,6 +2192,7 @@ TH2D * h_all_true_energy_theta = new TH2D("h_all_true_energy_theta", "h_all_true
 TH2D * h_nue_true_energy_phi   = new TH2D("h_nue_true_energy_phi",   "h_nue_true_energy_phi",   20, 0, 10, 14, -180, 180);
 TH2D * h_ele_true_energy_theta = new TH2D("h_ele_true_energy_theta", "h_ele_true_energy_theta", 20, 0, 10, 14, 0, 180);
 TH2D * h_ele_true_energy_phi   = new TH2D("h_ele_true_energy_phi",   "h_ele_true_energy_phi",   20, 0, 10, 14, -180, 180);
+TH2D * h_nue_elec_true_energy   = new TH2D("h_nue_elec_true_energy",   ";True Neutrino Energy [Gev]; True Electron Energy [GeV]",   40, 0, 4, 40, 0, 4);
 
 TH2D * h_true_reco_ele_momentum = new TH2D ("h_true_reco_ele_momentum", "h_true_reco_ele_momentum", 10, 0, 3, 10, 0, 3);
 TH2D * h_true_reco_ele_costheta = new TH2D ("h_true_reco_ele_costheta", "h_true_reco_ele_costheta", 10, -1, 1, 10, -1, 1);

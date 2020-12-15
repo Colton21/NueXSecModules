@@ -360,6 +360,45 @@ void selection_functions_data::LeadingThetaData(std::vector<xsecAna::TPCObjectCo
 //leading shower theta
 //***************************************************************************
 //***************************************************************************
+void selection_functions_data::LeadingEffAngData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
+                                                std::vector<std::pair<int, std::string> > * passed_tpco,
+                                                TH1D * h_ele_pfp_theta_data)
+{
+	int n_tpc_obj = tpc_object_container_v->size();
+	for(int i = 0; i < n_tpc_obj; i++)
+	{
+		if(passed_tpco->at(i).first == 0) {continue; }
+		auto const tpc_obj = tpc_object_container_v->at(i);
+		std::pair<std::string, int> tpco_class = TPCO_Classifier_Data(tpc_obj);
+		std::string tpco_id = tpco_class.first;
+		const int leading_index = tpco_class.second;
+		auto const leading_shower = tpc_obj.GetParticle(leading_index);
+		//const double leading_shower_theta = acos(leading_shower.pfpDirZ()) * (180 / 3.1415);
+
+		const double leading_shower_z = leading_shower.pfpDirZ();
+		const double leading_shower_y = leading_shower.pfpDirY();
+		const double leading_shower_x = leading_shower.pfpDirX();
+		const double reco_nu_vtx_sce_x = tpc_obj.pfpVtxX();
+		const double reco_nu_vtx_sce_y = tpc_obj.pfpVtxY();
+		const double reco_nu_vtx_sce_z = tpc_obj.pfpVtxZ();
+
+
+		TVector3 shower_vector(leading_shower_x, leading_shower_y, leading_shower_z);
+		shower_vector.Unit();
+		
+		TVector3 v_targ_uboone(-31387.58422, -3316.402543, -60100.2414);
+		TVector3 v_nu_vtx(reco_nu_vtx_sce_x, reco_nu_vtx_sce_y, reco_nu_vtx_sce_z);
+		TVector3 v_targ_to_vtx = (-1*v_targ_uboone + v_nu_vtx).Unit();
+
+		double effective_angle = shower_vector.Angle(v_targ_to_vtx) * 180 / 3.14159;
+
+
+		h_ele_pfp_theta_data->Fill(effective_angle);
+	}//end pfp loop
+}
+//leading shower theta
+//***************************************************************************
+//***************************************************************************
 void selection_functions_data::LeadingMomentumData(std::vector<xsecAna::TPCObjectContainer> * tpc_object_container_v,
                                                    std::vector<std::pair<int, std::string> > * passed_tpco, bool _verbose, TH1D * h_ele_pfp_momentum_data)
 {
